@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  * @author HuangChengwei
  * @since 2024-04-11 8:28
  */
-abstract class AbstractQuerySqlBuilder {
+public abstract class AbstractQuerySqlBuilder {
 
     protected static final String NONE_DELIMITER = "";
     protected static final String DELIMITER = ",";

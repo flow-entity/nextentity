@@ -13,11 +13,7 @@ import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
@@ -59,7 +55,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         return update(entities, entityClass, excludeNull);
     }
 
-    private <T> @NotNull List<@NotNull T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass, boolean excludeNull) {
+    protected <T> @NotNull List<@NotNull T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass, boolean excludeNull) {
         List<@NotNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return list;
@@ -115,7 +111,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         return update(Collections.singletonList(entity), entityClass, true).get(0);
     }
 
-    private static void setNewVersion(Object entity, BasicAttribute attribute) {
+    protected static void setNewVersion(Object entity, BasicAttribute attribute) {
         Object version = attribute.getDatabaseValue(entity);
         if (version instanceof Integer) {
             version = (Integer) version + 1;
@@ -127,10 +123,12 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         attribute.setByDatabaseValue(entity, version);
     }
 
-    private void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
+    protected void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
         insertStatement.print();
         boolean generateKey = insertStatement.returnGeneratedKeys();
-        try (PreparedStatement statement = generateKey ? connection.prepareStatement(insertStatement.sql(), Statement.RETURN_GENERATED_KEYS) : connection.prepareStatement(insertStatement.sql())) {
+        try (PreparedStatement statement = generateKey
+                ? connection.prepareStatement(insertStatement.sql(), Statement.RETURN_GENERATED_KEYS)
+                : connection.prepareStatement(insertStatement.sql())) {
             executeUpdate(statement, insertStatement.parameters());
             if (generateKey) {
                 try (ResultSet keys = statement.getGeneratedKeys()) {
@@ -148,7 +146,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
-    private int[] executeUpdate(PreparedStatement statement, Iterable<? extends Iterable<?>> parameters) throws SQLException {
+    protected int[] executeUpdate(PreparedStatement statement, Iterable<? extends Iterable<?>> parameters) throws SQLException {
         Iterator<? extends Iterable<?>> iterator = parameters.iterator();
         if (iterator.hasNext()) {
             setParameters(statement, iterator.next());
@@ -166,14 +164,11 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
-    private static void setParameters(PreparedStatement statement, Iterable<?> parameters) throws SQLException {
-        int parameterIndex = 0;
-        for (Object o : parameters) {
-            statement.setObject(++parameterIndex, o);
-        }
+    protected static void setParameters(PreparedStatement statement, Iterable<?> parameters) throws SQLException {
+        JdbcUtil.setParameters(statement, parameters);
     }
 
-    private <T> void execute(ConnectionCallback<T> action) {
+    protected <T> void execute(ConnectionCallback<T> action) {
         try {
             connectionProvider.execute(connection -> {
                 if (connection.getAutoCommit()) {

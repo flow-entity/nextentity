@@ -39,7 +39,7 @@ public class JpaMetamodel extends AbstractMetamodel {
     @Override
     protected String getTableName(Class<?> javaType) {
         String tableName = getTableNameByAnnotation(javaType);
-        return tableName != null ? tableName : getTableNameByClassName(javaType);
+        return tableName != null ? unwrapSymbol(tableName) : getTableNameByClassName(javaType);
     }
 
     protected String getTableNameByClassName(Class<?> javaType) {

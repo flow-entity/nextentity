@@ -19,7 +19,7 @@ import java.util.Objects;
 
 import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
-@Entity
+@Entity(name = "\"user\"")
 @ToString
 @Getter
 @Setter

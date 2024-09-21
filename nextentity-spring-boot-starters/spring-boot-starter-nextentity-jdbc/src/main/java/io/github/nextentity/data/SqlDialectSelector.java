@@ -2,16 +2,8 @@ package io.github.nextentity.data;
 
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.jdbc.BatchSqlStatement;
-import io.github.nextentity.jdbc.InsertSqlStatement;
+import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.QuerySqlBuilder;
-import io.github.nextentity.jdbc.JdbcUpdateSqlBuilder;
-import io.github.nextentity.jdbc.MySqlQuerySqlBuilder;
-import io.github.nextentity.jdbc.MysqlUpdateSqlBuilder;
-import io.github.nextentity.jdbc.QueryContext;
-import io.github.nextentity.jdbc.QuerySqlStatement;
-import io.github.nextentity.jdbc.SqlServerQuerySqlBuilder;
-import io.github.nextentity.jdbc.SqlServerUpdateSqlBuilder;
 import org.springframework.beans.factory.InitializingBean;
 
 import javax.sql.DataSource;
@@ -38,6 +30,9 @@ public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder
         } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
             querySqlBuilder = new SqlServerQuerySqlBuilder();
             updateSqlBuilder = new SqlServerUpdateSqlBuilder();
+        } else if (driverName.contains("postgresql")) {
+            querySqlBuilder = new PostgresqlQuerySqlBuilder();
+            updateSqlBuilder = new PostgresqlUpdateSqlBuilder();
         }
         return this;
     }

@@ -50,7 +50,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
                 }
                 // noinspection SqlSourceToSinkFlow
                 try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
-                    JdbcUtil.setParam(statement, sql.parameters());
+                    JdbcUtil.setParameters(statement, sql.parameters());
                     try (ResultSet resultSet = statement.executeQuery()) {
                         return collector.resolve(resultSet, context);
                     }

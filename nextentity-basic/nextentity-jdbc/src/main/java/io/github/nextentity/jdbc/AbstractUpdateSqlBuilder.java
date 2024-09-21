@@ -3,6 +3,7 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.meta.BasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Iterators;
 import org.jetbrains.annotations.NotNull;
 
@@ -58,7 +59,10 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
 
     private static Iterable<? extends Iterable<?>> getParameters(Iterable<?> entities,
                                                                  Collection<? extends BasicAttribute> attributes) {
-        return Iterators.map(entities, entity -> Iterators.map(attributes, attr -> attr.getDatabaseValue(entity)));
+        return Iterators.map(entities, entity -> Iterators.map(attributes, attr -> {
+            Object value = attr.getDatabaseValue(entity);
+            return value == null ? new NullParameter(attr.type()) : value;
+        }));
     }
 
     @NotNull
@@ -89,9 +93,10 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
             delimiter = ",";
             sql.append(leftTicks()).append(attribute.columnName()).append(rightTicks()).append("=");
             if (excludeNull) {
-                sql.append("case when ? is null then")
+                sql.append("case when ").append(typedPlaceholder(attribute)).append(" is null then")
                         .append(leftTicks()).append(attribute.columnName()).append(rightTicks())
-                        .append("else ? end");
+                        .append("else ").append(typedPlaceholder(attribute))
+                        .append(" end");
                 paramAttr.add(attribute);
                 paramAttr.add(attribute);
             } else {
@@ -116,6 +121,10 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
         return new BatchSqlStatement(sql.toString(), getParameters(entities, paramAttr));
     }
 
+    protected @NotNull String typedPlaceholder(BasicAttribute attribute) {
+        return "?";
+    }
+
     @Override
     public BatchSqlStatement buildDeleteStatement(Iterable<?> entities, EntityType entity) {
         BasicAttribute id = entity.id();
@@ -124,6 +133,28 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
         List<BasicAttribute> paramAttr = Collections.singletonList(id);
         Iterable<? extends Iterable<?>> parameters = getParameters(entities, paramAttr);
         return new BatchSqlStatement(sql, parameters);
+    }
+
+    protected List<InsertSqlStatement> buildGroupedInsertStatement(Iterable<?> entities, @NotNull EntityType entityType) {
+        BasicAttribute idAttribute = entityType.id();
+        Collection<? extends BasicAttribute> basicAttributes = entityType.primitiveAttributes();
+        List<? extends BasicAttribute> withoutId = basicAttributes.stream()
+                .filter(attr -> attr != idAttribute)
+                .collect(ImmutableList.collector(basicAttributes.size() - 1));
+        List<InsertSqlStatement> result = new ArrayList<>();
+        List<Object> entitiesHasId = new ArrayList<>();
+        for (Object entity : entities) {
+            List<?> single = Collections.singletonList(entity);
+            if (idAttribute.get(entity) == null) {
+                result.add(buildInsertStatement(single, entityType, withoutId, true));
+            } else {
+                entitiesHasId.add(entity);
+            }
+        }
+        if (!entitiesHasId.isEmpty()) {
+            result.add(buildInsertStatement(entitiesHasId, entityType, basicAttributes, false));
+        }
+        return result;
     }
 
 }

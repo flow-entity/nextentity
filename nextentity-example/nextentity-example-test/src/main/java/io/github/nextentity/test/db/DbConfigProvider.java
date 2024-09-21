@@ -70,7 +70,7 @@ public interface DbConfigProvider {
             }
         };
 
-        List<RepositoryFactory> list = ImmutableList.of(jdbc, jpa, jpaNative);
+        List<RepositoryFactory> list = ImmutableList.of(jdbc, jpa);
         return new DbConfig(querySqlBuilder,
                 updateSqlBuilder(),
                 dataSource,

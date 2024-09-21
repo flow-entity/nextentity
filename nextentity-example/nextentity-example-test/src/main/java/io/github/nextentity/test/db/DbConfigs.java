@@ -12,6 +12,7 @@ public interface DbConfigs {
 
     DbConfig MYSQL = new Mysql().getConfig();
     DbConfig SQLSERVER = new SqlServer().getConfig();
-    List<DbConfig> CONFIGS = ImmutableList.of(MYSQL, SQLSERVER);
+    DbConfig POSTGRESQL = new Postgresql().getConfig();
+    List<DbConfig> CONFIGS = ImmutableList.of(MYSQL, SQLSERVER, POSTGRESQL);
 
 }
