@@ -1,6 +1,6 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableList;
@@ -34,7 +34,7 @@ public interface BasicAttribute extends Schema, Attribute {
         return attributePaths().size();
     }
 
-    EntityPath path();
+    InternalPathExpression path();
 
     default List<? extends BasicAttribute> attributePaths() {
         Schema cur = this;

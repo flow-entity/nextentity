@@ -5,7 +5,7 @@ import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.QueryStructure.From;
@@ -218,14 +218,14 @@ public class JpaQueryExecutor implements QueryExecutor {
             }
         }
 
-        protected void setFetch(Collection<? extends EntityPath> fetchPaths) {
+        protected void setFetch(Collection<? extends InternalPathExpression> fetchPaths) {
             if (fetchPaths != null) {
-                for (EntityPath path : fetchPaths) {
+                for (InternalPathExpression path : fetchPaths) {
                     Fetch<?, ?> fetch = null;
                     for (int i = 0; i < path.deep(); i++) {
                         Fetch<?, ?> cur = fetch;
                         String stringPath = path.get(i);
-                        EntityPath sub = path.subLength(i + 1);
+                        InternalPathExpression sub = path.subLength(i + 1);
                         fetch = (Fetch<?, ?>) fetched.computeIfAbsent(sub, k -> {
                             if (cur == null) {
                                 return root.fetch(stringPath, JoinType.LEFT);
@@ -242,7 +242,7 @@ public class JpaQueryExecutor implements QueryExecutor {
             Selected select = structure.select();
             setDistinct(select);
             if (select instanceof SelectEntity) {
-                Collection<? extends EntityPath> attributes = ((SelectEntity) select)
+                Collection<? extends InternalPathExpression> attributes = ((SelectEntity) select)
                         .fetch();
                 setFetch(attributes);
             }

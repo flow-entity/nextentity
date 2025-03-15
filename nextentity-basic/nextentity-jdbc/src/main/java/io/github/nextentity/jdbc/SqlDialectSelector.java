@@ -1,22 +1,19 @@
-package io.github.nextentity.data;
+package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.QuerySqlBuilder;
-import org.springframework.beans.factory.InitializingBean;
 
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author HuangChengwei
  * @since 2024/4/11 下午3:35
  */
-public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder, InitializingBean {
+public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder {
 
     private QuerySqlBuilder querySqlBuilder;
     private JdbcUpdateSqlBuilder updateSqlBuilder;
@@ -36,13 +33,6 @@ public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder
         }
         return this;
     }
-
-    @Override
-    public void afterPropertiesSet() {
-        Objects.requireNonNull(querySqlBuilder);
-        Objects.requireNonNull(updateSqlBuilder);
-    }
-
 
     @Override
     public QuerySqlStatement build(QueryContext context) {

@@ -10,19 +10,19 @@ import java.util.stream.Stream;
  * @author HuangChengwei
  * @since 2024/4/17 下午1:27
  */
-public interface EntityPath extends Expression, Iterable<String> {
+public interface InternalPathExpression extends Expression, Iterable<String> {
 
     int deep();
 
     String get(int i);
 
-    EntityPath get(String path);
+    InternalPathExpression get(String path);
 
-    EntityPath get(EntityPath column);
+    InternalPathExpression get(InternalPathExpression path);
 
-    EntityPath parent();
+    InternalPathExpression parent();
 
-    EntityPath subLength(int len);
+    InternalPathExpression subLength(int len);
 
     BasicAttribute toAttribute(EntitySchema entityType);
 

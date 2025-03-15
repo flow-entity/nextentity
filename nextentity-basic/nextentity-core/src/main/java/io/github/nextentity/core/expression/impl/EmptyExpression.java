@@ -11,6 +11,9 @@ import java.util.List;
 final class EmptyExpression implements Literal, AbstractExpression {
     public static final EmptyExpression EMPTY = new EmptyExpression();
 
+    private EmptyExpression() {
+    }
+
     @Override
     public @NotNull AbstractExpression operate(Operator operator, Expression expression) {
         return toTypedExpression(expression);

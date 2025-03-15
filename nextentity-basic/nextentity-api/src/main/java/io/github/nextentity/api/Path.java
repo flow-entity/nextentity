@@ -1,6 +1,7 @@
 package io.github.nextentity.api;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 @FunctionalInterface
 public interface Path<T, R> extends Serializable {
@@ -14,6 +15,27 @@ public interface Path<T, R> extends Serializable {
     }
 
     interface StringPath<T> extends Path<T, String> {
+    }
+
+    interface LongPath<T> extends NumberPath<T, Long> {
+    }
+
+    interface IntegerPath<T> extends NumberPath<T, Integer> {
+    }
+
+    interface ShortPath<T> extends NumberPath<T, Short> {
+    }
+
+    interface BytePath<T> extends NumberPath<T, Byte> {
+    }
+
+    interface DoublePath<T> extends NumberPath<T, Double> {
+    }
+
+    interface FloatPath<T> extends NumberPath<T, Float> {
+    }
+
+    interface BigDecimalPath<T> extends NumberPath<T, BigDecimal> {
     }
 
 }

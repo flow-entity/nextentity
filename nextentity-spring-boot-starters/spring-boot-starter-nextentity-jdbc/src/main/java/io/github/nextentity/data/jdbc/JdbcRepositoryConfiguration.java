@@ -7,7 +7,7 @@ import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.data.EntityTypeUtil;
-import io.github.nextentity.data.SqlDialectSelector;
+import io.github.nextentity.jdbc.SqlDialectSelector;
 import io.github.nextentity.data.TransactionalUpdateExecutor;
 import io.github.nextentity.jdbc.ConnectionProvider;
 import io.github.nextentity.jdbc.JdbcQueryExecutor;

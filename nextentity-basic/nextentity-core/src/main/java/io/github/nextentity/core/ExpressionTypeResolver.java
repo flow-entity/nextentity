@@ -1,7 +1,7 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Literal;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.Operator;
@@ -34,8 +34,8 @@ public class ExpressionTypeResolver {
 
 
     public static Class<?> getExpressionType(Expression expression, EntityType entityType) {
-        if (expression instanceof EntityPath) {
-            return getColumnType((EntityPath) expression, entityType);
+        if (expression instanceof InternalPathExpression) {
+            return getColumnType((InternalPathExpression) expression, entityType);
         } else if (expression instanceof Literal) {
             return getLiteralType((Literal) expression);
         } else if (expression instanceof Operation) {
@@ -126,7 +126,7 @@ public class ExpressionTypeResolver {
         return expression.value().getClass();
     }
 
-    public static Class<?> getColumnType(EntityPath column, EntityType entityType) {
+    public static Class<?> getColumnType(InternalPathExpression column, EntityType entityType) {
         BasicAttribute attribute = entityType.getAttribute(column);
         return attribute.databaseType().databaseType();
     }

@@ -18,6 +18,7 @@
     <module>nextentity-example-jdbc</module>
     <module>nextentity-example-jpa</module>
     <module>nextentity-example-test</module>
+      <module>nextentity-example-springboot</module>
   </modules>
 
   <dependencyManagement>

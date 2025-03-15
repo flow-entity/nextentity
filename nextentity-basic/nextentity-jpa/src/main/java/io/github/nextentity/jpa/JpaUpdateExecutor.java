@@ -4,7 +4,7 @@ import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.SelectImpl;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
 import io.github.nextentity.core.expression.Expressions;
@@ -68,7 +68,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             EntityType<T> entity = entityManager.getMetamodel().entity(entityType);
             SingularAttribute<? super T, ?> id = entity.getId(entity.getIdType().getJavaType());
             String name = id.getName();
-            EntityPath idPath = ExpressionImpls.column(name);
+            InternalPathExpression idPath = ExpressionImpls.column(name);
             Expression operate = ExpressionImpls.operate(idPath, Operator.IN, ids);
             List<T> dbList = new SelectImpl<>(queryConfig, entityType)
                     .where(Expressions.of(operate))

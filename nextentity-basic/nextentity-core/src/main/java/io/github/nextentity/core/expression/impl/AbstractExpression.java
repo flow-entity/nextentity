@@ -1,15 +1,11 @@
 package io.github.nextentity.core.expression.impl;
 
-import io.github.nextentity.api.Expression;
-import io.github.nextentity.api.ExpressionBuilder;
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.Order;
-import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.EntityPath;
 import io.github.nextentity.core.expression.Expressions;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Iterators;
@@ -21,10 +17,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import static io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import static io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import static io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import static io.github.nextentity.api.TypedExpression.StringPathExpression;
+import static io.github.nextentity.api.TypedExpression.*;
 
 @Accessors(fluent = true)
 @SuppressWarnings("rawtypes")
@@ -332,7 +325,7 @@ interface AbstractExpression extends NumberPathExpression, StringPathExpression,
     default EntityPathExpression get(Path path) {
         // PathChain expression = (PathChain) Paths.get((Path<?, ?>) path);
         String name = ExpressionImpls.attributeName(path);
-        return toTypedExpression(((EntityPath) this).get(name));
+        return toTypedExpression(((InternalPathExpression) this).get(name));
     }
 
     @Override
@@ -402,8 +395,8 @@ interface AbstractExpression extends NumberPathExpression, StringPathExpression,
 
     @NotNull
     default AbstractExpression get0(PathExpression<?, ?> pathExpression) {
-        EntityPath expression = (EntityPath) pathExpression;
-        return toTypedExpression(((EntityPath) this).get(expression));
+        InternalPathExpression expression = (InternalPathExpression) pathExpression;
+        return toTypedExpression(((InternalPathExpression) this).get(expression));
     }
 
     default AbstractExpression not(TypedExpression<?, ?> expression) {
@@ -432,7 +425,8 @@ interface AbstractExpression extends NumberPathExpression, StringPathExpression,
     }
 
     @NotNull
-    default StringExpression<?> asString() {
+    default <T> StringExpression<T> asString() {
+        //noinspection unchecked
         return this;
     }
 
@@ -440,7 +434,8 @@ interface AbstractExpression extends NumberPathExpression, StringPathExpression,
         return this;
     }
 
-    default NumberExpression<?, ?> asNumber() {
+    default <T, R extends Number> NumberExpression<T, R> asNumber() {
+        //noinspection unchecked
         return this;
     }
 

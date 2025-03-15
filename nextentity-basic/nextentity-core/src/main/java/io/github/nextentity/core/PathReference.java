@@ -2,38 +2,36 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.Path;
 import io.github.nextentity.core.exception.BeanReflectiveException;
-import io.github.nextentity.core.util.Exceptions;
 import lombok.Getter;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodHandleInfo;
+import java.lang.invoke.MethodType;
 import java.lang.invoke.SerializedLambda;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Getter
 public class PathReference {
 
-    private static final Pattern RETURN_TYPE_PATTERN = Pattern.compile("\\(.*\\)L(.*);");
-    private static final Pattern PARAMETER_TYPE_PATTERN = Pattern.compile("\\((.*)\\).*");
+    private static final Pattern METHOD_PATTERN = Pattern.compile("^\\(L(.*);\\)(L(.*);|.*)$");
 
     private static final Map<Path<?, ?>, PathReference> map = new ConcurrentHashMap<>();
 
     private final String fieldName;
     private final Class<?> returnType;
     private final Class<?> entityType;
-    private final SerializedLambda serializedLambda;
 
     private PathReference(SerializedLambda serializedLambda) {
-        this.serializedLambda = serializedLambda;
         this.fieldName = getFieldName(serializedLambda.getImplMethodName());
-        this.returnType = getReturnType(serializedLambda);
-        this.entityType = getEntityType(serializedLambda);
+        MethodType methodType = MethodType.fromMethodDescriptorString(
+                serializedLambda.getInstantiatedMethodType(),
+                serializedLambda.getClass().getClassLoader());
+        returnType = methodType.returnType();
+        entityType = methodType.parameterType(0);
     }
 
     public static <T, R> PathReference of(Path<T, R> path) {
@@ -86,44 +84,6 @@ public class PathReference {
         }
         builder.setCharAt(0, Character.toLowerCase(builder.charAt(0)));
         return builder.toString();
-    }
-
-    private static Class<?> getReturnType(SerializedLambda serializedLambda) {
-        String expr = serializedLambda.getInstantiatedMethodType();
-        Matcher matcher = RETURN_TYPE_PATTERN.matcher(expr);
-        if (!matcher.find() || matcher.groupCount() != 1) {
-            throw new IllegalStateException("Failed to get Lambda information");
-        }
-        String className = matcher.group(1).replace("/", ".");
-        try {
-            return Class.forName(className);
-        } catch (ClassNotFoundException e) {
-            throw Exceptions.sneakyThrow(e);
-        }
-    }
-
-
-    private static Class<?> getEntityType(SerializedLambda serializedLambda) {
-        String expr = serializedLambda.getInstantiatedMethodType();
-        Matcher matcher = PARAMETER_TYPE_PATTERN.matcher(expr);
-        if (!matcher.find() || matcher.groupCount() != 1) {
-            throw new IllegalStateException("Failed to get Lambda information");
-        }
-        expr = matcher.group(1);
-        return Arrays.stream(expr.split(";"))
-                .filter(s -> !s.isBlank())
-                .map(s -> {
-                    try {
-                        String className = s
-                                .replaceFirst("L", "")
-                                .replace("/", ".");
-                        return Class.forName(className);
-                    } catch (ClassNotFoundException e) {
-                        throw Exceptions.sneakyThrow(e);
-                    }
-                })
-                .findFirst()
-                .orElseThrow();
     }
 
 }

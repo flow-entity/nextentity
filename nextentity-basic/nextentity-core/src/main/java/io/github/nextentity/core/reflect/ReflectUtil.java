@@ -55,30 +55,21 @@ public class ReflectUtil {
         }
     }
 
-    @NotNull
-    public static Object newInstance(Class<?> resultType) {
-        try {
-            return resultType.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new BeanReflectiveException(e);
-        }
-    }
-
     public static Object invokeDefaultMethod(Object proxy, Method method, Object[] args) throws Throwable {
         return InvocationHandler.invokeDefault(proxy, method, args);
     }
 
     public static Object getFieldValue(Field field, Object instance) throws IllegalAccessException {
-        checkAccessible(field, instance);
+        setAccessible(field, instance);
         return field.get(instance);
     }
 
     public static void setFieldValue(Field field, Object instance, Object value) throws IllegalAccessException {
-        checkAccessible(field, instance);
+        setAccessible(field, instance);
         field.set(instance, value);
     }
 
-    private static void checkAccessible(AccessibleObject accessible, Object instance) {
+    private static void setAccessible(AccessibleObject accessible, Object instance) {
         if (!isAccessible(accessible, instance)) {
             accessible.setAccessible(true);
         }
@@ -117,7 +108,7 @@ public class ReflectUtil {
         Object array = SINGLE_ENUM_MAP.computeIfAbsent(cls, k -> {
             try {
                 Method method = cls.getMethod("values");
-                checkAccessible(method, null);
+                setAccessible(method, null);
                 return method.invoke(null);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw Exceptions.sneakyThrow(e);
@@ -132,7 +123,7 @@ public class ReflectUtil {
         }
         try {
             Method method = cls.getMethod("valueOf");
-            checkAccessible(method, null);
+            setAccessible(method, null);
             return method.invoke(name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw Exceptions.sneakyThrow(e);

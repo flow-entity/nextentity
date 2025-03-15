@@ -85,7 +85,7 @@ public interface QueryStructure extends Expression {
         class SelectEntity implements Selected {
             private Class<?> type;
             private boolean distinct;
-            private Collection<? extends EntityPath> fetch;
+            private Collection<? extends InternalPathExpression> fetch;
 
             public SelectEntity() {
             }

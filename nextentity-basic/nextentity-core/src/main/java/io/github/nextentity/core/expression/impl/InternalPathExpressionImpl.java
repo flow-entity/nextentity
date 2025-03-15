@@ -1,6 +1,6 @@
 package io.github.nextentity.core.expression.impl;
 
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.meta.BasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.reflect.schema.Schema;
@@ -12,10 +12,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.stream.Stream;
 
-final class EntityPathImpl implements EntityPath, AbstractExpression {
+final class InternalPathExpressionImpl implements InternalPathExpression, AbstractExpression {
     private final String[] paths;
 
-    EntityPathImpl(String[] paths) {
+    InternalPathExpressionImpl(String[] paths) {
         this.paths = paths;
     }
 
@@ -30,20 +30,20 @@ final class EntityPathImpl implements EntityPath, AbstractExpression {
     }
 
     @Override
-    public EntityPath get(String path) {
+    public InternalPathExpression get(String path) {
         String[] strings = new String[deep() + 1];
         System.arraycopy(paths, 0, strings, 0, paths.length);
         strings[deep()] = path;
-        return new EntityPathImpl(strings);
+        return new InternalPathExpressionImpl(strings);
     }
 
     @Override
-    public EntityPath parent() {
+    public InternalPathExpression parent() {
         return sub(deep() - 1);
     }
 
     @Override
-    public EntityPath subLength(int len) {
+    public InternalPathExpression subLength(int len) {
         if (len == deep()) {
             return this;
         }
@@ -68,13 +68,13 @@ final class EntityPathImpl implements EntityPath, AbstractExpression {
     }
 
     @Nullable
-    private EntityPath sub(int len) {
+    private InternalPathExpression sub(int len) {
         if (len <= 0) {
             return null;
         }
         String[] strings = new String[len];
         System.arraycopy(paths, 0, strings, 0, strings.length);
-        return new EntityPathImpl(strings);
+        return new InternalPathExpressionImpl(strings);
     }
 
     @NotNull
@@ -84,16 +84,16 @@ final class EntityPathImpl implements EntityPath, AbstractExpression {
     }
 
     @Override
-    public EntityPath get(EntityPath column) {
-        String[] paths = new String[deep() + column.deep()];
+    public InternalPathExpression get(InternalPathExpression path) {
+        String[] paths = new String[deep() + path.deep()];
         int i = 0;
         for (String s : this) {
             paths[i++] = s;
         }
-        for (String s : column) {
+        for (String s : path) {
             paths[i++] = s;
         }
-        return new EntityPathImpl(paths);
+        return new InternalPathExpressionImpl(paths);
     }
 
     @Override
@@ -101,7 +101,7 @@ final class EntityPathImpl implements EntityPath, AbstractExpression {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        EntityPathImpl strings = (EntityPathImpl) o;
+        InternalPathExpressionImpl strings = (InternalPathExpressionImpl) o;
         return Arrays.equals(paths, strings.paths);
     }
 

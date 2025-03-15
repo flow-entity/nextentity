@@ -4,7 +4,6 @@ import io.github.nextentity.api.SelectFetchStep;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Select;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
 import io.github.nextentity.api.RowsSelectWhereStep;
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple10;
@@ -16,7 +15,7 @@ import io.github.nextentity.api.model.Tuple6;
 import io.github.nextentity.api.model.Tuple7;
 import io.github.nextentity.api.model.Tuple8;
 import io.github.nextentity.api.model.Tuple9;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.QueryStructure.Selected;
 import io.github.nextentity.core.expression.QueryStructure.Selected.SelectArray;
@@ -48,14 +47,14 @@ public class SelectImpl<T> extends WhereImpl<T, T> implements Select<T>, SelectF
         super(config, type);
     }
 
-    public RowsSelectWhereStep<T, T> fetch(List<PathExpression<T, ?>> expressions) {
+    public RowsSelectWhereStep<T, T> fetch(List<TypedExpression.PathExpression<T, ?>> expressions) {
         if (expressions == null || expressions.isEmpty()) {
             return this;
         }
-        Set<EntityPath> fetchPaths = new HashSet<>(expressions.size() << 1);
+        Set<InternalPathExpression> fetchPaths = new HashSet<>(expressions.size() << 1);
         EntityType entityType = config.metamodel().getEntity(fromType());
-        for (PathExpression<T, ?> expression : expressions) {
-            EntityPath entityPath = (EntityPath) expression;
+        for (TypedExpression.PathExpression<T, ?> expression : expressions) {
+            InternalPathExpression entityPath = (InternalPathExpression) expression;
             BasicAttribute attribute = entityType.getAttribute(entityPath);
             if (!attribute.isObject()) {
                 log.warn("ignoring fetch a non-entity attribute `{}` of {}",

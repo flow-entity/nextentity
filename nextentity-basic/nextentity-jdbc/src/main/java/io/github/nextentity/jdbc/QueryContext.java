@@ -2,7 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.QueryStructure.From;
 import io.github.nextentity.core.expression.QueryStructure.From.FromEntity;
@@ -47,7 +47,7 @@ public class QueryContext {
     private @NotNull InstanceFactory getSelectedConstruct() {
         Selected select = structure.select();
         if (select instanceof SelectEntity) {
-            Collection<? extends EntityPath> fetch = ((SelectEntity) select).fetch();
+            Collection<? extends InternalPathExpression> fetch = ((SelectEntity) select).fetch();
             if (fetch == null || fetch.isEmpty() || !expandReferencePath) {
                 return entityType.getInstanceFactory();
             } else {
@@ -68,7 +68,7 @@ public class QueryContext {
 
     private InstanceFactory newPrimitiveFactory(Selected.SelectPrimitive select) {
         Expression expression = select.expression();
-        if (expression instanceof EntityPath entityPath) {
+        if (expression instanceof InternalPathExpression entityPath) {
             BasicAttribute attribute = entityType.getAttribute(entityPath);
             if (expandReferencePath && attribute.isObject()) {
                 return ((AssociationAttribute) attribute).getInstanceFactory();

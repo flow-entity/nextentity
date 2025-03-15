@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class UpdateTest {
+public class                                                                                      UpdateTest {
 
     Select<User> query(UserRepository updater) {
         return updater;

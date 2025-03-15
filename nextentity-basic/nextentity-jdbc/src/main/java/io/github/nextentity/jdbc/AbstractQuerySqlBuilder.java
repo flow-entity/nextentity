@@ -4,7 +4,7 @@ import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Literal;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.Operator;
@@ -53,7 +53,7 @@ public abstract class AbstractQuerySqlBuilder {
 
     protected final StringBuilder sql;
     protected final List<Object> args;
-    protected final Map<EntityPath, Integer> joins = new LinkedHashMap<>();
+    protected final Map<InternalPathExpression, Integer> joins = new LinkedHashMap<>();
 
     protected final QueryContext context;
 
@@ -124,7 +124,7 @@ public abstract class AbstractQuerySqlBuilder {
     }
 
     protected void appendSelectAlias(Expression expression) {
-        if (selectIndex.get() != 0 || !(expression instanceof EntityPath) || ((EntityPath) expression).deep() != 1) {
+        if (selectIndex.get() != 0 || !(expression instanceof InternalPathExpression) || ((InternalPathExpression) expression).deep() != 1) {
             int index = selectIndex.getAndIncrement();
             String alias = Integer.toString(index, Character.MAX_RADIX);
             sql.append(" as _").append(alias);
@@ -198,7 +198,7 @@ public abstract class AbstractQuerySqlBuilder {
     }
 
     protected void appendPredicate(Expression node) {
-        if (node instanceof EntityPath || node instanceof Literal) {
+        if (node instanceof InternalPathExpression || node instanceof Literal) {
             node = ExpressionImpls.operate(node, Operator.EQ, ExpressionImpls.TRUE);
         }
         appendExpression(node);
@@ -216,8 +216,8 @@ public abstract class AbstractQuerySqlBuilder {
     protected void appendExpression(Expression expression) {
         if (expression instanceof Literal) {
             appendLiteral((Literal) expression);
-        } else if (expression instanceof EntityPath) {
-            appendPaths((EntityPath) expression);
+        } else if (expression instanceof InternalPathExpression) {
+            appendPaths((InternalPathExpression) expression);
         } else if (expression instanceof Operation) {
             appendOperation((Operation) expression);
         } else if (expression instanceof QueryStructure) {
@@ -454,7 +454,7 @@ public abstract class AbstractQuerySqlBuilder {
         sql.append(sign);
     }
 
-    protected void appendPaths(EntityPath column) {
+    protected void appendPaths(InternalPathExpression column) {
         appendBlank();
         int iMax = column.deep() - 1;
         if (iMax == -1)
@@ -471,8 +471,8 @@ public abstract class AbstractQuerySqlBuilder {
     }
 
     protected void appendJoin() {
-        for (Entry<EntityPath, Integer> entry : joins.entrySet()) {
-            EntityPath k = entry.getKey();
+        for (Entry<InternalPathExpression, Integer> entry : joins.entrySet()) {
+            InternalPathExpression k = entry.getKey();
             Integer v = entry.getValue();
             BasicAttribute attribute = getAttribute(k);
             EntitySchema entityTypeInfo = (EntitySchema) context.getEntityType().getAttribute(k);
@@ -483,7 +483,7 @@ public abstract class AbstractQuerySqlBuilder {
             sql.append(ON);
             EntitySchema declared = attribute.declareBy();
             if (declared.isAttribute()) {
-                EntityPath parent = ((BasicAttribute) declared).path();
+                InternalPathExpression parent = ((BasicAttribute) declared).path();
                 Integer parentIndex = joins.get(parent);
                 appendTableAlias(parentIndex);
             } else {
@@ -517,9 +517,9 @@ public abstract class AbstractQuerySqlBuilder {
     }
 
     private void addJoin(Expression select) {
-        if (select instanceof EntityPath) {
+        if (select instanceof InternalPathExpression) {
             EntityType entityType = context.getEntityType();
-            BasicAttribute attribute = entityType.getAttribute((EntityPath) select);
+            BasicAttribute attribute = entityType.getAttribute((InternalPathExpression) select);
             for (BasicAttribute join : attribute.attributePaths()) {
                 if (join.isObject()) {
                     joins.putIfAbsent(join.path(), joins.size());
@@ -569,7 +569,7 @@ public abstract class AbstractQuerySqlBuilder {
         return append.append(index).append("_");
     }
 
-    protected BasicAttribute getAttribute(EntityPath path) {
+    protected BasicAttribute getAttribute(InternalPathExpression path) {
         Schema schema = context.getEntityType();
         for (String s : path) {
             if (schema instanceof EntitySchema) {

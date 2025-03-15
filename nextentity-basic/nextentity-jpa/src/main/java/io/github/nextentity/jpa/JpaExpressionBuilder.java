@@ -2,7 +2,7 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Literal;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.Operator;
@@ -26,7 +26,7 @@ public class JpaExpressionBuilder {
 
     protected final CriteriaBuilder cb;
 
-    protected final Map<EntityPath, FetchParent<?, ?>> fetched = new HashMap<>();
+    protected final Map<InternalPathExpression, FetchParent<?, ?>> fetched = new HashMap<>();
 
     public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb) {
         this.root = root;
@@ -38,8 +38,8 @@ public class JpaExpressionBuilder {
             Literal literal = (Literal) expression;
             return cb.literal(literal.value());
         }
-        if (expression instanceof EntityPath) {
-            EntityPath path = (EntityPath) expression;
+        if (expression instanceof InternalPathExpression) {
+            InternalPathExpression path = (InternalPathExpression) expression;
             return getPath(path);
         }
         if (expression instanceof Operation) {
@@ -193,13 +193,13 @@ public class JpaExpressionBuilder {
         return TypeCastUtil.unsafeCast(o);
     }
 
-    protected jakarta.persistence.criteria.Path<?> getPath(EntityPath column) {
+    protected jakarta.persistence.criteria.Path<?> getPath(InternalPathExpression column) {
         From<?, ?> r = root;
         int size = column.deep();
         for (int i = 0; i < size; i++) {
             String s = column.get(i);
             if (i != size - 1) {
-                EntityPath offset = column.subLength(i + 1);
+                InternalPathExpression offset = column.subLength(i + 1);
                 r = join(offset);
             } else {
                 return r.get(s);
@@ -209,7 +209,7 @@ public class JpaExpressionBuilder {
         return r;
     }
 
-    private Join<?, ?> join(EntityPath column) {
+    private Join<?, ?> join(InternalPathExpression column) {
         return (Join<?, ?>) fetched.compute(column, (k, v) -> {
             if (v instanceof Join<?, ?>) {
                 return v;

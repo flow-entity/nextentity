@@ -1,6 +1,6 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
 import io.github.nextentity.core.reflect.InstanceFactories.AttributeFactoryImpl;
 import io.github.nextentity.core.reflect.InstanceFactories.ObjectFactoryImpl;
@@ -15,7 +15,10 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 import lombok.experimental.Delegate;
+import lombok.extern.slf4j.Slf4j;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -27,6 +30,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+@Slf4j
 public class Metamodels {
 
     @Getter
@@ -38,6 +42,8 @@ public class Metamodels {
         protected Method setter;
         protected Field field;
         protected T declareBy;
+        protected MethodHandle getterHandler;
+        protected MethodHandle setterHandler;
 
         public AttributeImpl() {
         }
@@ -49,6 +55,60 @@ public class Metamodels {
             this.setter = setter;
             this.field = field;
             this.declareBy = declareBy;
+            MethodHandles.Lookup lookup = MethodHandles.lookup();
+            if (getter != null) {
+                try {
+                    getterHandler = lookup.unreflect(getter);
+                } catch (Throwable e) {
+                    getterHandler = null;
+                }
+            } else if (field != null) {
+                try {
+                    field.setAccessible(true);
+                    getterHandler = lookup.unreflectGetter(field);
+                } catch (Throwable e) {
+                    getterHandler = null;
+                }
+            }
+            if (setter != null) {
+                try {
+                    setterHandler = lookup.unreflect(setter);
+                } catch (Throwable e) {
+                    setterHandler = null;
+                }
+            } else if (field != null) {
+                try {
+                    field.setAccessible(true);
+                    setterHandler = lookup.unreflectSetter(field);
+                } catch (Throwable e) {
+                    setterHandler = null;
+                }
+            }
+        }
+
+        @Override
+        public Object get(Object entity) {
+            if (getterHandler != null) {
+                try {
+                    return getterHandler.invoke(entity);
+                } catch (Throwable e) {
+                    return Attribute.super.get(entity);
+                }
+            }
+            return Attribute.super.get(entity);
+        }
+
+        @Override
+        public void set(Object entity, Object value) {
+            if (getterHandler != null) {
+                try {
+                    setterHandler.invoke(entity, value);
+                } catch (Throwable e) {
+                    Attribute.super.set(entity, value);
+                }
+            } else {
+                Attribute.super.set(entity, value);
+            }
         }
 
         public AttributeImpl(Attribute attribute, T declareBy) {
@@ -68,7 +128,7 @@ public class Metamodels {
         protected String columnName;
         private final boolean isVersion;
         private final List<? extends BasicAttribute> referencedAttributes;
-        private final EntityPath path;
+        private final InternalPathExpression path;
         private DatabaseType databaseType;
 
         public BasicAttributeImpl(Attribute attribute, String columnName, boolean isVersion) {

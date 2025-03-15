@@ -4,12 +4,8 @@ import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.exception.UncheckedReflectiveException;
-import io.github.nextentity.core.expression.EntityPath;
-import io.github.nextentity.core.meta.BasicAttribute;
-import io.github.nextentity.core.meta.EntitySchema;
-import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.ProjectionAssociationAttribute;
-import io.github.nextentity.core.meta.ProjectionBasicAttribute;
+import io.github.nextentity.core.expression.InternalPathExpression;
+import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.InstanceFactory;
 import io.github.nextentity.core.reflect.schema.InstanceFactory.AttributeFactory;
@@ -17,16 +13,12 @@ import io.github.nextentity.core.reflect.schema.InstanceFactory.PrimitiveFactory
 import io.github.nextentity.core.util.ImmutableList;
 import lombok.extern.slf4j.Slf4j;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,9 +30,9 @@ import java.util.stream.Stream;
 @Slf4j
 public class InstanceFactories {
 
-    public static InstanceFactory.ObjectFactory fetch(EntityType entityType, Iterable<? extends EntityPath> fetchPaths) {
+    public static InstanceFactory.ObjectFactory fetch(EntityType entityType, Iterable<? extends InternalPathExpression> fetchPaths) {
         ObjectFactoryBuilder builder = new ObjectFactoryBuilder(entityType);
-        for (EntityPath fetchPath : fetchPaths) {
+        for (InternalPathExpression fetchPath : fetchPaths) {
             builder.fetch(fetchPath);
         }
         return builder.build();
@@ -79,7 +71,7 @@ public class InstanceFactories {
             this.schema = schema;
         }
 
-        public void fetch(EntityPath path) {
+        public void fetch(InternalPathExpression path) {
             AbstractInstanceFactoryBuilder<?> cur = this;
             for (String s : path) {
                 cur = cur.fetch(s);
@@ -157,10 +149,14 @@ public class InstanceFactories {
         }
 
         class ObjectFactory implements Function<Iterator<?>, Object> {
-            private final Constructor<?> constructor;
+            private final MethodHandle constructor;
 
             ObjectFactory() {
-                this.constructor = getConstructor(type());
+                try {
+                    this.constructor = MethodHandles.lookup().unreflectConstructor(getConstructor(type()));
+                } catch (Throwable e) {
+                    throw new UncheckedReflectiveException("", e);
+                }
             }
 
             public Object apply(Iterator<?> arguments) {
@@ -170,8 +166,8 @@ public class InstanceFactories {
                     if (value != null) {
                         if (object == null) {
                             try {
-                                object = constructor.newInstance();
-                            } catch (ReflectiveOperationException e) {
+                                object = constructor.invoke();
+                            } catch (Throwable e) {
                                 throw new UncheckedReflectiveException("new instance error", e);
                             }
                         }
@@ -211,7 +207,7 @@ public class InstanceFactories {
 
         class RecordFactory implements Function<Iterator<?>, Object> {
             private final int[] attributePositions;
-            private final Constructor<?> constructor;
+            private final MethodHandle constructor;
             private final int constructorArgumentsLength;
 
             public RecordFactory() {
@@ -225,8 +221,9 @@ public class InstanceFactories {
                     positionMap.put(component.getName(), i);
                 }
                 try {
-                    constructor = type().getDeclaredConstructor(parameterTypes);
-                } catch (NoSuchMethodException e) {
+                    Constructor<?> declaredConstructor = type().getDeclaredConstructor(parameterTypes);
+                    constructor = MethodHandles.lookup().unreflectConstructor(declaredConstructor);
+                } catch (Throwable e) {
                     throw new UncheckedReflectiveException("no such constructor", e);
                 }
                 int cur = 0;
@@ -260,8 +257,8 @@ public class InstanceFactories {
                     return null;
                 }
                 try {
-                    return constructor.newInstance(args);
-                } catch (ReflectiveOperationException e) {
+                    return constructor.invokeWithArguments(args);
+                } catch (Throwable e) {
                     throw new UncheckedReflectiveException("new instance error", e);
                 }
             }
@@ -388,7 +385,7 @@ public class InstanceFactories {
         }
 
         @Override
-        public EntityPath expression() {
+        public InternalPathExpression expression() {
             return attribute.path();
         }
 

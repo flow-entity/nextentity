@@ -7,7 +7,6 @@ import io.github.nextentity.api.TypedExpression.EntityPathExpression;
 import io.github.nextentity.api.TypedExpression.NumberExpression;
 import io.github.nextentity.api.TypedExpression.NumberPathExpression;
 import io.github.nextentity.api.TypedExpression.OperatableExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
 import io.github.nextentity.api.TypedExpression.Predicate;
 import io.github.nextentity.api.TypedExpression.StringExpression;
 import io.github.nextentity.api.TypedExpression.StringPathExpression;
@@ -31,19 +30,19 @@ public class Expressions {
         return toTypedExpression(ExpressionImpls.FALSE);
     }
 
-    public static <T, R> PathExpression<T, R> ofPath(EntityPath column) {
+    public static <T, R> TypedExpression.PathExpression<T, R> ofPath(InternalPathExpression column) {
         return toTypedExpression(column);
     }
 
-    public static <T, R> EntityPathExpression<T, R> ofEntity(EntityPath column) {
+    public static <T, R> EntityPathExpression<T, R> ofEntity(InternalPathExpression column) {
         return toTypedExpression(column);
     }
 
-    public static <T> StringPathExpression<T> ofString(EntityPath column) {
+    public static <T> StringPathExpression<T> ofString(InternalPathExpression column) {
         return toTypedExpression(column);
     }
 
-    public static <T, U extends Number> NumberPathExpression<T, U> ofNumber(EntityPath column) {
+    public static <T, U extends Number> NumberPathExpression<T, U> ofNumber(InternalPathExpression column) {
         return toTypedExpression(column);
     }
 
@@ -59,7 +58,7 @@ public class Expressions {
         return toTypedExpression(expression);
     }
 
-    public static <T> BooleanPathExpression<T> ofBoolean(EntityPath expression) {
+    public static <T> BooleanPathExpression<T> ofBoolean(InternalPathExpression expression) {
         return toTypedExpression(expression);
     }
 

@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Literal;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.Operator;
@@ -78,7 +78,7 @@ public class SqlServerQuerySqlBuilder implements QuerySqlBuilder {
         @Override
         protected void appendNotOperation(Operation operation) {
             Expression operand = operation.firstOperand();
-            if (operand instanceof EntityPath || operand instanceof Literal) {
+            if (operand instanceof InternalPathExpression || operand instanceof Literal) {
                 appendBinaryOperation(operand, Operator.EQ, ExpressionImpls.FALSE);
             } else {
                 super.appendNotOperation(operation);

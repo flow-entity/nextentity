@@ -1,23 +1,19 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Collector;
-import io.github.nextentity.api.Expression;
+import io.github.nextentity.api.*;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.SelectHavingStep;
-import io.github.nextentity.api.SelectOrderByStep;
-import io.github.nextentity.api.OrderOperator;
-import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Path.NumberPath;
 import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.api.TypedExpression.NumberPathExpression;
 import io.github.nextentity.api.TypedExpression.OperatableExpression;
-import io.github.nextentity.api.RowsSelectWhereStep;
+import io.github.nextentity.api.TypedExpression.PathExpression;
+import io.github.nextentity.api.TypedExpression.StringPathExpression;
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Order;
+import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.expression.QueryStructure;
@@ -26,7 +22,6 @@ import io.github.nextentity.core.expression.QueryStructure.Selected.SelectArray;
 import io.github.nextentity.core.expression.QueryStructure.Selected.SelectPrimitive;
 import io.github.nextentity.core.expression.impl.ExpressionBuilders;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
-import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Paths;
 import org.jetbrains.annotations.NotNull;
@@ -331,6 +326,22 @@ public class WhereImpl<T, U> implements RowsSelectWhereStep<T, U>, SelectHavingS
         return ExpressionBuilders.ofPath(root().get(path), this::whereAnd);
     }
 
+
+    @Override
+    public <N extends Number> NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberPathExpression<T, N> path) {
+        return ExpressionBuilders.ofNumber(path, this::whereAnd);
+    }
+
+    @Override
+    public StringOperator<T, RowsSelectWhereStep<T, U>> where(StringPathExpression<T> path) {
+        return ExpressionBuilders.ofString(path, this::whereAnd);
+    }
+
+
+    @Override
+    public <N> PathOperator<T, N, RowsSelectWhereStep<T, U>> where(PathExpression<T, N> path) {
+        return ExpressionBuilders.ofPath(path, this::whereAnd);
+    }
 
     class SubQuery<X> implements SubQueryBuilder<X, U>, QueryStructure {
 

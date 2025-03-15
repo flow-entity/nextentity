@@ -1,41 +1,14 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Collector;
+import io.github.nextentity.api.*;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.OrderOperator;
-import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Path.BooleanPath;
 import io.github.nextentity.api.Path.NumberPath;
 import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.Repository;
-import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
-import io.github.nextentity.api.SelectWhereStep;
-import io.github.nextentity.api.RowsSelectWhereStep;
-import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.api.model.LockModeType;
-import io.github.nextentity.api.model.Order;
-import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.Pageable;
-import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.api.model.Sliceable;
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.api.model.Tuple10;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.api.model.Tuple4;
-import io.github.nextentity.api.model.Tuple5;
-import io.github.nextentity.api.model.Tuple6;
-import io.github.nextentity.api.model.Tuple7;
-import io.github.nextentity.api.model.Tuple8;
-import io.github.nextentity.api.model.Tuple9;
+import io.github.nextentity.api.TypedExpression.*;
+import io.github.nextentity.api.model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -434,6 +407,21 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
 
     @Override
     public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringPath<T> path) {
+        return target.where(path);
+    }
+
+    @Override
+    public <N> PathOperator<T, N, ? extends SelectWhereStep<T, T>> where(PathExpression<T, N> path) {
+        return target.where(path);
+    }
+
+    @Override
+    public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberPathExpression<T, N> path) {
+        return target.where(path);
+    }
+
+    @Override
+    public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringPathExpression<T> path) {
         return target.where(path);
     }
 

@@ -8,7 +8,7 @@ import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Literal;
 import io.github.nextentity.core.expression.Operation;
 import io.github.nextentity.core.expression.Operator;
@@ -55,7 +55,7 @@ public class ExpressionImpls {
         return ExpressionImpls.literal(value);
     }
 
-    public static EntityPath of(Path<?, ?> path) {
+    public static InternalPathExpression of(Path<?, ?> path) {
         String attributeName = attributeName(path);
         return column(attributeName);
     }
@@ -64,11 +64,11 @@ public class ExpressionImpls {
         return PathReference.of(path).getFieldName();
     }
 
-    public static EntityPath column(String path) {
+    public static InternalPathExpression column(String path) {
         return ExpressionImpls.newColumn(new String[]{path});
     }
 
-    public static EntityPath column(List<String> paths) {
+    public static InternalPathExpression column(List<String> paths) {
         return ExpressionImpls.newColumn(paths.toArray(EmptyArrays.STRING));
     }
 
@@ -137,8 +137,8 @@ public class ExpressionImpls {
         return new LiteralImpl(value);
     }
 
-    public static EntityPath newColumn(String[] path) {
-        return new EntityPathImpl(path);
+    public static InternalPathExpression newColumn(String[] path) {
+        return new InternalPathExpressionImpl(path);
     }
 
     public static Expression newOperation(List<? extends Expression> operands, Operator operator) {
@@ -220,6 +220,10 @@ public class ExpressionImpls {
     }
 
     static <T extends TypedExpression<?, ?>> T toTypedExpression(Expression expression) {
+        if (expression instanceof TypedExpressionWrapper wrapper) {
+            TypedExpression<?, ?> unwrap = wrapper.unwrap();
+            return TypeCastUtil.unsafeCast(unwrap);
+        }
         return TypeCastUtil.unsafeCast(expression);
     }
 }
