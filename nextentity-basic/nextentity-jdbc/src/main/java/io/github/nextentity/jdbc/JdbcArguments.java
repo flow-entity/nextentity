@@ -2,7 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.reflect.TypedArguments;
-import io.github.nextentity.core.reflect.schema.Typed;
+import io.github.nextentity.core.reflect.schema.InstanceFactory;
 import lombok.SneakyThrows;
 
 import java.sql.ResultSet;
@@ -12,7 +12,7 @@ public class JdbcArguments extends TypedArguments {
 
     private final ResultSet resultSet;
 
-    public JdbcArguments(ResultSet resultSet, List<? extends Typed> types, TypeConverter typeConverter) {
+    public JdbcArguments(ResultSet resultSet, List<? extends InstanceFactory.PrimitiveFactory> types, TypeConverter typeConverter) {
         super(types, typeConverter);
         this.resultSet = resultSet;
     }

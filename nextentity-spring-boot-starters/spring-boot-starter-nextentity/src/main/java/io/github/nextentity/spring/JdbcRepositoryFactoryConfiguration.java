@@ -8,6 +8,8 @@ import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import lombok.Getter;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -15,27 +17,17 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Getter
-public class JdbcRepositoryFactoryConfiguration {
+public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
 
-    private final RepositoryFactory repositoryFactory;
-
-    public JdbcRepositoryFactoryConfiguration(JdbcTemplate jdbcTemplate) throws SQLException {
-        SqlDialectSelector querySqlBuilder = sqlDialectAutoSelector(jdbcTemplate.getDataSource());
-        ConnectionProvider connectionProvider = connectionProvider(jdbcTemplate);
-        Metamodel metamodel = metamodel();
-        JdbcQueryExecutor executor = jdbcQueryExecutor(
-                metamodel,
-                querySqlBuilder,
-                jdbcResultCollector(typeConverter()),
-                connectionProvider
-        );
-        UpdateExecutor updateExecutor = jdbcUpdate(querySqlBuilder, connectionProvider, metamodel);
-        repositoryFactory = jdbcEntitiesFactory(executor, updateExecutor, getQueryPostProcessor(), metamodel);
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+    @Autowired(required = false)
+    private QueryPostProcessor queryPostProcessor;
+    private RepositoryFactory repositoryFactory;
 
 
     protected QueryPostProcessor getQueryPostProcessor() {
-        return null;
+        return queryPostProcessor;
     }
 
     protected Metamodel metamodel() {
@@ -83,4 +75,22 @@ public class JdbcRepositoryFactoryConfiguration {
         return new JdbcUpdateExecutor(sqlBuilder, connectionProvider, metamodel);
     }
 
+    private <T> T getOrDefault(T value, T defaultValue) {
+        return value == null ? defaultValue : value;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        SqlDialectSelector querySqlBuilder = sqlDialectAutoSelector(jdbcTemplate.getDataSource());
+        ConnectionProvider connectionProvider = connectionProvider(jdbcTemplate);
+        Metamodel metamodel = metamodel();
+        JdbcQueryExecutor executor = jdbcQueryExecutor(
+                metamodel,
+                querySqlBuilder,
+                jdbcResultCollector(typeConverter()),
+                connectionProvider
+        );
+        UpdateExecutor updateExecutor = jdbcUpdate(querySqlBuilder, connectionProvider, metamodel);
+        repositoryFactory = jdbcEntitiesFactory(executor, updateExecutor, getQueryPostProcessor(), metamodel);
+    }
 }

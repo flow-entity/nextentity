@@ -2,7 +2,7 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.reflect.TypedArguments;
-import io.github.nextentity.core.reflect.schema.Typed;
+import io.github.nextentity.core.reflect.schema.InstanceFactory;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class JpaArguments extends TypedArguments {
     private final Object[] objects;
 
     public JpaArguments(Object[] objects,
-                        List<? extends Typed> types,
+                        List<? extends InstanceFactory.PrimitiveFactory> types,
                         TypeConverter typeConverter) {
         super(types, typeConverter);
         this.objects = objects;

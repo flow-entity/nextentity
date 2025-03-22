@@ -8,11 +8,7 @@ import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.InternalPathExpression;
-import io.github.nextentity.core.expression.Literal;
-import io.github.nextentity.core.expression.Operation;
-import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.EmptyArrays;
 import io.github.nextentity.core.util.ImmutableList;
@@ -220,10 +216,6 @@ public class ExpressionImpls {
     }
 
     static <T extends TypedExpression<?, ?>> T toTypedExpression(Expression expression) {
-        if (expression instanceof TypedExpressionWrapper wrapper) {
-            TypedExpression<?, ?> unwrap = wrapper.unwrap();
-            return TypeCastUtil.unsafeCast(unwrap);
-        }
         return TypeCastUtil.unsafeCast(expression);
     }
 }

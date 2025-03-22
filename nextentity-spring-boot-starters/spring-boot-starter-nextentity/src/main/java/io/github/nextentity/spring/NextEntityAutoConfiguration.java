@@ -10,8 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.SQLException;
-
 
 @Configuration
 @AutoConfigureAfter({JdbcTemplateAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
@@ -20,8 +18,8 @@ public class NextEntityAutoConfiguration {
     @Bean
     @ConditionalOnBean(JdbcTemplate.class)
     @ConditionalOnMissingBean(JdbcRepositoryFactoryConfiguration.class)
-    protected JdbcRepositoryFactoryConfiguration jdbcRepositoryFactoryConfiguration(JdbcTemplate jdbcTemplate) throws SQLException {
-        return new JdbcRepositoryFactoryConfiguration(jdbcTemplate);
+    protected JdbcRepositoryFactoryConfiguration jdbcRepositoryFactoryConfiguration() {
+        return new JdbcRepositoryFactoryConfiguration();
     }
 
 

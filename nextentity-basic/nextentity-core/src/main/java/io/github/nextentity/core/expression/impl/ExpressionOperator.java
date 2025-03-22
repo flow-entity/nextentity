@@ -4,7 +4,6 @@ import io.github.nextentity.api.ExpressionBuilder;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.Expressions;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
@@ -13,7 +12,7 @@ import java.util.function.Function;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 class ExpressionOperator implements ExpressionBuilder.PathOperator, ExpressionBuilder.StringOperator, ExpressionBuilder.NumberOperator {
-    private final AbstractExpression base;
+    private final AbstractPathExpression base;
     private final Function<? super TypedExpression.OperatableExpression, ?> operatedCallback;
 
     ExpressionOperator(TypedExpression.OperatableExpression<?, ?> base, Function<? super TypedExpression.OperatableExpression<?, ?>, ?> operatedCallback) {
@@ -211,117 +210,130 @@ class ExpressionOperator implements ExpressionBuilder.PathOperator, ExpressionBu
 
     @Override
     public NumberOperator add(Number value) {
-        TypedExpression.OperatableExpression expression = base.add(value);
+        TypedExpression.OperatableExpression expression = asNumber().add(value);
         return newOperator(expression);
     }
 
     @Override
     public NumberOperator subtract(Number value) {
-        return newOperator(base.subtract(value));
+        return newOperator(asNumber().subtract(value));
     }
 
     @Override
     public NumberOperator multiply(Number value) {
-        return newOperator(base.multiply(value));
+        return newOperator(asNumber().multiply(value));
     }
 
     @Override
     public NumberOperator divide(Number value) {
-        return newOperator(base.divide(value));
+        return newOperator(asNumber().divide(value));
     }
 
     @Override
     public NumberOperator mod(Number value) {
-        return newOperator(base.mod(value));
+        return newOperator(asNumber().mod(value));
     }
 
     @Override
     public NumberOperator add(TypedExpression expression) {
-        return newOperator(base.add(expression));
+        return newOperator(asNumber().add(expression));
     }
 
     @Override
     public NumberOperator subtract(TypedExpression expression) {
-        return newOperator(base.subtract(expression));
+        return newOperator(asNumber().subtract(expression));
     }
 
     @Override
     public NumberOperator multiply(TypedExpression expression) {
-        return newOperator(base.multiply(expression));
+        return newOperator(asNumber().multiply(expression));
     }
 
     @Override
     public NumberOperator divide(TypedExpression expression) {
-        return newOperator(base.divide(expression));
+        return newOperator(asNumber().divide(expression));
     }
 
     @Override
     public NumberOperator mod(TypedExpression expression) {
-        return newOperator(base.mod(expression));
+        return newOperator(asNumber().mod(expression));
     }
 
     @Override
     public PathOperator get(Path path) {
-        return newOperator(base.get(path));
+        return newOperator(asEntityPath().get(path));
     }
 
     @Override
     public StringOperator get(Path.StringPath path) {
-        return newOperator(base.get(path));
+        return newOperator(asEntityPath().get(path));
     }
 
     @Override
     public NumberOperator get(Path.NumberPath path) {
-        return newOperator(base.get(path));
+        return newOperator(asEntityPath().get(path));
     }
 
     @Override
     public Object like(String value) {
-        return applyCallback(base.like(value));
+        return applyCallback(asString().like(value));
     }
 
     @Override
     public Object notLike(String value) {
-        return applyCallback(base.notLike(value));
+        return applyCallback(asString().notLike(value));
     }
 
     @Override
     public Object likeIfNotNull(String value) {
-        return applyCallback(value == null ? null : base.like(value));
+        return applyCallback(value == null ? null : asString().like(value));
     }
 
     @Override
     public Object notLikeIfNotNull(String value) {
-        return applyCallback(value == null ? null : base.notLike(value));
+        return applyCallback(value == null ? null : asString().notLike(value));
     }
 
     @Override
     public Object notLikeIfNotEmpty(String value) {
-        return applyCallback(value == null || value.isEmpty() ? null : base.notLike(value));
+        return applyCallback(value == null || value.isEmpty() ? null : asString().notLike(value));
     }
 
     @Override
     public StringOperator lower() {
-        return newOperator(base.lower());
+        return newOperator(asString().lower());
     }
 
     @Override
     public StringOperator upper() {
-        return newOperator(base.upper());
+        return newOperator(asString().upper());
     }
 
     @Override
     public StringOperator substring(int offset, int length) {
-        return newOperator(base.substring(offset, length));
+        return newOperator(asString().substring(offset, length));
     }
 
     @Override
     public StringOperator trim() {
-        return newOperator(base.trim());
+        return newOperator(asString().trim());
     }
 
     @Override
     public NumberOperator length() {
-        return newOperator(base.length());
+        return newOperator(asString().length());
+    }
+
+    private AbstractStringExpression asString() {
+        return (AbstractStringExpression) base;
+    }
+
+    private AbstractNumberExpression asNumber() {
+        return (AbstractNumberExpression) base;
+    }
+
+
+    private AbstractEntityPath asEntityPath() {
+        return (AbstractEntityPath) base;
     }
 }

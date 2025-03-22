@@ -24,10 +24,6 @@ public interface InstanceFactory {
     interface ArrayFactory extends InstanceFactory {
         List<? extends InstanceFactory> items();
 
-        default Class<Object[]> type() {
-            return Object[].class;
-        }
-
         @Override
         Tuple getInstance(Iterator<?> arguments);
     }
@@ -42,8 +38,10 @@ public interface InstanceFactory {
         String name();
     }
 
-    interface PrimitiveFactory extends InstanceFactory, Typed {
+    interface PrimitiveFactory extends InstanceFactory {
         Expression expression();
+
+        Class<?> type();
 
         @Override
         default Object getInstance(Iterator<?> arguments) {

@@ -121,7 +121,6 @@ public class Metamodels {
         }
     }
 
-
     @Getter
     @Accessors(fluent = true)
     public static class BasicAttributeImpl extends AttributeImpl<EntitySchema> implements BasicAttribute {

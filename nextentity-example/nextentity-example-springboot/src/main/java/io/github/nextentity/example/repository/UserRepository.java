@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserRepository extends AbstractJpaRepository<User, Long> {
 
-    private final $number<Long> id = $(User::getId);
-    private final $string username = $(User::getUsername);
+    private final $Long id = $(User::getId);
+    private final $String username = $(User::getUsername);
 
     protected UserRepository(JpaRepositoryFactoryConfiguration configuration) {
         super(configuration);
@@ -20,8 +20,9 @@ public class UserRepository extends AbstractJpaRepository<User, Long> {
     }
 
     public User findByUsername(String name) {
-        @SuppressWarnings("unused") String first = repository.select(username).getFirst();
-        return repository.where(username).eq(name).getSingle();
+        @SuppressWarnings("unused")
+        String first = repository.select(username).getFirst();
+        return repository.where(username).like(name).getSingle();
     }
 
 }

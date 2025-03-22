@@ -1,7 +1,7 @@
 package io.github.nextentity.core.reflect;
 
 import io.github.nextentity.core.converter.TypeConverter;
-import io.github.nextentity.core.reflect.schema.Typed;
+import io.github.nextentity.core.reflect.schema.InstanceFactory;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 
@@ -10,11 +10,11 @@ import java.util.List;
 
 public abstract class TypedArguments implements Arguments {
 
-    protected final List<? extends Typed> types;
+    protected final List<? extends InstanceFactory.PrimitiveFactory> types;
     protected final TypeConverter typeConverter;
 
 
-    public TypedArguments(List<? extends Typed> types, TypeConverter typeConverter) {
+    public TypedArguments(List<? extends InstanceFactory.PrimitiveFactory> types, TypeConverter typeConverter) {
         this.types = types;
         this.typeConverter = typeConverter;
     }
