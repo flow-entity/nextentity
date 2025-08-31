@@ -1,28 +1,23 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.converter.TypeConverter;
-import io.github.nextentity.core.reflect.TypedArguments;
-import io.github.nextentity.core.reflect.schema.InstanceFactory;
-import lombok.SneakyThrows;
-
 import java.sql.ResultSet;
-import java.util.List;
+import java.sql.SQLException;
 
-public class JdbcArguments extends TypedArguments {
+public class JdbcArguments extends AbstractArguments {
 
     private final ResultSet resultSet;
 
-    public JdbcArguments(ResultSet resultSet, List<? extends InstanceFactory.PrimitiveFactory> types, TypeConverter typeConverter) {
-        super(types, typeConverter);
+    public JdbcArguments(ResultSet resultSet) {
         this.resultSet = resultSet;
     }
 
-
-    @SneakyThrows
     @Override
-    protected Object getValue(int index, Class<?> type) {
-        return JdbcUtil.getValue(resultSet, ++index, type);
+    public Object get(int index, Class<?> type) {
+        try {
+            return JdbcUtil.getValue(resultSet, 1 + index, type);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
-
 
 }

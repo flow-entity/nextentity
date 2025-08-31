@@ -2,7 +2,6 @@ package io.github.nextentity.test.db;
 
 import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.SimpleQueryConfig;
-import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.jdbc.JdbcQueryExecutor;
@@ -42,8 +41,7 @@ public interface DbConfigProvider {
         );
 
         JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(manager, metamodel, jdbcQueryExecutor);
-        TypeConverter typeConverter = TypeConverter.ofDefault();
-        JpaNativeQueryExecutor jpaNativeQueryExecutor = new JpaNativeQueryExecutor(querySqlBuilder, manager, metamodel, typeConverter);
+        JpaNativeQueryExecutor jpaNativeQueryExecutor = new JpaNativeQueryExecutor(querySqlBuilder, manager, metamodel);
 
         SimpleQueryConfig queryConfig = new SimpleQueryConfig()
                 .queryExecutor(jpaQueryExecutor)

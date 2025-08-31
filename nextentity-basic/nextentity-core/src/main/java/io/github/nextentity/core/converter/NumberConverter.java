@@ -2,7 +2,7 @@ package io.github.nextentity.core.converter;
 
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.util.Maps;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -13,7 +13,6 @@ import java.util.function.Function;
  * @author HuangChengwei
  * @since 2024-03-25 11:57
  */
-@Slf4j
 public class NumberConverter implements TypeConverter {
 
     private static final Map<Class<? extends Number>, Function<Number, Number>> CONVERTERS =
@@ -35,6 +34,7 @@ public class NumberConverter implements TypeConverter {
                     .build();
 
     private static final NumberConverter INSTANCE = new NumberConverter();
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(NumberConverter.class);
 
     public static NumberConverter of() {
         return INSTANCE;
@@ -51,7 +51,7 @@ public class NumberConverter implements TypeConverter {
         try {
             return doConvert(value, targetType);
         } catch (Exception e) {
-            log.warn(value.getClass() + "[" + value + "] cast to " + targetType + " failed", e);
+            log.warn("{}[{}] cast to {} failed", value.getClass(), value, targetType, e);
             return value;
         }
     }

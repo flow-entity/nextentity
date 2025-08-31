@@ -14,19 +14,19 @@ import io.github.nextentity.core.util.EmptyArrays;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.ImmutableList.Builder;
 import io.github.nextentity.core.util.Paths;
-import lombok.experimental.Accessors;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
-@Slf4j
 public class ExpressionImpls {
 
     public static final Expression EMPTY = EmptyExpression.EMPTY;
     public static final Literal TRUE = LiteralImpl.TRUE;
     public static final Literal FALSE = LiteralImpl.FALSE;
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(ExpressionImpls.class);
 
     public static boolean isNullOrTrue(Expression expression) {
         return expression == null || expression == EMPTY || ExpressionImpls.isTrue(expression);
@@ -203,13 +203,61 @@ public class ExpressionImpls {
     }
 
 
-    @lombok.Data
-    @Accessors(fluent = true)
     public static final class SliceImpl<T> implements Slice<T> {
         private final List<T> data;
         private final long total;
         private final int offset;
         private final int limit;
+
+        public SliceImpl(List<T> data, long total, int offset, int limit) {
+            this.data = data;
+            this.total = total;
+            this.offset = offset;
+            this.limit = limit;
+        }
+
+        public List<T> data() {
+            return this.data;
+        }
+
+        public long total() {
+            return this.total;
+        }
+
+        public int offset() {
+            return this.offset;
+        }
+
+        public int limit() {
+            return this.limit;
+        }
+
+        public boolean equals(final Object o) {
+            if (o == this) return true;
+            if (!(o instanceof SliceImpl<?> other)) return false;
+            final Object this$data = this.data();
+            final Object other$data = other.data();
+            if (!Objects.equals(this$data, other$data)) return false;
+            if (this.total() != other.total()) return false;
+            if (this.offset() != other.offset()) return false;
+            return this.limit() == other.limit();
+        }
+
+        public int hashCode() {
+            final int PRIME = 59;
+            int result = 1;
+            final Object $data = this.data();
+            result = result * PRIME + ($data == null ? 43 : $data.hashCode());
+            final long $total = this.total();
+            result = result * PRIME + Long.hashCode($total);
+            result = result * PRIME + this.offset();
+            result = result * PRIME + this.limit();
+            return result;
+        }
+
+        public String toString() {
+            return "ExpressionImpls.SliceImpl(data=" + this.data() + ", total=" + this.total() + ", offset=" + this.offset() + ", limit=" + this.limit() + ")";
+        }
     }
 
     private ExpressionImpls() {

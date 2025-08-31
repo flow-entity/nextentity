@@ -18,6 +18,7 @@ import io.github.nextentity.test.entity.User;
 import io.github.nextentity.test.projection.IUser;
 import io.github.nextentity.test.projection.UserInterface;
 import io.github.nextentity.test.projection.UserModel;
+import io.github.nextentity.test.projection.UserRecord;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -49,23 +50,35 @@ class QueryBuilderTest {
                         User::getId, User::getRandomNumber)
                 // .orderBy(User::getId)
                 .getList(10, 20);
-        System.out.println(list);
+        log.info("{}", list);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select3(UserRepository userQuery) {
         IUser first1 = userQuery.select(IUser.class).getFirst(90);
-        System.out.println(first1);
+        log.info("{}", first1);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select4(UserRepository userQuery) {
         List<User> list = userQuery.selectDistinct(User::getParentUser).getList();
-        System.out.println(list);
+        log.info("{}", list);
+        List<Tuple2<User, User>> list1 = userQuery.selectDistinct(User::getParentUser, User::getRandomUser).getList();
+        log.info("{}", list1);
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(UserQueryProvider.class)
+    void selectRecord(UserRepository userQuery) {
+        UserRecord ui = userQuery.select(UserRecord.class)
+                .where(User::getPid).isNotNull()
+                .orderBy(User::getId)
+                .getFirst();
+
+        log.info("{}", ui);
+    }
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select(UserRepository userQuery) {
@@ -83,8 +96,8 @@ class QueryBuilderTest {
         }
 
         User first3 = userQuery.fetch(User::getParentUser).getFirst(offset);
-        System.out.println(first3);
-        System.out.println(first3.getParentUser());
+        log.info("{}", first3);
+        log.info("{}", first3.getParentUser());
         IUser.U first2 = userQuery.select(IUser.U.class)
                 .orderBy(User::getId)
                 .getFirst(offset);

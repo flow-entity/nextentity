@@ -2,7 +2,6 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.Path;
 import io.github.nextentity.core.exception.BeanReflectiveException;
-import lombok.Getter;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodHandleInfo;
@@ -12,12 +11,8 @@ import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
-@Getter
 public class PathReference {
-
-    private static final Pattern METHOD_PATTERN = Pattern.compile("^\\(L(.*);\\)(L(.*);|.*)$");
 
     private static final Map<Path<?, ?>, PathReference> map = new ConcurrentHashMap<>();
 
@@ -86,4 +81,15 @@ public class PathReference {
         return builder.toString();
     }
 
+    public String getFieldName() {
+        return this.fieldName;
+    }
+
+    public Class<?> getReturnType() {
+        return this.returnType;
+    }
+
+    public Class<?> getEntityType() {
+        return this.entityType;
+    }
 }

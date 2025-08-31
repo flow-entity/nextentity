@@ -2,20 +2,14 @@ package io.github.nextentity.core.reflect;
 
 import io.github.nextentity.core.exception.BeanReflectiveException;
 import io.github.nextentity.core.util.Exceptions;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,23 +29,26 @@ public class ReflectUtil {
         return null;
     }
 
-    @SneakyThrows
     public static <T> void copyTargetNullFields(T src, T target, Class<T> type) {
-        BeanInfo beanInfo = Introspector.getBeanInfo(type);
-        PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor descriptor : descriptors) {
-            Method reader = descriptor.getReadMethod();
-            Method writer = descriptor.getWriteMethod();
-            if (reader != null && writer != null) {
-                Object tv = reader.invoke(target);
-                if (tv != null) {
-                    continue;
-                }
-                Object sv = reader.invoke(src);
-                if (sv != null) {
-                    writer.invoke(target, sv);
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(type);
+            PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor descriptor : descriptors) {
+                Method reader = descriptor.getReadMethod();
+                Method writer = descriptor.getWriteMethod();
+                if (reader != null && writer != null) {
+                    Object tv = reader.invoke(target);
+                    if (tv != null) {
+                        continue;
+                    }
+                    Object sv = reader.invoke(src);
+                    if (sv != null) {
+                        writer.invoke(target, sv);
+                    }
                 }
             }
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 

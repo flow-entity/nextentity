@@ -1,7 +1,7 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 
 import java.util.stream.Stream;
@@ -24,7 +24,7 @@ public interface InternalPathExpression extends Expression, Iterable<String> {
 
     InternalPathExpression subLength(int len);
 
-    BasicAttribute toAttribute(EntitySchema entityType);
+    EntityAttribute toAttribute(EntitySchema entityType);
 
     Stream<String> stream();
 

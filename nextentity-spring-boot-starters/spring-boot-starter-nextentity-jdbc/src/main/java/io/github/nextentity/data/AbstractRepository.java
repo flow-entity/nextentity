@@ -4,7 +4,7 @@ import io.github.nextentity.api.Repository;
 import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.RepositoryImpl;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
@@ -24,7 +24,7 @@ public abstract class AbstractRepository<ID extends Serializable, T> extends Rep
         Class<T> entityType = TypeCastUtil.cast(type.resolveGeneric(1));
         Class<?> idType = type.resolveGeneric(0);
         EntityType entity = entitiesFactory.getMetamodel().getEntity(entityType);
-        BasicAttribute id = entity.id();
+        EntityAttribute id = entity.id();
         Class<?> expected = id.type();
         if (expected != idType) {
             String msg = "id class defined in " + getClass() + " does not match," +

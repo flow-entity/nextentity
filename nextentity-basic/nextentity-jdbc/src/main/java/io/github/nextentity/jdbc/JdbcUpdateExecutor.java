@@ -4,14 +4,14 @@ import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
 import io.github.nextentity.core.exception.UncheckedSQLException;
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
 
 import java.sql.*;
 import java.util.Arrays;
@@ -19,9 +19,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-@Slf4j
 public class JdbcUpdateExecutor implements UpdateExecutor {
 
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(JdbcUpdateExecutor.class);
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
     private final Metamodel metamodel;
@@ -67,7 +67,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
             //noinspection SqlSourceToSinkFlow
             try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
                 int[] updateRowCounts = executeUpdate(statement, sql.parameters());
-                BasicAttribute version = entityType.version();
+                EntityAttribute version = entityType.version();
                 boolean hasVersion = version != null;
                 for (int rowCount : updateRowCounts) {
                     if (rowCount != 1) {
@@ -111,7 +111,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         return update(Collections.singletonList(entity), entityClass, true).get(0);
     }
 
-    protected static void setNewVersion(Object entity, BasicAttribute attribute) {
+    protected static void setNewVersion(Object entity, EntityAttribute attribute) {
         Object version = attribute.getDatabaseValue(entity);
         if (version instanceof Integer) {
             version = (Integer) version + 1;
@@ -126,6 +126,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     protected void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
         insertStatement.print();
         boolean generateKey = insertStatement.returnGeneratedKeys();
+        //noinspection SqlSourceToSinkFlow
         try (PreparedStatement statement = generateKey
                 ? connection.prepareStatement(insertStatement.sql(), Statement.RETURN_GENERATED_KEYS)
                 : connection.prepareStatement(insertStatement.sql())) {
@@ -135,7 +136,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
                     Iterator<?> iterator = insertStatement.entities().iterator();
                     while (keys.next()) {
                         Object entity = iterator.next();
-                        BasicAttribute idField = entityType.id();
+                        EntityAttribute idField = entityType.id();
                         Object key = JdbcUtil.getValue(keys, 1, idField.type());
                         idField.setByDatabaseValue(entity, key);
                     }

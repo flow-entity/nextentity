@@ -2,14 +2,7 @@ package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.OperatableExpression;
-import io.github.nextentity.api.TypedExpression.Predicate;
-import io.github.nextentity.api.TypedExpression.StringExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
+import io.github.nextentity.api.TypedExpression.*;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
 

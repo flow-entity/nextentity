@@ -5,23 +5,17 @@ import io.github.nextentity.core.TypeCastUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
-import java.util.AbstractList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.RandomAccess;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
+import java.util.stream.Stream;
 
 /**
  * @author HuangChengwei
  * @since 2024/4/23 上午8:50
  */
-public class ImmutableList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable {
+public class ImmutableList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable, ImmutableArray<E> {
 
     private static final ImmutableList<?> EMPTY = new ImmutableList<>(EmptyArrays.OBJECT);
 
@@ -36,10 +30,12 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     }
 
     public static <T> ImmutableList<T> ofIterable(Iterable<T> iterable) {
-        return iterable instanceof Collection ? ofCollection((Collection<T>) iterable) : new ImmutableList<T>(Iterators.toArray(iterable));
+        return iterable instanceof Collection
+                ? ofCollection((Collection<T>) iterable)
+                : new ImmutableList<>(Iterators.toArray(iterable));
     }
 
-    private static <T> @NotNull ImmutableList<T> ofCollection(Collection<T> collection) {
+    public static <T> @NotNull ImmutableList<T> ofCollection(Collection<T> collection) {
         if (collection instanceof ImmutableList) {
             return (ImmutableList<T>) collection;
         } else if (collection.isEmpty()) {
@@ -59,11 +55,11 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
         return TypeCastUtil.unsafeCast(EMPTY);
     }
 
-    public ImmutableList(Collection<E> collection) {
+    public ImmutableList(Collection<? extends E> collection) {
         this(collection.toArray());
     }
 
-    private ImmutableList(Object[] elements) {
+    protected ImmutableList(Object[] elements) {
         this.elements = elements;
     }
 
@@ -78,9 +74,20 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
         return new Itr();
     }
 
+    @NotNull
     @Override
     public ListIterator<E> listIterator() {
         return new Itr();
+    }
+
+    @Override
+    public Stream<E> stream() {
+        return super.stream();
+    }
+
+    @Override
+    public List<E> asList() {
+        return this;
     }
 
     private class Itr implements ListIterator<E> {
@@ -134,13 +141,12 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
 
     @NotNull
     @Override
-    public Object[] toArray() {
+    public Object @NotNull [] toArray() {
         return elements.clone();
     }
 
-    @NotNull
     @Override
-    public <T> T[] toArray(T[] a) {
+    public <T> T @NotNull [] toArray(T[] a) {
         int size = size();
         if (a.length < size) {
             return TypeCastUtil.unsafeCast(Arrays.copyOf(elements, size, a.getClass()));

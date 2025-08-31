@@ -1,9 +1,6 @@
 package io.github.nextentity.core.reflect;
 
 import io.github.nextentity.core.PathReference;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -12,12 +9,14 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Getter
-@RequiredArgsConstructor
-@Accessors(fluent = true)
 public final class InstanceInvocationHandler implements InvocationHandler {
     private final Class<?> resultType;
     private final Map<Method, Object> data;
+
+    public InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data) {
+        this.resultType = resultType;
+        this.data = data;
+    }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -61,5 +60,13 @@ public final class InstanceInvocationHandler implements InvocationHandler {
                 })
                 .collect(Collectors.joining(", "));
         return resultType.getSimpleName() + "(" + str + ")";
+    }
+
+    public Class<?> resultType() {
+        return this.resultType;
+    }
+
+    public Map<Method, Object> data() {
+        return this.data;
     }
 }

@@ -4,26 +4,20 @@ import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.SelectImpl;
 import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
-import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceUnitUtil;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-@Slf4j
 public class JpaUpdateExecutor implements UpdateExecutor {
 
     private final EntityManager entityManager;

@@ -1,14 +1,10 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.expression.InternalPathExpression;
-import io.github.nextentity.core.expression.Literal;
-import io.github.nextentity.core.expression.Operation;
-import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.reflect.PrimitiveTypes;
+import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.math.BigDecimal;
@@ -127,8 +123,8 @@ public class ExpressionTypeResolver {
     }
 
     public static Class<?> getColumnType(InternalPathExpression column, EntityType entityType) {
-        BasicAttribute attribute = entityType.getAttribute(column);
-        return attribute.databaseType().databaseType();
+        Attribute attribute = entityType.getAttribute(column);
+        return attribute.type();
     }
 
 }

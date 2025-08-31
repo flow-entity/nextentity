@@ -2,11 +2,7 @@ package io.github.nextentity.api.model;
 
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
+import io.github.nextentity.api.TypedExpression.*;
 
 public interface EntityRoot<T> {
 

@@ -5,15 +5,11 @@ import io.github.nextentity.api.Path.BooleanPath;
 import io.github.nextentity.api.Path.NumberPath;
 import io.github.nextentity.api.Path.StringPath;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
+import io.github.nextentity.api.TypedExpression.*;
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
 import io.github.nextentity.core.expression.Expressions;
+import io.github.nextentity.core.expression.impl.ExpressionImpls;
 
 public interface Paths {
 

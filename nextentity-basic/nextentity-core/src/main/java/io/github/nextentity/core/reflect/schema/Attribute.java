@@ -7,14 +7,13 @@ import io.github.nextentity.core.reflect.ReflectUtil;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashSet;
 
 /**
  * @author HuangChengwei
  * @since 2024/4/18 下午12:55
  * <p>
  */
-public interface Attribute extends Schema {
+public non-sealed interface Attribute extends ReflectType {
 
     String name();
 
@@ -26,6 +25,8 @@ public interface Attribute extends Schema {
 
     Schema declareBy();
 
+    int ordinal();
+
     default boolean isAttribute() {
         return true;
     }
@@ -35,18 +36,6 @@ public interface Attribute extends Schema {
             return 1;
         }
         return ((Attribute) declareBy()).deep() + 1;
-    }
-
-    default boolean circularReferenced() {
-        HashSet<Object> set = new HashSet<>();
-        Schema cur = this;
-        while (cur != null) {
-            if (!set.add(cur.type())) {
-                return true;
-            }
-            cur = cur.declareBy();
-        }
-        return false;
     }
 
     default Object get(Object entity) {

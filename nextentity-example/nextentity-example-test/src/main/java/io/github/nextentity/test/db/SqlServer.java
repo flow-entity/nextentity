@@ -44,7 +44,7 @@ public class SqlServer implements DbConfigProvider {
                 .put(FORMAT_SQL, false)
                 .put(QUERY_STARTUP_CHECKING, false)
                 .put(GENERATE_STATISTICS, false)
-                .put(USE_REFLECTION_OPTIMIZER, false)
+//                .put(USE_REFLECTION_OPTIMIZER, false)
                 .put(USE_SECOND_LEVEL_CACHE, false)
                 .put(USE_QUERY_CACHE, false)
                 .put(USE_STRUCTURED_CACHE, false)

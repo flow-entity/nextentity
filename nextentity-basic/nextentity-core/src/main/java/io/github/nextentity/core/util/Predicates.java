@@ -3,8 +3,8 @@ package io.github.nextentity.core.util;
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.TypedExpression.Predicate;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
 import io.github.nextentity.core.expression.Expressions;
+import io.github.nextentity.core.expression.impl.ExpressionImpls;
 
 import static io.github.nextentity.core.expression.Operator.NOT;
 

@@ -1,11 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.expression.InternalPathExpression;
-import io.github.nextentity.core.expression.Literal;
-import io.github.nextentity.core.expression.Operation;
-import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.QuerySqlBuilder;
 

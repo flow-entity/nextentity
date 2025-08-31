@@ -1,20 +1,7 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.SelectFetchStep;
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Select;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.RowsSelectWhereStep;
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.api.model.Tuple10;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.api.model.Tuple4;
-import io.github.nextentity.api.model.Tuple5;
-import io.github.nextentity.api.model.Tuple6;
-import io.github.nextentity.api.model.Tuple7;
-import io.github.nextentity.api.model.Tuple8;
-import io.github.nextentity.api.model.Tuple9;
+import io.github.nextentity.api.*;
+import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.expression.InternalPathExpression;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.QueryStructure.Selected;
@@ -23,22 +10,18 @@ import io.github.nextentity.core.expression.QueryStructure.Selected.SelectEntity
 import io.github.nextentity.core.expression.QueryStructure.Selected.SelectPrimitive;
 import io.github.nextentity.core.expression.QueryStructure.Selected.SelectProjection;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
-import io.github.nextentity.core.meta.BasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableList;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Slf4j
 public class SelectImpl<T> extends WhereImpl<T, T> implements Select<T>, SelectFetchStep<T> {
 
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(SelectImpl.class);
 
     public SelectImpl() {
     }
@@ -55,7 +38,7 @@ public class SelectImpl<T> extends WhereImpl<T, T> implements Select<T>, SelectF
         EntityType entityType = config.metamodel().getEntity(fromType());
         for (TypedExpression.PathExpression<T, ?> expression : expressions) {
             InternalPathExpression entityPath = (InternalPathExpression) expression;
-            BasicAttribute attribute = entityType.getAttribute(entityPath);
+            Attribute attribute = entityType.getAttribute(entityPath);
             if (!attribute.isObject()) {
                 log.warn("ignoring fetch a non-entity attribute `{}` of {}",
                         entityPath.stream().collect(Collectors.joining(".")),
@@ -223,7 +206,7 @@ public class SelectImpl<T> extends WhereImpl<T, T> implements Select<T>, SelectF
     }
 
     private SelectArray selectTuple(boolean distinct, Stream<? extends TypedExpression<T, ?>> stream, int len) {
-        List<SelectPrimitive> selectItems = stream
+        ImmutableList<SelectPrimitive> selectItems = stream
                 .map(expression -> new SelectPrimitive()
                         .expression(expression)
                         .distinct(false)
@@ -235,7 +218,7 @@ public class SelectImpl<T> extends WhereImpl<T, T> implements Select<T>, SelectF
     }
 
     public <R extends Tuple> RowsSelectWhereStep<T, R> selectTuple(boolean distinct, List<? extends Path<T, ?>> paths) {
-        List<SelectPrimitive> selectItems = paths.stream()
+        ImmutableList<SelectPrimitive> selectItems = paths.stream()
                 .map(path -> new SelectPrimitive()
                         .expression(ExpressionImpls.of(path))
                         .distinct(false)

@@ -3,7 +3,6 @@ package io.github.nextentity.spring;
 import io.github.nextentity.core.QueryPostProcessor;
 import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
@@ -14,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.List;
 
 @Getter
 public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
@@ -32,10 +30,6 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
 
     protected Metamodel metamodel() {
         return JpaMetamodel.of();
-    }
-
-    protected List<TypeConverter> typeConverter() {
-        return List.of(TypeConverter.ofDefault());
     }
 
     protected SqlDialectSelector sqlDialectAutoSelector(DataSource dataSource) throws SQLException {
@@ -56,8 +50,8 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
         return new RepositoryFactory(queryExecutor, updateExecutor, queryPostProcessor, metamodel);
     }
 
-    protected JdbcQueryExecutor.ResultCollector jdbcResultCollector(List<TypeConverter> typeConverters) {
-        return new JdbcResultCollector(TypeConverter.of(typeConverters));
+    protected JdbcQueryExecutor.ResultCollector jdbcResultCollector() {
+        return new JdbcResultCollector();
     }
 
     protected ConnectionProvider connectionProvider(JdbcTemplate jdbcTemplate) {
@@ -75,10 +69,6 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
         return new JdbcUpdateExecutor(sqlBuilder, connectionProvider, metamodel);
     }
 
-    private <T> T getOrDefault(T value, T defaultValue) {
-        return value == null ? defaultValue : value;
-    }
-
     @Override
     public void afterPropertiesSet() throws Exception {
         SqlDialectSelector querySqlBuilder = sqlDialectAutoSelector(jdbcTemplate.getDataSource());
@@ -87,7 +77,7 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
         JdbcQueryExecutor executor = jdbcQueryExecutor(
                 metamodel,
                 querySqlBuilder,
-                jdbcResultCollector(typeConverter()),
+                jdbcResultCollector(),
                 connectionProvider
         );
         UpdateExecutor updateExecutor = jdbcUpdate(querySqlBuilder, connectionProvider, metamodel);

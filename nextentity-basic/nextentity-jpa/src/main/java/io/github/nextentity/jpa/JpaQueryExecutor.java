@@ -1,8 +1,8 @@
 package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.SortOrder;
+import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.InternalPathExpression;
@@ -14,23 +14,18 @@ import io.github.nextentity.core.expression.QueryStructure.Selected;
 import io.github.nextentity.core.expression.QueryStructure.Selected.SelectEntity;
 import io.github.nextentity.core.expression.impl.ExpressionImpls;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.meta.SubSelectType;
+import io.github.nextentity.core.meta.SubQueryEntityType;
+import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.jdbc.QueryContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Fetch;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-
-import static io.github.nextentity.core.reflect.schema.InstanceFactory.PrimitiveFactory;
 
 public class JpaQueryExecutor implements QueryExecutor {
 
@@ -55,11 +50,11 @@ public class JpaQueryExecutor implements QueryExecutor {
             return TypeCastUtil.cast(resultList);
         }
         QueryContext context = new QueryContext(queryStructure, metamodel, false);
-        List<Object[]> objectsList = getObjectsList(queryStructure, context.getConstructor().primitives());
+        List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
         List<Object> result = objectsList.stream()
                 .map(objects -> {
                     JpaArguments arguments = new JpaArguments(
-                            objects, null, null);
+                            objects);
                     return context.construct(arguments);
                 })
                 .collect(ImmutableList.collector(objectsList.size()));
@@ -69,7 +64,7 @@ public class JpaQueryExecutor implements QueryExecutor {
     private boolean requiredNativeQuery(@NotNull QueryStructure queryStructure) {
         From from = queryStructure.from();
         return from instanceof FromSubQuery
-               || metamodel.getEntity(from.type()) instanceof SubSelectType
+               || metamodel.getEntity(from.type()) instanceof SubQueryEntityType
                || hasSubQuery(queryStructure);
     }
 
@@ -117,7 +112,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         return new EntityBuilder(root, cb, query, structure).getResultList();
     }
 
-    private List<Object[]> getObjectsList(@NotNull QueryStructure structure, List<? extends PrimitiveFactory> columns) {
+    private List<Object[]> getObjectsList(@NotNull QueryStructure structure, ImmutableArray<Expression> columns) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<?> query = cb.createQuery(Object[].class);
         Root<?> root = query.from(structure.from().type());
@@ -126,13 +121,13 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     class ObjectArrayBuilder extends Builder {
 
-        private final List<? extends PrimitiveFactory> selects;
+        private final ImmutableArray<Expression> selects;
 
         public ObjectArrayBuilder(Root<?> root,
                                   CriteriaBuilder cb,
                                   CriteriaQuery<?> query,
                                   QueryStructure structure,
-                                  List<? extends PrimitiveFactory> selects) {
+                                  ImmutableArray<Expression> selects) {
             super(root, cb, query, structure);
             this.selects = selects;
         }
@@ -154,7 +149,6 @@ public class JpaQueryExecutor implements QueryExecutor {
         protected TypedQuery<?> getTypedQuery() {
             CriteriaQuery<?> select = query.multiselect(
                     selects.stream()
-                            .map(PrimitiveFactory::expression)
                             .map(this::toExpression)
                             .collect(ImmutableList.collector(selects.size()))
             );

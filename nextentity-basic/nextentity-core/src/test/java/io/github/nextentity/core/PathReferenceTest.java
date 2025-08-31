@@ -9,7 +9,6 @@ class PathReferenceTest {
     @Test
     void of() {
         String name = Integer[].class.getName();
-        System.out.println(name);
         try {
             Class.forName(name);
         } catch (ClassNotFoundException e) {

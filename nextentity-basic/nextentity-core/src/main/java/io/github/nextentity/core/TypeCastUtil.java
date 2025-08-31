@@ -3,12 +3,17 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.model.EntityRoot;
+import io.github.nextentity.core.util.ImmutableArray;
 
 import java.util.List;
 
 public class TypeCastUtil {
 
     public static <T> List<T> cast(List<?> expression) {
+        return unsafeCast(expression);
+    }
+
+    public static <T> ImmutableArray<T> cast(ImmutableArray<?> expression) {
         return unsafeCast(expression);
     }
 

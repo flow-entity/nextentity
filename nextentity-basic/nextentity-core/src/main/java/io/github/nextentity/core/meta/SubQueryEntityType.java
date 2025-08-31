@@ -1,6 +1,6 @@
 package io.github.nextentity.core.meta;
 
-public interface SubSelectType extends EntityType {
+public interface SubQueryEntityType extends EntityType {
 
     String subSelectSql();
 

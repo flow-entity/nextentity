@@ -1,7 +1,5 @@
 package io.github.nextentity.core.expression;
 
-import lombok.Getter;
-
 public enum Operator {
 
     NOT("not", 10),
@@ -46,9 +44,7 @@ public enum Operator {
 
     private final String sign;
     private final int priority;
-    @Getter
     private final boolean multivalued;
-    @Getter
     private final boolean agg;
 
     Operator(String sign, int priority, boolean multivalued, boolean agg) {
@@ -80,4 +76,11 @@ public enum Operator {
         return priority;
     }
 
+    public boolean isMultivalued() {
+        return this.multivalued;
+    }
+
+    public boolean isAgg() {
+        return this.agg;
+    }
 }

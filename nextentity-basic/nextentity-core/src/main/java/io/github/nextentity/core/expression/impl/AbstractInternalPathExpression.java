@@ -1,9 +1,9 @@
 package io.github.nextentity.core.expression.impl;
 
 import io.github.nextentity.core.expression.InternalPathExpression;
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
-import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.reflect.schema.ReflectType;
 import io.github.nextentity.core.util.Iterators;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,12 +53,12 @@ public interface AbstractInternalPathExpression extends InternalPathExpression {
     }
 
     @Override
-    default BasicAttribute toAttribute(EntitySchema entityType) {
-        Schema type = entityType;
+    default EntityAttribute toAttribute(EntitySchema entityType) {
+        ReflectType type = entityType;
         for (String s : this) {
             type = ((EntitySchema) type).getAttribute(s);
         }
-        return (BasicAttribute) type;
+        return (EntityAttribute) type;
     }
 
     @Override

@@ -3,7 +3,6 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Repository;
 import io.github.nextentity.core.meta.Metamodel;
-import lombok.Getter;
 
 import java.io.Serializable;
 
@@ -12,7 +11,6 @@ import java.io.Serializable;
  * @since 2024-04-08 15:12
  */
 
-@Getter
 public class RepositoryFactory implements QueryConfig {
 
     private final QueryExecutor queryExecutor;
@@ -55,5 +53,13 @@ public class RepositoryFactory implements QueryConfig {
     @Override
     public QueryPostProcessor queryPostProcessor() {
         return queryPostProcessor;
+    }
+
+    public UpdateExecutor getUpdateExecutor() {
+        return updateExecutor;
+    }
+
+    public Metamodel getMetamodel() {
+        return metamodel;
     }
 }

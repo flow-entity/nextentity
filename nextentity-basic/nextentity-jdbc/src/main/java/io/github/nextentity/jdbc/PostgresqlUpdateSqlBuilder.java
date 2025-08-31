@@ -1,6 +1,6 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import org.jetbrains.annotations.NotNull;
 
@@ -19,7 +19,7 @@ public class PostgresqlUpdateSqlBuilder extends AbstractUpdateSqlBuilder {
         return "\"";
     }
 
-    protected @NotNull String typedPlaceholder(BasicAttribute attribute) {
+    protected @NotNull String typedPlaceholder(EntityAttribute attribute) {
         if (attribute.type() == Date.class || attribute.type().isAssignableFrom(java.sql.Timestamp.class)) {
             return "?::timestamp";
         }

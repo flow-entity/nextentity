@@ -3,19 +3,7 @@ package io.github.nextentity.meta.jpa;
 import io.github.nextentity.core.meta.AbstractMetamodel;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Version;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.persistence.*;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -23,7 +11,6 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
-@Slf4j
 public class JpaMetamodel extends AbstractMetamodel {
     private static final JpaMetamodel JPA_METAMODEL = new JpaMetamodel();
     private final List<Class<? extends Annotation>> JOIN_ANNOTATIONS =

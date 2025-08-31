@@ -30,7 +30,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.util.List;
 
 @Configuration
 public class JdbcRepositoryConfiguration {
@@ -69,8 +68,8 @@ public class JdbcRepositoryConfiguration {
     }
 
     @Bean
-    protected ResultCollector jdbcResultCollector(List<TypeConverter> typeConverters) {
-        return new JdbcResultCollector(TypeConverter.of(typeConverters));
+    protected ResultCollector jdbcResultCollector() {
+        return new JdbcResultCollector();
     }
 
     @Bean
