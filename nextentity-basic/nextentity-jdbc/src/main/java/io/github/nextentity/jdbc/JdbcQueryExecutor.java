@@ -37,7 +37,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @Override
     @NotNull
     public <R> List<R> getList(@NotNull QueryStructure queryStructure) {
-        QueryContext context = new QueryContext(queryStructure, metamodel, true);
+        QueryContext context = QueryContext.create(queryStructure, metamodel, true);
         QuerySqlStatement sql = sqlBuilder.build(context);
         sql.print();
         try {

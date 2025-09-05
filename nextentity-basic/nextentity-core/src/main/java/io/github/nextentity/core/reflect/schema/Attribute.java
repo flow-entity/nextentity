@@ -27,10 +27,6 @@ public non-sealed interface Attribute extends ReflectType {
 
     int ordinal();
 
-    default boolean isAttribute() {
-        return true;
-    }
-
     default int deep() {
         if (!(declareBy() instanceof Attribute)) {
             return 1;

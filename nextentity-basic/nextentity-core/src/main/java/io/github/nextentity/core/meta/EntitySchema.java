@@ -13,8 +13,8 @@ public interface EntitySchema extends Schema {
     String tableName();
 
     @Override
-    default ImmutableArray<? extends EntityAttribute> primitiveAttributes() {
-        ImmutableArray<? extends Attribute> attributes = Schema.super.primitiveAttributes();
+    default ImmutableArray<? extends EntityAttribute> getPrimitives() {
+        ImmutableArray<? extends Attribute> attributes = Schema.super.getPrimitives();
         return TypeCastUtil.cast(attributes);
     }
 

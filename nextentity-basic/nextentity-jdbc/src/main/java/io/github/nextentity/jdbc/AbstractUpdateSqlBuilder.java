@@ -24,7 +24,7 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
                 hasNullId = true;
             }
         }
-        ImmutableArray<? extends EntityAttribute> selectList = entityType.primitiveAttributes();
+        ImmutableArray<? extends EntityAttribute> selectList = entityType.getPrimitives();
         return Collections.singletonList(buildInsertStatement(entities, entityType, selectList, hasNullId));
     }
 
@@ -75,7 +75,7 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
     public BatchSqlStatement buildUpdateStatement(Iterable<?> entities,
                                                   EntitySchema entityType,
                                                   boolean excludeNull) {
-        ImmutableArray<? extends EntityAttribute> columns = entityType.primitiveAttributes();
+        ImmutableArray<? extends EntityAttribute> columns = entityType.getPrimitives();
         StringBuilder sql = new StringBuilder("update ")
                 .append(leftTicks())
                 .append(entityType.tableName())
@@ -137,7 +137,7 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
 
     protected List<InsertSqlStatement> buildGroupedInsertStatement(Iterable<?> entities, @NotNull EntityType entityType) {
         EntityAttribute idAttribute = entityType.id();
-        ImmutableArray<? extends EntityAttribute> basicAttributes = entityType.primitiveAttributes();
+        ImmutableArray<? extends EntityAttribute> basicAttributes = entityType.getPrimitives();
         List<? extends EntityAttribute> withoutId = basicAttributes.stream()
                 .filter(attr -> attr != idAttribute)
                 .collect(ImmutableList.collector(basicAttributes.size() - 1));

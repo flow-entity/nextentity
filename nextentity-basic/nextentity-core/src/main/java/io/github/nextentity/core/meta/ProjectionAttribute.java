@@ -6,4 +6,7 @@ public interface ProjectionAttribute extends Attribute {
 
     EntityAttribute source();
 
+    default ValueConvertor valueConvertor() {
+        return source().valueConvertor();
+    }
 }

@@ -1,33 +1,32 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.expression.InternalPathExpression;
+import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 
-public class SelectEntityContext implements SelectedContext {
+import java.util.Collection;
 
-    private final EntityType entityType;
+public class SelectEntityContext extends QueryContext {
+
     private final SchemaAttributePaths schemaAttributePaths;
     private final ImmutableArray<Expression> expressions;
 
-    public SelectEntityContext(EntityType entityType, SchemaAttributePaths schemaAttributePaths) {
-        this.entityType = entityType;
-        this.schemaAttributePaths = schemaAttributePaths;
-        if (schemaAttributePaths.isEmpty()) {
-            this.expressions = TypeCastUtil.cast(entityType.primitiveAttributes());
-        } else {
-            this.expressions = SelectedContext.getSelectSchemaExpressions(entityType, schemaAttributePaths);
-        }
+    public SelectEntityContext(QueryStructure structure, Metamodel metamodel, Collection<? extends InternalPathExpression> fetch) {
+        super(structure, metamodel, true);
+        this.schemaAttributePaths = newJoinPaths(fetch);
+        this.expressions = getSelectSchemaExpressions(entityType, schemaAttributePaths);
     }
 
+
     @Override
-    public ImmutableArray<Expression> expressions() {
+    public ImmutableArray<Expression> getSelectedExpression() {
         return expressions;
     }
 
     @Override
     public Object construct(Arguments arguments) {
-        return SelectedContext.constructSchema(entityType, arguments, schemaAttributePaths);
+        return constructSchema(entityType, arguments, schemaAttributePaths);
     }
 }

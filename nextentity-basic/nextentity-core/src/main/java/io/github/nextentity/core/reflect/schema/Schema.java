@@ -6,7 +6,7 @@ public non-sealed interface Schema extends ReflectType {
 
     Attributes attributes();
 
-    default ImmutableArray<? extends Attribute> primitiveAttributes() {
+    default ImmutableArray<? extends Attribute> getPrimitives() {
         return attributes().getPrimitives();
     }
 

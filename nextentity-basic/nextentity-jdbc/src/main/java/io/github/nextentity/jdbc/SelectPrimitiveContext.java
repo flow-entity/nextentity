@@ -1,29 +1,32 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.core.expression.QueryStructure.Selected.SelectPrimitive;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 
-public class SelectPrimitiveContext implements SelectedContext {
+public class SelectPrimitiveContext extends QueryContext {
 
     private final ImmutableArray<Expression> expressions;
-    private final EntityType entityType;
     private final Expression expression;
 
-    protected SelectPrimitiveContext(EntityType entityType, Expression expression) {
-        this.entityType = entityType;
-        this.expression = expression;
-        this.expressions = SelectedContext.getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));
+
+    protected SelectPrimitiveContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectPrimitive selectPrimitive) {
+        super(structure, metamodel, expandObjectAttribute);
+        this.expression = selectPrimitive.expression();
+        this.expressions = getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));
     }
 
 
     @Override
-    public ImmutableArray<Expression> expressions() {
+    public ImmutableArray<Expression> getSelectedExpression() {
         return expressions;
     }
 
     @Override
     public Object construct(Arguments arguments) {
-        return SelectedContext.constructExpression(entityType, arguments, expression);
+        return constructExpression(entityType, arguments, expression);
     }
 }
