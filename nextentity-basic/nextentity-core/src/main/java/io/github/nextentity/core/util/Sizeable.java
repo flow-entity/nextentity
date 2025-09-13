@@ -7,7 +7,7 @@ public interface Sizeable {
         return size() == 0;
     }
 
-    default boolean idNotEmpty() {
+    default boolean isNotEmpty() {
         return !isEmpty();
     }
 }

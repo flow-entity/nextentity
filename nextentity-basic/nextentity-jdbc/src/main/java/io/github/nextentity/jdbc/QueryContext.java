@@ -137,7 +137,7 @@ public abstract class QueryContext {
                 if (attribute instanceof EntityAttribute entityAttribute) {
                     type = entityAttribute.valueConvertor().getDatabaseType();
                 } else if (attribute instanceof ProjectionAttribute projectionAttribute) {
-                    type = projectionAttribute.source().valueConvertor().getDatabaseType();
+                    type = projectionAttribute.valueConvertor().getDatabaseType();
                 } else {
                     type = attribute.type();
                 }
@@ -226,7 +226,7 @@ public abstract class QueryContext {
         if (attribute instanceof EntityAttribute entityAttribute) {
             type = entityAttribute.valueConvertor().getDatabaseType();
         } else if (attribute instanceof ProjectionAttribute projectionAttribute) {
-            type = projectionAttribute.source().valueConvertor().getDatabaseType();
+            type = projectionAttribute.valueConvertor().getDatabaseType();
         } else {
             type = attribute.type();
         }
