@@ -6,7 +6,6 @@ import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
-import lombok.Getter;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,7 +13,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
-@Getter
 public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
 
     @Autowired
@@ -82,5 +80,13 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
         );
         UpdateExecutor updateExecutor = jdbcUpdate(querySqlBuilder, connectionProvider, metamodel);
         repositoryFactory = jdbcEntitiesFactory(executor, updateExecutor, getQueryPostProcessor(), metamodel);
+    }
+
+    public JdbcTemplate getJdbcTemplate() {
+        return this.jdbcTemplate;
+    }
+
+    public RepositoryFactory getRepositoryFactory() {
+        return this.repositoryFactory;
     }
 }

@@ -7,13 +7,11 @@ import io.github.nextentity.jpa.JpaUpdateExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 public class JpaRepositoryFactoryConfiguration {
 
-    @Getter
     private final RepositoryFactory repositoryFactory;
     private final JdbcRepositoryFactoryConfiguration jdbcRepositoryFactoryConfiguration;
 
@@ -64,4 +62,7 @@ public class JpaRepositoryFactoryConfiguration {
         return new JpaQueryExecutor(entityManager, metamodel, executor);
     }
 
+    public RepositoryFactory getRepositoryFactory() {
+        return this.repositoryFactory;
+    }
 }

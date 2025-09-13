@@ -10,9 +10,6 @@ import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.impl.*;
 import io.github.nextentity.core.meta.EntityType;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.Accessors;
 import org.springframework.core.ResolvableType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -104,124 +101,193 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
     protected abstract class $String implements StringPathExpression<T> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $StringImpl extends $String implements AbstractInternalPathExpression, AbstractStringExpression<T> {
         private final String[] paths;
+
+        private $StringImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Boolean implements BooleanPathExpression<T> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $BooleanImpl extends $Boolean implements AbstractInternalPathExpression, AbstractBooleanExpression<T> {
         private final String[] paths;
+
+        private $BooleanImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Number<X extends Number> implements NumberPathExpression<T, X> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $NumberImpl<X extends Number> extends $Number<X> implements AbstractInternalPathExpression, AbstractNumberExpression<T, X> {
         private final String[] paths;
+
+        private $NumberImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Long extends $Number<Long> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $LongImpl extends $Long implements AbstractInternalPathExpression, AbstractNumberExpression<T, Long> {
         private final String[] paths;
+
+        private $LongImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Integer extends $Number<Integer> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $IntegerImpl extends $Integer implements AbstractInternalPathExpression, AbstractNumberExpression<T, Integer> {
         private final String[] paths;
+
+        private $IntegerImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Short extends $Number<Short> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $ShortImpl extends $Short implements AbstractInternalPathExpression, AbstractNumberExpression<T, Short> {
         private final String[] paths;
+
+        private $ShortImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Byte extends $Number<Byte> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $ByteImpl extends $Byte implements AbstractInternalPathExpression, AbstractNumberExpression<T, Byte> {
         private final String[] paths;
+
+        private $ByteImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Double extends $Number<Double> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $DoubleImpl extends $Double implements AbstractInternalPathExpression, AbstractNumberExpression<T, Double> {
         private final String[] paths;
+
+        private $DoubleImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Float extends $Number<Float> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $FloatImpl extends $Float implements AbstractInternalPathExpression, AbstractNumberExpression<T, Float> {
         private final String[] paths;
+
+        private $FloatImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $BigDecimal extends $Number<BigDecimal> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $BigDecimalImpl extends $BigDecimal implements AbstractInternalPathExpression, AbstractNumberExpression<T, BigDecimal> {
         private final String[] paths;
+
+        private $BigDecimalImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     protected abstract class $Entity<X> implements AbstractEntityPath<T, X> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class $EntityImpl<X> extends $Entity<X> implements AbstractInternalPathExpression {
         private final String[] paths;
+
+        private $EntityImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected abstract class $Path<X> implements AbstractPathExpression<T, X> {
     }
 
-    @Getter
-    @Accessors(fluent = true)
-    @RequiredArgsConstructor
     private class PathImpl<X> extends $Path<X> implements AbstractInternalPathExpression {
         private final String[] paths;
+
+        private PathImpl(String[] paths) {
+            this.paths = paths;
+        }
+
+        @Override
+        public String[] paths() {
+            return paths;
+        }
     }
 
     protected $Boolean $(Path.BooleanPath<T> path) {
