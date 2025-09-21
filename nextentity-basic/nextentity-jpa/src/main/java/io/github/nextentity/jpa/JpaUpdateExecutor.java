@@ -1,13 +1,12 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.SelectImpl;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.expression.Expressions;
-import io.github.nextentity.core.expression.InternalPathExpression;
+import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.expression.LiteralNode;
 import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
+import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
@@ -41,7 +40,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
 
     @Override
     public <T> List<T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
-        List<Expression> ids = new ArrayList<>();
+        List<ExpressionNode> ids = new ArrayList<>();
         Set<Object> uniqueValues = new HashSet<>();
         int size = 0;
         for (T entity : entities) {
@@ -49,7 +48,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             Object id = requireId(entity);
             if (uniqueValues.add(id)) {
                 if (!util.isLoaded(entity)) {
-                    ids.add(ExpressionImpls.of(id));
+                    ids.add(new LiteralNode(id));
                 }
             } else {
                 throw new IllegalArgumentException("duplicate id");
@@ -62,10 +61,10 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             EntityType<T> entity = entityManager.getMetamodel().entity(entityType);
             SingularAttribute<? super T, ?> id = entity.getId(entity.getIdType().getJavaType());
             String name = id.getName();
-            InternalPathExpression idPath = ExpressionImpls.column(name);
-            Expression operate = ExpressionImpls.operate(idPath, Operator.IN, ids);
+            PathNode idPath = new PathNode(name);
+            ExpressionNode operate = idPath.operate(Operator.IN, ids);
             List<T> dbList = new SelectImpl<>(queryConfig, entityType)
-                    .where(Expressions.of(operate))
+                    .andWhere(operate)
                     .getList();
             if (dbList.size() != size) {
                 throw new IllegalArgumentException("some id not found");

@@ -1,9 +1,10 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.expression.InternalPathExpression;
+import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableArray;
 
 import java.util.Collection;
@@ -11,9 +12,9 @@ import java.util.Collection;
 public class SelectEntityContext extends QueryContext {
 
     private final SchemaAttributePaths schemaAttributePaths;
-    private final ImmutableArray<Expression> expressions;
+    private final ImmutableArray<SelectItem> expressions;
 
-    public SelectEntityContext(QueryStructure structure, Metamodel metamodel, Collection<? extends InternalPathExpression> fetch) {
+    public SelectEntityContext(QueryStructure structure, Metamodel metamodel, Collection<? extends Attribute> fetch) {
         super(structure, metamodel, true);
         this.schemaAttributePaths = newJoinPaths(fetch);
         this.expressions = getSelectSchemaExpressions(entityType, schemaAttributePaths);
@@ -21,7 +22,7 @@ public class SelectEntityContext extends QueryContext {
 
 
     @Override
-    public ImmutableArray<Expression> getSelectedExpression() {
+    public ImmutableArray<SelectItem> getSelectedExpression() {
         return expressions;
     }
 

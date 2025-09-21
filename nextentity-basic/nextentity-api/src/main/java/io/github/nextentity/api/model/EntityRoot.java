@@ -1,42 +1,40 @@
 package io.github.nextentity.api.model;
 
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.*;
+import io.github.nextentity.api.*;
 
 public interface EntityRoot<T> {
 
     <U> TypedExpression<T, U> literal(U value);
 
-    <U> EntityPathExpression<T, U> get(Path<T, U> path);
+    <U> EntityPath<T, U> get(Path<T, U> path);
 
-    BooleanPathExpression<T> get(Path.BooleanPath<T> path);
+    BooleanPath<T> get(Path.BooleanRef<T> path);
 
-    StringPathExpression<T> get(Path.StringPath<T> path);
+    StringPath<T> get(Path.StringRef<T> path);
 
-    <U extends Number> NumberPathExpression<T, U> get(Path.NumberPath<T, U> path);
+    <U extends Number> NumberPath<T, U> get(Path.NumberRef<T, U> path);
 
     <U> PathExpression<T, U> path(Path<T, U> path);
 
-    <U> EntityPathExpression<T, U> entity(Path<T, U> path);
+    <U> EntityPath<T, U> entity(Path<T, U> path);
 
-    StringPathExpression<T> string(Path<T, String> path);
+    StringPath<T> string(Path<T, String> path);
 
-    <U extends Number> NumberPathExpression<T, U> number(Path<T, U> path);
+    <U extends Number> NumberPath<T, U> number(Path<T, U> path);
 
-    BooleanPathExpression<T> bool(Path<T, Boolean> path);
+    BooleanPath<T> bool(Path<T, Boolean> path);
 
 
     // type-unsafe
 
     <U> PathExpression<T, U> path(String fieldName);
 
-    <U> EntityPathExpression<T, U> entityPath(String fieldName);
+    <U> EntityPath<T, U> entityPath(String fieldName);
 
-    StringPathExpression<T> stringPath(String fieldName);
+    StringPath<T> stringPath(String fieldName);
 
-    <U extends Number> NumberPathExpression<T, U> numberPath(String fieldName);
+    <U extends Number> NumberPath<T, U> numberPath(String fieldName);
 
-    BooleanPathExpression<T> booleanPath(String fieldName);
+    BooleanPath<T> booleanPath(String fieldName);
 
 }

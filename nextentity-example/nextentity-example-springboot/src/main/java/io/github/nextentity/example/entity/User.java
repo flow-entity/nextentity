@@ -1,9 +1,9 @@
 package io.github.nextentity.example.entity;
 
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
+import io.github.nextentity.api.EntityPath;
+import io.github.nextentity.api.NumberPath;
+import io.github.nextentity.api.PathExpression;
+import io.github.nextentity.api.StringPath;
 import io.github.nextentity.core.Persistable;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -24,10 +24,10 @@ import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 @Setter
 public class User implements Persistable<Long> {
 
-    public static StringPathExpression<User> Username = get(User::getUsername);
-    public static EntityPathExpression<User, User> ParentUser = get(User::getParentUser);
+    public static StringPath<User> Username = get(User::getUsername);
+    public static EntityPath<User, User> ParentUser = get(User::getParentUser);
     public static PathExpression<User, Gender> Gender = get(User::getGender);
-    public static NumberPathExpression<User, Long> Pid = get(User::getPid);
+    public static NumberPath<User, Long> Pid = get(User::getPid);
 
     @Id
     private Long id;

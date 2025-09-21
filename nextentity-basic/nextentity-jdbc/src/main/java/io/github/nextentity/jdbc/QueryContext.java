@@ -2,11 +2,9 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
+import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.exception.BeanReflectiveException;
-import io.github.nextentity.core.expression.InternalPathExpression;
-import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.expression.QueryStructure.From;
-import io.github.nextentity.core.expression.QueryStructure.From.FromEntity;
+import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Attribute;
@@ -35,19 +33,23 @@ public abstract class QueryContext {
     protected final boolean expandReferencePath;
 
     public static QueryContext create(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
-        QueryStructure.Selected select = structure.select();
-        if (select instanceof QueryStructure.Selected.SelectEntity) {
-            Collection<? extends InternalPathExpression> fetch = ((QueryStructure.Selected.SelectEntity) select).fetch();
+        Selected select = structure.select();
+        if (select instanceof SelectEntity selectEntity) {
+            ImmutableList<PathNode> fetch = selectEntity.fetch();
             if (fetch != null && !fetch.isEmpty() && expandObjectAttribute) {
-                return new SelectEntityContext(structure, metamodel, fetch);
+                Collection<? extends Attribute> attributes = fetch
+                        .stream()
+                        .map(it -> it.getAttribute(metamodel.getEntity(((FromEntity) structure.from()).type())))
+                        .toList();
+                return new SelectEntityContext(structure, metamodel, attributes);
             } else {
                 return new SelectSimpleEntityContext(structure, metamodel, expandObjectAttribute);
             }
-        } else if (select instanceof QueryStructure.Selected.SelectProjection selectProjection) {
+        } else if (select instanceof SelectProjection selectProjection) {
             return new SelectProjectionContext(structure, metamodel, expandObjectAttribute, selectProjection);
-        } else if (select instanceof QueryStructure.Selected.SelectPrimitive selectPrimitive) {
+        } else if (select instanceof SelectExpression selectPrimitive) {
             return new SelectPrimitiveContext(structure, metamodel, expandObjectAttribute, selectPrimitive);
-        } else if (select instanceof QueryStructure.Selected.SelectArray selectArray) {
+        } else if (select instanceof SelectExpressions selectArray) {
             return new SelectArrayContext(structure, metamodel, expandObjectAttribute, selectArray);
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
@@ -58,19 +60,19 @@ public abstract class QueryContext {
         this.metamodel = metamodel;
         this.expandReferencePath = expandObjectAttribute;
         From from = structure.from();
-        this.entityType = from instanceof FromEntity ? metamodel.getEntity(from.type()) : null;
+        this.entityType = from instanceof FromEntity fromEntity ? metamodel.getEntity(fromEntity.type()) : null;
     }
 
     public QueryContext newContext(QueryStructure structure) {
         return create(structure, metamodel, expandReferencePath);
     }
 
-    public abstract ImmutableArray<Expression> getSelectedExpression();
+    public abstract ImmutableArray<SelectItem> getSelectedExpression();
 
-    protected SchemaAttributePaths newJoinPaths(Collection<? extends InternalPathExpression> fetch) {
+    protected SchemaAttributePaths newJoinPaths(Collection<? extends Attribute> fetch) {
         DefaultSchemaAttributePaths paths = new DefaultSchemaAttributePaths();
-        for (InternalPathExpression strings : fetch) {
-            paths.add(strings);
+        for (Attribute strings : fetch) {
+            paths.add(strings.path());
         }
         return paths;
     }
@@ -133,15 +135,13 @@ public abstract class QueryContext {
                     map.put(attribute.getter(), value);
                 }
             } else {
-                Class<?> type;
-                if (attribute instanceof EntityAttribute entityAttribute) {
-                    type = entityAttribute.valueConvertor().getDatabaseType();
-                } else if (attribute instanceof ProjectionAttribute projectionAttribute) {
-                    type = projectionAttribute.valueConvertor().getDatabaseType();
+                ValueConvertor<?, ?> convertor = null;
+                if (attribute instanceof DatabaseColumnAttribute entityAttribute) {
+                    convertor = entityAttribute.valueConvertor();
                 } else {
-                    type = attribute.type();
+                    convertor = IdentityValueConvertor.of();
                 }
-                Object value = arguments.next(type);
+                Object value = arguments.next(convertor);
                 map.put(attribute.getter(), value);
             }
         }
@@ -222,41 +222,40 @@ public abstract class QueryContext {
     }
 
     protected Object getSimpleAttributeValue(Arguments arguments, Attribute attribute) {
-        Class<?> type;
-        if (attribute instanceof EntityAttribute entityAttribute) {
-            type = entityAttribute.valueConvertor().getDatabaseType();
-        } else if (attribute instanceof ProjectionAttribute projectionAttribute) {
-            type = projectionAttribute.valueConvertor().getDatabaseType();
-        } else {
-            type = attribute.type();
+        ValueConvertor<?, ?> convertor = null;
+        if (attribute instanceof DatabaseColumnAttribute entityAttribute) {
+            convertor = entityAttribute.valueConvertor();
         }
-        return arguments.next(type);
+        if (convertor == null) {
+            convertor = IdentityValueConvertor.of();
+        }
+        return arguments.next(convertor);
     }
 
-    protected ImmutableArray<Expression> getSelectPrimitiveExpressions(EntityType entityType, Expression expression, SchemaAttributePaths schemaAttributePaths) {
-        if (expression instanceof InternalPathExpression path) {
+    protected ImmutableArray<SelectItem> getSelectPrimitiveExpressions(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
+        if (expression instanceof PathNode path) {
             Attribute attribute = entityType.getAttribute(path);
             return stream(attribute, schemaAttributePaths).collect(ImmutableList.collector());
         }
-        return ImmutableList.of(expression);
+        return ImmutableList.of((SelectItem) expression);
     }
 
-    protected Stream<Expression> stream(EntityType entityType, Expression expression, SchemaAttributePaths schemaAttributePaths) {
-        if (expression instanceof InternalPathExpression path) {
+    protected Stream<SelectItem> stream(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
+        if (expression instanceof PathNode path) {
             Attribute attribute = entityType.getAttribute(path);
             return stream(attribute, schemaAttributePaths);
         }
-        return Stream.of(expression);
+        return Stream.of((SelectItem) expression);
     }
 
-    protected ImmutableArray<Expression> getSelectSchemaExpressions(Schema schema, SchemaAttributePaths schemaAttributePaths) {
+    protected ImmutableArray<SelectItem> getSelectSchemaExpressions(Schema schema, SchemaAttributePaths schemaAttributePaths) {
         return schema.attributes().stream()
                 .flatMap(it -> stream(it, schemaAttributePaths))
                 .collect(ImmutableList.collector());
     }
 
-    protected Stream<Expression> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
-        if (attribute instanceof Expression expression) {
+    protected Stream<SelectItem> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
+        if (attribute instanceof EntityAttribute expression) {
             return Stream.of(expression);
         } else if (attribute instanceof ProjectionAttribute expression) {
             return Stream.of(expression.source());
@@ -273,14 +272,15 @@ public abstract class QueryContext {
     protected Object constructExpression(EntityType entityType, Arguments arguments, Object expression) {
         if (expression instanceof Schema) {
             return constructSchema((Schema) expression, arguments, SchemaAttributePaths.empty());
-        } else if (expression instanceof EntityAttribute attribute) {
-            ValueConvertor valueConvertor = attribute.valueConvertor();
-            Object value = arguments.next(valueConvertor.getDatabaseType());
-            return valueConvertor.toAttributeValue(value);
+        } else if (expression instanceof DatabaseColumnAttribute attribute) {
+            ValueConvertor<?, ?> valueConvertor = attribute.valueConvertor();
+            return arguments.next(valueConvertor);
         } else if (expression instanceof Expression e) {
-            return arguments.next(ExpressionTypeResolver.getExpressionType(e, entityType));
+            ExpressionNode node = ExpressionNodes.getNode(e);
+            Class<?> expressionType = ExpressionTypeResolver.getExpressionType(node, entityType);
+            return arguments.next(new IdentityValueConvertor(expressionType));
         } else {
-            return arguments.next(Object.class);
+            return arguments.next(IdentityValueConvertor.of());
         }
     }
 }

@@ -126,9 +126,9 @@ public interface ExpressionBuilder<T, U, B> {
 
         <V> PathOperator<T, V, B> get(Path<U, V> path);
 
-        StringOperator<T, B> get(Path.StringPath<U> path);
+        StringOperator<T, B> get(Path.StringRef<U> path);
 
-        <V extends Number> NumberOperator<T, V, B> get(Path.NumberPath<U, V> path);
+        <V extends Number> NumberOperator<T, V, B> get(Path.NumberRef<U, V> path);
 
     }
 
@@ -243,9 +243,9 @@ public interface ExpressionBuilder<T, U, B> {
 
         <R> PathOperator<T, R, Conjunction<T>> and(Path<T, R> path);
 
-        <R extends Number> NumberOperator<T, R, Conjunction<T>> and(Path.NumberPath<T, R> path);
+        <R extends Number> NumberOperator<T, R, Conjunction<T>> and(Path.NumberRef<T, R> path);
 
-        StringOperator<T, Conjunction<T>> and(Path.StringPath<T> path);
+        StringOperator<T, Conjunction<T>> and(Path.StringRef<T> path);
 
         Conjunction<T> and(TypedExpression<T, Boolean> expression);
 
@@ -261,9 +261,9 @@ public interface ExpressionBuilder<T, U, B> {
 
         <N> PathOperator<T, N, Disjunction<T>> or(Path<T, N> path);
 
-        <N extends Number> NumberOperator<T, N, Disjunction<T>> or(Path.NumberPath<T, N> path);
+        <N extends Number> NumberOperator<T, N, Disjunction<T>> or(Path.NumberRef<T, N> path);
 
-        StringOperator<T, ? extends Disjunction<T>> or(Path.StringPath<T> path);
+        StringOperator<T, ? extends Disjunction<T>> or(Path.StringRef<T> path);
 
         Disjunction<T> or(TypedExpression<T, Boolean> predicate);
 

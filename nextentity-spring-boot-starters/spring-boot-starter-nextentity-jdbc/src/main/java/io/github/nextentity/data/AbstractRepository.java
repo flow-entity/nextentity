@@ -8,6 +8,7 @@ import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
+import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
 
@@ -25,7 +26,7 @@ public abstract class AbstractRepository<ID extends Serializable, T> extends Rep
         Class<?> idType = type.resolveGeneric(0);
         EntityType entity = entitiesFactory.getMetamodel().getEntity(entityType);
         EntityAttribute id = entity.id();
-        Class<?> expected = id.type();
+        Class<?> expected = ClassUtils.resolvePrimitiveIfNecessary(id.type());
         if (expected != idType) {
             String msg = "id class defined in " + getClass() + " does not match," +
                          " expected id " + expected + ", actual id " + idType;

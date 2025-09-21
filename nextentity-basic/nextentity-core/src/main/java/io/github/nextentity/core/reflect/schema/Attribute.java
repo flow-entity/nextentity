@@ -3,6 +3,7 @@ package io.github.nextentity.core.reflect.schema;
 
 import io.github.nextentity.core.exception.BeanReflectiveException;
 import io.github.nextentity.core.reflect.ReflectUtil;
+import io.github.nextentity.core.util.ImmutableList;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -25,13 +26,12 @@ public non-sealed interface Attribute extends ReflectType {
 
     Schema declareBy();
 
+    ImmutableList<String> path();
+
     int ordinal();
 
     default int deep() {
-        if (!(declareBy() instanceof Attribute)) {
-            return 1;
-        }
-        return ((Attribute) declareBy()).deep() + 1;
+        return path().size();
     }
 
     default Object get(Object entity) {

@@ -67,6 +67,8 @@ public class User extends EnableOptimisticLock implements Cloneable {
     @ToString.Exclude
     private User testUser;
 
+    private transient Test test;
+
     public User() {
     }
 

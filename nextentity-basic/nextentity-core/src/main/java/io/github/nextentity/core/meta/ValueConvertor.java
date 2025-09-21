@@ -1,15 +1,13 @@
 package io.github.nextentity.core.meta;
 
-public interface ValueConvertor {
+public interface ValueConvertor<X, Y> {
 
-    Object toDatabaseValue(Object attributeValue);
+    Y convertToDatabaseColumn(X attributeValue);
 
-    Object toAttributeValue(Object databaseValue);
+    X convertToEntityAttribute(Y databaseValue);
 
-    void init(Class<?> propertyType, Class<?> databaseType);
-
-    Class<?> getAttributeType();
-
-    Class<?> getDatabaseType();
+    default Class<? extends Y> getDatabaseColumnType() {
+        return null;
+    }
 
 }

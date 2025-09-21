@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.reflect.ReflectUtil;
+import io.github.nextentity.core.meta.ValueConvertor;
 
 import java.math.BigDecimal;
 import java.sql.*;
@@ -61,22 +61,27 @@ public abstract class JdbcUtil {
 
     }
 
+    public static Object getValue(ResultSet resultSet, int column, ValueConvertor<?, ?> convertor) throws SQLException {
+        if (convertor != null) {
+            Object dbValue = getValue(resultSet, column, convertor.getDatabaseColumnType());
+            return convertor.convertToEntityAttribute(TypeCastUtil.unsafeCast(dbValue));
+        } else {
+            return getValue(resultSet, column, (Class<?>) null);
+        }
+    }
+
     public static Object getValue(ResultSet resultSet, int column, Class<?> targetType) throws SQLException {
         Object result = resultSet.getObject(column);
         if (result == null) {
             return null;
         }
-        if (!targetType.isInstance(result)) {
+        if (targetType != null && !targetType.isInstance(result)) {
             ResultSetGetter<?> getter = GETTER_MAPS.get(targetType);
-            if (getter == null) {
-                if (Enum.class.isAssignableFrom(targetType)) {
-                    result = ReflectUtil.getEnum(targetType, resultSet.getInt(column));
-                }
-            } else {
+            if (getter != null) {
                 result = getter.getValue(resultSet, column);
             }
         }
-        return TypeCastUtil.unsafeCast(result);
+        return result;
     }
 
     public static void setParameters(PreparedStatement pst, Iterable<?> args) throws SQLException {

@@ -137,8 +137,8 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
                     while (keys.next()) {
                         Object entity = iterator.next();
                         EntityAttribute idField = entityType.id();
-                        Object key = JdbcUtil.getValue(keys, 1, idField.type());
-                        idField.setByDatabaseValue(entity, key);
+                        Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
+                        idField.set(entity, key);
                     }
                 } catch (Exception e) {
                     log.warn("", e);

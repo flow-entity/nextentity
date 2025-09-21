@@ -1,31 +1,36 @@
 package io.github.nextentity.core.meta;
 
+import io.github.nextentity.core.reflect.schema.Attribute;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class EnumConvertor extends AbstractValueConvertor {
+public class EnumConvertor implements ValueConvertor<Object, Integer> {
 
-    private Object[] values;
+    private final Object[] values;
 
     @Override
-    public Object toDatabaseValue(Object attributeValue) {
+    public Integer convertToDatabaseColumn(Object attributeValue) {
         return attributeValue == null ? null : ((Enum<?>) attributeValue).ordinal();
     }
 
     @Override
-    public Object toAttributeValue(Object databaseValue) {
-        return databaseValue instanceof Integer index ? values[index] : databaseValue;
+    public Object convertToEntityAttribute(Integer databaseValue) {
+        return databaseValue == null ? null : values[databaseValue];
     }
 
-    @Override
-    public void init(Class<?> propertyType, Class<?> databaseType) {
+    public EnumConvertor(Attribute attribute) {
         try {
-            super.init(propertyType, databaseType);
-            Method method = propertyType.getDeclaredMethod("values");
+            Class<?> attributeType = attribute.type();
+            Method method = attributeType.getDeclaredMethod("values");
             this.values = (Object[]) method.invoke(null);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
     }
 
+    @Override
+    public Class<Integer> getDatabaseColumnType() {
+        return Integer.class;
+    }
 }

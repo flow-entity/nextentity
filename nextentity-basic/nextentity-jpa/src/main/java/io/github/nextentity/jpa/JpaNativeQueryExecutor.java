@@ -2,6 +2,7 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.QueryExecutor;
+import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
@@ -55,7 +56,7 @@ public class JpaNativeQueryExecutor implements QueryExecutor {
         }
         Object first = resultSet.get(0);
         int columnsCount = asArray(first).length;
-        ImmutableArray<Expression> expressions = context.getSelectedExpression();
+        ImmutableArray<SelectItem> expressions = context.getSelectedExpression();
         if (expressions.size() != columnsCount) {
             throw new IllegalStateException("column count error");
         }

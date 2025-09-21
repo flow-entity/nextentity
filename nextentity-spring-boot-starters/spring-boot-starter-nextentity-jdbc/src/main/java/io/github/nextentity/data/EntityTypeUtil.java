@@ -7,6 +7,7 @@ import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.config.DependencyDescriptor;
+import org.springframework.util.ClassUtils;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -54,6 +55,7 @@ public class EntityTypeUtil {
                                                                 Class<T> entityType) {
         Class<ID> idType = EntityTypeUtil.getIdType(descriptor);
         Class<?> expected = metamodel.getEntity(entityType).id().type();
+        expected = ClassUtils.resolvePrimitiveIfNecessary(expected);
         if (expected != idType) {
             String msg = descriptor.getResolvableType() + " " + descriptor
                          + " id type mismatch, expected: " + expected + ", actual: " + idType;

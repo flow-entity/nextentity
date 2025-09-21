@@ -4,10 +4,9 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.Path.BooleanPath;
-import io.github.nextentity.api.Path.NumberPath;
-import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.TypedExpression.*;
+import io.github.nextentity.api.Path.BooleanRef;
+import io.github.nextentity.api.Path.NumberRef;
+import io.github.nextentity.api.Path.StringRef;
 import io.github.nextentity.api.model.*;
 import org.jetbrains.annotations.NotNull;
 
@@ -76,22 +75,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <U> EntityPathExpression<T, U> get(Path<T, U> path) {
+    public <U> EntityPath<T, U> get(Path<T, U> path) {
         return target.get(path);
     }
 
     @Override
-    public BooleanPathExpression<T> get(BooleanPath<T> path) {
+    public BooleanPath<T> get(BooleanRef<T> path) {
         return target.get(path);
     }
 
     @Override
-    public StringPathExpression<T> get(StringPath<T> path) {
+    public StringPath<T> get(StringRef<T> path) {
         return target.get(path);
     }
 
     @Override
-    public <U extends Number> NumberPathExpression<T, U> get(NumberPath<T, U> path) {
+    public <U extends Number> NumberPath<T, U> get(NumberRef<T, U> path) {
         return target.get(path);
     }
 
@@ -101,22 +100,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <U> EntityPathExpression<T, U> entity(Path<T, U> path) {
+    public <U> EntityPath<T, U> entity(Path<T, U> path) {
         return target.entity(path);
     }
 
     @Override
-    public StringPathExpression<T> string(Path<T, String> path) {
+    public StringPath<T> string(Path<T, String> path) {
         return target.string(path);
     }
 
     @Override
-    public <U extends Number> NumberPathExpression<T, U> number(Path<T, U> path) {
+    public <U extends Number> NumberPath<T, U> number(Path<T, U> path) {
         return target.number(path);
     }
 
     @Override
-    public BooleanPathExpression<T> bool(Path<T, Boolean> path) {
+    public BooleanPath<T> bool(Path<T, Boolean> path) {
         return target.bool(path);
     }
 
@@ -401,12 +400,12 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberPath<T, N> path) {
+    public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberRef<T, N> path) {
         return target.where(path);
     }
 
     @Override
-    public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringPath<T> path) {
+    public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringRef<T> path) {
         return target.where(path);
     }
 
@@ -416,12 +415,12 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberPathExpression<T, N> path) {
+    public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberPath<T, N> path) {
         return target.where(path);
     }
 
     @Override
-    public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringPathExpression<T> path) {
+    public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringPath<T> path) {
         return target.where(path);
     }
 
@@ -686,22 +685,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <U> EntityPathExpression<T, U> entityPath(String fieldName) {
+    public <U> EntityPath<T, U> entityPath(String fieldName) {
         return target.entityPath(fieldName);
     }
 
     @Override
-    public StringPathExpression<T> stringPath(String fieldName) {
+    public StringPath<T> stringPath(String fieldName) {
         return target.stringPath(fieldName);
     }
 
     @Override
-    public <U extends Number> NumberPathExpression<T, U> numberPath(String fieldName) {
+    public <U extends Number> NumberPath<T, U> numberPath(String fieldName) {
         return target.numberPath(fieldName);
     }
 
     @Override
-    public BooleanPathExpression<T> booleanPath(String fieldName) {
+    public BooleanPath<T> booleanPath(String fieldName) {
         return target.booleanPath(fieldName);
     }
 }

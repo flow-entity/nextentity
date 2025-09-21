@@ -17,7 +17,11 @@ public non-sealed interface Schema extends ReflectType {
     default Attribute getAttribute(Iterable<String> fieldNames) {
         ReflectType schema = this;
         for (String fieldName : fieldNames) {
-            schema = ((Schema) schema).getAttribute(fieldName);
+            try {
+                schema = ((Schema) schema).getAttribute(fieldName);
+            } catch (ClassCastException e) {
+                throw e;
+            }
         }
         return (Attribute) schema;
     }

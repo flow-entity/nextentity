@@ -18,9 +18,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.RecordComponent;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 public abstract class AbstractMetamodel implements Metamodel {
 
@@ -141,16 +143,15 @@ public abstract class AbstractMetamodel implements Metamodel {
 
     protected abstract Field[] getSuperClassField(Class<?> baseClass, Class<?> superClass);
 
-    protected ValueConvertor databaseType(Attribute attribute) {
-        // TODO
-        ValueConvertor convertor;
-        if (attribute.type().isEnum()) {
-            convertor = new EnumConvertor();
+    protected ValueConvertor<?, ?> databaseType(Attribute attribute) {
+        Class<?> type = attribute.type();
+        if (type.isEnum()) {
+            return new EnumConvertor(attribute);
+        } else if (type == Instant.class) {
+            return InstantConvertor.of();
         } else {
-            convertor = new IdentityValueConvertor();
+            return new IdentityValueConvertor(type);
         }
-        convertor.init(attribute.type(), attribute.type());
-        return convertor;
     }
 
     protected EntityType createEntityType(Class<?> entityType) {
@@ -248,7 +249,7 @@ public abstract class AbstractMetamodel implements Metamodel {
         AtomicInteger ordinal = new AtomicInteger();
         List<Attribute> attributes = declaredFields.stream()
                 .map(field -> newAttribute(owner, field, map.remove(field.getName()), ordinal.getAndIncrement()))
-                .collect(ImmutableList.collector(declaredFields.size()));
+                .collect(Collectors.toList());
         map.values().stream()
                 .map(descriptor -> newAttribute(owner, null, descriptor, ordinal.getAndIncrement()))
                 .forEach(attributes::add);

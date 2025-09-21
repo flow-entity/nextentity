@@ -1,6 +1,5 @@
 package io.github.nextentity.api;
 
-import io.github.nextentity.api.TypedExpression.PathExpression;
 import io.github.nextentity.api.model.EntityRoot;
 
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ interface SelectFetchStep<T> extends SelectWhereStep<T, T> {
         EntityRoot<T> root = root();
         List<PathExpression<T, ?>> result = new ArrayList<>(paths.size());
         for (Path<T, ?> path : paths) {
-            TypedExpression.EntityPathExpression<T, ?> tEntityPathExpression = root.get(path);
+            EntityPath<T, ?> tEntityPathExpression = root.get(path);
             result.add(tEntityPathExpression);
         }
         List<PathExpression<T, ?>> list = Collections.unmodifiableList(result);

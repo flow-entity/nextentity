@@ -1,6 +1,6 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.expression.ExpressionNode;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -46,7 +46,7 @@ public class PostgresqlQuerySqlBuilder implements QuerySqlBuilder {
         }
 
         @Override
-        protected void appendPredicate(Expression node) {
+        protected void appendPredicate(ExpressionNode node) {
             appendExpression(node);
         }
 

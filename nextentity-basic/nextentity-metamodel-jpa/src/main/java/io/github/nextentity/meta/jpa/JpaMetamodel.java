@@ -1,9 +1,13 @@
 package io.github.nextentity.meta.jpa;
 
+import io.github.nextentity.core.exception.UncheckedReflectiveException;
 import io.github.nextentity.core.meta.AbstractMetamodel;
 import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.core.meta.ValueConvertor;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -13,6 +17,7 @@ import java.util.List;
 
 public class JpaMetamodel extends AbstractMetamodel {
     private static final JpaMetamodel JPA_METAMODEL = new JpaMetamodel();
+    private static final Logger log = LoggerFactory.getLogger(JpaMetamodel.class);
     private final List<Class<? extends Annotation>> JOIN_ANNOTATIONS =
             Arrays.asList(ManyToOne.class, OneToMany.class, ManyToMany.class, OneToOne.class);
 
@@ -21,6 +26,24 @@ public class JpaMetamodel extends AbstractMetamodel {
 
     public static Metamodel of() {
         return JPA_METAMODEL;
+    }
+
+    @Override
+    protected ValueConvertor<?, ?> databaseType(Attribute attribute) {
+        Convert convert = getAnnotation(attribute, Convert.class);
+        if (convert != null) {
+            Class<?> type = convert.converter();
+            if (type != void.class) {
+                try {
+                    AttributeConverter<?, ?> converter = (AttributeConverter<?, ?>) type.getConstructor().newInstance();
+                    return AttributeConverterWrapper.of(converter);
+                } catch (ReflectiveOperationException e) {
+                    log.error("create AttributeConverter error, attribute: {}", attribute);
+                    throw new UncheckedReflectiveException(e.getMessage(), e);
+                }
+            }
+        }
+        return super.databaseType(attribute);
     }
 
     @Override

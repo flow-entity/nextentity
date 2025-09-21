@@ -3,11 +3,8 @@ package io.github.nextentity.api;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.Path.NumberPath;
-import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
+import io.github.nextentity.api.Path.NumberRef;
+import io.github.nextentity.api.Path.StringRef;
 
 /**
  * @author HuangChengwei
@@ -20,14 +17,14 @@ interface RowsSelectWhereStep<T, U> extends SelectGroupByStep<T, U>, SelectWhere
 
     <N> PathOperator<T, N, RowsSelectWhereStep<T, U>> where(Path<T, N> path);
 
-    <N extends Number> NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberPath<T, N> path);
+    <N extends Number> NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberRef<T, N> path);
 
-    StringOperator<T, RowsSelectWhereStep<T, U>> where(StringPath<T> path);
+    StringOperator<T, RowsSelectWhereStep<T, U>> where(StringRef<T> path);
 
     <N> PathOperator<T, N, RowsSelectWhereStep<T, U>> where(PathExpression<T, N> path);
 
-    <N extends Number> NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberPathExpression<T, N> path);
+    <N extends Number> NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberPath<T, N> path);
 
-    StringOperator<T, RowsSelectWhereStep<T, U>> where(StringPathExpression<T> path);
+    StringOperator<T, RowsSelectWhereStep<T, U>> where(StringPath<T> path);
 
 }

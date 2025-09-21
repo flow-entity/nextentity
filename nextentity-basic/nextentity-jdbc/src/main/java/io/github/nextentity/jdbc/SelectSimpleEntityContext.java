@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.EntityType;
@@ -14,7 +15,7 @@ public class SelectSimpleEntityContext extends QueryContext {
     }
 
     @Override
-    public ImmutableArray<Expression> getSelectedExpression() {
+    public ImmutableArray<SelectItem> getSelectedExpression() {
         return TypeCastUtil.cast(entityType.getPrimitives());
     }
 

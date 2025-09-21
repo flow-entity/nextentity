@@ -1,5 +1,7 @@
 package io.github.nextentity.core.reflect.schema;
 
+import io.github.nextentity.core.util.ImmutableList;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
@@ -19,6 +21,7 @@ public class SimpleAttribute implements Attribute {
 
     private int ordinal;
 
+    private volatile ImmutableList<String> path;
 
     public SimpleAttribute() {
     }
@@ -65,6 +68,29 @@ public class SimpleAttribute implements Attribute {
 
     public Schema declareBy() {
         return this.declareBy;
+    }
+
+    @Override
+    public ImmutableList<String> path() {
+        if(path == null) {
+            synchronized (this) {
+                if(path == null) {
+                    Schema schema = declareBy();
+                    if (schema instanceof Attribute p) {
+                        ImmutableList<String> pp = p.path();
+                        String[] strings = new String[pp.size() + 1];
+                        for (int i = 0; i < pp.size(); i++) {
+                            strings[i] = pp.get(i);
+                        }
+                        strings[pp.size()] = name();
+                        path = ImmutableList.of(strings);
+                    } else {
+                        path = ImmutableList.of(name());
+                    }
+                }
+            }
+        }
+        return path;
     }
 
     public int ordinal() {

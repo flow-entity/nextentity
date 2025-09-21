@@ -1,13 +1,10 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Repository;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.OperatableExpression;
-import io.github.nextentity.api.Update;
+import io.github.nextentity.api.*;
+import io.github.nextentity.api.SimpleExpression;
 import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.core.expression.Expressions;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
+import io.github.nextentity.core.expression.SimpleExpressionImpl;
+import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.util.Iterators;
 import io.github.nextentity.core.util.Paths;
@@ -28,7 +25,7 @@ public class RepositoryImpl<ID extends Serializable, T> extends SelectImpl<T> im
     protected final EntityRoot<T> entityRoot = Paths.root();
     protected Update<T> update;
 
-    protected OperatableExpression<T, ID> idExpression;
+    protected SimpleExpression<T, ID> idExpression;
     protected Function<T, ID> getId;
 
     public RepositoryImpl() {
@@ -54,7 +51,7 @@ public class RepositoryImpl<ID extends Serializable, T> extends SelectImpl<T> im
         update = Updaters.create(entitiesFactory.getUpdateExecutor(), entityType);
         EntityAttribute idAttribute = entitiesFactory.getMetamodel().getEntity(entityType).id();
         getId = entity -> TypeCastUtil.unsafeCast(idAttribute.get(entity));
-        idExpression = Expressions.of(ExpressionImpls.column(idAttribute.name()));
+        idExpression = new SimpleExpressionImpl<>(new PathNode(idAttribute.name()));
     }
 
     public T get(ID id) {
@@ -73,59 +70,59 @@ public class RepositoryImpl<ID extends Serializable, T> extends SelectImpl<T> im
         return this.entityRoot.literal(value);
     }
 
-    public <U> TypedExpression.EntityPathExpression<T, U> get(Path<T, U> path) {
+    public <U> EntityPath<T, U> get(Path<T, U> path) {
         return this.entityRoot.get(path);
     }
 
-    public TypedExpression.BooleanPathExpression<T> get(Path.BooleanPath<T> path) {
+    public BooleanPath<T> get(Path.BooleanRef<T> path) {
         return this.entityRoot.get(path);
     }
 
-    public TypedExpression.StringPathExpression<T> get(Path.StringPath<T> path) {
+    public StringPath<T> get(Path.StringRef<T> path) {
         return this.entityRoot.get(path);
     }
 
-    public <U extends Number> TypedExpression.NumberPathExpression<T, U> get(Path.NumberPath<T, U> path) {
+    public <U extends Number> NumberPath<T, U> get(Path.NumberRef<T, U> path) {
         return this.entityRoot.get(path);
     }
 
-    public <U> TypedExpression.PathExpression<T, U> path(Path<T, U> path) {
+    public <U> PathExpression<T, U> path(Path<T, U> path) {
         return this.entityRoot.path(path);
     }
 
-    public <U> TypedExpression.EntityPathExpression<T, U> entity(Path<T, U> path) {
+    public <U> EntityPath<T, U> entity(Path<T, U> path) {
         return this.entityRoot.entity(path);
     }
 
-    public TypedExpression.StringPathExpression<T> string(Path<T, String> path) {
+    public StringPath<T> string(Path<T, String> path) {
         return this.entityRoot.string(path);
     }
 
-    public <U extends Number> TypedExpression.NumberPathExpression<T, U> number(Path<T, U> path) {
+    public <U extends Number> NumberPath<T, U> number(Path<T, U> path) {
         return this.entityRoot.number(path);
     }
 
-    public TypedExpression.BooleanPathExpression<T> bool(Path<T, Boolean> path) {
+    public BooleanPath<T> bool(Path<T, Boolean> path) {
         return this.entityRoot.bool(path);
     }
 
-    public <U> TypedExpression.PathExpression<T, U> path(String fieldName) {
+    public <U> PathExpression<T, U> path(String fieldName) {
         return this.entityRoot.path(fieldName);
     }
 
-    public <U> TypedExpression.EntityPathExpression<T, U> entityPath(String fieldName) {
+    public <U> EntityPath<T, U> entityPath(String fieldName) {
         return this.entityRoot.entityPath(fieldName);
     }
 
-    public TypedExpression.StringPathExpression<T> stringPath(String fieldName) {
+    public StringPath<T> stringPath(String fieldName) {
         return this.entityRoot.stringPath(fieldName);
     }
 
-    public <U extends Number> TypedExpression.NumberPathExpression<T, U> numberPath(String fieldName) {
+    public <U extends Number> NumberPath<T, U> numberPath(String fieldName) {
         return this.entityRoot.numberPath(fieldName);
     }
 
-    public TypedExpression.BooleanPathExpression<T> booleanPath(String fieldName) {
+    public BooleanPath<T> booleanPath(String fieldName) {
         return this.entityRoot.booleanPath(fieldName);
     }
 

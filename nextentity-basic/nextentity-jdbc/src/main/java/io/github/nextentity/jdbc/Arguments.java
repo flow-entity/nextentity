@@ -1,9 +1,11 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.meta.ValueConvertor;
+
 public interface Arguments {
 
-    Object get(int index, Class<?> type);
+    Object get(int index, ValueConvertor<?, ?> convertor);
 
-    Object next(Class<?> type);
+    Object next(ValueConvertor<?, ?> convertor);
 
 }

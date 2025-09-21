@@ -8,34 +8,34 @@ public interface Path<T, R> extends Serializable {
 
     R apply(T t);
 
-    interface NumberPath<T, R extends Number> extends Path<T, R> {
+    interface NumberRef<T, R extends Number> extends Path<T, R> {
     }
 
-    interface BooleanPath<T> extends Path<T, Boolean> {
+    interface BooleanRef<T> extends Path<T, Boolean> {
     }
 
-    interface StringPath<T> extends Path<T, String> {
+    interface StringRef<T> extends Path<T, String> {
     }
 
-    interface LongPath<T> extends NumberPath<T, Long> {
+    interface LongRef<T> extends NumberRef<T, Long> {
     }
 
-    interface IntegerPath<T> extends NumberPath<T, Integer> {
+    interface IntegerRef<T> extends NumberRef<T, Integer> {
     }
 
-    interface ShortPath<T> extends NumberPath<T, Short> {
+    interface ShortRef<T> extends NumberRef<T, Short> {
     }
 
-    interface BytePath<T> extends NumberPath<T, Byte> {
+    interface ByteRef<T> extends NumberRef<T, Byte> {
     }
 
-    interface DoublePath<T> extends NumberPath<T, Double> {
+    interface DoubleRef<T> extends NumberRef<T, Double> {
     }
 
-    interface FloatPath<T> extends NumberPath<T, Float> {
+    interface FloatRef<T> extends NumberRef<T, Float> {
     }
 
-    interface BigDecimalPath<T> extends NumberPath<T, BigDecimal> {
+    interface BigDecimalRef<T> extends NumberRef<T, BigDecimal> {
     }
 
 }

@@ -1,7 +1,7 @@
 package io.github.nextentity.test;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.TypedExpression.Predicate;
+import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Slice;
@@ -940,7 +940,12 @@ class QueryBuilderTest {
             List<User> users = checker.collector
                     .orderBy(User::getRandomNumber, User::getId).asc()
                     .getList();
-            assertEquals(users, sorted);
+            try {
+                assertEquals(users, sorted);
+            } catch (Throwable e) {
+                checker.ex.printStackTrace();
+                throw e;
+            }
 
             assertEquals(checker.collector
                     .orderBy(User::getRandomNumber, User::getId)
@@ -1701,6 +1706,7 @@ class QueryBuilderTest {
     }
 
     static class Checker<T, U extends Collector<T>> {
+        private final RuntimeException ex;
         List<T> expected;
 
         U collector;
@@ -1712,6 +1718,7 @@ class QueryBuilderTest {
         Checker(List<T> expected, U collector) {
             this.expected = expected;
             this.collector = collector;
+            this.ex = new RuntimeException();
         }
     }
 }

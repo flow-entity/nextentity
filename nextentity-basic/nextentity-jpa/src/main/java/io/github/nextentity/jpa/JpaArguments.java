@@ -1,5 +1,6 @@
 package io.github.nextentity.jpa;
 
+import io.github.nextentity.core.meta.ValueConvertor;
 import io.github.nextentity.jdbc.AbstractArguments;
 
 /**
@@ -14,7 +15,7 @@ public class JpaArguments extends AbstractArguments {
     }
 
     @Override
-    public Object get(int index, Class<?> type) {
+    public Object get(int index, ValueConvertor<?, ?> convertor) {
         return objects[index];
     }
 

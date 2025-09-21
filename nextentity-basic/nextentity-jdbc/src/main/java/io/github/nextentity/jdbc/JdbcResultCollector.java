@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.ResultCollector;
@@ -29,7 +30,7 @@ public class JdbcResultCollector implements ResultCollector {
             result = new ArrayList<>();
         }
         int columnsCount = resultSet.getMetaData().getColumnCount();
-        ImmutableArray<Expression> primitives = context.getSelectedExpression();
+        ImmutableArray<SelectItem> primitives = context.getSelectedExpression();
         if (primitives.size() != columnsCount) {
             throw new IllegalStateException();
         }

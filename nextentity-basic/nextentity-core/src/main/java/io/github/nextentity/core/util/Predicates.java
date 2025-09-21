@@ -1,10 +1,10 @@
 package io.github.nextentity.core.util;
 
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.Predicate;
-import io.github.nextentity.core.expression.Expressions;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
+import io.github.nextentity.api.Predicate;
+import io.github.nextentity.core.expression.ExpressionNodes;
+import io.github.nextentity.core.expression.OperatorNode;
+import io.github.nextentity.core.expression.PredicateImpl;
 
 import static io.github.nextentity.core.expression.Operator.NOT;
 
@@ -15,7 +15,7 @@ import static io.github.nextentity.core.expression.Operator.NOT;
 public interface Predicates {
 
     static <T> Predicate<T> of(TypedExpression<T, Boolean> predicate) {
-        return Expressions.ofBoolean(predicate);
+        return new PredicateImpl<>(ExpressionNodes.getNode(predicate));
     }
 
     @SafeVarargs
@@ -30,9 +30,9 @@ public interface Predicates {
         return of(predicate).or(predicates);
     }
 
-    static <T> Predicate<T> not(TypedExpression<T, Boolean> lt) {
-        Expression expression = ExpressionImpls.operate(lt, NOT);
-        return Expressions.ofBoolean(expression);
+    static <T> Predicate<T> not(TypedExpression<T, Boolean> predicate) {
+        OperatorNode node = new OperatorNode(ImmutableList.of(ExpressionNodes.getNode(predicate)), NOT);
+        return new PredicateImpl<>(node);
     }
 
 }

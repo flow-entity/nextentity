@@ -291,7 +291,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
             this.elements = EmptyArrays.OBJECT;
         }
 
-        public void add(Object o) {
+        public void add(E o) {
             ensureCapacity(size + 1);
             elements[size++] = o;
         }
@@ -326,6 +326,26 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
                 return;
             }
             ensureCapacity(size + c.size());
+            for (E e : c) {
+                elements[size++] = e;
+            }
+        }
+
+        public void addAll(ImmutableArray<? extends E> c) {
+            if (c.isEmpty()) {
+                return;
+            }
+            ensureCapacity(size + c.size());
+            for (E e : c) {
+                elements[size++] = e;
+            }
+        }
+
+        public void addAll(E[] c) {
+            if (c == null || c.length == 0) {
+                return;
+            }
+            ensureCapacity(size + c.length);
             for (E e : c) {
                 elements[size++] = e;
             }

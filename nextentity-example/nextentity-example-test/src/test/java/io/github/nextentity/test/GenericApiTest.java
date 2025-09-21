@@ -4,8 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import io.github.nextentity.api.ExpressionBuilder.Conjunction;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.Predicate;
+import io.github.nextentity.api.NumberPath;
+import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
@@ -42,7 +42,7 @@ public class GenericApiTest {
                 .where(User::getId).eq(10)
                 .getList();
 
-        NumberPathExpression<User, Integer> id = Paths.get(User::getId);
+        NumberPath<User, Integer> id = Paths.get(User::getId);
 
         log.info("{}", list.size());
         ImmutableList<Predicate<User>> predicates = ImmutableList.of(id.geIfNotNull(null), id.eqIfNotNull(null));

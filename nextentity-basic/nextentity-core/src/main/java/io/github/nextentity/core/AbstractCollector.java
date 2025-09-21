@@ -3,7 +3,7 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.Collector;
 import io.github.nextentity.api.SubQueryBuilder;
 import io.github.nextentity.api.model.*;
-import io.github.nextentity.core.expression.impl.ExpressionImpls.SliceImpl;
+import io.github.nextentity.core.expression.SliceImpl;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jetbrains.annotations.NotNull;
 

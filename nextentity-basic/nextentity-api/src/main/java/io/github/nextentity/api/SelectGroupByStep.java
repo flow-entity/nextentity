@@ -9,6 +9,9 @@ import java.util.List;
  */
 public
 interface SelectGroupByStep<T, U> extends SelectOrderByStep<T, U> {
+
+    SelectHavingStep<T, U> groupBy(TypedExpression<T, ?> expressions);
+
     SelectHavingStep<T, U> groupBy(List<? extends TypedExpression<T, ?>> expressions);
 
     SelectHavingStep<T, U> groupBy(Path<T, ?> path);
