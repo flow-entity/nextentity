@@ -7,6 +7,8 @@ import io.github.nextentity.example.eneity.User;
 import io.github.nextentity.example.projection.IUsernameGender;
 import io.github.nextentity.example.projection.UsernameGender;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,7 +21,7 @@ import java.util.Random;
  * @author HuangChengwei
  * @since 2024-03-19 14:01
  */
-@ActiveProfiles("sqlserver")
+//@ActiveProfiles("sqlserver")
 @SpringBootTest
 class UserServiceTest {
 
