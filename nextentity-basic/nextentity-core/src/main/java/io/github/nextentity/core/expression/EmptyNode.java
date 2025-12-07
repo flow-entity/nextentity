@@ -1,6 +1,5 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;

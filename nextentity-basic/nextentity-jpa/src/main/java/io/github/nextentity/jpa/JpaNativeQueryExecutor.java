@@ -1,6 +1,5 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;

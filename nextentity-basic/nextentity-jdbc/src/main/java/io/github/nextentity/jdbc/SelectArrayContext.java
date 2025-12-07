@@ -3,7 +3,6 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.expression.SelectExpression;
 import io.github.nextentity.core.expression.SelectExpressions;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;

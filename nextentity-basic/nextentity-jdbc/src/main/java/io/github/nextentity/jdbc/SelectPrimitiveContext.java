@@ -1,6 +1,5 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.QueryStructure;

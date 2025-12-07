@@ -1,6 +1,9 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.*;
+import io.github.nextentity.api.BooleanPath;
+import io.github.nextentity.api.ExpressionBuilder;
+import io.github.nextentity.api.Path;
+import io.github.nextentity.api.Predicate;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Function;

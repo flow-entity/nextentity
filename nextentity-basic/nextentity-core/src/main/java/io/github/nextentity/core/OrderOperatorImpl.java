@@ -1,8 +1,10 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.*;
+import io.github.nextentity.api.OrderOperator;
+import io.github.nextentity.api.Path;
+import io.github.nextentity.api.SelectOrderByStep;
+import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.SortExpression;
 import io.github.nextentity.core.util.ImmutableList;
@@ -11,7 +13,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
 
 public class OrderOperatorImpl<T, U> implements OrderOperator<T, U> {
     private final WhereImpl<T, U> builder;

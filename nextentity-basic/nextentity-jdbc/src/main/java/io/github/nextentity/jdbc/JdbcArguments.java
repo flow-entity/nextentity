@@ -1,6 +1,5 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.meta.ValueConvertor;
 
 import java.sql.ResultSet;

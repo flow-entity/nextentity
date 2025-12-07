@@ -1,10 +1,9 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.SimpleExpression;
 import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.core.expression.SimpleExpressionImpl;
 import io.github.nextentity.core.expression.PathNode;
+import io.github.nextentity.core.expression.SimpleExpressionImpl;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.util.Iterators;
 import io.github.nextentity.core.util.Paths;

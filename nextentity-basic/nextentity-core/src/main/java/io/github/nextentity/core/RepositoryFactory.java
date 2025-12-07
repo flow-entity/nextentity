@@ -50,11 +50,6 @@ public class RepositoryFactory implements QueryConfig {
         return queryExecutor;
     }
 
-    @Override
-    public QueryPostProcessor queryPostProcessor() {
-        return queryPostProcessor;
-    }
-
     public UpdateExecutor getUpdateExecutor() {
         return updateExecutor;
     }

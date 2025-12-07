@@ -1,6 +1,5 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.reflect.schema.SimpleAttribute;

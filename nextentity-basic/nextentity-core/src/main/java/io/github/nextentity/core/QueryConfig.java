@@ -12,6 +12,4 @@ public interface QueryConfig {
 
     QueryExecutor queryExecutor();
 
-    QueryPostProcessor queryPostProcessor();
-
 }

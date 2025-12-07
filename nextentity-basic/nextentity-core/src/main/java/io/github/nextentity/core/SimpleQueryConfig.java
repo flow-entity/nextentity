@@ -19,10 +19,6 @@ public class SimpleQueryConfig implements QueryConfig {
         return this.metamodel;
     }
 
-    public QueryPostProcessor queryPostProcessor() {
-        return this.queryPostProcessor;
-    }
-
     public SimpleQueryConfig queryExecutor(QueryExecutor queryExecutor) {
         this.queryExecutor = queryExecutor;
         return this;

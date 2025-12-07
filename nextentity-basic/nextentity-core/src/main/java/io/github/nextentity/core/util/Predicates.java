@@ -1,7 +1,7 @@
 package io.github.nextentity.core.util;
 
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.Predicate;
+import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.expression.ExpressionNodes;
 import io.github.nextentity.core.expression.OperatorNode;
 import io.github.nextentity.core.expression.PredicateImpl;

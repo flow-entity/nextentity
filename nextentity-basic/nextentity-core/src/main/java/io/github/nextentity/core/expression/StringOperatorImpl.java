@@ -1,7 +1,6 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.ExpressionBuilder;
-import io.github.nextentity.core.expression.Operator;
 
 import java.util.function.Function;
 
