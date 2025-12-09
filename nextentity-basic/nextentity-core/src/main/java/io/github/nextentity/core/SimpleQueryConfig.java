@@ -9,7 +9,6 @@ import io.github.nextentity.core.meta.Metamodel;
 public class SimpleQueryConfig implements QueryConfig {
     private QueryExecutor queryExecutor;
     private Metamodel metamodel;
-    private QueryPostProcessor queryPostProcessor = QueryPostProcessor.NONE;
 
     public QueryExecutor queryExecutor() {
         return this.queryExecutor;
@@ -26,11 +25,6 @@ public class SimpleQueryConfig implements QueryConfig {
 
     public SimpleQueryConfig metamodel(Metamodel metamodel) {
         this.metamodel = metamodel;
-        return this;
-    }
-
-    public SimpleQueryConfig queryPostProcessor(QueryPostProcessor queryPostProcessor) {
-        this.queryPostProcessor = queryPostProcessor;
         return this;
     }
 }

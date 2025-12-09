@@ -1,6 +1,5 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.QueryPostProcessor;
 import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.meta.Metamodel;
@@ -17,14 +16,7 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
-    @Autowired(required = false)
-    private QueryPostProcessor queryPostProcessor;
     private RepositoryFactory repositoryFactory;
-
-
-    protected QueryPostProcessor getQueryPostProcessor() {
-        return queryPostProcessor;
-    }
 
     protected Metamodel metamodel() {
         return JpaMetamodel.of();
@@ -43,9 +35,8 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
 
     protected RepositoryFactory jdbcEntitiesFactory(JdbcQueryExecutor queryExecutor,
                                                     UpdateExecutor updateExecutor,
-                                                    QueryPostProcessor queryPostProcessor,
                                                     Metamodel metamodel) {
-        return new RepositoryFactory(queryExecutor, updateExecutor, queryPostProcessor, metamodel);
+        return new RepositoryFactory(queryExecutor, updateExecutor, metamodel);
     }
 
     protected JdbcQueryExecutor.ResultCollector jdbcResultCollector() {
@@ -79,7 +70,7 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
                 connectionProvider
         );
         UpdateExecutor updateExecutor = jdbcUpdate(querySqlBuilder, connectionProvider, metamodel);
-        repositoryFactory = jdbcEntitiesFactory(executor, updateExecutor, getQueryPostProcessor(), metamodel);
+        repositoryFactory = jdbcEntitiesFactory(executor, updateExecutor, metamodel);
     }
 
     public JdbcTemplate getJdbcTemplate() {

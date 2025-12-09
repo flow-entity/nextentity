@@ -1,6 +1,5 @@
 package io.github.nextentity.data.jdbc;
 
-import io.github.nextentity.core.QueryPostProcessor;
 import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.converter.TypeConverter;
@@ -10,7 +9,6 @@ import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.QuerySqlBuilder;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.ResultCollector;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,10 +25,8 @@ public class NextEntityJdbcAutoConfiguration {
     @Bean(name = JDBC_REPOSITORY_FACTORY_BEAN_NAME)
     protected RepositoryFactory jdbcEntitiesFactory(JdbcQueryExecutor queryExecutor,
                                                     UpdateExecutor updateExecutor,
-                                                    @Autowired(required = false)
-                                                    QueryPostProcessor queryPostProcessor,
                                                     Metamodel metamodel) {
-        return new RepositoryFactory(queryExecutor, updateExecutor, queryPostProcessor, metamodel);
+        return new RepositoryFactory(queryExecutor, updateExecutor, metamodel);
     }
 
     @Bean

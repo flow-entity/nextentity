@@ -1,13 +1,15 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.*;
+import io.github.nextentity.core.QueryExecutor;
+import io.github.nextentity.core.RepositoryFactory;
+import io.github.nextentity.core.SimpleQueryConfig;
+import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.jpa.JpaUpdateExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
 
 public class JpaRepositoryFactoryConfiguration {
@@ -21,17 +23,13 @@ public class JpaRepositoryFactoryConfiguration {
         QueryExecutor jdbcQueryExecutor = jdbcRepositoryFactoryConfiguration.getRepositoryFactory().queryExecutor();
         Metamodel metamodel = metamodel();
         JpaQueryExecutor jpaQueryExecutor = jpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
-        UpdateExecutor updateExecutor = jpaUpdateExecutor(entityManager, jpaQueryExecutor, metamodel, getQueryPostProcessor());
-        repositoryFactory = new RepositoryFactory(jpaQueryExecutor, updateExecutor, getQueryPostProcessor(), metamodel);
+        UpdateExecutor updateExecutor = jpaUpdateExecutor(entityManager, jpaQueryExecutor, metamodel);
+        repositoryFactory = new RepositoryFactory(jpaQueryExecutor, updateExecutor, metamodel);
         this.jdbcRepositoryFactoryConfiguration = jdbcRepositoryFactoryConfiguration;
     }
 
     public JdbcRepositoryFactoryConfiguration jdbc() {
         return jdbcRepositoryFactoryConfiguration;
-    }
-
-    protected QueryPostProcessor getQueryPostProcessor() {
-        return null;
     }
 
     protected Metamodel metamodel() {
@@ -40,14 +38,11 @@ public class JpaRepositoryFactoryConfiguration {
 
     protected UpdateExecutor jpaUpdateExecutor(EntityManager entityManager,
                                                JpaQueryExecutor jpaQueryExecutor,
-                                               Metamodel metamodel,
-                                               @Autowired(required = false)
-                                               QueryPostProcessor postProcessor) {
+                                               Metamodel metamodel) {
 
         SimpleQueryConfig config = new SimpleQueryConfig()
                 .metamodel(metamodel)
-                .queryExecutor(jpaQueryExecutor)
-                .queryPostProcessor(postProcessor);
+                .queryExecutor(jpaQueryExecutor);
         return new JpaUpdateExecutor(entityManager, config);
     }
 

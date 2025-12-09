@@ -4,15 +4,15 @@ import jakarta.persistence.EntityManagerFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
-import org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration;
+import org.springframework.boot.jdbc.autoconfigure.JdbcTemplateAutoConfiguration;
+import org.springframework.boot.jpa.autoconfigure.JpaBaseConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 
 @Configuration
-@AutoConfigureAfter({JdbcTemplateAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
+@AutoConfigureAfter({JdbcTemplateAutoConfiguration.class, JpaBaseConfiguration.class})
 public class NextEntityAutoConfiguration {
 
     @Bean

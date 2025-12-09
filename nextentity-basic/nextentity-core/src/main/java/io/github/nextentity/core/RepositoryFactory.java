@@ -15,17 +15,14 @@ public class RepositoryFactory implements QueryConfig {
 
     private final QueryExecutor queryExecutor;
     private final UpdateExecutor updateExecutor;
-    private final QueryPostProcessor queryPostProcessor;
     private final Metamodel metamodel;
 
 
     public RepositoryFactory(QueryExecutor queryExecutor,
                              UpdateExecutor updateExecutor,
-                             QueryPostProcessor queryPostProcessor,
                              Metamodel metamodel) {
         this.queryExecutor = queryExecutor;
         this.updateExecutor = updateExecutor;
-        this.queryPostProcessor = queryPostProcessor;
         this.metamodel = metamodel;
     }
 
