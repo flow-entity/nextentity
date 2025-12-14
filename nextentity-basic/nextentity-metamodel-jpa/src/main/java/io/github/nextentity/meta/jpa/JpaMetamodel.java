@@ -82,6 +82,12 @@ public class JpaMetamodel extends AbstractMetamodel {
     }
 
     @Override
+    protected boolean isUpdatable(Attribute attribute) {
+        Column id = getAnnotation(attribute, Column.class);
+        return id == null || id.updatable();
+    }
+
+    @Override
     protected String getReferencedColumnName(Attribute attribute) {
         JoinColumn annotation = getAnnotation(attribute, JoinColumn.class);
         String referencedColumnName = null;

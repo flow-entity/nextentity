@@ -86,7 +86,7 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
         List<EntityAttribute> paramAttr = new ArrayList<>(columns.size() + 1);
         EntityAttribute version = entityType.version();
         for (EntityAttribute attribute : columns) {
-            if (entityType.id() == attribute) {
+            if (entityType.id() == attribute || !attribute.isUpdatable()) {
                 continue;
             }
             sql.append(delimiter);

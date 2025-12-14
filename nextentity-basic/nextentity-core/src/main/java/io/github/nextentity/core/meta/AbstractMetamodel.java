@@ -127,6 +127,8 @@ public abstract class AbstractMetamodel implements Metamodel {
 
     protected abstract boolean isMarkedId(Attribute attribute);
 
+    protected abstract boolean isUpdatable(Attribute attribute);
+
     protected abstract String getReferencedColumnName(Attribute attribute);
 
     protected abstract String getJoinColumnName(Attribute attribute);
@@ -195,6 +197,9 @@ public abstract class AbstractMetamodel implements Metamodel {
                 boolean isMarkedId = isMarkedId(attribute);
                 if (isMarkedId || "id".equals(attr.name())) {
                     attribute.setId(true);
+                    attribute.setUpdatable(false);
+                } else {
+                    attribute.setUpdatable(isUpdatable(attribute));
                 }
                 attributes.add(attribute);
             } else if (isAnyToOne(attr)) {

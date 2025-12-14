@@ -6,6 +6,8 @@ public interface DatabaseColumnAttribute extends Attribute {
 
     ValueConvertor<?, ?> valueConvertor();
 
+    boolean isUpdatable();
+
     default Class<?> getDatabaseColumnType() {
         Class<?> databaseType = valueConvertor().getDatabaseColumnType();
         if (databaseType == null) {

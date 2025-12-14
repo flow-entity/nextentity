@@ -14,4 +14,8 @@ public class SimpleProjectionAttribute extends SimpleAttribute implements Projec
         return sourceAttribute;
     }
 
+    @Override
+    public boolean isUpdatable() {
+        return sourceAttribute.isUpdatable();
+    }
 }

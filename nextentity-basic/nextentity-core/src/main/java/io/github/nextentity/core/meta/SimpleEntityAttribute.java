@@ -9,6 +9,7 @@ public class SimpleEntityAttribute extends SimpleAttribute implements EntityAttr
     private ValueConvertor<?, ?> valueConvertor;
     private boolean version;
     private boolean id;
+    private boolean updatable;
     private volatile PathNode pathNode;
 
     @Override
@@ -19,6 +20,15 @@ public class SimpleEntityAttribute extends SimpleAttribute implements EntityAttr
     @Override
     public ValueConvertor<?, ?> valueConvertor() {
         return valueConvertor;
+    }
+
+    @Override
+    public boolean isUpdatable() {
+        return updatable;
+    }
+
+    public void setUpdatable(boolean updatable) {
+        this.updatable = updatable;
     }
 
     @Override
