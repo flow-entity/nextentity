@@ -12,21 +12,21 @@ import java.util.List;
 public interface UpdateExecutor {
 
     default <T> T insert(@NotNull T entity, @NotNull Class<T> entityType) {
-        return insert(ImmutableList.of(entity), entityType).get(0);
+        return insertAll(ImmutableList.of(entity), entityType).get(0);
     }
 
-    <T> List<T> insert(@NotNull Iterable<T> entities, @NotNull Class<T> entityType);
+    <T> List<T> insertAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType);
 
-    <T> List<T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityType);
+    <T> List<T> updateAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType);
 
     default <T> T update(@NotNull T entity, Class<T> entityType) {
-        return update(ImmutableList.of(entity), entityType).get(0);
+        return updateAll(ImmutableList.of(entity), entityType).get(0);
     }
 
-    <T> void delete(@NotNull Iterable<T> entities, @NotNull Class<T> entityType);
+    <T> void deleteAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType);
 
     default <T> void delete(@NotNull T entity, @NotNull Class<T> entityType) {
-        delete(ImmutableList.of(entity), entityType);
+        deleteAll(ImmutableList.of(entity), entityType);
     }
 
     <T> T updateExcludeNullColumn(@NotNull T entity, @NotNull Class<T> entityType);

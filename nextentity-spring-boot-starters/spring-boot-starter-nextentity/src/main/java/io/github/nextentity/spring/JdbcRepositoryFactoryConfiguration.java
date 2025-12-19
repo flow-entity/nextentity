@@ -44,12 +44,7 @@ public class JdbcRepositoryFactoryConfiguration implements InitializingBean {
     }
 
     protected ConnectionProvider connectionProvider(JdbcTemplate jdbcTemplate) {
-        return new ConnectionProvider() {
-            @Override
-            public <T> T execute(ConnectionCallback<T> action) {
-                return jdbcTemplate.execute(action::doInConnection);
-            }
-        };
+        return new JdbcTemplateConnectionProvider(jdbcTemplate);
     }
 
     protected UpdateExecutor jdbcUpdate(JdbcUpdateSqlBuilder sqlBuilder,

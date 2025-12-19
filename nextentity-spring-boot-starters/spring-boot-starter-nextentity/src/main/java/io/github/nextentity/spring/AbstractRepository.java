@@ -21,7 +21,7 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
     protected final EntityRoot<T> root;
 
     protected AbstractRepository(RepositoryFactory repositoryFactory) {
-        ResolvableType type = ResolvableType.forClass(getClass()).as(AbstractJdbcRepository.class);
+        ResolvableType type = ResolvableType.forClass(getClass()).as(AbstractRepository.class);
         this.entityType = TypeCastUtil.cast(type.resolveGeneric(0));
         if (entityType == null) {
             throw new RuntimeException();

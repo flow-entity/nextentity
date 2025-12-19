@@ -30,7 +30,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> insert(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+    public <T> List<T> insertAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
         List<T> list = ImmutableList.ofIterable(entities);
         for (T entity : entities) {
             entityManager.persist(entity);
@@ -39,7 +39,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+    public <T> List<T> updateAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
         List<ExpressionNode> ids = new ArrayList<>();
         Set<Object> uniqueValues = new HashSet<>();
         int size = 0;
@@ -79,7 +79,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void delete(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+    public <T> void deleteAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
         for (T entity : entities) {
             entityManager.remove(entity);
         }
