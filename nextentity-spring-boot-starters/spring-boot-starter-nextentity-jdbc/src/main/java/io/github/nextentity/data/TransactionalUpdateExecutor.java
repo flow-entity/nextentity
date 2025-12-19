@@ -22,14 +22,14 @@ public class TransactionalUpdateExecutor implements UpdateExecutor {
 
     @Override
     @Transactional
-    public <T> List<T> insert(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
-        return target.insert(entities, entityType);
+    public <T> List<T> insertAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+        return target.insertAll(entities, entityType);
     }
 
     @Override
     @Transactional
-    public <T> List<T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
-        return target.update(entities, entityType);
+    public <T> List<T> updateAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+        return target.updateAll(entities, entityType);
     }
 
     @Override
@@ -40,8 +40,8 @@ public class TransactionalUpdateExecutor implements UpdateExecutor {
 
     @Override
     @Transactional
-    public <T> void delete(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
-        target.delete(entities, entityType);
+    public <T> void deleteAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+        target.deleteAll(entities, entityType);
     }
 
     @Override

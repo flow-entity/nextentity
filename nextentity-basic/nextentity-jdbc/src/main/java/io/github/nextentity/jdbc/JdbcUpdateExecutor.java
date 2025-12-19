@@ -33,7 +33,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> insert(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass) {
+    public <T> List<T> insertAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass) {
         List<@NotNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return list;
@@ -50,12 +50,12 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass) {
+    public <T> List<T> updateAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass) {
         boolean excludeNull = false;
-        return update(entities, entityClass, excludeNull);
+        return updateAll(entities, entityClass, excludeNull);
     }
 
-    protected <T> @NotNull List<@NotNull T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass, boolean excludeNull) {
+    protected <T> @NotNull List<@NotNull T> updateAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityClass, boolean excludeNull) {
         List<@NotNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return list;
@@ -90,7 +90,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void delete(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+    public <T> void deleteAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
         if (!entities.iterator().hasNext()) {
             return;
         }
@@ -108,7 +108,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     @Override
     public <T> T updateExcludeNullColumn(@NotNull T entity, @NotNull Class<T> entityClass) {
-        return update(Collections.singletonList(entity), entityClass, true).get(0);
+        return updateAll(Collections.singletonList(entity), entityClass, true).get(0);
     }
 
     protected static void setNewVersion(Object entity, EntityAttribute attribute) {

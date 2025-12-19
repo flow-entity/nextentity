@@ -31,12 +31,12 @@ public class Updaters {
 
         @Override
         public List<T> insert(@NotNull Iterable<T> entities) {
-            return updateExecutor.insert(entities, entityType);
+            return updateExecutor.insertAll(entities, entityType);
         }
 
         @Override
         public List<T> update(@NotNull Iterable<T> entities) {
-            return updateExecutor.update(entities, entityType);
+            return updateExecutor.updateAll(entities, entityType);
         }
 
         @Override
@@ -46,7 +46,7 @@ public class Updaters {
 
         @Override
         public void delete(@NotNull Iterable<T> entities) {
-            updateExecutor.delete(entities, entityType);
+            updateExecutor.deleteAll(entities, entityType);
         }
 
         @Override
