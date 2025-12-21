@@ -49,19 +49,19 @@ public interface DbConfigProvider {
 
         JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(manager, queryConfig);
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(updateSqlBuilder(), connectionProvider, metamodel);
-        RepositoryFactory jpa = new RepositoryFactory(jpaQueryExecutor, jpaUpdateExecutor, null, metamodel) {
+        RepositoryFactory jpa = new RepositoryFactory(jpaQueryExecutor, jpaUpdateExecutor, metamodel) {
             @Override
             public String toString() {
                 return name() + "-jpa";
             }
         };
-        RepositoryFactory jdbc = new RepositoryFactory(jdbcQueryExecutor, jdbcUpdateExecutor, null, metamodel) {
+        RepositoryFactory jdbc = new RepositoryFactory(jdbcQueryExecutor, jdbcUpdateExecutor, metamodel) {
             @Override
             public String toString() {
                 return name() + "-jdbc";
             }
         };
-        RepositoryFactory jpaNative = new RepositoryFactory(jpaNativeQueryExecutor, jpaUpdateExecutor, null, metamodel) {
+        RepositoryFactory jpaNative = new RepositoryFactory(jpaNativeQueryExecutor, jpaUpdateExecutor, metamodel) {
             @Override
             public String toString() {
                 return name() + "-jpa-native";

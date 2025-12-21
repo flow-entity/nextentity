@@ -73,7 +73,6 @@ public class Users {
         user.setInstant(new Timestamp(System.currentTimeMillis()));
         user.setTestLong(random.nextLong());
         user.setTestInteger(random.nextInt(100));
-        user.setNotUpdatable(random.nextInt(100));
         user.setTestLocalDate(LocalDate.now());
         user.setTestLocalDateTime(new Date().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime());
         return user;

@@ -270,13 +270,17 @@ public abstract class QueryContext {
     }
 
     protected Object constructExpression(EntityType entityType, Arguments arguments, Object expression) {
+        if (expression instanceof PathNode path) {
+            expression = entityType.getAttribute(path);
+        } else if (expression instanceof Expression e) {
+            expression = ExpressionNodes.getNode(e);
+        }
         if (expression instanceof Schema) {
             return constructSchema((Schema) expression, arguments, SchemaAttributePaths.empty());
         } else if (expression instanceof DatabaseColumnAttribute attribute) {
             ValueConvertor<?, ?> valueConvertor = attribute.valueConvertor();
             return arguments.next(valueConvertor);
-        } else if (expression instanceof Expression e) {
-            ExpressionNode node = ExpressionNodes.getNode(e);
+        } else if (expression instanceof ExpressionNode node) {
             Class<?> expressionType = ExpressionTypeResolver.getExpressionType(node, entityType);
             return arguments.next(new IdentityValueConvertor(expressionType));
         } else {
