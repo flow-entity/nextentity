@@ -450,22 +450,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Collection<Path<T, Comparable<?>>> paths) {
+    public OrderOperator<T, T> orderBy(Collection<Path<T,? extends Comparable<?>>> paths) {
         return target.orderBy(paths);
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Path<T, Comparable<?>> path) {
+    public OrderOperator<T, T> orderBy(Path<T,? extends Comparable<?>> path) {
         return target.orderBy(path);
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2) {
+    public OrderOperator<T, T> orderBy(Path<T,? extends Comparable<?>> p1, Path<T,? extends Comparable<?>> p2) {
         return target.orderBy(p1, p2);
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2, Path<T, Comparable<?>> p3) {
+    public OrderOperator<T, T> orderBy(Path<T,? extends Comparable<?>> p1, Path<T,? extends Comparable<?>> p2, Path<T,? extends Comparable<?>> p3) {
         return target.orderBy(p1, p2, p3);
     }
 

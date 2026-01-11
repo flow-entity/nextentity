@@ -23,7 +23,7 @@ interface OrderOperator<T, U> extends SelectOrderByStep<T, U> {
     SelectOrderByStep<T, U> sort(SortOrder order);
 
     @Override
-    default OrderOperator<T, U> orderBy(Collection<Path<T, Comparable<?>>> paths) {
+    default OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths) {
         return asc().orderBy(paths);
     }
 

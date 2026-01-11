@@ -30,17 +30,17 @@ interface SelectOrderByStep<T, U> extends Collector<U>, EntityRootProvider<T> {
         return orderBy(List.of(order1, order2, order3));
     }
 
-    OrderOperator<T, U> orderBy(Collection<Path<T, Comparable<?>>> paths);
+    OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths);
 
-    default OrderOperator<T, U> orderBy(Path<T, Comparable<?>> path) {
+    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> path) {
         return orderBy(List.of(path));
     }
 
-    default OrderOperator<T, U> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2) {
+    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> p1, Path<T, ? extends Comparable<?>> p2) {
         return orderBy(List.of(p1, p2));
     }
 
-    default OrderOperator<T, U> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2, Path<T, Comparable<?>> p3) {
+    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> p1, Path<T, ? extends Comparable<?>> p2, Path<T, ? extends Comparable<?>> p3) {
         return orderBy(List.of(p1, p2, p3));
     }
 
