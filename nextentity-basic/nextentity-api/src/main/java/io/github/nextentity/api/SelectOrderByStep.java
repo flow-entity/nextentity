@@ -75,7 +75,7 @@ interface SelectOrderByStep<T, U> extends Collector<U>, EntityRootProvider<T> {
      * @param paths 路径集合
      * @return OrderOperator实例
      */
-    OrderOperator<T, U> orderBy(Collection<Path<T, Comparable<?>>> paths);
+    OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths);
 
     /**
      * 按照单个路径进行排序。
@@ -83,7 +83,7 @@ interface SelectOrderByStep<T, U> extends Collector<U>, EntityRootProvider<T> {
      * @param path 路径
      * @return OrderOperator实例
      */
-    default OrderOperator<T, U> orderBy(Path<T, Comparable<?>> path) {
+    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> path) {
         return orderBy(List.of(path));
     }
 
@@ -94,7 +94,7 @@ interface SelectOrderByStep<T, U> extends Collector<U>, EntityRootProvider<T> {
      * @param p2 第二个路径
      * @return OrderOperator实例
      */
-    default OrderOperator<T, U> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2) {
+    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> p1, Path<T, ? extends Comparable<?>> p2) {
         return orderBy(List.of(p1, p2));
     }
 
@@ -106,7 +106,7 @@ interface SelectOrderByStep<T, U> extends Collector<U>, EntityRootProvider<T> {
      * @param p3 第三个路径
      * @return OrderOperator实例
      */
-    default OrderOperator<T, U> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2, Path<T, Comparable<?>> p3) {
+    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> p1, Path<T, ? extends Comparable<?>> p2, Path<T, ? extends Comparable<?>> p3) {
         return orderBy(List.of(p1, p2, p3));
     }
 

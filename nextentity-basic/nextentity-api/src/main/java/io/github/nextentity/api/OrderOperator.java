@@ -51,7 +51,7 @@ interface OrderOperator<T, U> extends SelectOrderByStep<T, U> {
      * @return OrderOperator实例
      */
     @Override
-    default OrderOperator<T, U> orderBy(Collection<Path<T, Comparable<?>>> paths) {
+    default OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths) {
         return asc().orderBy(paths);
     }
 

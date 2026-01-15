@@ -119,7 +119,7 @@ public class WhereImpl<T, U> implements RowsSelectWhereStep<T, U>, SelectHavingS
     }
 
     @Override
-    public OrderOperator<T, U> orderBy(Collection<Path<T, Comparable<?>>> paths) {
+    public OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths) {
         ImmutableList<ExpressionNode> add = PathNode.mapping(paths);
         return new OrderOperatorImpl<>(this, add);
     }
