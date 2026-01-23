@@ -23,7 +23,7 @@
         <maven.compiler.encoding>UTF-8</maven.compiler.encoding>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <lombok.version>1.18.30</lombok.version>
+        <lombok.version>1.18.42</lombok.version>
         <mysql.version>8.2.0</mysql.version>
         <logback.version>1.4.12</logback.version>
         <slf4j.version>2.0.1</slf4j.version>
