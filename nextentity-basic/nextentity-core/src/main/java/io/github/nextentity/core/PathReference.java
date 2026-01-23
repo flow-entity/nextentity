@@ -24,7 +24,7 @@ public class PathReference {
         this.fieldName = getFieldName(serializedLambda.getImplMethodName());
         MethodType methodType = MethodType.fromMethodDescriptorString(
                 serializedLambda.getInstantiatedMethodType(),
-                Thread.currentThread().getContextClassLoader());
+                getClass().getClassLoader());
         returnType = methodType.returnType();
         entityType = methodType.parameterType(0);
     }
