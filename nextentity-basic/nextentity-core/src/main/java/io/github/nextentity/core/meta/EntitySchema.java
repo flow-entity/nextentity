@@ -1,38 +1,25 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.InstanceFactory;
-import io.github.nextentity.core.reflect.schema.ObjectSchema;
+import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.reflect.schema.Attributes;
 import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.ImmutableArray;
 
-import java.util.Collection;
-import java.util.List;
+public interface EntitySchema extends Schema {
 
-public interface EntitySchema extends ObjectSchema {
-
-    BasicAttribute id();
+    EntityAttribute id();
 
     String tableName();
 
-    BasicAttribute getAttribute(String fieldName);
-
     @Override
-    default List<? extends BasicAttribute> primitiveAttributes() {
-        Collection<? extends BasicAttribute> attributes = attributes();
-        return attributes.stream()
-                .filter(Schema::isPrimitive)
-                .collect(ImmutableList.collector(attributes.size()));
+    default ImmutableArray<? extends EntityAttribute> getPrimitives() {
+        ImmutableArray<? extends Attribute> attributes = Schema.super.getPrimitives();
+        return TypeCastUtil.cast(attributes);
     }
 
-    default BasicAttribute getAttribute(Iterable<String> fieldNames) {
-        Schema attr = ObjectSchema.super.getAttribute(fieldNames);
-        return (BasicAttribute) attr;
-    }
-
-    BasicAttribute version();
-
-    InstanceFactory.ObjectFactory getInstanceFactory();
+    EntityAttribute version();
 
     @Override
-    Collection<? extends BasicAttribute> attributes();
+    Attributes attributes();
 }

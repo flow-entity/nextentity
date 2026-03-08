@@ -1,12 +1,7 @@
 package io.github.nextentity.test.entity;
 
 import io.github.nextentity.core.util.Exceptions;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ForeignKey;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -19,7 +14,7 @@ import java.util.Objects;
 
 import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
-@Entity
+@Entity(name = "\"user\"")
 @ToString
 @Getter
 @Setter
@@ -66,6 +61,8 @@ public class User extends EnableOptimisticLock implements Cloneable {
     @JoinColumn(name = "testInteger", updatable = false, insertable = false, foreignKey = @ForeignKey(NO_CONSTRAINT))
     @ToString.Exclude
     private User testUser;
+
+    private transient Test test;
 
     public User() {
     }

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public class DbProvider implements ArgumentsProvider {
     @Override
     public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
-        return Stream.of(Arguments.of(DbConfigs.MYSQL), Arguments.of(DbConfigs.SQLSERVER));
+        return DbConfigs.CONFIGS.stream()
+                .map(Arguments::of);
     }
 }

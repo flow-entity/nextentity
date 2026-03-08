@@ -2,90 +2,289 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
-import io.github.nextentity.core.expression.EntityPath;
-import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.expression.QueryStructure.From;
-import io.github.nextentity.core.expression.QueryStructure.From.FromEntity;
-import io.github.nextentity.core.expression.QueryStructure.Selected;
-import io.github.nextentity.core.expression.QueryStructure.Selected.SelectEntity;
-import io.github.nextentity.core.expression.QueryStructure.Selected.SelectProjection;
-import io.github.nextentity.core.meta.AssociationAttribute;
-import io.github.nextentity.core.meta.BasicAttribute;
-import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.reflect.Arguments;
-import io.github.nextentity.core.reflect.InstanceFactories;
-import io.github.nextentity.core.reflect.schema.InstanceFactory;
+import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.expression.*;
+import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.reflect.ReflectUtil;
+import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.reflect.schema.Attributes;
+import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
-import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.RecordComponent;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Stream;
 
 /**
  * @author HuangChengwei
  * @since 2024/4/20 下午12:03
  */
-@Data
-public class QueryContext {
+public abstract class QueryContext {
 
     protected final QueryStructure structure;
     protected final Metamodel metamodel;
     protected final EntityType entityType;
     protected final boolean expandReferencePath;
-    protected final InstanceFactory constructor;
 
-    public QueryContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
-        this.structure = structure;
-        this.metamodel = metamodel;
-        this.expandReferencePath = expandObjectAttribute;
-        From from = structure.from();
-        this.entityType = from instanceof FromEntity ? metamodel.getEntity(from.type()) : null;
-        this.constructor = getSelectedConstruct();
-    }
-
-    private @NotNull InstanceFactory getSelectedConstruct() {
+    public static QueryContext create(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
         Selected select = structure.select();
-        if (select instanceof SelectEntity) {
-            Collection<? extends EntityPath> fetch = ((SelectEntity) select).fetch();
-            if (fetch == null || fetch.isEmpty() || !expandReferencePath) {
-                return entityType.getInstanceFactory();
+        if (select instanceof SelectEntity selectEntity) {
+            ImmutableList<PathNode> fetch = selectEntity.fetch();
+            if (fetch != null && !fetch.isEmpty() && expandObjectAttribute) {
+                Collection<? extends Attribute> attributes = fetch
+                        .stream()
+                        .map(it -> it.getAttribute(metamodel.getEntity(((FromEntity) structure.from()).type())))
+                        .toList();
+                return new SelectEntityContext(structure, metamodel, attributes);
             } else {
-                return InstanceFactories.fetch(entityType, fetch);
+                return new SelectSimpleEntityContext(structure, metamodel, expandObjectAttribute);
             }
-        } else if (select instanceof SelectProjection) {
-            return entityType.getProjection(select.type()).getInstanceFactory();
-        } else if (select instanceof Selected.SelectPrimitive selectPrimitive) {
-            return newPrimitiveFactory(selectPrimitive);
-        } else if (select instanceof Selected.SelectArray selectArray) {
-            ImmutableList<InstanceFactory> factories = selectArray.items().stream()
-                    .map(this::newPrimitiveFactory)
-                    .collect(ImmutableList.collector(selectArray.items().size()));
-            return new InstanceFactories.ArrayFactoryImpl(factories);
+        } else if (select instanceof SelectProjection selectProjection) {
+            return new SelectProjectionContext(structure, metamodel, expandObjectAttribute, selectProjection);
+        } else if (select instanceof SelectExpression selectPrimitive) {
+            return new SelectPrimitiveContext(structure, metamodel, expandObjectAttribute, selectPrimitive);
+        } else if (select instanceof SelectExpressions selectArray) {
+            return new SelectArrayContext(structure, metamodel, expandObjectAttribute, selectArray);
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
     }
 
-    private InstanceFactory newPrimitiveFactory(Selected.SelectPrimitive select) {
-        Expression expression = select.expression();
-        if (expression instanceof EntityPath entityPath) {
-            BasicAttribute attribute = entityType.getAttribute(entityPath);
-            if (expandReferencePath && attribute.isObject()) {
-                return ((AssociationAttribute) attribute).getInstanceFactory();
-            } else {
-                return new InstanceFactories.AttributeFactoryImpl(attribute);
-            }
-        }
-        return new InstanceFactories.PrimitiveFactoryImpl(
-                expression, ExpressionTypeResolver.getExpressionType(expression, entityType));
+    protected QueryContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
+        this.structure = structure;
+        this.metamodel = metamodel;
+        this.expandReferencePath = expandObjectAttribute;
+        From from = structure.from();
+        this.entityType = from instanceof FromEntity fromEntity ? metamodel.getEntity(fromEntity.type()) : null;
     }
 
     public QueryContext newContext(QueryStructure structure) {
-        return new QueryContext(structure, metamodel, expandReferencePath);
+        return create(structure, metamodel, expandReferencePath);
     }
 
-    public Object construct(Arguments arguments) {
-        return constructor.getInstance(arguments.iterator());
+    public abstract ImmutableArray<SelectItem> getSelectedExpression();
+
+    protected SchemaAttributePaths newJoinPaths(Collection<? extends Attribute> fetch) {
+        DefaultSchemaAttributePaths paths = new DefaultSchemaAttributePaths();
+        for (Attribute strings : fetch) {
+            paths.add(strings.path());
+        }
+        return paths;
     }
 
+    public abstract Object construct(Arguments arguments);
+
+    public QueryStructure getStructure() {
+        return this.structure;
+    }
+
+    public Metamodel getMetamodel() {
+        return this.metamodel;
+    }
+
+    public EntityType getEntityType() {
+        return this.entityType;
+    }
+
+
+    protected Object constructSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        if (schema.type().isInterface()) {
+            return constructInterfaceSchema(schema, arguments, schemaAttributes);
+        } else if (schema.type().isRecord()) {
+            return constructRecordSchema(schema, arguments, schemaAttributes);
+        } else {
+            return constructSimpleSchema(schema, arguments, schemaAttributes);
+        }
+    }
+
+    protected Object constructRecordSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        Object[] objects = getAttributeValues(schema, arguments, schemaAttributes);
+        if (objects == null) {
+            return null;
+        }
+        RecordComponent[] components = schema.type().getRecordComponents();
+        Class<?>[] parameterTypes = new Class[components.length];
+        for (int i = 0; i < components.length; i++) {
+            parameterTypes[i] = components[i].getType();
+        }
+        Object[] args = new Object[components.length];
+        Attributes attributes = schema.attributes();
+        int i = 0;
+        for (Attribute attribute : attributes) {
+            args[attribute.ordinal()] = objects[i++];
+        }
+        try {
+            return schema.type().getConstructor(parameterTypes).newInstance(args);
+        } catch (ReflectiveOperationException e) {
+            throw new BeanReflectiveException(e);
+        }
+    }
+
+    protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        Map<Method, Object> map = new HashMap<>();
+        for (Attribute attribute : rootSchema.attributes()) {
+            if (attribute instanceof Schema schema) {
+                SchemaAttributePaths schemaAttributePaths = schemaAttributes.get(attribute.name());
+                if (schemaAttributePaths != null) {
+                    Object value = constructSchema(schema, arguments, schemaAttributePaths);
+                    map.put(attribute.getter(), value);
+                }
+            } else {
+                ValueConvertor<?, ?> convertor = null;
+                if (attribute instanceof DatabaseColumnAttribute entityAttribute) {
+                    convertor = entityAttribute.valueConvertor();
+                } else {
+                    convertor = IdentityValueConvertor.of();
+                }
+                Object value = arguments.next(convertor);
+                map.put(attribute.getter(), value);
+            }
+        }
+        if (map.isEmpty()) {
+            return null;
+        }
+        return ReflectUtil.newProxyInstance(rootSchema.type(), map);
+    }
+
+    protected Object constructSimpleSchema(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        try {
+            Attributes attributes = entityType.attributes();
+            Object instance = null;
+            for (Attribute attribute : attributes) {
+                Object value = constructAttribute(attribute, arguments, schemaAttributes);
+                if (value != null) {
+                    if (instance == null) {
+                        instance = entityType.type().getConstructor().newInstance();
+                    }
+                    attribute.set(instance, value);
+                }
+            }
+            return instance;
+        } catch (ReflectiveOperationException e) {
+            throw new BeanReflectiveException(e);
+        }
+    }
+
+    private @Nullable Object constructAttribute(Attribute attribute, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        Object value = null;
+        if (attribute instanceof Schema schema) {
+            SchemaAttributePaths schemaAttributePaths = schemaAttributes.get(attribute.name());
+            if (schemaAttributePaths != null) {
+                value = constructSchema(schema, arguments, schemaAttributePaths);
+            }
+        } else {
+            value = getSimpleAttributeValue(arguments, attribute);
+        }
+        return value;
+    }
+
+    protected Object @Nullable [] getAttributeValues(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        Attributes attributes = entityType.attributes();
+        int attributeSize = attributes.size();
+        Object[] objects = null;
+        for (int i = 0; i < attributeSize; i++) {
+            Attribute attribute = attributes.get(i);
+            Object value = constructAttribute(attribute, arguments, schemaAttributes);
+            if (value != null) {
+                if (objects == null) {
+                    objects = new Object[attributeSize];
+                }
+                objects[i] = value;
+            }
+        }
+        return objects;
+    }
+
+    protected Object constructSimpleSchema(Schema entityType, Arguments arguments) {
+        try {
+            ImmutableArray<Attribute> attributes = entityType.attributes().getPrimitives();
+            int attributeSize = attributes.size();
+            Object result = null;
+            for (int i = 0; i < attributeSize; i++) {
+                Attribute attribute = attributes.get(i);
+                Object value = getSimpleAttributeValue(arguments, attribute);
+                if (value != null) {
+                    if (result == null) {
+                        result = entityType.type().getConstructor().newInstance();
+                    }
+                    attribute.set(result, value);
+                }
+            }
+            return result;
+        } catch (ReflectiveOperationException e) {
+            throw new BeanReflectiveException(e);
+        }
+    }
+
+    protected Object getSimpleAttributeValue(Arguments arguments, Attribute attribute) {
+        ValueConvertor<?, ?> convertor = null;
+        if (attribute instanceof DatabaseColumnAttribute entityAttribute) {
+            convertor = entityAttribute.valueConvertor();
+        }
+        if (convertor == null) {
+            convertor = IdentityValueConvertor.of();
+        }
+        return arguments.next(convertor);
+    }
+
+    protected ImmutableArray<SelectItem> getSelectPrimitiveExpressions(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
+        if (expression instanceof PathNode path) {
+            Attribute attribute = entityType.getAttribute(path);
+            return stream(attribute, schemaAttributePaths).collect(ImmutableList.collector());
+        }
+        return ImmutableList.of((SelectItem) expression);
+    }
+
+    protected Stream<SelectItem> stream(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
+        if (expression instanceof PathNode path) {
+            Attribute attribute = entityType.getAttribute(path);
+            return stream(attribute, schemaAttributePaths);
+        }
+        return Stream.of((SelectItem) expression);
+    }
+
+    protected ImmutableArray<SelectItem> getSelectSchemaExpressions(Schema schema, SchemaAttributePaths schemaAttributePaths) {
+        return schema.attributes().stream()
+                .flatMap(it -> stream(it, schemaAttributePaths))
+                .collect(ImmutableList.collector());
+    }
+
+    protected Stream<SelectItem> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
+        if (attribute instanceof EntityAttribute expression) {
+            return Stream.of(expression);
+        } else if (attribute instanceof ProjectionAttribute expression) {
+            return Stream.of(expression.source());
+        } else if (attribute instanceof Schema schema) {
+            SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());
+            if (sub != null) {
+                return schema.attributes().stream()
+                        .flatMap(subAttr -> stream(subAttr, sub));
+            }
+        }
+        return Stream.empty();
+    }
+
+    protected Object constructExpression(EntityType entityType, Arguments arguments, Object expression) {
+        if (expression instanceof PathNode path) {
+            expression = entityType.getAttribute(path);
+        } else if (expression instanceof Expression e) {
+            expression = ExpressionNodes.getNode(e);
+        }
+        if (expression instanceof Schema) {
+            return constructSchema((Schema) expression, arguments, SchemaAttributePaths.empty());
+        } else if (expression instanceof DatabaseColumnAttribute attribute) {
+            ValueConvertor<?, ?> valueConvertor = attribute.valueConvertor();
+            return arguments.next(valueConvertor);
+        } else if (expression instanceof ExpressionNode node) {
+            Class<?> expressionType = ExpressionTypeResolver.getExpressionType(node, entityType);
+            return arguments.next(new IdentityValueConvertor(expressionType));
+        } else {
+            return arguments.next(IdentityValueConvertor.of());
+        }
+    }
 }

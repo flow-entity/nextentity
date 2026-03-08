@@ -8,21 +8,17 @@ import io.github.nextentity.test.db.Transaction;
 import io.github.nextentity.test.db.UserRepository;
 import io.github.nextentity.test.entity.AutoGenId;
 import io.github.nextentity.test.entity.User;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 
+@Slf4j
 public class UpdateTest {
 
     Select<User> query(UserRepository updater) {
@@ -122,8 +118,8 @@ public class UpdateTest {
             jdbc.insert(entity);
             user = ((Select<User>) jdbc).where(User::getId).eq(10000006).getSingle();
             assertEquals(entity, user);
-            System.out.println(entity.getInstant());
-            System.out.println(user.getInstant());
+            log.info("{}", entity.getInstant());
+            log.info("{}", user.getInstant());
         });
 
         userUpdater.doInTransaction(() -> {
@@ -136,8 +132,8 @@ public class UpdateTest {
             jpa.insert(entity);
             user = ((Select<User>) jpa).where(User::getId).eq(10000007).getSingle();
             assertEquals(entity, user);
-            System.out.println(entity.getInstant());
-            System.out.println(user.getInstant());
+            log.info("{}", entity.getInstant());
+            log.info("{}", user.getInstant());
         });
     }
 
@@ -146,8 +142,8 @@ public class UpdateTest {
     public void test2(UserRepository userUpdater) {
         User a = userUpdater.getConfig().getJdbc().where(User::getId).eq(1).getSingle();
         User b = userUpdater.getConfig().getJpa().where(User::getId).eq(1).getSingle();
-        System.out.println(a);
-        System.out.println(b);
+        log.info("{}", a);
+        log.info("{}", b);
     }
 
     @ParameterizedTest

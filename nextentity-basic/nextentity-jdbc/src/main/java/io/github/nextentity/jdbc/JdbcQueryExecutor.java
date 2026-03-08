@@ -6,7 +6,6 @@ import io.github.nextentity.core.exception.TransactionRequiredException;
 import io.github.nextentity.core.exception.UncheckedSQLException;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.sql.PreparedStatement;
@@ -14,7 +13,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-@Slf4j
 public class JdbcQueryExecutor implements QueryExecutor {
 
     @NotNull
@@ -39,7 +37,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @Override
     @NotNull
     public <R> List<R> getList(@NotNull QueryStructure queryStructure) {
-        QueryContext context = new QueryContext(queryStructure, metamodel, true);
+        QueryContext context = QueryContext.create(queryStructure, metamodel, true);
         QuerySqlStatement sql = sqlBuilder.build(context);
         sql.print();
         try {
@@ -50,7 +48,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
                 }
                 // noinspection SqlSourceToSinkFlow
                 try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
-                    JdbcUtil.setParam(statement, sql.parameters());
+                    JdbcUtil.setParameters(statement, sql.parameters());
                     try (ResultSet resultSet = statement.executeQuery()) {
                         return collector.resolve(resultSet, context);
                     }

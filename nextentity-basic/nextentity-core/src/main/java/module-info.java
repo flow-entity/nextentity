@@ -1,5 +1,4 @@
 module nextentity.core {
-    requires static lombok;
     requires static org.jetbrains.annotations;
 
     requires java.desktop;
@@ -16,5 +15,4 @@ module nextentity.core {
     exports io.github.nextentity.core.expression;
     exports io.github.nextentity.core.annotaion;
     exports io.github.nextentity.core.reflect.schema;
-    exports io.github.nextentity.core.expression.impl;
 }

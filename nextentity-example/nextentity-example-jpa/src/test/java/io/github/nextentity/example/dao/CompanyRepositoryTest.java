@@ -1,6 +1,7 @@
 package io.github.nextentity.example.dao;
 
 import io.github.nextentity.api.Repository;
+import io.github.nextentity.example.eneity.BytesIdEntity;
 import io.github.nextentity.example.eneity.Company;
 import io.github.nextentity.example.eneity.Employee;
 import io.github.nextentity.example.eneity.User;
@@ -8,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.UUID;
 
 /**
  * @author HuangChengwei
@@ -27,7 +30,8 @@ class CompanyRepositoryTest {
     Repository<Integer, Employee> employeeEntities;
     @Autowired(required = false)
     Repository<Long, User> userRepository;
-
+    @Autowired(required = false)
+    Repository<UUID, BytesIdEntity> bytesIdEntityRepository;
     @Test
     void testAutowired() {
         Assertions.assertNotNull(employeeEntities);
@@ -36,6 +40,14 @@ class CompanyRepositoryTest {
         Assertions.assertNotNull(employeeRepository);
         Assertions.assertNotNull(employeeRepository2);
         Assertions.assertNotNull(userRepository);
+    }
+
+    @Test
+    void testFindById() {
+        BytesIdEntity entity = new BytesIdEntity();
+        entity.setId(UUID.randomUUID());
+        bytesIdEntityRepository.insert(entity);
+        System.out.println(bytesIdEntityRepository.getList());
     }
 
 }

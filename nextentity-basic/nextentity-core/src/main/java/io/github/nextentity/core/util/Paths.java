@@ -1,19 +1,12 @@
 package io.github.nextentity.core.util;
 
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Path.BooleanPath;
-import io.github.nextentity.api.Path.NumberPath;
-import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
+import io.github.nextentity.api.*;
+import io.github.nextentity.api.Path.BooleanRef;
+import io.github.nextentity.api.Path.NumberRef;
+import io.github.nextentity.api.Path.StringRef;
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
-import io.github.nextentity.core.expression.Expressions;
+import io.github.nextentity.core.expression.*;
 
 public interface Paths {
 
@@ -21,19 +14,19 @@ public interface Paths {
         return RootImpl.of();
     }
 
-    static <T, U> EntityPathExpression<T, U> get(Path<T, U> path) {
+    static <T, U> EntityPath<T, U> get(Path<T, U> path) {
         return Paths.<T>root().entity(path);
     }
 
-    static <T> BooleanPathExpression<T> get(BooleanPath<T> path) {
+    static <T> BooleanPath<T> get(BooleanRef<T> path) {
         return Paths.<T>root().get(path);
     }
 
-    static <T> StringPathExpression<T> get(StringPath<T> path) {
+    static <T> StringPath<T> get(StringRef<T> path) {
         return Paths.<T>root().get(path);
     }
 
-    static <T, U extends Number> NumberPathExpression<T, U> get(NumberPath<T, U> path) {
+    static <T, U extends Number> NumberPath<T, U> get(NumberRef<T, U> path) {
         return Paths.<T>root().get(path);
     }
 
@@ -41,19 +34,19 @@ public interface Paths {
         return Paths.<T>root().get(path);
     }
 
-    static <T, U> EntityPathExpression<T, U> entity(Path<T, U> path) {
+    static <T, U> EntityPath<T, U> entity(Path<T, U> path) {
         return Paths.<T>root().entity(path);
     }
 
-    static <T> StringPathExpression<T> string(Path<T, String> path) {
+    static <T> StringPath<T> string(Path<T, String> path) {
         return Paths.<T>root().string(path);
     }
 
-    static <T, U extends Number> NumberPathExpression<T, U> number(Path<T, U> path) {
+    static <T, U extends Number> NumberPath<T, U> number(Path<T, U> path) {
         return Paths.<T>root().number(path);
     }
 
-    static <T> BooleanPathExpression<T> bool(Path<T, Boolean> path) {
+    static <T> BooleanPath<T> bool(Path<T, Boolean> path) {
         return Paths.<T>root().bool(path);
     }
 
@@ -63,19 +56,19 @@ public interface Paths {
         return Paths.<T>root().path(fieldName);
     }
 
-    static <T, U> EntityPathExpression<T, U> entityPath(String fieldName) {
+    static <T, U> EntityPath<T, U> entityPath(String fieldName) {
         return Paths.<T>root().entityPath(fieldName);
     }
 
-    static <T> StringPathExpression<T> stringPath(String fieldName) {
+    static <T> StringPath<T> stringPath(String fieldName) {
         return Paths.<T>root().stringPath(fieldName);
     }
 
-    static <T, U extends Number> NumberPathExpression<T, U> numberPath(String fieldName) {
+    static <T, U extends Number> NumberPath<T, U> numberPath(String fieldName) {
         return Paths.<T>root().numberPath(fieldName);
     }
 
-    static <T> BooleanPathExpression<T> booleanPath(String fieldName) {
+    static <T> BooleanPath<T> booleanPath(String fieldName) {
         return Paths.<T>root().booleanPath(fieldName);
     }
 
@@ -92,77 +85,78 @@ public interface Paths {
 
         @Override
         public <U> TypedExpression<T, U> literal(U value) {
-            return Expressions.of(value);
+            return new SimpleExpressionImpl<>(new LiteralNode(value));
         }
 
         @Override
         public <U> PathExpression<T, U> path(Path<T, U> path) {
-            return Expressions.ofPath(ExpressionImpls.of(path));
+            return new SimpleExpressionImpl<>(PathNode.of(path));
         }
 
         @Override
-        public <U> EntityPathExpression<T, U> entity(Path<T, U> path) {
-            return Expressions.ofEntity(ExpressionImpls.of(path));
+        public <U> EntityPath<T, U> entity(Path<T, U> path) {
+            return new SimpleExpressionImpl<>(PathNode.of(path));
         }
 
         @Override
-        public <U> EntityPathExpression<T, U> get(Path<T, U> path) {
-            return Expressions.ofEntity(ExpressionImpls.of(path));
+        public <U> EntityPath<T, U> get(Path<T, U> path) {
+            return new SimpleExpressionImpl<>(PathNode.of(path));
         }
 
         @Override
-        public BooleanPathExpression<T> get(BooleanPath<T> path) {
-            return Expressions.ofBoolean(ExpressionImpls.of(path));
+        public BooleanPath<T> get(BooleanRef<T> path) {
+            return new PredicateImpl<>(PathNode.of(path));
         }
 
         @Override
-        public StringPathExpression<T> get(StringPath<T> path) {
+        public StringPath<T> get(StringRef<T> path) {
             return string(path);
         }
 
         @Override
-        public <U extends Number> NumberPathExpression<T, U> get(NumberPath<T, U> path) {
+        public <U extends Number> NumberPath<T, U> get(NumberRef<T, U> path) {
             return number(path);
         }
 
         @Override
-        public StringPathExpression<T> string(Path<T, String> path) {
-            return Expressions.ofString(ExpressionImpls.of(path));
+        public StringPath<T> string(Path<T, String> path) {
+            return new StringExpressionImpl<>(PathNode.of(path));
         }
 
         @Override
-        public <U extends Number> NumberPathExpression<T, U> number(Path<T, U> path) {
-            return Expressions.ofNumber(ExpressionImpls.of(path));
+        public <U extends Number> NumberPath<T, U> number(Path<T, U> path) {
+            return new NumberExpressionImpl<>(PathNode.of(path));
         }
 
         @Override
-        public BooleanPathExpression<T> bool(Path<T, Boolean> path) {
-            return Expressions.ofBoolean(ExpressionImpls.of(path));
+        public BooleanPath<T> bool(Path<T, Boolean> path) {
+            return new PredicateImpl<>(PathNode.of(path));
+
         }
 
         @Override
         public <U> PathExpression<T, U> path(String fieldName) {
-            return Expressions.ofPath(ExpressionImpls.column(fieldName));
+            return new SimpleExpressionImpl<>(new PathNode(new String[]{fieldName}));
         }
 
         @Override
-        public <U> EntityPathExpression<T, U> entityPath(String fieldName) {
-            return Expressions.ofEntity(ExpressionImpls.column(fieldName));
+        public <U> EntityPath<T, U> entityPath(String fieldName) {
+            return new SimpleExpressionImpl<>(new PathNode(new String[]{fieldName}));
         }
 
         @Override
-        public StringPathExpression<T> stringPath(String fieldName) {
-            return Expressions.ofString(ExpressionImpls.column(fieldName));
+        public StringPath<T> stringPath(String fieldName) {
+            return new StringExpressionImpl<>(new PathNode(new String[]{fieldName}));
         }
 
         @Override
-        public <U extends Number> NumberPathExpression<T, U> numberPath(String fieldName) {
-            return Expressions.ofNumber(ExpressionImpls.column(fieldName));
+        public <U extends Number> NumberPath<T, U> numberPath(String fieldName) {
+            return new NumberExpressionImpl<>(new PathNode(new String[]{fieldName}));
         }
 
         @Override
-        public BooleanPathExpression<T> booleanPath(String fieldName) {
-            return Expressions.ofBoolean(ExpressionImpls.column(fieldName));
+        public BooleanPath<T> booleanPath(String fieldName) {
+            return new PredicateImpl<>(new PathNode(new String[]{fieldName}));
         }
 
     }

@@ -1,15 +1,9 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.InstanceFactory;
-import io.github.nextentity.core.reflect.schema.ObjectSchema;
+import io.github.nextentity.core.reflect.schema.Schema;
 
-import java.util.Collection;
+public interface ProjectionType extends Schema {
 
-public interface ProjectionType extends ObjectSchema {
+    Schema source();
 
-    Collection<? extends ProjectionBasicAttribute> attributes();
-
-    EntitySchema entityType();
-
-    InstanceFactory getInstanceFactory();
 }

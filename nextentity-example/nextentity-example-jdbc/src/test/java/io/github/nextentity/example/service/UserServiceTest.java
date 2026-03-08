@@ -19,7 +19,7 @@ import java.util.Random;
  * @author HuangChengwei
  * @since 2024-03-19 14:01
  */
-@ActiveProfiles("sqlserver")
+@ActiveProfiles
 @SpringBootTest
 class UserServiceTest {
 
@@ -89,7 +89,16 @@ class UserServiceTest {
     @Test
     void updateUser() {
         User first = userRepository.getFirst();
-        first.setTestInteger(new Random().nextInt(100));
+        String oldUsername = first.getUsername();
+        Integer testInteger = first.getTestInteger();
+
+        first.setUsername(oldUsername + "updated");
+        int updatedInteger = testInteger + 1;
+        first.setTestInteger(updatedInteger);
+
         userService.updateUser(first);
+        User updatedUser = userRepository.get(first.getId());
+        Assertions.assertEquals(oldUsername, updatedUser.getUsername());
+        Assertions.assertEquals(updatedInteger, updatedUser.getTestInteger());
     }
 }

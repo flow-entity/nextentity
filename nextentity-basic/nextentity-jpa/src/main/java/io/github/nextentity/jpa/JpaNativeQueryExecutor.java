@@ -1,36 +1,31 @@
 package io.github.nextentity.jpa;
 
 import io.github.nextentity.core.QueryExecutor;
+import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.reflect.schema.InstanceFactory.PrimitiveFactory;
+import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.QuerySqlBuilder;
 import io.github.nextentity.jdbc.QueryContext;
 import io.github.nextentity.jdbc.QuerySqlStatement;
 import jakarta.persistence.EntityManager;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 public class JpaNativeQueryExecutor implements QueryExecutor {
     private final QuerySqlBuilder sqlBuilder;
     private final EntityManager entityManager;
     private final Metamodel metamodel;
-    private final TypeConverter typeConverter;
 
     public JpaNativeQueryExecutor(QuerySqlBuilder sqlBuilder,
                                   EntityManager entityManager,
-                                  Metamodel metamodel,
-                                  TypeConverter typeConverter) {
+                                  Metamodel metamodel) {
         this.sqlBuilder = sqlBuilder;
         this.entityManager = entityManager;
         this.metamodel = metamodel;
-        this.typeConverter = typeConverter;
     }
 
     @Override
@@ -39,9 +34,8 @@ public class JpaNativeQueryExecutor implements QueryExecutor {
     }
 
     private <T> List<T> queryByNativeSql(@NotNull QueryStructure queryStructure) {
-        QueryContext context = new QueryContext(queryStructure, metamodel, true);
+        QueryContext context = QueryContext.create(queryStructure, metamodel, true);
         QuerySqlStatement preparedSql = sqlBuilder.build(context);
-        // noinspection SqlSourceToSinkFlow
         jakarta.persistence.Query query = entityManager.createNativeQuery(preparedSql.sql());
         int position = 0;
         for (Object arg : preparedSql.parameters()) {
@@ -61,14 +55,14 @@ public class JpaNativeQueryExecutor implements QueryExecutor {
         }
         Object first = resultSet.get(0);
         int columnsCount = asArray(first).length;
-        List<? extends PrimitiveFactory> expressions = context.getConstructor().primitives();
+        ImmutableArray<SelectItem> expressions = context.getSelectedExpression();
         if (expressions.size() != columnsCount) {
             throw new IllegalStateException("column count error");
         }
 
         for (Object o : resultSet) {
             Object[] array = asArray(o);
-            JpaArguments arguments = new JpaArguments(array, expressions, typeConverter);
+            JpaArguments arguments = new JpaArguments(array);
             Object row = context.construct(arguments);
             result.add(row);
         }

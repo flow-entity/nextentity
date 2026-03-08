@@ -2,7 +2,6 @@ package io.github.nextentity.test.db;
 
 import io.github.nextentity.core.RepositoryFactory;
 import io.github.nextentity.core.SimpleQueryConfig;
-import io.github.nextentity.core.converter.TypeConverter;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.jdbc.JdbcQueryExecutor;
@@ -42,8 +41,7 @@ public interface DbConfigProvider {
         );
 
         JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(manager, metamodel, jdbcQueryExecutor);
-        TypeConverter typeConverter = TypeConverter.ofDefault();
-        JpaNativeQueryExecutor jpaNativeQueryExecutor = new JpaNativeQueryExecutor(querySqlBuilder, manager, metamodel, typeConverter);
+        JpaNativeQueryExecutor jpaNativeQueryExecutor = new JpaNativeQueryExecutor(querySqlBuilder, manager, metamodel);
 
         SimpleQueryConfig queryConfig = new SimpleQueryConfig()
                 .queryExecutor(jpaQueryExecutor)
@@ -51,26 +49,26 @@ public interface DbConfigProvider {
 
         JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(manager, queryConfig);
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(updateSqlBuilder(), connectionProvider, metamodel);
-        RepositoryFactory jpa = new RepositoryFactory(jpaQueryExecutor, jpaUpdateExecutor, null, metamodel) {
+        RepositoryFactory jpa = new RepositoryFactory(jpaQueryExecutor, jpaUpdateExecutor, metamodel) {
             @Override
             public String toString() {
                 return name() + "-jpa";
             }
         };
-        RepositoryFactory jdbc = new RepositoryFactory(jdbcQueryExecutor, jdbcUpdateExecutor, null, metamodel) {
+        RepositoryFactory jdbc = new RepositoryFactory(jdbcQueryExecutor, jdbcUpdateExecutor, metamodel) {
             @Override
             public String toString() {
                 return name() + "-jdbc";
             }
         };
-        RepositoryFactory jpaNative = new RepositoryFactory(jpaNativeQueryExecutor, jpaUpdateExecutor, null, metamodel) {
+        RepositoryFactory jpaNative = new RepositoryFactory(jpaNativeQueryExecutor, jpaUpdateExecutor, metamodel) {
             @Override
             public String toString() {
                 return name() + "-jpa-native";
             }
         };
 
-        List<RepositoryFactory> list = ImmutableList.of(jdbc, jpa, jpaNative);
+        List<RepositoryFactory> list = ImmutableList.of(jdbc, jpa);
         return new DbConfig(querySqlBuilder,
                 updateSqlBuilder(),
                 dataSource,

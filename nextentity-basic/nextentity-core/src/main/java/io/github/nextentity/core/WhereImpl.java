@@ -1,220 +1,142 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Collector;
-import io.github.nextentity.api.Expression;
-import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
-import io.github.nextentity.api.ExpressionBuilder.PathOperator;
-import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.SelectHavingStep;
-import io.github.nextentity.api.SelectOrderByStep;
-import io.github.nextentity.api.OrderOperator;
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Path.NumberPath;
-import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.OperatableExpression;
-import io.github.nextentity.api.RowsSelectWhereStep;
+import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Order;
-import io.github.nextentity.core.expression.Operation;
-import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.expression.QueryStructure.Selected;
-import io.github.nextentity.core.expression.QueryStructure.Selected.SelectArray;
-import io.github.nextentity.core.expression.QueryStructure.Selected.SelectPrimitive;
-import io.github.nextentity.core.expression.impl.ExpressionBuilders;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
-import io.github.nextentity.core.expression.Expressions;
+import io.github.nextentity.core.expression.*;
+import io.github.nextentity.core.expression.OrderOperatorImpl;
+import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Paths;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 
-@SuppressWarnings("PatternVariableCanBeUsed")
 public class WhereImpl<T, U> implements RowsSelectWhereStep<T, U>, SelectHavingStep<T, U>, AbstractCollector<U> {
 
-    static final Selected SELECT_ANY = new SelectPrimitive().expression(ExpressionImpls.TRUE).type(Boolean.class);
-    static final Selected COUNT_ANY = new SelectPrimitive()
-            .expression(ExpressionImpls.operate(ExpressionImpls.TRUE, Operator.COUNT)).type(Long.class);
-
-    protected QueryConfig config;
+    public static final SelectExpression SELECT_COUNT_ANY = new SelectExpression(new OperatorNode(ImmutableList.of(LiteralNode.TRUE), Operator.COUNT), false);
+    public static final SelectExpression SELECT_ANY = new SelectExpression(LiteralNode.TRUE, false);
     protected QueryStructure queryStructure;
+    protected QueryConfig config;
 
     public WhereImpl() {
-    }
-
-    public WhereImpl(QueryConfig config, Class<T> type) {
-        this(config, ExpressionImpls.queryStructure(type));
+        this(null, null);
     }
 
     public WhereImpl(QueryConfig config, QueryStructure queryStructure) {
-        this.config = config;
         this.queryStructure = queryStructure;
-    }
-
-    public void init(QueryConfig config, Class<T> type) {
         this.config = config;
-        this.queryStructure = ExpressionImpls.queryStructure(type);
     }
 
-    <X, Y> WhereImpl<X, Y> update(QueryStructure queryStructure) {
-        return new WhereImpl<>(config, queryStructure);
+    protected void init(RepositoryFactory entitiesFactory, Class<T> entityType) {
+        this.config = entitiesFactory;
+        this.queryStructure = QueryStructure.of(entityType);
     }
 
     @Override
     public RowsSelectWhereStep<T, U> where(TypedExpression<T, Boolean> predicate) {
-        if (ExpressionImpls.isNullOrTrue(predicate)) {
+        if (ExpressionNodes.isNullOrTrue(predicate)) {
             return this;
         }
-        QueryStructure structure = whereAnd(queryStructure, predicate);
-        return update(structure);
+        ExpressionNode node = ExpressionNodes.getNode(predicate);
+        return andWhere(node);
     }
 
-    static QueryStructure whereAnd(QueryStructure structure, Expression expression) {
-        Expression where;
-        if (ExpressionImpls.isNullOrTrue(structure.where())) {
-            where = expression;
-        } else {
-            where = ExpressionImpls.operate(structure.where(), Operator.AND, expression);
-        }
-        return ExpressionImpls.where(structure, where);
+    @Override
+    public <N> ExpressionBuilder.PathOperator<T, N, RowsSelectWhereStep<T, U>> where(Path<T, N> path) {
+        return new PathOperatorImpl<>(PathNode.of(path), this::andWhere);
+    }
+
+    @Override
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(Path.NumberRef<T, N> path) {
+        return new NumberOperatorImpl<>(PathNode.of(path), this::andWhere);
+    }
+
+    @Override
+    public ExpressionBuilder.StringOperator<T, RowsSelectWhereStep<T, U>> where(Path.StringRef<T> path) {
+        return new StringOperatorImpl<>(PathNode.of(path), this::andWhere);
+    }
+
+    @Override
+    public <N> ExpressionBuilder.PathOperator<T, N, RowsSelectWhereStep<T, U>> where(PathExpression<T, N> path) {
+        return new PathOperatorImpl<>(ExpressionNodes.getNode(path), this::andWhere);
+    }
+
+    @Override
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberPath<T, N> path) {
+        return new NumberOperatorImpl<>(ExpressionNodes.getNode(path), this::andWhere);
+    }
+
+    @Override
+    public ExpressionBuilder.StringOperator<T, RowsSelectWhereStep<T, U>> where(StringPath<T> path) {
+        return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::andWhere);
+    }
+
+    public final SelectHavingStep<T, U> groupBy(TypedExpression<T, ?> expressions) {
+        return groupBy(Collections.singletonList(expressions));
+    }
+
+    @Override
+    public SelectHavingStep<T, U> groupBy(List<? extends TypedExpression<T, ?>> typedExpressions) {
+        ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), typedExpressions);
+        return update(queryStructure.groupBy(newList));
+    }
+
+    @Override
+    public SelectHavingStep<T, U> groupBy(Path<T, ?> path) {
+        ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), path);
+        return update(queryStructure.groupBy(newList));
+    }
+
+    @Override
+    public SelectHavingStep<T, U> groupBy(Collection<Path<T, ?>> paths) {
+        ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), paths);
+        return update(queryStructure.groupBy(newList));
+    }
+
+    @Override
+    public SelectOrderByStep<T, U> having(TypedExpression<T, Boolean> predicate) {
+        ExpressionNode newHaving = queryStructure.having().operate(Operator.AND, ExpressionNodes.getNode(predicate));
+        return update(queryStructure.having(newHaving));
     }
 
     @Override
     public Collector<U> orderBy(List<? extends Order<T>> orders) {
-        return addOrderBy(orders);
+        ImmutableList<SortExpression> add = SortExpression.mapping(orders);
+        ImmutableList<SortExpression> newOrders = ImmutableList.concat(queryStructure.orderBy().asList(), add);
+        return update(queryStructure.orderBy(newOrders));
     }
 
     @Override
     public Collector<U> orderBy(Function<EntityRoot<T>, List<? extends Order<T>>> ordersBuilder) {
-        return orderBy(ordersBuilder.apply(Paths.root()));
+        ImmutableList<SortExpression> add = SortExpression.mapping(ordersBuilder.apply(root()));
+        ImmutableList<SortExpression> newOrders = ImmutableList.concat(queryStructure.orderBy().asList(), add);
+        return update(queryStructure.orderBy(newOrders));
     }
 
     @Override
-    public OrderOperator<T, U> orderBy(Collection<Path<T, Comparable<?>>> paths) {
-        return new OrderOperatorImpl<>(this, paths);
-    }
-
-    WhereImpl<T, U> addOrderBy(List<? extends Order<T>> orders) {
-        List<? extends Order<?>> orderBy = queryStructure.orderBy();
-        orderBy = orderBy == null ? orders : ImmutableList.concat(orderBy, orders);
-        QueryStructure structure = ExpressionImpls.queryStructure(
-                queryStructure.select(),
-                queryStructure.from(),
-                queryStructure.where(),
-                queryStructure.groupBy(),
-                orderBy,
-                queryStructure.having(),
-                queryStructure.offset(),
-                queryStructure.limit(),
-                queryStructure.lockType()
-        );
-        return update(structure);
+    public OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths) {
+        ImmutableList<ExpressionNode> add = PathNode.mapping(paths);
+        return new OrderOperatorImpl<>(this, add);
     }
 
     @Override
     public long count() {
-        QueryStructure structure = buildCountData();
-        QueryPostProcessor processor = config.queryPostProcessor();
-        if (processor != null) {
-            structure = processor.preCountQuery(structure);
-        }
-        return config.queryExecutor().<Number>getList(structure).get(0).longValue();
-    }
-
-    @NotNull
-    QueryStructure buildCountData() {
-        if (queryStructure.select().distinct()) {
-            return countFrom(queryStructure.select());
-        } else if (requiredCountSubQuery(queryStructure.select())) {
-            return countFrom(COUNT_ANY);
-        } else if (queryStructure.groupBy() != null && !queryStructure.groupBy().isEmpty()) {
-            return countFrom(SELECT_ANY);
-        } else {
-            return ExpressionImpls.queryStructure(
-                    COUNT_ANY,
-                    queryStructure.from(),
-                    queryStructure.where(),
-                    queryStructure.groupBy(),
-                    ImmutableList.of(),
-                    queryStructure.having(),
-                    null,
-                    null,
-                    LockModeType.NONE);
-        }
-
-    }
-
-
-    public QueryStructure countFrom(Selected selected) {
-        QueryStructure.From from = ExpressionImpls.from(ExpressionImpls.queryStructure(
-                selected,
-                queryStructure.from(),
-                queryStructure.where(),
-                queryStructure.groupBy(),
-                ImmutableList.of(),
-                queryStructure.having(),
-                null,
-                null,
-                LockModeType.NONE));
-        return ExpressionImpls.queryStructure(COUNT_ANY, from);
-    }
-
-
-    boolean requiredCountSubQuery(Selected select) {
-        if (select instanceof SelectPrimitive) {
-            return requiredCountSubQuery(((SelectPrimitive) select).expression());
-        }
-        if (select instanceof SelectArray) {
-            for (Selected expression : ((SelectArray) select).items()) {
-                if (requiredCountSubQuery(expression)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    protected boolean requiredCountSubQuery(Expression expression) {
-        if (expression instanceof Operation) {
-            Operation operation = (Operation) expression;
-            if (operation.operator().isAgg()) {
-                return true;
-            }
-            List<? extends Expression> args = operation.operands();
-            if (args != null) {
-                for (Expression arg : args) {
-                    if (requiredCountSubQuery(arg)) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return config.queryExecutor().<Number>getList(buildCountData()).get(0).longValue();
     }
 
     @Override
     public List<U> getList(int offset, int maxResult, LockModeType lockModeType) {
-        QueryStructure structure = buildListData(offset, maxResult, lockModeType);
-        QueryPostProcessor processor = config.queryPostProcessor();
-        if (processor != null) {
-            structure = processor.preListQuery(structure);
-        }
-        return queryList(structure);
-    }
-
-    public <X> List<X> queryList(QueryStructure structure) {
+        QueryStructure structure = getQueryListStructure(offset, maxResult, lockModeType);
         return config.queryExecutor().getList(structure);
     }
 
-    @NotNull
-    QueryStructure buildListData(int offset, int maxResult, LockModeType lockModeType) {
-        return ExpressionImpls.queryStructure(
+    private @NotNull QueryStructure getQueryListStructure(int offset, int maxResult, LockModeType lockModeType) {
+        return new QueryStructure(
                 queryStructure.select(),
                 queryStructure.from(),
                 queryStructure.where(),
@@ -229,17 +151,7 @@ public class WhereImpl<T, U> implements RowsSelectWhereStep<T, U>, SelectHavingS
 
     @Override
     public boolean exist(int offset) {
-        QueryStructure structure = buildExistData(offset);
-        QueryPostProcessor processor = config.queryPostProcessor();
-        if (processor != null) {
-            structure = processor.preExistQuery(structure);
-        }
-        return !queryList(structure).isEmpty();
-    }
-
-    @NotNull
-    QueryStructure buildExistData(int offset) {
-        return ExpressionImpls.queryStructure(
+        QueryStructure structure = new QueryStructure(
                 SELECT_ANY,
                 queryStructure.from(),
                 queryStructure.where(),
@@ -250,149 +162,121 @@ public class WhereImpl<T, U> implements RowsSelectWhereStep<T, U>, SelectHavingS
                 1,
                 queryStructure.lockType()
         );
+        return !config.queryExecutor().getList(structure).isEmpty();
     }
 
     @Override
     public <X> SubQueryBuilder<X, U> asSubQuery() {
-        return new SubQuery<>();
+        return new SubQueryBuilderImpl<>();
     }
 
     @Override
-    public SelectHavingStep<T, U> groupBy(List<? extends TypedExpression<T, ?>> expressions) {
-        return setGroupBy(expressions);
-    }
-
-    private WhereImpl<T, U> setGroupBy(List<? extends Expression> group) {
-        QueryStructure structure = ExpressionImpls.queryStructure(
-                queryStructure.select(),
-                queryStructure.from(),
-                queryStructure.where(),
-                group,
-                queryStructure.orderBy(),
-                queryStructure.having(),
-                queryStructure.offset(),
-                queryStructure.limit(),
-                queryStructure.lockType()
-        );
-        return update(structure);
-    }
-
-    @Override
-    public SelectHavingStep<T, U> groupBy(Path<T, ?> path) {
-        return setGroupBy(ImmutableList.of(ExpressionImpls.of(path)));
-    }
-
-    @Override
-    public SelectHavingStep<T, U> groupBy(Collection<Path<T, ?>> paths) {
-        return groupBy(ExpressionImpls.toExpressionList(paths));
-    }
-
-    @Override
-    public SelectOrderByStep<T, U> having(TypedExpression<T, Boolean> predicate) {
-        QueryStructure structure = ExpressionImpls.queryStructure(
-                queryStructure.select(),
-                queryStructure.from(),
-                queryStructure.where(),
-                queryStructure.groupBy(),
-                queryStructure.orderBy(),
-                predicate,
-                queryStructure.offset(),
-                queryStructure.limit(),
-                queryStructure.lockType()
-        );
-        return update(structure);
-    }
-
-    @Override
-    public <N extends Number> NumberOperator<T, N, RowsSelectWhereStep<T, U>> where(NumberPath<T, N> path) {
-        return ExpressionBuilders.ofNumber(root().get(path), this::whereAnd);
-    }
-
-    @NotNull
-    private RowsSelectWhereStep<T, U> whereAnd(OperatableExpression<?, ?> expression) {
-        if (expression == null) {
-            return this;
-        }
-        QueryStructure structure = whereAnd(queryStructure, expression);
-        return update(structure);
-    }
-
-    @Override
-    public StringOperator<T, RowsSelectWhereStep<T, U>> where(StringPath<T> path) {
-        return ExpressionBuilders.ofString(root().get(path), this::whereAnd);
-    }
-
     public EntityRoot<T> root() {
         return Paths.root();
     }
 
-    @Override
-    public <N> PathOperator<T, N, RowsSelectWhereStep<T, U>> where(Path<T, N> path) {
-        return ExpressionBuilders.ofPath(root().get(path), this::whereAnd);
+    public QueryStructure getQueryStructure() {
+        return queryStructure;
+    }
+
+    public WhereImpl<T, U> andWhere(ExpressionNode node) {
+        QueryStructure structure = queryStructure.where(queryStructure.where().operate(Operator.AND, node));
+        return update(structure);
+    }
+
+    public <X, Y> WhereImpl<X, Y> update(QueryStructure structure) {
+        return new WhereImpl<>(config, structure);
+    }
+
+    @NotNull
+    QueryStructure buildCountData() {
+        if (queryStructure.select().distinct()) {
+            return QueryStructure.of(queryStructure.select(), new FromSubQuery(queryStructure));
+        } else if (requiredCountSubQuery(queryStructure.select())) {
+            return QueryStructure.of(SELECT_COUNT_ANY, new FromSubQuery(queryStructure));
+        } else if (queryStructure.groupBy() != null && !queryStructure.groupBy().isEmpty()) {
+            return QueryStructure.of(SELECT_COUNT_ANY, new FromSubQuery(queryStructure));
+        } else {
+            return new QueryStructure(
+                    SELECT_COUNT_ANY,
+                    queryStructure.from(),
+                    queryStructure.where(),
+                    queryStructure.groupBy(),
+                    ImmutableList.of(),
+                    queryStructure.having(),
+                    null,
+                    null,
+                    LockModeType.NONE);
+        }
+
+    }
+
+    boolean requiredCountSubQuery(Selected select) {
+        if (select instanceof SelectExpression) {
+            return requiredCountSubQuery(((SelectExpression) select).expression());
+        }
+        if (select instanceof SelectExpressions) {
+            for (ExpressionNode expression : ((SelectExpressions) select).items()) {
+                if (requiredCountSubQuery(expression)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    protected boolean requiredCountSubQuery(ExpressionNode expression) {
+        if (expression instanceof OperatorNode operation) {
+            if (operation.operator().isAgg()) {
+                return true;
+            }
+            ImmutableArray<ExpressionNode> args = operation.operands();
+            if (args != null) {
+                for (ExpressionNode arg : args) {
+                    if (requiredCountSubQuery(arg)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public SelectOrderByStep<T, U> addOrderBy(@NotNull List<SortExpression> orderList) {
+        ImmutableList<SortExpression> sortExpressions = queryStructure.orderBy();
+        ImmutableList<SortExpression> newExpressions = ImmutableList.concat(sortExpressions, orderList);
+        return update(queryStructure.orderBy(newExpressions));
     }
 
 
-    class SubQuery<X> implements SubQueryBuilder<X, U>, QueryStructure {
+    public class SubQueryBuilderImpl<X> implements SubQueryBuilder<X, U>, ExpressionTree {
 
         @Override
         public TypedExpression<X, Long> count() {
-            QueryStructure structure = buildCountData();
-            return Expressions.of(structure);
+            return new NumberExpressionImpl<>(buildCountData());
         }
 
         @Override
         public TypedExpression<X, List<U>> slice(int offset, int maxResult) {
-            QueryStructure structure = buildListData(offset, maxResult, null);
-            return Expressions.of(structure);
+            QueryStructure structure = getQueryListStructure(offset, maxResult, null);
+            return new SimpleExpressionImpl<>(structure);
         }
 
         @Override
         public TypedExpression<X, U> getSingle(int offset) {
-            QueryStructure structure = buildListData(offset, 2, null);
-            return Expressions.of(structure);
+            QueryStructure structure = getQueryListStructure(offset, 2, null);
+            return new SimpleExpressionImpl<>(structure);
         }
 
         @Override
         public TypedExpression<X, U> getFirst(int offset) {
-            QueryStructure structure = buildListData(offset, 1, null);
-            return Expressions.of(structure);
+            QueryStructure structure = getQueryListStructure(offset, 1, null);
+            return new SimpleExpressionImpl<>(structure);
         }
 
-        public LockModeType lockType() {
-            return queryStructure.lockType();
-        }
-
-        public Integer limit() {
-            return queryStructure.limit();
-        }
-
-        public Integer offset() {
-            return queryStructure.offset();
-        }
-
-        public Expression having() {
-            return queryStructure.having();
-        }
-
-        public List<? extends Order<?>> orderBy() {
-            return queryStructure.orderBy();
-        }
-
-        public List<? extends Expression> groupBy() {
-            return queryStructure.groupBy();
-        }
-
-        public Expression where() {
-            return queryStructure.where();
-        }
-
-        public From from() {
-            return queryStructure.from();
-        }
-
-        public Selected select() {
-            return queryStructure.select();
+        @Override
+        public ExpressionNode getRoot() {
+            return queryStructure;
         }
     }
-
 }

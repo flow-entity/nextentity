@@ -1,29 +1,22 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.SelectImpl;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.expression.EntityPath;
+import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.expression.LiteralNode;
 import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.impl.ExpressionImpls;
-import io.github.nextentity.core.expression.Expressions;
+import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceUnitUtil;
 import jakarta.persistence.metamodel.EntityType;
 import jakarta.persistence.metamodel.SingularAttribute;
-import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
-@Slf4j
 public class JpaUpdateExecutor implements UpdateExecutor {
 
     private final EntityManager entityManager;
@@ -37,7 +30,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> insert(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+    public <T> List<T> insertAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
         List<T> list = ImmutableList.ofIterable(entities);
         for (T entity : entities) {
             entityManager.persist(entity);
@@ -46,8 +39,8 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> update(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
-        List<Expression> ids = new ArrayList<>();
+    public <T> List<T> updateAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+        List<ExpressionNode> ids = new ArrayList<>();
         Set<Object> uniqueValues = new HashSet<>();
         int size = 0;
         for (T entity : entities) {
@@ -55,7 +48,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             Object id = requireId(entity);
             if (uniqueValues.add(id)) {
                 if (!util.isLoaded(entity)) {
-                    ids.add(ExpressionImpls.of(id));
+                    ids.add(new LiteralNode(id));
                 }
             } else {
                 throw new IllegalArgumentException("duplicate id");
@@ -68,10 +61,10 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             EntityType<T> entity = entityManager.getMetamodel().entity(entityType);
             SingularAttribute<? super T, ?> id = entity.getId(entity.getIdType().getJavaType());
             String name = id.getName();
-            EntityPath idPath = ExpressionImpls.column(name);
-            Expression operate = ExpressionImpls.operate(idPath, Operator.IN, ids);
+            PathNode idPath = new PathNode(name);
+            ExpressionNode operate = idPath.operate(Operator.IN, ids);
             List<T> dbList = new SelectImpl<>(queryConfig, entityType)
-                    .where(Expressions.of(operate))
+                    .andWhere(operate)
                     .getList();
             if (dbList.size() != size) {
                 throw new IllegalArgumentException("some id not found");
@@ -86,7 +79,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void delete(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
+    public <T> void deleteAll(@NotNull Iterable<T> entities, @NotNull Class<T> entityType) {
         for (T entity : entities) {
             entityManager.remove(entity);
         }

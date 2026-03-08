@@ -2,20 +2,14 @@ package io.github.nextentity.core.reflect;
 
 import io.github.nextentity.core.exception.BeanReflectiveException;
 import io.github.nextentity.core.util.Exceptions;
-import lombok.SneakyThrows;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.AccessibleObject;
-import java.lang.reflect.Array;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.lang.reflect.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -35,32 +29,26 @@ public class ReflectUtil {
         return null;
     }
 
-    @SneakyThrows
     public static <T> void copyTargetNullFields(T src, T target, Class<T> type) {
-        BeanInfo beanInfo = Introspector.getBeanInfo(type);
-        PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
-        for (PropertyDescriptor descriptor : descriptors) {
-            Method reader = descriptor.getReadMethod();
-            Method writer = descriptor.getWriteMethod();
-            if (reader != null && writer != null) {
-                Object tv = reader.invoke(target);
-                if (tv != null) {
-                    continue;
-                }
-                Object sv = reader.invoke(src);
-                if (sv != null) {
-                    writer.invoke(target, sv);
+        try {
+            BeanInfo beanInfo = Introspector.getBeanInfo(type);
+            PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
+            for (PropertyDescriptor descriptor : descriptors) {
+                Method reader = descriptor.getReadMethod();
+                Method writer = descriptor.getWriteMethod();
+                if (reader != null && writer != null) {
+                    Object tv = reader.invoke(target);
+                    if (tv != null) {
+                        continue;
+                    }
+                    Object sv = reader.invoke(src);
+                    if (sv != null) {
+                        writer.invoke(target, sv);
+                    }
                 }
             }
-        }
-    }
-
-    @NotNull
-    public static Object newInstance(Class<?> resultType) {
-        try {
-            return resultType.getConstructor().newInstance();
-        } catch (ReflectiveOperationException e) {
-            throw new BeanReflectiveException(e);
+        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -69,16 +57,16 @@ public class ReflectUtil {
     }
 
     public static Object getFieldValue(Field field, Object instance) throws IllegalAccessException {
-        checkAccessible(field, instance);
+        setAccessible(field, instance);
         return field.get(instance);
     }
 
     public static void setFieldValue(Field field, Object instance, Object value) throws IllegalAccessException {
-        checkAccessible(field, instance);
+        setAccessible(field, instance);
         field.set(instance, value);
     }
 
-    private static void checkAccessible(AccessibleObject accessible, Object instance) {
+    private static void setAccessible(AccessibleObject accessible, Object instance) {
         if (!isAccessible(accessible, instance)) {
             accessible.setAccessible(true);
         }
@@ -90,7 +78,7 @@ public class ReflectUtil {
 
     @NotNull
     public static Object newProxyInstance(@NotNull Class<?> resultType, Map<Method, Object> map) {
-        ClassLoader classLoader = resultType.getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Class<?>[] interfaces = {resultType};
         return Proxy.newProxyInstance(classLoader, interfaces, new InstanceInvocationHandler(resultType, map));
     }
@@ -117,7 +105,7 @@ public class ReflectUtil {
         Object array = SINGLE_ENUM_MAP.computeIfAbsent(cls, k -> {
             try {
                 Method method = cls.getMethod("values");
-                checkAccessible(method, null);
+                setAccessible(method, null);
                 return method.invoke(null);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw Exceptions.sneakyThrow(e);
@@ -132,7 +120,7 @@ public class ReflectUtil {
         }
         try {
             Method method = cls.getMethod("valueOf");
-            checkAccessible(method, null);
+            setAccessible(method, null);
             return method.invoke(name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw Exceptions.sneakyThrow(e);

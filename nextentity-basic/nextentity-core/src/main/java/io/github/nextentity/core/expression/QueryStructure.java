@@ -1,110 +1,100 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.model.LockModeType;
-import io.github.nextentity.api.model.Order;
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.core.reflect.schema.ArraySchema;
-import io.github.nextentity.core.reflect.schema.Schema;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import io.github.nextentity.core.util.ImmutableList;
 
-import java.io.Serializable;
-import java.util.Collection;
-import java.util.List;
+public record QueryStructure(
 
-/**
- * @author HuangChengwei
- * @since 2024/4/17 下午1:28
- */
-public interface QueryStructure extends Expression {
+        Selected select,
 
-    Selected select();
+        From from,
 
-    From from();
+        ExpressionNode where,
 
-    Expression where();
+        ImmutableList<ExpressionNode> groupBy,
 
-    List<? extends Expression> groupBy();
+        ImmutableList<SortExpression> orderBy,
 
-    List<? extends Order<?>> orderBy();
+        ExpressionNode having,
 
-    Expression having();
+        Integer offset,
 
-    Integer offset();
+        Integer limit,
 
-    Integer limit();
+        LockModeType lockType
 
-    LockModeType lockType();
+) implements ExpressionNode {
 
-    interface From extends Serializable {
-
-        Class<?> type();
-
-        interface FromEntity extends From {
-        }
-
-        interface FromSubQuery extends From, QueryStructure {
-            @Override
-            default Class<?> type() {
-                return select().type();
-            }
-
-        }
-
+    public static QueryStructure of(Selected select, From from) {
+        return new QueryStructure(
+                select,
+                from,
+                EmptyNode.INSTANCE,
+                ImmutableList.of(),
+                ImmutableList.of(),
+                EmptyNode.INSTANCE,
+                null,
+                null,
+                LockModeType.NONE);
     }
 
-    interface Selected extends Schema {
-        boolean distinct();
+    public static QueryStructure of(Class<?> type) {
+        return new QueryStructure(
+                new SelectEntity(ImmutableList.empty(), false),
+                new FromEntity(type),
+                EmptyNode.INSTANCE,
+                ImmutableList.of(),
+                ImmutableList.of(),
+                EmptyNode.INSTANCE,
+                null,
+                null,
+                LockModeType.NONE);
+    }
 
-        @Data
-        @Accessors(fluent = true, chain = true)
-        class SelectPrimitive implements Selected {
-            private Class<?> type = Object.class;
-            private boolean distinct;
-            private Expression expression;
+    public QueryStructure selectFrom(Selected select, From from) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
 
-            public SelectPrimitive() {
-            }
+    public QueryStructure select(Selected select) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure from(From from) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure where(ExpressionNode where) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure groupBy(ImmutableList<ExpressionNode> groupBy) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure orderBy(ImmutableList<SortExpression> orderBy) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure having(ExpressionNode having) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure offset(Integer offset) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure limit(Integer limit) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure lockType(LockModeType lockType) {
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);
+    }
+
+    public QueryStructure removeOffsetLimit() {
+        if (offset == null && limit == null) {
+            return this;
         }
-
-        @Data
-        @Accessors(fluent = true, chain = true)
-        class SelectArray implements Selected, ArraySchema {
-            private boolean distinct;
-            private Collection<? extends SelectPrimitive> items;
-
-            @Override
-            public Class<?> type() {
-                return Tuple.class;
-            }
-        }
-
-        @Data
-        @Accessors(fluent = true, chain = true)
-        class SelectEntity implements Selected {
-            private Class<?> type;
-            private boolean distinct;
-            private Collection<? extends EntityPath> fetch;
-
-            public SelectEntity() {
-            }
-
-            public SelectEntity(SelectEntity select) {
-                this.type = select.type();
-                this.distinct = select.distinct();
-                this.fetch = select.fetch();
-            }
-        }
-
-        @Data
-        @Accessors(fluent = true, chain = true)
-        class SelectProjection implements Selected {
-            private Class<?> type;
-            private Class<?> entityType;
-            private boolean distinct;
-        }
-
-
+        return new QueryStructure(select, from, where, groupBy, orderBy, having, null, null, lockType);
     }
 }

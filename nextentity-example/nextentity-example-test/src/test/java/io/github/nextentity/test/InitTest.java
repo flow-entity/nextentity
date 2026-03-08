@@ -6,6 +6,6 @@ public class InitTest {
 
 
     public static void main(String[] args) {
-        System.out.println(DbConfigs.SQLSERVER);
+//        log.info("{}", DbConfigs.POSTGRESQL);
     }
 }

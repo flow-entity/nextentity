@@ -1,31 +1,33 @@
 package io.github.nextentity.core.reflect.schema;
 
-public interface Schema {
+import io.github.nextentity.core.util.ImmutableArray;
 
-    Class<?> type();
+public non-sealed interface Schema extends ReflectType {
 
-    default String name() {
-        throw new UnsupportedOperationException();
+    Attributes attributes();
+
+    default ImmutableArray<? extends Attribute> getPrimitives() {
+        return attributes().getPrimitives();
     }
 
-    default Schema declareBy() {
-        throw new UnsupportedOperationException();
+    default Attribute getAttribute(String name) {
+        return attributes().get(name);
+    }
+
+    default Attribute getAttribute(Iterable<String> fieldNames) {
+        ReflectType schema = this;
+        for (String fieldName : fieldNames) {
+            try {
+                schema = ((Schema) schema).getAttribute(fieldName);
+            } catch (ClassCastException e) {
+                throw e;
+            }
+        }
+        return (Attribute) schema;
     }
 
     default boolean isObject() {
-        return false;
-    }
-
-    default boolean isArray() {
-        return false;
-    }
-
-    default boolean isPrimitive() {
-        return !isObject() && !isArray();
-    }
-
-    default boolean isAttribute() {
-        return false;
+        return true;
     }
 
 }

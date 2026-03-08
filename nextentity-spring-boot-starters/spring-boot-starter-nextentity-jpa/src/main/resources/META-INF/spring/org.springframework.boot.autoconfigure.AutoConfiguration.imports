@@ -1,1 +1,1 @@
-io.github.nextentity.data.jpa.JpaRepositoryConfiguration
+io.github.nextentity.data.jpa.NextEntityJpaAutoConfiguration

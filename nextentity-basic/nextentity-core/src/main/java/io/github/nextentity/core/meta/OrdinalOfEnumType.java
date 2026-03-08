@@ -1,7 +1,6 @@
 package io.github.nextentity.core.meta;
 
-import lombok.SneakyThrows;
-
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /**
@@ -12,11 +11,14 @@ public class OrdinalOfEnumType implements DatabaseType {
     private final Class<?> databaseType;
     private final Object[] values;
 
-    @SneakyThrows
     public OrdinalOfEnumType(Class<?> attributeType) {
         this.databaseType = Integer.class;
-        Method method = attributeType.getDeclaredMethod("values");
-        this.values = (Object[]) method.invoke(null);
+        try {
+            Method method = attributeType.getDeclaredMethod("values");
+            this.values = (Object[]) method.invoke(null);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override

@@ -6,4 +6,6 @@ public class UncheckedSQLException extends RuntimeException {
         super(cause);
     }
 
+    public UncheckedSQLException() {
+    }
 }

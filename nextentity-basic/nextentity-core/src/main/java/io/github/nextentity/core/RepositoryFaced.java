@@ -1,41 +1,13 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Collector;
+import io.github.nextentity.api.*;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.OrderOperator;
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Path.BooleanPath;
-import io.github.nextentity.api.Path.NumberPath;
-import io.github.nextentity.api.Path.StringPath;
-import io.github.nextentity.api.Repository;
-import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.TypedExpression.BooleanPathExpression;
-import io.github.nextentity.api.TypedExpression.EntityPathExpression;
-import io.github.nextentity.api.TypedExpression.NumberPathExpression;
-import io.github.nextentity.api.TypedExpression.PathExpression;
-import io.github.nextentity.api.TypedExpression.StringPathExpression;
-import io.github.nextentity.api.SelectWhereStep;
-import io.github.nextentity.api.RowsSelectWhereStep;
-import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.api.model.LockModeType;
-import io.github.nextentity.api.model.Order;
-import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.Pageable;
-import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.api.model.Sliceable;
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.api.model.Tuple10;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.api.model.Tuple4;
-import io.github.nextentity.api.model.Tuple5;
-import io.github.nextentity.api.model.Tuple6;
-import io.github.nextentity.api.model.Tuple7;
-import io.github.nextentity.api.model.Tuple8;
-import io.github.nextentity.api.model.Tuple9;
+import io.github.nextentity.api.Path.BooleanRef;
+import io.github.nextentity.api.Path.NumberRef;
+import io.github.nextentity.api.Path.StringRef;
+import io.github.nextentity.api.model.*;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.Serializable;
@@ -103,22 +75,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <U> EntityPathExpression<T, U> get(Path<T, U> path) {
+    public <U> EntityPath<T, U> get(Path<T, U> path) {
         return target.get(path);
     }
 
     @Override
-    public BooleanPathExpression<T> get(BooleanPath<T> path) {
+    public BooleanPath<T> get(BooleanRef<T> path) {
         return target.get(path);
     }
 
     @Override
-    public StringPathExpression<T> get(StringPath<T> path) {
+    public StringPath<T> get(StringRef<T> path) {
         return target.get(path);
     }
 
     @Override
-    public <U extends Number> NumberPathExpression<T, U> get(NumberPath<T, U> path) {
+    public <U extends Number> NumberPath<T, U> get(NumberRef<T, U> path) {
         return target.get(path);
     }
 
@@ -128,22 +100,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <U> EntityPathExpression<T, U> entity(Path<T, U> path) {
+    public <U> EntityPath<T, U> entity(Path<T, U> path) {
         return target.entity(path);
     }
 
     @Override
-    public StringPathExpression<T> string(Path<T, String> path) {
+    public StringPath<T> string(Path<T, String> path) {
         return target.string(path);
     }
 
     @Override
-    public <U extends Number> NumberPathExpression<T, U> number(Path<T, U> path) {
+    public <U extends Number> NumberPath<T, U> number(Path<T, U> path) {
         return target.number(path);
     }
 
     @Override
-    public BooleanPathExpression<T> bool(Path<T, Boolean> path) {
+    public BooleanPath<T> bool(Path<T, Boolean> path) {
         return target.bool(path);
     }
 
@@ -428,6 +400,21 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
+    public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberRef<T, N> path) {
+        return target.where(path);
+    }
+
+    @Override
+    public StringOperator<T, ? extends SelectWhereStep<T, T>> where(StringRef<T> path) {
+        return target.where(path);
+    }
+
+    @Override
+    public <N> PathOperator<T, N, ? extends SelectWhereStep<T, T>> where(PathExpression<T, N> path) {
+        return target.where(path);
+    }
+
+    @Override
     public <N extends Number> NumberOperator<T, N, ? extends SelectWhereStep<T, T>> where(NumberPath<T, N> path) {
         return target.where(path);
     }
@@ -463,22 +450,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Collection<Path<T, Comparable<?>>> paths) {
+    public OrderOperator<T, T> orderBy(Collection<Path<T,? extends Comparable<?>>> paths) {
         return target.orderBy(paths);
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Path<T, Comparable<?>> path) {
+    public OrderOperator<T, T> orderBy(Path<T,? extends Comparable<?>> path) {
         return target.orderBy(path);
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2) {
+    public OrderOperator<T, T> orderBy(Path<T,? extends Comparable<?>> p1, Path<T,? extends Comparable<?>> p2) {
         return target.orderBy(p1, p2);
     }
 
     @Override
-    public OrderOperator<T, T> orderBy(Path<T, Comparable<?>> p1, Path<T, Comparable<?>> p2, Path<T, Comparable<?>> p3) {
+    public OrderOperator<T, T> orderBy(Path<T,? extends Comparable<?>> p1, Path<T,? extends Comparable<?>> p2, Path<T,? extends Comparable<?>> p3) {
         return target.orderBy(p1, p2, p3);
     }
 
@@ -698,22 +685,22 @@ public class RepositoryFaced<ID extends Serializable, T> implements Repository<I
     }
 
     @Override
-    public <U> EntityPathExpression<T, U> entityPath(String fieldName) {
+    public <U> EntityPath<T, U> entityPath(String fieldName) {
         return target.entityPath(fieldName);
     }
 
     @Override
-    public StringPathExpression<T> stringPath(String fieldName) {
+    public StringPath<T> stringPath(String fieldName) {
         return target.stringPath(fieldName);
     }
 
     @Override
-    public <U extends Number> NumberPathExpression<T, U> numberPath(String fieldName) {
+    public <U extends Number> NumberPath<T, U> numberPath(String fieldName) {
         return target.numberPath(fieldName);
     }
 
     @Override
-    public BooleanPathExpression<T> booleanPath(String fieldName) {
+    public BooleanPath<T> booleanPath(String fieldName) {
         return target.booleanPath(fieldName);
     }
 }

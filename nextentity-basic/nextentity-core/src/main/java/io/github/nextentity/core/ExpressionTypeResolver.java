@@ -1,14 +1,9 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.expression.EntityPath;
-import io.github.nextentity.core.expression.Literal;
-import io.github.nextentity.core.expression.Operation;
-import io.github.nextentity.core.expression.Operator;
-import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.meta.BasicAttribute;
+import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.reflect.PrimitiveTypes;
+import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.math.BigDecimal;
@@ -33,24 +28,34 @@ public class ExpressionTypeResolver {
     );
 
 
-    public static Class<?> getExpressionType(Expression expression, EntityType entityType) {
-        if (expression instanceof EntityPath) {
-            return getColumnType((EntityPath) expression, entityType);
-        } else if (expression instanceof Literal) {
-            return getLiteralType((Literal) expression);
-        } else if (expression instanceof Operation) {
-            return getOperationType((Operation) expression, entityType);
+    public static Class<?> getExpressionType(ExpressionNode expression, EntityType entityType) {
+        if (expression instanceof PathNode) {
+            return getColumnType((PathNode) expression, entityType);
+        } else if (expression instanceof LiteralNode) {
+            return getLiteralType((LiteralNode) expression);
+        } else if (expression instanceof OperatorNode) {
+            return getOperationType((OperatorNode) expression, entityType);
         } else if (expression instanceof QueryStructure) {
-            return getSubQueryType((QueryStructure) expression);
+            return getSubQueryType((QueryStructure) expression, entityType);
         }
         return Object.class;
     }
 
-    private static Class<?> getSubQueryType(QueryStructure subQuery) {
-        return subQuery.from().type();
+    public static Class<?> getSubQueryType(QueryStructure subQuery, EntityType entityType) {
+        Selected select = subQuery.select();
+        if (select instanceof SelectEntity) {
+            return ((FromEntity) subQuery.from()).type();
+        } else if (select instanceof SelectProjection selectProjection) {
+            return selectProjection.type();
+        } else if (select instanceof SelectExpression selectExpression) {
+            return ExpressionTypeResolver.getExpressionType(selectExpression.expression(), entityType);
+        } else if (select instanceof SelectExpressions) {
+            return Tuples.class;
+        }
+        throw new UnsupportedOperationException();
     }
 
-    public static Class<?> getOperationType(Operation expression, EntityType entityType) {
+    public static Class<?> getOperationType(OperatorNode expression, EntityType entityType) {
         Operator operator = expression.operator();
         // noinspection EnhancedSwitchMigration
         switch (operator) {
@@ -95,16 +100,16 @@ public class ExpressionTypeResolver {
         return Object.class;
     }
 
-    private static Class<?> getFirstOperandType(Operation expression, EntityType entityType) {
+    private static Class<?> getFirstOperandType(OperatorNode expression, EntityType entityType) {
         if (!expression.operands().isEmpty()) {
             return getExpressionType(expression.operands().get(0), entityType);
         }
         return Object.class;
     }
 
-    private static Class<?> getNumberType(Operation expression, EntityType entityType) {
+    private static Class<?> getNumberType(OperatorNode expression, EntityType entityType) {
         int index = -1;
-        for (Expression operand : expression.operands()) {
+        for (ExpressionNode operand : expression.operands()) {
             Class<?> type = getExpressionType(operand, entityType);
             if (type.isPrimitive()) {
                 type = PrimitiveTypes.getWrapper(type);
@@ -122,13 +127,13 @@ public class ExpressionTypeResolver {
         return Object.class;
     }
 
-    public static Class<?> getLiteralType(Literal expression) {
+    public static Class<?> getLiteralType(LiteralNode expression) {
         return expression.value().getClass();
     }
 
-    public static Class<?> getColumnType(EntityPath column, EntityType entityType) {
-        BasicAttribute attribute = entityType.getAttribute(column);
-        return attribute.databaseType().databaseType();
+    public static Class<?> getColumnType(PathNode column, EntityType entityType) {
+        Attribute attribute = column.getAttribute(entityType);
+        return attribute.type();
     }
 
 }

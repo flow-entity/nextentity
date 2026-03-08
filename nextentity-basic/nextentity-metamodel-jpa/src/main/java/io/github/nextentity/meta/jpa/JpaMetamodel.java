@@ -1,21 +1,13 @@
 package io.github.nextentity.meta.jpa;
 
+import io.github.nextentity.core.exception.UncheckedReflectiveException;
 import io.github.nextentity.core.meta.AbstractMetamodel;
 import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.core.meta.ValueConvertor;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.persistence.Version;
-import lombok.extern.slf4j.Slf4j;
+import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -23,9 +15,9 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
 
-@Slf4j
 public class JpaMetamodel extends AbstractMetamodel {
     private static final JpaMetamodel JPA_METAMODEL = new JpaMetamodel();
+    private static final Logger log = LoggerFactory.getLogger(JpaMetamodel.class);
     private final List<Class<? extends Annotation>> JOIN_ANNOTATIONS =
             Arrays.asList(ManyToOne.class, OneToMany.class, ManyToMany.class, OneToOne.class);
 
@@ -37,9 +29,27 @@ public class JpaMetamodel extends AbstractMetamodel {
     }
 
     @Override
+    protected ValueConvertor<?, ?> databaseType(Attribute attribute) {
+        Convert convert = getAnnotation(attribute, Convert.class);
+        if (convert != null) {
+            Class<?> type = convert.converter();
+            if (type != void.class) {
+                try {
+                    AttributeConverter<?, ?> converter = (AttributeConverter<?, ?>) type.getConstructor().newInstance();
+                    return AttributeConverterWrapper.of(converter);
+                } catch (ReflectiveOperationException e) {
+                    log.error("create AttributeConverter error, attribute: {}", attribute);
+                    throw new UncheckedReflectiveException(e.getMessage(), e);
+                }
+            }
+        }
+        return super.databaseType(attribute);
+    }
+
+    @Override
     protected String getTableName(Class<?> javaType) {
         String tableName = getTableNameByAnnotation(javaType);
-        return tableName != null ? tableName : getTableNameByClassName(javaType);
+        return tableName != null ? unwrapSymbol(tableName) : getTableNameByClassName(javaType);
     }
 
     protected String getTableNameByClassName(Class<?> javaType) {
@@ -69,6 +79,12 @@ public class JpaMetamodel extends AbstractMetamodel {
     protected boolean isMarkedId(Attribute attribute) {
         Id id = getAnnotation(attribute, Id.class);
         return id != null;
+    }
+
+    @Override
+    protected boolean isUpdatable(Attribute attribute) {
+        Column id = getAnnotation(attribute, Column.class);
+        return id == null || id.updatable();
     }
 
     @Override

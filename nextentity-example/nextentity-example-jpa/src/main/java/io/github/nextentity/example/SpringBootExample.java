@@ -1,5 +1,6 @@
 package io.github.nextentity.example;
 
+import io.github.nextentity.data.jpa.annotation.EnableAutoRegisterJpaRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -8,6 +9,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @author HuangChengwei
  * @since 2024-03-19 13:50
  */
+@EnableAutoRegisterJpaRepository
 @SpringBootApplication
 public class SpringBootExample {
     public static ConfigurableApplicationContext context;
