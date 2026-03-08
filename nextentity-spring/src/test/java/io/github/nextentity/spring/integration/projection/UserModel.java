@@ -3,6 +3,8 @@ package io.github.nextentity.spring.integration.projection;
 import io.github.nextentity.core.annotation.EntityAttribute;
 import io.github.nextentity.spring.integration.entity.User;
 
+import java.util.Objects;
+
 public class UserModel implements UserInterface {
 
     private int id;
@@ -86,5 +88,36 @@ public class UserModel implements UserInterface {
 
     public void setParentUsername(String parentUsername) {
         this.parentUsername = parentUsername;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (!(o instanceof UserModel userModel)) return false;
+
+        return id == userModel.id
+               && randomNumber == userModel.randomNumber
+               && valid == userModel.valid
+               && Objects.equals(username, userModel.username)
+               && Objects.equals(pid, userModel.pid)
+               && Objects.equals(parentUsername, userModel.parentUsername);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + randomNumber;
+        result = 31 * result + Objects.hashCode(username);
+        result = 31 * result + Objects.hashCode(pid);
+        result = 31 * result + Boolean.hashCode(valid);
+        result = 31 * result + Objects.hashCode(parentUsername);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "UserModel{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               '}';
     }
 }

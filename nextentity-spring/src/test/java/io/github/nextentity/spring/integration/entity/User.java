@@ -234,5 +234,11 @@ public class User extends EnableOptimisticLock implements Cloneable {
         this.test = test;
     }
 
-
+    @Override
+    public String toString() {
+        return "User{" +
+               "id=" + id +
+               ", username='" + username + '\'' +
+               '}';
+    }
 }

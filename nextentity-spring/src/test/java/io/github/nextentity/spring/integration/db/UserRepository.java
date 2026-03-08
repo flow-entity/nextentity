@@ -10,8 +10,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author HuangChengwei
@@ -19,16 +21,18 @@ import java.util.function.Function;
  */
 public class UserRepository extends AbstractRepository<User, Integer> implements Select<User> {
 
-
     private List<User> users;
     private Transaction transaction;
+    private final String name;
 
     public UserRepository(JdbcTemplate jdbcTemplate) {
         super(jdbcTemplate);
+        name = "jdbc";
     }
 
     public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
         super(entityManager, jdbcTemplate);
+        name = "jpa";
     }
 
     public void setTransaction(Transaction transaction) {
@@ -41,6 +45,16 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
 
     public void insert(@NonNull Iterable<User> entities) {
         super.insertAll(entities);
+    }
+
+    @Override
+    public void insertAll(@NonNull Iterable<User> entities) {
+        doInTransaction(() -> super.insertAll(entities));
+    }
+
+    @Override
+    public void insert(@org.springframework.lang.NonNull User entity) {
+        doInTransaction(() -> super.insert(entity));
     }
 
     public void update(@NonNull Iterable<User> entities) {
@@ -477,14 +491,31 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     public List<User> users() {
+        if (users == null) {
+            List<User> list = query().orderBy(User::getId).asc().getList();
+            Map<Integer, User> map = list.stream().collect(Collectors.toMap(User::getId, Function.identity()));
+            for (User user : list) {
+                Integer pid = user.getPid();
+                User p = map.get(pid);
+                user.setParentUser(p);
+                user.setRandomUser(map.get(user.getRandomNumber()));
+                user.setTestUser(map.get(user.getTestInteger()));
+            }
+            users = list;
+        }
         return users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void doInTransaction(Runnable o) {
+        if ("jdbc".equals(name)) {
+            transaction.doInJdbcTransaction(o);
+        } else {
+            transaction.doInJpaTransaction(o);
+        }
     }
 
-    public void doInTransaction(Runnable o) {
-        transaction.doInTransaction(o);
+    @Override
+    public String toString() {
+        return name;
     }
 }

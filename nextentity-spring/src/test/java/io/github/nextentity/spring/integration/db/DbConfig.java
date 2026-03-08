@@ -33,9 +33,7 @@ public class DbConfig {
         this.users = new DbInitializer(this).initialize();
 
         Transaction transaction = new Transaction(this);
-        jdbc.setUsers(users);
         jdbc.setTransaction(transaction);
-        jpa.setUsers(users);
         jpa.setTransaction(transaction);
     }
 

@@ -6,10 +6,13 @@ import jakarta.persistence.EntityTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.ConnectionCallback;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
 
+import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -19,13 +22,13 @@ import java.util.function.Function;
  */
 public class Transaction {
     private static final Logger log = LoggerFactory.getLogger(Transaction.class);
+    private final TransactionTemplate jdbcTransactionTemplate;
     protected DbConfig config;
-
-    public Transaction() {
-    }
 
     public Transaction(DbConfig config) {
         this.config = config;
+        this.jdbcTransactionTemplate = jdbcTransactionTemplate();
+
     }
 
     public void doInTransaction(Consumer<Connection> action) {
@@ -62,42 +65,56 @@ public class Transaction {
 
     }
 
-    public void doInTransaction(Runnable action) {
+    public void doInJpaTransaction(Runnable action) {
         try {
-            executeAction(action);
+            executeJpaAction(action);
         } catch (SQLException e) {
             throw new UncheckedSQLException(e);
         }
     }
 
-    private void executeAction(Runnable action) throws SQLException {
+    public void doInJdbcTransaction(Runnable action) {
+        try {
+            executeJdbcAction(action);
+        } catch (SQLException e) {
+            throw new UncheckedSQLException(e);
+        }
+    }
+
+    private void executeJpaAction(Runnable action) throws SQLException {
         EntityTransaction transaction = config.getEntityManager().getTransaction();
-        boolean rollback = false;
-        JdbcTemplate provider = config.getJdbcTemplate();
-        provider.execute((Connection connection) -> {
-            connection.setAutoCommit(false);
-            return null;
-        });
+        if (transaction.isActive()) {
+            action.run();
+            return;
+        }
         transaction.begin();
+        boolean rolledBack = false;
         try {
             action.run();
-        } catch (Throwable throwable) {
-            rollback = true;
-            provider.execute((Connection connection) -> {
-                connection.rollback();
-                return null;
-            });
+        } catch (Throwable e) {
             transaction.rollback();
-            throw throwable;
+            rolledBack = true;
+            throw e;
         } finally {
-            if (!rollback) {
-                provider.execute((Connection connection) -> {
-                    connection.commit();
-                    return null;
-                });
+            if (rolledBack) {
+                transaction.rollback();
+            } else {
                 transaction.commit();
             }
         }
+    }
+
+    private void executeJdbcAction(Runnable action) throws SQLException {
+        jdbcTransactionTemplate.execute(status -> {
+            action.run();
+            return null;
+        });
+    }
+
+    private TransactionTemplate jdbcTransactionTemplate() {
+        DataSource dataSource = Objects.requireNonNull(config.getJdbcTemplate().getDataSource());
+        DataSourceTransactionManager manager = new DataSourceTransactionManager(dataSource);
+        return new TransactionTemplate(manager);
     }
 
 

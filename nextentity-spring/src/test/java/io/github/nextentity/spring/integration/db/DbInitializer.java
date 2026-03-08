@@ -18,7 +18,7 @@ public class DbInitializer extends Transaction {
     List<User> allUsers;
 
     public DbInitializer(DbConfig config) {
-        this.config = config;
+        super(config);
     }
 
     public synchronized List<User> initialize() {
