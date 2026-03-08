@@ -78,7 +78,7 @@ public class ReflectUtil {
 
     @NotNull
     public static Object newProxyInstance(@NotNull Class<?> resultType, Map<Method, Object> map) {
-        ClassLoader classLoader = resultType.getClassLoader();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Class<?>[] interfaces = {resultType};
         return Proxy.newProxyInstance(classLoader, interfaces, new InstanceInvocationHandler(resultType, map));
     }
