@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git push:*)",
+      "Bash(gh pr:*)",
+      "Bash(mvn package:*)",
+      "Bash(mvnw package:*)"
+    ]
+  }
+}

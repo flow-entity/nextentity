@@ -1,0 +1,377 @@
+package io.github.nextentity.api;
+
+import io.github.nextentity.api.model.EntityRoot;
+import io.github.nextentity.api.model.Order;
+import org.jspecify.annotations.NonNull;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * Simple expression interface, providing basic expression operation methods.
+ *
+ * @param <T> Entity type
+ * @param <U> Expression value type
+ * @author HuangChengwei
+ * @since 1.0.0
+ */
+public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
+
+    /**
+     * Gets the entity root object.
+     *
+     * @return Entity root object
+     */
+    EntityRoot<T> root();
+
+    /**
+     * Counts the number of expression values.
+     *
+     * @return Count expression
+     */
+    NumberExpression<T, Long> count();
+
+    /**
+     * Counts the number of distinct expression values.
+     *
+     * @return Distinct count expression
+     */
+    NumberExpression<T, Long> countDistinct();
+
+    /**
+     * Equals the specified value.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> eq(U value);
+
+    /**
+     * Equals the specified value if not null.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> eqIfNotNull(U value);
+
+    /**
+     * Equals the value of another expression.
+     *
+     * @param value Another expression
+     * @return Predicate object
+     */
+    Predicate<T> eq(TypedExpression<T, U> value);
+
+    /**
+     * Not equals the specified value.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> ne(U value);
+
+    /**
+     * Not equals the specified value if not null.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> neIfNotNull(U value);
+
+    /**
+     * Not equals the value of another expression.
+     *
+     * @param value Another expression
+     * @return Predicate object
+     */
+    Predicate<T> ne(TypedExpression<T, U> value);
+
+    /**
+     * In the values of the specified expression list.
+     *
+     * @param expressions Expression list
+     * @return Predicate object
+     */
+    Predicate<T> in(@NonNull TypedExpression<T, List<U>> expressions);
+
+    /**
+     * In the specified value array.
+     *
+     * @param values Value array
+     * @return Predicate object
+     */
+    @SuppressWarnings("unchecked")
+    Predicate<T> in(U... values);
+
+    /**
+     * In the values of the specified expression list.
+     *
+     * @param values Expression list
+     * @return Predicate object
+     */
+    Predicate<T> in(@NonNull List<? extends TypedExpression<T, U>> values);
+
+    /**
+     * In the specified collection.
+     *
+     * @param values Value collection
+     * @return Predicate object
+     */
+    Predicate<T> in(@NonNull Collection<? extends U> values);
+
+    /**
+     * Not in the specified value array.
+     *
+     * @param values Value array
+     * @return Predicate object
+     */
+    @SuppressWarnings("unchecked")
+    Predicate<T> notIn(U... values);
+
+    /**
+     * Not in the values of the specified expression list.
+     *
+     * @param values Expression list
+     * @return Predicate object
+     */
+    Predicate<T> notIn(@NonNull List<? extends TypedExpression<T, U>> values);
+
+    /**
+     * Not in the specified collection.
+     *
+     * @param values Value collection
+     * @return Predicate object
+     */
+    Predicate<T> notIn(@NonNull Collection<? extends U> values);
+
+    /**
+     * Value is null.
+     *
+     * @return Predicate object
+     */
+    Predicate<T> isNull();
+
+    /**
+     * Value is not null.
+     *
+     * @return Predicate object
+     */
+    Predicate<T> isNotNull();
+
+    /**
+     * Greater than or equal to the value of another expression.
+     *
+     * @param expression Another expression
+     * @return Predicate object
+     */
+    Predicate<T> ge(TypedExpression<T, U> expression);
+
+    /**
+     * Greater than the value of another expression.
+     *
+     * @param expression Another expression
+     * @return Predicate object
+     */
+    Predicate<T> gt(TypedExpression<T, U> expression);
+
+    /**
+     * Less than or equal to the value of another expression.
+     *
+     * @param expression Another expression
+     * @return Predicate object
+     */
+    Predicate<T> le(TypedExpression<T, U> expression);
+
+    /**
+     * Less than the value of another expression.
+     *
+     * @param expression Another expression
+     * @return Predicate object
+     */
+    Predicate<T> lt(TypedExpression<T, U> expression);
+
+    /**
+     * Between the values of two expressions.
+     *
+     * @param l Left boundary expression
+     * @param r Right boundary expression
+     * @return Predicate object
+     */
+    Predicate<T> between(TypedExpression<T, U> l, TypedExpression<T, U> r);
+
+    /**
+     * Not between the values of two expressions.
+     *
+     * @param l Left boundary expression
+     * @param r Right boundary expression
+     * @return Predicate object
+     */
+    Predicate<T> notBetween(TypedExpression<T, U> l, TypedExpression<T, U> r);
+
+    /**
+     * Sorts in ascending order.
+     *
+     * @return Order object
+     */
+    default Order<T> asc() {
+        return sort(SortOrder.ASC);
+    }
+
+    /**
+     * Sorts in descending order.
+     *
+     * @return Order object
+     */
+    default Order<T> desc() {
+        return sort(SortOrder.DESC);
+    }
+
+    /**
+     * Sorts by the specified sort order.
+     *
+     * @param order Sort order
+     * @return Order object
+     */
+    Order<T> sort(SortOrder order);
+
+    /**
+     * Greater than or equal to the specified value.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    default Predicate<T> ge(U value) {
+        return ge(root().literal(value));
+    }
+
+    /**
+     * Greater than the specified value.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    default Predicate<T> gt(U value) {
+        return gt(root().literal(value));
+    }
+
+    /**
+     * Less than or equal to the specified value.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    default Predicate<T> le(U value) {
+        return le(root().literal(value));
+    }
+
+    /**
+     * Less than the specified value.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    default Predicate<T> lt(U value) {
+        return lt(root().literal(value));
+    }
+
+    /**
+     * Greater than or equal to the specified value if not null.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> geIfNotNull(U value);
+
+    /**
+     * Greater than the specified value if not null.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> gtIfNotNull(U value);
+
+    /**
+     * Less than or equal to the specified value if not null.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> leIfNotNull(U value);
+
+    /**
+     * Less than the specified value if not null.
+     *
+     * @param value Comparison value
+     * @return Predicate object
+     */
+    Predicate<T> ltIfNotNull(U value);
+
+    /**
+     * Between two values.
+     *
+     * @param l Left boundary value
+     * @param r Right boundary value
+     * @return Predicate object
+     */
+    default Predicate<T> between(U l, U r) {
+        EntityRoot<T> eb = root();
+        return between(eb.literal(l), eb.literal(r));
+    }
+
+    /**
+     * Not between two values.
+     *
+     * @param l Left boundary value
+     * @param r Right boundary value
+     * @return Predicate object
+     */
+    default Predicate<T> notBetween(U l, U r) {
+        EntityRoot<T> eb = root();
+        return notBetween(eb.literal(l), eb.literal(r));
+    }
+
+    /**
+     * Between expression and value.
+     *
+     * @param l Left boundary expression
+     * @param r Right boundary value
+     * @return Predicate object
+     */
+    default Predicate<T> between(TypedExpression<T, U> l, U r) {
+        return between(l, root().literal(r));
+    }
+
+    /**
+     * Between value and expression.
+     *
+     * @param l Left boundary value
+     * @param r Right boundary expression
+     * @return Predicate object
+     */
+    default Predicate<T> between(U l, TypedExpression<T, U> r) {
+        return between(root().literal(l), r);
+    }
+
+    /**
+     * Not between expression and value.
+     *
+     * @param l Left boundary expression
+     * @param r Right boundary value
+     * @return Predicate object
+     */
+    default Predicate<T> notBetween(TypedExpression<T, U> l, U r) {
+        return notBetween(l, root().literal(r));
+    }
+
+    /**
+     * Not between value and expression.
+     *
+     * @param l Left boundary value
+     * @param r Right boundary expression
+     * @return Predicate object
+     */
+    default Predicate<T> notBetween(U l, TypedExpression<T, U> r) {
+        return notBetween(root().literal(l), r);
+    }
+
+}

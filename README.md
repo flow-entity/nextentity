@@ -12,12 +12,12 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>io.github.nextentity</groupId>
+  <groupId>io.github.flow-entity</groupId>
   <artifactId>nextentity-example-jdbc</artifactId>
 
   <dependencies>
     <dependency>
-      <groupId>io.github.nextentity</groupId>
+      <groupId>io.github.flow-entity</groupId>
       <artifactId>spring-boot-starter-nextentity-jdbc</artifactId>
       <version>${nextentity.version}</version>
     </dependency>
