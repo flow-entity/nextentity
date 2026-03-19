@@ -7,6 +7,20 @@ import java.math.BigDecimal;
  * Path interface, representing the path reference to an entity attribute.
  * <p>
  * Used to reference entity attributes in queries, and is a functional interface.
+ * <p>
+ * Usage: This interface and all its sub-interfaces (NumberRef, BooleanRef, StringRef, LongRef, etc.)
+ * are not intended to be implemented directly by user classes. Instead, they are designed to be
+ * used as method references for type-safe property access in query expressions. For example:
+ * <pre>{@code
+ * // Using method reference as a path expression
+ * repository.select(User.class)
+ *     .where(User::getId).eq(1L)
+ *     .getList();
+ *
+ * // User::getId is automatically converted to a Path<User, Long>
+ * // User::getName becomes Path<User, String> (StringRef)
+ * // User::isActive becomes Path<User, Boolean> (BooleanRef)
+ * }</pre>
  *
  * @param <T> Entity type
  * @param <R> Attribute type
