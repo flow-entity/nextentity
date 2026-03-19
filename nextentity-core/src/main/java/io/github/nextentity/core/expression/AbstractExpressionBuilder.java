@@ -1,6 +1,7 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Path;
+import io.github.nextentity.api.SimpleExpression;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.PathReference;
 import org.jspecify.annotations.NonNull;

@@ -69,6 +69,16 @@ public class SimpleExpressionImpl<T, U>
     }
 
     @Override
+    public SimpleExpression<T, U> max() {
+        return new SimpleExpressionImpl<>(operate(Operator.MAX));
+    }
+
+    @Override
+    public SimpleExpression<T, U> min() {
+        return new SimpleExpressionImpl<>(operate(Operator.MIN));
+    }
+
+    @Override
     protected Predicate<T> next(ExpressionNode operate) {
         return new PredicateImpl<>(operate);
     }

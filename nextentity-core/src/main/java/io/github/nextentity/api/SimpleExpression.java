@@ -374,4 +374,17 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
         return notBetween(root().literal(l), r);
     }
 
+    /**
+     * Gets the maximum value of the expression.
+     *
+     * @return Maximum expression
+     */
+    SimpleExpression<T, U> max();
+
+    /**
+     * Gets the minimum value of the expression.
+     *
+     * @return Minimum expression
+     */
+    SimpleExpression<T, U> min();
 }

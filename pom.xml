@@ -134,13 +134,11 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven Surefire Plugin 用于运行测试 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
 
-            <!-- Maven Source Plugin 生成源码包 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -155,7 +153,6 @@
                 </executions>
             </plugin>
 
-            <!-- Maven Javadoc Plugin 生成文档包 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
@@ -177,7 +174,6 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven GPG Plugin 签名插件 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
@@ -207,7 +203,6 @@
                     <pomElements>
                         <parent>remove</parent>
                         <dependencyManagement>resolve</dependencyManagement>
-                        <!-- 按需配置 -->
                     </pomElements>
                 </configuration>
                 <executions>
