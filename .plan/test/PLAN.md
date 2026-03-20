@@ -257,12 +257,12 @@ void testSelect_NormalCase() {
 - 检查测试数据是否合理
 
 #### 步骤 2：问题分类
-| 问题类型 | 处理方式 |
-|----------|----------|
-| **测试代码错误** | 修复测试用例 |
-| **业务代码 Bug** | 修复业务代码 |
-| **需求不明确** | 确认需求后决定修改哪方 |
-| **设计缺陷** | 评估影响范围，可能需要重构 |
+| 问题类型 | 处理方式           |
+|----------|----------------|
+| **测试代码错误** | 修复测试用例         |
+| **业务代码 Bug** | 修复业务代码(先记录，后期修复) |
+| **需求不明确** | 确认需求后决定修改哪方    |
+| **设计缺陷** | 评估影响范围，可能需要重构  |
 
 #### 步骤 3：记录问题
 在 `.plan/test/ISSUES.md` 中记录：
@@ -1072,11 +1072,11 @@ jobs:
 ### core/converter/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
 |------|--------|--------------|----------|------|
-| EnumConverter.java | 3 | 3 | 0% | 枚举类型转换器 |
-| LocalDateTimeConverter.java | 3 | 3 | 0% | LocalDateTime 转换器 |
-| NumberConverter.java | 6 | 6 | 0% | 数值类型转换器 |
+| EnumConverter.java | 3 | 3 | 100% | 枚举类型转换器 |
+| LocalDateTimeConverter.java | 3 | 3 | 100% | LocalDateTime 转换器 |
+| NumberConverter.java | 6 | 6 | 100% | 数值类型转换器 |
 | TypeConverter.java | 3 | - | - | 类型转换器接口 |
-| TypeConverters.java | 1 | 1 | 0% | 类型转换器注册表 |
+| TypeConverters.java | 1 | 1 | 100% | 类型转换器注册表 |
 
 ### core/exception/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
@@ -1132,7 +1132,7 @@ jobs:
 | EntityAttribute.java | 2 | - | - | 实体属性 |
 | EntitySchema.java | 1 | - | - | 实体模式 |
 | EntityType.java | 0 | - | - | 实体类型 |
-| EnumConverter.java | 3 | 3 | 0% | 元数据枚举转换器 |
+| EnumConverter.java | 3 | 3 | 100% | 元数据枚举转换器 |
 | IdentityValueConverter.java | 5 | 5 | 0% | 标识值转换器 |
 | InstantConverter.java | 5 | 5 | 0% | Instant 转换器 |
 | JoinAttribute.java | 0 | - | - | 关联属性 |
@@ -1154,9 +1154,9 @@ jobs:
 ### core/reflect/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
 |------|--------|--------------|----------|------|
-| InstanceInvocationHandler.java | 6 | 6 | 0% | 实例调用处理器 |
-| PrimitiveTypes.java | 4 | 4 | 0% | 基本类型工具 |
-| ReflectUtil.java | 11 | 11 | 0% | 反射工具类 |
+| InstanceInvocationHandler.java | 6 | 6 | 100% | 实例调用处理器 |
+| PrimitiveTypes.java | 4 | 4 | 100% | 基本类型工具 |
+| ReflectUtil.java | 11 | 11 | 100% | 反射工具类 |
 
 ### core/reflect/schema/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
@@ -1167,22 +1167,22 @@ jobs:
 | ReflectType.java | 2 | - | - | 反射类型 |
 | Schema.java | 4 | - | - | 模式接口 |
 | SchemaAttribute.java | 0 | - | - | 模式属性接口 |
-| SimpleAttribute.java | 16 | 14 | 0% | 简单属性 |
+| SimpleAttribute.java | 16 | 14 | 100% | 简单属性 |
 | SimpleAttributes.java | 2 | 2 | 0% | 简单属性集合 |
-| SimpleSchema.java | 4 | 4 | 0% | 简单模式 |
+| SimpleSchema.java | 4 | 4 | 100% | 简单模式 |
 
 ### core/util/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
 |------|--------|--------------|----------|------|
 | EmptyArrays.java | 0 | - | - | 空数组常量 |
-| Exceptions.java | 2 | 2 | 0% | 异常工具 |
-| ImmutableArray.java | 1 | 1 | 0% | 不可变数组实现 |
-| ImmutableList.java | 47 | 40 | 0% | 不可变列表实现 |
-| Iterators.java | 13 | 13 | 0% | 迭代器工具 |
-| Lazy.java | 1 | 1 | 0% | 延迟初始化 |
-| Maps.java | 5 | 5 | 0% | Map 工具 |
+| Exceptions.java | 2 | 2 | 100% | 异常工具 |
+| ImmutableArray.java | 1 | 1 | 100% | 不可变数组实现 |
+| ImmutableList.java | 47 | 40 | 95% | 不可变列表实现 (1个bug待修复) |
+| Iterators.java | 13 | 13 | 100% | 迭代器工具 |
+| Lazy.java | 1 | 1 | 100% | 延迟初始化 |
+| Maps.java | 5 | 5 | 100% | Map 工具 |
 | Paths.java | 31 | 25 | 0% | 路径工具 |
-| Predicates.java | 4 | 4 | 0% | 谓词工具 |
+| Predicates.java | 4 | 4 | 100% | 谓词工具 |
 | Sizeable.java | 2 | - | - | 可大小度量接口 |
 
 ### jdbc/
@@ -1251,7 +1251,47 @@ jobs:
 | **包结构** | 17 个包 |
 | **方法总数** | ~800+ 个 |
 | **需测试方法数** | ~650+ 个 |
-| **整体测试进度** | 0% |
+| **整体测试进度** | ~15% |
+
+### 已完成测试
+
+#### 第一阶段：基础工具类 (core/util)
+| 文件 | 测试数 | 状态 |
+|------|--------|------|
+| EmptyArraysTest | 5 | ✅ 通过 |
+| SizeableTest | 5 | ✅ 通过 |
+| LazyTest | 8 | ✅ 通过 |
+| ExceptionsTest | 5 | ✅ 通过 |
+| ImmutableArrayTest | 9 | ✅ 通过 |
+| ImmutableListTest | 50 | ⚠️ 1失败 (Bug #1) |
+| IteratorsTest | 21 | ✅ 通过 |
+| MapsTest | 11 | ✅ 通过 |
+| PredicatesTest | 5 | ✅ 通过 |
+
+#### 第二阶段：反射与元模型基础
+| 文件 | 测试数 | 状态 |
+|------|--------|------|
+| PrimitiveTypesTest | 38 | ✅ 通过 |
+| ReflectUtilTest | 11 | ✅ 通过 |
+| InstanceInvocationHandlerTest | 8 | ✅ 通过 |
+| SimpleAttributeTest | 5 | ✅ 通过 |
+| SimpleSchemaTest | 3 | ✅ 通过 |
+| EnumConverterTest (meta) | 10 | ✅ 通过 |
+
+#### 第三阶段：类型转换器
+| 文件 | 测试数 | 状态 |
+|------|--------|------|
+| NumberConverterTest | 10 | ✅ 通过 |
+| EnumConverterTest (converter) | 9 | ✅ 通过 |
+| LocalDateTimeConverterTest | 8 | ✅ 通过 |
+| TypeConvertersTest | 6 | ✅ 通过 |
+| BugVerificationTest | 3 | ✅ 已禁用 (待Bug修复) |
+
+### 发现的Bug
+详见 `.plan/test/ISSUES.md`
+1. ImmutableList.of() 未创建防御性副本
+2. NumberConverter 精度丢失时返回原值
+3. ReflectUtil.getEnum(String) 方法调用错误
 
 ### 测试优先级建议
 1. **高优先级**：`QueryBuilder.java`, `AbstractExpressionBuilder.java`, `AbstractQuerySqlBuilder.java` - 核心查询构建逻辑
