@@ -1099,8 +1099,8 @@ jobs:
 | ExpressionTree.java | 0 | - | - | 表达式树结构 |
 | Expressions.java | 5 | 5 | 100% | 表达式工具 |
 | From.java | 0 | - | - | FROM 子句接口 |
-| FromEntity.java | 1 | 1 | 0% | FROM 实体实现 |
-| FromSubQuery.java | 1 | 1 | 0% | FROM 子查询实现 |
+| FromEntity.java | 1 | 1 | 100% | FROM 实体实现 |
+| FromSubQuery.java | 1 | 1 | 100% | FROM 子查询实现 |
 | LiteralNode.java | 5 | 5 | 100% | 字面值节点 |
 | NumberExpressionImpl.java | 9 | 9 | 100% | 数值表达式实现 |
 | NumberOperatorImpl.java | 12 | 12 | 0% | 数值操作符实现 |
@@ -1112,14 +1112,14 @@ jobs:
 | PathOperatorImpl.java | 3 | 3 | 0% | 路径操作符实现 |
 | PredicateImpl.java | 9 | 9 | 100% | 谓词实现 |
 | QueryStructure.java | 14 | 12 | 0% | 查询结构 |
-| SelectEntity.java | 1 | 1 | 0% | 选择实体 |
-| SelectExpression.java | 1 | 1 | 0% | 选择表达式 |
+| SelectEntity.java | 1 | 1 | 100% | 选择实体 |
+| SelectExpression.java | 1 | 1 | 100% | 选择表达式 |
 | SelectExpressions.java | 1 | 1 | 0% | 选择表达式工具 |
-| SelectProjection.java | 1 | 1 | 0% | 选择投影 |
+| SelectProjection.java | 1 | 1 | 100% | 选择投影 |
 | Selected.java | 0 | - | - | 已选择项 |
 | SimpleExpressionImpl.java | 14 | 12 | 100% | 简单表达式实现 |
-| SliceImpl.java | 0 | - | - | 切片实现 |
-| SortExpression.java | 3 | 3 | 0% | 排序表达式 |
+| SliceImpl.java | 0 | - | 100% | 切片实现 |
+| SortExpression.java | 3 | 3 | 100% | 排序表达式 |
 | StringExpressionImpl.java | 5 | 5 | 100% | 字符串表达式实现 |
 | StringOperatorImpl.java | 5 | 5 | 0% | 字符串操作符实现 |
 
@@ -1181,7 +1181,7 @@ jobs:
 | Iterators.java | 13 | 13 | 100% | 迭代器工具 |
 | Lazy.java | 1 | 1 | 100% | 延迟初始化 |
 | Maps.java | 5 | 5 | 100% | Map 工具 |
-| Paths.java | 31 | 25 | 0% | 路径工具 |
+| Paths.java | 31 | 25 | 0% | 路径工具 (RootImpl已测试) |
 | Predicates.java | 4 | 4 | 100% | 谓词工具 |
 | Sizeable.java | 2 | - | - | 可大小度量接口 |
 
@@ -1192,53 +1192,53 @@ jobs:
 | AbstractQuerySqlBuilder.java | 56 | 45 | 0% | 抽象查询 SQL 构建器 |
 | AbstractUpdateSqlBuilder.java | 9 | 8 | 0% | 抽象更新 SQL 构建器 |
 | Arguments.java | 0 | - | - | 查询参数接口 |
-| AttributeParameter.java | 2 | 2 | 0% | 属性参数 |
-| BatchSqlStatement.java | 2 | 2 | 0% | 批量 SQL 语句 |
+| AttributeParameter.java | 2 | 2 | 100% | 属性参数 |
+| BatchSqlStatement.java | 2 | 2 | 100% | 批量 SQL 语句 |
 | ConnectionProvider.java | 0 | - | - | 连接提供者 |
-| DeepLimitSchemaAttributePaths.java | 3 | 3 | 0% | 深层限制模式属性路径 |
-| DefaultSchemaAttributePaths.java | 3 | 3 | 0% | 默认模式属性路径 |
-| EmptySchemaAttributePaths.java | 2 | 2 | 0% | 空模式属性路径 |
-| InsertSqlStatement.java | 2 | 2 | 0% | 插入 SQL 语句 |
+| DeepLimitSchemaAttributePaths.java | 3 | 3 | 100% | 深层限制模式属性路径 |
+| DefaultSchemaAttributePaths.java | 3 | 3 | 100% | 默认模式属性路径 |
+| EmptySchemaAttributePaths.java | 2 | 2 | 100% | 空模式属性路径 |
+| InsertSqlStatement.java | 2 | 2 | 100% | 插入 SQL 语句 |
 | JdbcArguments.java | 1 | 1 | 0% | JDBC 参数 |
 | JdbcQueryExecutor.java | 1 | 1 | 0% | JDBC 查询执行器 |
 | JdbcResultCollector.java | 1 | 1 | 0% | JDBC 结果收集器 |
 | JdbcUpdateExecutor.java | 10 | 8 | 0% | JDBC 更新执行器 |
 | JdbcUpdateSqlBuilder.java | 0 | - | - | JDBC 更新 SQL 构建器 |
-| JdbcUtil.java | 5 | 5 | 0% | JDBC 工具类 |
-| MySqlQuerySqlBuilder.java | 7 | 6 | 0% | MySQL 查询 SQL 构建器 |
-| MySqlUpdateSqlBuilder.java | 2 | 2 | 0% | MySQL 更新 SQL 构建器 |
-| NullParameter.java | 3 | 3 | 0% | 空参数 |
-| PostgreSqlUpdateSqlBuilder.java | 4 | 4 | 0% | PostgreSQL 更新 SQL 构建器 |
-| PostgresqlQuerySqlBuilder.java | 7 | 6 | 0% | PostgreSQL 查询 SQL 构建器 |
+| JdbcUtil.java | 5 | 5 | 100% | JDBC 工具类 |
+| MySqlQuerySqlBuilder.java | 7 | 6 | 100% | MySQL 查询 SQL 构建器 |
+| MySqlUpdateSqlBuilder.java | 2 | 2 | 100% | MySQL 更新 SQL 构建器 |
+| NullParameter.java | 3 | 3 | 100% | 空参数 |
+| PostgreSqlUpdateSqlBuilder.java | 4 | 4 | 100% | PostgreSQL 更新 SQL 构建器 |
+| PostgresqlQuerySqlBuilder.java | 7 | 6 | 100% | PostgreSQL 查询 SQL 构建器 |
 | QueryContext.java | 21 | 18 | 0% | 查询上下文 |
-| QuerySqlStatement.java | 3 | 3 | 0% | 查询 SQL 语句 |
-| SchemaAttributePaths.java | 1 | - | - | 模式属性路径 |
+| QuerySqlStatement.java | 3 | 3 | 100% | 查询 SQL 语句 |
+| SchemaAttributePaths.java | 1 | 1 | 100% | 模式属性路径 |
 | SelectArrayContext.java | 2 | 2 | 0% | 数组选择上下文 |
 | SelectEntityContext.java | 2 | 2 | 0% | 实体选择上下文 |
 | SelectPrimitiveContext.java | 2 | 2 | 0% | 基本类型选择上下文 |
 | SelectProjectionContext.java | 2 | 2 | 0% | 投影选择上下文 |
 | SelectSimpleEntityContext.java | 2 | 2 | 0% | 简单实体选择上下文 |
-| SqlDialectSelector.java | 5 | 5 | 0% | SQL 方言选择器 |
-| SqlServerQuerySqlBuilder.java | 8 | 7 | 0% | SQL Server 查询 SQL 构建器 |
-| SqlServerUpdateSqlBuilder.java | 3 | 3 | 0% | SQL Server 更新 SQL 构建器 |
+| SqlDialectSelector.java | 5 | 5 | 100% | SQL 方言选择器 |
+| SqlServerQuerySqlBuilder.java | 8 | 7 | 100% | SQL Server 查询 SQL 构建器 |
+| SqlServerUpdateSqlBuilder.java | 3 | 3 | 100% | SQL Server 更新 SQL 构建器 |
 | SqlStatement.java | 1 | - | - | SQL 语句 |
 | TypedParameter.java | 0 | - | - | 类型化参数 |
 
 ### jpa/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
 |------|--------|--------------|----------|------|
-| JpaArguments.java | 1 | 1 | 0% | JPA 参数 |
+| JpaArguments.java | 1 | 1 | 100% | JPA 参数 |
 | JpaExpressionBuilder.java | 10 | 9 | 0% | JPA 表达式构建器 |
 | JpaNativeQueryExecutor.java | 4 | 4 | 0% | JPA 原生查询执行器 |
 | JpaQueryExecutor.java | 20 | 16 | 0% | JPA 查询执行器 |
 | JpaUpdateExecutor.java | 5 | 5 | 0% | JPA 更新执行器 |
-| LockModeTypeAdapter.java | 1 | 1 | 0% | 锁模式类型适配器 |
+| LockModeTypeAdapter.java | 1 | 1 | 100% | 锁模式类型适配器 |
 
 ### meta/jpa/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
 |------|--------|--------------|----------|------|
-| AttributeConverterWrapper.java | 3 | 3 | 0% | 属性转换器包装器 |
-| DurationStringConverter.java | 2 | 2 | 0% | Duration 字符串转换器 |
+| AttributeConverterWrapper.java | 3 | 3 | 100% | 属性转换器包装器 |
+| DurationStringConverter.java | 2 | 2 | 100% | Duration 字符串转换器 |
 | JpaMetamodel.java | 20 | 18 | 0% | JPA 元模型实现 |
 
 ---
@@ -1251,7 +1251,7 @@ jobs:
 | **包结构** | 17 个包 |
 | **方法总数** | ~800+ 个 |
 | **需测试方法数** | ~650+ 个 |
-| **整体测试进度** | ~55% |
+| **整体测试进度** | ~65% |
 | **测试用例总数** | 536 |
 | **通过** | 533 |
 | **跳过 (Bug相关)** | 3 |
