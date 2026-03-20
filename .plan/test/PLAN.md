@@ -1252,8 +1252,8 @@ jobs:
 | **方法总数** | ~800+ 个 |
 | **需测试方法数** | ~650+ 个 |
 | **整体测试进度** | ~55% |
-| **测试用例总数** | 516 |
-| **通过** | 513 |
+| **测试用例总数** | 536 |
+| **通过** | 533 |
 | **跳过 (Bug相关)** | 3 |
 | **失败** | 0 |
 
@@ -1304,6 +1304,13 @@ jobs:
 | NumberExpressionImplTest | 9 | ✅ 通过 |
 | PredicateImplTest | 4 | ✅ 通过 |
 | StringExpressionImplTest | 5 | ✅ 通过 |
+| FromEntityTest | 2 | ✅ 通过 |
+| FromSubQueryTest | 2 | ✅ 通过 |
+| SelectEntityTest | 3 | ✅ 通过 |
+| SelectExpressionTest | 3 | ✅ 通过 |
+| SelectProjectionTest | 3 | ✅ 通过 |
+| SliceImplTest | 4 | ✅ 通过 |
+| SortExpressionTest | 3 | ✅ 通过 |
 
 #### 第五阶段：元模型系统 (core/meta)
 | 文件 | 测试数 | 状态 |
