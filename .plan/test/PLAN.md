@@ -1252,8 +1252,8 @@ jobs:
 | **方法总数** | ~800+ 个 |
 | **需测试方法数** | ~650+ 个 |
 | **整体测试进度** | ~55% |
-| **测试用例总数** | 464 |
-| **通过** | 461 |
+| **测试用例总数** | 516 |
+| **通过** | 513 |
 | **跳过 (Bug相关)** | 3 |
 | **失败** | 0 |
 
@@ -1335,11 +1335,24 @@ jobs:
 | SchemaAttributePathsTest | 2 | ✅ 通过 |
 | DeepLimitSchemaAttributePathsTest | 7 | ✅ 通过 |
 
-#### 第八阶段：JPA实现 (jpa)
+#### 第八阶段：数据库方言 (jdbc/dialect)
+| 文件 | 测试数 | 状态 |
+|------|--------|------|
+| MySqlUpdateSqlBuilderTest | 2 | ✅ 通过 |
+| PostgreSqlUpdateSqlBuilderTest | 7 | ✅ 通过 |
+| SqlServerUpdateSqlBuilderTest | 2 | ✅ 通过 |
+| MySqlQuerySqlBuilderTest | 4 | ✅ 通过 |
+| PostgresqlQuerySqlBuilderTest | 4 | ✅ 通过 |
+| SqlServerQuerySqlBuilderTest | 5 | ✅ 通过 |
+| SqlDialectSelectorTest | 4 | ✅ 通过 |
+
+#### 第九阶段：JPA实现 (jpa)
 | 文件 | 测试数 | 状态 |
 |------|--------|------|
 | JpaArgumentsTest | 5 | ✅ 通过 |
+| LockModeTypeAdapterTest | 9 | ✅ 通过 |
 | DurationStringConverterTest | 7 | ✅ 通过 |
+| AttributeConverterWrapperTest | 4 | ✅ 通过 |
 
 ### 发现的Bug
 详见 `.plan/test/ISSUES.md`
