@@ -1,0 +1,75 @@
+package io.github.nextentity.jdbc;
+
+import org.junit.jupiter.api.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Test objective: Verify BatchSqlStatement correctly stores SQL and batch parameters
+ * <p>
+ * Test scenarios:
+ * 1. Create batch statement with SQL and parameters
+ * 2. Verify SQL getter
+ * 3. Verify parameters getter
+ */
+class BatchSqlStatementTest {
+
+    @Test
+    void batchSqlStatement_CreatesWithSqlAndParameters() {
+        // given
+        String sql = "INSERT INTO users (name) VALUES (?)";
+        List<List<Object>> params = Arrays.asList(
+                Arrays.asList("user1"),
+                Arrays.asList("user2")
+        );
+
+        // when
+        BatchSqlStatement statement = new BatchSqlStatement(sql, params);
+
+        // then
+        assertThat(statement.sql()).isEqualTo(sql);
+    }
+
+    @Test
+    void batchSqlStatement_Sql_ReturnsExactSql() {
+        // given
+        String sql = "UPDATE users SET name = ? WHERE id = ?";
+
+        // when
+        BatchSqlStatement statement = new BatchSqlStatement(sql, Collections.emptyList());
+
+        // then
+        assertThat(statement.sql()).isSameAs(sql);
+    }
+
+    @Test
+    void batchSqlStatement_Parameters_ReturnsIterable() {
+        // given
+        List<List<Object>> params = Arrays.asList(
+                Arrays.asList("a", 1),
+                Arrays.asList("b", 2)
+        );
+
+        // when
+        BatchSqlStatement statement = new BatchSqlStatement("UPDATE ?", params);
+
+        // then
+        assertThat(statement.parameters()).hasSize(2);
+    }
+
+    @Test
+    void batchSqlStatement_EmptyParameters() {
+        // given
+        String sql = "DELETE FROM users";
+
+        // when
+        BatchSqlStatement statement = new BatchSqlStatement(sql, Collections.emptyList());
+
+        // then
+        assertThat(statement.parameters()).isEmpty();
+    }
+}
