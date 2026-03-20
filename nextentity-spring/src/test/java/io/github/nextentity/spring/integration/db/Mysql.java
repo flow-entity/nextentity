@@ -1,59 +1,36 @@
 package io.github.nextentity.spring.integration.db;
 
-import com.mysql.cj.jdbc.MysqlDataSource;
-import io.github.nextentity.core.util.Maps;
-import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver;
-import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.hibernate.tool.schema.Action;
-
-import javax.sql.DataSource;
-import java.util.Map;
-
-import static org.hibernate.cfg.AvailableSettings.*;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.MySQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 /**
+ * MySQL database configuration provider using Testcontainers.
+ * <p>
+ * Uses MySQL 8.0 container with singleton pattern for efficient resource sharing.
+ *
  * @author HuangChengwei
  * @since 2024-04-10 10:45
  */
-public class Mysql implements DbConfigProvider {
+public class Mysql extends AbstractTestcontainersDbConfigProvider {
 
-    private final String user = "root";
-    private final String password = "root";
-    private final String url = "jdbc:mysql:///nextentity";
+    /**
+     * Singleton MySQL container instance.
+     * Started once and shared across all tests.
+     */
+    private static final JdbcDatabaseContainer<?> CONTAINER = new MySQLContainer<>(
+            DockerImageName.parse("mysql:latest"))
+            .withDatabaseName("nextentity")
+            .withUsername("root")
+            .withPassword("root");
 
-    @Override
-    public DataSource getDataSource() {
-        MysqlDataSource source = new MysqlDataSource();
-        source.setUrl(url);
-        source.setUser(user);
-        source.setPassword(password);
-        return source;
+    static {
+        CONTAINER.start();
     }
 
     @Override
-    public EntityManagerFactory getEntityManagerFactory() {
-        Map<String, Object> properties = Maps.<String, Object>hashmap()
-                .put(JAKARTA_JDBC_DRIVER, "com.mysql.cj.jdbc.Driver")
-                .put(JAKARTA_JDBC_URL, url)
-                .put(USER, user)
-                .put(PASS, password)
-                .put(DIALECT_RESOLVERS, StandardDialectResolver.class.getName())
-                .put(HBM2DDL_AUTO, Action.UPDATE)
-                .put(SHOW_SQL, false)
-                .put(FORMAT_SQL, false)
-                .put(QUERY_STARTUP_CHECKING, false)
-                .put(GENERATE_STATISTICS, false)
-//                .put(USE_REFLECTION_OPTIMIZER, false)
-                .put(USE_SECOND_LEVEL_CACHE, false)
-                .put(USE_QUERY_CACHE, false)
-                .put(USE_STRUCTURED_CACHE, false)
-                .put(STATEMENT_BATCH_SIZE, 2000)
-                .put(PHYSICAL_NAMING_STRATEGY, CamelCaseToUnderscoresNamingStrategy.class)
-                .build();
-        return new HibernatePersistenceProvider()
-                .createContainerEntityManagerFactory(new HibernateUnitInfo(), properties);
+    protected JdbcDatabaseContainer<?> getContainer() {
+        return CONTAINER;
     }
 
     @Override

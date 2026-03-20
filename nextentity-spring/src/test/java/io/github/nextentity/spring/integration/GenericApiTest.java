@@ -1,12 +1,16 @@
 package io.github.nextentity.spring.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.nextentity.api.ExpressionBuilder.Conjunction;
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.NumberPath;
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
-import io.github.nextentity.api.model.*;
+import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.api.model.Slice;
+import io.github.nextentity.api.model.Tuple;
+import io.github.nextentity.api.model.Tuple2;
+import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Paths;
@@ -383,18 +387,27 @@ public class GenericApiTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
-    public void testSelect(UserRepository userQuery) {
+    public void testSelect(UserRepository userQuery) throws JsonProcessingException {
         List<Tuple2<Integer, String>> qList = userQuery
                 .select(User::getRandomNumber, User::getUsername)
                 .orderBy(User::getUsername)
                 .orderBy(User::getRandomNumber)
+                .orderBy(User::getId)
                 .getList();
 
+        Comparator<User> comparator = Comparator.comparing(User::getUsername)
+                .thenComparing(User::getRandomNumber)
+                .thenComparing(User::getId);
+
         List<Tuple2<Integer, String>> fList = userQuery.users().stream()
-                .sorted(Comparator.comparingInt(User::getRandomNumber))
-                .sorted(Comparator.comparing(User::getUsername))
+                .sorted(comparator)
                 .map(it -> Tuples.of(it.getRandomNumber(), it.getUsername()))
                 .collect(Collectors.toList());
+
+        JsonMapper jsonMapper = new JsonMapper();
+        System.out.println(jsonMapper.writeValueAsString(qList.stream().map(Tuple2::get1)
+                .distinct()
+                .collect(Collectors.toList())));
 
         assertEquals(qList, fList);
 

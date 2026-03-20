@@ -1560,6 +1560,7 @@ class QueryBuilderTest {
     void queryList(UserRepository userQuery) {
         User single = userQuery
                 .where(User::getId).le(10)
+                .orderBy(User::getId).asc()
                 .getSingle(10);
         User user = userQuery.users().get(10);
         assertEquals(single, user);

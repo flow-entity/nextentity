@@ -1,59 +1,37 @@
 package io.github.nextentity.spring.integration.db;
 
-import io.github.nextentity.core.util.Maps;
-import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver;
-import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.hibernate.tool.schema.Action;
-import org.postgresql.ds.PGSimpleDataSource;
-
-import javax.sql.DataSource;
-import java.util.Map;
-
-import static org.hibernate.cfg.AvailableSettings.*;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.utility.DockerImageName;
 
 /**
+ * PostgreSQL database configuration provider using Testcontainers.
+ * <p>
+ * Uses PostgreSQL 15 Alpine container with singleton pattern for efficient resource sharing.
+ *
  * @author HuangChengwei
  * @since 2024-04-10 10:45
  */
-public class Postgresql implements DbConfigProvider {
+public class Postgresql extends AbstractTestcontainersDbConfigProvider {
 
-    private final String user = "postgres";
-    private final String password = "root";
-    private final String url = "jdbc:postgresql://localhost:5432/nextentity";
+    /**
+     * Singleton PostgreSQL container instance.
+     * Started once and shared across all tests.
+     */
+    private static final JdbcDatabaseContainer<?> CONTAINER = new PostgreSQLContainer<>(
+            DockerImageName.parse("postgres"))
+            .withDatabaseName("nextentity")
+            .withUsername("postgres")
+            .withPassword("root")
+            .withEnv("POSTGRES_INITDB_ARGS", "--lc-collate=C --lc-ctype=C");
 
-    @Override
-    public DataSource getDataSource() {
-        PGSimpleDataSource source = new PGSimpleDataSource();
-        source.setUrl(url);
-        source.setUser(user);
-        source.setPassword(password);
-        return source;
+    static {
+        CONTAINER.start();
     }
 
     @Override
-    public EntityManagerFactory getEntityManagerFactory() {
-        Map<String, Object> properties = Maps.<String, Object>hashmap()
-                .put(JAKARTA_JDBC_DRIVER, "org.postgresql.Driver")
-                .put(JAKARTA_JDBC_URL, url)
-                .put(USER, user)
-                .put(PASS, password)
-                .put(DIALECT_RESOLVERS, StandardDialectResolver.class.getName())
-                .put(HBM2DDL_AUTO, Action.UPDATE)
-                .put(SHOW_SQL, false)
-                .put(FORMAT_SQL, false)
-                .put(QUERY_STARTUP_CHECKING, false)
-                .put(GENERATE_STATISTICS, false)
-//                .put(USE_REFLECTION_OPTIMIZER, false)
-                .put(USE_SECOND_LEVEL_CACHE, false)
-                .put(USE_QUERY_CACHE, false)
-                .put(USE_STRUCTURED_CACHE, false)
-                .put(STATEMENT_BATCH_SIZE, 2000)
-                .put(PHYSICAL_NAMING_STRATEGY, CamelCaseToUnderscoresNamingStrategy.class)
-                .build();
-        return new HibernatePersistenceProvider()
-                .createContainerEntityManagerFactory(new HibernateUnitInfo(), properties);
+    protected JdbcDatabaseContainer<?> getContainer() {
+        return CONTAINER;
     }
 
     @Override

@@ -14,7 +14,8 @@ public interface DbConfigProvider {
         return new DbConfig(
                 getDataSource(),
                 getEntityManagerFactory().createEntityManager(),
-                setPidNullSql());
+                setPidNullSql(),
+                name());
     }
 
     DataSource getDataSource();

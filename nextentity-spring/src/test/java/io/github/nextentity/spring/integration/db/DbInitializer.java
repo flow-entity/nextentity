@@ -2,8 +2,8 @@ package io.github.nextentity.spring.integration.db;
 
 import io.github.nextentity.spring.integration.Users;
 import io.github.nextentity.spring.integration.entity.User;
+import org.springframework.jdbc.core.JdbcTemplate;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -22,10 +22,10 @@ public class DbInitializer extends Transaction {
     }
 
     public synchronized List<User> initialize() {
-        doInTransaction(connection -> {
+        doInJdbcTransaction(() -> {
             try {
                 UserRepository query = config.getJdbc();
-//                resetData(connection, query);
+                resetData(config.getJdbcTemplate(), query);
                 allUsers = queryAllUsers(query);
             } catch (Exception e) {
                 throw new RuntimeException(e);
@@ -34,12 +34,11 @@ public class DbInitializer extends Transaction {
         return allUsers;
     }
 
-    private void resetData(Connection connection, UserRepository query) throws SQLException {
+    private void resetData(JdbcTemplate jdbcTemplate, UserRepository query) {
         String sql = config.getSetPidNullSql();
-        //noinspection SqlSourceToSinkFlow
-        connection.createStatement().executeUpdate(sql);
+        jdbcTemplate.execute(sql);
         query.deleteAll(queryAllUsers(query));
-        query.deleteAll(Users.getUsers());
+        query.insertAll(Users.getUsers());
     }
 
     private List<User> queryAllUsers(UserRepository query) {

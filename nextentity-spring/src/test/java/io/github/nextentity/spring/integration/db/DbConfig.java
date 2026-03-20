@@ -23,18 +23,19 @@ public class DbConfig {
 
     public DbConfig(DataSource getDataSource,
                     EntityManager entityManager,
-                    String setPidNullSql) {
+                    String setPidNullSql,
+                    String dialect) {
         this.entityManager = entityManager;
         this.setPidNullSql = setPidNullSql;
         this.jdbcTemplate = new JdbcTemplate(getDataSource);
-        this.jdbc = new UserRepository(new JdbcTemplate(getDataSource));
-        this.jpa = new UserRepository(entityManager, jdbcTemplate);
-
-        this.users = new DbInitializer(this).initialize();
+        this.jdbc = new UserRepository(new JdbcTemplate(getDataSource),dialect);
+        this.jpa = new UserRepository(entityManager, jdbcTemplate,dialect);
 
         Transaction transaction = new Transaction(this);
         jdbc.setTransaction(transaction);
         jpa.setTransaction(transaction);
+
+        this.users = new DbInitializer(this).initialize();
     }
 
     public Stream<UserRepository> repositories() {

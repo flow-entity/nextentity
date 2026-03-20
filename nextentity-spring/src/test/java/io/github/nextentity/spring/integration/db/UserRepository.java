@@ -24,15 +24,18 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     private List<User> users;
     private Transaction transaction;
     private final String name;
+    private final boolean jdbc;
 
-    public UserRepository(JdbcTemplate jdbcTemplate) {
+    public UserRepository(JdbcTemplate jdbcTemplate, String dialect) {
         super(jdbcTemplate);
-        name = "jdbc";
+        name = "jdbc:" + dialect;
+        jdbc = true;
     }
 
-    public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+    public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate, String dialect) {
         super(entityManager, jdbcTemplate);
-        name = "jpa";
+        name = "jpa:" + dialect;
+        jdbc = false;
     }
 
     public void setTransaction(Transaction transaction) {
@@ -53,7 +56,7 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     @Override
-    public void insert(@org.springframework.lang.NonNull User entity) {
+    public void insert(@NonNull User entity) {
         doInTransaction(() -> super.insert(entity));
     }
 
@@ -506,11 +509,11 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return users;
     }
 
-    public void doInTransaction(Runnable o) {
-        if ("jdbc".equals(name)) {
-            transaction.doInJdbcTransaction(o);
+    public void doInTransaction(Runnable runnable) {
+        if (jdbc) {
+            transaction.doInJdbcTransaction(runnable);
         } else {
-            transaction.doInJpaTransaction(o);
+            transaction.doInJpaTransaction(runnable);
         }
     }
 

@@ -1,54 +1,41 @@
 package io.github.nextentity.spring.integration.db;
 
-import com.microsoft.sqlserver.jdbc.SQLServerDataSource;
-import io.github.nextentity.core.util.Maps;
-import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
-import org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver;
-import org.hibernate.jpa.HibernatePersistenceProvider;
-import org.hibernate.tool.schema.Action;
-
-import javax.sql.DataSource;
-import java.util.Map;
-
-import static org.hibernate.cfg.AvailableSettings.*;
+import org.testcontainers.containers.JdbcDatabaseContainer;
+import org.testcontainers.containers.MSSQLServerContainer;
+import org.testcontainers.utility.DockerImageName;
 
 /**
+ * SQL Server database configuration provider using Testcontainers.
+ * <p>
+ * Uses SQL Server 2022 container with singleton pattern for efficient resource sharing.
+ * <p>
+ * Note: SQL Server container is heavy (~1.5GB image, slower startup).
+ * Consider running separately when needed by uncommenting in DbConfigs.
+ *
  * @author HuangChengwei
  * @since 2024-04-09 15:00
  */
-public class SqlServer implements DbConfigProvider {
+public class SqlServer extends AbstractTestcontainersDbConfigProvider {
 
-    static final String url = "jdbc:sqlserver://localhost;encrypt=false;database=nextentity;integratedSecurity=false;";
-    static final String username = "sa";
-    static final String password = "root";
+    /**
+     * Singleton SQL Server container instance.
+     * Started once and shared across all tests.
+     */
+    @SuppressWarnings("resource")
+    private static final JdbcDatabaseContainer<?> CONTAINER = new MSSQLServerContainer<>(
+            DockerImageName.parse("mcr.microsoft.com/mssql/server"))
+            .acceptLicense()
+            .withDatabaseName("nextentity")
+            .withUsername("sa")
+            .withPassword("Root_Passw0rd!");
 
-    public SqlServer() {
+    static {
+        CONTAINER.start();
     }
 
-
-    public EntityManagerFactory getEntityManagerFactory() {
-        Map<String, Object> properties = Maps.<String, Object>hashmap()
-                .put(JAKARTA_JDBC_DRIVER, "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-                .put(JAKARTA_JDBC_URL, url)
-                .put(USER, username)
-                .put(PASS, password)
-                .put(DIALECT_RESOLVERS, StandardDialectResolver.class.getName())
-                .put(GLOBALLY_QUOTED_IDENTIFIERS, true)
-                .put(HBM2DDL_AUTO, Action.UPDATE)
-                .put(SHOW_SQL, false)
-                .put(FORMAT_SQL, false)
-                .put(QUERY_STARTUP_CHECKING, false)
-                .put(GENERATE_STATISTICS, false)
-//                .put(USE_REFLECTION_OPTIMIZER, false)
-                .put(USE_SECOND_LEVEL_CACHE, false)
-                .put(USE_QUERY_CACHE, false)
-                .put(USE_STRUCTURED_CACHE, false)
-                .put(STATEMENT_BATCH_SIZE, 2000)
-                .put(PHYSICAL_NAMING_STRATEGY, CamelCaseToUnderscoresNamingStrategy.class)
-                .build();
-        return new HibernatePersistenceProvider()
-                .createContainerEntityManagerFactory(new HibernateUnitInfo(), properties);
+    @Override
+    protected JdbcDatabaseContainer<?> getContainer() {
+        return CONTAINER;
     }
 
     @Override
@@ -60,13 +47,4 @@ public class SqlServer implements DbConfigProvider {
     public String name() {
         return "sqlserver";
     }
-
-    public DataSource getDataSource() {
-        SQLServerDataSource source = new SQLServerDataSource();
-        source.setURL(url);
-        source.setUser(username);
-        source.setPassword(password);
-        return source;
-    }
-
 }
