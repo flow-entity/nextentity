@@ -58,9 +58,6 @@ must_haves:
 
 <objective>
 Create foundational test coverage for core type-safe query building functionality. This plan establishes comprehensive tests for SELECT, ORDER BY, GROUP BY clauses and expression building systems using method references, ensuring type safety across all query components.
-
-Purpose: Establish the foundation for type-safe SQL query building with method reference-based property access
-Output: Test files covering CORE-01, CORE-02, CORE-03, TYPE-01, TYPE-02, and TYPE-03 requirements
 </objective>
 
 <execution_context>
@@ -126,6 +123,42 @@ public class WhereImpl<T, R> implements Select<T>, WhereStep<T, R>, GroupByStep<
 }
 ```
 
+From nextentity-core/src/main/java/io/github/nextentity/core/QueryBuilder.java:
+```java
+public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, FetchStep<T> {
+    public QueryBuilder(Metamodel metamodel, QueryExecutor executor, Class<T> entityType) {
+        this(QueryStructure.of(entityType), metamodel, executor);
+    }
+}
+```
+
+From nextentity-core/src/main/java/io/github/nextentity/core/expression/QueryStructure.java:
+```java
+public record QueryStructure(
+    Selected select,
+    From from,
+    ExpressionNode where,
+    ImmutableList<ExpressionNode> groupBy,
+    ImmutableList<SortExpression> orderBy,
+    ExpressionNode having,
+    Integer offset,
+    Integer limit,
+    LockModeType lockType
+) { ... }
+```
+
+From nextentity-core/src/main/java/io/github/nextentity/core/expression/From.java:
+```java
+public sealed interface From permits FromEntity, FromSubQuery {
+}
+```
+
+From nextentity-core/src/main/java/io/github/nextentity/core/expression/FromEntity.java:
+```java
+public record FromEntity(Class<?> type) implements From {
+}
+```
+
 From nextentity-core/src/test/java/io/github/nextentity/integration/entity/Employee.java:
 ```java
 public class Employee {
@@ -160,11 +193,11 @@ public class Employee {
 </task>
 
 <task type="auto">
-  <name>Task 3: Create SELECT Clause Test Suite</name>
+  <name>Task 3: Create SELECT Clause Test Suite with FROM clause testing</name>
   <files>nextentity-core/src/test/java/io/github/nextentity/core/SelectStepTest.java</files>
-  <action>Create comprehensive unit tests for SELECT clause functionality using method reference-based property access. Test selecting specific columns, entity selection, and proper FROM clause handling. Follow the existing test patterns and ensure proper query structure generation for SELECT operations. Include tests for distinct selection and multiple column selection.</action>
+  <action>Create comprehensive unit tests for SELECT clause functionality using method reference-based property access. Test selecting specific columns, entity selection, and proper FROM clause handling. Follow the existing test patterns and ensure proper query structure generation for SELECT operations. Include tests for distinct selection and multiple column selection. Specifically test that FROM clause is properly constructed from the initial QueryBuilder creation with entity type. Test QueryStructure.from() returns correct FromEntity with proper type, verify QueryBuilder initializes QueryStructure.of(entityType) correctly to establish the FROM clause.</action>
   <verify>mvn test -Dtest=SelectStepTest</verify>
-  <done>All SELECT test cases pass with method reference support for different data types</done>
+  <done>All SELECT test cases pass with method reference support for different data types and FROM clause properly tested</done>
 </task>
 
 </tasks>
@@ -182,6 +215,7 @@ public class Employee {
 - Entity metamodel provides table and property metadata for type safety
 - Expression system provides type-safe operations (eq, ne, gt, lt, in, etc.)
 - All method references work correctly (e.g., Employee::getName, Employee::getSalary)
+- FROM clause is correctly established when creating queries with QueryBuilder(entityType)
 </success_criteria>
 
 <output>

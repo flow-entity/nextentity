@@ -4,8 +4,8 @@ plan: 03
 type: execute
 wave: 2
 depends_on:
-  - 01-foundation-core-types-01
-  - 01-foundation-core-types-02
+  - "01"
+  - "02"
 files_modified:
   - nextentity-core/src/test/java/io/github/nextentity/core/MetamodelTest.java
   - nextentity-core/src/test/java/io/github/nextentity/core/QueryStructureTest.java
@@ -45,9 +45,6 @@ must_haves:
 
 <objective>
 Complete the foundation by testing core infrastructure components: metamodel for entity metadata, query structure for internal representation, and entity paths for type-safe property access. This plan ties together all components needed for type-safe query building.
-
-Purpose: Test core infrastructure components that enable type-safe query building
-Output: Test files covering metamodel, query structure, and entity path functionality
 </objective>
 
 <execution_context>
@@ -124,7 +121,7 @@ public class Employee {
 <task type="auto">
   <name>Task 2: Create Query Structure Test Suite</name>
   <files>nextentity-core/src/test/java/io/github/nextentity/core/QueryStructureTest.java</files>
-  <action>Create comprehensive unit tests for the QueryStructure record that holds the internal representation of queries. Test the creation, modification, and access patterns for all query components (FROM, WHERE, ORDER BY, GROUP BY, etc.). Verify that query structure maintains integrity across different operations.</action>
+  <action>Create comprehensive unit tests for the QueryStructure record that holds the internal representation of queries. Test the creation, modification, and access patterns for all query components (FROM, WHERE, ORDER BY, GROUP BY, etc.). Verify that query structure maintains integrity across different operations. Pay special attention to FROM clause handling - test QueryStructure.of(entityType) creates proper FromEntity with correct type information.</action>
   <verify>mvn test -Dtest=QueryStructureTest</verify>
   <done>QueryStructure properly manages all query components with immutable updates</done>
 </task>
