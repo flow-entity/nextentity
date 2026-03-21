@@ -2,7 +2,6 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
-import io.github.nextentity.core.exception.TransactionRequiredException;
 import io.github.nextentity.core.exception.UncheckedSQLException;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
@@ -18,6 +17,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class JdbcUpdateExecutor implements UpdateExecutor {
 
@@ -61,7 +61,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
         EntityType entityType = metamodel.getEntity(entityClass);
         BatchSqlStatement sql = sqlBuilder.buildUpdateStatement(entities, entityType, excludeNull);
-        execute(connection -> {
+        return execute(connection -> {
             sql.debug();
             //noinspection SqlSourceToSinkFlow
             try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
@@ -82,10 +82,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
                         setNewVersion(entity, version);
                     }
                 }
-                return null;
+                return list;
             }
         });
-        return list;
     }
 
     @Override
@@ -108,6 +107,27 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     @Override
     public <T> T patch(@NonNull T entity, @NonNull Class<T> entityClass) {
         return updateAll(Collections.singletonList(entity), entityClass, true).get(0);
+    }
+
+    @Override
+    public void doInTransaction(Runnable command) {
+        try {
+            connectionProvider.executeInTransaction(connection -> {
+                command.run();
+                return null;
+            });
+        } catch (SQLException e) {
+            throw new UncheckedSQLException(e);
+        }
+    }
+
+    @Override
+    public <T> T doInTransaction(Supplier<T> command) {
+        try {
+            return connectionProvider.executeInTransaction(connection -> command.get());
+        } catch (SQLException e) {
+            throw new UncheckedSQLException(e);
+        }
     }
 
     protected static void setNewVersion(Object entity, EntityAttribute attribute) {
@@ -168,14 +188,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         JdbcUtil.setParameters(statement, parameters);
     }
 
-    protected <T> void execute(ConnectionCallback<T> action) {
+    protected <T> T execute(ConnectionCallback<T> action) {
         try {
-            connectionProvider.execute(connection -> {
-                if (connection.getAutoCommit()) {
-                    throw new TransactionRequiredException();
-                }
-                return action.doInConnection(connection);
-            });
+            return connectionProvider.executeInTransaction(action);
         } catch (SQLException e) {
             throw new UncheckedSQLException(e);
         }

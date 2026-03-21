@@ -1,4 +1,4 @@
-package io.github.nextentity.spring.integration.db;
+package io.github.nextentity.integration.config;
 
 import jakarta.persistence.SharedCacheMode;
 import jakarta.persistence.ValidationMode;
@@ -76,7 +76,8 @@ public class HibernateUnitInfo implements PersistenceUnitInfo {
     @Override
     public List<String> getManagedClassNames() {
         return List.of(
-                "io.github.nextentity.spring.integration.entity.User"
+                "io.github.nextentity.test.entity.Employee",
+                "io.github.nextentity.test.entity.Department"
         );
     }
 

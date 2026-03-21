@@ -18,7 +18,6 @@ import java.util.function.Function;
 
 /**
  * @author HuangChengwei
- * @since 2024-04-10 16:19
  */
 public class Transaction {
     private static final Logger log = LoggerFactory.getLogger(Transaction.class);

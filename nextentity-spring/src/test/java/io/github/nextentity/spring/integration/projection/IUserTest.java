@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author HuangChengwei
- * @since 2024/4/18 下午4:27
  */
 class IUserTest {
 

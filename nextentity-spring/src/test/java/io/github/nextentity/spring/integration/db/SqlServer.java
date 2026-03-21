@@ -13,7 +13,6 @@ import org.testcontainers.utility.DockerImageName;
  * Consider running separately when needed by uncommenting in DbConfigs.
  *
  * @author HuangChengwei
- * @since 2024-04-09 15:00
  */
 public class SqlServer extends AbstractTestcontainersDbConfigProvider {
 

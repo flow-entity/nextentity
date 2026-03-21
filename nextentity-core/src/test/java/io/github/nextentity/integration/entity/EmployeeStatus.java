@@ -1,4 +1,4 @@
-package io.github.nextentity.test.entity;
+package io.github.nextentity.integration.entity;
 
 /**
  * Employee status enum for integration testing.

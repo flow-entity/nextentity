@@ -10,7 +10,6 @@ import org.testcontainers.utility.DockerImageName;
  * Uses PostgreSQL 15 Alpine container with singleton pattern for efficient resource sharing.
  *
  * @author HuangChengwei
- * @since 2024-04-10 10:45
  */
 public class Postgresql extends AbstractTestcontainersDbConfigProvider {
 

@@ -4,7 +4,7 @@ import io.github.nextentity.api.OrderByStep;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.test.entity.Employee;
+import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

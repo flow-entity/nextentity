@@ -1,4 +1,4 @@
-package io.github.nextentity.spring.integration.db;
+package io.github.nextentity.integration.config;
 
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.nextentity.core.util.Maps;
@@ -22,7 +22,7 @@ import static org.hibernate.cfg.AvailableSettings.*;
  *
  * @author HuangChengwei
  */
-public abstract class AbstractTestcontainersDbConfigProvider implements DbConfigProvider {
+public abstract class AbstractTestcontainersDbConfigProvider {
 
     /**
      * Returns the Testcontainers database container instance.
@@ -32,7 +32,6 @@ public abstract class AbstractTestcontainersDbConfigProvider implements DbConfig
      */
     protected abstract JdbcDatabaseContainer<?> getContainer();
 
-    @Override
     public DataSource getDataSource() {
         JdbcDatabaseContainer<?> container = getContainer();
         HikariDataSource dataSource = new HikariDataSource();
@@ -43,7 +42,6 @@ public abstract class AbstractTestcontainersDbConfigProvider implements DbConfig
         return dataSource;
     }
 
-    @Override
     public EntityManagerFactory getEntityManagerFactory() {
         JdbcDatabaseContainer<?> container = getContainer();
         Map<String, Object> properties = Maps.<String, Object>hashmap()

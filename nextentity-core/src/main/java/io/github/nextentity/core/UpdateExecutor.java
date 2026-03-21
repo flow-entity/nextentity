@@ -1,9 +1,11 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.core.util.ImmutableList;
+import jakarta.persistence.EntityTransaction;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * @author HuangChengwei
@@ -31,4 +33,12 @@ public interface UpdateExecutor {
 
     <T> T patch(@NonNull T entity, @NonNull Class<T> entityType);
 
+    default void doInTransaction(Runnable command) {
+        doInTransaction(() -> {
+            command.run();
+            return null;
+        });
+    }
+
+    <T> T doInTransaction(Supplier<T> command);
 }

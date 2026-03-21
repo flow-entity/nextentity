@@ -1,17 +1,18 @@
-package io.github.nextentity.spring.integration.db;
+package io.github.nextentity.integration.config;
 
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.List;
 
 /**
+ * Unified database configurations for integration tests.
+ *
  * @author HuangChengwei
  */
 public interface DbConfigs {
 
     DbConfig MYSQL = new Mysql().getConfig();
-//    DbConfig SQLSERVER = new SqlServer().getConfig();
     DbConfig POSTGRESQL = new Postgresql().getConfig();
-    List<DbConfig> CONFIGS = ImmutableList.of(MYSQL/*, SQLSERVER*/, POSTGRESQL);
+    List<DbConfig> CONFIGS = ImmutableList.of(MYSQL, POSTGRESQL);
 
 }

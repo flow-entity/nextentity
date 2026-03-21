@@ -6,7 +6,6 @@ import javax.sql.DataSource;
 
 /**
  * @author HuangChengwei
- * @since 2024-04-10 10:45
  */
 public interface DbConfigProvider {
 

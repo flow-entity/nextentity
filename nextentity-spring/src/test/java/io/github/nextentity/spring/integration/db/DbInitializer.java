@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 
 /**
  * @author HuangChengwei
- * @since 2024-04-10 15:43
  */
 public class DbInitializer extends Transaction {
     List<User> allUsers;

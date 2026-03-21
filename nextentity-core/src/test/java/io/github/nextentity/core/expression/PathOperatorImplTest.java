@@ -1,8 +1,7 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Path;
-import io.github.nextentity.test.entity.Department;
-import io.github.nextentity.test.entity.Employee;
+import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

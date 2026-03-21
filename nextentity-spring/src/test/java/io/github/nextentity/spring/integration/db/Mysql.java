@@ -10,7 +10,6 @@ import org.testcontainers.utility.DockerImageName;
  * Uses MySQL 8.0 container with singleton pattern for efficient resource sharing.
  *
  * @author HuangChengwei
- * @since 2024-04-10 10:45
  */
 public class Mysql extends AbstractTestcontainersDbConfigProvider {
 

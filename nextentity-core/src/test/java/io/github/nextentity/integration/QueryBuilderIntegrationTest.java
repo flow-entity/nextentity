@@ -1,11 +1,14 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.test.db.AbstractIntegrationTest;
-import io.github.nextentity.test.entity.Department;
-import io.github.nextentity.test.entity.Employee;
-import io.github.nextentity.test.entity.EmployeeStatus;
-import org.junit.jupiter.api.Test;
+import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestProvider;
+import io.github.nextentity.integration.entity.Department;
+import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.entity.EmployeeStatus;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
@@ -15,17 +18,18 @@ import static org.assertj.core.api.Assertions.assertThat;
 /**
  * Integration tests for QueryBuilder.
  */
-class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
+class QueryBuilderIntegrationTest {
 
     /**
      * Test objective: Verify that basic query returns all entities.
      * Test scenario: Execute getList() without any conditions.
      * Expected result: Returns all entities from the database.
      */
-    @Test
-    void getList_ShouldReturnAllEntities() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void getList_ShouldReturnAllEntities(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class).getList();
+        List<Employee> employees = config.queryEmployees().getList();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -37,10 +41,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with equality condition.
      * Expected result: Returns only matching entities.
      */
-    @Test
-    void where_WithEqualityCondition_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithEqualityCondition_ShouldFilterResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(Employee::getName).eq("Alice Johnson")
                 .getList();
 
@@ -54,13 +59,14 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with AND conditions using Predicate.
      * Expected result: Returns entities matching all conditions.
      */
-    @Test
-    void where_WithMultipleConditions_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithMultipleConditions_ShouldFilterResults(DbConfig config) {
         // given
-        io.github.nextentity.api.Predicate<Employee> isActive = get(Employee::getActive).eq(true);
+        Predicate<Employee> isActive = get(Employee::getActive).eq(true);
 
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(isActive.and(Employee::getStatus).eq(EmployeeStatus.ACTIVE))
                 .getList();
 
@@ -74,10 +80,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with ascending order by salary.
      * Expected result: Returns entities sorted by salary in ascending order.
      */
-    @Test
-    void orderBy_WithAscendingOrder_ShouldSortResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void orderBy_WithAscendingOrder_ShouldSortResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .orderBy(Employee::getSalary).asc()
                 .getList();
 
@@ -94,10 +101,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with descending order by salary.
      * Expected result: Returns entities sorted by salary in descending order.
      */
-    @Test
-    void orderBy_WithDescendingOrder_ShouldSortResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void orderBy_WithDescendingOrder_ShouldSortResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .getList();
 
@@ -114,10 +122,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with orderBy and getFirst.
      * Expected result: Returns the first entity based on sort order.
      */
-    @Test
-    void getFirst_ShouldReturnFirstResult() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void getFirst_ShouldReturnFirstResult(DbConfig config) {
         // when
-        Employee employee = query(Employee.class)
+        Employee employee = config.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .getFirst();
 
@@ -131,10 +140,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with limit.
      * Expected result: Returns at most the specified number of entities.
      */
-    @Test
-    void limit_ShouldRestrictResultCount() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void limit_ShouldRestrictResultCount(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .limit(5);
 
         // then
@@ -146,15 +156,16 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with offset and limit.
      * Expected result: Skips the first N results and returns the next M.
      */
-    @Test
-    void offset_ShouldSkipResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void offset_ShouldSkipResults(DbConfig config) {
         // given
-        List<Employee> allEmployees = query(Employee.class)
+        List<Employee> allEmployees = config.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList();
 
         // when
-        List<Employee> pagedEmployees = query(Employee.class)
+        List<Employee> pagedEmployees = config.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(3, 5);
 
@@ -168,10 +179,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query selecting only the name field.
      * Expected result: Returns list of names.
      */
-    @Test
-    void select_WithSingleField_ShouldReturnProjectedResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithSingleField_ShouldReturnProjectedResults(DbConfig config) {
         // when
-        List<String> names = query(Employee.class)
+        List<String> names = config.queryEmployees()
                 .select(Employee::getName)
                 .getList();
 
@@ -186,10 +198,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query selecting name and salary.
      * Expected result: Returns tuples of name and salary.
      */
-    @Test
-    void select_WithMultipleFields_ShouldReturnTupleResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithMultipleFields_ShouldReturnTupleResults(DbConfig config) {
         // when
-        List<Tuple2<String, Double>> results = query(Employee.class)
+        List<Tuple2<String, Double>> results = config.queryEmployees()
                 .select(Employee::getName, Employee::getSalary)
                 .getList();
 
@@ -207,10 +220,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query selecting distinct department IDs.
      * Expected result: Returns unique department IDs.
      */
-    @Test
-    void selectDistinct_ShouldReturnUniqueResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void selectDistinct_ShouldReturnUniqueResults(DbConfig config) {
         // when
-        List<Long> deptIds = query(Employee.class)
+        List<Long> deptIds = config.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
                 .getList();
 
@@ -224,10 +238,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with IN condition.
      * Expected result: Returns entities matching any value in the list.
      */
-    @Test
-    void where_WithInClause_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithInClause_ShouldFilterResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(Employee::getDepartmentId).in(1L, 2L)
                 .getList();
 
@@ -241,10 +256,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with BETWEEN condition.
      * Expected result: Returns entities within the specified range.
      */
-    @Test
-    void where_WithBetweenClause_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithBetweenClause_ShouldFilterResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(Employee::getSalary).between(60000.0, 75000.0)
                 .getList();
 
@@ -258,10 +274,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with LIKE condition.
      * Expected result: Returns entities matching the pattern.
      */
-    @Test
-    void where_WithLikeClause_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithLikeClause_ShouldFilterResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(Employee::getEmail).like("%@example.com")
                 .getList();
 
@@ -275,10 +292,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with IS NOT NULL condition.
      * Expected result: Returns entities where the field is not null.
      */
-    @Test
-    void where_WithIsNotNull_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithIsNotNull_ShouldFilterResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(Employee::getDepartmentId).isNotNull()
                 .getList();
 
@@ -292,10 +310,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with count aggregation.
      * Expected result: Returns the count of matching entities.
      */
-    @Test
-    void select_WithCount_ShouldReturnCount() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithCount_ShouldReturnCount(DbConfig config) {
         // when
-        Long count = query(Employee.class)
+        Long count = config.queryEmployees()
                 .select(get(Employee::getId).count())
                 .getFirst();
 
@@ -308,10 +327,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with sum aggregation.
      * Expected result: Returns the sum of the specified field.
      */
-    @Test
-    void select_WithSum_ShouldReturnSum() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithSum_ShouldReturnSum(DbConfig config) {
         // when
-        Double sum = query(Employee.class)
+        Double sum = config.queryEmployees()
                 .select(get(Employee::getSalary).sum())
                 .getFirst();
 
@@ -324,10 +344,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with avg aggregation.
      * Expected result: Returns the average of the specified field.
      */
-    @Test
-    void select_WithAvg_ShouldReturnAverage() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithAvg_ShouldReturnAverage(DbConfig config) {
         // when
-        Double avg = query(Employee.class)
+        Double avg = config.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .getFirst();
 
@@ -340,10 +361,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with max aggregation.
      * Expected result: Returns the maximum value of the specified field.
      */
-    @Test
-    void select_WithMax_ShouldReturnMax() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithMax_ShouldReturnMax(DbConfig config) {
         // when
-        Double max = query(Employee.class)
+        Double max = config.queryEmployees()
                 .select(get(Employee::getSalary).max())
                 .getFirst();
 
@@ -356,10 +378,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with min aggregation.
      * Expected result: Returns the minimum value of the specified field.
      */
-    @Test
-    void select_WithMin_ShouldReturnMin() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithMin_ShouldReturnMin(DbConfig config) {
         // when
-        Double min = query(Employee.class)
+        Double min = config.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getFirst();
 
@@ -372,13 +395,14 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query with OR condition using Predicate.
      * Expected result: Returns entities matching any of the conditions.
      */
-    @Test
-    void where_WithOrCondition_ShouldFilterResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void where_WithOrCondition_ShouldFilterResults(DbConfig config) {
         // given
-        io.github.nextentity.api.Predicate<Employee> isAlice = get(Employee::getName).eq("Alice Johnson");
+        Predicate<Employee> isAlice = get(Employee::getName).eq("Alice Johnson");
 
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .where(isAlice.or(Employee::getName).eq("Bob Smith"))
                 .getList();
 
@@ -393,10 +417,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query all departments.
      * Expected result: Returns all departments.
      */
-    @Test
-    void query_Departments_ShouldReturnAllDepartments() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void query_Departments_ShouldReturnAllDepartments(DbConfig config) {
         // when
-        List<Department> departments = query(Department.class).getList();
+        List<Department> departments = config.queryDepartments().getList();
 
         // then
         assertThat(departments).hasSize(5);
@@ -407,10 +432,11 @@ class QueryBuilderIntegrationTest extends AbstractIntegrationTest {
      * Test scenario: Query selecting into a different type.
      * Expected result: Returns projected results.
      */
-    @Test
-    void select_WithProjectionType_ShouldReturnProjectedResults() {
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    void select_WithProjectionType_ShouldReturnProjectedResults(DbConfig config) {
         // when
-        List<Employee> employees = query(Employee.class)
+        List<Employee> employees = config.queryEmployees()
                 .select(Employee.class)
                 .where(Employee::getActive).eq(true)
                 .getList();

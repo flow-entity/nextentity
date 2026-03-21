@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 /**
  * @author HuangChengwei
- * @since 2024-04-10 16:10
  */
 public class UserRepository extends AbstractRepository<User, Integer> implements Select<User> {
 

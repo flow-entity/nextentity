@@ -1,4 +1,4 @@
-package io.github.nextentity.test.entity;
+package io.github.nextentity.integration.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

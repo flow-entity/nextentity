@@ -117,6 +117,17 @@
             <version>2.0.3</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -129,6 +140,10 @@
                         --add-opens nextentity.core/io.github.nextentity.test.db=ALL-UNNAMED
                         --add-opens nextentity.core/io.github.nextentity.test.entity=ALL-UNNAMED
                         --add-opens nextentity.core/io.github.nextentity.test.fixtures=ALL-UNNAMED
+                        --add-opens nextentity.core/io.github.nextentity.integration=ALL-UNNAMED
+                        --add-opens nextentity.core/io.github.nextentity.integration.config=ALL-UNNAMED
+                        --add-opens nextentity.core/io.github.nextentity.integration.entity=ALL-UNNAMED
+                        --add-opens nextentity.core/io.github.nextentity.integration.config.fixtures=ALL-UNNAMED
                         --add-opens nextentity.core/io.github.nextentity.jdbc=ALL-UNNAMED
                         --add-opens nextentity.core/io.github.nextentity.core=ALL-UNNAMED
                         --add-opens nextentity.core/io.github.nextentity.core.meta=ALL-UNNAMED

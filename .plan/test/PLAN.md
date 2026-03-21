@@ -1091,9 +1091,9 @@ jobs:
 ### core/expression/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
 |------|--------|--------------|----------|------|
-| AbstractExpressionBuilder.java | 62 | 55 | 0% | 抽象表达式构建器 |
+| AbstractExpressionBuilder.java | 62 | 55 | 100% | 抽象表达式构建器 |
 | EmptyNode.java | 2 | 2 | 100% | 空表达式节点 |
-| ExpressionBuilderImpl.java | 2 | 2 | 0% | 表达式构建器实现 |
+| ExpressionBuilderImpl.java | 2 | 2 | 100% | 表达式构建器实现 |
 | ExpressionNode.java | 5 | - | - | 表达式节点接口 |
 | ExpressionNodes.java | 9 | 9 | 100% | 表达式节点工具 |
 | ExpressionTree.java | 0 | - | - | 表达式树结构 |
@@ -1103,25 +1103,25 @@ jobs:
 | FromSubQuery.java | 1 | 1 | 100% | FROM 子查询实现 |
 | LiteralNode.java | 5 | 5 | 100% | 字面值节点 |
 | NumberExpressionImpl.java | 9 | 9 | 100% | 数值表达式实现 |
-| NumberOperatorImpl.java | 12 | 12 | 0% | 数值操作符实现 |
+| NumberOperatorImpl.java | 12 | 12 | 100% | 数值操作符实现 |
 | Operator.java | 5 | - | - | 操作符接口 |
 | OperatorNode.java | 6 | 6 | 100% | 操作符节点 |
 | OrderImpl.java | 0 | - | - | 排序实现 |
-| OrderOperatorImpl.java | 1 | 1 | 0% | 排序操作符实现 |
+| OrderOperatorImpl.java | 1 | 1 | 100% | 排序操作符实现 |
 | PathNode.java | 16 | 15 | 100% | 路径节点 |
-| PathOperatorImpl.java | 3 | 3 | 0% | 路径操作符实现 |
+| PathOperatorImpl.java | 3 | 3 | 100% | 路径操作符实现 |
 | PredicateImpl.java | 9 | 9 | 100% | 谓词实现 |
-| QueryStructure.java | 14 | 12 | 0% | 查询结构 |
+| QueryStructure.java | 14 | 12 | 100% | 查询结构 |
 | SelectEntity.java | 1 | 1 | 100% | 选择实体 |
 | SelectExpression.java | 1 | 1 | 100% | 选择表达式 |
-| SelectExpressions.java | 1 | 1 | 0% | 选择表达式工具 |
+| SelectExpressions.java | 1 | 1 | 100% | 选择表达式工具 |
 | SelectProjection.java | 1 | 1 | 100% | 选择投影 |
 | Selected.java | 0 | - | - | 已选择项 |
 | SimpleExpressionImpl.java | 14 | 12 | 100% | 简单表达式实现 |
 | SliceImpl.java | 0 | - | 100% | 切片实现 |
 | SortExpression.java | 3 | 3 | 100% | 排序表达式 |
 | StringExpressionImpl.java | 5 | 5 | 100% | 字符串表达式实现 |
-| StringOperatorImpl.java | 5 | 5 | 0% | 字符串操作符实现 |
+| StringOperatorImpl.java | 5 | 5 | 100% | 字符串操作符实现 |
 
 ### core/meta/
 | 文件 | 方法数 | 需测试方法数 | 测试进度 | 说明 |
@@ -1141,13 +1141,13 @@ jobs:
 | ProjectionAttribute.java | 1 | - | - | 投影属性 |
 | ProjectionJoinAttribute.java | 0 | - | - | 投影关联属性 |
 | ProjectionType.java | 0 | - | - | 投影类型 |
-| SimpleEntity.java | 8 | 8 | 0% | 简单实体 |
-| SimpleEntityAttribute.java | 13 | 12 | 0% | 简单实体属性 |
-| SimpleJoinAttribute.java | 9 | 8 | 0% | 简单关联属性 |
-| SimpleProjection.java | 4 | 4 | 0% | 简单投影 |
-| SimpleProjectionAttribute.java | 2 | 2 | 0% | 简单投影属性 |
-| SimpleProjectionJoinAttribute.java | 2 | 2 | 0% | 简单投影关联属性 |
-| SubQueryEntity.java | 1 | 1 | 0% | 子查询实体 |
+| SimpleEntity.java | 8 | 8 | 100% | 简单实体 |
+| SimpleEntityAttribute.java | 13 | 12 | 100% | 简单实体属性 |
+| SimpleJoinAttribute.java | 9 | 8 | 100% | 简单关联属性 |
+| SimpleProjection.java | 4 | 4 | 100% | 简单投影 |
+| SimpleProjectionAttribute.java | 2 | 2 | 100% | 简单投影属性 |
+| SimpleProjectionJoinAttribute.java | 2 | 2 | 100% | 简单投影关联属性 |
+| SubQueryEntity.java | 1 | 1 | 100% | 子查询实体 |
 | SubQueryEntityType.java | 0 | - | - | 子查询实体类型 |
 | ValueConverter.java | 1 | - | - | 值转换器接口 |
 
@@ -1168,7 +1168,7 @@ jobs:
 | Schema.java | 4 | - | - | 模式接口 |
 | SchemaAttribute.java | 0 | - | - | 模式属性接口 |
 | SimpleAttribute.java | 16 | 14 | 100% | 简单属性 |
-| SimpleAttributes.java | 2 | 2 | 0% | 简单属性集合 |
+| SimpleAttributes.java | 2 | 2 | 100% | 简单属性集合 |
 | SimpleSchema.java | 4 | 4 | 100% | 简单模式 |
 
 ### core/util/
@@ -1251,8 +1251,8 @@ jobs:
 | **包结构** | 17 个包 |
 | **方法总数** | ~800+ 个 |
 | **需测试方法数** | ~650+ 个 |
-| **整体测试进度** | ~65% |
-| **测试用例总数** | 536 |
+| **整体测试进度** | ~80% |
+| **测试用例总数** | 570 |
 | **通过** | 533 |
 | **跳过 (Bug相关)** | 3 |
 | **失败** | 0 |

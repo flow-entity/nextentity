@@ -1,8 +1,8 @@
-package io.github.nextentity.test.fixtures;
+package io.github.nextentity.integration.config.fixtures;
 
-import io.github.nextentity.test.entity.Department;
-import io.github.nextentity.test.entity.Employee;
-import io.github.nextentity.test.entity.EmployeeStatus;
+import io.github.nextentity.integration.entity.Department;
+import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.entity.EmployeeStatus;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

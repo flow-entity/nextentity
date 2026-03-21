@@ -4,13 +4,10 @@ import io.github.nextentity.api.Path;
 import io.github.nextentity.api.PathExpression;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.model.LockModeType;
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.test.entity.Employee;
+import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -19,13 +16,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for QueryBuilder - Core query builder implementation.
