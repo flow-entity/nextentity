@@ -165,13 +165,30 @@ class ImmutableListTest {
         }
 
         /**
-         * Test objective: Verify of() creates defensive copy
+         * Test objective: Verify copyOf() creates defensive copy
          * Test scenario: Modify original array after creating list
          * Expected result: ImmutableList is not affected
          */
         @Test
-        @Disabled("Bug #1: ImmutableList.of() 未创建防御性副本，待修复后启用")
-        void of_ShouldCreateDefensiveCopy() {
+        void copyOf_ShouldCreateDefensiveCopy() {
+            // given
+            String[] array = {"a", "b", "c"};
+
+            // when
+            ImmutableList<String> list = ImmutableList.copyOf(array);
+            array[0] = "modified";
+
+            // then
+            assertThat(list).containsExactly("a", "b", "c");
+        }
+
+        /**
+         * Test objective: Verify of() does NOT create defensive copy
+         * Test scenario: Modify original array after creating list
+         * Expected result: ImmutableList is affected (shares same array)
+         */
+        @Test
+        void of_DoesNotCreateDefensiveCopy() {
             // given
             String[] array = {"a", "b", "c"};
 
@@ -179,8 +196,26 @@ class ImmutableListTest {
             ImmutableList<String> list = ImmutableList.of(array);
             array[0] = "modified";
 
+            // then - of() shares the array, so modification is visible
+            assertThat(list).containsExactly("modified", "b", "c");
+        }
+
+        /**
+         * Test objective: Verify copyOf() with empty array returns empty list
+         * Test scenario: Pass empty array to copyOf()
+         * Expected result: Empty ImmutableList is returned
+         */
+        @Test
+        void copyOf_WithEmptyArray_ShouldReturnEmptyList() {
+            // given
+            String[] array = {};
+
+            // when
+            ImmutableList<String> result = ImmutableList.copyOf(array);
+
             // then
-            assertThat(list).containsExactly("a", "b", "c");
+            assertThat(result).isEmpty();
+            assertThat(result).isSameAs(ImmutableList.empty());
         }
     }
 

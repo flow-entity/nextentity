@@ -37,7 +37,6 @@ class EnumConverterTest {
          *
          * Bug #3: ReflectUtil.getEnum(String) method invocation error
          */
-        @Disabled("Bug #3: ReflectUtil.getEnum(String) 方法调用错误，待修复后启用")
         @Test
         void convert_StringToEnum_ShouldReturnEnum() {
             // given

@@ -51,7 +51,6 @@ class NumberConverterTest {
          *
          * Bug #2: NumberConverter returns original value when precision is lost
          */
-        @Disabled("Bug #2: NumberConverter 精度丢失时返回原值，待修复后启用")
         @Test
         void convert_DoubleToInt_ShouldTruncate() {
             // given
