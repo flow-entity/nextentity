@@ -3,7 +3,7 @@ package io.github.nextentity.spring.integration.db;
 import com.zaxxer.hikari.HikariDataSource;
 import io.github.nextentity.core.util.Maps;
 import jakarta.persistence.EntityManagerFactory;
-import org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy;
+import org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl;
 import org.hibernate.engine.jdbc.dialect.internal.StandardDialectResolver;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.hibernate.tool.schema.Action;
@@ -50,8 +50,8 @@ public abstract class AbstractTestcontainersDbConfigProvider implements DbConfig
         Map<String, Object> properties = Maps.<String, Object>hashmap()
                 .put(JAKARTA_JDBC_DRIVER, container.getDriverClassName())
                 .put(JAKARTA_JDBC_URL, container.getJdbcUrl())
-                .put(USER, container.getUsername())
-                .put(PASS, container.getPassword())
+                .put(JAKARTA_JDBC_USER, container.getUsername())
+                .put(JAKARTA_JDBC_PASSWORD, container.getPassword())
                 .put(DIALECT_RESOLVERS, StandardDialectResolver.class.getName())
                 .put(HBM2DDL_AUTO, Action.UPDATE)
                 .put(SHOW_SQL, true)
@@ -62,7 +62,7 @@ public abstract class AbstractTestcontainersDbConfigProvider implements DbConfig
                 .put(USE_QUERY_CACHE, false)
                 .put(USE_STRUCTURED_CACHE, false)
                 .put(STATEMENT_BATCH_SIZE, 2000)
-                .put(PHYSICAL_NAMING_STRATEGY, CamelCaseToUnderscoresNamingStrategy.class)
+                .put(PHYSICAL_NAMING_STRATEGY, PhysicalNamingStrategySnakeCaseImpl.class)
                 .build();
         return new HibernatePersistenceProvider()
                 .createContainerEntityManagerFactory(new HibernateUnitInfo(), properties);
