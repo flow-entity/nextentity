@@ -104,50 +104,34 @@ public class Order {
 |------|--------|--------------|----------|------|
 | AbstractCollector.java | 9 | 5 | 0% | 抽象结果收集器 |
 | OrderOperatorImpl.java | 3 | 3 | 0% | 排序操作符实现 |
-| QueryBuilder.java | 56 | 45 | 0% | **主查询构建器实现（核心）** |
+| QueryBuilder.java | 56 | 45 | ✅ DONE | **主查询构建器实现（核心）** - 已创建 QueryBuilderTest (15 测试) |
 | UpdateExecutor.java | 3 | 3 | 0% | 更新执行器接口 |
 | Updaters.java | 9 | 8 | 0% | 更新操作工具 |
-| WhereImpl.java | 31 | 25 | 0% | **WHERE 子句实现（核心）** |
+| WhereImpl.java | 31 | 25 | ✅ DONE | **WHERE 子句实现（核心）** - 已创建 WhereImplTest (31 测试) |
 
 ### core/expression/ (表达式系统)
 
 | 文件 | 方法数 | 需测试方法数 | 当前状态 | 说明 |
 |------|--------|--------------|----------|------|
-| AbstractExpressionBuilder.java | 62 | 55 | 0% | **抽象表达式构建器（核心）** |
 | ExpressionBuilderImpl.java | 2 | 2 | 0% | 表达式构建器实现 |
-| NumberOperatorImpl.java | 12 | 12 | 0% | 数值操作符实现 |
-| OrderOperatorImpl.java | 1 | 1 | 0% | 排序操作符实现 |
-| PathOperatorImpl.java | 3 | 3 | 0% | 路径操作符实现 |
-| QueryStructure.java | 14 | 12 | 0% | 查询结构 |
-| SelectExpressions.java | 1 | 1 | 0% | 选择表达式工具 |
-| StringOperatorImpl.java | 5 | 5 | 0% | 字符串操作符实现 |
 
 ### core/meta/ (元模型系统)
 
 | 文件 | 方法数 | 需测试方法数 | 当前状态 | 说明 |
 |------|--------|--------------|----------|------|
 | AbstractMetamodel.java | 32 | 28 | 0% | **抽象元模型（核心）** |
-| SimpleEntity.java | 8 | 8 | 0% | 简单实体 |
-| SimpleEntityAttribute.java | 13 | 12 | 0% | 简单实体属性 |
-| SimpleJoinAttribute.java | 9 | 8 | 0% | 简单关联属性 |
-| SimpleProjection.java | 4 | 4 | 0% | 简单投影 |
-| SimpleProjectionAttribute.java | 2 | 2 | 0% | 简单投影属性 |
-| SimpleProjectionJoinAttribute.java | 2 | 2 | 0% | 简单投影关联属性 |
-| SubQueryEntity.java | 1 | 1 | 0% | 子查询实体 |
 
 ### core/reflect/schema/
 
 | 文件 | 方法数 | 需测试方法数 | 当前状态 | 说明 |
 |------|--------|--------------|----------|------|
 | AbstractSchemaAttribute.java | 2 | 2 | 0% | 抽象模式属性 |
-| SimpleAttributes.java | 2 | 2 | 0% | 简单属性集合 |
 
 ### core/util/
 
 | 文件 | 方法数 | 需测试方法数 | 当前状态 | 说明 |
 |------|--------|--------------|----------|------|
 | ImmutableList.java | 47 | 40 | 95% | 不可变列表实现 (1个bug待修复) |
-| Paths.java | 31 | 25 | 0% | 路径工具 (RootImpl已测试) |
 
 ### jdbc/ (JDBC实现)
 
@@ -248,10 +232,10 @@ public class Order {
 
 | 项目 | 数值 |
 |------|------|
-| **需测试文件数（未完成）** | 38 个 |
-| **需测试方法数（未完成）** | ~350 个 |
+| **需测试文件数（未完成）** | 20 个 |
+| **需测试方法数（未完成）** | ~200 个 |
 | **无需测试文件数** | ~70 个 |
-| **已完成测试进度** | ~65% |
+| **已完成测试进度** | ~80% |
 
 ---
 
@@ -293,25 +277,25 @@ public class Order {
 ### Phase 3: 表达式构建器（高优先级）
 
 **单元测试：**
-1. `ExpressionBuilderImpl.java` - 2 方法 - 表达式构建入口
+1. `ExpressionBuilderImpl.java` - 2 方法 - 表达式构建入口 ✅ DONE
 2. `OrderOperatorImpl.java` (expression/) - 1 方法 - 排序操作符
-3. `PathOperatorImpl.java` - 3 方法 - 路径操作符
-4. `StringOperatorImpl.java` - 5 方法 - 字符串操作符
-5. `NumberOperatorImpl.java` - 12 方法 - 数值操作符
-6. `SelectExpressions.java` - 1 方法 - 选择表达式
-7. `QueryStructure.java` - 12 方法 - 查询结构
-8. `AbstractExpressionBuilder.java` - 55 方法 - **核心表达式构建器**
+3. `PathOperatorImpl.java` - 3 方法 - 路径操作符 ✅ DONE
+4. `StringOperatorImpl.java` - 5 方法 - 字符串操作符 ✅ DONE
+5. `NumberOperatorImpl.java` - 12 方法 - 数值操作符 ✅ DONE
+6. `SelectExpressions.java` - 1 方法 - 选择表达式 ✅ DONE
+7. `QueryStructure.java` - 12 方法 - 查询结构 ✅ DONE
+8. `AbstractExpressionBuilder.java` - 55 方法 - **核心表达式构建器** ✅ DONE
 
 ### Phase 4: 元模型系统（中优先级）
 
 **单元测试：**
-1. `SimpleEntity.java` - 8 方法 - 简单实体
-2. `SimpleEntityAttribute.java` - 12 方法 - 实体属性
-3. `SimpleJoinAttribute.java` - 8 方法 - 关联属性
-4. `SimpleProjection.java` - 4 方法 - 投影
-5. `SimpleProjectionAttribute.java` - 2 方法 - 投影属性
-6. `SimpleProjectionJoinAttribute.java` - 2 方法 - 投影关联
-7. `SubQueryEntity.java` - 1 方法 - 子查询实体
+1. `SimpleEntity.java` - 8 方法 - 简单实体 ✅ DONE
+2. `SimpleEntityAttribute.java` - 12 方法 - 实体属性 ✅ DONE
+3. `SimpleJoinAttribute.java` - 8 方法 - 关联属性 ✅ DONE
+4. `SimpleProjection.java` - 4 方法 - 投影 ✅ DONE
+5. `SimpleProjectionAttribute.java` - 2 方法 - 投影属性 ✅ DONE
+6. `SimpleProjectionJoinAttribute.java` - 2 方法 - 投影关联 ✅ DONE
+7. `SubQueryEntity.java` - 1 方法 - 子查询实体 ✅ DONE
 8. `AbstractMetamodel.java` - 28 方法 - **元模型基类**
 
 ### Phase 5: JDBC 实现（中优先级）
@@ -347,9 +331,9 @@ public class Order {
 ### Phase 7: 工具类补充（低优先级）
 
 **单元测试：**
-1. `Paths.java` - 25 方法 - 路径工具（完成 RootImpl 以外的测试）
+1. `Paths.java` - 25 方法 - 路径工具 ✅ DONE
 2. `AbstractSchemaAttribute.java` - 2 方法 - 抽象模式属性
-3. `SimpleAttributes.java` - 2 方法 - 简单属性集合
+3. `SimpleAttributes.java` - 2 方法 - 简单属性集合 ✅ DONE
 4. `ImmutableList.java` - 补充剩余测试（待 bug 修复）
 
 ---
