@@ -29,7 +29,12 @@
   3. User can apply ORDER BY clauses with type-safe property references
   4. User can apply GROUP BY clauses with type-safe property references
   5. Entity metamodel provides table and property metadata for type safety
-**Plans**: TBD
+**Plans**: 3 plans
+
+Plans:
+- [ ] 01-foundation-core-types-01-PLAN.md — Foundation test coverage for SELECT, ORDER BY, GROUP BY clauses
+- [ ] 01-foundation-core-types-02-PLAN.md — Expression building and path operation test coverage
+- [ ] 01-foundation-core-types-03-PLAN.md — Core infrastructure: metamodel, query structure, and entity paths
 
 ### Phase 2: Database Dialect Support
 **Goal**: Application works consistently across multiple database platforms
@@ -111,7 +116,7 @@
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation & Core Types | 0/5 | Not started | - |
+| 1. Foundation & Core Types | 0/3 | Not started | - |
 | 2. Database Dialect Support | 0/4 | Not started | - |
 | 3. Repository Abstraction | 0/6 | Not started | - |
 | 4. Parameter Binding & Security | 0/3 | Not started | - |
