@@ -34,6 +34,16 @@ public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder
         return this;
     }
 
+    public SqlDialectSelector setQuerySqlBuilder(QuerySqlBuilder querySqlBuilder) {
+        this.querySqlBuilder = querySqlBuilder;
+        return this;
+    }
+
+    public SqlDialectSelector setUpdateSqlBuilder(JdbcUpdateSqlBuilder updateSqlBuilder) {
+        this.updateSqlBuilder = updateSqlBuilder;
+        return this;
+    }
+
     @Override
     public QuerySqlStatement build(QueryContext context) {
         return querySqlBuilder.build(context);

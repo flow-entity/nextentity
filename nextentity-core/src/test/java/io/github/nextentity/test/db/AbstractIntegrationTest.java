@@ -40,7 +40,9 @@ public abstract class AbstractIntegrationTest {
     void setUpDatabase() throws SQLException {
         dataSource = createDataSource();
         metamodel = createMetamodel();
-        dialectSelector = new SqlDialectSelector().setByDataSource(dataSource);
+        dialectSelector = new SqlDialectSelector().
+                setQuerySqlBuilder(new MySqlQuerySqlBuilder())
+                .setUpdateSqlBuilder(new MySqlUpdateSqlBuilder());
         queryExecutor = createQueryExecutor();
         updateExecutor = createUpdateExecutor();
 
