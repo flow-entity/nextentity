@@ -1,15 +1,6 @@
 package io.github.nextentity.spring.integration;
 
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.api.model.Tuple10;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.api.model.Tuple4;
-import io.github.nextentity.api.model.Tuple5;
-import io.github.nextentity.api.model.Tuple6;
-import io.github.nextentity.api.model.Tuple7;
-import io.github.nextentity.api.model.Tuple8;
-import io.github.nextentity.api.model.Tuple9;
+import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.Tuples;
 import org.junit.jupiter.api.Test;
 

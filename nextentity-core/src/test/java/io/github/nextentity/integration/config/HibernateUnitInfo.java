@@ -76,9 +76,8 @@ public class HibernateUnitInfo implements PersistenceUnitInfo {
     @Override
     public List<String> getManagedClassNames() {
         return List.of(
-                "io.github.nextentity.test.entity.Employee",
-                "io.github.nextentity.test.entity.Department"
-        );
+                "io.github.nextentity.integration.entity.Employee",
+                "io.github.nextentity.integration.entity.Department"        );
     }
 
     @Override

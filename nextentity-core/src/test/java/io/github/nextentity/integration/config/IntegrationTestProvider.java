@@ -1,8 +1,10 @@
 package io.github.nextentity.integration.config;
 
+import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.support.ParameterDeclarations;
 
 import java.util.stream.Stream;
 
@@ -15,12 +17,14 @@ import java.util.stream.Stream;
  */
 public class IntegrationTestProvider implements ArgumentsProvider {
 
+    private static final Mysql MYSQL = new Mysql();
+    private static final Postgresql POSTGRESQL = new Postgresql();
+
     @Override
-    public Stream<? extends Arguments> provideArguments(ExtensionContext context) {
-        // Reset test data before each test method to ensure clean state
-        for (DbConfig config : DbConfigs.CONFIGS) {
-            config.resetTestData();
-        }
-        return DbConfigs.CONFIGS.stream().map(Arguments::of);
+    public @NonNull Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
+                                                                 @NonNull ExtensionContext context) {
+        return Stream.of(MYSQL, POSTGRESQL)
+                .flatMap(it -> it.getConfigs().stream())
+                .map(arguments -> Arguments.of(arguments.reset()));
     }
 }

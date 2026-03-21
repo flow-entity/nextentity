@@ -1,16 +1,16 @@
 package io.github.nextentity.integration.config;
 
+import java.util.Collection;
+
 /**
  * Interface for database configuration providers.
  *
  * @author HuangChengwei
  */
-public interface DbConfigProvider {
+public interface ContainerContext {
 
-    /**
-     * Returns the database configuration.
-     *
-     * @return the DbConfig instance
-     */
-    DbConfig getConfig();
+    Collection<DbConfig> getConfigs();
+
+    void reset(DbConfig config);
+
 }

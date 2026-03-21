@@ -43,7 +43,9 @@ public class SimpleConnectionProvider implements ConnectionProvider {
             return action.doInConnection(transaction.connection);
         } catch (Exception e) {
             transaction.rollback = true;
-            transaction.connection.rollback();
+            if (!transaction.connection.isClosed()) {
+                transaction.connection.rollback();
+            }
             throw e;
         }
     }
