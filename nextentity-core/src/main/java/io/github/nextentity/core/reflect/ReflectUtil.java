@@ -117,9 +117,9 @@ public class ReflectUtil {
             throw new IllegalArgumentException();
         }
         try {
-            Method method = cls.getMethod("valueOf");
+            Method method = cls.getMethod("valueOf", String.class);
             setAccessible(method, null);
-            return method.invoke(name);
+            return method.invoke(null, name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw Exceptions.sneakyThrow(e);
         }

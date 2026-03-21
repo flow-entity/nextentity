@@ -57,36 +57,21 @@ public class NumberConverter implements TypeConverter {
     }
 
     private static Object doConvert(Object value, Class<?> targetType) {
-        if (value instanceof String) {
+        Number number;
+        if (value instanceof String string) {
             try {
-                value = Double.parseDouble((String) value);
+                number = new BigDecimal(string);
             } catch (NumberFormatException e) {
+                log.warn("{}[{}] cast to {} failed", value.getClass(), string, targetType, e);
                 return value;
             }
-        }
-        Class<?> valueType = value.getClass();
-        Function<Number, Number> indexOfValueType = CONVERTERS.get(valueType);
-        if (indexOfValueType == null) {
+        } else if (value instanceof Number n) {
+            number = n;
+        } else {
             return value;
         }
         Function<Number, Number> indexOfTargetType = CONVERTERS.get(targetType);
-        if (indexOfTargetType == null) {
-            return value;
-        }
-
-        Number number = (Number) value;
-        Number result = indexOfTargetType.apply(number);
-        if (isBasic(targetType) && isBasic(valueType)) {
-            if (result.longValue() == number.longValue() && result.doubleValue() == number.doubleValue()) {
-                return result;
-            }
-        } else {
-            Number n = indexOfValueType.apply(result);
-            if (equals(value, n)) {
-                return result;
-            }
-        }
-        return value;
+        return indexOfTargetType == null ? value : indexOfTargetType.apply(number);
     }
 
     private static boolean isBasic(Class<?> targetType) {
