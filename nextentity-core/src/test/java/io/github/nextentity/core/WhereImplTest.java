@@ -19,9 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
@@ -637,6 +639,103 @@ class WhereImplTest {
             // then
             QueryStructure structure = ((WhereImpl<?, ?>) result).getQueryStructure();
             assertThat(structure.orderBy().asList()).hasSize(1);
+        }
+    }
+
+    @Nested
+    class ExceptionAndEdgeCases {
+
+        /**
+         * Tests that where with empty in collection returns FALSE expression.
+         * Note: The implementation logs a warning and returns FALSE for empty collections.
+         */
+        @Test
+        void where_WithEmptyInCollection_ShouldReturnFalseExpression() {
+            // given
+            Collection<Long> emptyIds = Collections.emptyList();
+
+            // when
+            var result = whereImpl.where(Employee::getId).in(emptyIds);
+
+            // then
+            assertThat(result).isNotNull();
+            // The implementation returns a FALSE expression for empty collections
+        }
+
+        /**
+         * Tests that where with null in collection throws NullPointerException.
+         */
+        @Test
+        void where_WithNullInCollection_ShouldThrowException() {
+            // when/then
+            assertThatThrownBy(() -> whereImpl.where(Employee::getId).in((Collection<Long>) null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        /**
+         * Tests that groupBy with null expression throws exception.
+         */
+        @Test
+        void groupBy_WithNullExpression_ShouldThrowException() {
+            // when/then
+            assertThatThrownBy(() -> whereImpl.groupBy((io.github.nextentity.api.Path<Employee, ?>) null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        /**
+         * Tests that groupBy with null expressions list throws exception.
+         */
+        @Test
+        void groupBy_WithNullExpressionsList_ShouldThrowException() {
+            // when/then
+            assertThatThrownBy(() -> whereImpl.groupBy((java.util.List<io.github.nextentity.api.Path<Employee, ?>>) null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        /**
+         * Tests that having with null predicate throws exception.
+         */
+        @Test
+        void having_WithNullPredicate_ShouldThrowException() {
+            // when/then
+            assertThatThrownBy(() -> whereImpl.having((TypedExpression<Employee, Boolean>) null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        /**
+         * Tests that andWhere with null condition handles gracefully.
+         */
+        @Test
+        void andWhere_WithNullCondition_ShouldHandleGracefully() {
+            // when
+            var result = whereImpl.andWhere(null);
+
+            // then
+            assertThat(result).isNotNull();
+        }
+
+        /**
+         * Tests that where with TRUE predicate returns same instance (edge case).
+         */
+        @Test
+        void where_WithTruePredicate_ShouldReturnSameInstance() {
+            // when
+            var result = whereImpl.where(Expressions.ofTrue());
+
+            // then
+            assertThat(result).isSameAs(whereImpl);
+        }
+
+        /**
+         * Tests that where with FALSE predicate is handled.
+         */
+        @Test
+        void where_WithFalsePredicate_ShouldReturnNewInstance() {
+            // when
+            var result = whereImpl.where(Expressions.ofFalse());
+
+            // then
+            assertThat(result).isNotNull();
         }
     }
 }

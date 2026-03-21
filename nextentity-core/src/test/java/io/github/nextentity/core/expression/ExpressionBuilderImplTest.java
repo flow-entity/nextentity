@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /**
  * Unit tests for ExpressionBuilderImpl.
@@ -88,6 +89,55 @@ class ExpressionBuilderImplTest {
             // then
             assertThat(result).isEqualTo("result");
             assertThat(capturedNode).isSameAs(node);
+        }
+    }
+
+    @Nested
+    class ExceptionAndEdgeCases {
+
+        /**
+         * Tests that eqIfNotNull with empty string value creates EQ operator.
+         */
+        @Test
+        void eqIfNotNull_WithEmptyString_ShouldCreateEqOperator() {
+            // given
+            String value = "";
+
+            // when
+            builder.eqIfNotNull(value);
+
+            // then
+            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
+            OperatorNode opNode = (OperatorNode) capturedNode;
+            assertThat(opNode.operator()).isEqualTo(Operator.EQ);
+        }
+
+        /**
+         * Tests that next method handles null node.
+         */
+        @Test
+        void next_WithNullNode_ShouldPassNullToCallback() {
+            // when
+            builder.next(null);
+
+            // then
+            assertThat(capturedNode).isNull();
+        }
+
+        /**
+         * Tests that neIfNotNull with null value returns operateNull result.
+         */
+        @Test
+        void neIfNotNull_WithNullValue_ShouldReturnOperateNull() {
+            // given
+            String value = null;
+
+            // when
+            String result = builder.neIfNotNull(value);
+
+            // then
+            assertThat(result).isEqualTo("result");
+            assertThat(capturedNode).isInstanceOf(EmptyNode.class);
         }
     }
 }

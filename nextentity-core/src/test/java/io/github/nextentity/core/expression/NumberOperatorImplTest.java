@@ -1,8 +1,11 @@
 package io.github.nextentity.core.expression;
 
+import io.github.nextentity.api.ExpressionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.function.Function;
 
@@ -31,91 +34,44 @@ class NumberOperatorImplTest {
     class ArithmeticOperationsWithValues {
 
         /**
-         * Test objective: Verify add() creates ADD operator with value.
-         * Test scenario: Call add(100.0) then eq() on number operator.
-         * Expected result: Creates ADD operator node.
+         * Verifies that arithmetic operations create correct operator nodes.
+         * Tests add, subtract, multiply, divide, and mod operations with values.
          */
-        @Test
-        void add_ShouldCreateAddOperator() {
+        @ParameterizedTest
+        @CsvSource({
+            "ADD, 100.0",
+            "SUBTRACT, 50.0",
+            "MULTIPLY, 2.0",
+            "DIVIDE, 2.0",
+            "MOD, 10.0"
+        })
+        void shouldCreateCorrectOperator(String expectedOperator, double operandValue) {
+            // given
+            Function<NumberOperatorImpl<Object, Double, String>, ExpressionBuilder.NumberOperator<Object, Double, String>> operation =
+                    getOperationForOperator(expectedOperator);
+
             // when
-            operator.add(100.0).eq(1000.0);
+            operation.apply(operator).eq(1000.0);
 
             // then
             assertThat(capturedNode).isInstanceOf(OperatorNode.class);
             OperatorNode opNode = (OperatorNode) capturedNode;
             assertThat(opNode.operator()).isEqualTo(Operator.EQ);
-            // The first operand should be ADD operator
             assertThat(opNode.operands().get(0)).isInstanceOf(OperatorNode.class);
-            OperatorNode addNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(addNode.operator()).isEqualTo(Operator.ADD);
+            OperatorNode operationNode = (OperatorNode) opNode.operands().get(0);
+            assertThat(operationNode.operator()).isEqualTo(Operator.valueOf(expectedOperator));
         }
 
-        /**
-         * Test objective: Verify subtract() creates SUBTRACT operator with value.
-         * Test scenario: Call subtract(50.0) then eq() on number operator.
-         * Expected result: Creates SUBTRACT operator node.
-         */
-        @Test
-        void subtract_ShouldCreateSubtractOperator() {
-            // when
-            operator.subtract(50.0).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode subNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(subNode.operator()).isEqualTo(Operator.SUBTRACT);
-        }
-
-        /**
-         * Test objective: Verify multiply() creates MULTIPLY operator with value.
-         * Test scenario: Call multiply(2.0) then eq() on number operator.
-         * Expected result: Creates MULTIPLY operator node.
-         */
-        @Test
-        void multiply_ShouldCreateMultiplyOperator() {
-            // when
-            operator.multiply(2.0).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode mulNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(mulNode.operator()).isEqualTo(Operator.MULTIPLY);
-        }
-
-        /**
-         * Test objective: Verify divide() creates DIVIDE operator with value.
-         * Test scenario: Call divide(2.0) then eq() on number operator.
-         * Expected result: Creates DIVIDE operator node.
-         */
-        @Test
-        void divide_ShouldCreateDivideOperator() {
-            // when
-            operator.divide(2.0).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode divNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(divNode.operator()).isEqualTo(Operator.DIVIDE);
-        }
-
-        /**
-         * Test objective: Verify mod() creates MOD operator with value.
-         * Test scenario: Call mod(10.0) then eq() on number operator.
-         * Expected result: Creates MOD operator node.
-         */
-        @Test
-        void mod_ShouldCreateModOperator() {
-            // when
-            operator.mod(10.0).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode modNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(modNode.operator()).isEqualTo(Operator.MOD);
+        private Function<NumberOperatorImpl<Object, Double, String>, ExpressionBuilder.NumberOperator<Object, Double, String>>
+                getOperationForOperator(String operator) {
+            return switch (operator) {
+                case "ADD" -> op -> op.add(100.0);
+                case "SUBTRACT" -> op -> op.subtract(50.0);
+                case "MULTIPLY" -> op -> op.multiply(2.0);
+                case "DIVIDE" -> op -> op.divide(2.0);
+                case "MOD" -> op -> op.mod(10.0);
+                default -> throw new IllegalArgumentException("Unknown operator: " + operator);
+            };
         }
     }
 
@@ -123,108 +79,43 @@ class NumberOperatorImplTest {
     class ArithmeticOperationsWithExpressions {
 
         /**
-         * Test objective: Verify add() with expression creates ADD operator.
-         * Test scenario: Call add(expression) then eq() on number operator.
-         * Expected result: Creates ADD operator node with expression operand.
+         * Verifies that arithmetic operations with expressions create correct operator nodes.
          */
-        @Test
-        void add_WithExpression_ShouldCreateAddOperator() {
+        @ParameterizedTest
+        @CsvSource({
+            "ADD, 50.0",
+            "SUBTRACT, 25.0",
+            "MULTIPLY, 1.5",
+            "DIVIDE, 2.0",
+            "MOD, 10.0"
+        })
+        void shouldCreateCorrectOperatorWithExpression(String expectedOperator, double expressionValue) {
             // given
-            LiteralNode exprNode = new LiteralNode(50.0);
+            LiteralNode exprNode = new LiteralNode(expressionValue);
             SimpleExpressionImpl<Object, Double> expression = new SimpleExpressionImpl<>(exprNode);
+            Function<NumberOperatorImpl<Object, Double, String>, ExpressionBuilder.NumberOperator<Object, Double, String>> operation =
+                    getExpressionOperationForOperator(expectedOperator, expression);
 
             // when
-            operator.add(expression).eq(1000.0);
+            operation.apply(operator).eq(1000.0);
 
             // then
             assertThat(capturedNode).isInstanceOf(OperatorNode.class);
             OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode addNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(addNode.operator()).isEqualTo(Operator.ADD);
+            OperatorNode operationNode = (OperatorNode) opNode.operands().get(0);
+            assertThat(operationNode.operator()).isEqualTo(Operator.valueOf(expectedOperator));
         }
 
-        /**
-         * Test objective: Verify subtract() with expression creates SUBTRACT operator.
-         * Test scenario: Call subtract(expression) then eq() on number operator.
-         * Expected result: Creates SUBTRACT operator node with expression operand.
-         */
-        @Test
-        void subtract_WithExpression_ShouldCreateSubtractOperator() {
-            // given
-            LiteralNode exprNode = new LiteralNode(25.0);
-            SimpleExpressionImpl<Object, Double> expression = new SimpleExpressionImpl<>(exprNode);
-
-            // when
-            operator.subtract(expression).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode subNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(subNode.operator()).isEqualTo(Operator.SUBTRACT);
-        }
-
-        /**
-         * Test objective: Verify multiply() with expression creates MULTIPLY operator.
-         * Test scenario: Call multiply(expression) then eq() on number operator.
-         * Expected result: Creates MULTIPLY operator node with expression operand.
-         */
-        @Test
-        void multiply_WithExpression_ShouldCreateMultiplyOperator() {
-            // given
-            LiteralNode exprNode = new LiteralNode(1.5);
-            SimpleExpressionImpl<Object, Double> expression = new SimpleExpressionImpl<>(exprNode);
-
-            // when
-            operator.multiply(expression).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode mulNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(mulNode.operator()).isEqualTo(Operator.MULTIPLY);
-        }
-
-        /**
-         * Test objective: Verify divide() with expression creates DIVIDE operator.
-         * Test scenario: Call divide(expression) then eq() on number operator.
-         * Expected result: Creates DIVIDE operator node with expression operand.
-         */
-        @Test
-        void divide_WithExpression_ShouldCreateDivideOperator() {
-            // given
-            LiteralNode exprNode = new LiteralNode(2.0);
-            SimpleExpressionImpl<Object, Double> expression = new SimpleExpressionImpl<>(exprNode);
-
-            // when
-            operator.divide(expression).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode divNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(divNode.operator()).isEqualTo(Operator.DIVIDE);
-        }
-
-        /**
-         * Test objective: Verify mod() with expression creates MOD operator.
-         * Test scenario: Call mod(expression) then eq() on number operator.
-         * Expected result: Creates MOD operator node with expression operand.
-         */
-        @Test
-        void mod_WithExpression_ShouldCreateModOperator() {
-            // given
-            LiteralNode exprNode = new LiteralNode(10.0);
-            SimpleExpressionImpl<Object, Double> expression = new SimpleExpressionImpl<>(exprNode);
-
-            // when
-            operator.mod(expression).eq(1000.0);
-
-            // then
-            assertThat(capturedNode).isInstanceOf(OperatorNode.class);
-            OperatorNode opNode = (OperatorNode) capturedNode;
-            OperatorNode modNode = (OperatorNode) opNode.operands().get(0);
-            assertThat(modNode.operator()).isEqualTo(Operator.MOD);
+        private Function<NumberOperatorImpl<Object, Double, String>, ExpressionBuilder.NumberOperator<Object, Double, String>>
+                getExpressionOperationForOperator(String operator, SimpleExpressionImpl<Object, Double> expression) {
+            return switch (operator) {
+                case "ADD" -> op -> op.add(expression);
+                case "SUBTRACT" -> op -> op.subtract(expression);
+                case "MULTIPLY" -> op -> op.multiply(expression);
+                case "DIVIDE" -> op -> op.divide(expression);
+                case "MOD" -> op -> op.mod(expression);
+                default -> throw new IllegalArgumentException("Unknown operator: " + operator);
+            };
         }
     }
 
@@ -232,73 +123,33 @@ class NumberOperatorImplTest {
     class ReturnType {
 
         /**
-         * Test objective: Verify arithmetic operations return NumberOperator.
-         * Test scenario: Call add() and verify return type.
-         * Expected result: Returns NumberOperatorImpl instance.
+         * Verifies that all arithmetic operations return NumberOperatorImpl.
          */
-        @Test
-        void arithmeticOperations_ShouldReturnNumberOperator() {
+        @ParameterizedTest
+        @CsvSource({
+            "ADD, 100.0",
+            "SUBTRACT, 50.0",
+            "MULTIPLY, 2.0",
+            "DIVIDE, 2.0",
+            "MOD, 10.0"
+        })
+        void arithmeticOperations_ShouldReturnNumberOperator(String operationName, double operandValue) {
             // when
-            var result = operator.add(100.0);
+            var result = applyOperation(operationName, operandValue);
 
             // then
             assertThat(result).isInstanceOf(NumberOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify subtract returns NumberOperator.
-         * Test scenario: Call subtract().
-         * Expected result: Returns NumberOperatorImpl instance.
-         */
-        @Test
-        void subtract_ShouldReturnNumberOperator() {
-            // when
-            var result = operator.subtract(50.0);
-
-            // then
-            assertThat(result).isInstanceOf(NumberOperatorImpl.class);
-        }
-
-        /**
-         * Test objective: Verify multiply returns NumberOperator.
-         * Test scenario: Call multiply().
-         * Expected result: Returns NumberOperatorImpl instance.
-         */
-        @Test
-        void multiply_ShouldReturnNumberOperator() {
-            // when
-            var result = operator.multiply(2.0);
-
-            // then
-            assertThat(result).isInstanceOf(NumberOperatorImpl.class);
-        }
-
-        /**
-         * Test objective: Verify divide returns NumberOperator.
-         * Test scenario: Call divide().
-         * Expected result: Returns NumberOperatorImpl instance.
-         */
-        @Test
-        void divide_ShouldReturnNumberOperator() {
-            // when
-            var result = operator.divide(2.0);
-
-            // then
-            assertThat(result).isInstanceOf(NumberOperatorImpl.class);
-        }
-
-        /**
-         * Test objective: Verify mod returns NumberOperator.
-         * Test scenario: Call mod().
-         * Expected result: Returns NumberOperatorImpl instance.
-         */
-        @Test
-        void mod_ShouldReturnNumberOperator() {
-            // when
-            var result = operator.mod(10.0);
-
-            // then
-            assertThat(result).isInstanceOf(NumberOperatorImpl.class);
+        private ExpressionBuilder.NumberOperator<Object, Double, String> applyOperation(String operation, double value) {
+            return switch (operation) {
+                case "ADD" -> operator.add(value);
+                case "SUBTRACT" -> operator.subtract(value);
+                case "MULTIPLY" -> operator.multiply(value);
+                case "DIVIDE" -> operator.divide(value);
+                case "MOD" -> operator.mod(value);
+                default -> throw new IllegalArgumentException("Unknown operation: " + operation);
+            };
         }
     }
 }
