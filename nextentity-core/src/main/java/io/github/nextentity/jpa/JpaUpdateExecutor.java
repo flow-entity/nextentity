@@ -78,19 +78,15 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             return command.get();
         }
         transaction.begin();
-        boolean rolledBack = false;
         try {
-            return command.get();
+            T result = command.get();
+            transaction.commit();
+            return result;
         } catch (Throwable e) {
             transaction.rollback();
-            rolledBack = true;
             throw e;
         } finally {
-            if (rolledBack) {
-                transaction.rollback();
-            } else {
-                transaction.commit();
-            }
+            entityManager.clear();
         }
     }
 }
