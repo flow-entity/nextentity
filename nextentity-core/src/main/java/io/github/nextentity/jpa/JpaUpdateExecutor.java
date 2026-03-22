@@ -85,8 +85,6 @@ public class JpaUpdateExecutor implements UpdateExecutor {
         } catch (Throwable e) {
             transaction.rollback();
             throw e;
-        } finally {
-            entityManager.clear();
         }
     }
 }
