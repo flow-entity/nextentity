@@ -5,9 +5,7 @@ import io.github.nextentity.integration.config.DbConfig;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.condition.DisabledIf;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -38,78 +36,81 @@ public class JpaSpecificFeaturesIntegrationTest {
      * This test is primarily for JPA implementation.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic read lock")
     void shouldQueryWithPessimisticReadLock(DbConfig config) {
-        // When
-        Employee employee = config.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .getList(0, 1, LockModeType.PESSIMISTIC_READ)
-                .get(0);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            Employee employee = config.queryEmployees()
+                    .where(Employee::getId).eq(1L)
+                    .getList(0, 1, LockModeType.PESSIMISTIC_READ)
+                    .get(0);
 
-        // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+            // Then
+            assertThat(employee).isNotNull();
+            assertThat(employee.getId()).isEqualTo(1L);
+        });
     }
 
     /**
      * Tests query with PESSIMISTIC_WRITE lock mode.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic write lock")
     void shouldQueryWithPessimisticWriteLock(DbConfig config) {
-        // When
-        Employee employee = config.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
-                .get(0);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            Employee employee = config.queryEmployees()
+                    .where(Employee::getId).eq(1L)
+                    .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
+                    .get(0);
 
-        // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+            // Then
+            assertThat(employee).isNotNull();
+            assertThat(employee.getId()).isEqualTo(1L);
+        });
     }
 
     /**
      * Tests query with OPTIMISTIC lock mode.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic lock")
     void shouldQueryWithOptimisticLock(DbConfig config) {
-        // When
-        Employee employee = config.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .getList(0, 1, LockModeType.OPTIMISTIC)
-                .get(0);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            Employee employee = config.queryEmployees()
+                    .where(Employee::getId).eq(1L)
+                    .getList(0, 1, LockModeType.OPTIMISTIC)
+                    .get(0);
 
-        // Then
-        assertThat(employee).isNotNull();
+            // Then
+            assertThat(employee).isNotNull();
+        });
     }
 
     /**
      * Tests query with OPTIMISTIC_FORCE_INCREMENT lock mode.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic force increment lock")
     void shouldQueryWithOptimisticForceIncrementLock(DbConfig config) {
-        // When
-        Employee employee = config.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .getList(0, 1, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
-                .get(0);
-
-        // Then
-        assertThat(employee).isNotNull();
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            Employee employee = config.queryEmployees()
+                    .where(Employee::getId).eq(1L)
+                    .getList(0, 1, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+                    .get(0);
+            // Then
+            assertThat(employee).isNotNull();
+        });
     }
 
     /**
@@ -133,91 +134,95 @@ public class JpaSpecificFeaturesIntegrationTest {
      * Tests first with lock mode.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with lock mode")
     void shouldGetFirstWithLockMode(DbConfig config) {
-        // When
-        Employee employee = config.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .first(0, LockModeType.PESSIMISTIC_READ)
-                .orElse(null);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            Employee employee = config.queryEmployees()
+                    .orderBy(Employee::getId).asc()
+                    .first(0, LockModeType.PESSIMISTIC_READ)
+                    .orElse(null);
 
-        // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+            // Then
+            assertThat(employee).isNotNull();
+            assertThat(employee.getId()).isEqualTo(1L);
+        });
     }
 
     /**
      * Tests single with lock mode.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with lock mode")
     void shouldGetSingleWithLockMode(DbConfig config) {
-        // When
-        Employee employee = config.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .single(0, LockModeType.PESSIMISTIC_READ)
-                .orElse(null);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            Employee employee = config.queryEmployees()
+                    .where(Employee::getId).eq(1L)
+                    .single(0, LockModeType.PESSIMISTIC_READ)
+                    .orElse(null);
 
-        // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+            // Then
+            assertThat(employee).isNotNull();
+            assertThat(employee.getId()).isEqualTo(1L);
+        });
     }
 
     /**
      * Tests update after pessimistic lock.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update after pessimistic lock")
     void shouldUpdateAfterPessimisticLock(DbConfig config) {
-        // Given
-        Employee employee = createTestEmployee(5001L, "Lock Update Test");
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // Given
+            Employee employee = createTestEmployee(5001L, "Lock Update Test");
+            config.getUpdateExecutor().insert(employee, Employee.class);
 
-        // When - Lock and update
-        Employee locked = config.queryEmployees()
-                .where(Employee::getId).eq(5001L)
-                .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
-                .get(0);
+            // When - Lock and update
+            Employee locked = config.queryEmployees()
+                    .where(Employee::getId).eq(5001L)
+                    .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
+                    .get(0);
 
-        locked.setName("Updated After Lock");
-        config.getUpdateExecutor().update(locked, Employee.class);
+            locked.setName("Updated After Lock");
+            config.getUpdateExecutor().update(locked, Employee.class);
 
-        // Then
-        Employee updated = config.queryEmployees()
-                .where(Employee::getId).eq(5001L)
-                .getSingle();
-        assertThat(updated.getName()).isEqualTo("Updated After Lock");
+            // Then
+            Employee updated = config.queryEmployees()
+                    .where(Employee::getId).eq(5001L)
+                    .getSingle();
+            assertThat(updated.getName()).isEqualTo("Updated After Lock");
 
-        // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+            // Cleanup
+            config.getUpdateExecutor().delete(employee, Employee.class);
+        });
     }
 
     /**
      * Tests list with lock mode.
      * Note: Requires active transaction.
      */
-    @Disabled("Requires active transaction context")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with lock mode")
     void shouldGetListWithLockMode(DbConfig config) {
-        // When
-        List<Employee> employees = config.queryEmployees()
-                .where(Employee::getDepartmentId).eq(1L)
-                .orderBy(Employee::getId).asc()
-                .getList(0, 3, LockModeType.PESSIMISTIC_READ);
+        config.getUpdateExecutor().doInTransaction(() -> {
+            // When
+            List<Employee> employees = config.queryEmployees()
+                    .where(Employee::getDepartmentId).eq(1L)
+                    .orderBy(Employee::getId).asc()
+                    .getList(0, 3, LockModeType.PESSIMISTIC_READ);
 
-        // Then
-        assertThat(employees).hasSize(3);
+            // Then
+            assertThat(employees).hasSize(3);
+        });
     }
 
     /**
