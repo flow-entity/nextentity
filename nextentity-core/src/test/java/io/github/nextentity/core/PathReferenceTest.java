@@ -1,9 +1,8 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -14,6 +13,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Test scenarios:
  * 1. getFieldName converts method names correctly
  * 2. getFieldName handles edge cases
+ * 3. of() creates PathReference for valid paths
+ * 4. clearCache() clears the internal cache
  */
 class PathReferenceTest {
 
@@ -132,17 +133,88 @@ class PathReferenceTest {
     }
 
     @Nested
+    class OfMethod {
+
+        /**
+         * Test objective: Verify of() creates PathReference with correct field name
+         * Test scenario: Create PathReference for Employee::getName
+         * Expected result: Field name is "name"
+         */
+        @Test
+        void of_WithValidPath_ShouldReturnCorrectFieldName() {
+            // when
+            PathReference ref = PathReference.of(Employee::getName);
+
+            // then
+            assertThat(ref.getFieldName()).isEqualTo("name");
+        }
+
+        /**
+         * Test objective: Verify of() creates PathReference with correct return type
+         * Test scenario: Create PathReference for Employee::getSalary
+         * Expected result: Return type is Double
+         */
+        @Test
+        void of_WithValidPath_ShouldReturnCorrectReturnType() {
+            // when
+            PathReference ref = PathReference.of(Employee::getSalary);
+
+            // then
+            assertThat(ref.getReturnType()).isEqualTo(Double.class);
+        }
+
+        /**
+         * Test objective: Verify of() creates PathReference with correct entity type
+         * Test scenario: Create PathReference for Employee path
+         * Expected result: Entity type is Employee
+         */
+        @Test
+        void of_WithValidPath_ShouldReturnCorrectEntityType() {
+            // when
+            PathReference ref = PathReference.of(Employee::getName);
+
+            // then
+            assertThat(ref.getEntityType()).isEqualTo(Employee.class);
+        }
+
+        /**
+         * Test objective: Verify of() throws NPE for null path
+         * Test scenario: Pass null to of()
+         * Expected result: NullPointerException thrown
+         */
+        @Test
+        void of_WithNullPath_ShouldThrowNPE() {
+            // when & then
+            assertThatThrownBy(() -> PathReference.of(null))
+                    .isInstanceOf(NullPointerException.class);
+        }
+    }
+
+    @Nested
     class ClearCache {
 
         /**
-         * Test objective: Verify clearCache() works without error
-         * Test scenario: Call clearCache()
-         * Expected result: No exception
+         * Test objective: Verify clearCache() method executes without error
+         * Test scenario: Call clearCache() after using the cache
+         * Expected result: Method completes successfully
+         * <p>
+         * Note: This test verifies the method is callable. The actual cache behavior
+         * is an implementation detail that may vary.
          */
         @Test
-        void clearCache_NoError() {
-            // when & then - should not throw
-            PathReference.clearCache();
+        void clearCache_AfterCacheUsage_ShouldNotThrow() {
+            // given - use cache
+            PathReference.of(Employee::getName);
+
+            // when & then - clearCache should not throw
+            org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> {
+                PathReference.clearCache();
+            });
+
+            // verify we can still create new PathReference after clear
+            PathReference ref = PathReference.of(Employee::getName);
+            assertThat(ref).isNotNull();
+            assertThat(ref.getFieldName()).isEqualTo("name");
         }
     }
 }
