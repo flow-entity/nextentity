@@ -1,0 +1,734 @@
+package io.github.nextentity.integration;
+
+import io.github.nextentity.api.Path;
+import io.github.nextentity.api.model.Tuple;
+import io.github.nextentity.api.model.Tuple2;
+import io.github.nextentity.api.model.Tuple3;
+import io.github.nextentity.api.model.Tuple4;
+import io.github.nextentity.api.model.Tuple5;
+import io.github.nextentity.api.model.Tuple6;
+import io.github.nextentity.api.model.Tuple7;
+import io.github.nextentity.api.model.Tuple8;
+import io.github.nextentity.api.model.Tuple9;
+import io.github.nextentity.api.model.Tuple10;
+import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestProvider;
+import io.github.nextentity.integration.entity.Department;
+import io.github.nextentity.integration.entity.Employee;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static io.github.nextentity.core.util.Paths.get;
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Select API integration tests.
+ * <p>
+ * Tests all select method variants from the Select interface including:
+ * - select(Class) projection type selection
+ * - select(Path) single path selection
+ * - select(Path...) tuple selection (2-10 paths)
+ * - selectDistinct variants
+ * - select with TypedExpression
+ * - select with Collection/List parameters
+ * <p>
+ * These tests run against MySQL and PostgreSQL using Testcontainers.
+ *
+ * @author HuangChengwei
+ */
+@DisplayName("Select API Integration Tests")
+public class SelectApiIntegrationTest {
+
+    // ========================================
+    // 1. Single Path Selection
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select single path - name")
+    void shouldSelectSinglePathName(DbConfig config) {
+        // When
+        List<String> names = config.queryEmployees()
+                .select(Employee::getName)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(names).hasSize(12);
+        assertThat(names.get(0)).isEqualTo("Alice Johnson");
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select single path - salary")
+    void shouldSelectSinglePathSalary(DbConfig config) {
+        // When
+        List<Double> salaries = config.queryEmployees()
+                .select(Employee::getSalary)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(salaries).hasSize(12);
+        assertThat(salaries).allMatch(s -> s != null && s > 0);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select single path with where condition")
+    void shouldSelectSinglePathWithWhere(DbConfig config) {
+        // When
+        List<String> names = config.queryEmployees()
+                .select(Employee::getName)
+                .where(Employee::getDepartmentId).eq(1L)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(names).hasSize(5);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct single path")
+    void shouldSelectDistinctSinglePath(DbConfig config) {
+        // When
+        List<Long> deptIds = config.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId)
+                .orderBy(Employee::getDepartmentId).asc()
+                .getList();
+
+        // Then
+        assertThat(deptIds).hasSize(5);
+        assertThat(deptIds).containsExactly(1L, 2L, 3L, 4L, 5L);
+    }
+
+    // ========================================
+    // 2. Tuple2 Selection (Two Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select two paths as Tuple2")
+    void shouldSelectTwoPaths(DbConfig config) {
+        // When
+        List<Tuple2<String, String>> results = config.queryEmployees()
+                .select(Employee::getName, Employee::getEmail)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple2<String, String> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo("Alice Johnson");
+        assertThat(tuple.get1()).isEqualTo("alice@example.com");
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct two paths")
+    void shouldSelectDistinctTwoPaths(DbConfig config) {
+        // When
+        List<Tuple2<Long, Boolean>> results = config.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive)
+                .orderBy(Employee::getDepartmentId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        // Verify distinctness
+        long distinctCount = results.stream().distinct().count();
+        assertThat(results.size()).isEqualTo((int) distinctCount);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select two paths with condition")
+    void shouldSelectTwoPathsWithCondition(DbConfig config) {
+        // When
+        List<Tuple2<String, Double>> results = config.queryEmployees()
+                .select(Employee::getName, Employee::getSalary)
+                .where(Employee::getSalary).gt(70000.0)
+                .orderBy(Employee::getName).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        assertThat(results).allMatch(t -> t.get1() > 70000.0);
+    }
+
+    // ========================================
+    // 3. Tuple3 Selection (Three Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select three paths as Tuple3")
+    void shouldSelectThreePaths(DbConfig config) {
+        // When
+        List<Tuple3<String, String, Double>> results = config.queryEmployees()
+                .select(Employee::getName, Employee::getEmail, Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple3<String, String, Double> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo("Alice Johnson");
+        assertThat(tuple.get1()).isEqualTo("alice@example.com");
+        assertThat(tuple.get2()).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct three paths")
+    void shouldSelectDistinctThreePaths(DbConfig config) {
+        // When
+        List<Tuple3<Long, Boolean, Double>> results = config.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getSalary)
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+    }
+
+    // ========================================
+    // 4. Tuple4 Selection (Four Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select four paths as Tuple4")
+    void shouldSelectFourPaths(DbConfig config) {
+        // When
+        List<Tuple4<Long, String, String, Double>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail, Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple4<Long, String, String, Double> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo(1L);
+        assertThat(tuple.get1()).isEqualTo("Alice Johnson");
+        assertThat(tuple.get2()).isEqualTo("alice@example.com");
+        assertThat(tuple.get3()).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct four paths")
+    void shouldSelectDistinctFourPaths(DbConfig config) {
+        // When
+        List<Tuple4<Long, Boolean, Double, String>> results = config.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getSalary, Employee::getName)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12); // All names are distinct
+    }
+
+    // ========================================
+    // 5. Tuple5 Selection (Five Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select five paths as Tuple5")
+    void shouldSelectFivePaths(DbConfig config) {
+        // When
+        List<Tuple5<Long, String, String, Double, Boolean>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple5<Long, String, String, Double, Boolean> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo(1L);
+        assertThat(tuple.get1()).isEqualTo("Alice Johnson");
+        assertThat(tuple.get4()).isTrue();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct five paths")
+    void shouldSelectDistinctFivePaths(DbConfig config) {
+        // When
+        List<Tuple5<Long, Boolean, String, Double, String>> results = config.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive,
+                        Employee::getName, Employee::getSalary, Employee::getEmail)
+                .orderBy(Employee::getDepartmentId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
+    }
+
+    // ========================================
+    // 6. Tuple6 Selection (Six Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select six paths as Tuple6")
+    void shouldSelectSixPaths(DbConfig config) {
+        // When
+        List<Tuple6<Long, String, String, Double, Boolean, Long>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive, Employee::getDepartmentId)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple6<Long, String, String, Double, Boolean, Long> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo(1L);
+        assertThat(tuple.get5()).isEqualTo(1L);
+    }
+
+    // ========================================
+    // 7. Tuple7 Selection (Seven Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select seven paths as Tuple7")
+    void shouldSelectSevenPaths(DbConfig config) {
+        // When
+        List<Tuple7<Long, String, String, Double, Boolean, Long, String>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
+                        Employee::getName) // Reuse name for 7th
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple7<Long, String, String, Double, Boolean, Long, String> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo(1L);
+        assertThat(tuple.get1()).isEqualTo(tuple.get6()); // Both are name
+    }
+
+    // ========================================
+    // 8. Tuple8 Selection (Eight Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select eight paths as Tuple8")
+    void shouldSelectEightPaths(DbConfig config) {
+        // When
+        List<Tuple8<Long, String, String, Double, Boolean, Long, String, Double>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
+                        Employee::getName, Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get0()).isEqualTo(1L);
+    }
+
+    // ========================================
+    // 9. Tuple9 Selection (Nine Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select nine paths as Tuple9")
+    void shouldSelectNinePaths(DbConfig config) {
+        // When
+        List<Tuple9<Long, String, String, Double, Boolean, Long, String, Double, Boolean>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
+                        Employee::getName, Employee::getSalary, Employee::getActive)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get0()).isEqualTo(1L);
+    }
+
+    // ========================================
+    // 10. Tuple10 Selection (Ten Paths)
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select ten paths as Tuple10")
+    void shouldSelectTenPaths(DbConfig config) {
+        // When
+        List<Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
+                        Employee::getName, Employee::getSalary, Employee::getActive,
+                        Employee::getId)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long> tuple = results.get(0);
+        assertThat(tuple.get0()).isEqualTo(1L);
+        assertThat(tuple.get0()).isEqualTo(tuple.get9()); // Both are ID
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct ten paths")
+    void shouldSelectDistinctTenPaths(DbConfig config) {
+        // When
+        List<Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long>> results = config.queryEmployees()
+                .selectDistinct(Employee::getId, Employee::getName, Employee::getEmail,
+                        Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
+                        Employee::getName, Employee::getSalary, Employee::getActive,
+                        Employee::getId)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
+    }
+
+    // ========================================
+    // 11. Collection Parameter Selection
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with collection of paths")
+    void shouldSelectWithCollectionOfPaths(DbConfig config) {
+        // Given
+        Collection<Path<Employee, ?>> paths = new ArrayList<>();
+        paths.add(Employee::getName);
+        paths.add(Employee::getEmail);
+
+        // When
+        List<Tuple> results = config.queryEmployees()
+                .select(paths)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple tuple = results.get(0);
+        assertThat((String) tuple.get(0)).isEqualTo("Alice Johnson");
+        assertThat((String) tuple.get(1)).isEqualTo("alice@example.com");
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with collection of paths")
+    void shouldSelectDistinctWithCollectionOfPaths(DbConfig config) {
+        // Given
+        Collection<Path<Employee, ?>> paths = new ArrayList<>();
+        paths.add(Employee::getDepartmentId);
+        paths.add(Employee::getActive);
+
+        // When
+        List<Tuple> results = config.queryEmployees()
+                .selectDistinct(paths)
+                .orderBy(Employee::getDepartmentId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+    }
+
+    // ========================================
+    // 12. TypedExpression Selection
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with typed expression - max")
+    void shouldSelectWithTypedExpressionMax(DbConfig config) {
+        // When
+        Double maxSalary = config.queryEmployees()
+                .select(get(Employee::getSalary).max())
+                .getSingle();
+
+        // Then
+        assertThat(maxSalary).isNotNull();
+        assertThat(maxSalary).isGreaterThan(0);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with typed expression - min")
+    void shouldSelectWithTypedExpressionMin(DbConfig config) {
+        // When
+        Double minSalary = config.queryEmployees()
+                .select(get(Employee::getSalary).min())
+                .getSingle();
+
+        // Then
+        assertThat(minSalary).isNotNull();
+        assertThat(minSalary).isGreaterThan(0);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with typed expression - count")
+    void shouldSelectWithTypedExpressionCount(DbConfig config) {
+        // When
+        Long count = config.queryEmployees()
+                .select(get(Employee::getId).count())
+                .getSingle();
+
+        // Then
+        assertThat(count).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with typed expression - sum")
+    void shouldSelectWithTypedExpressionSum(DbConfig config) {
+        // When
+        Double sum = config.queryEmployees()
+                .select(get(Employee::getSalary).sum())
+                .getSingle();
+
+        // Then
+        assertThat(sum).isNotNull();
+        assertThat(sum).isGreaterThan(0);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with typed expression - avg")
+    void shouldSelectWithTypedExpressionAvg(DbConfig config) {
+        // When
+        Double avg = config.queryEmployees()
+                .select(get(Employee::getSalary).avg())
+                .getSingle();
+
+        // Then
+        assertThat(avg).isNotNull();
+        assertThat(avg).isGreaterThan(0);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with typed expression")
+    void shouldSelectDistinctWithTypedExpression(DbConfig config) {
+        // When
+        Long distinctDeptCount = config.queryEmployees()
+                .selectDistinct(get(Employee::getDepartmentId).count())
+                .getSingle();
+
+        // Then
+        assertThat(distinctDeptCount).isNotNull();
+    }
+
+    // ========================================
+    // 13. Multiple TypedExpression Selection
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with two typed expressions")
+    void shouldSelectWithTwoTypedExpressions(DbConfig config) {
+        // When
+        List<Tuple2<Double, Double>> results = config.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        Tuple2<Double, Double> tuple = results.get(0);
+        assertThat(tuple.get0()).isLessThanOrEqualTo(tuple.get1());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with three typed expressions")
+    void shouldSelectWithThreeTypedExpressions(DbConfig config) {
+        // When
+        List<Tuple3<Double, Double, Double>> results = config.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+    }
+
+    // ========================================
+    // 14. Projection Type Selection
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with projection type - same entity")
+    void shouldSelectWithProjectionTypeSameEntity(DbConfig config) {
+        // When
+        List<Employee> employees = config.queryEmployees()
+                .select(Employee.class)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize(1);
+        assertThat(employees.get(0).getName()).isEqualTo("Alice Johnson");
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with projection type - same entity returns same query")
+    void shouldSelectWithProjectionTypeSameEntityReturnsSame(DbConfig config) {
+        // When - select same type should return entity
+        List<Employee> employees = config.queryEmployees()
+                .select(Employee.class)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize(12);
+        assertThat(employees.get(0)).isInstanceOf(Employee.class);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with projection type")
+    void shouldSelectDistinctWithProjectionType(DbConfig config) {
+        // When
+        List<Department> departments = config.queryDepartments()
+                .selectDistinct(Department.class)
+                .orderBy(Department::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(departments).hasSize(5);
+    }
+
+    // ========================================
+    // 15. Selection with Conditions and Ordering
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with where and order by")
+    void shouldSelectWithWhereAndOrderBy(DbConfig config) {
+        // When
+        List<Tuple2<Long, String>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName)
+                .where(Employee::getActive).eq(true)
+                .orderBy(Employee::getName).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        // Verify ordering
+        for (int i = 0; i < results.size() - 1; i++) {
+            String current = results.get(i).get1();
+            String next = results.get(i + 1).get1();
+            assertThat(current.compareTo(next)).isLessThanOrEqualTo(0);
+        }
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with pagination")
+    void shouldSelectWithPagination(DbConfig config) {
+        // When
+        List<Tuple2<Long, String>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName)
+                .orderBy(Employee::getId).asc()
+                .getList(0, 5);
+
+        // Then
+        assertThat(results).hasSize(5);
+        assertThat(results.get(0).get0()).isEqualTo(1L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with limit")
+    void shouldSelectWithLimit(DbConfig config) {
+        // When
+        List<Tuple2<Long, String>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName)
+                .orderBy(Employee::getId).asc()
+                .limit(3);
+
+        // Then
+        assertThat(results).hasSize(3);
+    }
+
+    // ========================================
+    // 16. Edge Cases
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle select with null values in data")
+    void shouldHandleSelectWithNullValues(DbConfig config) {
+        // Given - Employee 1 exists
+        // When
+        List<Tuple2<String, String>> results = config.queryEmployees()
+                .select(Employee::getName, Employee::getEmail)
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        // Email could be null
+        assertThat(results.get(0).get0()).isNotNull();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return empty list for no matches")
+    void shouldReturnEmptyListForNoMatches(DbConfig config) {
+        // When
+        List<Tuple2<Long, String>> results = config.queryEmployees()
+                .select(Employee::getId, Employee::getName)
+                .where(Employee::getId).eq(99999L)
+                .getList();
+
+        // Then
+        assertThat(results).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select single result with getSingle")
+    void shouldSelectSingleWithGetSingle(DbConfig config) {
+        // When
+        Tuple2<Long, String> result = config.queryEmployees()
+                .select(Employee::getId, Employee::getName)
+                .where(Employee::getId).eq(1L)
+                .getSingle();
+
+        // Then
+        assertThat(result).isNotNull();
+        assertThat(result.get0()).isEqualTo(1L);
+        assertThat(result.get1()).isEqualTo("Alice Johnson");
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select first result with first")
+    void shouldSelectFirst(DbConfig config) {
+        // When
+        var result = config.queryEmployees()
+                .select(Employee::getId, Employee::getName)
+                .orderBy(Employee::getId).asc()
+                .first();
+
+        // Then
+        assertThat(result).isPresent();
+        assertThat(result.get().get0()).isEqualTo(1L);
+    }
+}
