@@ -90,11 +90,6 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return select(true, nodes);
     }
 
-    protected WhereStep<T, Tuple> select(boolean distinct, ExpressionNode... nodes) {
-        ImmutableList<ExpressionNode> expressionNodes = ImmutableList.of(nodes);
-        return select(distinct, expressionNodes);
-    }
-
     private WhereImpl<T, Tuple> select(boolean distinct, ImmutableList<ExpressionNode> expressionNodes) {
         SelectExpressions selected = new SelectExpressions(expressionNodes, distinct);
         return updateSelected(selected);
