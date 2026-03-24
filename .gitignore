@@ -60,3 +60,4 @@ hs_err_pid*
 replay_pid*
 .flattened-pom.xml
 /.claude
+/htmlReport
