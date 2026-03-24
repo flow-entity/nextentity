@@ -2,6 +2,7 @@ package io.github.nextentity.core.util;
 
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.ExpressionNodes;
 import io.github.nextentity.core.expression.OperatorNode;
 import io.github.nextentity.core.expression.PredicateImpl;
@@ -31,8 +32,8 @@ public interface Predicates {
     }
 
     static <T> Predicate<T> not(TypedExpression<T, Boolean> predicate) {
-        OperatorNode node = new OperatorNode(ImmutableList.of(ExpressionNodes.getNode(predicate)), NOT);
-        return new PredicateImpl<>(node);
+        ExpressionNode operand = ExpressionNodes.getNode(predicate);
+        return new PredicateImpl<>(operand.operate(NOT));
     }
 
 }

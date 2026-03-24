@@ -627,7 +627,6 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained NOT operations")
-        @Disabled("BUG: Double NOT (NOT(NOT(...))) does not correctly cancel out - returns wrong results")
         void shouldHandleChainedNotOperations(DbConfig config) {
             // Given: NOT(NOT(active))
             List<Employee> employees = config.queryEmployees()
