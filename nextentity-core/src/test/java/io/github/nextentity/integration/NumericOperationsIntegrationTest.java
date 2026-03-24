@@ -1,6 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Tuple2;
+import io.github.nextentity.core.util.Paths;
 import io.github.nextentity.integration.config.DbConfig;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -475,7 +476,7 @@ public class NumericOperationsIntegrationTest {
 
         // Then - depends on test data
         // Just verify it returns a boolean
-        assertThat(exists).isNotNull();
+        assertThat(exists).isFalse();
     }
 
     /**
@@ -521,5 +522,591 @@ public class NumericOperationsIntegrationTest {
         // Then
         assertThat(employee).isNotNull();
         assertThat(employee.getSalary()).isGreaterThan(SALARY_THRESHOLD);
+    }
+
+    // ==================== Arithmetic Operations ====================
+
+    /**
+     * Tests addition operation in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should add value to numeric field in SELECT")
+    void shouldAddValueInSelect(DbConfig config) {
+        // Given
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        Double bonus = 5000.0;
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).add(bonus))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary + bonus);
+    }
+
+    /**
+     * Tests subtraction operation in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should subtract value from numeric field in SELECT")
+    void shouldSubtractValueInSelect(DbConfig config) {
+        // Given
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        Double deduction = 1000.0;
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).subtract(deduction))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary - deduction);
+    }
+
+    /**
+     * Tests multiplication operation in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should multiply numeric field in SELECT")
+    void shouldMultiplyValueInSelect(DbConfig config) {
+        // Given
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        Double multiplier = 1.1; // 10% raise
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).multiply(multiplier))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary * multiplier);
+    }
+
+    /**
+     * Tests division operation in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should divide numeric field in SELECT")
+    void shouldDivideValueInSelect(DbConfig config) {
+        // Given
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        Double divisor = 12.0; // Monthly salary
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).divide(divisor))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary / divisor);
+    }
+
+    /**
+     * Tests modulo operation in SELECT clause with ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should modulo numeric field in SELECT")
+    void shouldModuloValueInSelect(DbConfig config) {
+        // Given
+        Long modValue = 3L;
+
+        // When
+        List<Long> results = config.queryEmployees()
+                .select(get(Employee::getId).mod(modValue))
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        // Verify modulo results are in expected range [0, modValue)
+        assertThat(results).allMatch(n -> n >= 0 && n < modValue);
+    }
+
+    /**
+     * Tests chained arithmetic operations in SELECT.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should chain arithmetic operations in SELECT")
+    void shouldChainArithmeticOperationsInSelect(DbConfig config) {
+        // Given
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        // (salary + 1000) * 1.1 - 500
+        Double expected = (originalSalary + 1000.0) * 1.1 - 500.0;
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).add(1000.0).multiply(1.1).subtract(500.0))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(expected);
+    }
+
+    /**
+     * Tests arithmetic in HAVING clause with aggregation.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use arithmetic with group by and aggregation")
+    void shouldUseArithmeticWithGroupBy(DbConfig config) {
+        // Given - average salary by department, multiplied by 1.1
+        Double multiplier = 1.1;
+
+        // When - Get average adjusted salary per department
+        List<Tuple2<Long, Double>> results = config.queryEmployees()
+                .select(get(Employee::getDepartmentId), get(Employee::getSalary).multiply(multiplier).avg())
+                .groupBy(Employee::getDepartmentId)
+                .orderBy(Employee::getDepartmentId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        assertThat(results).allMatch(t -> t.get0() != null && t.get1() != null && t.get1() > 0);
+    }
+
+    /**
+     * Tests arithmetic operation in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should perform arithmetic with expression in SELECT")
+    void shouldPerformArithmeticWithExpressionInSelect(DbConfig config) {
+        // Given
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        Double bonus = 1000.0;
+
+        // When - Select salary + literal using expression
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).add(Paths.<Employee>root().literal(bonus)))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary + bonus);
+    }
+
+    /**
+     * Tests arithmetic operation in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use arithmetic in WHERE clause")
+    void shouldUseArithmeticInWhereClause(DbConfig config) {
+        // Given
+        double threshold = 70000.0;
+        Double bonus = 10000.0;
+
+        // When - Find employees where salary + bonus > threshold
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getSalary).add(bonus).gt(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() + bonus > threshold);
+    }
+
+    /**
+     * Tests subtraction in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use subtraction in WHERE clause")
+    void shouldUseSubtractionInWhereClause(DbConfig config) {
+        // Given
+        double threshold = 50000.0;
+        Double deduction = 5000.0;
+
+        // When - Find employees where salary - deduction >= threshold
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getSalary).subtract(deduction).ge(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() - deduction >= threshold);
+    }
+
+    /**
+     * Tests multiplication in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use multiplication in WHERE clause")
+    void shouldUseMultiplicationInWhereClause(DbConfig config) {
+        // Given
+        double threshold = 100000.0;
+        Double multiplier = 2.0;
+
+        // When - Find employees where salary * multiplier > threshold
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getSalary).multiply(multiplier).gt(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() * multiplier > threshold);
+    }
+
+    /**
+     * Tests division in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use division in WHERE clause")
+    void shouldUseDivisionInWhereClause(DbConfig config) {
+        // Given
+        double threshold = 5000.0; // Monthly salary threshold
+        Double months = 12.0;
+
+        // When - Find employees where salary / 12 > threshold
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getSalary).divide(months).gt(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() / months > threshold);
+    }
+
+    /**
+     * Tests modulo in WHERE clause with ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use modulo in WHERE clause")
+    void shouldUseModuloInWhereClause(DbConfig config) {
+        // Given
+        Long modValue = 2L;
+
+        // When - Find employees where id % 2 = 0 (even IDs)
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).mod(modValue).eq(0L)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getId() % modValue == 0);
+    }
+
+    /**
+     * Tests combined arithmetic operations in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use combined arithmetic in WHERE clause")
+    void shouldUseCombinedArithmeticInWhereClause(DbConfig config) {
+        // Given - salary + 10000 > 80000
+        Double bonus = 10000.0;
+        double threshold = 80000.0;
+
+        // When
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getSalary).add(bonus).gt(threshold)
+                .orderBy(Employee::getSalary).desc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() + bonus > threshold);
+    }
+
+    /**
+     * Tests arithmetic with aggregation functions.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use arithmetic with aggregation")
+    void shouldUseArithmeticWithAggregation(DbConfig config) {
+        // Given
+        Double multiplier = 1.1; // 10% increase
+
+        // When - Select sum(salary * multiplier) as total projected payroll
+        Double result = config.queryEmployees()
+                .select(get(Employee::getSalary).multiply(multiplier).sum())
+                .getSingle();
+
+        // Then
+        assertThat(result).isNotNull();
+        // Verify it's the sum of all salaries * multiplier (with delta for floating point precision)
+        Double totalSalary = config.queryEmployees()
+                .select(get(Employee::getSalary).sum())
+                .getSingle();
+        assertThat(result).isCloseTo(totalSalary * multiplier, org.assertj.core.data.Offset.offset(0.01));
+    }
+
+    /**
+     * Tests arithmetic with count and filter.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should count results with arithmetic filter")
+    void shouldCountResultsWithArithmeticFilter(DbConfig config) {
+        // Given
+        Double threshold = 70000.0;
+        Double bonus = 5000.0;
+
+        // When
+        long count = config.queryEmployees()
+                .where(Employee::getSalary).add(bonus).gt(threshold)
+                .count();
+
+        // Then
+        assertThat(count).isPositive();
+    }
+
+    /**
+     * Tests conditional arithmetic operations (addIfNotNull).
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle conditional add with null value")
+    void shouldHandleConditionalAddWithNull(DbConfig config) {
+        // Given
+        Double nullBonus = null;
+
+        // When - addIfNotNull with null should not change the value
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).addIfNotNull(nullBonus))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(employees.get(0).getSalary());
+    }
+
+    /**
+     * Tests conditional arithmetic operations with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle conditional add with non-null value")
+    void shouldHandleConditionalAddWithNonNull(DbConfig config) {
+        // Given
+        Double bonus = 5000.0;
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).addIfNotNull(bonus))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(employees.get(0).getSalary() + bonus);
+    }
+
+    /**
+     * Tests complex arithmetic expression with multiple operations.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle complex arithmetic expression")
+    void shouldHandleComplexArithmeticExpression(DbConfig config) {
+        // Given - Calculate: (salary * 12 + 1000) / 12 - 100
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        Double expected = (originalSalary * 12.0 + 1000.0) / 12.0 - 100.0;
+
+        // When
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).multiply(12.0).add(1000.0).divide(12.0).subtract(100.0))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(expected);
+    }
+
+    /**
+     * Tests arithmetic with distinct select.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct arithmetic results")
+    void shouldSelectDistinctArithmeticResults(DbConfig config) {
+        // Given - departmentId % 3 should have limited distinct values
+        Long modValue = 3L;
+
+        // When
+        List<Long> distinctResults = config.queryEmployees()
+                .selectDistinct(get(Employee::getDepartmentId).mod(modValue))
+                .getList();
+
+        // Then
+        assertThat(distinctResults).isNotEmpty();
+        assertThat(distinctResults).doesNotHaveDuplicates();
+        assertThat(distinctResults).allMatch(n -> n >= 0 && n < modValue);
+    }
+
+    /**
+     * Tests arithmetic operations on integer ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should perform arithmetic on ID field")
+    void shouldPerformArithmeticOnIdField(DbConfig config) {
+        // Given
+        Long offset = 100L;
+
+        // When
+        List<Long> results = config.queryEmployees()
+                .select(get(Employee::getId).add(offset))
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        List<Long> originalIds = config.queryEmployees()
+                .select(Employee::getId)
+                .orderBy(Employee::getId).asc()
+                .getList();
+        for (int i = 0; i < results.size(); i++) {
+            assertThat(results.get(i)).isEqualTo(originalIds.get(i) + offset);
+        }
+    }
+
+    /**
+     * Tests conditional subtract with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle conditional subtract with null value")
+    void shouldHandleConditionalSubtractWithNull(DbConfig config) {
+        // Given
+        Double nullDeduction = null;
+
+        // When - subtractIfNotNull with null should not change the value
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).subtractIfNotNull(nullDeduction))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(employees.get(0).getSalary());
+    }
+
+    /**
+     * Tests conditional multiply with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle conditional multiply with null value")
+    void shouldHandleConditionalMultiplyWithNull(DbConfig config) {
+        // Given
+        Double nullMultiplier = null;
+
+        // When - multiplyIfNotNull with null should not change the value
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).multiplyIfNotNull(nullMultiplier))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(employees.get(0).getSalary());
+    }
+
+    /**
+     * Tests conditional divide with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle conditional divide with null value")
+    void shouldHandleConditionalDivideWithNull(DbConfig config) {
+        // Given
+        Double nullDivisor = null;
+
+        // When - divideIfNotNull with null should not change the value
+        List<Double> results = config.queryEmployees()
+                .select(get(Employee::getSalary).divideIfNotNull(nullDivisor))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        List<Employee> employees = config.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(employees.get(0).getSalary());
+    }
+
+    /**
+     * Tests conditional mod with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle conditional mod with null value")
+    void shouldHandleConditionalModWithNull(DbConfig config) {
+        // Given
+        Long nullModValue = null;
+
+        // When - modIfNotNull with null should not change the value
+        List<Long> results = config.queryEmployees()
+                .select(get(Employee::getId).modIfNotNull(nullModValue))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        List<Long> originalIds = config.queryEmployees()
+                .select(Employee::getId)
+                .where(Employee::getId).eq(1L)
+                .getList();
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalIds.get(0));
     }
 }
