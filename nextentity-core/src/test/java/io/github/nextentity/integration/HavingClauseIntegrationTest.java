@@ -31,7 +31,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  *
  * @author HuangChengwei
  */
-@Disabled("BUG: HAVING clause generates SQL without GROUP BY clause - framework implementation issue")
 @DisplayName("Having Clause Integration Tests")
 public class HavingClauseIntegrationTest {
 

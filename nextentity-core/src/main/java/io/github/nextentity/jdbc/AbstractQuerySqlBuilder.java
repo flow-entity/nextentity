@@ -88,8 +88,8 @@ public abstract class AbstractQuerySqlBuilder {
         appendJoin();
         appendWhere();
         appendGroupBy();
-        appendOrderBy();
         appendHaving();
+        appendOrderBy();
         appendOffsetAndLimit();
         appendLockModeType(context.getStructure().lockType());
     }
