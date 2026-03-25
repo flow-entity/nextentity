@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -39,9 +39,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch employee with department")
-    void shouldFetchEmployeeWithDepartment(DbConfig config) {
+    void shouldFetchEmployeeWithDepartment(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -64,9 +64,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by department name")
-    void shouldFilterEmployeesByDepartmentName(DbConfig config) {
+    void shouldFilterEmployeesByDepartmentName(IntegrationTestContext context) {
         // When - query employees in department 1
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
@@ -87,9 +87,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query departments")
-    void shouldQueryDepartments(DbConfig config) {
+    void shouldQueryDepartments(IntegrationTestContext context) {
         // When
-        List<Department> departments = config.queryDepartments()
+        List<Department> departments = context.queryDepartments()
                 .orderBy(Department::getId).asc()
                 .getList();
 
@@ -108,9 +108,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees per department")
-    void shouldCountEmployeesPerDepartment(DbConfig config) {
+    void shouldCountEmployeesPerDepartment(IntegrationTestContext context) {
         // When - get employees for department 1
-        List<Employee> dept1Employees = config.queryEmployees()
+        List<Employee> dept1Employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
 
@@ -118,7 +118,7 @@ public class JoinOperationsIntegrationTest {
         assertEquals(5, dept1Employees.size());
 
         // When - get employees for department 2
-        List<Employee> dept2Employees = config.queryEmployees()
+        List<Employee> dept2Employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(2L)
                 .getList();
 
@@ -132,9 +132,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with multiple conditions")
-    void shouldFetchWithMultipleConditions(DbConfig config) {
+    void shouldFetchWithMultipleConditions(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
@@ -158,9 +158,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should calculate salary statistics per department")
-    void shouldCalculateSalaryStatsPerDepartment(DbConfig config) {
+    void shouldCalculateSalaryStatsPerDepartment(IntegrationTestContext context) {
         // When - get max salary in department 1
-        Number maxSalary = config.queryEmployees()
+        Number maxSalary = context.queryEmployees()
                 .select(io.github.nextentity.core.util.Paths.get(Employee::getSalary).max())
                 .where(Employee::getDepartmentId).eq(1L)
                 .getSingle();
@@ -169,7 +169,7 @@ public class JoinOperationsIntegrationTest {
         assertNotNull(maxSalary);
 
         // Verify max salary in department 1
-        double expectedMax = config.queryEmployees()
+        double expectedMax = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList().stream()
                 .mapToDouble(Employee::getSalary)
@@ -184,9 +184,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by department and salary")
-    void shouldOrderByDepartmentAndSalary(DbConfig config) {
+    void shouldOrderByDepartmentAndSalary(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId).asc()
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -213,9 +213,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get distinct department IDs")
-    void shouldGetDistinctDepartmentIds(DbConfig config) {
+    void shouldGetDistinctDepartmentIds(IntegrationTestContext context) {
         // When
-        List<Long> deptIds = config.queryEmployees()
+        List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(io.github.nextentity.core.util.Paths.get(Employee::getDepartmentId))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -231,9 +231,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter by status and department")
-    void shouldFilterByStatusAndDepartment(DbConfig config) {
+    void shouldFilterByStatusAndDepartment(IntegrationTestContext context) {
         // When
-        List<Employee> activeInDept1 = config.queryEmployees()
+        List<Employee> activeInDept1 = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
@@ -253,9 +253,9 @@ public class JoinOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query department budget")
-    void shouldQueryDepartmentBudget(DbConfig config) {
+    void shouldQueryDepartmentBudget(IntegrationTestContext context) {
         // When
-        List<Department> activeDepts = config.queryDepartments()
+        List<Department> activeDepts = context.queryDepartments()
                 .where(Department::getActive).eq(true)
                 .orderBy(Department::getBudget).desc()
                 .getList();

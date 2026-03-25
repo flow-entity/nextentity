@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
@@ -38,15 +38,15 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert 100 records in batch")
-    void shouldInsertLargeBatch(DbConfig config) {
+    void shouldInsertLargeBatch(IntegrationTestContext context) {
         // Given
         List<Employee> employees = createTestEmployees(1000, BATCH_SIZE);
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then
-        List<Employee> inserted = config.queryEmployees()
+        List<Employee> inserted = context.queryEmployees()
                 .where(Employee::getId).ge(1000L)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -59,15 +59,15 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert 200 records in batch")
-    void shouldInsertLargerBatch(DbConfig config) {
+    void shouldInsertLargerBatch(IntegrationTestContext context) {
         // Given
         List<Employee> employees = createTestEmployees(2000, 200);
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).ge(2000L)
                 .count();
         assertThat(count).isEqualTo(200);
@@ -79,10 +79,10 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update multiple records in batch")
-    void shouldUpdateBatch(DbConfig config) {
+    void shouldUpdateBatch(IntegrationTestContext context) {
         // Given - Insert test employees
         List<Employee> employees = createTestEmployees(3000, 20);
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Modify all employees
         for (Employee emp : employees) {
@@ -90,10 +90,10 @@ public class BatchOperationsIntegrationTest {
         }
 
         // When
-        config.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, Employee.class);
 
         // Then
-        List<Employee> updated = config.queryEmployees()
+        List<Employee> updated = context.queryEmployees()
                 .where(Employee::getId).ge(3000L)
                 .getList();
         assertThat(updated).allMatch(e -> e.getSalary() >= 60000.0);
@@ -105,22 +105,22 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete multiple records in batch")
-    void shouldDeleteBatch(DbConfig config) {
+    void shouldDeleteBatch(IntegrationTestContext context) {
         // Given - Insert test employees
         List<Employee> employees = createTestEmployees(4000, 15);
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Verify inserted
-        long countBefore = config.queryEmployees()
+        long countBefore = context.queryEmployees()
                 .where(Employee::getId).ge(4000L)
                 .count();
         assertThat(countBefore).isEqualTo(15);
 
         // When
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
 
         // Then
-        long countAfter = config.queryEmployees()
+        long countAfter = context.queryEmployees()
                 .where(Employee::getId).ge(4000L)
                 .count();
         assertThat(countAfter).isZero();
@@ -132,13 +132,13 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch insert")
-    void shouldHandleEmptyBatchInsert(DbConfig config) {
+    void shouldHandleEmptyBatchInsert(IntegrationTestContext context) {
         // Given
         List<Employee> emptyList = new ArrayList<>();
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().insertAll(emptyList, Employee.class));
+                context.getUpdateExecutor().insertAll(emptyList, Employee.class));
     }
 
     /**
@@ -147,13 +147,13 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch update")
-    void shouldHandleEmptyBatchUpdate(DbConfig config) {
+    void shouldHandleEmptyBatchUpdate(IntegrationTestContext context) {
         // Given
         List<Employee> emptyList = new ArrayList<>();
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().updateAll(emptyList, Employee.class));
+                context.getUpdateExecutor().updateAll(emptyList, Employee.class));
     }
 
     /**
@@ -162,13 +162,13 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch delete")
-    void shouldHandleEmptyBatchDelete(DbConfig config) {
+    void shouldHandleEmptyBatchDelete(IntegrationTestContext context) {
         // Given
         List<Employee> emptyList = new ArrayList<>();
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().deleteAll(emptyList, Employee.class));
+                context.getUpdateExecutor().deleteAll(emptyList, Employee.class));
     }
 
     /**
@@ -177,16 +177,16 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle single element batch insert")
-    void shouldHandleSingleElementBatchInsert(DbConfig config) {
+    void shouldHandleSingleElementBatchInsert(IntegrationTestContext context) {
         // Given
         List<Employee> singleList = new ArrayList<>();
         singleList.add(createTestEmployee(5000L, "Single Employee"));
 
         // When
-        config.getUpdateExecutor().insertAll(singleList, Employee.class);
+        context.getUpdateExecutor().insertAll(singleList, Employee.class);
 
         // Then
-        Employee inserted = config.queryEmployees()
+        Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(5000L)
                 .getSingle();
         assertThat(inserted).isNotNull();
@@ -199,7 +199,7 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert batch with varying data")
-    void shouldInsertBatchWithVaryingData(DbConfig config) {
+    void shouldInsertBatchWithVaryingData(IntegrationTestContext context) {
         // Given
         List<Employee> employees = new ArrayList<>();
         employees.add(createTestEmployee(6000L, "Employee A"));
@@ -207,10 +207,10 @@ public class BatchOperationsIntegrationTest {
         employees.add(createTestEmployee(6002L, "Employee C"));
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then
-        List<Employee> inserted = config.queryEmployees()
+        List<Employee> inserted = context.queryEmployees()
                 .where(Employee::getId).in(6000L, 6001L, 6002L)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -223,10 +223,10 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update batch with partial field changes")
-    void shouldUpdateBatchPartialFields(DbConfig config) {
+    void shouldUpdateBatchPartialFields(IntegrationTestContext context) {
         // Given - Insert test employees
         List<Employee> employees = createTestEmployees(7000, 10);
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Modify only status
         for (Employee emp : employees) {
@@ -234,10 +234,10 @@ public class BatchOperationsIntegrationTest {
         }
 
         // When
-        config.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, Employee.class);
 
         // Then
-        List<Employee> updated = config.queryEmployees()
+        List<Employee> updated = context.queryEmployees()
                 .where(Employee::getId).ge(7000L)
                 .getList();
         assertThat(updated).allMatch(e -> e.getStatus() == EmployeeStatus.INACTIVE);
@@ -249,18 +249,18 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle large batch operations efficiently")
-    void shouldHandleLargeBatchEfficiently(DbConfig config) {
+    void shouldHandleLargeBatchEfficiently(IntegrationTestContext context) {
         // Given
         int largeBatchSize = 50;
         List<Employee> employees = createTestEmployees(8000, largeBatchSize);
 
         // When
         long startInsert = System.currentTimeMillis();
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
         long insertTime = System.currentTimeMillis() - startInsert;
 
         // Then
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).ge(8000L)
                 .count();
         assertThat(count).isEqualTo(largeBatchSize);
@@ -275,24 +275,24 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert and delete batch sequentially")
-    void shouldInsertAndDeleteBatchSequentially(DbConfig config) {
+    void shouldInsertAndDeleteBatchSequentially(IntegrationTestContext context) {
         // Given
         List<Employee> employees = createTestEmployees(9000, 25);
 
         // When - Insert
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then - Verify insert
-        long countAfterInsert = config.queryEmployees()
+        long countAfterInsert = context.queryEmployees()
                 .where(Employee::getId).ge(9000L)
                 .count();
         assertThat(countAfterInsert).isEqualTo(25);
 
         // When - Delete
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
 
         // Then - Verify delete
-        long countAfterDelete = config.queryEmployees()
+        long countAfterDelete = context.queryEmployees()
                 .where(Employee::getId).ge(9000L)
                 .count();
         assertThat(countAfterDelete).isZero();
@@ -304,16 +304,16 @@ public class BatchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert batch without affecting existing data")
-    void shouldInsertBatchWithoutAffectingExistingData(DbConfig config) {
+    void shouldInsertBatchWithoutAffectingExistingData(IntegrationTestContext context) {
         // Given
-        long originalCount = config.queryEmployees().count();
+        long originalCount = context.queryEmployees().count();
         List<Employee> employees = createTestEmployees(10000, 10);
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then
-        long newCount = config.queryEmployees().count();
+        long newCount = context.queryEmployees().count();
         assertThat(newCount).isEqualTo(originalCount + 10);
     }
 

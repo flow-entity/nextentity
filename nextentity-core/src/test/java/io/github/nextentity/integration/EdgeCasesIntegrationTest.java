@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -41,9 +41,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list when no matches")
-    void shouldReturnEmptyListWhenNoMatches(DbConfig config) {
+    void shouldReturnEmptyListWhenNoMatches(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .getList();
 
@@ -57,9 +57,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return zero count when no matches")
-    void shouldReturnZeroCountWhenNoMatches(DbConfig config) {
+    void shouldReturnZeroCountWhenNoMatches(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .count();
 
@@ -73,9 +73,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return false for exist when no matches")
-    void shouldReturnFalseForExistWhenNoMatches(DbConfig config) {
+    void shouldReturnFalseForExistWhenNoMatches(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .exist();
 
@@ -89,9 +89,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty optional for first when no matches")
-    void shouldReturnEmptyOptionalForFirstWhenNoMatches(DbConfig config) {
+    void shouldReturnEmptyOptionalForFirstWhenNoMatches(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = config.queryEmployees()
+        Optional<Employee> employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .first();
 
@@ -105,9 +105,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return null for getSingle when no matches")
-    void shouldReturnNullForGetSingleWhenNoMatches(DbConfig config) {
+    void shouldReturnNullForGetSingleWhenNoMatches(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .getSingle();
 
@@ -121,7 +121,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null field value")
-    void shouldHandleNullFieldValue(DbConfig config) {
+    void shouldHandleNullFieldValue(IntegrationTestContext context) {
         // Given - Insert employee with null email
         Employee employee = new Employee();
         employee.setId(9001L);
@@ -133,10 +133,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getId).eq(9001L)
                 .getList();
 
@@ -145,7 +145,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.get(0).getEmail()).isNull();
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -154,7 +154,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query IS NULL")
-    void shouldQueryIsNull(DbConfig config) {
+    void shouldQueryIsNull(IntegrationTestContext context) {
         // Given - Insert employee with null email
         Employee employee = new Employee();
         employee.setId(9002L);
@@ -166,10 +166,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getEmail).isNull()
                 .getList();
 
@@ -178,7 +178,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).anyMatch(e -> e.getId() == 9002L);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -187,9 +187,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query IS NOT NULL")
-    void shouldQueryIsNotNull(DbConfig config) {
+    void shouldQueryIsNotNull(IntegrationTestContext context) {
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getEmail).isNotNull()
                 .getList();
 
@@ -204,10 +204,10 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty list in IN clause")
-    void shouldHandleEmptyListInClause(DbConfig config) {
+    void shouldHandleEmptyListInClause(IntegrationTestContext context) {
         // When
         List<Long> emptyList = Collections.emptyList();
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(emptyList)
                 .getList();
 
@@ -221,10 +221,10 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty list in NOT IN clause")
-    void shouldHandleEmptyListNotInClause(DbConfig config) {
+    void shouldHandleEmptyListNotInClause(IntegrationTestContext context) {
         // When
         List<Long> emptyList = Collections.emptyList();
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).notIn(emptyList)
                 .count();
 
@@ -238,9 +238,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle zero offset")
-    void shouldHandleZeroOffset(DbConfig config) {
+    void shouldHandleZeroOffset(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(0, 5);
 
@@ -254,9 +254,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle large offset")
-    void shouldHandleLargeOffset(DbConfig config) {
+    void shouldHandleLargeOffset(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(10000, 5);
 
@@ -270,9 +270,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle zero limit")
-    void shouldHandleZeroLimit(DbConfig config) {
+    void shouldHandleZeroLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(0, 0);
 
@@ -286,9 +286,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle negative offset")
-    void shouldHandleNegativeOffset(DbConfig config) {
+    void shouldHandleNegativeOffset(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(-1, 5);
 
@@ -302,7 +302,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle special characters in string")
-    void shouldHandleSpecialCharactersInString(DbConfig config) {
+    void shouldHandleSpecialCharactersInString(IntegrationTestContext context) {
         // Given - Insert employee with special characters in name
         Employee employee = new Employee();
         employee.setId(9003L);
@@ -314,10 +314,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getName).eq("O'Brien-Smith")
                 .getList();
 
@@ -326,7 +326,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.get(0).getName()).isEqualTo("O'Brien-Smith");
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -335,7 +335,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle unicode characters in string")
-    void shouldHandleUnicodeCharactersInString(DbConfig config) {
+    void shouldHandleUnicodeCharactersInString(IntegrationTestContext context) {
         // Given - Insert employee with unicode in name
         Employee employee = new Employee();
         employee.setId(9004L);
@@ -347,10 +347,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getName).eq("张三")
                 .getList();
 
@@ -359,7 +359,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.get(0).getName()).isEqualTo("张三");
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -368,7 +368,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle long string within limit")
-    void shouldHandleLongStringWithinLimit(DbConfig config) {
+    void shouldHandleLongStringWithinLimit(IntegrationTestContext context) {
         // Given - Use a string that fits within typical VARCHAR(100) limit
         String longName = "A".repeat(50); // 50 characters, within typical limits
         Employee employee = new Employee();
@@ -381,10 +381,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(9005L)
                 .getSingle();
 
@@ -392,7 +392,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getName()).isEqualTo(longName);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -401,7 +401,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle boundary salary values")
-    void shouldHandleBoundarySalaryValues(DbConfig config) {
+    void shouldHandleBoundarySalaryValues(IntegrationTestContext context) {
         // Given - Insert employee with max salary
         Employee maxEmployee = new Employee();
         maxEmployee.setId(9006L);
@@ -415,10 +415,10 @@ public class EdgeCasesIntegrationTest {
 
         // When/Then - should handle without overflow
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().insert(maxEmployee, Employee.class));
+                context.getUpdateExecutor().insert(maxEmployee, Employee.class));
 
         // Cleanup
-        config.getUpdateExecutor().delete(maxEmployee, Employee.class);
+        context.getUpdateExecutor().delete(maxEmployee, Employee.class);
     }
 
     /**
@@ -427,7 +427,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle zero salary")
-    void shouldHandleZeroSalary(DbConfig config) {
+    void shouldHandleZeroSalary(IntegrationTestContext context) {
         // Given
         Employee employee = new Employee();
         employee.setId(9007L);
@@ -439,10 +439,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getSalary).eq(0.0)
                 .getList();
 
@@ -450,7 +450,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).anyMatch(e -> e.getId() == 9007L);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -459,7 +459,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle negative salary")
-    void shouldHandleNegativeSalary(DbConfig config) {
+    void shouldHandleNegativeSalary(IntegrationTestContext context) {
         // Given
         Employee employee = new Employee();
         employee.setId(9008L);
@@ -471,10 +471,10 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        List<Employee> found = config.queryEmployees()
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getSalary).lt(0.0)
                 .getList();
 
@@ -482,7 +482,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).anyMatch(e -> e.getId() == 9008L);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -491,9 +491,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception for getSingle with multiple results")
-    void shouldThrowExceptionForGetSingleWithMultipleResults(DbConfig config) {
+    void shouldThrowExceptionForGetSingleWithMultipleResults(IntegrationTestContext context) {
         // When/Then
-        assertThatThrownBy(() -> config.queryEmployees().getSingle())
+        assertThatThrownBy(() -> context.queryEmployees().getSingle())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -503,9 +503,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception for requireSingle when no results")
-    void shouldThrowExceptionForRequireSingleWhenNoResults(DbConfig config) {
+    void shouldThrowExceptionForRequireSingleWhenNoResults(IntegrationTestContext context) {
         // When/Then
-        assertThatThrownBy(() -> config.queryEmployees()
+        assertThatThrownBy(() -> context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .requireSingle())
                 .isInstanceOf(NullPointerException.class);
@@ -517,9 +517,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice with empty results")
-    void shouldHandleSliceWithEmptyResults(DbConfig config) {
+    void shouldHandleSliceWithEmptyResults(IntegrationTestContext context) {
         // When
-        var slice = config.queryEmployees()
+        var slice = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .slice(0, 10);
 
@@ -534,7 +534,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle page with empty results")
-    void shouldHandlePageWithEmptyResults(DbConfig config) {
+    void shouldHandlePageWithEmptyResults(IntegrationTestContext context) {
         // Given
         var pageable = new io.github.nextentity.api.model.Pageable() {
             @Override
@@ -549,7 +549,7 @@ public class EdgeCasesIntegrationTest {
         };
 
         // When
-        var page = config.queryEmployees()
+        var page = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .getPage(pageable);
 
@@ -564,9 +564,9 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle ordering with potential null values")
-    void shouldHandleOrderingWithNullValues(DbConfig config) {
+    void shouldHandleOrderingWithNullValues(IntegrationTestContext context) {
         // When - ordering by a field that might have nulls
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getEmail).asc()
                 .getList();
 
@@ -580,10 +580,10 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle batch insert with empty list")
-    void shouldHandleBatchInsertEmptyList(DbConfig config) {
+    void shouldHandleBatchInsertEmptyList(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().insertAll(new ArrayList<>(), Employee.class));
+                context.getUpdateExecutor().insertAll(new ArrayList<>(), Employee.class));
     }
 
     /**
@@ -592,7 +592,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fail on duplicate ID insert")
-    void shouldFailOnDuplicateIdInsert(DbConfig config) {
+    void shouldFailOnDuplicateIdInsert(IntegrationTestContext context) {
         // Given
         Employee duplicate = new Employee();
         duplicate.setId(1L); // Already exists
@@ -606,7 +606,7 @@ public class EdgeCasesIntegrationTest {
 
         // When/Then
         assertThatThrownBy(() ->
-                config.getUpdateExecutor().insert(duplicate, Employee.class))
+                context.getUpdateExecutor().insert(duplicate, Employee.class))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -616,7 +616,7 @@ public class EdgeCasesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle department with null budget")
-    void shouldHandleDepartmentWithNullBudget(DbConfig config) {
+    void shouldHandleDepartmentWithNullBudget(IntegrationTestContext context) {
         // Given
         Department dept = new Department();
         dept.setId(9999L);
@@ -625,10 +625,10 @@ public class EdgeCasesIntegrationTest {
         dept.setBudget(null); // Null budget
         dept.setActive(true);
 
-        config.getUpdateExecutor().insert(dept, Department.class);
+        context.getUpdateExecutor().insert(dept, Department.class);
 
         // When
-        Department found = config.queryDepartments()
+        Department found = context.queryDepartments()
                 .where(Department::getId).eq(9999L)
                 .getSingle();
 
@@ -637,6 +637,6 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getBudget()).isNull();
 
         // Cleanup
-        config.getUpdateExecutor().delete(dept, Department.class);
+        context.getUpdateExecutor().delete(dept, Department.class);
     }
 }

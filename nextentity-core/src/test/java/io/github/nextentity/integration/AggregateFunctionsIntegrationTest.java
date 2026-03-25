@@ -2,7 +2,7 @@ package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
@@ -43,9 +43,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees with count()")
-    void shouldCountEmployees(DbConfig config) {
+    void shouldCountEmployees(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees().count();
+        long count = context.queryEmployees().count();
 
         // Then
         assertEquals(12, count);
@@ -57,9 +57,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with count expression")
-    void shouldCountWithExpression(DbConfig config) {
+    void shouldCountWithExpression(IntegrationTestContext context) {
         // When
-        Long count = config.queryEmployees()
+        Long count = context.queryEmployees()
                 .select(get(Employee::getId).count())
                 .getSingle();
 
@@ -73,9 +73,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count distinct department IDs")
-    void shouldCountDistinct(DbConfig config) {
+    void shouldCountDistinct(IntegrationTestContext context) {
         // When
-        Long count = config.queryEmployees()
+        Long count = context.queryEmployees()
                 .select(get(Employee::getDepartmentId).countDistinct())
                 .getSingle();
 
@@ -89,15 +89,15 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should sum employee salaries")
-    void shouldSumSalaries(DbConfig config) {
+    void shouldSumSalaries(IntegrationTestContext context) {
         // When
-        Number sum = config.queryEmployees()
+        Number sum = context.queryEmployees()
                 .select(get(Employee::getSalary).sum())
                 .getSingle();
 
         // Then
         assertNotNull(sum);
-        double expectedSum = config.queryEmployees().getList().stream()
+        double expectedSum = context.queryEmployees().getList().stream()
                 .mapToDouble(Employee::getSalary)
                 .sum();
         assertEquals(expectedSum, sum.doubleValue(), 0.01);
@@ -109,15 +109,15 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should calculate average salary")
-    void shouldCalculateAverageSalary(DbConfig config) {
+    void shouldCalculateAverageSalary(IntegrationTestContext context) {
         // When
-        Number avg = config.queryEmployees()
+        Number avg = context.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .getSingle();
 
         // Then
         assertNotNull(avg);
-        double expectedAvg = config.queryEmployees().getList().stream()
+        double expectedAvg = context.queryEmployees().getList().stream()
                 .mapToDouble(Employee::getSalary)
                 .average()
                 .orElse(0);
@@ -130,15 +130,15 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find maximum salary")
-    void shouldFindMaxSalary(DbConfig config) {
+    void shouldFindMaxSalary(IntegrationTestContext context) {
         // When
-        Number max = config.queryEmployees()
+        Number max = context.queryEmployees()
                 .select(get(Employee::getSalary).max())
                 .getSingle();
 
         // Then
         assertNotNull(max);
-        double expectedMax = config.queryEmployees().getList().stream()
+        double expectedMax = context.queryEmployees().getList().stream()
                 .mapToDouble(Employee::getSalary)
                 .max()
                 .orElse(0);
@@ -151,15 +151,15 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find minimum salary")
-    void shouldFindMinSalary(DbConfig config) {
+    void shouldFindMinSalary(IntegrationTestContext context) {
         // When
-        Number min = config.queryEmployees()
+        Number min = context.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getSingle();
 
         // Then
         assertNotNull(min);
-        double expectedMin = config.queryEmployees().getList().stream()
+        double expectedMin = context.queryEmployees().getList().stream()
                 .mapToDouble(Employee::getSalary)
                 .min()
                 .orElse(0);
@@ -172,9 +172,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return multiple aggregations")
-    void shouldReturnMultipleAggregations(DbConfig config) {
+    void shouldReturnMultipleAggregations(IntegrationTestContext context) {
         // When
-        Tuple aggregations = config.queryEmployees()
+        Tuple aggregations = context.queryEmployees()
                 .select(
                         get(Employee::getSalary).min(),
                         get(Employee::getSalary).max()
@@ -186,7 +186,7 @@ public class AggregateFunctionsIntegrationTest {
         Number min = aggregations.get(0);
         Number max = aggregations.get(1);
 
-        List<Employee> employees = config.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().getList();
         double expectedMin = employees.stream().mapToDouble(Employee::getSalary).min().orElse(0);
         double expectedMax = employees.stream().mapToDouble(Employee::getSalary).max().orElse(0);
 
@@ -200,9 +200,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department ID")
-    void shouldGroupByDepartmentId(DbConfig config) {
+    void shouldGroupByDepartmentId(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -224,9 +224,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department with count")
-    void shouldGroupByWithCount(DbConfig config) {
+    void shouldGroupByWithCount(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -247,9 +247,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department with sum of salaries")
-    void shouldGroupByWithSum(DbConfig config) {
+    void shouldGroupByWithSum(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -263,7 +263,7 @@ public class AggregateFunctionsIntegrationTest {
         Tuple2<Long, Double> dept1 = results.get(0);
         assertEquals(1L, dept1.get0());
 
-        double expectedSum = config.queryEmployees()
+        double expectedSum = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList().stream()
                 .mapToDouble(Employee::getSalary)
@@ -277,9 +277,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department with average salary")
-    void shouldGroupByWithAvg(DbConfig config) {
+    void shouldGroupByWithAvg(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -293,7 +293,7 @@ public class AggregateFunctionsIntegrationTest {
         Tuple2<Long, Double> dept1 = results.get(0);
         assertEquals(1L, dept1.get0());
 
-        double expectedAvg = config.queryEmployees()
+        double expectedAvg = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList().stream()
                 .mapToDouble(Employee::getSalary)
@@ -308,9 +308,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by multiple columns")
-    void shouldGroupByMultipleColumns(DbConfig config) {
+    void shouldGroupByMultipleColumns(IntegrationTestContext context) {
         // When
-        List<?> results = config.queryEmployees()
+        List<?> results = context.queryEmployees()
                 .select(
                         get(Employee::getDepartmentId),
                         get(Employee::getActive),
@@ -337,16 +337,16 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should aggregate with WHERE condition")
-    void shouldAggregateWithWhereCondition(DbConfig config) {
+    void shouldAggregateWithWhereCondition(IntegrationTestContext context) {
         // When - count active employees
-        Long activeCount = config.queryEmployees()
+        Long activeCount = context.queryEmployees()
                 .select(get(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
 
         // Then
         assertNotNull(activeCount);
-        long expectedActive = config.queryEmployees()
+        long expectedActive = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .getList().size();
         assertEquals(expectedActive, activeCount);
@@ -358,15 +358,15 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find max ID")
-    void shouldFindMaxId(DbConfig config) {
+    void shouldFindMaxId(IntegrationTestContext context) {
         // When
-        Number maxId = config.queryEmployees()
+        Number maxId = context.queryEmployees()
                 .select(get(Employee::getId).max())
                 .getSingle();
 
         // Then
         assertNotNull(maxId);
-        long expectedMax = config.queryEmployees().getList().stream()
+        long expectedMax = context.queryEmployees().getList().stream()
                 .mapToLong(Employee::getId)
                 .max()
                 .orElse(0);
@@ -379,15 +379,15 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find min ID")
-    void shouldFindMinId(DbConfig config) {
+    void shouldFindMinId(IntegrationTestContext context) {
         // When
-        Number minId = config.queryEmployees()
+        Number minId = context.queryEmployees()
                 .select(get(Employee::getId).min())
                 .getSingle();
 
         // Then
         assertNotNull(minId);
-        long expectedMin = config.queryEmployees().getList().stream()
+        long expectedMin = context.queryEmployees().getList().stream()
                 .mapToLong(Employee::getId)
                 .min()
                 .orElse(0);
@@ -400,16 +400,16 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count active employees")
-    void shouldCountActiveEmployees(DbConfig config) {
+    void shouldCountActiveEmployees(IntegrationTestContext context) {
         // When
-        Long count = config.queryEmployees()
+        Long count = context.queryEmployees()
                 .select(get(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
 
         // Then
         assertNotNull(count);
-        long expectedCount = config.queryEmployees()
+        long expectedCount = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .getList().size();
         assertEquals(expectedCount, count);
@@ -421,16 +421,16 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should sum salaries for department")
-    void shouldSumSalariesForDepartment(DbConfig config) {
+    void shouldSumSalariesForDepartment(IntegrationTestContext context) {
         // When
-        Number sum = config.queryEmployees()
+        Number sum = context.queryEmployees()
                 .select(get(Employee::getSalary).sum())
                 .where(Employee::getDepartmentId).eq(1L)
                 .getSingle();
 
         // Then
         assertNotNull(sum);
-        double expectedSum = config.queryEmployees()
+        double expectedSum = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList().stream()
                 .mapToDouble(Employee::getSalary)
@@ -444,9 +444,9 @@ public class AggregateFunctionsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by employee status")
-    void shouldGroupByStatus(DbConfig config) {
+    void shouldGroupByStatus(IntegrationTestContext context) {
         // When
-        List<Tuple2<EmployeeStatus, Long>> results = config.queryEmployees()
+        List<Tuple2<EmployeeStatus, Long>> results = context.queryEmployees()
                 .select(get(Employee::getStatus), get(Employee::getId).count())
                 .groupBy(Employee::getStatus)
                 .getList();

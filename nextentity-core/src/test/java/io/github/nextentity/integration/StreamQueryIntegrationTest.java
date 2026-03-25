@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
@@ -36,9 +36,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get all employees")
-    void shouldGetAllEmployees(DbConfig config) {
+    void shouldGetAllEmployees(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().getList();
 
         // Then
         assertThat(employees).hasSize(12);
@@ -47,9 +47,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get employees with limit")
-    void shouldGetEmployeesWithLimit(DbConfig config) {
+    void shouldGetEmployeesWithLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees().limit(5);
+        List<Employee> employees = context.queryEmployees().limit(5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -58,9 +58,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get employees with offset")
-    void shouldGetEmployeesWithOffset(DbConfig config) {
+    void shouldGetEmployeesWithOffset(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .offset(5);
 
@@ -72,9 +72,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get employees with pagination")
-    void shouldGetEmployeesWithPagination(DbConfig config) {
+    void shouldGetEmployeesWithPagination(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(2, 3);
 
@@ -90,9 +90,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first employee")
-    void shouldGetFirstEmployee(DbConfig config) {
+    void shouldGetFirstEmployee(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getFirst();
 
@@ -104,9 +104,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first employee as optional")
-    void shouldGetFirstEmployeeAsOptional(DbConfig config) {
+    void shouldGetFirstEmployeeAsOptional(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = config.queryEmployees()
+        Optional<Employee> employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .first();
 
@@ -118,9 +118,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with offset")
-    void shouldGetFirstWithOffset(DbConfig config) {
+    void shouldGetFirstWithOffset(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getFirst(2);
 
@@ -132,9 +132,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single employee")
-    void shouldGetSingleEmployee(DbConfig config) {
+    void shouldGetSingleEmployee(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
 
@@ -146,9 +146,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single as optional")
-    void shouldGetSingleAsOptional(DbConfig config) {
+    void shouldGetSingleAsOptional(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = config.queryEmployees()
+        Optional<Employee> employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .single();
 
@@ -160,9 +160,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty optional for non-existing")
-    void shouldReturnEmptyOptionalForNonExisting(DbConfig config) {
+    void shouldReturnEmptyOptionalForNonExisting(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = config.queryEmployees()
+        Optional<Employee> employee = context.queryEmployees()
                 .where(Employee::getId).eq(999L)
                 .single();
 
@@ -177,9 +177,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should map employees to names")
-    void shouldMapEmployeesToNames(DbConfig config) {
+    void shouldMapEmployeesToNames(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .map(Employee::getName)
                 .getList();
 
@@ -191,9 +191,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should map employees to salaries")
-    void shouldMapEmployeesToSalaries(DbConfig config) {
+    void shouldMapEmployeesToSalaries(IntegrationTestContext context) {
         // When
-        List<Double> salaries = config.queryEmployees()
+        List<Double> salaries = context.queryEmployees()
                 .map(Employee::getSalary)
                 .getList();
 
@@ -205,9 +205,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should map with filter")
-    void shouldMapWithFilter(DbConfig config) {
+    void shouldMapWithFilter(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .map(Employee::getName)
                 .getList();
@@ -223,9 +223,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees")
-    void shouldCountEmployees(DbConfig config) {
+    void shouldCountEmployees(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees().count();
+        long count = context.queryEmployees().count();
 
         // Then
         assertThat(count).isEqualTo(12);
@@ -234,9 +234,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with filter")
-    void shouldCountWithFilter(DbConfig config) {
+    void shouldCountWithFilter(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .count();
 
@@ -247,9 +247,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check exist")
-    void shouldCheckExist(DbConfig config) {
+    void shouldCheckExist(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .exist();
 
@@ -260,9 +260,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check not exist")
-    void shouldCheckNotExist(DbConfig config) {
+    void shouldCheckNotExist(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(999L)
                 .exist();
 
@@ -273,10 +273,10 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should exist with offset")
-    void shouldExistWithOffset(DbConfig config) {
+    void shouldExistWithOffset(IntegrationTestContext context) {
         // When
-        boolean exists1 = config.queryEmployees().exist(0);
-        boolean exists2 = config.queryEmployees().exist(100);
+        boolean exists1 = context.queryEmployees().exist(0);
+        boolean exists2 = context.queryEmployees().exist(100);
 
         // Then
         assertThat(exists1).isTrue();
@@ -290,9 +290,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should chain where and map")
-    void shouldChainWhereAndMap(DbConfig config) {
+    void shouldChainWhereAndMap(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .map(Employee::getName)
                 .getList();
@@ -304,9 +304,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should chain order by and limit")
-    void shouldChainOrderByAndLimit(DbConfig config) {
+    void shouldChainOrderByAndLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .limit(3);
 
@@ -319,9 +319,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should chain multiple where clauses")
-    void shouldChainMultipleWhereClauses(DbConfig config) {
+    void shouldChainMultipleWhereClauses(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getSalary).gt(60000.0)
                 .orderBy(Employee::getName).asc()
@@ -339,9 +339,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice employees")
-    void shouldSliceEmployees(DbConfig config) {
+    void shouldSliceEmployees(IntegrationTestContext context) {
         // When
-        var slice = config.queryEmployees()
+        var slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(0, 5);
 
@@ -353,9 +353,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with offset")
-    void shouldSliceWithOffset(DbConfig config) {
+    void shouldSliceWithOffset(IntegrationTestContext context) {
         // When
-        var slice = config.queryEmployees()
+        var slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(5, 5);
 
@@ -371,9 +371,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should map to id list")
-    void shouldMapToIdList(DbConfig config) {
+    void shouldMapToIdList(IntegrationTestContext context) {
         // When
-        List<Long> ids = config.queryEmployees()
+        List<Long> ids = context.queryEmployees()
                 .map(Employee::getId)
                 .getList();
 
@@ -385,9 +385,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should map and count")
-    void shouldMapAndCount(DbConfig config) {
+    void shouldMapAndCount(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .map(Employee::getName)
                 .count();
 
@@ -398,9 +398,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should map and limit")
-    void shouldMapAndLimit(DbConfig config) {
+    void shouldMapAndLimit(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .map(Employee::getName)
                 .limit(3);
 
@@ -415,9 +415,9 @@ public class StreamQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should require single")
-    void shouldRequireSingle(DbConfig config) {
+    void shouldRequireSingle(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .requireSingle();
 

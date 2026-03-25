@@ -2,12 +2,11 @@ package io.github.nextentity.integration;
 
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -55,9 +54,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine conditions with AND using Predicates.and()")
-        void shouldCombineWithAndUsingPredicates(DbConfig config) {
+        void shouldCombineWithAndUsingPredicates(IntegrationTestContext context) {
             // When: active AND departmentId = 1
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             get(Employee::getDepartmentId).eq(1L)
@@ -75,9 +74,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple conditions with AND")
-        void shouldCombineMultipleWithAnd(DbConfig config) {
+        void shouldCombineMultipleWithAnd(IntegrationTestContext context) {
             // When: active AND status = ACTIVE AND salary > 55000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
@@ -99,9 +98,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine number range conditions with AND")
-        void shouldCombineNumberRangesWithAnd(DbConfig config) {
+        void shouldCombineNumberRangesWithAnd(IntegrationTestContext context) {
             // When: salary > 60000 AND salary < 80000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getSalary).gt(60000.0),
                             get(Employee::getSalary).lt(HIGH_SALARY_THRESHOLD)
@@ -120,9 +119,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine string conditions with AND")
-        void shouldCombineStringConditionsWithAnd(DbConfig config) {
+        void shouldCombineStringConditionsWithAnd(IntegrationTestContext context) {
             // When: name starts with 'A' AND active = true
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getName).startsWith("A"),
                             get(Employee::getActive).eq(true)
@@ -140,9 +139,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine Department conditions with AND")
-        void shouldCombineDepartmentConditionsWithAnd(DbConfig config) {
+        void shouldCombineDepartmentConditionsWithAnd(IntegrationTestContext context) {
             // When: active AND budget > 300000
-            List<Department> departments = config.queryDepartments()
+            List<Department> departments = context.queryDepartments()
                     .where(and(
                             get(Department::getActive).eq(true),
                             get(Department::getBudget).gt(300000.0)
@@ -160,9 +159,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle deep AND nesting")
-        void shouldHandleDeepAndNesting(DbConfig config) {
+        void shouldHandleDeepAndNesting(IntegrationTestContext context) {
             // Given: active AND status AND dept AND salary > threshold
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
@@ -191,9 +190,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine conditions with OR using Predicates.or()")
-        void shouldCombineWithOrUsingPredicates(DbConfig config) {
+        void shouldCombineWithOrUsingPredicates(IntegrationTestContext context) {
             // When: name = 'Alice' OR name = 'Bob'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getName).eq(ALICE_NAME),
                             get(Employee::getName).eq(BOB_NAME)
@@ -213,9 +212,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple conditions with OR")
-        void shouldCombineMultipleWithOr(DbConfig config) {
+        void shouldCombineMultipleWithOr(IntegrationTestContext context) {
             // When: name = 'Alice' OR name = 'Bob' OR name = 'Charlie'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getName).eq(ALICE_NAME),
                             get(Employee::getName).eq(BOB_NAME),
@@ -236,9 +235,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine different field conditions with OR")
-        void shouldCombineDifferentFieldsWithOr(DbConfig config) {
+        void shouldCombineDifferentFieldsWithOr(IntegrationTestContext context) {
             // When: salary > 80000 OR departmentId = 1
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD),
                             get(Employee::getDepartmentId).eq(1L)
@@ -256,9 +255,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine number range conditions with OR")
-        void shouldCombineNumberRangesWithOr(DbConfig config) {
+        void shouldCombineNumberRangesWithOr(IntegrationTestContext context) {
             // When: salary < 50000 OR salary > 80000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getSalary).lt(50000.0),
                             get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
@@ -277,9 +276,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine string conditions with OR")
-        void shouldCombineStringConditionsWithOr(DbConfig config) {
+        void shouldCombineStringConditionsWithOr(IntegrationTestContext context) {
             // When: name starts with 'A' OR name starts with 'B'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getName).startsWith("A"),
                             get(Employee::getName).startsWith("B")
@@ -297,9 +296,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine Department conditions with OR")
-        void shouldCombineDepartmentConditionsWithOr(DbConfig config) {
+        void shouldCombineDepartmentConditionsWithOr(IntegrationTestContext context) {
             // When: id = 1 OR id = 2
-            List<Department> departments = config.queryDepartments()
+            List<Department> departments = context.queryDepartments()
                     .where(or(
                             get(Department::getId).eq(1L),
                             get(Department::getId).eq(2L)
@@ -319,9 +318,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle deep OR nesting")
-        void shouldHandleDeepOrNesting(DbConfig config) {
+        void shouldHandleDeepOrNesting(IntegrationTestContext context) {
             // Given: name = 'Alice' OR 'Bob' OR 'Charlie' OR 'Diana'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getName).eq(ALICE_NAME),
                             get(Employee::getName).eq(BOB_NAME),
@@ -348,9 +347,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle OR nested inside AND")
-        void shouldHandleOrNestedInAnd(DbConfig config) {
+        void shouldHandleOrNestedInAnd(IntegrationTestContext context) {
             // Given: active AND (departmentId = 1 OR departmentId = 2)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             or(
@@ -372,9 +371,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND nested inside OR")
-        void shouldHandleAndNestedInOr(DbConfig config) {
+        void shouldHandleAndNestedInOr(IntegrationTestContext context) {
             // Given: (active AND departmentId = 1) OR (salary > 80000)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
                                     get(Employee::getActive).eq(true),
@@ -396,10 +395,10 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex mixed AND/OR pattern like testAndOr2")
-        void shouldHandleComplexMixedAndOrPattern(DbConfig config) {
+        void shouldHandleComplexMixedAndOrPattern(IntegrationTestContext context) {
             // Given: active AND status = ACTIVE AND salary > 60000 AND
             //        (departmentId = 1 OR departmentId = 2 OR name = 'Alice')
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
@@ -427,9 +426,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle triple nested combination")
-        void shouldHandleTripleNestedCombination(DbConfig config) {
+        void shouldHandleTripleNestedCombination(IntegrationTestContext context) {
             // Given: (active AND departmentId = 1) OR (salary > 80000 AND status = ACTIVE)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
                                     get(Employee::getActive).eq(true),
@@ -455,10 +454,10 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex business rule pattern")
-        void shouldHandleComplexBusinessRulePattern(DbConfig config) {
+        void shouldHandleComplexBusinessRulePattern(IntegrationTestContext context) {
             // Given: Business rule - Find employees who are:
             // (active with high salary) OR (in department 1 or 2)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
                                     get(Employee::getActive).eq(true),
@@ -485,9 +484,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine where clause with AND/OR predicates")
-        void shouldCombineWhereWithAndOrPredicates(DbConfig config) {
+        void shouldCombineWhereWithAndOrPredicates(IntegrationTestContext context) {
             // Given
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getDepartmentId).eq(1L),
                             get(Employee::getDepartmentId).eq(2L)
@@ -507,12 +506,12 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle full complex pattern like testAndOr2")
-        void shouldHandleFullComplexPatternLikeTestAndOr2(DbConfig config) {
+        void shouldHandleFullComplexPatternLikeTestAndOr2(IntegrationTestContext context) {
             // Given: Similar structure to testAndOr2
             // active AND status != null AND salary > 50000 AND
             // (departmentId = 1 OR departmentId = 2 OR name = 'Alice') AND
             // salary < 90000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             get(Employee::getStatus).isNotNull(),
@@ -547,9 +546,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine NOT with AND")
-        void shouldCombineNotWithAnd(DbConfig config) {
+        void shouldCombineNotWithAnd(IntegrationTestContext context) {
             // Given: active AND NOT(departmentId = 1)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getActive).eq(true),
                             not(get(Employee::getDepartmentId).eq(1L))
@@ -567,9 +566,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine NOT with OR")
-        void shouldCombineNotWithOr(DbConfig config) {
+        void shouldCombineNotWithOr(IntegrationTestContext context) {
             // Given: active OR NOT(departmentId = 1)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getActive).eq(true),
                             not(get(Employee::getDepartmentId).eq(1L))
@@ -587,9 +586,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle NOT of AND predicate")
-        void shouldHandleNotOfAndPredicate(DbConfig config) {
+        void shouldHandleNotOfAndPredicate(IntegrationTestContext context) {
             // Given: NOT(active AND departmentId = 1)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(not(and(
                             get(Employee::getActive).eq(true),
                             get(Employee::getDepartmentId).eq(1L)
@@ -607,9 +606,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle NOT of OR predicate")
-        void shouldHandleNotOfOrPredicate(DbConfig config) {
+        void shouldHandleNotOfOrPredicate(IntegrationTestContext context) {
             // Given: NOT(departmentId = 1 OR departmentId = 2)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(not(or(
                             get(Employee::getDepartmentId).eq(1L),
                             get(Employee::getDepartmentId).eq(2L)
@@ -627,9 +626,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained NOT operations")
-        void shouldHandleChainedNotOperations(DbConfig config) {
+        void shouldHandleChainedNotOperations(IntegrationTestContext context) {
             // Given: NOT(NOT(active))
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(not(not(get(Employee::getActive).eq(true))))
                     .getList();
 
@@ -644,9 +643,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex NOT with AND/OR combination")
-        void shouldHandleComplexNotWithAndOr(DbConfig config) {
+        void shouldHandleComplexNotWithAndOr(IntegrationTestContext context) {
             // Given: NOT(active AND (departmentId = 1 OR departmentId = 2))
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(not(and(
                             get(Employee::getActive).eq(true),
                             or(
@@ -673,9 +672,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND with NULL check")
-        void shouldHandleAndWithNullCheck(DbConfig config) {
+        void shouldHandleAndWithNullCheck(IntegrationTestContext context) {
             // When: email IS NOT NULL AND active = true
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getEmail).isNotNull(),
                             get(Employee::getActive).eq(true)
@@ -693,9 +692,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle OR with NULL check")
-        void shouldHandleOrWithNullCheck(DbConfig config) {
+        void shouldHandleOrWithNullCheck(IntegrationTestContext context) {
             // When: email IS NULL OR active = false
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getEmail).isNull(),
                             get(Employee::getActive).eq(false)
@@ -712,9 +711,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND with BETWEEN")
-        void shouldHandleAndWithBetween(DbConfig config) {
+        void shouldHandleAndWithBetween(IntegrationTestContext context) {
             // When: salary BETWEEN 60000 AND 75000 AND active = true
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getSalary).between(60000.0, 75000.0),
                             get(Employee::getActive).eq(true)
@@ -733,9 +732,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle OR with IN clause")
-        void shouldHandleOrWithInClause(DbConfig config) {
+        void shouldHandleOrWithInClause(IntegrationTestContext context) {
             // When: departmentId IN (1, 2) OR salary > 80000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             get(Employee::getDepartmentId).in(1L, 2L),
                             get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
@@ -755,9 +754,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND with LIKE")
-        void shouldHandleAndWithLike(DbConfig config) {
+        void shouldHandleAndWithLike(IntegrationTestContext context) {
             // When: email LIKE '%example.com' AND active = true
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(and(
                             get(Employee::getEmail).like("%@example.com"),
                             get(Employee::getActive).eq(true)
@@ -776,10 +775,10 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex predicate with all operators")
-        void shouldHandleComplexPredicateWithAllOperators(DbConfig config) {
+        void shouldHandleComplexPredicateWithAllOperators(IntegrationTestContext context) {
             // Given: (active AND status = ACTIVE) OR
             //        (NOT(departmentId IN (1,2)) AND salary > 70000)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
                                     get(Employee::getActive).eq(true),
@@ -805,14 +804,14 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine using Predicate.and() method")
-        void shouldCombineUsingPredicateAndMethod(DbConfig config) {
+        void shouldCombineUsingPredicateAndMethod(IntegrationTestContext context) {
             // Given: using Predicate.and() to chain
             Predicate<Employee> p1 = get(Employee::getActive).eq(true);
             Predicate<Employee> p2 = get(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
             Predicate<Employee> p3 = get(Employee::getDepartmentId).eq(1L);
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(p1.and(p2).and(p3))
                     .getList();
 
@@ -830,14 +829,14 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine using Predicate.or() method")
-        void shouldCombineUsingPredicateOrMethod(DbConfig config) {
+        void shouldCombineUsingPredicateOrMethod(IntegrationTestContext context) {
             // Given: using Predicate.or() to chain
             Predicate<Employee> p1 = get(Employee::getName).eq(ALICE_NAME);
             Predicate<Employee> p2 = get(Employee::getName).eq(BOB_NAME);
             Predicate<Employee> p3 = get(Employee::getName).eq(CHARLIE_NAME);
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(p1.or(p2).or(p3))
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -854,14 +853,14 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine predicates with Iterable")
-        void shouldCombinePredicatesWithIterable(DbConfig config) {
+        void shouldCombinePredicatesWithIterable(IntegrationTestContext context) {
             // Given
             Predicate<Employee> isActive = get(Employee::getActive).eq(true);
             Predicate<Employee> isStatusActive = get(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
             Predicate<Employee> isDept1 = get(Employee::getDepartmentId).eq(1L);
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(isActive.and(Arrays.asList(isStatusActive, isDept1)))
                     .getList();
 
@@ -879,7 +878,7 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should convert Conjunction to Predicate")
-        void shouldConvertConjunctionToPredicate(DbConfig config) {
+        void shouldConvertConjunctionToPredicate(IntegrationTestContext context) {
 
             // Given
             Predicate<Employee> predicate = get(Employee::getActive).eq(true)
@@ -887,7 +886,7 @@ public class AndOrPredicateIntegrationTest {
                     .toPredicate();
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .getList();
 
@@ -902,14 +901,14 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should convert Disjunction to Predicate")
-        void shouldConvertDisjunctionToPredicate(DbConfig config) {
+        void shouldConvertDisjunctionToPredicate(IntegrationTestContext context) {
             // Given
             Predicate<Employee> predicate = get(Employee::getName).eq(ALICE_NAME)
                     .or(get(Employee::getName).eq(BOB_NAME))
                     .toPredicate();
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -924,14 +923,14 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine predicates with Iterable for OR")
-        void shouldCombinePredicatesWithIterableForOr(DbConfig config) {
+        void shouldCombinePredicatesWithIterableForOr(IntegrationTestContext context) {
             // Given
             Predicate<Employee> isAlice = get(Employee::getName).eq(ALICE_NAME);
             Predicate<Employee> isBob = get(Employee::getName).eq(BOB_NAME);
             Predicate<Employee> isCharlie = get(Employee::getName).eq(CHARLIE_NAME);
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(isAlice.or(Arrays.asList(isBob, isCharlie)))
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -953,7 +952,7 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine with varargs array using Predicate.and()")
-        void shouldCombineWithVarargsArrayUsingPredicateAnd(DbConfig config) {
+        void shouldCombineWithVarargsArrayUsingPredicateAnd(IntegrationTestContext context) {
             // Given
             @SuppressWarnings("unchecked")
             TypedExpression<Employee, Boolean>[] predicates = new TypedExpression[]{
@@ -963,7 +962,7 @@ public class AndOrPredicateIntegrationTest {
             };
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true).and(predicates))
                     .getList();
 
@@ -982,7 +981,7 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine with varargs array using Predicate.or()")
-        void shouldCombineWithVarargsArrayUsingPredicateOr(DbConfig config) {
+        void shouldCombineWithVarargsArrayUsingPredicateOr(IntegrationTestContext context) {
             // Given
             @SuppressWarnings("unchecked")
             TypedExpression<Employee, Boolean>[] predicates = new TypedExpression[]{
@@ -992,7 +991,7 @@ public class AndOrPredicateIntegrationTest {
             };
 
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME).or(predicates))
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -1009,9 +1008,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(Path) returning PathOperator")
-        void shouldChainAndPathReturningPathOperator(DbConfig config) {
+        void shouldChainAndPathReturningPathOperator(IntegrationTestContext context) {
             // Given: active AND departmentId = 1 using fluent chaining
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L))
                     .getList();
@@ -1027,9 +1026,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain multiple and(Path) calls")
-        void shouldChainMultipleAndPathCalls(DbConfig config) {
+        void shouldChainMultipleAndPathCalls(IntegrationTestContext context) {
             // Given: active AND departmentId = 1 AND status = ACTIVE
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L)
                             .and(Employee::getStatus).eq(EmployeeStatus.ACTIVE))
@@ -1049,9 +1048,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(Path) returning PathOperator")
-        void shouldChainOrPathReturningPathOperator(DbConfig config) {
+        void shouldChainOrPathReturningPathOperator(IntegrationTestContext context) {
             // Given: name = 'Alice' OR departmentId = 1
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getDepartmentId).eq(1L))
                     .getList();
@@ -1068,9 +1067,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain multiple or(Path) calls")
-        void shouldChainMultipleOrPathCalls(DbConfig config) {
+        void shouldChainMultipleOrPathCalls(IntegrationTestContext context) {
             // Given: name = 'Alice' OR name = 'Bob' OR name = 'Charlie'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getName).eq(BOB_NAME)
                             .or(Employee::getName).eq(CHARLIE_NAME))
@@ -1089,9 +1088,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(NumberRef) returning NumberOperator")
-        void shouldChainAndNumberRefReturningNumberOperator(DbConfig config) {
+        void shouldChainAndNumberRefReturningNumberOperator(IntegrationTestContext context) {
             // Given: active AND salary > 60000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getSalary).gt(60000.0))
                     .orderBy(Employee::getSalary).asc()
@@ -1108,9 +1107,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(NumberRef) with arithmetic operations")
-        void shouldChainAndNumberRefWithArithmeticOperations(DbConfig config) {
+        void shouldChainAndNumberRefWithArithmeticOperations(IntegrationTestContext context) {
             // Given: active AND salary + 10000 > 80000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getSalary).add(10000.0).gt(80000.0))
                     .orderBy(Employee::getSalary).asc()
@@ -1127,9 +1126,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(NumberRef) returning NumberOperator")
-        void shouldChainOrNumberRefReturningNumberOperator(DbConfig config) {
+        void shouldChainOrNumberRefReturningNumberOperator(IntegrationTestContext context) {
             // Given: name = 'Alice' OR salary > 80000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD))
                     .getList();
@@ -1146,9 +1145,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(StringRef) returning StringOperator")
-        void shouldChainAndStringRefReturningStringOperator(DbConfig config) {
+        void shouldChainAndStringRefReturningStringOperator(IntegrationTestContext context) {
             // Given: active AND name starts with 'A'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getName).startsWith("A"))
                     .getList();
@@ -1164,9 +1163,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(StringRef) with string functions")
-        void shouldChainAndStringRefWithStringFunctions(DbConfig config) {
+        void shouldChainAndStringRefWithStringFunctions(IntegrationTestContext context) {
             // Given: active AND lower(name) starts with 'a'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getName).lower().startsWith("a"))
                     .getList();
@@ -1183,9 +1182,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(StringRef) returning StringOperator")
-        void shouldChainOrStringRefReturningStringOperator(DbConfig config) {
+        void shouldChainOrStringRefReturningStringOperator(IntegrationTestContext context) {
             // Given: departmentId = 1 OR name contains 'Brown'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getDepartmentId).eq(1L)
                             .or(Employee::getName).contains("Brown"))
                     .getList();
@@ -1202,10 +1201,10 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle mixed Conjunction and Disjunction using Predicate")
-        void shouldHandleMixedConjunctionAndDisjunctionChains(DbConfig config) {
+        void shouldHandleMixedConjunctionAndDisjunctionChains(IntegrationTestContext context) {
             // Given: (name = 'Alice' OR name = 'Bob') AND active = true
             // Using toPredicate() to convert Disjunction to Predicate, then chain and()
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getName).eq(BOB_NAME)
                             .toPredicate()
@@ -1226,9 +1225,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex fluent chain like testPredicateAssembler")
-        void shouldHandleComplexFluentChainLikeTestPredicateAssembler(DbConfig config) {
+        void shouldHandleComplexFluentChainLikeTestPredicateAssembler(IntegrationTestContext context) {
             // Given: active AND (status = ACTIVE OR salary > 70000)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(get(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                                     .or(Employee::getSalary).gt(70000.0)))
@@ -1247,9 +1246,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain after Predicate.not()")
-        void shouldChainAfterPredicateNot(DbConfig config) {
+        void shouldChainAfterPredicateNot(IntegrationTestContext context) {
             // Given: NOT(active) AND departmentId = 1
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true).not()
                             .and(Employee::getDepartmentId).eq(1L))
                     .getList();
@@ -1265,9 +1264,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or() after Predicate.not()")
-        void shouldChainOrAfterPredicateNot(DbConfig config) {
+        void shouldChainOrAfterPredicateNot(IntegrationTestContext context) {
             // Given: NOT(departmentId = 1) OR active = true
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getDepartmentId).eq(1L).not()
                             .or(Employee::getActive).eq(true))
                     .getList();
@@ -1283,9 +1282,9 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex chain with NOT, AND, OR")
-        void shouldHandleComplexChainWithNotAndOr(DbConfig config) {
+        void shouldHandleComplexChainWithNotAndOr(IntegrationTestContext context) {
             // Given: active AND NOT(departmentId = 1) AND (status = ACTIVE OR salary > 60000)
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(get(Employee::getDepartmentId).eq(1L).not())
                             .and(get(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
@@ -1306,7 +1305,7 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(Iterable) for further operations")
-        void shouldChainAndIterableForFurtherOperations(DbConfig config) {
+        void shouldChainAndIterableForFurtherOperations(IntegrationTestContext context) {
             // Given
             List<TypedExpression<Employee, Boolean>> predicates = Arrays.asList(
                     get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
@@ -1314,7 +1313,7 @@ public class AndOrPredicateIntegrationTest {
             );
 
             // When: active AND (status = ACTIVE AND departmentId = 1) AND salary > 50000
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(predicates)
                             .and(Employee::getSalary).gt(50000.0))
@@ -1335,7 +1334,7 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(Iterable) for further operations")
-        void shouldChainOrIterableForFurtherOperations(DbConfig config) {
+        void shouldChainOrIterableForFurtherOperations(IntegrationTestContext context) {
             // Given
             List<TypedExpression<Employee, Boolean>> predicates = Arrays.asList(
                     get(Employee::getName).eq(BOB_NAME),
@@ -1343,7 +1342,7 @@ public class AndOrPredicateIntegrationTest {
             );
 
             // When: name = 'Alice' OR (name = 'Bob' OR name = 'Charlie') OR name = 'Diana'
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME)
                             .or(predicates)
                             .or(Employee::getName).eq(DIANA_NAME))
@@ -1362,11 +1361,11 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained and().or() pattern using toPredicate()")
-        void shouldHandleChainedAndOrPattern(DbConfig config) {
+        void shouldHandleChainedAndOrPattern(IntegrationTestContext context) {
             // Given: active AND departmentId = 1 OR salary > 80000
             // Note: This is (active AND departmentId = 1) OR salary > 80000
             // Using toPredicate() to convert Conjunction to Predicate, then chain or()
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L)
                             .toPredicate()
@@ -1386,11 +1385,11 @@ public class AndOrPredicateIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained or().and() pattern using toPredicate()")
-        void shouldHandleChainedOrAndPattern(DbConfig config) {
+        void shouldHandleChainedOrAndPattern(IntegrationTestContext context) {
             // Given: name = 'Alice' OR departmentId = 1 AND active = true
             // Note: This is (name = 'Alice' OR departmentId = 1) AND active = true
             // Using toPredicate() to convert Disjunction to Predicate, then chain and()
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(get(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getDepartmentId).eq(1L)
                             .toPredicate()

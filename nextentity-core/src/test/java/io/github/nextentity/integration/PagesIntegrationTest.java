@@ -2,7 +2,7 @@ package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Page;
 import io.github.nextentity.core.Pages;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
@@ -31,12 +31,12 @@ public class PagesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should paginate results correctly")
-        void shouldPaginateResultsCorrectly(DbConfig config) {
+        void shouldPaginateResultsCorrectly(IntegrationTestContext context) {
             // Given - get total count first
-            long total = config.queryEmployees().count();
+            long total = context.queryEmployees().count();
 
             // When - get first page
-            List<Employee> page1 = config.queryEmployees()
+            List<Employee> page1 = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(0, 5);
 
@@ -49,18 +49,18 @@ public class PagesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should get second page correctly")
-        void shouldGetSecondPageCorrectly(DbConfig config) {
+        void shouldGetSecondPageCorrectly(IntegrationTestContext context) {
             // Given
-            long total = config.queryEmployees().count();
+            long total = context.queryEmployees().count();
             if (total < 10) {
                 return; // Skip if not enough data
             }
 
             // When
-            List<Employee> page1 = config.queryEmployees()
+            List<Employee> page1 = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(0, 5);
-            List<Employee> page2 = config.queryEmployees()
+            List<Employee> page2 = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(5, 5);
 
@@ -73,9 +73,9 @@ public class PagesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle page beyond data")
-        void shouldHandlePageBeyondData(DbConfig config) {
+        void shouldHandlePageBeyondData(IntegrationTestContext context) {
             // When
-            List<Employee> page = config.queryEmployees()
+            List<Employee> page = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(10000, 10);
 
@@ -86,9 +86,9 @@ public class PagesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle zero offset")
-        void shouldHandleZeroOffset(DbConfig config) {
+        void shouldHandleZeroOffset(IntegrationTestContext context) {
             // When
-            List<Employee> page = config.queryEmployees()
+            List<Employee> page = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(0, 3);
 
@@ -100,9 +100,9 @@ public class PagesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle small limit")
-        void shouldHandleSmallLimit(DbConfig config) {
+        void shouldHandleSmallLimit(IntegrationTestContext context) {
             // When
-            List<Employee> page = config.queryEmployees()
+            List<Employee> page = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(0, 1);
 
@@ -113,12 +113,12 @@ public class PagesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create page from query results")
-        void shouldCreatePageFromQueryResults(DbConfig config) {
+        void shouldCreatePageFromQueryResults(IntegrationTestContext context) {
             // Given
-            List<Employee> items = config.queryEmployees()
+            List<Employee> items = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList(0, 10);
-            long total = config.queryEmployees().count();
+            long total = context.queryEmployees().count();
 
             // When
             Page<Employee> page = Pages.page(items, total);

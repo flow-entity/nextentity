@@ -1,12 +1,11 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -41,9 +40,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having count gt")
-    void shouldFilterGroupsWithHavingCountGt(DbConfig config) {
+    void shouldFilterGroupsWithHavingCountGt(IntegrationTestContext context) {
         // When - Find departments with more than 2 employees
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(2L))
@@ -58,9 +57,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having count ge")
-    void shouldFilterGroupsWithHavingCountGe(DbConfig config) {
+    void shouldFilterGroupsWithHavingCountGe(IntegrationTestContext context) {
         // When - Find departments with at least 2 employees
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().ge(2L))
@@ -75,9 +74,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having count eq")
-    void shouldFilterGroupsWithHavingCountEq(DbConfig config) {
+    void shouldFilterGroupsWithHavingCountEq(IntegrationTestContext context) {
         // When - Find departments with exactly 5 employees
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().eq(5L))
@@ -93,9 +92,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having count lt")
-    void shouldFilterGroupsWithHavingCountLt(DbConfig config) {
+    void shouldFilterGroupsWithHavingCountLt(IntegrationTestContext context) {
         // When - Find departments with less than 3 employees
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().lt(3L))
@@ -114,9 +113,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having sum gt")
-    void shouldFilterGroupsWithHavingSumGt(DbConfig config) {
+    void shouldFilterGroupsWithHavingSumGt(IntegrationTestContext context) {
         // When - Find departments where total salary > 250000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getSalary).sum().gt(250000.0))
@@ -131,9 +130,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having sum ge")
-    void shouldFilterGroupsWithHavingSumGe(DbConfig config) {
+    void shouldFilterGroupsWithHavingSumGe(IntegrationTestContext context) {
         // When - Find departments where total salary >= 200000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getSalary).sum().ge(200000.0))
@@ -152,9 +151,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having avg gt")
-    void shouldFilterGroupsWithHavingAvgGt(DbConfig config) {
+    void shouldFilterGroupsWithHavingAvgGt(IntegrationTestContext context) {
         // When - Find departments where average salary > 55000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getSalary).avg().gt(55000.0))
@@ -169,9 +168,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having avg between")
-    void shouldFilterGroupsWithHavingAvgBetween(DbConfig config) {
+    void shouldFilterGroupsWithHavingAvgBetween(IntegrationTestContext context) {
         // When - Find departments where average salary between 50000 and 60000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getSalary).avg().between(50000.0, 60000.0))
@@ -190,9 +189,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having max gt")
-    void shouldFilterGroupsWithHavingMaxGt(DbConfig config) {
+    void shouldFilterGroupsWithHavingMaxGt(IntegrationTestContext context) {
         // When - Find departments where max salary > 70000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).max())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getSalary).max().gt(70000.0))
@@ -207,9 +206,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter groups with having min gt")
-    void shouldFilterGroupsWithHavingMinGt(DbConfig config) {
+    void shouldFilterGroupsWithHavingMinGt(IntegrationTestContext context) {
         // When - Find departments where min salary > 55000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).min())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getSalary).min().gt(55000.0))
@@ -227,9 +226,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine where group by having")
-    void shouldCombineWhereGroupByHaving(DbConfig config) {
+    void shouldCombineWhereGroupByHaving(IntegrationTestContext context) {
         // When - Find active employees grouped by department with count > 1
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
                 .groupBy(Employee::getDepartmentId)
@@ -245,9 +244,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine where with aggregate having")
-    void shouldCombineWhereWithAggregateHaving(DbConfig config) {
+    void shouldCombineWhereWithAggregateHaving(IntegrationTestContext context) {
         // When - Find departments with active employees having total salary > 100000
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
                 .where(Employee::getActive).eq(true)
                 .groupBy(Employee::getDepartmentId)
@@ -266,9 +265,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine having with order by")
-    void shouldCombineHavingWithOrderBy(DbConfig config) {
+    void shouldCombineHavingWithOrderBy(IntegrationTestContext context) {
         // When - Find departments with count > 1, ordered by department id
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(1L))
@@ -290,9 +289,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine having with limit")
-    void shouldCombineHavingWithLimit(DbConfig config) {
+    void shouldCombineHavingWithLimit(IntegrationTestContext context) {
         // When - Find departments with count > 0, limit 2
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(0L))
@@ -310,9 +309,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine having with pagination")
-    void shouldCombineHavingWithPagination(DbConfig config) {
+    void shouldCombineHavingWithPagination(IntegrationTestContext context) {
         // When - Find departments with count > 0, page 1 (offset 0, limit 2)
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(0L))
@@ -326,9 +325,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine having with offset")
-    void shouldCombineHavingWithOffset(DbConfig config) {
+    void shouldCombineHavingWithOffset(IntegrationTestContext context) {
         // When - Find departments with count > 0, page 2 (offset 1, limit 2)
-        List<Tuple2<Long, Long>> results = config.queryEmployees()
+        List<Tuple2<Long, Long>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(0L))
@@ -346,9 +345,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with having clause")
-    void shouldCountWithHavingClause(DbConfig config) {
+    void shouldCountWithHavingClause(IntegrationTestContext context) {
         // When - Count departments with employees > 1
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(1L))
@@ -365,9 +364,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check existence with having")
-    void shouldCheckExistenceWithHaving(DbConfig config) {
+    void shouldCheckExistenceWithHaving(IntegrationTestContext context) {
         // When - Check if departments with employees > 3 exist
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(get(Employee::getId).count().gt(3L))
@@ -384,9 +383,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by status with having")
-    void shouldGroupByStatusWithHaving(DbConfig config) {
+    void shouldGroupByStatusWithHaving(IntegrationTestContext context) {
         // When - Group by status with count > 0
-        List<Tuple2<EmployeeStatus, Long>> results = config.queryEmployees()
+        List<Tuple2<EmployeeStatus, Long>> results = context.queryEmployees()
                 .select(get(Employee::getStatus), get(Employee::getId).count())
                 .groupBy(Employee::getStatus)
                 .having(get(Employee::getId).count().gt(0L))
@@ -407,9 +406,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by multiple columns with having")
-    void shouldGroupByMultipleColumnsWithHaving(DbConfig config) {
+    void shouldGroupByMultipleColumnsWithHaving(IntegrationTestContext context) {
         // When - Group by department and active status with count > 0
-        var results = config.queryEmployees()
+        var results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getActive), get(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId, Employee::getActive)
                 .having(get(Employee::getId).count().gt(0L))
@@ -427,9 +426,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use having with count distinct")
-    void shouldUseHavingWithCountDistinct(DbConfig config) {
+    void shouldUseHavingWithCountDistinct(IntegrationTestContext context) {
         // When - Group by active status with distinct department count > 2
-        var results = config.queryEmployees()
+        var results = context.queryEmployees()
                 .select(get(Employee::getActive), get(Employee::getDepartmentId).countDistinct())
                 .groupBy(Employee::getActive)
                 .having(get(Employee::getDepartmentId).countDistinct().gt(2L))
@@ -446,9 +445,9 @@ public class HavingClauseIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use having on department query")
-    void shouldUseHavingOnDepartmentQuery(DbConfig config) {
+    void shouldUseHavingOnDepartmentQuery(IntegrationTestContext context) {
         // When - Group departments by active status with budget sum > 100000
-        var results = config.queryDepartments()
+        var results = context.queryDepartments()
                 .select(get(Department::getActive), get(Department::getBudget).sum())
                 .groupBy(Department::getActive)
                 .having(get(Department::getBudget).sum().gt(100000.0))

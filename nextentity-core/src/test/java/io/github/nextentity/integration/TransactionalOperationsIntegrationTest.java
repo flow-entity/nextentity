@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
@@ -35,22 +35,22 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should commit insert operation")
-    void shouldCommitInsertOperation(DbConfig config) {
+    void shouldCommitInsertOperation(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7001L, "Transaction Test");
 
         // When
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Then - Verify the insert was committed
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7001L)
                 .getSingle();
         assertThat(found).isNotNull();
         assertThat(found.getName()).isEqualTo("Transaction Test");
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -59,23 +59,23 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should commit update operation")
-    void shouldCommitUpdateOperation(DbConfig config) {
+    void shouldCommitUpdateOperation(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7002L, "Before Update");
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
         employee.setName("After Update");
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then - Verify the update was committed
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7002L)
                 .getSingle();
         assertThat(found.getName()).isEqualTo("After Update");
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -84,16 +84,16 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should commit delete operation")
-    void shouldCommitDeleteOperation(DbConfig config) {
+    void shouldCommitDeleteOperation(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7003L, "To Delete");
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
 
         // Then - Verify the delete was committed
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7003L)
                 .getSingle();
         assertThat(found).isNull();
@@ -105,7 +105,7 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert batch atomically")
-    void shouldInsertBatchAtomically(DbConfig config) {
+    void shouldInsertBatchAtomically(IntegrationTestContext context) {
         // Given
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -113,18 +113,18 @@ public class TransactionalOperationsIntegrationTest {
         }
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then - All should be inserted
         for (int i = 0; i < 5; i++) {
-            Employee found = config.queryEmployees()
+            Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(7100L + i)
                     .getSingle();
             assertThat(found).isNotNull();
         }
 
         // Cleanup
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
     }
 
     /**
@@ -133,30 +133,30 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update batch atomically")
-    void shouldUpdateBatchAtomically(DbConfig config) {
+    void shouldUpdateBatchAtomically(IntegrationTestContext context) {
         // Given
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             employees.add(createTestEmployee(7200L + i, "Before " + i));
         }
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // When - Update all names
         for (int i = 0; i < employees.size(); i++) {
             employees.get(i).setName("After " + i);
         }
-        config.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, Employee.class);
 
         // Then - All should be updated
         for (int i = 0; i < 3; i++) {
-            Employee found = config.queryEmployees()
+            Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(7200L + i)
                     .getSingle();
             assertThat(found.getName()).isEqualTo("After " + i);
         }
 
         // Cleanup
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
     }
 
     /**
@@ -165,20 +165,20 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete batch atomically")
-    void shouldDeleteBatchAtomically(DbConfig config) {
+    void shouldDeleteBatchAtomically(IntegrationTestContext context) {
         // Given
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 3; i++) {
             employees.add(createTestEmployee(7300L + i, "To Delete " + i));
         }
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // When
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
 
         // Then - All should be deleted
         for (int i = 0; i < 3; i++) {
-            Employee found = config.queryEmployees()
+            Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(7300L + i)
                     .getSingle();
             assertThat(found).isNull();
@@ -191,28 +191,28 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should perform sequential CRUD operations")
-    void shouldPerformSequentialCrudOperations(DbConfig config) {
+    void shouldPerformSequentialCrudOperations(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7400L, "Sequential Test");
 
         // When - Insert
-        config.getUpdateExecutor().insert(employee, Employee.class);
-        Employee afterInsert = config.queryEmployees()
+        context.getUpdateExecutor().insert(employee, Employee.class);
+        Employee afterInsert = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
                 .getSingle();
         assertThat(afterInsert).isNotNull();
 
         // When - Update
         employee.setName("Updated Sequential");
-        config.getUpdateExecutor().update(employee, Employee.class);
-        Employee afterUpdate = config.queryEmployees()
+        context.getUpdateExecutor().update(employee, Employee.class);
+        Employee afterUpdate = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
                 .getSingle();
         assertThat(afterUpdate.getName()).isEqualTo("Updated Sequential");
 
         // When - Delete
-        config.getUpdateExecutor().delete(employee, Employee.class);
-        Employee afterDelete = config.queryEmployees()
+        context.getUpdateExecutor().delete(employee, Employee.class);
+        Employee afterDelete = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
                 .getSingle();
         assertThat(afterDelete).isNull();
@@ -224,35 +224,35 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle multiple entity operations")
-    void shouldHandleMultipleEntityOperations(DbConfig config) {
+    void shouldHandleMultipleEntityOperations(IntegrationTestContext context) {
         // Given
         Employee emp1 = createTestEmployee(7501L, "Emp 1");
         Employee emp2 = createTestEmployee(7502L, "Emp 2");
         Employee emp3 = createTestEmployee(7503L, "Emp 3");
 
         // When - Insert multiple
-        config.getUpdateExecutor().insert(emp1, Employee.class);
-        config.getUpdateExecutor().insert(emp2, Employee.class);
-        config.getUpdateExecutor().insert(emp3, Employee.class);
+        context.getUpdateExecutor().insert(emp1, Employee.class);
+        context.getUpdateExecutor().insert(emp2, Employee.class);
+        context.getUpdateExecutor().insert(emp3, Employee.class);
 
         // Then - All should exist
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).in(7501L, 7502L, 7503L)
                 .count();
         assertThat(count).isEqualTo(3);
 
         // When - Delete one
-        config.getUpdateExecutor().delete(emp2, Employee.class);
+        context.getUpdateExecutor().delete(emp2, Employee.class);
 
         // Then - Two should remain
-        count = config.queryEmployees()
+        count = context.queryEmployees()
                 .where(Employee::getId).in(7501L, 7502L, 7503L)
                 .count();
         assertThat(count).isEqualTo(2);
 
         // Cleanup
-        config.getUpdateExecutor().delete(emp1, Employee.class);
-        config.getUpdateExecutor().delete(emp3, Employee.class);
+        context.getUpdateExecutor().delete(emp1, Employee.class);
+        context.getUpdateExecutor().delete(emp3, Employee.class);
     }
 
     /**
@@ -261,24 +261,24 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update status within transaction")
-    void shouldUpdateStatusWithinTransaction(DbConfig config) {
+    void shouldUpdateStatusWithinTransaction(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7600L, "Status Test");
         employee.setStatus(EmployeeStatus.ACTIVE);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
         employee.setStatus(EmployeeStatus.INACTIVE);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7600L)
                 .getSingle();
         assertThat(found.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -287,24 +287,24 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update salary within transaction")
-    void shouldUpdateSalaryWithinTransaction(DbConfig config) {
+    void shouldUpdateSalaryWithinTransaction(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7700L, "Salary Test");
         employee.setSalary(50000.0);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
         employee.setSalary(60000.0);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7700L)
                 .getSingle();
         assertThat(found.getSalary()).isEqualTo(60000.0);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -313,24 +313,24 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update department within transaction")
-    void shouldUpdateDepartmentWithinTransaction(DbConfig config) {
+    void shouldUpdateDepartmentWithinTransaction(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7800L, "Dept Test");
         employee.setDepartmentId(1L);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
         employee.setDepartmentId(2L);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7800L)
                 .getSingle();
         assertThat(found.getDepartmentId()).isEqualTo(2L);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -339,34 +339,34 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should toggle active flag")
-    void shouldToggleActiveFlag(DbConfig config) {
+    void shouldToggleActiveFlag(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7900L, "Active Test");
         employee.setActive(true);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When - Toggle to false
         employee.setActive(false);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7900L)
                 .getSingle();
         assertThat(found.getActive()).isFalse();
 
         // When - Toggle back to true
         employee.setActive(true);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        found = config.queryEmployees()
+        found = context.queryEmployees()
                 .where(Employee::getId).eq(7900L)
                 .getSingle();
         assertThat(found.getActive()).isTrue();
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -375,13 +375,13 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query inserted data immediately")
-    void shouldQueryInsertedDataImmediately(DbConfig config) {
+    void shouldQueryInsertedDataImmediately(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(8000L, "Query Test");
 
         // When
-        config.getUpdateExecutor().insert(employee, Employee.class);
-        List<Employee> found = config.queryEmployees()
+        context.getUpdateExecutor().insert(employee, Employee.class);
+        List<Employee> found = context.queryEmployees()
                 .where(Employee::getId).eq(8000L)
                 .getList();
 
@@ -390,7 +390,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.get(0).getName()).isEqualTo("Query Test");
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -399,9 +399,9 @@ public class TransactionalOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count after batch insert")
-    void shouldCountAfterBatchInsert(DbConfig config) {
+    void shouldCountAfterBatchInsert(IntegrationTestContext context) {
         // Given
-        long initialCount = config.queryEmployees().count();
+        long initialCount = context.queryEmployees().count();
 
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
@@ -409,14 +409,14 @@ public class TransactionalOperationsIntegrationTest {
         }
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
-        long newCount = config.queryEmployees().count();
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        long newCount = context.queryEmployees().count();
 
         // Then
         assertThat(newCount).isEqualTo(initialCount + 5);
 
         // Cleanup
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
     }
 
     /**

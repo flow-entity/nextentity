@@ -2,7 +2,7 @@ package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.core.util.Paths;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
@@ -37,9 +37,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with greater than")
-    void shouldFilterWithGreaterThan(DbConfig config) {
+    void shouldFilterWithGreaterThan(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(SALARY_THRESHOLD)
                 .getList();
 
@@ -54,9 +54,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with greater than or equal")
-    void shouldFilterWithGreaterThanOrEqual(DbConfig config) {
+    void shouldFilterWithGreaterThanOrEqual(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).ge(SALARY_THRESHOLD)
                 .getList();
 
@@ -71,9 +71,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with less than")
-    void shouldFilterWithLessThan(DbConfig config) {
+    void shouldFilterWithLessThan(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).lt(SALARY_THRESHOLD)
                 .getList();
 
@@ -88,9 +88,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with less than or equal")
-    void shouldFilterWithLessThanOrEqual(DbConfig config) {
+    void shouldFilterWithLessThanOrEqual(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).le(SALARY_THRESHOLD)
                 .getList();
 
@@ -105,13 +105,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between")
-    void shouldFilterWithBetween(DbConfig config) {
+    void shouldFilterWithBetween(IntegrationTestContext context) {
         // Given
         double minSalary = 55000.0;
         double maxSalary = 75000.0;
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(minSalary, maxSalary)
                 .getList();
 
@@ -127,13 +127,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle between with boundary values")
-    void shouldHandleBetweenBoundary(DbConfig config) {
+    void shouldHandleBetweenBoundary(IntegrationTestContext context) {
         // Given
         double minSalary = 60000.0;
         double maxSalary = 70000.0;
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(minSalary, maxSalary)
                 .getList();
 
@@ -149,9 +149,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with numeric IN clause")
-    void shouldFilterWithNumericIn(DbConfig config) {
+    void shouldFilterWithNumericIn(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(1L, 2L, 3L)
                 .getList();
 
@@ -167,9 +167,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with numeric NOT IN clause")
-    void shouldFilterWithNumericNotIn(DbConfig config) {
+    void shouldFilterWithNumericNotIn(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).notIn(1L, 2L)
                 .getList();
 
@@ -184,9 +184,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by numeric field ascending")
-    void shouldOrderByNumericAsc(DbConfig config) {
+    void shouldOrderByNumericAsc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).asc()
                 .getList();
 
@@ -204,9 +204,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by numeric field descending")
-    void shouldOrderByNumericDesc(DbConfig config) {
+    void shouldOrderByNumericDesc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .getList();
 
@@ -224,9 +224,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by ID ascending")
-    void shouldOrderByIdAsc(DbConfig config) {
+    void shouldOrderByIdAsc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList();
 
@@ -244,9 +244,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with multiple numeric conditions")
-    void shouldFilterWithMultipleNumericConditions(DbConfig config) {
+    void shouldFilterWithMultipleNumericConditions(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).ge(50000.0)
                 .where(Employee::getSalary).le(80000.0)
                 .where(Employee::getDepartmentId).eq(1L)
@@ -264,9 +264,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select numeric field")
-    void shouldSelectNumericField(DbConfig config) {
+    void shouldSelectNumericField(IntegrationTestContext context) {
         // When
-        List<Double> salaries = config.queryEmployees()
+        List<Double> salaries = context.queryEmployees()
                 .select(Employee::getSalary)
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -282,9 +282,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select ID field")
-    void shouldSelectIdField(DbConfig config) {
+    void shouldSelectIdField(IntegrationTestContext context) {
         // When
-        List<Long> ids = config.queryEmployees()
+        List<Long> ids = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -300,9 +300,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should sum numeric field")
-    void shouldSumNumericField(DbConfig config) {
+    void shouldSumNumericField(IntegrationTestContext context) {
         // When
-        Number sum = config.queryEmployees()
+        Number sum = context.queryEmployees()
                 .select(get(Employee::getSalary).sum())
                 .getSingle();
 
@@ -317,9 +317,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should average numeric field")
-    void shouldAverageNumericField(DbConfig config) {
+    void shouldAverageNumericField(IntegrationTestContext context) {
         // When
-        Number avg = config.queryEmployees()
+        Number avg = context.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .getSingle();
 
@@ -334,16 +334,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find max of numeric field")
-    void shouldFindMaxNumericField(DbConfig config) {
+    void shouldFindMaxNumericField(IntegrationTestContext context) {
         // When
-        Number max = config.queryEmployees()
+        Number max = context.queryEmployees()
                 .select(get(Employee::getSalary).max())
                 .getSingle();
 
         // Then
         assertThat(max).isNotNull();
         // Verify it's actually the max
-        List<Employee> employees = config.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().getList();
         double expectedMax = employees.stream()
                 .mapToDouble(Employee::getSalary)
                 .max()
@@ -357,16 +357,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find min of numeric field")
-    void shouldFindMinNumericField(DbConfig config) {
+    void shouldFindMinNumericField(IntegrationTestContext context) {
         // When
-        Number min = config.queryEmployees()
+        Number min = context.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getSingle();
 
         // Then
         assertThat(min).isNotNull();
         // Verify it's actually the min
-        List<Employee> employees = config.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().getList();
         double expectedMin = employees.stream()
                 .mapToDouble(Employee::getSalary)
                 .min()
@@ -380,9 +380,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with ID comparison")
-    void shouldFilterWithIdComparison(DbConfig config) {
+    void shouldFilterWithIdComparison(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).gt(5L)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -398,9 +398,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select multiple numeric fields")
-    void shouldSelectMultipleNumericFields(DbConfig config) {
+    void shouldSelectMultipleNumericFields(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getSalary)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -416,9 +416,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should aggregate with numeric filter")
-    void shouldAggregateWithNumericFilter(DbConfig config) {
+    void shouldAggregateWithNumericFilter(IntegrationTestContext context) {
         // When
-        Number avg = config.queryEmployees()
+        Number avg = context.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .where(Employee::getDepartmentId).eq(1L)
                 .getSingle();
@@ -434,9 +434,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct numeric values")
-    void shouldSelectDistinctNumeric(DbConfig config) {
+    void shouldSelectDistinctNumeric(IntegrationTestContext context) {
         // When
-        List<Long> deptIds = config.queryEmployees()
+        List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -452,9 +452,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count numeric filtered results")
-    void shouldCountNumericFiltered(DbConfig config) {
+    void shouldCountNumericFiltered(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getSalary).gt(SALARY_THRESHOLD)
                 .count();
 
@@ -468,9 +468,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check existence with numeric filter")
-    void shouldCheckExistenceWithNumericFilter(DbConfig config) {
+    void shouldCheckExistenceWithNumericFilter(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getSalary).gt(100000.0)
                 .exist();
 
@@ -485,9 +485,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by multiple numeric fields")
-    void shouldOrderByMultipleNumericFields(DbConfig config) {
+    void shouldOrderByMultipleNumericFields(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId).asc()
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -512,9 +512,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with numeric filter")
-    void shouldGetFirstWithNumericFilter(DbConfig config) {
+    void shouldGetFirstWithNumericFilter(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getSalary).gt(SALARY_THRESHOLD)
                 .orderBy(Employee::getSalary).desc()
                 .getFirst();
@@ -532,16 +532,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should add value to numeric field in SELECT")
-    void shouldAddValueInSelect(DbConfig config) {
+    void shouldAddValueInSelect(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
         Double bonus = 5000.0;
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).add(bonus))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -557,16 +557,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should subtract value from numeric field in SELECT")
-    void shouldSubtractValueInSelect(DbConfig config) {
+    void shouldSubtractValueInSelect(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
         Double deduction = 1000.0;
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).subtract(deduction))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -582,16 +582,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should multiply numeric field in SELECT")
-    void shouldMultiplyValueInSelect(DbConfig config) {
+    void shouldMultiplyValueInSelect(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
         Double multiplier = 1.1; // 10% raise
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).multiply(multiplier))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -607,16 +607,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should divide numeric field in SELECT")
-    void shouldDivideValueInSelect(DbConfig config) {
+    void shouldDivideValueInSelect(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
         Double divisor = 12.0; // Monthly salary
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).divide(divisor))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -632,12 +632,12 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should modulo numeric field in SELECT")
-    void shouldModuloValueInSelect(DbConfig config) {
+    void shouldModuloValueInSelect(IntegrationTestContext context) {
         // Given
         Long modValue = 3L;
 
         // When
-        List<Long> results = config.queryEmployees()
+        List<Long> results = context.queryEmployees()
                 .select(get(Employee::getId).mod(modValue))
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -654,9 +654,9 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should chain arithmetic operations in SELECT")
-    void shouldChainArithmeticOperationsInSelect(DbConfig config) {
+    void shouldChainArithmeticOperationsInSelect(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
@@ -664,7 +664,7 @@ public class NumericOperationsIntegrationTest {
         Double expected = (originalSalary + 1000.0) * 1.1 - 500.0;
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).add(1000.0).multiply(1.1).subtract(500.0))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -680,12 +680,12 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic with group by and aggregation")
-    void shouldUseArithmeticWithGroupBy(DbConfig config) {
+    void shouldUseArithmeticWithGroupBy(IntegrationTestContext context) {
         // Given - average salary by department, multiplied by 1.1
         Double multiplier = 1.1;
 
         // When - Get average adjusted salary per department
-        List<Tuple2<Long, Double>> results = config.queryEmployees()
+        List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(get(Employee::getDepartmentId), get(Employee::getSalary).multiply(multiplier).avg())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -702,16 +702,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should perform arithmetic with expression in SELECT")
-    void shouldPerformArithmeticWithExpressionInSelect(DbConfig config) {
+    void shouldPerformArithmeticWithExpressionInSelect(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
         Double bonus = 1000.0;
 
         // When - Select salary + literal using expression
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).add(Paths.<Employee>root().literal(bonus)))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -727,13 +727,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic in WHERE clause")
-    void shouldUseArithmeticInWhereClause(DbConfig config) {
+    void shouldUseArithmeticInWhereClause(IntegrationTestContext context) {
         // Given
         double threshold = 70000.0;
         Double bonus = 10000.0;
 
         // When - Find employees where salary + bonus > threshold
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
                 .getList();
 
@@ -748,13 +748,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use subtraction in WHERE clause")
-    void shouldUseSubtractionInWhereClause(DbConfig config) {
+    void shouldUseSubtractionInWhereClause(IntegrationTestContext context) {
         // Given
         double threshold = 50000.0;
         Double deduction = 5000.0;
 
         // When - Find employees where salary - deduction >= threshold
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).subtract(deduction).ge(threshold)
                 .getList();
 
@@ -769,13 +769,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use multiplication in WHERE clause")
-    void shouldUseMultiplicationInWhereClause(DbConfig config) {
+    void shouldUseMultiplicationInWhereClause(IntegrationTestContext context) {
         // Given
         double threshold = 100000.0;
         Double multiplier = 2.0;
 
         // When - Find employees where salary * multiplier > threshold
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).multiply(multiplier).gt(threshold)
                 .getList();
 
@@ -790,13 +790,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use division in WHERE clause")
-    void shouldUseDivisionInWhereClause(DbConfig config) {
+    void shouldUseDivisionInWhereClause(IntegrationTestContext context) {
         // Given
         double threshold = 5000.0; // Monthly salary threshold
         Double months = 12.0;
 
         // When - Find employees where salary / 12 > threshold
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).divide(months).gt(threshold)
                 .getList();
 
@@ -811,12 +811,12 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use modulo in WHERE clause")
-    void shouldUseModuloInWhereClause(DbConfig config) {
+    void shouldUseModuloInWhereClause(IntegrationTestContext context) {
         // Given
         Long modValue = 2L;
 
         // When - Find employees where id % 2 = 0 (even IDs)
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).mod(modValue).eq(0L)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -832,13 +832,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use combined arithmetic in WHERE clause")
-    void shouldUseCombinedArithmeticInWhereClause(DbConfig config) {
+    void shouldUseCombinedArithmeticInWhereClause(IntegrationTestContext context) {
         // Given - salary + 10000 > 80000
         Double bonus = 10000.0;
         double threshold = 80000.0;
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -854,19 +854,19 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic with aggregation")
-    void shouldUseArithmeticWithAggregation(DbConfig config) {
+    void shouldUseArithmeticWithAggregation(IntegrationTestContext context) {
         // Given
         Double multiplier = 1.1; // 10% increase
 
         // When - Select sum(salary * multiplier) as total projected payroll
-        Double result = config.queryEmployees()
+        Double result = context.queryEmployees()
                 .select(get(Employee::getSalary).multiply(multiplier).sum())
                 .getSingle();
 
         // Then
         assertThat(result).isNotNull();
         // Verify it's the sum of all salaries * multiplier (with delta for floating point precision)
-        Double totalSalary = config.queryEmployees()
+        Double totalSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).sum())
                 .getSingle();
         assertThat(result).isCloseTo(totalSalary * multiplier, org.assertj.core.data.Offset.offset(0.01));
@@ -878,13 +878,13 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count results with arithmetic filter")
-    void shouldCountResultsWithArithmeticFilter(DbConfig config) {
+    void shouldCountResultsWithArithmeticFilter(IntegrationTestContext context) {
         // Given
         Double threshold = 70000.0;
         Double bonus = 5000.0;
 
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
                 .count();
 
@@ -898,18 +898,18 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional add with null value")
-    void shouldHandleConditionalAddWithNull(DbConfig config) {
+    void shouldHandleConditionalAddWithNull(IntegrationTestContext context) {
         // Given
         Double nullBonus = null;
 
         // When - addIfNotNull with null should not change the value
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).addIfNotNull(nullBonus))
                 .where(Employee::getId).eq(1L)
                 .getList();
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         assertThat(results).hasSize(1);
@@ -922,18 +922,18 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional add with non-null value")
-    void shouldHandleConditionalAddWithNonNull(DbConfig config) {
+    void shouldHandleConditionalAddWithNonNull(IntegrationTestContext context) {
         // Given
         Double bonus = 5000.0;
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).addIfNotNull(bonus))
                 .where(Employee::getId).eq(1L)
                 .getList();
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         assertThat(results).hasSize(1);
@@ -946,16 +946,16 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle complex arithmetic expression")
-    void shouldHandleComplexArithmeticExpression(DbConfig config) {
+    void shouldHandleComplexArithmeticExpression(IntegrationTestContext context) {
         // Given - Calculate: (salary * 12 + 1000) / 12 - 100
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         Double originalSalary = employees.get(0).getSalary();
         Double expected = (originalSalary * 12.0 + 1000.0) / 12.0 - 100.0;
 
         // When
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).multiply(12.0).add(1000.0).divide(12.0).subtract(100.0))
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -971,12 +971,12 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct arithmetic results")
-    void shouldSelectDistinctArithmeticResults(DbConfig config) {
+    void shouldSelectDistinctArithmeticResults(IntegrationTestContext context) {
         // Given - departmentId % 3 should have limited distinct values
         Long modValue = 3L;
 
         // When
-        List<Long> distinctResults = config.queryEmployees()
+        List<Long> distinctResults = context.queryEmployees()
                 .selectDistinct(get(Employee::getDepartmentId).mod(modValue))
                 .getList();
 
@@ -992,19 +992,19 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should perform arithmetic on ID field")
-    void shouldPerformArithmeticOnIdField(DbConfig config) {
+    void shouldPerformArithmeticOnIdField(IntegrationTestContext context) {
         // Given
         Long offset = 100L;
 
         // When
-        List<Long> results = config.queryEmployees()
+        List<Long> results = context.queryEmployees()
                 .select(get(Employee::getId).add(offset))
                 .orderBy(Employee::getId).asc()
                 .getList();
 
         // Then
         assertThat(results).isNotEmpty();
-        List<Long> originalIds = config.queryEmployees()
+        List<Long> originalIds = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -1019,18 +1019,18 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional subtract with null value")
-    void shouldHandleConditionalSubtractWithNull(DbConfig config) {
+    void shouldHandleConditionalSubtractWithNull(IntegrationTestContext context) {
         // Given
         Double nullDeduction = null;
 
         // When - subtractIfNotNull with null should not change the value
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).subtractIfNotNull(nullDeduction))
                 .where(Employee::getId).eq(1L)
                 .getList();
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         assertThat(results).hasSize(1);
@@ -1043,18 +1043,18 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional multiply with null value")
-    void shouldHandleConditionalMultiplyWithNull(DbConfig config) {
+    void shouldHandleConditionalMultiplyWithNull(IntegrationTestContext context) {
         // Given
         Double nullMultiplier = null;
 
         // When - multiplyIfNotNull with null should not change the value
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).multiplyIfNotNull(nullMultiplier))
                 .where(Employee::getId).eq(1L)
                 .getList();
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         assertThat(results).hasSize(1);
@@ -1067,18 +1067,18 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional divide with null value")
-    void shouldHandleConditionalDivideWithNull(DbConfig config) {
+    void shouldHandleConditionalDivideWithNull(IntegrationTestContext context) {
         // Given
         Double nullDivisor = null;
 
         // When - divideIfNotNull with null should not change the value
-        List<Double> results = config.queryEmployees()
+        List<Double> results = context.queryEmployees()
                 .select(get(Employee::getSalary).divideIfNotNull(nullDivisor))
                 .where(Employee::getId).eq(1L)
                 .getList();
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
         assertThat(results).hasSize(1);
@@ -1091,18 +1091,18 @@ public class NumericOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional mod with null value")
-    void shouldHandleConditionalModWithNull(DbConfig config) {
+    void shouldHandleConditionalModWithNull(IntegrationTestContext context) {
         // Given
         Long nullModValue = null;
 
         // When - modIfNotNull with null should not change the value
-        List<Long> results = config.queryEmployees()
+        List<Long> results = context.queryEmployees()
                 .select(get(Employee::getId).modIfNotNull(nullModValue))
                 .where(Employee::getId).eq(1L)
                 .getList();
 
         // Then
-        List<Long> originalIds = config.queryEmployees()
+        List<Long> originalIds = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getId).eq(1L)
                 .getList();

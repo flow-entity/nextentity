@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.dto.*;
 import io.github.nextentity.integration.entity.Employee;
@@ -34,9 +34,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to JavaBean - EmployeeBasicInfo")
-    void shouldProjectToJavaBeanBasicInfo(DbConfig config) {
+    void shouldProjectToJavaBeanBasicInfo(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -53,9 +53,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to JavaBean - EmployeeSummary")
-    void shouldProjectToJavaBeanSummary(DbConfig config) {
+    void shouldProjectToJavaBeanSummary(IntegrationTestContext context) {
         // When
-        List<EmployeeSummary> results = config.queryEmployees()
+        List<EmployeeSummary> results = context.queryEmployees()
                 .select(EmployeeSummary.class)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
@@ -73,9 +73,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to JavaBean with multiple results")
-    void shouldProjectToJavaBeanMultipleResults(DbConfig config) {
+    void shouldProjectToJavaBeanMultipleResults(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -88,9 +88,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to JavaBean with where condition")
-    void shouldProjectToJavaBeanWithWhere(DbConfig config) {
+    void shouldProjectToJavaBeanWithWhere(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
@@ -104,9 +104,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to JavaBean with pagination")
-    void shouldProjectToJavaBeanWithPagination(DbConfig config) {
+    void shouldProjectToJavaBeanWithPagination(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .orderBy(Employee::getId).asc()
                 .getList(0, 5);
@@ -118,9 +118,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list when no match for JavaBean projection")
-    void shouldReturnEmptyForJavaBeanNoMatch(DbConfig config) {
+    void shouldReturnEmptyForJavaBeanNoMatch(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getId).eq(99999L)
                 .getList();
@@ -136,9 +136,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface - EmployeeInfo")
-    void shouldProjectToInterfaceEmployeeInfo(DbConfig config) {
+    void shouldProjectToInterfaceEmployeeInfo(IntegrationTestContext context) {
         // When
-        List<EmployeeInfo> results = config.queryEmployees()
+        List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -155,9 +155,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface - EmployeeNameAndSalary")
-    void shouldProjectToInterfaceNameAndSalary(DbConfig config) {
+    void shouldProjectToInterfaceNameAndSalary(IntegrationTestContext context) {
         // When
-        List<EmployeeNameAndSalary> results = config.queryEmployees()
+        List<EmployeeNameAndSalary> results = context.queryEmployees()
                 .select(EmployeeNameAndSalary.class)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
@@ -174,9 +174,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface - DepartmentInfo")
-    void shouldProjectToInterfaceDepartmentInfo(DbConfig config) {
+    void shouldProjectToInterfaceDepartmentInfo(IntegrationTestContext context) {
         // When
-        List<DepartmentInfo> results = config.queryDepartments()
+        List<DepartmentInfo> results = context.queryDepartments()
                 .select(DepartmentInfo.class)
                 .orderBy(io.github.nextentity.integration.entity.Department::getId).asc()
                 .getList();
@@ -191,9 +191,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface with default method - EmployeeWithStatus")
-    void shouldProjectToInterfaceWithDefaultMethod(DbConfig config) {
+    void shouldProjectToInterfaceWithDefaultMethod(IntegrationTestContext context) {
         // When
-        List<EmployeeWithStatus> results = config.queryEmployees()
+        List<EmployeeWithStatus> results = context.queryEmployees()
                 .select(EmployeeWithStatus.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -210,9 +210,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface with condition")
-    void shouldProjectToInterfaceWithCondition(DbConfig config) {
+    void shouldProjectToInterfaceWithCondition(IntegrationTestContext context) {
         // When
-        List<EmployeeInfo> results = config.queryEmployees()
+        List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
@@ -226,9 +226,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface with pagination")
-    void shouldProjectToInterfaceWithPagination(DbConfig config) {
+    void shouldProjectToInterfaceWithPagination(IntegrationTestContext context) {
         // When
-        List<EmployeeInfo> results = config.queryEmployees()
+        List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .orderBy(Employee::getId).asc()
                 .getList(0, 3);
@@ -240,9 +240,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single result for interface projection")
-    void shouldGetSingleForInterface(DbConfig config) {
+    void shouldGetSingleForInterface(IntegrationTestContext context) {
         // When
-        EmployeeInfo result = config.queryEmployees()
+        EmployeeInfo result = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(1L)
                 .getSingle();
@@ -255,9 +255,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty optional for interface projection first")
-    void shouldReturnEmptyFirstForInterfaceNoMatch(DbConfig config) {
+    void shouldReturnEmptyFirstForInterfaceNoMatch(IntegrationTestContext context) {
         // When
-        var result = config.queryEmployees()
+        var result = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(99999L)
                 .first();
@@ -273,9 +273,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record - EmployeeRecord")
-    void shouldProjectToRecordEmployeeRecord(DbConfig config) {
+    void shouldProjectToRecordEmployeeRecord(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -292,9 +292,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record - EmployeeNameSalary")
-    void shouldProjectToRecordNameSalary(DbConfig config) {
+    void shouldProjectToRecordNameSalary(IntegrationTestContext context) {
         // When
-        List<EmployeeNameSalary> results = config.queryEmployees()
+        List<EmployeeNameSalary> results = context.queryEmployees()
                 .select(EmployeeNameSalary.class)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
@@ -311,9 +311,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record - DepartmentRecord")
-    void shouldProjectToRecordDepartmentRecord(DbConfig config) {
+    void shouldProjectToRecordDepartmentRecord(IntegrationTestContext context) {
         // When
-        List<DepartmentRecord> results = config.queryDepartments()
+        List<DepartmentRecord> results = context.queryDepartments()
                 .select(DepartmentRecord.class)
                 .orderBy(io.github.nextentity.integration.entity.Department::getId).asc()
                 .getList();
@@ -328,9 +328,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record - EmployeeDetailRecord")
-    void shouldProjectToRecordDetail(DbConfig config) {
+    void shouldProjectToRecordDetail(IntegrationTestContext context) {
         // When
-        List<EmployeeDetailRecord> results = config.queryEmployees()
+        List<EmployeeDetailRecord> results = context.queryEmployees()
                 .select(EmployeeDetailRecord.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -348,9 +348,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record with multiple results")
-    void shouldProjectToRecordMultipleResults(DbConfig config) {
+    void shouldProjectToRecordMultipleResults(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -363,9 +363,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record with where condition")
-    void shouldProjectToRecordWithWhere(DbConfig config) {
+    void shouldProjectToRecordWithWhere(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
@@ -379,9 +379,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record with pagination")
-    void shouldProjectToRecordWithPagination(DbConfig config) {
+    void shouldProjectToRecordWithPagination(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
                 .getList(0, 5);
@@ -393,9 +393,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single result for record projection")
-    void shouldGetSingleForRecord(DbConfig config) {
+    void shouldGetSingleForRecord(IntegrationTestContext context) {
         // When
-        EmployeeRecord result = config.queryEmployees()
+        EmployeeRecord result = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getId).eq(1L)
                 .getSingle();
@@ -408,9 +408,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list for record projection no match")
-    void shouldReturnEmptyForRecordNoMatch(DbConfig config) {
+    void shouldReturnEmptyForRecordNoMatch(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getId).eq(99999L)
                 .getList();
@@ -426,9 +426,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct JavaBean projection")
-    void shouldSelectDistinctJavaBean(DbConfig config) {
+    void shouldSelectDistinctJavaBean(IntegrationTestContext context) {
         // When
-        List<EmployeeSummary> results = config.queryEmployees()
+        List<EmployeeSummary> results = context.queryEmployees()
                 .selectDistinct(EmployeeSummary.class)
                 .orderBy(Employee::getName).asc()
                 .getList();
@@ -440,9 +440,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct interface projection")
-    void shouldSelectDistinctInterface(DbConfig config) {
+    void shouldSelectDistinctInterface(IntegrationTestContext context) {
         // When
-        List<EmployeeNameAndSalary> results = config.queryEmployees()
+        List<EmployeeNameAndSalary> results = context.queryEmployees()
                 .selectDistinct(EmployeeNameAndSalary.class)
                 .orderBy(Employee::getName).asc()
                 .getList();
@@ -454,9 +454,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct record projection")
-    void shouldSelectDistinctRecord(DbConfig config) {
+    void shouldSelectDistinctRecord(IntegrationTestContext context) {
         // When
-        List<EmployeeNameSalary> results = config.queryEmployees()
+        List<EmployeeNameSalary> results = context.queryEmployees()
                 .selectDistinct(EmployeeNameSalary.class)
                 .orderBy(Employee::getName).asc()
                 .getList();
@@ -472,9 +472,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null values in JavaBean projection")
-    void shouldHandleNullInJavaBean(DbConfig config) {
+    void shouldHandleNullInJavaBean(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -488,9 +488,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null values in interface projection")
-    void shouldHandleNullInInterface(DbConfig config) {
+    void shouldHandleNullInInterface(IntegrationTestContext context) {
         // When
-        List<EmployeeInfo> results = config.queryEmployees()
+        List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -504,9 +504,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null values in record projection")
-    void shouldHandleNullInRecord(DbConfig config) {
+    void shouldHandleNullInRecord(IntegrationTestContext context) {
         // When
-        List<EmployeeNullableRecord> results = config.queryEmployees()
+        List<EmployeeNullableRecord> results = context.queryEmployees()
                 .select(EmployeeNullableRecord.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -520,9 +520,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to interface with limit")
-    void shouldProjectToInterfaceWithLimit(DbConfig config) {
+    void shouldProjectToInterfaceWithLimit(IntegrationTestContext context) {
         // When
-        List<EmployeeInfo> results = config.queryEmployees()
+        List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .orderBy(Employee::getId).asc()
                 .limit(3);
@@ -534,9 +534,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project to record with limit")
-    void shouldProjectToRecordWithLimit(DbConfig config) {
+    void shouldProjectToRecordWithLimit(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
                 .limit(3);
@@ -548,9 +548,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project JavaBean with complex condition")
-    void shouldProjectJavaBeanWithComplexCondition(DbConfig config) {
+    void shouldProjectJavaBeanWithComplexCondition(IntegrationTestContext context) {
         // When
-        List<EmployeeBasicInfo> results = config.queryEmployees()
+        List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getSalary).gt(50000.0)
                 .where(Employee::getActive).eq(true)
@@ -565,9 +565,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project interface with complex condition")
-    void shouldProjectInterfaceWithComplexCondition(DbConfig config) {
+    void shouldProjectInterfaceWithComplexCondition(IntegrationTestContext context) {
         // When
-        List<EmployeeInfo> results = config.queryEmployees()
+        List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getSalary).gt(50000.0)
                 .where(Employee::getActive).eq(true)
@@ -582,9 +582,9 @@ public class ProjectionQueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should project record with complex condition")
-    void shouldProjectRecordWithComplexCondition(DbConfig config) {
+    void shouldProjectRecordWithComplexCondition(IntegrationTestContext context) {
         // When
-        List<EmployeeRecord> results = config.queryEmployees()
+        List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getSalary).gt(50000.0)
                 .where(Employee::getActive).eq(true)

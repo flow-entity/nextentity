@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -42,15 +42,15 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert single employee")
-    void shouldInsertSingleEmployee(DbConfig config) {
+    void shouldInsertSingleEmployee(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9001L, "Test Insert");
 
         // When
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Then
-        Employee inserted = config.queryEmployees()
+        Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(9001L)
                 .getSingle();
         assertThat(inserted).isNotNull();
@@ -60,7 +60,7 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert multiple employees")
-    void shouldInsertMultipleEmployees(DbConfig config) {
+    void shouldInsertMultipleEmployees(IntegrationTestContext context) {
         // Given
         List<Employee> employees = new ArrayList<>();
         employees.add(createTestEmployee(9010L, "Test 1"));
@@ -68,10 +68,10 @@ public class UpdateApiIntegrationTest {
         employees.add(createTestEmployee(9012L, "Test 3"));
 
         // When
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // Then
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).in(9010L, 9011L, 9012L)
                 .count();
         assertThat(count).isEqualTo(3);
@@ -80,7 +80,7 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert employee with null fields")
-    void shouldInsertEmployeeWithNullFields(DbConfig config) {
+    void shouldInsertEmployeeWithNullFields(IntegrationTestContext context) {
         // Given
         Employee employee = new Employee();
         employee.setId(9020L);
@@ -92,10 +92,10 @@ public class UpdateApiIntegrationTest {
         employee.setDepartmentId(1L);
 
         // When
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Then
-        Employee inserted = config.queryEmployees()
+        Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(9020L)
                 .getSingle();
         assertThat(inserted).isNotNull();
@@ -110,23 +110,23 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update single employee")
-    void shouldUpdateSingleEmployee(DbConfig config) {
+    void shouldUpdateSingleEmployee(IntegrationTestContext context) {
         // Given
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
         String originalName = employee.getName();
         employee.setName("Updated Name");
 
         // When
-        Employee updated = config.getUpdateExecutor().update(employee, Employee.class);
+        Employee updated = context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
         assertThat(updated.getName()).isEqualTo("Updated Name");
         assertThat(updated.getName()).isNotEqualTo(originalName);
 
         // Verify in database
-        Employee fromDb = config.queryEmployees()
+        Employee fromDb = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
         assertThat(fromDb.getName()).isEqualTo("Updated Name");
@@ -135,9 +135,9 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update multiple employees")
-    void shouldUpdateMultipleEmployees(DbConfig config) {
+    void shouldUpdateMultipleEmployees(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
         for (Employee emp : employees) {
@@ -145,7 +145,7 @@ public class UpdateApiIntegrationTest {
         }
 
         // When
-        List<Employee> updated = config.getUpdateExecutor().updateAll(employees, Employee.class);
+        List<Employee> updated = context.getUpdateExecutor().updateAll(employees, Employee.class);
 
         // Then
         assertThat(updated).hasSize(employees.size());
@@ -157,18 +157,18 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update employee status")
-    void shouldUpdateEmployeeStatus(DbConfig config) {
+    void shouldUpdateEmployeeStatus(IntegrationTestContext context) {
         // Given
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
         employee.setStatus(EmployeeStatus.INACTIVE);
 
         // When
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee updated = config.queryEmployees()
+        Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
         assertThat(updated.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
@@ -181,16 +181,16 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should patch employee")
-    void shouldPatchEmployee(DbConfig config) {
+    void shouldPatchEmployee(IntegrationTestContext context) {
         // Given
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
         Double newSalary = employee.getSalary() + 5000;
         employee.setSalary(newSalary);
 
         // When
-        Employee patched = config.getUpdateExecutor().patch(employee, Employee.class);
+        Employee patched = context.getUpdateExecutor().patch(employee, Employee.class);
 
         // Then
         assertThat(patched.getSalary()).isEqualTo(newSalary);
@@ -200,9 +200,9 @@ public class UpdateApiIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should patch employee with partial fields")
     @Disabled("BUG: PostgreSQL cannot determine data type for null parameters in JDBC patch operation")
-    void shouldPatchEmployeeWithPartialFields(DbConfig config) {
+    void shouldPatchEmployeeWithPartialFields(IntegrationTestContext context) {
         // Given - get original employee
-        Employee original = config.queryEmployees()
+        Employee original = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getSingle();
         String originalEmail = original.getEmail();
@@ -213,7 +213,7 @@ public class UpdateApiIntegrationTest {
         partial.setName("Patched Name Only");
 
         // When
-        Employee patched = config.getUpdateExecutor().patch(partial, Employee.class);
+        Employee patched = context.getUpdateExecutor().patch(partial, Employee.class);
 
         // Then
         assertThat(patched.getName()).isEqualTo("Patched Name Only");
@@ -227,36 +227,36 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete single employee")
-    void shouldDeleteSingleEmployee(DbConfig config) {
+    void shouldDeleteSingleEmployee(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9030L, "To Delete");
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Verify inserted
-        assertThat(config.queryEmployees().where(Employee::getId).eq(9030L).exist()).isTrue();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exist()).isTrue();
 
         // When
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
 
         // Then
-        assertThat(config.queryEmployees().where(Employee::getId).eq(9030L).exist()).isFalse();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exist()).isFalse();
     }
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete multiple employees")
-    void shouldDeleteMultipleEmployees(DbConfig config) {
+    void shouldDeleteMultipleEmployees(IntegrationTestContext context) {
         // Given
         List<Employee> employees = new ArrayList<>();
         employees.add(createTestEmployee(9040L, "Delete 1"));
         employees.add(createTestEmployee(9041L, "Delete 2"));
-        config.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, Employee.class);
 
         // When
-        config.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, Employee.class);
 
         // Then
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).in(9040L, 9041L)
                 .count();
         assertThat(count).isZero();
@@ -269,14 +269,14 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should do in transaction with result")
-    void shouldDoInTransactionWithResult(DbConfig config) {
+    void shouldDoInTransactionWithResult(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9050L, "Transaction Test");
 
         // When
-        Employee result = config.getUpdateExecutor().doInTransaction(() -> {
-            config.getUpdateExecutor().insert(employee, Employee.class);
-            return config.queryEmployees()
+        Employee result = context.getUpdateExecutor().doInTransaction(() -> {
+            context.getUpdateExecutor().insert(employee, Employee.class);
+            return context.queryEmployees()
                     .where(Employee::getId).eq(9050L)
                     .getSingle();
         });
@@ -289,37 +289,37 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should do in transaction with runnable")
-    void shouldDoInTransactionWithRunnable(DbConfig config) {
+    void shouldDoInTransactionWithRunnable(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9051L, "Runnable Transaction");
 
         // When
-        config.getUpdateExecutor().doInTransaction(() -> {
-            config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().doInTransaction(() -> {
+            context.getUpdateExecutor().insert(employee, Employee.class);
         });
 
         // Then
-        assertThat(config.queryEmployees().where(Employee::getId).eq(9051L).exist()).isTrue();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9051L).exist()).isTrue();
     }
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should rollback on exception")
     @Disabled("BUG: Transaction rollback not working correctly in JDBC implementation - data persists after exception")
-    void shouldRollbackOnException(DbConfig config) {
+    void shouldRollbackOnException(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9052L, "Rollback Test");
 
         // When
         assertThatThrownBy(() ->
-                config.getUpdateExecutor().doInTransaction(() -> {
-                    config.getUpdateExecutor().insert(employee, Employee.class);
+                context.getUpdateExecutor().doInTransaction(() -> {
+                    context.getUpdateExecutor().insert(employee, Employee.class);
                     throw new RuntimeException("Force rollback");
                 })
         ).isInstanceOf(RuntimeException.class);
 
         // Then - employee should not exist due to rollback
-        assertThat(config.queryEmployees().where(Employee::getId).eq(9052L).exist()).isFalse();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9052L).exist()).isFalse();
     }
 
     // ========================================
@@ -329,30 +329,30 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty insert batch")
-    void shouldHandleEmptyInsertBatch(DbConfig config) {
+    void shouldHandleEmptyInsertBatch(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().insertAll(new ArrayList<>(), Employee.class)
+                context.getUpdateExecutor().insertAll(new ArrayList<>(), Employee.class)
         );
     }
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty update batch")
-    void shouldHandleEmptyUpdateBatch(DbConfig config) {
+    void shouldHandleEmptyUpdateBatch(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().updateAll(new ArrayList<>(), Employee.class)
+                context.getUpdateExecutor().updateAll(new ArrayList<>(), Employee.class)
         );
     }
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty delete batch")
-    void shouldHandleEmptyDeleteBatch(DbConfig config) {
+    void shouldHandleEmptyDeleteBatch(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().deleteAll(new ArrayList<>(), Employee.class)
+                context.getUpdateExecutor().deleteAll(new ArrayList<>(), Employee.class)
         );
     }
 
@@ -363,15 +363,15 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert department")
-    void shouldInsertDepartment(DbConfig config) {
+    void shouldInsertDepartment(IntegrationTestContext context) {
         // Given
         Department department = new Department(9060L, "Test Dept", "Location", 100000.0, true);
 
         // When
-        config.getUpdateExecutor().insert(department, Department.class);
+        context.getUpdateExecutor().insert(department, Department.class);
 
         // Then
-        Department inserted = config.queryDepartments()
+        Department inserted = context.queryDepartments()
                 .where(Department::getId).eq(9060L)
                 .getSingle();
         assertThat(inserted).isNotNull();
@@ -381,18 +381,18 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update department")
-    void shouldUpdateDepartment(DbConfig config) {
+    void shouldUpdateDepartment(IntegrationTestContext context) {
         // Given
-        Department department = config.queryDepartments()
+        Department department = context.queryDepartments()
                 .where(Department::getId).eq(1L)
                 .getSingle();
         department.setBudget(department.getBudget() + 50000);
 
         // When
-        config.getUpdateExecutor().update(department, Department.class);
+        context.getUpdateExecutor().update(department, Department.class);
 
         // Then
-        Department updated = config.queryDepartments()
+        Department updated = context.queryDepartments()
                 .where(Department::getId).eq(1L)
                 .getSingle();
         assertThat(updated.getBudget()).isGreaterThan(100000.0);
@@ -405,13 +405,13 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fail on duplicate ID insert")
-    void shouldFailOnDuplicateIdInsert(DbConfig config) {
+    void shouldFailOnDuplicateIdInsert(IntegrationTestContext context) {
         // Given - employee with ID 1 already exists
         Employee duplicate = createTestEmployee(1L, "Duplicate");
 
         // When/Then
         assertThatThrownBy(() ->
-                config.getUpdateExecutor().insert(duplicate, Employee.class)
+                context.getUpdateExecutor().insert(duplicate, Employee.class)
         ).isInstanceOf(RuntimeException.class);
     }
 
@@ -422,20 +422,20 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle complex transaction")
-    void shouldHandleComplexTransaction(DbConfig config) {
+    void shouldHandleComplexTransaction(IntegrationTestContext context) {
         // When
-        Long count = config.getUpdateExecutor().doInTransaction(() -> {
+        Long count = context.getUpdateExecutor().doInTransaction(() -> {
             // Insert
             Employee e1 = createTestEmployee(9070L, "Complex 1");
-            config.getUpdateExecutor().insert(e1, Employee.class);
+            context.getUpdateExecutor().insert(e1, Employee.class);
 
             // Update
-            Employee e2 = config.queryEmployees().where(Employee::getId).eq(1L).getSingle();
+            Employee e2 = context.queryEmployees().where(Employee::getId).eq(1L).getSingle();
             e2.setSalary(e2.getSalary() + 1000);
-            config.getUpdateExecutor().update(e2, Employee.class);
+            context.getUpdateExecutor().update(e2, Employee.class);
 
             // Query
-            return config.queryEmployees().count();
+            return context.queryEmployees().count();
         });
 
         // Then
@@ -449,7 +449,7 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert employee with all statuses")
-    void shouldInsertEmployeeWithAllStatuses(DbConfig config) {
+    void shouldInsertEmployeeWithAllStatuses(IntegrationTestContext context) {
         // Given
         Employee active = createTestEmployee(9080L, "Active Status");
         active.setStatus(EmployeeStatus.ACTIVE);
@@ -458,12 +458,12 @@ public class UpdateApiIntegrationTest {
         inactive.setStatus(EmployeeStatus.INACTIVE);
 
         // When
-        config.getUpdateExecutor().insert(active, Employee.class);
-        config.getUpdateExecutor().insert(inactive, Employee.class);
+        context.getUpdateExecutor().insert(active, Employee.class);
+        context.getUpdateExecutor().insert(inactive, Employee.class);
 
         // Then
-        Employee activeFromDb = config.queryEmployees().where(Employee::getId).eq(9080L).getSingle();
-        Employee inactiveFromDb = config.queryEmployees().where(Employee::getId).eq(9081L).getSingle();
+        Employee activeFromDb = context.queryEmployees().where(Employee::getId).eq(9080L).getSingle();
+        Employee inactiveFromDb = context.queryEmployees().where(Employee::getId).eq(9081L).getSingle();
 
         assertThat(activeFromDb.getStatus()).isEqualTo(EmployeeStatus.ACTIVE);
         assertThat(inactiveFromDb.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);

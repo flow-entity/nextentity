@@ -15,7 +15,7 @@ import javax.sql.DataSource;
  *
  * @author HuangChengwei
  */
-public class DbConfig {
+public class IntegrationTestContext {
 
     private final DataSource dataSource;
     private final Metamodel metamodel;
@@ -25,13 +25,13 @@ public class DbConfig {
     private final String implType;
     private final ContainerContext containerContext;
 
-    public DbConfig(ContainerContext containerContext,
-                    DataSource dataSource,
-                    Metamodel metamodel,
-                    QueryExecutor queryExecutor,
-                    UpdateExecutor updateExecutor,
-                    String dialect,
-                    String implType) {
+    public IntegrationTestContext(ContainerContext containerContext,
+                                  DataSource dataSource,
+                                  Metamodel metamodel,
+                                  QueryExecutor queryExecutor,
+                                  UpdateExecutor updateExecutor,
+                                  String dialect,
+                                  String implType) {
         this.containerContext = containerContext;
         this.dataSource = dataSource;
         this.metamodel = metamodel;
@@ -69,7 +69,7 @@ public class DbConfig {
         return new QueryBuilder<>(metamodel, queryExecutor, Department.class);
     }
 
-    public DbConfig reset() {
+    public IntegrationTestContext reset() {
         containerContext.reset(this);
         return this;
     }

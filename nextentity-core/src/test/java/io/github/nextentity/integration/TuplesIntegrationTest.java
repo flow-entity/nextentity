@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.*;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
@@ -28,9 +28,9 @@ public class TuplesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create Tuple2 from query projection")
-        void shouldCreateTuple2FromQueryProjection(DbConfig config) {
+        void shouldCreateTuple2FromQueryProjection(IntegrationTestContext context) {
             // When
-            List<Tuple2<String, Double>> results = config.queryEmployees()
+            List<Tuple2<String, Double>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary)
                     .where(Employee::getId).eq(1L)
                     .getList();
@@ -45,9 +45,9 @@ public class TuplesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create Tuple3 from query projection")
-        void shouldCreateTuple3FromQueryProjection(DbConfig config) {
+        void shouldCreateTuple3FromQueryProjection(IntegrationTestContext context) {
             // When
-            List<Tuple3<String, Double, Boolean>> results = config.queryEmployees()
+            List<Tuple3<String, Double, Boolean>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary, Employee::getActive)
                     .where(Employee::getId).eq(1L)
                     .getList();
@@ -63,9 +63,9 @@ public class TuplesIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle multiple tuple results")
-        void shouldHandleMultipleTupleResults(DbConfig config) {
+        void shouldHandleMultipleTupleResults(IntegrationTestContext context) {
             // When
-            List<Tuple2<String, Double>> results = config.queryEmployees()
+            List<Tuple2<String, Double>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary)
                     .orderBy(Employee::getId).asc()
                     .getList(0, 5);

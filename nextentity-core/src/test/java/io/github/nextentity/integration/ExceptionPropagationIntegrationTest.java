@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
@@ -34,7 +34,7 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception on duplicate primary key")
-    void shouldThrowExceptionOnDuplicatePrimaryKey(DbConfig config) {
+    void shouldThrowExceptionOnDuplicatePrimaryKey(IntegrationTestContext context) {
         // Given - employee with ID 1 already exists
         Employee duplicate = new Employee();
         duplicate.setId(1L); // Existing ID
@@ -47,7 +47,7 @@ public class ExceptionPropagationIntegrationTest {
         duplicate.setHireDate(LocalDate.now());
 
         // When/Then - should throw exception
-        assertThatThrownBy(() -> config.getUpdateExecutor().insert(duplicate, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().insert(duplicate, Employee.class))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -57,9 +57,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception for getSingle with multiple results")
-    void shouldThrowExceptionForGetSingleWithMultipleResults(DbConfig config) {
+    void shouldThrowExceptionForGetSingleWithMultipleResults(IntegrationTestContext context) {
         // When/Then - query that returns multiple results
-        assertThatThrownBy(() -> config.queryEmployees().getSingle())
+        assertThatThrownBy(() -> context.queryEmployees().getSingle())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -69,9 +69,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception for requireSingle with no results")
-    void shouldThrowExceptionForRequireSingleWithNoResults(DbConfig config) {
+    void shouldThrowExceptionForRequireSingleWithNoResults(IntegrationTestContext context) {
         // When/Then - query that returns no results
-        assertThatThrownBy(() -> config.queryEmployees()
+        assertThatThrownBy(() -> context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .requireSingle())
                 .isInstanceOf(NullPointerException.class);
@@ -83,9 +83,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return null for getSingle with no results")
-    void shouldReturnNullForGetSingleWithNoResults(DbConfig config) {
+    void shouldReturnNullForGetSingleWithNoResults(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .getSingle();
 
@@ -99,9 +99,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return first result")
-    void shouldReturnFirstResult(DbConfig config) {
+    void shouldReturnFirstResult(IntegrationTestContext context) {
         // When
-        var employee = config.queryEmployees()
+        var employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .first();
 
@@ -116,9 +116,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty optional for first with no results")
-    void shouldReturnEmptyOptionalForFirstWithNoResults(DbConfig config) {
+    void shouldReturnEmptyOptionalForFirstWithNoResults(IntegrationTestContext context) {
         // When
-        var employee = config.queryEmployees()
+        var employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .first();
 
@@ -132,9 +132,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return true for exist with results")
-    void shouldReturnTrueForExistWithResults(DbConfig config) {
+    void shouldReturnTrueForExistWithResults(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .exist();
 
@@ -148,9 +148,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return false for exist with no results")
-    void shouldReturnFalseForExistWithNoResults(DbConfig config) {
+    void shouldReturnFalseForExistWithNoResults(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .exist();
 
@@ -164,9 +164,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return zero count for no results")
-    void shouldReturnZeroCountForNoResults(DbConfig config) {
+    void shouldReturnZeroCountForNoResults(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .count();
 
@@ -180,9 +180,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list for no matches")
-    void shouldReturnEmptyListForNoMatches(DbConfig config) {
+    void shouldReturnEmptyListForNoMatches(IntegrationTestContext context) {
         // When
-        var employees = config.queryEmployees()
+        var employees = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .getList();
 
@@ -196,9 +196,9 @@ public class ExceptionPropagationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first from ordered results")
-    void shouldGetFirstFromOrderedResults(DbConfig config) {
+    void shouldGetFirstFromOrderedResults(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getFirst();
 

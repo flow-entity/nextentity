@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -39,9 +39,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select all employees")
-    void shouldSelectAllEmployees(DbConfig config) {
+    void shouldSelectAllEmployees(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().getList();
 
         // Then
         assertNotNull(employees);
@@ -54,9 +54,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select all departments")
-    void shouldSelectAllDepartments(DbConfig config) {
+    void shouldSelectAllDepartments(IntegrationTestContext context) {
         // When
-        List<Department> departments = config.queryDepartments().getList();
+        List<Department> departments = context.queryDepartments().getList();
 
         // Then
         assertNotNull(departments);
@@ -69,9 +69,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find employee by ID")
-    void shouldFindEmployeeById(DbConfig config) {
+    void shouldFindEmployeeById(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList().get(0);
 
@@ -87,9 +87,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by name with eq")
-    void shouldFilterEmployeesByName(DbConfig config) {
+    void shouldFilterEmployeesByName(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).eq("Alice Johnson")
                 .getList();
 
@@ -104,9 +104,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with ne condition")
-    void shouldFilterEmployeesWithNeCondition(DbConfig config) {
+    void shouldFilterEmployeesWithNeCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).ne(1L)
                 .getList();
 
@@ -121,9 +121,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with gt condition")
-    void shouldFilterEmployeesWithGtCondition(DbConfig config) {
+    void shouldFilterEmployeesWithGtCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).gt(10L)
                 .getList();
 
@@ -138,9 +138,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with lt condition")
-    void shouldFilterEmployeesWithLtCondition(DbConfig config) {
+    void shouldFilterEmployeesWithLtCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).lt(4L)
                 .getList();
 
@@ -155,9 +155,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with in condition")
-    void shouldFilterEmployeesWithInCondition(DbConfig config) {
+    void shouldFilterEmployeesWithInCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(1L, 3L, 5L)
                 .getList();
 
@@ -173,9 +173,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with notIn condition")
-    void shouldFilterEmployeesWithNotInCondition(DbConfig config) {
+    void shouldFilterEmployeesWithNotInCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).notIn(1L, 3L, 5L)
                 .getList();
 
@@ -191,15 +191,15 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with isNull condition")
-    void shouldFilterWithIsNullCondition(DbConfig config) {
+    void shouldFilterWithIsNullCondition(IntegrationTestContext context) {
         // First, update an employee to have null email
-        Employee employee = config.queryEmployees().where(Employee::getId).eq(1L).getList().get(0);
+        Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).getList().get(0);
         String email = employee.getEmail();
         employee.setEmail(null);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).isNull()
                 .getList();
 
@@ -207,7 +207,7 @@ public class QueryOperationsIntegrationTest {
         assertFalse(employees.isEmpty());
         assertTrue(employees.stream().anyMatch(e -> e.getId() == 1L));
         employee.setEmail(email);
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
     }
 
     /**
@@ -216,9 +216,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with isNotNull condition")
-    void shouldFilterWithIsNotNullCondition(DbConfig config) {
+    void shouldFilterWithIsNotNullCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).isNotNull()
                 .getList();
 
@@ -233,9 +233,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter active employees")
-    void shouldFilterActiveEmployees(DbConfig config) {
+    void shouldFilterActiveEmployees(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .getList();
 
@@ -250,9 +250,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order employees by id ascending")
-    void shouldOrderEmployeesByIdAsc(DbConfig config) {
+    void shouldOrderEmployeesByIdAsc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList();
 
@@ -269,9 +269,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order employees by id descending")
-    void shouldOrderEmployeesByIdDesc(DbConfig config) {
+    void shouldOrderEmployeesByIdDesc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).desc()
                 .getList();
 
@@ -288,9 +288,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order employees by department and name")
-    void shouldOrderEmployeesByMultipleFields(DbConfig config) {
+    void shouldOrderEmployeesByMultipleFields(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId).asc()
                 .orderBy(Employee::getName).asc()
                 .getList();
@@ -313,9 +313,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit results")
-    void shouldLimitResults(DbConfig config) {
+    void shouldLimitResults(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(0, 5);
 
@@ -331,9 +331,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should paginate with offset and limit")
-    void shouldPaginateWithOffsetAndLimit(DbConfig config) {
+    void shouldPaginateWithOffsetAndLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(5, 3);
 
@@ -349,9 +349,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees")
-    void shouldCountEmployees(DbConfig config) {
+    void shouldCountEmployees(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees().count();
+        long count = context.queryEmployees().count();
 
         // Then
         assertEquals(12, count);
@@ -363,9 +363,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check if employees exist")
-    void shouldCheckExistence(DbConfig config) {
+    void shouldCheckExistence(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees().exist();
+        boolean exists = context.queryEmployees().exist();
 
         // Then
         assertTrue(exists);
@@ -377,16 +377,16 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check existence with condition")
-    void shouldCheckExistenceWithCondition(DbConfig config) {
+    void shouldCheckExistenceWithCondition(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .exist();
 
         // Then
         assertTrue(exists);
 
-        boolean notExists = config.queryEmployees()
+        boolean notExists = context.queryEmployees()
                 .where(Employee::getId).eq(999L)
                 .exist();
 
@@ -399,9 +399,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first employee")
-    void shouldGetFirstEmployee(DbConfig config) {
+    void shouldGetFirstEmployee(IntegrationTestContext context) {
         // When
-        var firstOpt = config.queryEmployees()
+        var firstOpt = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .first();
 
@@ -416,9 +416,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with AND condition")
-    void shouldFilterWithAndCondition(DbConfig config) {
+    void shouldFilterWithAndCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
@@ -434,9 +434,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE condition")
-    void shouldFilterWithLikeCondition(DbConfig config) {
+    void shouldFilterWithLikeCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("A%")
                 .getList();
 
@@ -451,13 +451,13 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select projected fields")
-    void shouldSelectProjectedFields(DbConfig config) {
+    void shouldSelectProjectedFields(IntegrationTestContext context) {
         // When
-        List<Tuple2<String, String>> tuples = config.queryEmployees()
+        List<Tuple2<String, String>> tuples = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail)
                 .where(Employee::getId).eq(1L)
                 .getList();
-        Employee employee = config.queryEmployees().where(Employee::getId).eq(1L).getSingle();
+        Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).getSingle();
         System.out.println(employee);
         // Then
         assertEquals(1, tuples.size());
@@ -472,9 +472,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter departments by active status")
-    void shouldFilterDepartmentsByActiveStatus(DbConfig config) {
+    void shouldFilterDepartmentsByActiveStatus(IntegrationTestContext context) {
         // When
-        List<Department> departments = config.queryDepartments()
+        List<Department> departments = context.queryDepartments()
                 .where(Department::getActive).eq(true)
                 .orderBy(Department::getId).asc()
                 .getList();
@@ -490,9 +490,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by department")
-    void shouldFilterEmployeesByDepartment(DbConfig config) {
+    void shouldFilterEmployeesByDepartment(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -508,9 +508,9 @@ public class QueryOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by salary range")
-    void shouldFilterEmployeesBySalaryRange(DbConfig config) {
+    void shouldFilterEmployeesBySalaryRange(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).ge(60000.0)
                 .where(Employee::getSalary).le(80000.0)
                 .orderBy(Employee::getSalary).desc()

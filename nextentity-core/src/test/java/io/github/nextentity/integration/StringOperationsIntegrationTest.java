@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
@@ -32,9 +32,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE prefix pattern")
-    void shouldFilterWithLikePrefix(DbConfig config) {
+    void shouldFilterWithLikePrefix(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("A%")
                 .getList();
 
@@ -49,9 +49,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE suffix pattern")
-    void shouldFilterWithLikeSuffix(DbConfig config) {
+    void shouldFilterWithLikeSuffix(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).like("%@example.com")
                 .getList();
 
@@ -66,9 +66,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE contains pattern")
-    void shouldFilterWithLikeContains(DbConfig config) {
+    void shouldFilterWithLikeContains(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("%son%")
                 .getList();
 
@@ -83,9 +83,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWith")
-    void shouldFilterWithStartsWith(DbConfig config) {
+    void shouldFilterWithStartsWith(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWith("Alice")
                 .getList();
 
@@ -100,9 +100,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWith")
-    void shouldFilterWithEndsWith(DbConfig config) {
+    void shouldFilterWithEndsWith(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWith("@example.com")
                 .getList();
 
@@ -117,9 +117,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with contains")
-    void shouldFilterWithContains(DbConfig config) {
+    void shouldFilterWithContains(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).contains("John")
                 .getList();
 
@@ -134,9 +134,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with NOT LIKE")
-    void shouldFilterWithNotLike(DbConfig config) {
+    void shouldFilterWithNotLike(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notLike("A%")
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -152,9 +152,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWith")
-    void shouldFilterWithNotStartsWith(DbConfig config) {
+    void shouldFilterWithNotStartsWith(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWith("A")
                 .getList();
 
@@ -169,9 +169,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContains")
-    void shouldFilterWithNotContains(DbConfig config) {
+    void shouldFilterWithNotContains(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContains("Alice")
                 .getList();
 
@@ -186,9 +186,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with likeIfNotNull when value is not null")
-    void shouldFilterWithLikeIfNotNull(DbConfig config) {
+    void shouldFilterWithLikeIfNotNull(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotNull("A%")
                 .getList();
 
@@ -203,12 +203,12 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when likeIfNotNull is null")
-    void shouldReturnAllWhenLikeIfNotNullIsNull(DbConfig config) {
+    void shouldReturnAllWhenLikeIfNotNullIsNull(IntegrationTestContext context) {
         // Given
-        long totalCount = config.queryEmployees().count();
+        long totalCount = context.queryEmployees().count();
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotNull(null)
                 .getList();
 
@@ -222,9 +222,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with likeIfNotEmpty when value is not empty")
-    void shouldFilterWithLikeIfNotEmpty(DbConfig config) {
+    void shouldFilterWithLikeIfNotEmpty(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotEmpty("A%")
                 .getList();
 
@@ -239,12 +239,12 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when likeIfNotEmpty is empty")
-    void shouldReturnAllWhenLikeIfNotEmptyIsEmpty(DbConfig config) {
+    void shouldReturnAllWhenLikeIfNotEmptyIsEmpty(IntegrationTestContext context) {
         // Given
-        long totalCount = config.queryEmployees().count();
+        long totalCount = context.queryEmployees().count();
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotEmpty("")
                 .getList();
 
@@ -258,9 +258,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with multiple LIKE conditions")
-    void shouldFilterWithMultipleLikeConditions(DbConfig config) {
+    void shouldFilterWithMultipleLikeConditions(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("A%")
                 .where(Employee::getEmail).like("%@example.com")
                 .getList();
@@ -277,9 +277,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE containing special characters")
-    void shouldFilterWithLikeSpecialChars(DbConfig config) {
+    void shouldFilterWithLikeSpecialChars(IntegrationTestContext context) {
         // When - email contains @
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).like("%@%")
                 .getList();
 
@@ -294,9 +294,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with case-insensitive pattern using lower")
-    void shouldFilterWithCaseInsensitiveUsingLower(DbConfig config) {
+    void shouldFilterWithCaseInsensitiveUsingLower(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).lower().like("alice%")
                 .getList();
 
@@ -311,9 +311,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter by string length")
-    void shouldFilterByStringLength(DbConfig config) {
+    void shouldFilterByStringLength(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).length().ge(10)
                 .getList();
 
@@ -328,9 +328,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by string field ascending")
-    void shouldOrderByStringAsc(DbConfig config) {
+    void shouldOrderByStringAsc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getName).asc()
                 .getList();
 
@@ -348,9 +348,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by string field descending")
-    void shouldOrderByStringDesc(DbConfig config) {
+    void shouldOrderByStringDesc(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getName).desc()
                 .getList();
 
@@ -368,9 +368,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle LIKE with underscore wildcard")
-    void shouldHandleLikeWithUnderscore(DbConfig config) {
+    void shouldHandleLikeWithUnderscore(IntegrationTestContext context) {
         // When - any single character followed by 'lice'
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("_lice%")
                 .getList();
 
@@ -386,9 +386,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple string operations")
-    void shouldCombineStringOperations(DbConfig config) {
+    void shouldCombineStringOperations(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("A%")
                 .where(Employee::getEmail).contains("@")
                 .orderBy(Employee::getName).asc()
@@ -406,9 +406,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty when LIKE has no matches")
-    void shouldReturnEmptyWhenNoMatches(DbConfig config) {
+    void shouldReturnEmptyWhenNoMatches(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("ZZZZZZ%")
                 .getList();
 
@@ -422,9 +422,9 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select string field")
-    void shouldSelectStringField(DbConfig config) {
+    void shouldSelectStringField(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .select(Employee::getName)
                 .orderBy(Employee::getName).asc()
                 .getList();
@@ -440,14 +440,14 @@ public class StringOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct string values")
-    void shouldSelectDistinctString(DbConfig config) {
+    void shouldSelectDistinctString(IntegrationTestContext context) {
         // When
-        List<String> emails = config.queryEmployees()
+        List<String> emails = context.queryEmployees()
                 .selectDistinct(Employee::getEmail)
                 .getList();
 
         // Then
         assertThat(emails).isNotEmpty();
-        assertThat(emails).hasSize((int) config.queryEmployees().count());
+        assertThat(emails).hasSize((int) context.queryEmployees().count());
     }
 }

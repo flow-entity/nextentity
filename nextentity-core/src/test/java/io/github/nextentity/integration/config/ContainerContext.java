@@ -9,8 +9,8 @@ import java.util.Collection;
  */
 public interface ContainerContext {
 
-    Collection<DbConfig> getConfigs();
+    Collection<IntegrationTestContext> getConfigs();
 
-    void reset(DbConfig config);
+    void reset(IntegrationTestContext context);
 
 }

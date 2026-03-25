@@ -1,10 +1,9 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
-import io.github.nextentity.integration.entity.EmployeeStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -35,9 +34,9 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should create subquery from query")
-    void shouldCreateSubqueryFromQuery(DbConfig config) {
+    void shouldCreateSubqueryFromQuery(IntegrationTestContext context) {
         // When
-        var subquery = config.queryEmployees()
+        var subquery = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .asSubQuery();
 
@@ -51,14 +50,14 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count using subquery")
-    void shouldCountUsingSubquery(DbConfig config) {
+    void shouldCountUsingSubquery(IntegrationTestContext context) {
         // Given - Count employees in department 1
-        long subqueryCount = config.queryEmployees()
+        long subqueryCount = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .count();
 
         // When - Get count directly
-        long directCount = config.queryEmployees()
+        long directCount = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .count();
 
@@ -73,9 +72,9 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice subquery results")
-    void shouldSliceSubqueryResults(DbConfig config) {
+    void shouldSliceSubqueryResults(IntegrationTestContext context) {
         // Given
-        var sliceExpr = config.queryEmployees()
+        var sliceExpr = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .asSubQuery()
                 .slice(0, 5);
@@ -90,9 +89,9 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single from subquery")
-    void shouldGetSingleFromSubquery(DbConfig config) {
+    void shouldGetSingleFromSubquery(IntegrationTestContext context) {
         // Given
-        var singleExpr = config.queryEmployees()
+        var singleExpr = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .asSubQuery()
                 .getSingle();
@@ -107,9 +106,9 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first from subquery")
-    void shouldGetFirstFromSubquery(DbConfig config) {
+    void shouldGetFirstFromSubquery(IntegrationTestContext context) {
         // Given
-        var firstExpr = config.queryEmployees()
+        var firstExpr = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .asSubQuery()
                 .getFirst();
@@ -124,14 +123,14 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should compare with max expression")
-    void shouldCompareWithMaxExpression(DbConfig config) {
+    void shouldCompareWithMaxExpression(IntegrationTestContext context) {
         // Given - Get max salary
-        Double maxSalary = config.queryEmployees()
+        Double maxSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).max())
                 .getSingle();
 
         // When - Find employees with max salary
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).eq(maxSalary)
                 .getList();
 
@@ -146,14 +145,14 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should compare with min expression")
-    void shouldCompareWithMinExpression(DbConfig config) {
+    void shouldCompareWithMinExpression(IntegrationTestContext context) {
         // Given - Get min salary
-        Double minSalary = config.queryEmployees()
+        Double minSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees with min salary
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).eq(minSalary)
                 .getList();
 
@@ -167,18 +166,18 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should compare with average expression")
-    void shouldCompareWithAverageExpression(DbConfig config) {
+    void shouldCompareWithAverageExpression(IntegrationTestContext context) {
         // Given - Get average salary
-        Double avgSalary = config.queryEmployees()
+        Double avgSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .getSingle();
 
         // When - Find employees above average
-        List<Employee> aboveAvg = config.queryEmployees()
+        List<Employee> aboveAvg = context.queryEmployees()
                 .where(Employee::getSalary).gt(avgSalary)
                 .getList();
 
-        List<Employee> belowAvg = config.queryEmployees()
+        List<Employee> belowAvg = context.queryEmployees()
                 .where(Employee::getSalary).lt(avgSalary)
                 .getList();
 
@@ -193,15 +192,15 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle two-step query")
-    void shouldHandleTwoStepQuery(DbConfig config) {
+    void shouldHandleTwoStepQuery(IntegrationTestContext context) {
         // Given - Get active department IDs
-        List<Long> activeDeptIds = config.queryDepartments()
+        List<Long> activeDeptIds = context.queryDepartments()
                 .select(Department::getId)
                 .where(Department::getActive).eq(true)
                 .getList();
 
         // When - Find employees in active departments
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(activeDeptIds)
                 .getList();
 
@@ -216,12 +215,12 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use pre-computed values in query")
-    void shouldUsePrecomputedValuesInQuery(DbConfig config) {
+    void shouldUsePrecomputedValuesInQuery(IntegrationTestContext context) {
         // Given - Pre-compute department IDs
         List<Long> deptIds = List.of(1L, 2L, 3L);
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(deptIds)
                 .getList();
 
@@ -236,15 +235,15 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with two-step approach for status")
-    void shouldFilterWithTwoStepForStatus(DbConfig config) {
+    void shouldFilterWithTwoStepForStatus(IntegrationTestContext context) {
         // Given - Get IDs of active employees
-        List<Long> activeIds = config.queryEmployees()
+        List<Long> activeIds = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getActive).eq(true)
                 .getList();
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(activeIds)
                 .getList();
 
@@ -259,15 +258,15 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with two-step approach for salary")
-    void shouldFilterWithTwoStepForSalary(DbConfig config) {
+    void shouldFilterWithTwoStepForSalary(IntegrationTestContext context) {
         // Given - Get IDs of high-salary employees
-        List<Long> highSalaryIds = config.queryEmployees()
+        List<Long> highSalaryIds = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getSalary).gt(70000.0)
                 .getList();
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(highSalaryIds)
                 .getList();
 
@@ -282,15 +281,15 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with NOT IN using pre-computed values")
-    void shouldFilterWithNotInPrecomputed(DbConfig config) {
+    void shouldFilterWithNotInPrecomputed(IntegrationTestContext context) {
         // Given - Get IDs of employees in department 1
-        List<Long> dept1Ids = config.queryEmployees()
+        List<Long> dept1Ids = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
 
         // When - Find employees NOT in department 1
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).notIn(dept1Ids)
                 .getList();
 
@@ -305,14 +304,14 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should aggregate with filter")
-    void shouldAggregateWithFilter(DbConfig config) {
+    void shouldAggregateWithFilter(IntegrationTestContext context) {
         // Given - Get min salary
-        Double minSalary = config.queryEmployees()
+        Double minSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees with salary above min
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(minSalary)
                 .getList();
 
@@ -320,7 +319,7 @@ public class SubqueryIntegrationTest {
         assertThat(employees).isNotEmpty();
 
         // Should have at least one employee NOT in the result (the min salary employee)
-        long total = config.queryEmployees().count();
+        long total = context.queryEmployees().count();
         assertThat(employees.size()).isLessThan((int) total);
     }
 
@@ -330,30 +329,30 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple aggregations")
-    void shouldCombineMultipleAggregations(DbConfig config) {
+    void shouldCombineMultipleAggregations(IntegrationTestContext context) {
         // Given
-        Long count = config.queryEmployees()
+        Long count = context.queryEmployees()
                 .select(get(Employee::getId).count())
                 .getSingle();
 
-        Double avg = config.queryEmployees()
+        Double avg = context.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .getSingle();
 
-        Double max = config.queryEmployees()
+        Double max = context.queryEmployees()
                 .select(get(Employee::getSalary).max())
                 .getSingle();
 
-        Double min = config.queryEmployees()
+        Double min = context.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees in various ranges
-        List<Employee> aboveAvg = config.queryEmployees()
+        List<Employee> aboveAvg = context.queryEmployees()
                 .where(Employee::getSalary).ge(avg)
                 .getList();
 
-        List<Employee> belowAvg = config.queryEmployees()
+        List<Employee> belowAvg = context.queryEmployees()
                 .where(Employee::getSalary).le(avg)
                 .getList();
 
@@ -369,9 +368,9 @@ public class SubqueryIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query by IDs with order")
-    void shouldQueryByIdsWithOrder(DbConfig config) {
+    void shouldQueryByIdsWithOrder(IntegrationTestContext context) {
         // Given - Get top 3 salary IDs
-        List<Long> topSalaryIds = config.queryEmployees()
+        List<Long> topSalaryIds = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .limit(3)
                 .stream()
@@ -379,7 +378,7 @@ public class SubqueryIntegrationTest {
                 .toList();
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(topSalaryIds)
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -388,7 +387,7 @@ public class SubqueryIntegrationTest {
         assertThat(employees).hasSize(3);
 
         // Verify these are indeed high-salary employees
-        List<Employee> allEmployees = config.queryEmployees()
+        List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .getList();
 

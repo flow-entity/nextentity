@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -45,15 +45,15 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert single employee")
-    void shouldInsertSingleEmployee(DbConfig config) {
+    void shouldInsertSingleEmployee(IntegrationTestContext context) {
         // Given
         Employee newEmployee = createTestEmployee(100L, "Test User", "test@example.com");
 
         // When
-        config.getUpdateExecutor().insert(newEmployee, Employee.class);
+        context.getUpdateExecutor().insert(newEmployee, Employee.class);
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(100L)
                 .getList();
         assertThat(employees).hasSize(1);
@@ -67,7 +67,7 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert multiple employees")
-    void shouldInsertMultipleEmployees(DbConfig config) {
+    void shouldInsertMultipleEmployees(IntegrationTestContext context) {
         // Given
         List<Employee> newEmployees = new ArrayList<>();
         newEmployees.add(createTestEmployee(200L, "User 200", "user200@example.com"));
@@ -75,10 +75,10 @@ public class CrudOperationsIntegrationTest {
         newEmployees.add(createTestEmployee(202L, "User 202", "user202@example.com"));
 
         // When
-        config.getUpdateExecutor().insertAll(newEmployees, Employee.class);
+        context.getUpdateExecutor().insertAll(newEmployees, Employee.class);
 
         // Then
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(200L, 201L, 202L)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -93,15 +93,15 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert single department")
-    void shouldInsertSingleDepartment(DbConfig config) {
+    void shouldInsertSingleDepartment(IntegrationTestContext context) {
         // Given
         Department newDept = new Department(100L, "IT", "Building E", 500000.0, true);
 
         // When
-        config.getUpdateExecutor().insert(newDept, Department.class);
+        context.getUpdateExecutor().insert(newDept, Department.class);
 
         // Then
-        List<Department> departments = config.queryDepartments()
+        List<Department> departments = context.queryDepartments()
                 .where(Department::getId).eq(100L)
                 .getList();
         assertThat(departments).hasSize(1);
@@ -115,9 +115,9 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update single employee")
-    void shouldUpdateSingleEmployee(DbConfig config) {
+    void shouldUpdateSingleEmployee(IntegrationTestContext context) {
         // Given
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList().get(0);
         String originalName = employee.getName();
@@ -125,10 +125,10 @@ public class CrudOperationsIntegrationTest {
         employee.setSalary(99999.0);
 
         // When
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee updated = config.queryEmployees()
+        Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList().get(0);
         assertThat(updated.getName()).isEqualTo("Updated Name");
@@ -142,9 +142,9 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update multiple employees")
-    void shouldUpdateMultipleEmployees(DbConfig config) {
+    void shouldUpdateMultipleEmployees(IntegrationTestContext context) {
         // Given
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
 
@@ -153,10 +153,10 @@ public class CrudOperationsIntegrationTest {
         }
 
         // When
-        config.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, Employee.class);
 
         // Then
-        List<Employee> updated = config.queryEmployees()
+        List<Employee> updated = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
         assertThat(updated).hasSize(employees.size());
@@ -171,22 +171,22 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete single employee")
-    void shouldDeleteSingleEmployee(DbConfig config) {
+    void shouldDeleteSingleEmployee(IntegrationTestContext context) {
         // Given - create an employee to delete
         Employee newEmployee = createTestEmployee(300L, "To Delete", "delete@example.com");
-        config.getUpdateExecutor().insert(newEmployee, Employee.class);
+        context.getUpdateExecutor().insert(newEmployee, Employee.class);
 
         // Verify it exists
-        List<Employee> before = config.queryEmployees()
+        List<Employee> before = context.queryEmployees()
                 .where(Employee::getId).eq(300L)
                 .getList();
         assertThat(before).hasSize(1);
 
         // When
-        config.getUpdateExecutor().delete(newEmployee, Employee.class);
+        context.getUpdateExecutor().delete(newEmployee, Employee.class);
 
         // Then
-        List<Employee> after = config.queryEmployees()
+        List<Employee> after = context.queryEmployees()
                 .where(Employee::getId).eq(300L)
                 .getList();
         assertThat(after).isEmpty();
@@ -198,24 +198,24 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete multiple employees")
-    void shouldDeleteMultipleEmployees(DbConfig config) {
+    void shouldDeleteMultipleEmployees(IntegrationTestContext context) {
         // Given - create employees to delete
         List<Employee> newEmployees = new ArrayList<>();
         newEmployees.add(createTestEmployee(400L, "Delete 1", "delete1@example.com"));
         newEmployees.add(createTestEmployee(401L, "Delete 2", "delete2@example.com"));
-        config.getUpdateExecutor().insertAll(newEmployees, Employee.class);
+        context.getUpdateExecutor().insertAll(newEmployees, Employee.class);
 
         // Verify they exist
-        List<Employee> before = config.queryEmployees()
+        List<Employee> before = context.queryEmployees()
                 .where(Employee::getId).in(400L, 401L)
                 .getList();
         assertThat(before).hasSize(2);
 
         // When
-        config.getUpdateExecutor().deleteAll(newEmployees, Employee.class);
+        context.getUpdateExecutor().deleteAll(newEmployees, Employee.class);
 
         // Then
-        List<Employee> after = config.queryEmployees()
+        List<Employee> after = context.queryEmployees()
                 .where(Employee::getId).in(400L, 401L)
                 .getList();
         assertThat(after).isEmpty();
@@ -227,19 +227,19 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete with where condition")
-    void shouldDeleteWithWhereCondition(DbConfig config) {
+    void shouldDeleteWithWhereCondition(IntegrationTestContext context) {
         // Given - create an employee to delete
         Employee newEmployee = createTestEmployee(500L, "Condition Delete", "cond@example.com");
-        config.getUpdateExecutor().insert(newEmployee, Employee.class);
+        context.getUpdateExecutor().insert(newEmployee, Employee.class);
 
         // When - delete using where clause
-        Employee toDelete = config.queryEmployees()
+        Employee toDelete = context.queryEmployees()
                 .where(Employee::getId).eq(500L)
                 .getList().get(0);
-        config.getUpdateExecutor().delete(toDelete, Employee.class);
+        context.getUpdateExecutor().delete(toDelete, Employee.class);
 
         // Then
-        List<Employee> after = config.queryEmployees()
+        List<Employee> after = context.queryEmployees()
                 .where(Employee::getId).eq(500L)
                 .getList();
         assertThat(after).isEmpty();
@@ -251,19 +251,19 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update employee status")
-    void shouldUpdateEmployeeStatus(DbConfig config) {
+    void shouldUpdateEmployeeStatus(IntegrationTestContext context) {
         // Given
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList().get(0);
         EmployeeStatus originalStatus = employee.getStatus();
         employee.setStatus(EmployeeStatus.INACTIVE);
 
         // When
-        config.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, Employee.class);
 
         // Then
-        Employee updated = config.queryEmployees()
+        Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList().get(0);
         assertThat(updated.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
@@ -276,21 +276,21 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert and update department")
-    void shouldInsertAndUpdateDepartment(DbConfig config) {
+    void shouldInsertAndUpdateDepartment(IntegrationTestContext context) {
         // Given - insert new department
         Department newDept = new Department(200L, "Research", "Building F", 300000.0, true);
-        config.getUpdateExecutor().insert(newDept, Department.class);
+        context.getUpdateExecutor().insert(newDept, Department.class);
 
         // When - update the department
-        Department dept = config.queryDepartments()
+        Department dept = context.queryDepartments()
                 .where(Department::getId).eq(200L)
                 .getList().get(0);
         dept.setBudget(400000.0);
         dept.setLocation("Building G");
-        config.getUpdateExecutor().update(dept, Department.class);
+        context.getUpdateExecutor().update(dept, Department.class);
 
         // Then
-        Department updated = config.queryDepartments()
+        Department updated = context.queryDepartments()
                 .where(Department::getId).eq(200L)
                 .getList().get(0);
         assertThat(updated.getBudget()).isEqualTo(400000.0);
@@ -303,7 +303,7 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert employee with all fields")
-    void shouldInsertEmployeeWithAllFields(DbConfig config) {
+    void shouldInsertEmployeeWithAllFields(IntegrationTestContext context) {
         // Given
         Employee employee = new Employee();
         employee.setId(600L);
@@ -316,10 +316,10 @@ public class CrudOperationsIntegrationTest {
         employee.setHireDate(LocalDate.of(2024, 1, 15));
 
         // When
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Then
-        Employee inserted = config.queryEmployees()
+        Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(600L)
                 .getList().get(0);
         assertThat(inserted.getName()).isEqualTo("Full Employee");
@@ -334,12 +334,12 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fail when inserting duplicate ID")
-    void shouldFailOnDuplicateId(DbConfig config) {
+    void shouldFailOnDuplicateId(IntegrationTestContext context) {
         // Given - employee with ID 1 already exists
         Employee duplicateEmployee = createTestEmployee(1L, "Duplicate", "dup@example.com");
 
         // When/Then - should throw exception
-        assertThatThrownBy(() -> config.getUpdateExecutor().insert(duplicateEmployee, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().insert(duplicateEmployee, Employee.class))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -350,13 +350,13 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle update of non-existent employee")
-    void shouldHandleUpdateNonExistent(DbConfig config) {
+    void shouldHandleUpdateNonExistent(IntegrationTestContext context) {
         // Given
         Employee nonExistent = createTestEmployee(9999L, "Non Existent", "none@example.com");
 
         // When/Then - should throw exception (entity not found)
         // TODO fix bug
-        assertThatThrownBy(() -> config.getUpdateExecutor().update(nonExistent, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().update(nonExistent, Employee.class))
                 .isInstanceOf(RuntimeException.class);
 
     }
@@ -372,7 +372,7 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle delete of non-existent employee")
-    void shouldHandleDeleteNonExistent(DbConfig config) {
+    void shouldHandleDeleteNonExistent(IntegrationTestContext context) {
         // Given
         Employee nonExistent = createTestEmployee(9998L, "Non Existent", "none@example.com");
 
@@ -380,7 +380,7 @@ public class CrudOperationsIntegrationTest {
         // JPA: entityManager.remove() on non-existent entity is a no-op
         // JDBC: delete operation affects 0 rows, but doesn't throw exception
         // TODO delete operation on non-existent entity should handle gracefully
-        assertThatThrownBy(() -> config.getUpdateExecutor().delete(nonExistent, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().delete(nonExistent, Employee.class))
                 .isInstanceOf(RuntimeException.class);
         // Then - operation completes without error (implementation-specific behavior)
         // This test documents that delete of non-existent entities is allowed
@@ -392,15 +392,15 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert employee with null email")
-    void shouldInsertEmployeeWithNullEmail(DbConfig config) {
+    void shouldInsertEmployeeWithNullEmail(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(700L, "No Email", null);
 
         // When
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Then
-        Employee inserted = config.queryEmployees()
+        Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(700L)
                 .getList().get(0);
         assertThat(inserted.getName()).isEqualTo("No Email");
@@ -413,12 +413,12 @@ public class CrudOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch insert")
-    void shouldHandleEmptyBatchInsert(DbConfig config) {
+    void shouldHandleEmptyBatchInsert(IntegrationTestContext context) {
         // Given
         List<Employee> emptyList = new ArrayList<>();
 
         // When/Then - should not throw exception
-        assertThatNoException().isThrownBy(() -> config.getUpdateExecutor().insertAll(emptyList, Employee.class));
+        assertThatNoException().isThrownBy(() -> context.getUpdateExecutor().insertAll(emptyList, Employee.class));
     }
 
     private Employee createTestEmployee(Long id, String name, String email) {

@@ -2,7 +2,7 @@ package io.github.nextentity.integration;
 
 import io.github.nextentity.api.Update;
 import io.github.nextentity.core.Updaters;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -41,9 +41,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create Update instance for Employee")
-        void shouldCreateUpdateInstanceForEmployee(DbConfig config) {
+        void shouldCreateUpdateInstanceForEmployee(IntegrationTestContext context) {
             // When
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
 
             // Then
             assertThat(update).isNotNull();
@@ -52,9 +52,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create Update instance for Department")
-        void shouldCreateUpdateInstanceForDepartment(DbConfig config) {
+        void shouldCreateUpdateInstanceForDepartment(IntegrationTestContext context) {
             // When
-            Update<Department> update = Updaters.create(config.getUpdateExecutor(), Department.class);
+            Update<Department> update = Updaters.create(context.getUpdateExecutor(), Department.class);
 
             // Then
             assertThat(update).isNotNull();
@@ -63,9 +63,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Update toString should contain entity type name")
-        void updateToStringShouldContainEntityTypeName(DbConfig config) {
+        void updateToStringShouldContainEntityTypeName(IntegrationTestContext context) {
             // When
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
 
             // Then
             String str = update.toString();
@@ -80,16 +80,16 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should insert single entity via Update interface")
-        void shouldInsertSingleEntityViaUpdateInterface(DbConfig config) {
+        void shouldInsertSingleEntityViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             Employee employee = createTestEmployee(8001L, "Update Test");
 
             // When
             update.insert(employee);
 
             // Then
-            Employee found = config.queryEmployees()
+            Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(8001L)
                     .getSingle();
             assertThat(found).isNotNull();
@@ -99,9 +99,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should update single entity via Update interface")
-        void shouldUpdateSingleEntityViaUpdateInterface(DbConfig config) {
+        void shouldUpdateSingleEntityViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             Employee employee = createTestEmployee(8002L, "Before Update");
             update.insert(employee);
 
@@ -113,7 +113,7 @@ public class UpdatersIntegrationTest {
             assertThat(updated).isNotNull();
             assertThat(updated.getName()).isEqualTo("After Update");
 
-            Employee found = config.queryEmployees()
+            Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(8002L)
                     .getSingle();
             assertThat(found.getName()).isEqualTo("After Update");
@@ -122,14 +122,14 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should delete single entity via Update interface")
-        void shouldDeleteSingleEntityViaUpdateInterface(DbConfig config) {
+        void shouldDeleteSingleEntityViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             Employee employee = createTestEmployee(8003L, "To Delete");
             update.insert(employee);
 
             // Verify exists
-            Employee before = config.queryEmployees()
+            Employee before = context.queryEmployees()
                     .where(Employee::getId).eq(8003L)
                     .getSingle();
             assertThat(before).isNotNull();
@@ -138,7 +138,7 @@ public class UpdatersIntegrationTest {
             update.delete(employee);
 
             // Then
-            Employee after = config.queryEmployees()
+            Employee after = context.queryEmployees()
                     .where(Employee::getId).eq(8003L)
                     .getSingle();
             assertThat(after).isNull();
@@ -148,9 +148,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should update non-null columns via updateNonNullColumn")
-        void shouldUpdateNonNullColumnsViaUpdateNonNullColumn(DbConfig config) {
+        void shouldUpdateNonNullColumnsViaUpdateNonNullColumn(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             Employee employee = createTestEmployee(8004L, "Patch Test");
             update.insert(employee);
 
@@ -167,7 +167,7 @@ public class UpdatersIntegrationTest {
             assertThat(updated.getName()).isEqualTo("Patched Name");
 
             // Verify other fields are not changed
-            Employee found = config.queryEmployees()
+            Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(8004L)
                     .getSingle();
             assertThat(found.getSalary()).isEqualTo(50000.0); // Original value
@@ -181,9 +181,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should insert multiple entities via Update interface")
-        void shouldInsertMultipleEntitiesViaUpdateInterface(DbConfig config) {
+        void shouldInsertMultipleEntitiesViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             List<Employee> employees = new ArrayList<>();
             employees.add(createTestEmployee(8011L, "Batch 1"));
             employees.add(createTestEmployee(8012L, "Batch 2"));
@@ -193,7 +193,7 @@ public class UpdatersIntegrationTest {
             update.insert(employees);
 
             // Then
-            List<Employee> found = config.queryEmployees()
+            List<Employee> found = context.queryEmployees()
                     .where(Employee::getId).in(8011L, 8012L, 8013L)
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -203,9 +203,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should update multiple entities via Update interface")
-        void shouldUpdateMultipleEntitiesViaUpdateInterface(DbConfig config) {
+        void shouldUpdateMultipleEntitiesViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             List<Employee> employees = new ArrayList<>();
             employees.add(createTestEmployee(8021L, "Update Batch 1"));
             employees.add(createTestEmployee(8022L, "Update Batch 2"));
@@ -226,16 +226,16 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should delete multiple entities via Update interface")
-        void shouldDeleteMultipleEntitiesViaUpdateInterface(DbConfig config) {
+        void shouldDeleteMultipleEntitiesViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             List<Employee> employees = new ArrayList<>();
             employees.add(createTestEmployee(8031L, "Delete Batch 1"));
             employees.add(createTestEmployee(8032L, "Delete Batch 2"));
             update.insert(employees);
 
             // Verify exists
-            List<Employee> before = config.queryEmployees()
+            List<Employee> before = context.queryEmployees()
                     .where(Employee::getId).in(8031L, 8032L)
                     .getList();
             assertThat(before).hasSize(2);
@@ -244,7 +244,7 @@ public class UpdatersIntegrationTest {
             update.delete(employees);
 
             // Then
-            List<Employee> after = config.queryEmployees()
+            List<Employee> after = context.queryEmployees()
                     .where(Employee::getId).in(8031L, 8032L)
                     .getList();
             assertThat(after).isEmpty();
@@ -253,9 +253,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle empty list for batch insert")
-        void shouldHandleEmptyListForBatchInsert(DbConfig config) {
+        void shouldHandleEmptyListForBatchInsert(IntegrationTestContext context) {
             // Given
-            Update<Employee> update = Updaters.create(config.getUpdateExecutor(), Employee.class);
+            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             List<Employee> emptyList = new ArrayList<>();
 
             // When/Then - should not throw exception
@@ -270,16 +270,16 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should insert department via Update interface")
-        void shouldInsertDepartmentViaUpdateInterface(DbConfig config) {
+        void shouldInsertDepartmentViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Department> update = Updaters.create(config.getUpdateExecutor(), Department.class);
+            Update<Department> update = Updaters.create(context.getUpdateExecutor(), Department.class);
             Department dept = new Department(9001L, "Test Dept", "Location A", 100000.0, true);
 
             // When
             update.insert(dept);
 
             // Then
-            Department found = config.queryDepartments()
+            Department found = context.queryDepartments()
                     .where(Department::getId).eq(9001L)
                     .getSingle();
             assertThat(found).isNotNull();
@@ -289,9 +289,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should update department via Update interface")
-        void shouldUpdateDepartmentViaUpdateInterface(DbConfig config) {
+        void shouldUpdateDepartmentViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Department> update = Updaters.create(config.getUpdateExecutor(), Department.class);
+            Update<Department> update = Updaters.create(context.getUpdateExecutor(), Department.class);
             Department dept = new Department(9002L, "Original Name", "Location B", 100000.0, true);
             update.insert(dept);
 
@@ -308,9 +308,9 @@ public class UpdatersIntegrationTest {
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should delete department via Update interface")
-        void shouldDeleteDepartmentViaUpdateInterface(DbConfig config) {
+        void shouldDeleteDepartmentViaUpdateInterface(IntegrationTestContext context) {
             // Given
-            Update<Department> update = Updaters.create(config.getUpdateExecutor(), Department.class);
+            Update<Department> update = Updaters.create(context.getUpdateExecutor(), Department.class);
             Department dept = new Department(9003L, "To Delete", "Location C", 100000.0, true);
             update.insert(dept);
 
@@ -318,7 +318,7 @@ public class UpdatersIntegrationTest {
             update.delete(dept);
 
             // Then
-            Department found = config.queryDepartments()
+            Department found = context.queryDepartments()
                     .where(Department::getId).eq(9003L)
                     .getSingle();
             assertThat(found).isNull();

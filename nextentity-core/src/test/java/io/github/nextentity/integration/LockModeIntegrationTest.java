@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.LockModeType;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -37,10 +37,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic read lock")
-    void shouldQueryWithPessimisticRead(DbConfig config) {
+    void shouldQueryWithPessimisticRead(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
         );
@@ -53,10 +53,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with pessimistic read lock")
-    void shouldGetSingleWithPessimisticRead(DbConfig config) {
+    void shouldGetSingleWithPessimisticRead(IntegrationTestContext context) {
         // When
-        Employee employee = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        Employee employee = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getSingle(0, LockModeType.PESSIMISTIC_READ)
         );
@@ -73,10 +73,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic write lock")
-    void shouldQueryWithPessimisticWrite(DbConfig config) {
+    void shouldQueryWithPessimisticWrite(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.PESSIMISTIC_WRITE)
         );
@@ -89,10 +89,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with pessimistic write lock")
-    void shouldGetSingleWithPessimisticWrite(DbConfig config) {
+    void shouldGetSingleWithPessimisticWrite(IntegrationTestContext context) {
         // When
-        Employee employee = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        Employee employee = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getSingle(0, LockModeType.PESSIMISTIC_WRITE)
         );
@@ -109,10 +109,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic lock")
-    void shouldQueryWithOptimistic(DbConfig config) {
+    void shouldQueryWithOptimistic(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.OPTIMISTIC)
         );
@@ -125,10 +125,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic force increment lock")
-    void shouldQueryWithOptimisticForceIncrement(DbConfig config) {
+    void shouldQueryWithOptimisticForceIncrement(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
         );
@@ -145,10 +145,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with read lock")
-    void shouldQueryWithReadLock(DbConfig config) {
+    void shouldQueryWithReadLock(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.READ)
         );
@@ -161,10 +161,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with write lock")
-    void shouldQueryWithWriteLock(DbConfig config) {
+    void shouldQueryWithWriteLock(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.WRITE)
         );
@@ -181,10 +181,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with no lock")
-    void shouldQueryWithNoLock(DbConfig config) {
+    void shouldQueryWithNoLock(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, LockModeType.NONE)
         );
@@ -201,10 +201,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should lock with where condition")
-    void shouldLockWithWhereCondition(DbConfig config) {
+    void shouldLockWithWhereCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getActive).eq(true)
                         .orderBy(Employee::getId).asc()
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
@@ -218,10 +218,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should lock with multiple conditions")
-    void shouldLockWithMultipleConditions(DbConfig config) {
+    void shouldLockWithMultipleConditions(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getActive).eq(true)
                         .where(Employee::getSalary).gt(50000.0)
                         .getList(0, 10, LockModeType.PESSIMISTIC_WRITE)
@@ -242,10 +242,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should lock with pagination")
-    void shouldLockWithPagination(DbConfig config) {
+    void shouldLockWithPagination(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .orderBy(Employee::getId).asc()
                         .getList(0, 3, LockModeType.PESSIMISTIC_READ)
         );
@@ -261,10 +261,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should lock with offset")
-    void shouldLockWithOffset(DbConfig config) {
+    void shouldLockWithOffset(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .orderBy(Employee::getId).asc()
                         .getList(2, 3, LockModeType.PESSIMISTIC_READ)
         );
@@ -281,10 +281,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with lock")
-    void shouldGetFirstWithLock(DbConfig config) {
+    void shouldGetFirstWithLock(IntegrationTestContext context) {
         // When
-        Employee employee = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        Employee employee = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .orderBy(Employee::getId).asc()
                         .getFirst(0, LockModeType.PESSIMISTIC_READ)
         );
@@ -301,11 +301,11 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic force increment lock")
-    void shouldQueryWithPessimisticForceIncrement(DbConfig config) {
+    void shouldQueryWithPessimisticForceIncrement(IntegrationTestContext context) {
         // When & Then
         assertThatNoException().isThrownBy(() ->
-                config.getUpdateExecutor().doInTransaction(() -> {
-                    config.queryEmployees()
+                context.getUpdateExecutor().doInTransaction(() -> {
+                    context.queryEmployees()
                             .where(Employee::getId).eq(1L)
                             .getList(0, 10, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
                     return null;
@@ -320,10 +320,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should lock with in condition")
-    void shouldLockWithInCondition(DbConfig config) {
+    void shouldLockWithInCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).in(1L, 2L, 3L)
                         .orderBy(Employee::getId).asc()
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
@@ -340,10 +340,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should lock department query")
-    void shouldLockDepartmentQuery(DbConfig config) {
+    void shouldLockDepartmentQuery(IntegrationTestContext context) {
         // When
-        List<Department> departments = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryDepartments()
+        List<Department> departments = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryDepartments()
                         .where(Department::getActive).eq(true)
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
         );
@@ -360,10 +360,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with null lock mode")
-    void shouldQueryWithNullLockMode(DbConfig config) {
+    void shouldQueryWithNullLockMode(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .where(Employee::getId).eq(1L)
                         .getList(0, 10, null)
         );
@@ -380,10 +380,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit with lock mode")
-    void shouldLimitWithLockMode(DbConfig config) {
+    void shouldLimitWithLockMode(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .orderBy(Employee::getId).asc()
                         .limit(5, LockModeType.PESSIMISTIC_READ)
         );
@@ -399,10 +399,10 @@ public class LockModeIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with lock mode")
-    void shouldGetListWithLockMode(DbConfig config) {
+    void shouldGetListWithLockMode(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.getUpdateExecutor().doInTransaction(() ->
-                config.queryEmployees()
+        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryEmployees()
                         .getList(LockModeType.PESSIMISTIC_READ)
         );
 

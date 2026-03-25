@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.LockModeType;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
@@ -39,10 +39,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic read lock")
-    void shouldQueryWithPessimisticReadLock(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldQueryWithPessimisticReadLock(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = config.queryEmployees()
+            Employee employee = context.queryEmployees()
                     .where(Employee::getId).eq(1L)
                     .getList(0, 1, LockModeType.PESSIMISTIC_READ)
                     .get(0);
@@ -60,10 +60,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic write lock")
-    void shouldQueryWithPessimisticWriteLock(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldQueryWithPessimisticWriteLock(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = config.queryEmployees()
+            Employee employee = context.queryEmployees()
                     .where(Employee::getId).eq(1L)
                     .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
                     .get(0);
@@ -81,10 +81,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic lock")
-    void shouldQueryWithOptimisticLock(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldQueryWithOptimisticLock(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = config.queryEmployees()
+            Employee employee = context.queryEmployees()
                     .where(Employee::getId).eq(1L)
                     .getList(0, 1, LockModeType.OPTIMISTIC)
                     .get(0);
@@ -101,10 +101,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic force increment lock")
-    void shouldQueryWithOptimisticForceIncrementLock(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldQueryWithOptimisticForceIncrementLock(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = config.queryEmployees()
+            Employee employee = context.queryEmployees()
                     .where(Employee::getId).eq(1L)
                     .getList(0, 1, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                     .get(0);
@@ -119,9 +119,9 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query without lock mode")
-    void shouldQueryWithoutLockMode(DbConfig config) {
+    void shouldQueryWithoutLockMode(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList(0, 1, null)
                 .get(0);
@@ -137,10 +137,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with lock mode")
-    void shouldGetFirstWithLockMode(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldGetFirstWithLockMode(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = config.queryEmployees()
+            Employee employee = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .first(0, LockModeType.PESSIMISTIC_READ)
                     .orElse(null);
@@ -158,10 +158,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with lock mode")
-    void shouldGetSingleWithLockMode(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldGetSingleWithLockMode(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = config.queryEmployees()
+            Employee employee = context.queryEmployees()
                     .where(Employee::getId).eq(1L)
                     .single(0, LockModeType.PESSIMISTIC_READ)
                     .orElse(null);
@@ -179,29 +179,29 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update after pessimistic lock")
-    void shouldUpdateAfterPessimisticLock(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldUpdateAfterPessimisticLock(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // Given
             Employee employee = createTestEmployee(5001L, "Lock Update Test");
-            config.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, Employee.class);
 
             // When - Lock and update
-            Employee locked = config.queryEmployees()
+            Employee locked = context.queryEmployees()
                     .where(Employee::getId).eq(5001L)
                     .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
                     .get(0);
 
             locked.setName("Updated After Lock");
-            config.getUpdateExecutor().update(locked, Employee.class);
+            context.getUpdateExecutor().update(locked, Employee.class);
 
             // Then
-            Employee updated = config.queryEmployees()
+            Employee updated = context.queryEmployees()
                     .where(Employee::getId).eq(5001L)
                     .getSingle();
             assertThat(updated.getName()).isEqualTo("Updated After Lock");
 
             // Cleanup
-            config.getUpdateExecutor().delete(employee, Employee.class);
+            context.getUpdateExecutor().delete(employee, Employee.class);
         });
     }
 
@@ -212,10 +212,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with lock mode")
-    void shouldGetListWithLockMode(DbConfig config) {
-        config.getUpdateExecutor().doInTransaction(() -> {
+    void shouldGetListWithLockMode(IntegrationTestContext context) {
+        context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            List<Employee> employees = config.queryEmployees()
+            List<Employee> employees = context.queryEmployees()
                     .where(Employee::getDepartmentId).eq(1L)
                     .orderBy(Employee::getId).asc()
                     .getList(0, 3, LockModeType.PESSIMISTIC_READ);
@@ -231,10 +231,10 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should detect implementation type")
-    void shouldDetectImplementationType(DbConfig config) {
+    void shouldDetectImplementationType(IntegrationTestContext context) {
         // When/Then - Just verify the config has an impl type
-        assertThat(config.toString()).isNotEmpty();
-        System.out.println("Implementation: " + config);
+        assertThat(context.toString()).isNotEmpty();
+        System.out.println("Implementation: " + context);
     }
 
     /**
@@ -243,9 +243,9 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute JPA query")
-    void shouldExecuteJpaQuery(DbConfig config) {
+    void shouldExecuteJpaQuery(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .getList();
 
@@ -260,9 +260,9 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA fetch behavior")
-    void shouldHandleJpaFetchBehavior(DbConfig config) {
+    void shouldHandleJpaFetchBehavior(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
 
@@ -277,26 +277,26 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should manage JPA entity state")
-    void shouldManageJpaEntityState(DbConfig config) {
+    void shouldManageJpaEntityState(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(5002L, "State Test");
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When - Query and modify
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5002L)
                 .getSingle();
         found.setName("Modified State");
-        config.getUpdateExecutor().update(found, Employee.class);
+        context.getUpdateExecutor().update(found, Employee.class);
 
         // Then
-        Employee verified = config.queryEmployees()
+        Employee verified = context.queryEmployees()
                 .where(Employee::getId).eq(5002L)
                 .getSingle();
         assertThat(verified.getName()).isEqualTo("Modified State");
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -305,21 +305,21 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA transaction scope")
-    void shouldHandleJpaTransactionScope(DbConfig config) {
+    void shouldHandleJpaTransactionScope(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(5003L, "Transaction Scope Test");
 
         // When - Insert in one transaction
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Then - Should be visible in new transaction
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5003L)
                 .getSingle();
         assertThat(found).isNotNull();
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -329,13 +329,13 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA query caching")
-    void shouldHandleJpaQueryCaching(DbConfig config) {
+    void shouldHandleJpaQueryCaching(IntegrationTestContext context) {
         // When - Execute same query twice
-        List<Employee> first = config.queryEmployees()
+        List<Employee> first = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
 
-        List<Employee> second = config.queryEmployees()
+        List<Employee> second = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
 
@@ -349,14 +349,14 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA null values")
-    void shouldHandleJpaNullValues(DbConfig config) {
+    void shouldHandleJpaNullValues(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(5004L, "Null Test");
         employee.setEmail(null);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5004L)
                 .getSingle();
 
@@ -364,7 +364,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found.getEmail()).isNull();
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -373,14 +373,14 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA enum values")
-    void shouldHandleJpaEnumValues(DbConfig config) {
+    void shouldHandleJpaEnumValues(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(5005L, "Enum Test");
         employee.setStatus(EmployeeStatus.INACTIVE);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
                 .where(Employee::getId).eq(5005L)
                 .getSingle();
@@ -390,7 +390,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**
@@ -399,15 +399,15 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA date values")
-    void shouldHandleJpaDateValues(DbConfig config) {
+    void shouldHandleJpaDateValues(IntegrationTestContext context) {
         // Given
         LocalDate hireDate = LocalDate.of(2024, 6, 15);
         Employee employee = createTestEmployee(5006L, "Date Test");
         employee.setHireDate(hireDate);
-        config.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, Employee.class);
 
         // When
-        Employee found = config.queryEmployees()
+        Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5006L)
                 .getSingle();
 
@@ -415,7 +415,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found.getHireDate()).isEqualTo(hireDate);
 
         // Cleanup
-        config.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, Employee.class);
     }
 
     /**

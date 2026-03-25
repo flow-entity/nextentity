@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -39,9 +39,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch single association")
-    void shouldFetchSingleAssociation(DbConfig config) {
+    void shouldFetchSingleAssociation(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -60,9 +60,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch association with multiple results")
-    void shouldFetchAssociationWithMultipleResults(DbConfig config) {
+    void shouldFetchAssociationWithMultipleResults(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).eq(1L)
                 .getList();
@@ -85,13 +85,13 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with collection of paths")
-    void shouldFetchWithCollectionOfPaths(DbConfig config) {
+    void shouldFetchWithCollectionOfPaths(IntegrationTestContext context) {
         // Given
         List<io.github.nextentity.api.Path<Employee, ?>> paths = new ArrayList<>();
         paths.add(Employee::getDepartment);
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(paths)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -108,9 +108,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with where condition")
-    void shouldFetchWithWhereCondition(DbConfig config) {
+    void shouldFetchWithWhereCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
@@ -127,9 +127,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with pagination")
-    void shouldFetchWithPagination(DbConfig config) {
+    void shouldFetchWithPagination(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
                 .getList(0, 3);
@@ -144,9 +144,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with limit")
-    void shouldFetchWithLimit(DbConfig config) {
+    void shouldFetchWithLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
                 .limit(5);
@@ -165,9 +165,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with order by")
-    void shouldFetchWithOrderBy(DbConfig config) {
+    void shouldFetchWithOrderBy(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -192,9 +192,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query without fetch - lazy loading")
-    void shouldQueryWithoutFetch(DbConfig config) {
+    void shouldQueryWithoutFetch(IntegrationTestContext context) {
         // When - query without fetch
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .getList();
 
@@ -211,9 +211,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with fetch")
-    void shouldCountWithFetch(DbConfig config) {
+    void shouldCountWithFetch(IntegrationTestContext context) {
         // When
-        long count = config.queryEmployees()
+        long count = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .count();
 
@@ -228,9 +228,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check existence with fetch")
-    void shouldCheckExistenceWithFetch(DbConfig config) {
+    void shouldCheckExistenceWithFetch(IntegrationTestContext context) {
         // When
-        boolean exists = config.queryEmployees()
+        boolean exists = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).eq(1L)
                 .exist();
@@ -246,9 +246,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with fetch")
-    void shouldGetSingleWithFetch(DbConfig config) {
+    void shouldGetSingleWithFetch(IntegrationTestContext context) {
         // When
-        Employee employee = config.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).eq(1L)
                 .getSingle();
@@ -266,9 +266,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with fetch")
-    void shouldGetFirstWithFetch(DbConfig config) {
+    void shouldGetFirstWithFetch(IntegrationTestContext context) {
         // When
-        var employeeOpt = config.queryEmployees()
+        var employeeOpt = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
                 .first();
@@ -287,9 +287,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query departments")
-    void shouldQueryDepartments(DbConfig config) {
+    void shouldQueryDepartments(IntegrationTestContext context) {
         // When
-        List<Department> departments = config.queryDepartments()
+        List<Department> departments = context.queryDepartments()
                 .where(Department::getActive).eq(true)
                 .getList();
 
@@ -305,12 +305,12 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch employees by department")
-    void shouldFetchEmployeesByDepartment(DbConfig config) {
+    void shouldFetchEmployeesByDepartment(IntegrationTestContext context) {
         // Given - Get department ID
         Long deptId = 1L;
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).eq(deptId)
                 .getList();
@@ -330,13 +330,13 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch employees with salary range")
-    void shouldFetchEmployeesWithSalaryRange(DbConfig config) {
+    void shouldFetchEmployeesWithSalaryRange(IntegrationTestContext context) {
         // Given
         double minSalary = 60000.0;
         double maxSalary = 80000.0;
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getSalary).ge(minSalary)
                 .where(Employee::getSalary).le(maxSalary)
@@ -357,9 +357,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with name like filter")
-    void shouldFetchWithNameLikeFilter(DbConfig config) {
+    void shouldFetchWithNameLikeFilter(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getName).like("A%")
                 .getList();
@@ -379,9 +379,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with in condition")
-    void shouldFetchWithInCondition(DbConfig config) {
+    void shouldFetchWithInCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).in(1L, 2L, 3L)
                 .orderBy(Employee::getId).asc()
@@ -402,9 +402,9 @@ public class FetchOperationsIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with not in condition")
-    void shouldFetchWithNotInCondition(DbConfig config) {
+    void shouldFetchWithNotInCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).notIn(1L, 2L)
                 .getList();

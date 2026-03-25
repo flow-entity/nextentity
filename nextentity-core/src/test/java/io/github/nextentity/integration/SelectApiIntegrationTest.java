@@ -11,7 +11,7 @@ import io.github.nextentity.api.model.Tuple7;
 import io.github.nextentity.api.model.Tuple8;
 import io.github.nextentity.api.model.Tuple9;
 import io.github.nextentity.api.model.Tuple10;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -51,9 +51,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select single path - name")
-    void shouldSelectSinglePathName(DbConfig config) {
+    void shouldSelectSinglePathName(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .select(Employee::getName)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -66,9 +66,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select single path - salary")
-    void shouldSelectSinglePathSalary(DbConfig config) {
+    void shouldSelectSinglePathSalary(IntegrationTestContext context) {
         // When
-        List<Double> salaries = config.queryEmployees()
+        List<Double> salaries = context.queryEmployees()
                 .select(Employee::getSalary)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -81,9 +81,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select single path with where condition")
-    void shouldSelectSinglePathWithWhere(DbConfig config) {
+    void shouldSelectSinglePathWithWhere(IntegrationTestContext context) {
         // When
-        List<String> names = config.queryEmployees()
+        List<String> names = context.queryEmployees()
                 .select(Employee::getName)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
@@ -96,9 +96,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct single path")
-    void shouldSelectDistinctSinglePath(DbConfig config) {
+    void shouldSelectDistinctSinglePath(IntegrationTestContext context) {
         // When
-        List<Long> deptIds = config.queryEmployees()
+        List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -115,9 +115,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select two paths as Tuple2")
-    void shouldSelectTwoPaths(DbConfig config) {
+    void shouldSelectTwoPaths(IntegrationTestContext context) {
         // When
-        List<Tuple2<String, String>> results = config.queryEmployees()
+        List<Tuple2<String, String>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -132,9 +132,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct two paths")
-    void shouldSelectDistinctTwoPaths(DbConfig config) {
+    void shouldSelectDistinctTwoPaths(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, Boolean>> results = config.queryEmployees()
+        List<Tuple2<Long, Boolean>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -149,9 +149,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select two paths with condition")
-    void shouldSelectTwoPathsWithCondition(DbConfig config) {
+    void shouldSelectTwoPathsWithCondition(IntegrationTestContext context) {
         // When
-        List<Tuple2<String, Double>> results = config.queryEmployees()
+        List<Tuple2<String, Double>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getSalary)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
@@ -169,9 +169,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select three paths as Tuple3")
-    void shouldSelectThreePaths(DbConfig config) {
+    void shouldSelectThreePaths(IntegrationTestContext context) {
         // When
-        List<Tuple3<String, String, Double>> results = config.queryEmployees()
+        List<Tuple3<String, String, Double>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -187,9 +187,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct three paths")
-    void shouldSelectDistinctThreePaths(DbConfig config) {
+    void shouldSelectDistinctThreePaths(IntegrationTestContext context) {
         // When
-        List<Tuple3<Long, Boolean, Double>> results = config.queryEmployees()
+        List<Tuple3<Long, Boolean, Double>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getSalary)
                 .getList();
 
@@ -204,9 +204,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select four paths as Tuple4")
-    void shouldSelectFourPaths(DbConfig config) {
+    void shouldSelectFourPaths(IntegrationTestContext context) {
         // When
-        List<Tuple4<Long, String, String, Double>> results = config.queryEmployees()
+        List<Tuple4<Long, String, String, Double>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail, Employee::getSalary)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -223,9 +223,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct four paths")
-    void shouldSelectDistinctFourPaths(DbConfig config) {
+    void shouldSelectDistinctFourPaths(IntegrationTestContext context) {
         // When
-        List<Tuple4<Long, Boolean, Double, String>> results = config.queryEmployees()
+        List<Tuple4<Long, Boolean, Double, String>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getSalary, Employee::getName)
                 .getList();
 
@@ -240,9 +240,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select five paths as Tuple5")
-    void shouldSelectFivePaths(DbConfig config) {
+    void shouldSelectFivePaths(IntegrationTestContext context) {
         // When
-        List<Tuple5<Long, String, String, Double, Boolean>> results = config.queryEmployees()
+        List<Tuple5<Long, String, String, Double, Boolean>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive)
                 .where(Employee::getId).eq(1L)
@@ -259,9 +259,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct five paths")
-    void shouldSelectDistinctFivePaths(DbConfig config) {
+    void shouldSelectDistinctFivePaths(IntegrationTestContext context) {
         // When
-        List<Tuple5<Long, Boolean, String, Double, String>> results = config.queryEmployees()
+        List<Tuple5<Long, Boolean, String, Double, String>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive,
                         Employee::getName, Employee::getSalary, Employee::getEmail)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -278,9 +278,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select six paths as Tuple6")
-    void shouldSelectSixPaths(DbConfig config) {
+    void shouldSelectSixPaths(IntegrationTestContext context) {
         // When
-        List<Tuple6<Long, String, String, Double, Boolean, Long>> results = config.queryEmployees()
+        List<Tuple6<Long, String, String, Double, Boolean, Long>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId)
                 .where(Employee::getId).eq(1L)
@@ -300,9 +300,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select seven paths as Tuple7")
-    void shouldSelectSevenPaths(DbConfig config) {
+    void shouldSelectSevenPaths(IntegrationTestContext context) {
         // When
-        List<Tuple7<Long, String, String, Double, Boolean, Long, String>> results = config.queryEmployees()
+        List<Tuple7<Long, String, String, Double, Boolean, Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName) // Reuse name for 7th
@@ -323,9 +323,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select eight paths as Tuple8")
-    void shouldSelectEightPaths(DbConfig config) {
+    void shouldSelectEightPaths(IntegrationTestContext context) {
         // When
-        List<Tuple8<Long, String, String, Double, Boolean, Long, String, Double>> results = config.queryEmployees()
+        List<Tuple8<Long, String, String, Double, Boolean, Long, String, Double>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName, Employee::getSalary)
@@ -344,9 +344,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select nine paths as Tuple9")
-    void shouldSelectNinePaths(DbConfig config) {
+    void shouldSelectNinePaths(IntegrationTestContext context) {
         // When
-        List<Tuple9<Long, String, String, Double, Boolean, Long, String, Double, Boolean>> results = config.queryEmployees()
+        List<Tuple9<Long, String, String, Double, Boolean, Long, String, Double, Boolean>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName, Employee::getSalary, Employee::getActive)
@@ -365,9 +365,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select ten paths as Tuple10")
-    void shouldSelectTenPaths(DbConfig config) {
+    void shouldSelectTenPaths(IntegrationTestContext context) {
         // When
-        List<Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long>> results = config.queryEmployees()
+        List<Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName, Employee::getSalary, Employee::getActive,
@@ -385,9 +385,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct ten paths")
-    void shouldSelectDistinctTenPaths(DbConfig config) {
+    void shouldSelectDistinctTenPaths(IntegrationTestContext context) {
         // When
-        List<Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long>> results = config.queryEmployees()
+        List<Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long>> results = context.queryEmployees()
                 .selectDistinct(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName, Employee::getSalary, Employee::getActive,
@@ -406,14 +406,14 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with collection of paths")
-    void shouldSelectWithCollectionOfPaths(DbConfig config) {
+    void shouldSelectWithCollectionOfPaths(IntegrationTestContext context) {
         // Given
         Collection<Path<Employee, ?>> paths = new ArrayList<>();
         paths.add(Employee::getName);
         paths.add(Employee::getEmail);
 
         // When
-        List<Tuple> results = config.queryEmployees()
+        List<Tuple> results = context.queryEmployees()
                 .select(paths)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -428,14 +428,14 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct with collection of paths")
-    void shouldSelectDistinctWithCollectionOfPaths(DbConfig config) {
+    void shouldSelectDistinctWithCollectionOfPaths(IntegrationTestContext context) {
         // Given
         Collection<Path<Employee, ?>> paths = new ArrayList<>();
         paths.add(Employee::getDepartmentId);
         paths.add(Employee::getActive);
 
         // When
-        List<Tuple> results = config.queryEmployees()
+        List<Tuple> results = context.queryEmployees()
                 .selectDistinct(paths)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -451,9 +451,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with typed expression - max")
-    void shouldSelectWithTypedExpressionMax(DbConfig config) {
+    void shouldSelectWithTypedExpressionMax(IntegrationTestContext context) {
         // When
-        Double maxSalary = config.queryEmployees()
+        Double maxSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).max())
                 .getSingle();
 
@@ -465,9 +465,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with typed expression - min")
-    void shouldSelectWithTypedExpressionMin(DbConfig config) {
+    void shouldSelectWithTypedExpressionMin(IntegrationTestContext context) {
         // When
-        Double minSalary = config.queryEmployees()
+        Double minSalary = context.queryEmployees()
                 .select(get(Employee::getSalary).min())
                 .getSingle();
 
@@ -479,9 +479,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with typed expression - count")
-    void shouldSelectWithTypedExpressionCount(DbConfig config) {
+    void shouldSelectWithTypedExpressionCount(IntegrationTestContext context) {
         // When
-        Long count = config.queryEmployees()
+        Long count = context.queryEmployees()
                 .select(get(Employee::getId).count())
                 .getSingle();
 
@@ -492,9 +492,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with typed expression - sum")
-    void shouldSelectWithTypedExpressionSum(DbConfig config) {
+    void shouldSelectWithTypedExpressionSum(IntegrationTestContext context) {
         // When
-        Double sum = config.queryEmployees()
+        Double sum = context.queryEmployees()
                 .select(get(Employee::getSalary).sum())
                 .getSingle();
 
@@ -506,9 +506,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with typed expression - avg")
-    void shouldSelectWithTypedExpressionAvg(DbConfig config) {
+    void shouldSelectWithTypedExpressionAvg(IntegrationTestContext context) {
         // When
-        Double avg = config.queryEmployees()
+        Double avg = context.queryEmployees()
                 .select(get(Employee::getSalary).avg())
                 .getSingle();
 
@@ -520,9 +520,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct with typed expression")
-    void shouldSelectDistinctWithTypedExpression(DbConfig config) {
+    void shouldSelectDistinctWithTypedExpression(IntegrationTestContext context) {
         // When
-        Long distinctDeptCount = config.queryEmployees()
+        Long distinctDeptCount = context.queryEmployees()
                 .selectDistinct(get(Employee::getDepartmentId).count())
                 .getSingle();
 
@@ -537,9 +537,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with two typed expressions")
-    void shouldSelectWithTwoTypedExpressions(DbConfig config) {
+    void shouldSelectWithTwoTypedExpressions(IntegrationTestContext context) {
         // When
-        List<Tuple2<Double, Double>> results = config.queryEmployees()
+        List<Tuple2<Double, Double>> results = context.queryEmployees()
                 .select(get(Employee::getSalary).min(), get(Employee::getSalary).max())
                 .getList();
 
@@ -552,9 +552,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with three typed expressions")
-    void shouldSelectWithThreeTypedExpressions(DbConfig config) {
+    void shouldSelectWithThreeTypedExpressions(IntegrationTestContext context) {
         // When
-        List<Tuple3<Double, Double, Double>> results = config.queryEmployees()
+        List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
                 .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
                         get(Employee::getSalary).avg())
                 .getList();
@@ -571,9 +571,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with projection type - same entity")
-    void shouldSelectWithProjectionTypeSameEntity(DbConfig config) {
+    void shouldSelectWithProjectionTypeSameEntity(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .select(Employee.class)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -586,9 +586,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with projection type - same entity returns same query")
-    void shouldSelectWithProjectionTypeSameEntityReturnsSame(DbConfig config) {
+    void shouldSelectWithProjectionTypeSameEntityReturnsSame(IntegrationTestContext context) {
         // When - select same type should return entity
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .select(Employee.class)
                 .orderBy(Employee::getId).asc()
                 .getList();
@@ -601,9 +601,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct with projection type")
-    void shouldSelectDistinctWithProjectionType(DbConfig config) {
+    void shouldSelectDistinctWithProjectionType(IntegrationTestContext context) {
         // When
-        List<Department> departments = config.queryDepartments()
+        List<Department> departments = context.queryDepartments()
                 .selectDistinct(Department.class)
                 .orderBy(Department::getId).asc()
                 .getList();
@@ -619,9 +619,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with where and order by")
-    void shouldSelectWithWhereAndOrderBy(DbConfig config) {
+    void shouldSelectWithWhereAndOrderBy(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, String>> results = config.queryEmployees()
+        List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getName).asc()
@@ -640,9 +640,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with pagination")
-    void shouldSelectWithPagination(DbConfig config) {
+    void shouldSelectWithPagination(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, String>> results = config.queryEmployees()
+        List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
                 .getList(0, 5);
@@ -655,9 +655,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select with limit")
-    void shouldSelectWithLimit(DbConfig config) {
+    void shouldSelectWithLimit(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, String>> results = config.queryEmployees()
+        List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
                 .limit(3);
@@ -673,10 +673,10 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle select with null values in data")
-    void shouldHandleSelectWithNullValues(DbConfig config) {
+    void shouldHandleSelectWithNullValues(IntegrationTestContext context) {
         // Given - Employee 1 exists
         // When
-        List<Tuple2<String, String>> results = config.queryEmployees()
+        List<Tuple2<String, String>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail)
                 .where(Employee::getId).eq(1L)
                 .getList();
@@ -690,9 +690,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list for no matches")
-    void shouldReturnEmptyListForNoMatches(DbConfig config) {
+    void shouldReturnEmptyListForNoMatches(IntegrationTestContext context) {
         // When
-        List<Tuple2<Long, String>> results = config.queryEmployees()
+        List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .where(Employee::getId).eq(99999L)
                 .getList();
@@ -704,9 +704,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select single result with getSingle")
-    void shouldSelectSingleWithGetSingle(DbConfig config) {
+    void shouldSelectSingleWithGetSingle(IntegrationTestContext context) {
         // When
-        Tuple2<Long, String> result = config.queryEmployees()
+        Tuple2<Long, String> result = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .where(Employee::getId).eq(1L)
                 .getSingle();
@@ -720,9 +720,9 @@ public class SelectApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select first result with first")
-    void shouldSelectFirst(DbConfig config) {
+    void shouldSelectFirst(IntegrationTestContext context) {
         // When
-        var result = config.queryEmployees()
+        var result = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
                 .first();

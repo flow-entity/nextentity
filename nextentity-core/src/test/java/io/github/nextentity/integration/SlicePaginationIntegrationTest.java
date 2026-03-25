@@ -3,7 +3,7 @@ package io.github.nextentity.integration;
 import io.github.nextentity.api.model.Page;
 import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.integration.config.DbConfig;
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
@@ -38,9 +38,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice results with offset and limit")
-    void shouldSliceResults(DbConfig config) {
+    void shouldSliceResults(IntegrationTestContext context) {
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(0, 5);
 
@@ -57,14 +57,14 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with non-zero offset")
-    void shouldSliceWithOffset(DbConfig config) {
+    void shouldSliceWithOffset(IntegrationTestContext context) {
         // Given
-        List<Employee> allEmployees = config.queryEmployees()
+        List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList();
 
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(5, 5);
 
@@ -80,9 +80,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice at end of data")
-    void shouldHandleSliceAtEnd(DbConfig config) {
+    void shouldHandleSliceAtEnd(IntegrationTestContext context) {
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(10, 5);
 
@@ -97,9 +97,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice with limit larger than total")
-    void shouldHandleSliceWithLargeLimit(DbConfig config) {
+    void shouldHandleSliceWithLargeLimit(IntegrationTestContext context) {
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(0, 100);
 
@@ -114,9 +114,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice with offset at end")
-    void shouldHandleSliceWithOffsetAtEnd(DbConfig config) {
+    void shouldHandleSliceWithOffsetAtEnd(IntegrationTestContext context) {
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .slice(100, 5);
 
@@ -131,12 +131,12 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get page with Pageable")
-    void shouldGetPageWithPageable(DbConfig config) {
+    void shouldGetPageWithPageable(IntegrationTestContext context) {
         // Given
         Pageable pageable = createPageable(1, 5);
 
         // When
-        Page<Employee> page = config.queryEmployees()
+        Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getPage(pageable);
 
@@ -151,12 +151,12 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get second page")
-    void shouldGetSecondPage(DbConfig config) {
+    void shouldGetSecondPage(IntegrationTestContext context) {
         // Given
         Pageable pageable = createPageable(2, 5);
 
         // When
-        Page<Employee> page = config.queryEmployees()
+        Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getPage(pageable);
 
@@ -165,7 +165,7 @@ public class SlicePaginationIntegrationTest {
         assertThat(page.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
 
         // Verify it's actually the second page
-        List<Employee> allEmployees = config.queryEmployees()
+        List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList();
         assertThat(page.getItems().get(0).getId()).isEqualTo(allEmployees.get(5).getId());
@@ -177,12 +177,12 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get last page with partial results")
-    void shouldGetLastPage(DbConfig config) {
+    void shouldGetLastPage(IntegrationTestContext context) {
         // Given
         Pageable pageable = createPageable(3, 5);
 
         // When
-        Page<Employee> page = config.queryEmployees()
+        Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getPage(pageable);
 
@@ -197,12 +197,12 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle page beyond data")
-    void shouldHandlePageBeyondData(DbConfig config) {
+    void shouldHandlePageBeyondData(IntegrationTestContext context) {
         // Given
         Pageable pageable = createPageable(10, 5);
 
         // When
-        Page<Employee> page = config.queryEmployees()
+        Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getPage(pageable);
 
@@ -217,9 +217,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with offset and limit")
-    void shouldGetListWithOffsetAndLimit(DbConfig config) {
+    void shouldGetListWithOffsetAndLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList(3, 5);
 
@@ -233,9 +233,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit results")
-    void shouldLimitResults(DbConfig config) {
+    void shouldLimitResults(IntegrationTestContext context) {
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .limit(5);
 
@@ -249,14 +249,14 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset results")
-    void shouldOffsetResults(DbConfig config) {
+    void shouldOffsetResults(IntegrationTestContext context) {
         // Given
-        List<Employee> allEmployees = config.queryEmployees()
+        List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getList();
 
         // When
-        List<Employee> employees = config.queryEmployees()
+        List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .offset(5);
 
@@ -271,9 +271,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with where condition")
-    void shouldSliceWithWhereCondition(DbConfig config) {
+    void shouldSliceWithWhereCondition(IntegrationTestContext context) {
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
                 .slice(0, 5);
@@ -289,12 +289,12 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get page with where condition")
-    void shouldGetPageWithWhereCondition(DbConfig config) {
+    void shouldGetPageWithWhereCondition(IntegrationTestContext context) {
         // Given
         Pageable pageable = createPageable(1, 3);
 
         // When
-        Page<Employee> page = config.queryEmployees()
+        Page<Employee> page = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
                 .getPage(pageable);
@@ -310,13 +310,13 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with correct ordering")
-    void shouldSliceWithOrdering(DbConfig config) {
+    void shouldSliceWithOrdering(IntegrationTestContext context) {
         // When
-        Slice<Employee> sliceAsc = config.queryEmployees()
+        Slice<Employee> sliceAsc = context.queryEmployees()
                 .orderBy(Employee::getSalary).asc()
                 .slice(0, 3);
 
-        Slice<Employee> sliceDesc = config.queryEmployees()
+        Slice<Employee> sliceDesc = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
                 .slice(0, 3);
 
@@ -333,14 +333,14 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should calculate correct total with filter")
-    void shouldCalculateCorrectTotalWithFilter(DbConfig config) {
+    void shouldCalculateCorrectTotalWithFilter(IntegrationTestContext context) {
         // Given
-        long expectedCount = config.queryEmployees()
+        long expectedCount = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .count();
 
         // When
-        Slice<Employee> slice = config.queryEmployees()
+        Slice<Employee> slice = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
                 .slice(0, 2);
@@ -355,9 +355,9 @@ public class SlicePaginationIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle different page sizes")
-    void shouldHandleDifferentPageSizes(DbConfig config) {
+    void shouldHandleDifferentPageSizes(IntegrationTestContext context) {
         // When - Page size 1
-        Page<Employee> page1 = config.queryEmployees()
+        Page<Employee> page1 = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getPage(createPageable(1, 1));
 
@@ -366,7 +366,7 @@ public class SlicePaginationIntegrationTest {
         assertThat(page1.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
 
         // When - Page size 12
-        Page<Employee> page2 = config.queryEmployees()
+        Page<Employee> page2 = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .getPage(createPageable(1, 12));
 

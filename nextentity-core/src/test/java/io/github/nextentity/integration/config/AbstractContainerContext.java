@@ -42,7 +42,7 @@ import static org.hibernate.cfg.AvailableSettings.*;
  */
 public abstract class AbstractContainerContext implements ContainerContext {
 
-    private List<DbConfig> configs;
+    private List<IntegrationTestContext> contexts;
     private EntityManager entityManager;
 
     /**
@@ -87,8 +87,8 @@ public abstract class AbstractContainerContext implements ContainerContext {
     }
 
     @Override
-    public List<DbConfig> getConfigs() {
-        if (configs == null) {
+    public List<IntegrationTestContext> getConfigs() {
+        if (contexts == null) {
 
             DataSource dataSource = getDataSource();
             Metamodel metamodel = JpaMetamodel.of();
@@ -98,18 +98,18 @@ public abstract class AbstractContainerContext implements ContainerContext {
             QueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
             UpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(dialectSelector, connectionProvider, metamodel);
 
-            DbConfig jdbc = new DbConfig(this, dataSource, metamodel, jdbcQueryExecutor, jdbcUpdateExecutor, getDialect(), "jdbc");
+            IntegrationTestContext jdbc = new IntegrationTestContext(this, dataSource, metamodel, jdbcQueryExecutor, jdbcUpdateExecutor, getDialect(), "jdbc");
 
             this.entityManager = getEntityManagerFactory().createEntityManager();
             JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
             JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager);
 
-            DbConfig jpa = new DbConfig(this, getDataSource(), metamodel, jpaQueryExecutor, jpaUpdateExecutor, getDialect(), "jpa");
+            IntegrationTestContext jpa = new IntegrationTestContext(this, getDataSource(), metamodel, jpaQueryExecutor, jpaUpdateExecutor, getDialect(), "jpa");
 
-            configs = List.of(jdbc, jpa);
+            contexts = List.of(jdbc, jpa);
 
         }
-        return configs;
+        return contexts;
     }
 
     protected abstract SqlDialectSelector getSqlDialectSelector();
@@ -119,10 +119,10 @@ public abstract class AbstractContainerContext implements ContainerContext {
     protected abstract @NonNull String getDialect();
 
     @Override
-    public void reset(DbConfig config) {
-        resetTable(config);
+    public void reset(IntegrationTestContext context) {
+        resetTable(context);
         // Insert test data - use the current connection directly
-        UpdateExecutor executor = config.getUpdateExecutor();
+        UpdateExecutor executor = context.getUpdateExecutor();
 
         List<Department> departments = TestDataFactory.createDepartments();
         List<Employee> employees = TestDataFactory.createEmployees();
@@ -131,8 +131,8 @@ public abstract class AbstractContainerContext implements ContainerContext {
         executor.insertAll(employees, Employee.class);
     }
 
-    protected void resetTable(DbConfig config) {
-        DataSource dataSource = config.getDataSource();
+    protected void resetTable(IntegrationTestContext context) {
+        DataSource dataSource = context.getDataSource();
         try (Connection conn = dataSource.getConnection()) {
             boolean autoCommit = conn.getAutoCommit();
             try {
