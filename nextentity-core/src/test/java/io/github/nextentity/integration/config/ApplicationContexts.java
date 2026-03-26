@@ -1,30 +1,19 @@
-package io.github.nextentity.integration.config.spring;
+package io.github.nextentity.integration.config;
 
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.env.Env;
 import org.jspecify.annotations.NonNull;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.ArgumentsProvider;
-import org.junit.jupiter.params.support.ParameterDeclarations;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
-import java.util.stream.Stream;
 
-public class ApplicationContextProvider implements ArgumentsProvider {
+public class ApplicationContexts {
 
     private static final List<ConfigurableApplicationContext> CONTEXTS = Env.dbs().stream()
-            .map(ApplicationContextProvider::getApplicationContext)
+            .map(ApplicationContexts::getApplicationContext)
             .toList();
-
-    @NonNull
-    @Override
-    public Stream<Arguments> provideArguments(@NonNull ParameterDeclarations parameters, @NonNull ExtensionContext context) {
-        return contexts().stream().map(Arguments::of);
-    }
 
     public static List<ConfigurableApplicationContext> contexts() {
         return CONTEXTS;

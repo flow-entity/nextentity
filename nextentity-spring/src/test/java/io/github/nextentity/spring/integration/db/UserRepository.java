@@ -63,10 +63,6 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         super.updateAll(entities);
     }
 
-    public void updateNonNullColumn(User entities) {
-        super.patch(entities);
-    }
-
     @Override
     public Select<User> query() {
         return super.query();

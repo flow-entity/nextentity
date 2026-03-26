@@ -8,8 +8,6 @@ import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import org.jspecify.annotations.NonNull;
 
-import javax.sql.DataSource;
-
 /**
  * Database configuration for integration tests.
  * Encapsulates DataSource, QueryExecutor, UpdateExecutor, and test data.
@@ -17,8 +15,6 @@ import javax.sql.DataSource;
  * @author HuangChengwei
  */
 public interface IntegrationTestContext {
-
-    DataSource getDataSource();
 
     QueryExecutor getQueryExecutor();
 

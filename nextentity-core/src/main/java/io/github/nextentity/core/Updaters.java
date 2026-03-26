@@ -55,7 +55,7 @@ public class Updaters {
         }
 
         @Override
-        public T updateNonNullColumn(@NonNull T entity) {
+        public T patch(@NonNull T entity) {
             return updateExecutor.patch(entity, entityType);
         }
 

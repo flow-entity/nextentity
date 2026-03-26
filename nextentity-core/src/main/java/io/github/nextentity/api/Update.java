@@ -63,6 +63,6 @@ public interface Update<T> {
      * @param entity Entity object
      * @return Updated entity object
      */
-    T updateNonNullColumn(@NonNull T entity);
+    T patch(@NonNull T entity);
 
 }

@@ -1,6 +1,5 @@
 package io.github.nextentity.integration.config;
 
-import io.github.nextentity.integration.config.spring.ApplicationContextProvider;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
@@ -22,7 +21,7 @@ public class IntegrationTestProvider implements ArgumentsProvider {
     public @NonNull Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
                                                                  @NonNull ExtensionContext context) {
 
-        return ApplicationContextProvider.contexts()
+        return ApplicationContexts.contexts()
                 .stream()
                 .flatMap(ctx -> ctx.getBeansOfType(IntegrationTestContext.class).values().stream())
                 .map(arguments -> Arguments.of(arguments.reset()));

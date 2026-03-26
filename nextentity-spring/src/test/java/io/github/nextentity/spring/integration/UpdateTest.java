@@ -78,11 +78,11 @@ public class UpdateTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserUpdaterProvider.class)
-    void updateNonNullColumn(UserRepository userUpdater) {
-        userUpdater.doInTransaction(() -> testUpdateNonNullColumn(userUpdater));
+    void patch(UserRepository userUpdater) {
+        userUpdater.doInTransaction(() -> testPatch(userUpdater));
     }
 
-    private void testUpdateNonNullColumn(UserRepository userUpdater) {
+    private void testPatch(UserRepository userUpdater) {
         List<User> users = query(userUpdater).where(User::getId).in(1, 2, 3).getList();
         List<User> users2 = new ArrayList<>(users.size());
         for (User user : users) {
@@ -95,7 +95,7 @@ public class UpdateTest {
             user.setUsername(null);
             user.setTime(null);
             user.setPid(null);
-            userUpdater.updateNonNullColumn(user);
+            userUpdater.patch(user);
         }
         assertEquals(users2, query(userUpdater).where(User::getId).in(1, 2, 3).getList());
 

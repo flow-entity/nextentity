@@ -62,6 +62,9 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
                                                                  Iterable<? extends EntityAttribute> attributes) {
         return Iterators.map(entities, entity -> Iterators.map(attributes, attr -> {
             Object value = attr.getDatabaseValue(entity);
+            if (attr.isVersion() && value == null) {
+                value = 0;
+            }
             return value == null ? new NullParameter(attr.type()) : value;
         }));
     }

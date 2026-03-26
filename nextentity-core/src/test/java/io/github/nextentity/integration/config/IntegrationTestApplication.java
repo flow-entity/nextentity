@@ -1,10 +1,9 @@
-package io.github.nextentity.integration.config.spring;
+package io.github.nextentity.integration.config;
 
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.UncheckedSQLException;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.fixtures.TestDataFactory;
 import io.github.nextentity.jdbc.*;
@@ -67,11 +66,7 @@ public class IntegrationTestApplication {
         JpaUpdateExecutor updateExecutor = new JpaUpdateExecutor(entityManager, new JpaTransactionTemplate() {
             @Override
             public <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action) {
-                return transactionTemplate.execute(status -> {
-                    T t = action.get();
-                    entityManager.flush();
-                    return t;
-                });
+                return transactionTemplate.execute(status -> action.get());
             }
         });
         return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jpa");
@@ -143,11 +138,6 @@ public class IntegrationTestApplication {
             this.queryExecutor = queryExecutor;
             this.updateExecutor = updateExecutor;
             this.name = name;
-        }
-
-        @Override
-        public DataSource getDataSource() {
-            return dataSource;
         }
 
         @Override

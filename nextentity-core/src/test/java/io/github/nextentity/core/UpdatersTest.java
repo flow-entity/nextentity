@@ -161,18 +161,18 @@ class UpdatersTest {
     }
 
     /**
-     * Test objective: Verify that updateNonNullColumn delegates to patch.
+     * Test objective: Verify that patch delegates to patch.
      * Test scenario: Update non-null columns of an entity.
      * Expected result: updateExecutor.patch is called and returns updated entity.
      */
     @Test
-    void updateNonNullColumn_ShouldDelegateToPatch() {
+    void patch_ShouldDelegateToPatch() {
         // given
         TestEntity entity = new TestEntity(1L, "test");
         when(updateExecutor.patch(entity, TestEntity.class)).thenReturn(entity);
 
         // when
-        TestEntity result = updater.updateNonNullColumn(entity);
+        TestEntity result = updater.patch(entity);
 
         // then
         assertThat(result).isEqualTo(entity);

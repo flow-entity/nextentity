@@ -1,10 +1,6 @@
 package io.github.nextentity.integration.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.JoinColumn;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +13,9 @@ public class Employee {
 
     @Id
     private Long id;
+
+//    @Version
+    private Long version;
 
     private String name;
 
@@ -61,6 +60,14 @@ public class Employee {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getName() {
@@ -139,6 +146,7 @@ public class Employee {
     public String toString() {
         return "Employee{" +
                 "id=" + id +
+                ", version=" + version +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", salary=" + salary +

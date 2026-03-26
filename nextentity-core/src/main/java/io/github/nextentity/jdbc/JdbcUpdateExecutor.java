@@ -39,6 +39,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
             return;
         }
         EntityType entity = metamodel.getEntity(entityClass);
+        EntityAttribute version = entity.version();
         List<InsertSqlStatement> statements = sqlBuilder.buildInsertStatement(entities, entity);
         execute(connection -> {
             for (InsertSqlStatement statement : statements) {
@@ -46,6 +47,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
             }
             return null;
         });
+        for (T e : entities) {
+            if (version != null) {
+                Object versionValue = version.get(e);
+                if (versionValue == null) {
+                    setNewVersion(e, version);
+                }
+            }
+        }
     }
 
     @Override
@@ -132,10 +141,11 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     protected static void setNewVersion(Object entity, EntityAttribute attribute) {
         Object version = attribute.getDatabaseValue(entity);
-        if (version instanceof Integer) {
-            version = (Integer) version + 1;
-        } else if (version instanceof Long) {
-            version = (Long) version + 1;
+        Class<?> type = attribute.type();
+        if (type == Integer.class || type == int.class) {
+            version = version == null ? 1 : (Integer) version + 1;
+        } else if (type == Long.class || type == long.class) {
+            version = version == null ? 1L : (Long) version + 1;
         } else {
             throw new IllegalStateException();
         }

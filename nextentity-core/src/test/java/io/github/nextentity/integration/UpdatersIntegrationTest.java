@@ -144,11 +144,11 @@ public class UpdatersIntegrationTest {
             assertThat(after).isNull();
         }
 
-        @Disabled("BUG: PostgreSQL cannot determine data type for null parameters in updateNonNullColumn")
+        @Disabled("BUG: PostgreSQL cannot determine data type for null parameters in patch")
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
-        @DisplayName("Should update non-null columns via updateNonNullColumn")
-        void shouldUpdateNonNullColumnsViaUpdateNonNullColumn(IntegrationTestContext context) {
+        @DisplayName("Should update non-null columns via patch")
+        void shouldPatchViaUpdatePatch(IntegrationTestContext context) {
             // Given
             Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
             Employee employee = createTestEmployee(8004L, "Patch Test");
@@ -160,7 +160,7 @@ public class UpdatersIntegrationTest {
             patch.setName("Patched Name");
             // Other fields are null
 
-            Employee updated = update.updateNonNullColumn(patch);
+            Employee updated = update.patch(patch);
 
             // Then
             assertThat(updated).isNotNull();
