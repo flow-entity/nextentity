@@ -17,10 +17,18 @@ public class JpaUpdateExecutor implements UpdateExecutor {
 
     private final EntityManager entityManager;
     private final PersistenceUnitUtil util;
+    private final JpaTransactionTemplate transactionTemplate;
 
     public JpaUpdateExecutor(EntityManager entityManager) {
         this.entityManager = entityManager;
         this.util = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+        this.transactionTemplate = DefaultTransactionTemplate.of();
+    }
+
+    public JpaUpdateExecutor(EntityManager entityManager, JpaTransactionTemplate jpaTransactionTemplate) {
+        this.entityManager = entityManager;
+        this.util = entityManager.getEntityManagerFactory().getPersistenceUnitUtil();
+        this.transactionTemplate = jpaTransactionTemplate;
     }
 
     @Override
@@ -73,18 +81,6 @@ public class JpaUpdateExecutor implements UpdateExecutor {
 
     @Override
     public <T> T doInTransaction(Supplier<T> command) {
-        EntityTransaction transaction = entityManager.getTransaction();
-        if (transaction.isActive()) {
-            return command.get();
-        }
-        transaction.begin();
-        try {
-            T result = command.get();
-            transaction.commit();
-            return result;
-        } catch (Throwable e) {
-            transaction.rollback();
-            throw e;
-        }
+        return transactionTemplate.executeInTransaction(entityManager, command);
     }
 }

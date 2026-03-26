@@ -1,4 +1,4 @@
-module nextentity.core {
+open module nextentity.core {
     requires jakarta.persistence;
     requires java.desktop;
     requires java.sql;

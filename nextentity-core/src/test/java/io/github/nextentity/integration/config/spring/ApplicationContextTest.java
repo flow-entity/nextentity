@@ -1,5 +1,6 @@
 package io.github.nextentity.integration.config.spring;
 
+import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.jdbc.ConnectionProvider;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -16,6 +17,10 @@ public class ApplicationContextTest {
         printBean(context, DatabaseEnvironmentVariables.class);
         printBean(context, ConnectionProvider.class);
         printBean(context, IntegrationTestApplication.DatabaseInitializer.class);
+
+        for (IntegrationTestContext value : context.getBeansOfType(IntegrationTestContext.class).values()) {
+            System.out.println(value);
+        }
     }
 
     private static void printBean(ApplicationContext context, Class<?> requiredType) {

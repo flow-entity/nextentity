@@ -2,14 +2,21 @@ package io.github.nextentity.integration.config.spring;
 
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.core.exception.UncheckedSQLException;
+import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.fixtures.TestDataFactory;
-import io.github.nextentity.jdbc.ConnectionProvider;
+import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jpa.JpaQueryExecutor;
+import io.github.nextentity.jpa.JpaTransactionTemplate;
+import io.github.nextentity.jpa.JpaUpdateExecutor;
+import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,29 +25,64 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
+import java.sql.SQLException;
+import java.util.Objects;
+import java.util.function.Supplier;
 
+@EntityScan("io.github.nextentity.integration.entity")
 @SpringBootApplication
 public class IntegrationTestApplication {
 
     @Bean
-    public IntegrationTestContext jdbcIntegrationTestContext() {
-        // TODO return new SpringIntegrationTestContext with JdbcQueryExecutor and JdbcUpdateExecutor
-        return null;
+    public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider) {
+        DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
+        SqlDialectSelector dialectSelector = new SqlDialectSelector();
+        try {
+            dialectSelector.setByDataSource(dataSource);
+        } catch (SQLException e) {
+            throw new UncheckedSQLException(e);
+        }
+        Metamodel metamodel = JpaMetamodel.of();
+        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
+        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(dialectSelector, connectionProvider, metamodel);
+        return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jdbc");
     }
 
     @Bean
-    public IntegrationTestContext jpaIntegrationTestContext() {
-        // TODO return new SpringIntegrationTestContext with JpaQueryExecutor and JpaUpdateExecutor
-        return null;
+    public IntegrationTestContext jpaIntegrationTestContext(EntityManager entityManager,
+                                                            JdbcTemplate jdbcTemplate,
+                                                            SpringConnectionProvider connectionProvider,
+                                                            TransactionTemplate transactionTemplate) {
+
+        DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
+        SqlDialectSelector dialectSelector = new SqlDialectSelector();
+        try {
+            dialectSelector.setByDataSource(dataSource);
+        } catch (SQLException e) {
+            throw new UncheckedSQLException(e);
+        }
+        Metamodel metamodel = JpaMetamodel.of();
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
+        JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
+        JpaUpdateExecutor updateExecutor = new JpaUpdateExecutor(entityManager, new JpaTransactionTemplate() {
+            @Override
+            public <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action) {
+                return transactionTemplate.execute(status -> {
+                    T t = action.get();
+                    entityManager.flush();
+                    return t;
+                });
+            }
+        });
+        return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jpa");
     }
 
     @Component
     public static class SpringConnectionProvider implements ConnectionProvider {
-        @Autowired
-        JdbcTemplate jdbcTemplate;
-        @Autowired
-        TransactionTemplate transactionTemplate;
+        private final JdbcTemplate jdbcTemplate;
+        private final TransactionTemplate transactionTemplate;
 
+        @Autowired
         public SpringConnectionProvider(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
             this.jdbcTemplate = jdbcTemplate;
             this.transactionTemplate = transactionTemplate;
@@ -59,12 +101,17 @@ public class IntegrationTestApplication {
 
     @Component
     public static class DatabaseInitializer {
-        @Autowired
-        JdbcTemplate jdbcTemplate;
-        @Autowired
-        EntityManager entityManager;
-        @Autowired
-        ApplicationContext applicationContext;
+        private final JdbcTemplate jdbcTemplate;
+        private final EntityManager entityManager;
+        private final ApplicationContext applicationContext;
+
+        public DatabaseInitializer(JdbcTemplate jdbcTemplate,
+                                   EntityManager entityManager,
+                                   ApplicationContext applicationContext) {
+            this.jdbcTemplate = jdbcTemplate;
+            this.entityManager = entityManager;
+            this.applicationContext = applicationContext;
+        }
 
         @Transactional
         public void reset() {
@@ -82,9 +129,11 @@ public class IntegrationTestApplication {
 
     public static class SpringIntegrationTestContext implements IntegrationTestContext {
         @Autowired
-        DataSource dataSource;
+        private DataSource dataSource;
         @Autowired
-        DatabaseInitializer databaseInitializer;
+        private DatabaseInitializer databaseInitializer;
+        @Autowired
+        private ApplicationContext applicationContext;
 
         private final String name;
         private final QueryExecutor queryExecutor;
@@ -120,7 +169,8 @@ public class IntegrationTestApplication {
 
         @Override
         public String toString() {
-            return name;
+            DatabaseEnvironmentVariables dbEnv = applicationContext.getBean(DatabaseEnvironmentVariables.class);
+            return dbEnv.name() + "-" + name;
         }
     }
 
