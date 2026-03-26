@@ -45,7 +45,6 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
                 """
                         CREATE TABLE employee (
                             id BIGINT PRIMARY KEY,
-                            version BIGINT,
                             name VARCHAR(100) NOT NULL,
                             email VARCHAR(100),
                             salary DOUBLE,
