@@ -1,31 +1,47 @@
 package io.github.nextentity.integration.config.spring;
 
-import io.github.nextentity.integration.config.env.MysqlEnvironmentVariables;
+import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
+import io.github.nextentity.integration.config.env.Env;
 import org.jspecify.annotations.NonNull;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.support.ParameterDeclarations;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
+import java.util.List;
 import java.util.stream.Stream;
 
 public class ApplicationContextProvider implements ArgumentsProvider {
 
-    @Override
+    private static final List<ConfigurableApplicationContext> CONTEXTS = Env.dbs().stream()
+            .map(ApplicationContextProvider::getApplicationContext)
+            .toList();
+
     @NonNull
-    public Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
-                                                        @NonNull ExtensionContext context) throws Exception {
-        MysqlEnvironmentVariables mysql = new MysqlEnvironmentVariables();
-        //spring.datasource.password
-        ConfigurableApplicationContext mysqlCtx = SpringApplication.run(
+    @Override
+    public Stream<Arguments> provideArguments(@NonNull ParameterDeclarations parameters, @NonNull ExtensionContext context) {
+        return contexts().stream().map(Arguments::of);
+    }
+
+    public static List<ConfigurableApplicationContext> contexts() {
+        return CONTEXTS;
+    }
+
+    private static @NonNull ConfigurableApplicationContext getApplicationContext(DatabaseEnvironmentVariables dbEnv) {
+        // spring.datasource.password
+        ConfigurableApplicationContext context = SpringApplication.run(
                 IntegrationTestApplication.class,
-                "--spring.datasource.password=" + mysql.getPassword(),
-                "--spring.datasource.url=" + mysql.getJdbcUrl(),
-                "--spring.datasource.username=" + mysql.getUsername(),
-                "--spring.datasource.driver-class-name=" + mysql.getDriverClassName()
+                "--spring.datasource.password=" + dbEnv.getPassword(),
+                "--spring.datasource.url=" + dbEnv.getJdbcUrl(),
+                "--spring.datasource.username=" + dbEnv.getUsername(),
+                "--spring.datasource.driver-class-name=" + dbEnv.getDriverClassName()
         );
-        return Stream.of(mysqlCtx).map(Arguments::of);
+
+        DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) context.getAutowireCapableBeanFactory();
+        defaultListableBeanFactory.registerSingleton("databaseEnvironmentVariables", dbEnv);
+        return context;
     }
 }

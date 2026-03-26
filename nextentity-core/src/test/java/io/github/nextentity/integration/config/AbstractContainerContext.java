@@ -98,13 +98,13 @@ public abstract class AbstractContainerContext implements ContainerContext {
             QueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
             UpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(dialectSelector, connectionProvider, metamodel);
 
-            IntegrationTestContext jdbc = new IntegrationTestContext(this, dataSource, metamodel, jdbcQueryExecutor, jdbcUpdateExecutor, getDialect(), "jdbc");
+            IntegrationTestContext jdbc = new IntegrationTestContextImpl(this, dataSource, metamodel, jdbcQueryExecutor, jdbcUpdateExecutor, getDialect(), "jdbc");
 
             this.entityManager = getEntityManagerFactory().createEntityManager();
             JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
             JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager);
 
-            IntegrationTestContext jpa = new IntegrationTestContext(this, getDataSource(), metamodel, jpaQueryExecutor, jpaUpdateExecutor, getDialect(), "jpa");
+            IntegrationTestContext jpa = new IntegrationTestContextImpl(this, getDataSource(), metamodel, jpaQueryExecutor, jpaUpdateExecutor, getDialect(), "jpa");
 
             contexts = List.of(jdbc, jpa);
 

@@ -3,9 +3,10 @@ package io.github.nextentity.integration.config;
 import io.github.nextentity.core.QueryBuilder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.meta.jpa.JpaMetamodel;
+import org.jspecify.annotations.NonNull;
 
 import javax.sql.DataSource;
 
@@ -15,67 +16,21 @@ import javax.sql.DataSource;
  *
  * @author HuangChengwei
  */
-public class IntegrationTestContext {
+public interface IntegrationTestContext {
 
-    private final DataSource dataSource;
-    private final Metamodel metamodel;
-    private final QueryExecutor queryExecutor;
-    private final UpdateExecutor updateExecutor;
-    private final String dialect;
-    private final String implType;
-    private final ContainerContext containerContext;
+    DataSource getDataSource();
 
-    public IntegrationTestContext(ContainerContext containerContext,
-                                  DataSource dataSource,
-                                  Metamodel metamodel,
-                                  QueryExecutor queryExecutor,
-                                  UpdateExecutor updateExecutor,
-                                  String dialect,
-                                  String implType) {
-        this.containerContext = containerContext;
-        this.dataSource = dataSource;
-        this.metamodel = metamodel;
-        this.queryExecutor = queryExecutor;
-        this.updateExecutor = updateExecutor;
-        this.dialect = dialect;
-        this.implType = implType;
+    QueryExecutor getQueryExecutor();
+
+    UpdateExecutor getUpdateExecutor();
+
+    default QueryBuilder<Employee> queryEmployees() {
+        return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Employee.class);
     }
 
-    public DataSource getDataSource() {
-        return dataSource;
+    default QueryBuilder<Department> queryDepartments() {
+        return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Department.class);
     }
 
-    public Metamodel getMetamodel() {
-        return metamodel;
-    }
-
-    public QueryExecutor getQueryExecutor() {
-        return queryExecutor;
-    }
-
-    public UpdateExecutor getUpdateExecutor() {
-        return updateExecutor;
-    }
-
-    public String getDialect() {
-        return dialect;
-    }
-
-    public QueryBuilder<Employee> queryEmployees() {
-        return new QueryBuilder<>(metamodel, queryExecutor, Employee.class);
-    }
-
-    public QueryBuilder<Department> queryDepartments() {
-        return new QueryBuilder<>(metamodel, queryExecutor, Department.class);
-    }
-
-    public IntegrationTestContext reset() {
-        containerContext.reset(this);
-        return this;
-    }
-
-    @Override
-    public String toString() {
-        return dialect + "-" + implType;
-    }
+    @NonNull IntegrationTestContext reset();
 }
