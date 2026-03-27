@@ -3,6 +3,7 @@ package io.github.nextentity.integration.config.fixtures;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
+import io.github.nextentity.integration.entity.LockableEntity;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -74,5 +75,19 @@ public class TestDataFactory {
 
     public static Employee createEmployee(Long id, String name, String email, Double salary) {
         return createEmployee(id, name, email, salary, true, EmployeeStatus.ACTIVE, 1L, LocalDate.now());
+    }
+
+    public static List<LockableEntity> createLockableEntities() {
+        List<LockableEntity> entities = new ArrayList<>();
+        entities.add(new LockableEntity(1L, "Lockable Item 1", "Description for item 1"));
+        entities.add(new LockableEntity(2L, "Lockable Item 2", "Description for item 2"));
+        entities.add(new LockableEntity(3L, "Lockable Item 3", "Description for item 3"));
+        entities.add(new LockableEntity(4L, "Lockable Item 4", "Description for item 4"));
+        entities.add(new LockableEntity(5L, "Lockable Item 5", "Description for item 5"));
+        return entities;
+    }
+
+    public static LockableEntity createLockableEntity(Long id, String name, String description) {
+        return new LockableEntity(id, name, description);
     }
 }

@@ -5,6 +5,7 @@ import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.entity.LockableEntity;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import org.jspecify.annotations.NonNull;
 
@@ -26,6 +27,10 @@ public interface IntegrationTestContext {
 
     default QueryBuilder<Department> queryDepartments() {
         return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Department.class);
+    }
+
+    default QueryBuilder<LockableEntity> queryLockableEntities() {
+        return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), LockableEntity.class);
     }
 
     @NonNull IntegrationTestContext reset();

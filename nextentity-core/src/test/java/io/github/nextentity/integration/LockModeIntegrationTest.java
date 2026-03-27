@@ -3,8 +3,7 @@ package io.github.nextentity.integration;
 import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
-import io.github.nextentity.integration.entity.Department;
-import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.entity.LockableEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -23,6 +22,9 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
  * Note: Lock operations require an active transaction.
  * All lock tests are wrapped in doInTransaction.
  * <p>
+ * Uses LockableEntity which has a @Version field to support
+ * optimistic locking (OPTIMISTIC, OPTIMISTIC_FORCE_INCREMENT).
+ * <p>
  * These tests run against MySQL and PostgreSQL using Testcontainers.
  *
  * @author HuangChengwei
@@ -39,15 +41,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with pessimistic read lock")
     void shouldQueryWithPessimisticRead(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     @ParameterizedTest
@@ -55,15 +57,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get single with pessimistic read lock")
     void shouldGetSingleWithPessimisticRead(IntegrationTestContext context) {
         // When
-        Employee employee = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getSingle(0, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+        assertThat(entity).isNotNull();
+        assertThat(entity.getId()).isEqualTo(1L);
     }
 
     // ========================================
@@ -75,15 +77,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with pessimistic write lock")
     void shouldQueryWithPessimisticWrite(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.PESSIMISTIC_WRITE)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     @ParameterizedTest
@@ -91,15 +93,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get single with pessimistic write lock")
     void shouldGetSingleWithPessimisticWrite(IntegrationTestContext context) {
         // When
-        Employee employee = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getSingle(0, LockModeType.PESSIMISTIC_WRITE)
         );
 
         // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+        assertThat(entity).isNotNull();
+        assertThat(entity.getId()).isEqualTo(1L);
     }
 
     // ========================================
@@ -111,15 +113,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with optimistic lock")
     void shouldQueryWithOptimistic(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.OPTIMISTIC)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     @ParameterizedTest
@@ -127,15 +129,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with optimistic force increment lock")
     void shouldQueryWithOptimisticForceIncrement(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     // ========================================
@@ -147,15 +149,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with read lock")
     void shouldQueryWithReadLock(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.READ)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     @ParameterizedTest
@@ -163,15 +165,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with write lock")
     void shouldQueryWithWriteLock(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.WRITE)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     // ========================================
@@ -183,15 +185,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with no lock")
     void shouldQueryWithNoLock(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, LockModeType.NONE)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     // ========================================
@@ -203,16 +205,16 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with where condition")
     void shouldLockWithWhereCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getActive).eq(true)
-                        .orderBy(Employee::getId).asc()
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getName).like("Lockable%")
+                        .orderBy(LockableEntity::getId).asc()
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).isNotEmpty();
-        assertThat(employees).allMatch(Employee::getActive);
+        assertThat(entities).isNotEmpty();
+        assertThat(entities).allMatch(e -> e.getName().startsWith("Lockable"));
     }
 
     @ParameterizedTest
@@ -220,18 +222,18 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with multiple conditions")
     void shouldLockWithMultipleConditions(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getActive).eq(true)
-                        .where(Employee::getSalary).gt(50000.0)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getName).like("Lockable%")
+                        .where(LockableEntity::getId).lt(4L)
                         .getList(0, 10, LockModeType.PESSIMISTIC_WRITE)
         );
 
         // Then
-        assertThat(employees).isNotEmpty();
-        for (Employee emp : employees) {
-            assertThat(emp.getActive()).isTrue();
-            assertThat(emp.getSalary()).isGreaterThan(50000.0);
+        assertThat(entities).isNotEmpty();
+        for (LockableEntity entity : entities) {
+            assertThat(entity.getName()).startsWith("Lockable");
+            assertThat(entity.getId()).isLessThan(4L);
         }
     }
 
@@ -244,14 +246,14 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with pagination")
     void shouldLockWithPagination(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .orderBy(Employee::getId).asc()
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .orderBy(LockableEntity::getId).asc()
                         .getList(0, 3, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).hasSize(3);
+        assertThat(entities).hasSize(3);
     }
 
     // ========================================
@@ -263,15 +265,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with offset")
     void shouldLockWithOffset(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .orderBy(Employee::getId).asc()
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .orderBy(LockableEntity::getId).asc()
                         .getList(2, 3, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).hasSize(3);
-        assertThat(employees.get(0).getId()).isEqualTo(3L);
+        assertThat(entities).hasSize(3);
+        assertThat(entities.get(0).getId()).isEqualTo(3L);
     }
 
     // ========================================
@@ -283,15 +285,15 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get first with lock")
     void shouldGetFirstWithLock(IntegrationTestContext context) {
         // When
-        Employee employee = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .orderBy(Employee::getId).asc()
+        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .orderBy(LockableEntity::getId).asc()
                         .getFirst(0, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employee).isNotNull();
-        assertThat(employee.getId()).isEqualTo(1L);
+        assertThat(entity).isNotNull();
+        assertThat(entity.getId()).isEqualTo(1L);
     }
 
     // ========================================
@@ -305,8 +307,8 @@ public class LockModeIntegrationTest {
         // When & Then
         assertThatNoException().isThrownBy(() ->
                 context.getUpdateExecutor().doInTransaction(() -> {
-                    context.queryEmployees()
-                            .where(Employee::getId).eq(1L)
+                    context.queryLockableEntities()
+                            .where(LockableEntity::getId).eq(1L)
                             .getList(0, 10, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
                     return null;
                 })
@@ -322,39 +324,19 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with in condition")
     void shouldLockWithInCondition(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).in(1L, 2L, 3L)
-                        .orderBy(Employee::getId).asc()
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).in(1L, 2L, 3L)
+                        .orderBy(LockableEntity::getId).asc()
                         .getList(0, 10, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).hasSize(3);
+        assertThat(entities).hasSize(3);
     }
 
     // ========================================
-    // 12. Lock Department
-    // ========================================
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should lock department query")
-    void shouldLockDepartmentQuery(IntegrationTestContext context) {
-        // When
-        List<Department> departments = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryDepartments()
-                        .where(Department::getActive).eq(true)
-                        .getList(0, 10, LockModeType.PESSIMISTIC_READ)
-        );
-
-        // Then
-        assertThat(departments).isNotEmpty();
-        assertThat(departments).allMatch(Department::getActive);
-    }
-
-    // ========================================
-    // 13. Null Lock Mode
+    // 12. Null Lock Mode
     // ========================================
 
     @ParameterizedTest
@@ -362,19 +344,19 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with null lock mode")
     void shouldQueryWithNullLockMode(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(1L)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .where(LockableEntity::getId).eq(1L)
                         .getList(0, 10, null)
         );
 
         // Then
-        assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isNotNull();
+        assertThat(entities).hasSize(1);
+        assertThat(entities.get(0).getName()).isNotNull();
     }
 
     // ========================================
-    // 14. Limit with Lock
+    // 13. Limit with Lock
     // ========================================
 
     @ParameterizedTest
@@ -382,18 +364,18 @@ public class LockModeIntegrationTest {
     @DisplayName("Should limit with lock mode")
     void shouldLimitWithLockMode(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
-                        .orderBy(Employee::getId).asc()
-                        .limit(5, LockModeType.PESSIMISTIC_READ)
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
+                        .orderBy(LockableEntity::getId).asc()
+                        .limit(3, LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).hasSize(5);
+        assertThat(entities).hasSize(3);
     }
 
     // ========================================
-    // 15. GetList with Lock
+    // 14. GetList with Lock
     // ========================================
 
     @ParameterizedTest
@@ -401,12 +383,12 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get list with lock mode")
     void shouldGetListWithLockMode(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.getUpdateExecutor().doInTransaction(() ->
-                context.queryEmployees()
+        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+                context.queryLockableEntities()
                         .getList(LockModeType.PESSIMISTIC_READ)
         );
 
         // Then
-        assertThat(employees).hasSize(12);
+        assertThat(entities).hasSize(5);
     }
 }

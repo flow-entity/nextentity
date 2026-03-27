@@ -4,7 +4,6 @@ import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.util.Iterators;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceUnitUtil;
 import org.jspecify.annotations.NonNull;
 
@@ -56,6 +55,9 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
         doInTransaction(() -> {
             for (T entity : entities) {
+                if (!entityManager.contains(entity)) {
+                    entity = entityManager.merge(entity);
+                }
                 entityManager.remove(entity);
             }
         });

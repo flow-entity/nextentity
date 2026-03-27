@@ -5,6 +5,7 @@ import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
+import io.github.nextentity.integration.entity.LockableEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -42,14 +43,14 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldQueryWithPessimisticReadLock(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = context.queryEmployees()
-                    .where(Employee::getId).eq(1L)
+            LockableEntity entity = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(1L)
                     .getList(0, 1, LockModeType.PESSIMISTIC_READ)
                     .get(0);
 
             // Then
-            assertThat(employee).isNotNull();
-            assertThat(employee.getId()).isEqualTo(1L);
+            assertThat(entity).isNotNull();
+            assertThat(entity.getId()).isEqualTo(1L);
         });
     }
 
@@ -63,20 +64,20 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldQueryWithPessimisticWriteLock(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = context.queryEmployees()
-                    .where(Employee::getId).eq(1L)
+            LockableEntity entity = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(1L)
                     .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
                     .get(0);
 
             // Then
-            assertThat(employee).isNotNull();
-            assertThat(employee.getId()).isEqualTo(1L);
+            assertThat(entity).isNotNull();
+            assertThat(entity.getId()).isEqualTo(1L);
         });
     }
 
     /**
      * Tests query with OPTIMISTIC lock mode.
-     * Note: Requires active transaction.
+     * Note: Requires active transaction and @Version field.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -84,19 +85,19 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldQueryWithOptimisticLock(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = context.queryEmployees()
-                    .where(Employee::getId).eq(1L)
+            LockableEntity entity = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(1L)
                     .getList(0, 1, LockModeType.OPTIMISTIC)
                     .get(0);
 
             // Then
-            assertThat(employee).isNotNull();
+            assertThat(entity).isNotNull();
         });
     }
 
     /**
      * Tests query with OPTIMISTIC_FORCE_INCREMENT lock mode.
-     * Note: Requires active transaction.
+     * Note: Requires active transaction and @Version field.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -104,12 +105,12 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldQueryWithOptimisticForceIncrementLock(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = context.queryEmployees()
-                    .where(Employee::getId).eq(1L)
+            LockableEntity entity = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(1L)
                     .getList(0, 1, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
                     .get(0);
             // Then
-            assertThat(employee).isNotNull();
+            assertThat(entity).isNotNull();
         });
     }
 
@@ -121,13 +122,13 @@ public class JpaSpecificFeaturesIntegrationTest {
     @DisplayName("Should query without lock mode")
     void shouldQueryWithoutLockMode(IntegrationTestContext context) {
         // When
-        Employee employee = context.queryEmployees()
-                .where(Employee::getId).eq(1L)
+        LockableEntity entity = context.queryLockableEntities()
+                .where(LockableEntity::getId).eq(1L)
                 .getList(0, 1, null)
                 .get(0);
 
         // Then
-        assertThat(employee).isNotNull();
+        assertThat(entity).isNotNull();
     }
 
     /**
@@ -140,14 +141,14 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldGetFirstWithLockMode(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = context.queryEmployees()
-                    .orderBy(Employee::getId).asc()
+            LockableEntity entity = context.queryLockableEntities()
+                    .orderBy(LockableEntity::getId).asc()
                     .first(0, LockModeType.PESSIMISTIC_READ)
                     .orElse(null);
 
             // Then
-            assertThat(employee).isNotNull();
-            assertThat(employee.getId()).isEqualTo(1L);
+            assertThat(entity).isNotNull();
+            assertThat(entity.getId()).isEqualTo(1L);
         });
     }
 
@@ -161,14 +162,14 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldGetSingleWithLockMode(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            Employee employee = context.queryEmployees()
-                    .where(Employee::getId).eq(1L)
+            LockableEntity entity = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(1L)
                     .single(0, LockModeType.PESSIMISTIC_READ)
                     .orElse(null);
 
             // Then
-            assertThat(employee).isNotNull();
-            assertThat(employee.getId()).isEqualTo(1L);
+            assertThat(entity).isNotNull();
+            assertThat(entity.getId()).isEqualTo(1L);
         });
     }
 
@@ -182,26 +183,26 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldUpdateAfterPessimisticLock(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // Given
-            Employee employee = createTestEmployee(5001L, "Lock Update Test");
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            LockableEntity testEntity = new LockableEntity(5001L, "Lock Update Test", "Test Description");
+            context.getUpdateExecutor().insert(testEntity, LockableEntity.class);
 
             // When - Lock and update
-            Employee locked = context.queryEmployees()
-                    .where(Employee::getId).eq(5001L)
+            LockableEntity locked = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(5001L)
                     .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
                     .get(0);
 
             locked.setName("Updated After Lock");
-            context.getUpdateExecutor().update(locked, Employee.class);
+            context.getUpdateExecutor().update(locked, LockableEntity.class);
 
             // Then
-            Employee updated = context.queryEmployees()
-                    .where(Employee::getId).eq(5001L)
+            LockableEntity updated = context.queryLockableEntities()
+                    .where(LockableEntity::getId).eq(5001L)
                     .getSingle();
             assertThat(updated.getName()).isEqualTo("Updated After Lock");
 
             // Cleanup
-            context.getUpdateExecutor().delete(employee, Employee.class);
+            context.getUpdateExecutor().delete(testEntity, LockableEntity.class);
         });
     }
 
@@ -215,13 +216,13 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldGetListWithLockMode(IntegrationTestContext context) {
         context.getUpdateExecutor().doInTransaction(() -> {
             // When
-            List<Employee> employees = context.queryEmployees()
-                    .where(Employee::getDepartmentId).eq(1L)
-                    .orderBy(Employee::getId).asc()
+            List<LockableEntity> entities = context.queryLockableEntities()
+                    .where(LockableEntity::getId).lt(4L)
+                    .orderBy(LockableEntity::getId).asc()
                     .getList(0, 3, LockModeType.PESSIMISTIC_READ);
 
             // Then
-            assertThat(employees).hasSize(3);
+            assertThat(entities).hasSize(3);
         });
     }
 
