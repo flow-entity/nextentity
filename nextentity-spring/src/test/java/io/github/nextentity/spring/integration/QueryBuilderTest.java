@@ -9,6 +9,7 @@ import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Paths;
+import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.domain.Page;
 import io.github.nextentity.spring.integration.domain.Pageable;

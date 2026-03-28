@@ -2,6 +2,7 @@ package io.github.nextentity.spring.integration;
 
 import io.github.nextentity.api.Select;
 import io.github.nextentity.spring.integration.db.UserRepository;
+import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.entity.User;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -22,7 +23,7 @@ public class UpdateTest {
     }
 
     @ParameterizedTest
-    @ArgumentsSource(UserUpdaterProvider.class)
+    @ArgumentsSource(UserQueryProvider.class)
     void insert(UserRepository userUpdater) {
         userUpdater.doInTransaction(() -> doInsert(userUpdater));
     }
@@ -56,7 +57,7 @@ public class UpdateTest {
 
 
     @ParameterizedTest
-    @ArgumentsSource(UserUpdaterProvider.class)
+    @ArgumentsSource(UserQueryProvider.class)
     void update(UserRepository userUpdater) {
         userUpdater.doInTransaction(() -> testUpdate(userUpdater));
     }

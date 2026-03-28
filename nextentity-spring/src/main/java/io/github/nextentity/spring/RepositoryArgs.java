@@ -6,17 +6,16 @@ import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaQueryExecutor;
+import io.github.nextentity.jpa.JpaTransactionTemplate;
 import io.github.nextentity.jpa.JpaUpdateExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityTransaction;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 public record RepositoryArgs(
         Metamodel metamodel,
@@ -33,7 +32,7 @@ public record RepositoryArgs(
             throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
-        ConnectionProvider connectionProvider = getConnectionProvider(jdbcTemplate, dataSource);
+        ConnectionProvider connectionProvider = new NoneTransactionProvider(jdbcTemplate);
 
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, connectionProvider, new JdbcResultCollector());
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(sqlDialectSelector, connectionProvider, metamodel);
@@ -44,19 +43,28 @@ public record RepositoryArgs(
         );
     }
 
-    private static ConnectionProvider getConnectionProvider(JdbcTemplate jdbcTemplate, DataSource dataSource) {
-        TransactionTemplate transactionTemplate = new TransactionTemplate(new DataSourceTransactionManager(dataSource));
-        return new ConnectionProvider() {
-            @Override
-            public <T> T execute(ConnectionCallback<T> action) {
-                return jdbcTemplate.execute(action::doInConnection);
-            }
+    public static class NoneTransactionProvider implements ConnectionProvider, JpaTransactionTemplate {
+        private final JdbcTemplate jdbcTemplate;
 
-            @Override
-            public <T> T executeInTransaction(ConnectionCallback<T> action) {
-                return transactionTemplate.execute(status -> execute(action));
-            }
-        };
+
+        public NoneTransactionProvider(JdbcTemplate jdbcTemplate) {
+            this.jdbcTemplate = jdbcTemplate;
+        }
+
+        @Override
+        public <T> T execute(ConnectionCallback<T> action) {
+            return jdbcTemplate.execute(action::doInConnection);
+        }
+
+        @Override
+        public <T> T executeInTransaction(ConnectionCallback<T> action) {
+            return execute(action);
+        }
+
+        @Override
+        public <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action) {
+            return action.get();
+        }
     }
 
     public static RepositoryArgs jpa(EntityManager entityManager,
@@ -70,42 +78,13 @@ public record RepositoryArgs(
         }
         Metamodel metamodel = JpaMetamodel.of();
 
-        ConnectionProvider connectionProvider = new ConnectionProvider() {
-            @Override
-            public <T> T execute(ConnectionCallback<T> action) {
-                return jdbcTemplate.execute(action::doInConnection);
-            }
+        NoneTransactionProvider noneTransactionProvider = new NoneTransactionProvider(jdbcTemplate);
 
-            @Override
-            public <T> T executeInTransaction(ConnectionCallback<T> action) {
-                EntityTransaction transaction = entityManager.getTransaction();
-                if (transaction.isActive()) {
-                    return execute(action);
-                }
-                transaction.begin();
-                boolean rolledBack = false;
-                try {
-                    return execute(action);
-                } catch (Throwable e) {
-                    transaction.rollback();
-                    rolledBack = true;
-                    throw e;
-                } finally {
-                    if (rolledBack) {
-                        transaction.rollback();
-                    } else {
-                        transaction.commit();
-                    }
-                }
-            }
-        };
-
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, connectionProvider, new JdbcResultCollector());
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, noneTransactionProvider, new JdbcResultCollector());
 
         JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(
                 entityManager, metamodel, jdbcQueryExecutor);
-        JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager, metamodel);
-
+        JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager, metamodel, noneTransactionProvider);
 
         return new RepositoryArgs(
                 metamodel,

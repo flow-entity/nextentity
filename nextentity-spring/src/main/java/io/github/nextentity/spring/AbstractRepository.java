@@ -5,7 +5,6 @@ import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.core.QueryBuilder;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.annotation.SubSelect;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.util.Paths;

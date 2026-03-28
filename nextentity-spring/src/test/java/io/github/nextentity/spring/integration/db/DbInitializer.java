@@ -2,9 +2,13 @@ package io.github.nextentity.spring.integration.db;
 
 import io.github.nextentity.spring.integration.Users;
 import io.github.nextentity.spring.integration.entity.User;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -13,28 +17,32 @@ import java.util.stream.Collectors;
 /**
  * @author HuangChengwei
  */
-public class DbInitializer extends Transaction {
+@Component
+public class DbInitializer implements InitializingBean {
+
     List<User> allUsers;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
+    @Autowired
+    DatabaseEnvironment env;
+    @Autowired
+    @Qualifier("jdbcUserRepository")
+    UserRepository userRepository;
 
-    public DbInitializer(DbConfig config) {
-        super(config);
+    @Transactional
+    public synchronized void initialize() {
+        try {
+            UserRepository query = userRepository;
+            resetData();
+            allUsers = queryAllUsers(query);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public synchronized List<User> initialize() {
-        doInJdbcTransaction(() -> {
-            try {
-                UserRepository query = config.getJdbc();
-                resetData(config.getJdbcTemplate(), query);
-                allUsers = queryAllUsers(query);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-        return allUsers;
-    }
-
-    private void resetData(JdbcTemplate jdbcTemplate, UserRepository query) {
-        String sql = config.getSetPidNullSql();
+    private void resetData() {
+        UserRepository query = userRepository;
+        String sql = env.get().getPidNullSql();
         jdbcTemplate.execute(sql);
         query.deleteAll(queryAllUsers(query));
         query.insertAll(Users.getUsers());
@@ -54,4 +62,8 @@ public class DbInitializer extends Transaction {
     }
 
 
+    @Override
+    public void afterPropertiesSet() {
+        initialize();
+    }
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.List;
@@ -22,24 +23,16 @@ import java.util.stream.Collectors;
 public class UserRepository extends AbstractRepository<User, Integer> implements Select<User> {
 
     private List<User> users;
-    private Transaction transaction;
     private final String name;
-    private final boolean jdbc;
 
-    public UserRepository(JdbcTemplate jdbcTemplate, String dialect) {
+    public UserRepository(JdbcTemplate jdbcTemplate, String name) {
         super(jdbcTemplate);
-        name = "jdbc:" + dialect;
-        jdbc = true;
+        this.name =  name;
     }
 
-    public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate, String dialect) {
+    public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate, String name) {
         super(entityManager, jdbcTemplate);
-        name = "jpa:" + dialect;
-        jdbc = false;
-    }
-
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
+        this.name = name;
     }
 
     public void delete(@NonNull Iterable<User> entities) {
@@ -48,16 +41,6 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
 
     public void insert(@NonNull Iterable<User> entities) {
         super.insertAll(entities);
-    }
-
-    @Override
-    public void insertAll(@NonNull Iterable<User> entities) {
-        doInTransaction(() -> super.insertAll(entities));
-    }
-
-    @Override
-    public void insert(@NonNull User entity) {
-        doInTransaction(() -> super.insert(entity));
     }
 
     public void update(@NonNull Iterable<User> entities) {
@@ -505,12 +488,9 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return users;
     }
 
+    @Transactional
     public void doInTransaction(Runnable runnable) {
-        if (jdbc) {
-            transaction.doInJdbcTransaction(runnable);
-        } else {
-            transaction.doInJpaTransaction(runnable);
-        }
+        runnable.run();
     }
 
     @Override
