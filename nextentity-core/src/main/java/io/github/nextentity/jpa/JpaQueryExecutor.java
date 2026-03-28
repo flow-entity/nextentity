@@ -183,7 +183,7 @@ public class JpaQueryExecutor implements QueryExecutor {
 
         protected void setOrderBy(List<? extends SortExpression> orderBy) {
             if (orderBy != null && !orderBy.isEmpty()) {
-                List<jakarta.persistence.criteria.Order> orders = orderBy.stream()
+                List<Order> orders = orderBy.stream()
                         .map(o -> o.order() == SortOrder.DESC
                                 ? cb.desc(toExpression(o.expression()))
                                 : cb.asc(toExpression(o.expression())))
@@ -200,7 +200,7 @@ public class JpaQueryExecutor implements QueryExecutor {
 
         protected void setGroupBy(List<? extends ExpressionNode> groupBy) {
             if (groupBy != null && !groupBy.isEmpty()) {
-                List<jakarta.persistence.criteria.Expression<?>> grouping = groupBy.stream()
+                List<Expression<?>> grouping = groupBy.stream()
                         .map(this::toExpression)
                         .collect(ImmutableList.collector(groupBy.size()));
                 query.groupBy(grouping);

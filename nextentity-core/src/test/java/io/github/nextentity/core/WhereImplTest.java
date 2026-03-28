@@ -678,7 +678,7 @@ class WhereImplTest {
         @Test
         void groupBy_WithNullExpression_ShouldThrowException() {
             // when/then
-            assertThatThrownBy(() -> whereImpl.groupBy((io.github.nextentity.api.Path<Employee, ?>) null))
+            assertThatThrownBy(() -> whereImpl.groupBy((Path<Employee, ?>) null))
                     .isInstanceOf(NullPointerException.class);
         }
 
@@ -688,7 +688,7 @@ class WhereImplTest {
         @Test
         void groupBy_WithNullExpressionsList_ShouldThrowException() {
             // when/then
-            assertThatThrownBy(() -> whereImpl.groupBy((java.util.List<io.github.nextentity.api.Path<Employee, ?>>) null))
+            assertThatThrownBy(() -> whereImpl.groupBy((List<Path<Employee, ?>>) null))
                     .isInstanceOf(NullPointerException.class);
         }
 
