@@ -450,4 +450,528 @@ public class StringOperationsIntegrationTest {
         assertThat(emails).isNotEmpty();
         assertThat(emails).hasSize((int) context.queryEmployees().count());
     }
+
+    // ==================== IfNotNull Default Methods Tests ====================
+
+    /**
+     * Tests startsWithIfNotNull with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with startsWithIfNotNull when value is not null")
+    void shouldFilterWithStartsWithIfNotNull(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotNull("Alice")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
+    }
+
+    /**
+     * Tests startsWithIfNotNull with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when startsWithIfNotNull is null")
+    void shouldReturnAllWhenStartsWithIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotNull(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests endsWithIfNotNull with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with endsWithIfNotNull when value is not null")
+    void shouldFilterWithEndsWithIfNotNull(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).endsWithIfNotNull("@example.com")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
+    }
+
+    /**
+     * Tests endsWithIfNotNull with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when endsWithIfNotNull is null")
+    void shouldReturnAllWhenEndsWithIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).endsWithIfNotNull(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests containsIfNotNull with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with containsIfNotNull when value is not null")
+    void shouldFilterWithContainsIfNotNull(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).containsIfNotNull("John")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getName().contains("John"));
+    }
+
+    /**
+     * Tests containsIfNotNull with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when containsIfNotNull is null")
+    void shouldReturnAllWhenContainsIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).containsIfNotNull(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests notStartsWithIfNotNull with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notStartsWithIfNotNull when value is not null")
+    void shouldFilterWithNotStartsWithIfNotNull(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notStartsWithIfNotNull("A")
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
+    }
+
+    /**
+     * Tests notStartsWithIfNotNull with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when notStartsWithIfNotNull is null")
+    void shouldReturnAllWhenNotStartsWithIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notStartsWithIfNotNull(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests notEndsWithIfNotNull with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notEndsWithIfNotNull when value is not null")
+    void shouldFilterWithNotEndsWithIfNotNull(IntegrationTestContext context) {
+        // When - filter emails not ending with a non-existent suffix
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).notEndsWithIfNotNull("@nonexistent.org")
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then - all emails should not end with @nonexistent.org (which is all of them)
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
+    }
+
+    /**
+     * Tests notEndsWithIfNotNull with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when notEndsWithIfNotNull is null")
+    void shouldReturnAllWhenNotEndsWithIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).notEndsWithIfNotNull(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests notContainsIfNotNull with non-null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notContainsIfNotNull when value is not null")
+    void shouldFilterWithNotContainsIfNotNull(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notContainsIfNotNull("Alice")
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
+    }
+
+    /**
+     * Tests notContainsIfNotNull with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when notContainsIfNotNull is null")
+    void shouldReturnAllWhenNotContainsIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notContainsIfNotNull(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    // ==================== IfNotEmpty Default Methods Tests ====================
+
+    /**
+     * Tests startsWithIfNotEmpty with non-empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with startsWithIfNotEmpty when value is not empty")
+    void shouldFilterWithStartsWithIfNotEmpty(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotEmpty("Alice")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
+    }
+
+    /**
+     * Tests startsWithIfNotEmpty with empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when startsWithIfNotEmpty is empty")
+    void shouldReturnAllWhenStartsWithIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotEmpty("")
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests startsWithIfNotEmpty with null value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when startsWithIfNotEmpty is null")
+    void shouldReturnAllWhenStartsWithIfNotEmptyIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotEmpty(null)
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests endsWithIfNotEmpty with non-empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with endsWithIfNotEmpty when value is not empty")
+    void shouldFilterWithEndsWithIfNotEmpty(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).endsWithIfNotEmpty("@example.com")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
+    }
+
+    /**
+     * Tests endsWithIfNotEmpty with empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when endsWithIfNotEmpty is empty")
+    void shouldReturnAllWhenEndsWithIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).endsWithIfNotEmpty("")
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests containsIfNotEmpty with non-empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with containsIfNotEmpty when value is not empty")
+    void shouldFilterWithContainsIfNotEmpty(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).containsIfNotEmpty("John")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getName().contains("John"));
+    }
+
+    /**
+     * Tests containsIfNotEmpty with empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when containsIfNotEmpty is empty")
+    void shouldReturnAllWhenContainsIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).containsIfNotEmpty("")
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests notStartsWithIfNotEmpty with non-empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notStartsWithIfNotEmpty when value is not empty")
+    void shouldFilterWithNotStartsWithIfNotEmpty(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notStartsWithIfNotEmpty("A")
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
+    }
+
+    /**
+     * Tests notStartsWithIfNotEmpty with empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when notStartsWithIfNotEmpty is empty")
+    void shouldReturnAllWhenNotStartsWithIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notStartsWithIfNotEmpty("")
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests notEndsWithIfNotEmpty with non-empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notEndsWithIfNotEmpty when value is not empty")
+    void shouldFilterWithNotEndsWithIfNotEmpty(IntegrationTestContext context) {
+        // When - filter emails not ending with a non-existent suffix
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).notEndsWithIfNotEmpty("@nonexistent.org")
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then - all emails should not end with @nonexistent.org (which is all of them)
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
+    }
+
+    /**
+     * Tests notEndsWithIfNotEmpty with empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when notEndsWithIfNotEmpty is empty")
+    void shouldReturnAllWhenNotEndsWithIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getEmail).notEndsWithIfNotEmpty("")
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    /**
+     * Tests notContainsIfNotEmpty with non-empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notContainsIfNotEmpty when value is not empty")
+    void shouldFilterWithNotContainsIfNotEmpty(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notContainsIfNotEmpty("Alice")
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
+    }
+
+    /**
+     * Tests notContainsIfNotEmpty with empty value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should return all when notContainsIfNotEmpty is empty")
+    void shouldReturnAllWhenNotContainsIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).notContainsIfNotEmpty("")
+                .getList();
+
+        // Then
+        assertThat(employees).hasSize((int) totalCount);
+    }
+
+    // ==================== Combined Conditional String Tests ====================
+
+    /**
+     * Tests combining multiple IfNotNull string conditions.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should combine multiple IfNotNull string conditions")
+    void shouldCombineMultipleIfNotNullStringConditions(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotNull("A")
+                .where(Employee::getEmail).containsIfNotNull("@")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e ->
+                e.getName().startsWith("A") && e.getEmail().contains("@"));
+    }
+
+    /**
+     * Tests combining IfNotNull with null value (should skip condition).
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should skip condition when IfNotNull value is null")
+    void shouldSkipConditionWhenIfNotNullIsNull(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When - one null condition should be skipped
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotNull("A")
+                .where(Employee::getEmail).containsIfNotNull(null)
+                .getList();
+
+        // Then - should only filter by name condition
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
+    }
+
+    /**
+     * Tests combining IfNotEmpty with empty value (should skip condition).
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should skip condition when IfNotEmpty value is empty")
+    void shouldSkipConditionWhenIfNotEmptyIsEmpty(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When - one empty condition should be skipped
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getName).startsWithIfNotEmpty("A")
+                .where(Employee::getEmail).containsIfNotEmpty("")
+                .getList();
+
+        // Then - should only filter by name condition
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
+    }
 }

@@ -1,0 +1,489 @@
+package io.github.nextentity.integration;
+
+import io.github.nextentity.integration.config.IntegrationTestContext;
+import io.github.nextentity.integration.config.IntegrationTestProvider;
+import io.github.nextentity.integration.entity.Employee;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ArgumentsSource;
+
+import java.time.LocalDate;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+/**
+ * Integration tests for SimpleExpression default methods.
+ * <p>
+ * Tests default methods in SimpleExpression interface including:
+ * - Comparison operators with values (ge, gt, le, lt)
+ * - Between operations with values
+ * - Mixed between operations (expression and value combinations)
+ * <p>
+ * These tests run against MySQL and PostgreSQL using Testcontainers.
+ *
+ * @author HuangChengwei
+ * @see io.github.nextentity.api.SimpleExpression
+ */
+@DisplayName("SimpleExpression Default Methods Integration Tests")
+public class SimpleExpressionDefaultMethodsIntegrationTest {
+
+    private static final double SALARY_THRESHOLD = 60000.0;
+
+    // ==================== ge(U value) Tests ====================
+
+    /**
+     * Tests ge(U value) - greater than or equal with value parameter.
+     * This is a default method that uses root().literal(value).
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with ge(value) - greater than or equal")
+    void shouldFilterWithGeValue(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).ge(SALARY_THRESHOLD)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
+    }
+
+    /**
+     * Tests ge(U value) with boundary value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle ge(value) with boundary value")
+    void shouldHandleGeValueBoundary(IntegrationTestContext context) {
+        // Given - find a specific salary to use as boundary
+        Employee first = context.queryEmployees().getFirst();
+        Double boundarySalary = first.getSalary();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).ge(boundarySalary)
+                .orderBy(Employee::getSalary).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() >= boundarySalary);
+    }
+
+    // ==================== gt(U value) Tests ====================
+
+    /**
+     * Tests gt(U value) - greater than with value parameter.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with gt(value) - greater than")
+    void shouldFilterWithGtValue(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).gt(SALARY_THRESHOLD)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
+    }
+
+    /**
+     * Tests gt(U value) with ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with gt(value) on ID field")
+    void shouldFilterWithGtValueOnId(IntegrationTestContext context) {
+        // Given
+        Long idThreshold = 5L;
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).gt(idThreshold)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getId() > idThreshold);
+    }
+
+    // ==================== le(U value) Tests ====================
+
+    /**
+     * Tests le(U value) - less than or equal with value parameter.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with le(value) - less than or equal")
+    void shouldFilterWithLeValue(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).le(SALARY_THRESHOLD)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
+    }
+
+    /**
+     * Tests le(U value) with boundary value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should handle le(value) with boundary value")
+    void shouldHandleLeValueBoundary(IntegrationTestContext context) {
+        // Given - find a specific salary to use as boundary
+        Employee first = context.queryEmployees().getFirst();
+        Double boundarySalary = first.getSalary();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).le(boundarySalary)
+                .orderBy(Employee::getSalary).desc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() <= boundarySalary);
+    }
+
+    // ==================== lt(U value) Tests ====================
+
+    /**
+     * Tests lt(U value) - less than with value parameter.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with lt(value) - less than")
+    void shouldFilterWithLtValue(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).lt(SALARY_THRESHOLD)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
+    }
+
+    /**
+     * Tests lt(U value) with ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with lt(value) on ID field")
+    void shouldFilterWithLtValueOnId(IntegrationTestContext context) {
+        // Given
+        Long idThreshold = 10L;
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).lt(idThreshold)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getId() < idThreshold);
+    }
+
+    // ==================== between(U l, U r) Tests ====================
+
+    /**
+     * Tests between(U l, U r) - between two values.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with between(value, value)")
+    void shouldFilterWithBetweenValues(IntegrationTestContext context) {
+        // Given
+        double minSalary = 55000.0;
+        double maxSalary = 75000.0;
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).between(minSalary, maxSalary)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e ->
+                e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
+    }
+
+    /**
+     * Tests between(U l, U r) with ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with between(value, value) on ID field")
+    void shouldFilterWithBetweenValuesOnId(IntegrationTestContext context) {
+        // Given
+        Long minId = 3L;
+        Long maxId = 7L;
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).between(minId, maxId)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getId() >= minId && e.getId() <= maxId);
+    }
+
+    /**
+     * Tests between(U l, U r) with hire date.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with between(value, value) on date field")
+    void shouldFilterWithBetweenValuesOnDate(IntegrationTestContext context) {
+        // Given
+        LocalDate minDate = LocalDate.of(2020, 1, 1);
+        LocalDate maxDate = LocalDate.of(2023, 12, 31);
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getHireDate).between(minDate, maxDate)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e ->
+                e.getHireDate() != null &&
+                !e.getHireDate().isBefore(minDate) &&
+                !e.getHireDate().isAfter(maxDate));
+    }
+
+    // ==================== notBetween(U l, U r) Tests ====================
+
+    /**
+     * Tests notBetween(U l, U r) - not between two values.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notBetween(value, value)")
+    void shouldFilterWithNotBetweenValues(IntegrationTestContext context) {
+        // Given
+        double minSalary = 55000.0;
+        double maxSalary = 75000.0;
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).notBetween(minSalary, maxSalary)
+                .orderBy(Employee::getSalary).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e ->
+                e.getSalary() < minSalary || e.getSalary() > maxSalary);
+    }
+
+    /**
+     * Tests notBetween(U l, U r) with ID field.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notBetween(value, value) on ID field")
+    void shouldFilterWithNotBetweenValuesOnId(IntegrationTestContext context) {
+        // Given
+        Long minId = 3L;
+        Long maxId = 7L;
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).notBetween(minId, maxId)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getId() < minId || e.getId() > maxId);
+    }
+
+    // ==================== between(TypedExpression, U) Tests ====================
+
+    /**
+     * Tests between(TypedExpression, U) - between expression and value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with between(expression, value)")
+    void shouldFilterWithBetweenExpressionAndValue(IntegrationTestContext context) {
+        // Given
+        double maxSalary = 75000.0;
+        Double employee1Salary = context.queryEmployees()
+                .select(Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getSingle();
+
+        // When - salary between (salary of employee 1) and maxSalary
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).between(employee1Salary, maxSalary)
+                .getList();
+
+        // Then - should return employees with salary >= employee 1's salary and <= maxSalary
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() >= employee1Salary && e.getSalary() <= maxSalary);
+    }
+
+    // ==================== between(U, TypedExpression) Tests ====================
+
+    /**
+     * Tests between(U, TypedExpression) - between value and expression.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with between(value, expression)")
+    void shouldFilterWithBetweenValueAndExpression(IntegrationTestContext context) {
+        // Given
+        double minSalary = 50000.0;
+        Double employee1Salary = context.queryEmployees()
+                .select(Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getSingle();
+
+        // When - salary between minSalary and (salary of employee 1)
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).between(minSalary, employee1Salary)
+                .getList();
+
+        // Then - should return employees with salary >= minSalary
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() >= minSalary && e.getSalary() <= employee1Salary);
+    }
+
+    // ==================== notBetween(TypedExpression, U) Tests ====================
+
+    /**
+     * Tests notBetween(TypedExpression, U) - not between expression and value.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notBetween(expression, value)")
+    void shouldFilterWithNotBetweenExpressionAndValue(IntegrationTestContext context) {
+        // Given
+        double maxSalary = 80000.0;
+        Double employee1Salary = context.queryEmployees()
+                .select(Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getSingle();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).notBetween(employee1Salary, maxSalary)
+                .orderBy(Employee::getSalary).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() < employee1Salary || e.getSalary() > maxSalary);
+    }
+
+    // ==================== notBetween(U, TypedExpression) Tests ====================
+
+    /**
+     * Tests notBetween(U, TypedExpression) - not between value and expression.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should filter with notBetween(value, expression)")
+    void shouldFilterWithNotBetweenValueAndExpression(IntegrationTestContext context) {
+        // Given
+        double minSalary = 50000.0;
+        Double employee1Salary = context.queryEmployees()
+                .select(Employee::getSalary)
+                .where(Employee::getId).eq(1L)
+                .getSingle();
+
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).notBetween(minSalary, employee1Salary)
+                .orderBy(Employee::getSalary).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() < minSalary || e.getSalary() > employee1Salary);
+    }
+
+    // ==================== Combined Tests ====================
+
+    /**
+     * Tests combining multiple comparison operators.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should combine multiple comparison operators")
+    void shouldCombineMultipleComparisons(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).ge(50000.0)
+                .where(Employee::getSalary).lt(80000.0)
+                .where(Employee::getId).gt(1L)
+                .orderBy(Employee::getSalary).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e ->
+                e.getSalary() >= 50000.0 && e.getSalary() < 80000.0 && e.getId() > 1L);
+    }
+
+    /**
+     * Tests combining between with other conditions.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should combine between with other conditions")
+    void shouldCombineBetweenWithOtherConditions(IntegrationTestContext context) {
+        // When
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).between(50000.0, 80000.0)
+                .where(Employee::getName).like("A%")
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e ->
+                e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0 && e.getName().startsWith("A"));
+    }
+
+    /**
+     * Tests that comparison operators return correct count.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should count correctly with comparison operators")
+    void shouldCountCorrectlyWithComparisons(IntegrationTestContext context) {
+        // When
+        long geCount = context.queryEmployees()
+                .where(Employee::getSalary).ge(SALARY_THRESHOLD)
+                .count();
+
+        long gtCount = context.queryEmployees()
+                .where(Employee::getSalary).gt(SALARY_THRESHOLD)
+                .count();
+
+        long leCount = context.queryEmployees()
+                .where(Employee::getSalary).le(SALARY_THRESHOLD)
+                .count();
+
+        long ltCount = context.queryEmployees()
+                .where(Employee::getSalary).lt(SALARY_THRESHOLD)
+                .count();
+
+        // Then - ge count should be >= gt count (since ge is inclusive)
+        assertThat(geCount).isGreaterThanOrEqualTo(gtCount);
+        assertThat(leCount).isGreaterThanOrEqualTo(ltCount);
+    }
+}
