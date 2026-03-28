@@ -1,6 +1,6 @@
 package io.github.nextentity.spring.integration.db;
 
-import io.github.nextentity.core.exception.UncheckedSQLException;
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.util.Exceptions;
 import jakarta.persistence.EntityTransaction;
 import org.slf4j.Logger;
@@ -68,7 +68,7 @@ public class Transaction {
         try {
             executeJpaAction(action);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
     }
 
@@ -76,7 +76,7 @@ public class Transaction {
         try {
             executeJdbcAction(action);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
     }
 

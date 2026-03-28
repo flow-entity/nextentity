@@ -3,7 +3,7 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.SelectItem;
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.ReflectUtil;
@@ -120,7 +120,7 @@ public abstract class QueryContext {
         try {
             return schema.type().getConstructor(parameterTypes).newInstance(args);
         } catch (ReflectiveOperationException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 
@@ -165,7 +165,7 @@ public abstract class QueryContext {
             }
             return instance;
         } catch (ReflectiveOperationException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 
@@ -216,7 +216,7 @@ public abstract class QueryContext {
             }
             return result;
         } catch (ReflectiveOperationException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 

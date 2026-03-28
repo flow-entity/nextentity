@@ -2,7 +2,7 @@ package io.github.nextentity.core.meta;
 
 import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.annotation.SubSelect;
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.*;
 import io.github.nextentity.core.util.ImmutableList;
@@ -248,7 +248,7 @@ public abstract class AbstractMetamodel implements Metamodel {
                 }
             }
         } catch (IntrospectionException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
         Collection<Field> declaredFields = getDeclaredFields(type);
         AtomicInteger ordinal = new AtomicInteger();

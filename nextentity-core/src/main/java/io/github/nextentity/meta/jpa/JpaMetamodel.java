@@ -1,6 +1,6 @@
 package io.github.nextentity.meta.jpa;
 
-import io.github.nextentity.core.exception.UncheckedReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.meta.AbstractMetamodel;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.ValueConverter;
@@ -39,7 +39,7 @@ public class JpaMetamodel extends AbstractMetamodel {
                     return AttributeConverterWrapper.of(converter);
                 } catch (ReflectiveOperationException e) {
                     log.error("create AttributeConverter error, attribute: {}", attribute);
-                    throw new UncheckedReflectiveException(e.getMessage(), e);
+                    throw new ReflectiveException(e.getMessage(), e);
                 }
             }
         }

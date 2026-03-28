@@ -2,7 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
-import io.github.nextentity.core.exception.UncheckedSQLException;
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
@@ -125,7 +125,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
                 return null;
             });
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
     }
 
@@ -134,7 +134,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         try {
             return connectionProvider.executeInTransaction(connection -> command.get());
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
     }
 
@@ -201,7 +201,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         try {
             return connectionProvider.executeInTransaction(action);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
     }
 

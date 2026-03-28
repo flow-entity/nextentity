@@ -1,6 +1,6 @@
 package io.github.nextentity.core.reflect;
 
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.util.Exceptions;
 import org.jspecify.annotations.NonNull;
 
@@ -84,14 +84,14 @@ public class ReflectUtil {
     public static void typeCheck(Object value, Class<?> type) {
         if (value == null) {
             if (type.isPrimitive()) {
-                throw new BeanReflectiveException("primitive type value can not be null");
+                throw new ReflectiveException("primitive type value can not be null");
             }
         } else if (!type.isInstance(value)) {
             if (type.isPrimitive()) {
                 type = PrimitiveTypes.getWrapper(type);
             }
             if (!type.isInstance(value)) {
-                throw new BeanReflectiveException(value.getClass() + "[" + value + "] can not cast to " + type);
+                throw new ReflectiveException(value.getClass() + "[" + value + "] can not cast to " + type);
             }
         }
     }

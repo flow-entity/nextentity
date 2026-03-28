@@ -1,7 +1,7 @@
 package io.github.nextentity.core.reflect.schema;
 
 
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.util.ImmutableList;
 
@@ -43,7 +43,7 @@ public non-sealed interface Attribute extends ReflectType {
                 return ReflectUtil.getFieldValue(field(), entity);
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 
@@ -58,7 +58,7 @@ public non-sealed interface Attribute extends ReflectType {
                 ReflectUtil.setFieldValue(field(), entity, value);
             }
         } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 

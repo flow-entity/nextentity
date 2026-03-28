@@ -1,6 +1,6 @@
 package io.github.nextentity.core.reflect;
 
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -104,7 +104,7 @@ class ReflectUtilTest {
         void typeCheck_NullForPrimitive_ShouldThrow() {
             // then
             assertThatThrownBy(() -> ReflectUtil.typeCheck(null, int.class))
-                    .isInstanceOf(BeanReflectiveException.class)
+                    .isInstanceOf(ReflectiveException.class)
                     .hasMessageContaining("primitive type value can not be null");
         }
 
@@ -128,7 +128,7 @@ class ReflectUtilTest {
         void typeCheck_IncompatibleType_ShouldThrow() {
             // then
             assertThatThrownBy(() -> ReflectUtil.typeCheck("string", Integer.class))
-                    .isInstanceOf(BeanReflectiveException.class)
+                    .isInstanceOf(ReflectiveException.class)
                     .hasMessageContaining("can not cast to");
         }
 

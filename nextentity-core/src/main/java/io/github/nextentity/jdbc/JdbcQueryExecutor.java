@@ -3,7 +3,7 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.TransactionRequiredException;
-import io.github.nextentity.core.exception.UncheckedSQLException;
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
@@ -55,7 +55,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
                 }
             });
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
     }
 

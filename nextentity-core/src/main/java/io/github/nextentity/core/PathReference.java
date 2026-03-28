@@ -1,7 +1,7 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.Path;
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodHandleInfo;
@@ -63,7 +63,7 @@ public class PathReference {
             }
             return new PathReference(serializedLambda);
         } catch (ReflectiveOperationException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 

@@ -2,7 +2,7 @@ package io.github.nextentity.integration.config;
 
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.exception.UncheckedSQLException;
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.fixtures.TestDataFactory;
@@ -39,7 +39,7 @@ public class IntegrationTestApplication {
         try {
             dialectSelector.setByDataSource(dataSource);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
         JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
@@ -58,7 +58,7 @@ public class IntegrationTestApplication {
         try {
             dialectSelector.setByDataSource(dataSource);
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());

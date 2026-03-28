@@ -2,7 +2,7 @@ package io.github.nextentity.spring;
 
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.exception.UncheckedSQLException;
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaQueryExecutor;
@@ -30,7 +30,7 @@ public record RepositoryArgs(
         try {
             sqlDialectSelector.setByDataSource(Objects.requireNonNull(dataSource));
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
         ConnectionProvider connectionProvider = getConnectionProvider(jdbcTemplate, dataSource);
@@ -66,7 +66,7 @@ public record RepositoryArgs(
         try {
             sqlDialectSelector.setByDataSource(Objects.requireNonNull(dataSource));
         } catch (SQLException e) {
-            throw new UncheckedSQLException(e);
+            throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
 

@@ -6,7 +6,7 @@ import io.github.nextentity.core.QueryBuilder;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.annotation.SubSelect;
-import io.github.nextentity.core.exception.RepositoryConfigurationException;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.util.Paths;
 import jakarta.persistence.EntityManager;
@@ -51,7 +51,7 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
         Class<ID> idType = TypeCastUtil.cast(type.resolveGeneric(1));
         this.entityType = entityType;
         if (this.entityType == null) {
-            throw new RepositoryConfigurationException("Cannot resolve entity type, AbstractRepository must specify generic parameter T");
+            throw new ConfigurationException("Cannot resolve entity type, AbstractRepository must specify generic parameter T");
         }
         this.idType = idType;
         this.queryBuilder = new QueryBuilder<>(
@@ -66,7 +66,7 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
     protected AbstractRepository(Class<T> entityType, Class<ID> idType, RepositoryArgs args, EntityManager entityManager) {
         this.entityType = entityType;
         if (this.entityType == null) {
-            throw new RepositoryConfigurationException("Cannot resolve entity type, AbstractRepository must specify generic parameter T");
+            throw new ConfigurationException("Cannot resolve entity type, AbstractRepository must specify generic parameter T");
         }
         this.idType = idType;
         this.queryBuilder = new QueryBuilder<>(

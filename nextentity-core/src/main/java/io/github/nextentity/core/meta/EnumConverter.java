@@ -1,6 +1,6 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.exception.BeanReflectiveException;
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.reflect.schema.Attribute;
 
 import java.lang.reflect.InvocationTargetException;
@@ -32,7 +32,7 @@ public class EnumConverter<E extends Enum<E>> implements ValueConverter<E, Integ
             Method method = attributeType.getDeclaredMethod("values");
             this.values = (E[]) method.invoke(null);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            throw new BeanReflectiveException(e);
+            throw new ReflectiveException(e);
         }
     }
 
