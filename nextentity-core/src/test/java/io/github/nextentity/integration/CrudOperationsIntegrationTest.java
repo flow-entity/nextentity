@@ -5,6 +5,7 @@ import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -38,6 +39,14 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class CrudOperationsIntegrationTest {
 
     private static final Logger log = LoggerFactory.getLogger(CrudOperationsIntegrationTest.class);
+
+    @AfterEach
+    void tearDown() {
+        var context = IntegrationTestProvider.getEntityManagerContext();
+        if (context != null) {
+            context.reset();
+        }
+    }
 
     /**
      * Tests inserting a single employee.

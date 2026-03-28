@@ -6,6 +6,7 @@ import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.slf4j.Logger;
@@ -521,6 +522,14 @@ public class QueryOperationsIntegrationTest {
         for (Employee emp : employees) {
             assertTrue(emp.getSalary() >= 60000.0);
             assertTrue(emp.getSalary() <= 80000.0);
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        var context = IntegrationTestProvider.getEntityManagerContext();
+        if (context != null) {
+            context.reset();
         }
     }
 }

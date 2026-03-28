@@ -126,8 +126,6 @@ public class IntegrationTestApplication {
 
     public static class SpringIntegrationTestContext implements IntegrationTestContext {
         @Autowired
-        private DataSource dataSource;
-        @Autowired
         private DatabaseInitializer databaseInitializer;
         @Autowired
         private ApplicationContext applicationContext;

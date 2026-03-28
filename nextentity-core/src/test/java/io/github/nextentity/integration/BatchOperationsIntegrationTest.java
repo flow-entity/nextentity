@@ -4,6 +4,7 @@ import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -31,6 +32,14 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 public class BatchOperationsIntegrationTest {
 
     private static final int BATCH_SIZE = 100;
+
+    @AfterEach
+    void tearDown() {
+        var context = IntegrationTestProvider.getEntityManagerContext();
+        if (context != null) {
+            context.reset();
+        }
+    }
 
     /**
      * Tests batch insert of 100 records.

@@ -6,6 +6,7 @@ import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
 import io.github.nextentity.integration.entity.LockableEntity;
 import jakarta.persistence.LockModeType;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -417,6 +418,14 @@ public class JpaSpecificFeaturesIntegrationTest {
 
         // Cleanup
         context.getUpdateExecutor().delete(employee, Employee.class);
+    }
+
+    @AfterEach
+    void tearDown() {
+        var context = IntegrationTestProvider.getEntityManagerContext();
+        if (context != null) {
+            context.reset();
+        }
     }
 
     /**

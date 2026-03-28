@@ -11,11 +11,16 @@ import java.util.stream.Stream;
 /**
  * Arguments provider for parameterized integration tests.
  * Provides DbConfig instances for MySQL and PostgreSQL.
- * Resets test data before each test method execution.
+ * <p>
+ * Note: Test data reset is no longer automatic. Tests that modify data
+ * should call {@link IntegrationTestContext#reset()} in {@code @AfterEach}
+ * or at the end of each test method.
  *
  * @author HuangChengwei
  */
 public class IntegrationTestProvider implements ArgumentsProvider {
+
+    private static final ThreadLocal<IntegrationTestContext> INTEGRATION_TEST_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();
 
     @Override
     public @NonNull Stream<? extends Arguments> provideArguments(@NonNull ParameterDeclarations parameters,
@@ -24,6 +29,11 @@ public class IntegrationTestProvider implements ArgumentsProvider {
         return ApplicationContexts.contexts()
                 .stream()
                 .flatMap(ctx -> ctx.getBeansOfType(IntegrationTestContext.class).values().stream())
-                .map(arguments -> Arguments.of(arguments.reset()));
+                .peek(INTEGRATION_TEST_CONTEXT_THREAD_LOCAL::set)
+                .map(Arguments::of);
+    }
+
+    public static IntegrationTestContext getEntityManagerContext() {
+        return INTEGRATION_TEST_CONTEXT_THREAD_LOCAL.get();
     }
 }

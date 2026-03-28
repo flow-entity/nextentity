@@ -5,6 +5,7 @@ import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -29,6 +30,14 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 @DisplayName("Error Handling Integration Tests")
 public class ErrorHandlingIntegrationTest {
+
+    @AfterEach
+    void tearDown() {
+        var context = IntegrationTestProvider.getEntityManagerContext();
+        if (context != null) {
+            context.reset();
+        }
+    }
 
     /**
      * Tests duplicate primary key violation.

@@ -31,6 +31,16 @@ public class ApplicationContexts {
 
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) context.getAutowireCapableBeanFactory();
         defaultListableBeanFactory.registerSingleton("databaseEnvironmentVariables", dbEnv);
+
+        // Initialize database schema and test data once per context
+        initializeDatabase(context);
+
         return context;
+    }
+
+    private static void initializeDatabase(ConfigurableApplicationContext context) {
+        // Get all IntegrationTestContext beans and call reset() to initialize database
+        context.getBeansOfType(IntegrationTestContext.class).values()
+                .forEach(IntegrationTestContext::reset);
     }
 }
