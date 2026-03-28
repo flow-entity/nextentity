@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 
 import java.sql.*;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
@@ -108,6 +107,11 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
             try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
                 int[] result = executeUpdate(statement, sql.parameters());
                 log.trace("executeBatch result: {}", Arrays.toString(result));
+                for (int updated : result) {
+                    if (updated != 1) {
+                        throw new IllegalStateException("ID does not exist or is deleted repeatedly");
+                    }
+                }
                 return null;
             }
         });
@@ -138,9 +142,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         Object version = attribute.getDatabaseValue(entity);
         Class<?> type = attribute.type();
         if (type == Integer.class || type == int.class) {
-            version = version == null ? 1 : (Integer) version + 1;
+            version = version == null ? 0 : (Integer) version + 1;
         } else if (type == Long.class || type == long.class) {
-            version = version == null ? 1L : (Long) version + 1;
+            version = version == null ? 0L : (Long) version + 1;
         } else {
             throw new IllegalStateException();
         }

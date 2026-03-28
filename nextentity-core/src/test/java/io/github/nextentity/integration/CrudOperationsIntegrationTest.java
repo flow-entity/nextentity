@@ -346,7 +346,6 @@ public class CrudOperationsIntegrationTest {
     /**
      * Tests updating non-existent employee.
      */
-    @Disabled("BUG - JpaUpdateExecutor update operation on non-existent entity should throw exception")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle update of non-existent employee")
@@ -368,7 +367,6 @@ public class CrudOperationsIntegrationTest {
      * while JDBC implementation may have different behavior.
      * This test verifies the actual behavior without asserting specific exceptions.
      */
-    @Disabled("Bug - delete operation on non-existent entity should handle gracefully")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle delete of non-existent employee")
@@ -379,7 +377,6 @@ public class CrudOperationsIntegrationTest {
         // When - delete non-existent entity should not throw exception
         // JPA: entityManager.remove() on non-existent entity is a no-op
         // JDBC: delete operation affects 0 rows, but doesn't throw exception
-        // TODO delete operation on non-existent entity should handle gracefully
         assertThatThrownBy(() -> context.getUpdateExecutor().delete(nonExistent, Employee.class))
                 .isInstanceOf(RuntimeException.class);
         // Then - operation completes without error (implementation-specific behavior)

@@ -35,7 +35,6 @@ public class JoinOperationsIntegrationTest {
     /**
      * Tests fetching associated department for employees.
      */
-    @Disabled("BUG - jpa fetched association is null")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch employee with department")
@@ -60,7 +59,6 @@ public class JoinOperationsIntegrationTest {
     /**
      * Tests querying employees with department filter.
      */
-    @Disabled("BUG - jpa fetched association is null")
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by department name")

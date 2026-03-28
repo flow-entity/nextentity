@@ -104,7 +104,7 @@ public record RepositoryArgs(
 
         JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(
                 entityManager, metamodel, jdbcQueryExecutor);
-        JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager);
+        JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager, metamodel);
 
 
         return new RepositoryArgs(

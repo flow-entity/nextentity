@@ -63,7 +63,7 @@ public class IntegrationTestApplication {
         Metamodel metamodel = JpaMetamodel.of();
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
-        JpaUpdateExecutor updateExecutor = new JpaUpdateExecutor(entityManager, new JpaTransactionTemplate() {
+        JpaUpdateExecutor updateExecutor = new JpaUpdateExecutor(entityManager, metamodel, new JpaTransactionTemplate() {
             @Override
             public <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action) {
                 return transactionTemplate.execute(status -> action.get());
