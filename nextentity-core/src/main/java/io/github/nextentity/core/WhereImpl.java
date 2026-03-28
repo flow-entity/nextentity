@@ -1,13 +1,13 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.OrderOperatorImpl;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
+import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;

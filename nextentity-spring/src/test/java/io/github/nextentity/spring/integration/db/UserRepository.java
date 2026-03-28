@@ -5,6 +5,7 @@ import io.github.nextentity.api.model.*;
 import io.github.nextentity.spring.AbstractRepository;
 import io.github.nextentity.spring.integration.entity.User;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 

@@ -1,7 +1,6 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.*;
@@ -9,6 +8,7 @@ import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
+import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;

@@ -254,7 +254,7 @@ public class JpaQueryExecutor implements QueryExecutor {
             if (maxResult != null && maxResult > 0) {
                 objectsQuery = objectsQuery.setMaxResults(maxResult);
             }
-            LockModeType lockModeType = LockModeTypeAdapter.of(structure.lockType());
+            LockModeType lockModeType = structure.lockType();
             if (lockModeType != null) {
                 objectsQuery.setLockMode(lockModeType);
             }

@@ -1,8 +1,8 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.core.util.ImmutableList;
+import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 

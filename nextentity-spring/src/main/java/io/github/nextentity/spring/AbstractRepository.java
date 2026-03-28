@@ -19,7 +19,6 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
-@SubSelect("")
 public abstract class AbstractRepository<T, ID extends Serializable> {
 
     private final Class<ID> idType;

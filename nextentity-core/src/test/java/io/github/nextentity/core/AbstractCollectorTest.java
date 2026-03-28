@@ -2,10 +2,10 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.Collector;
 import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Page;
 import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
+import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

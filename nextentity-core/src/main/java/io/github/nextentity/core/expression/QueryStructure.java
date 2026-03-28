@@ -1,7 +1,7 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.core.util.ImmutableList;
+import jakarta.persistence.LockModeType;
 
 public record QueryStructure(
 

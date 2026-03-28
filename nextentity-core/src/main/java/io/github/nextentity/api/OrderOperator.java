@@ -1,6 +1,7 @@
 package io.github.nextentity.api;
 
 import io.github.nextentity.api.model.*;
+import jakarta.persistence.LockModeType;
 
 import java.util.Collection;
 import java.util.List;

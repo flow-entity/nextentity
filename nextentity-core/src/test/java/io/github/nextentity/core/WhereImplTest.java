@@ -1,15 +1,11 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Predicate;
-import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.model.LockModeType;
+import io.github.nextentity.api.*;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.integration.entity.Employee;
+import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,15 +14,16 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for WhereImpl - WHERE clause implementation.

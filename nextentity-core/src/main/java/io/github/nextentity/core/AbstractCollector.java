@@ -2,9 +2,13 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.Collector;
 import io.github.nextentity.api.SubQueryBuilder;
-import io.github.nextentity.api.model.*;
+import io.github.nextentity.api.model.Page;
+import io.github.nextentity.api.model.Pageable;
+import io.github.nextentity.api.model.Slice;
+import io.github.nextentity.api.model.Sliceable;
 import io.github.nextentity.core.expression.SliceImpl;
 import io.github.nextentity.core.util.ImmutableList;
+import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;

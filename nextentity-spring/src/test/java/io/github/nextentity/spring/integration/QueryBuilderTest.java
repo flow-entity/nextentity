@@ -1,9 +1,7 @@
 package io.github.nextentity.spring.integration;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.api.model.LockModeType;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
@@ -19,27 +17,19 @@ import io.github.nextentity.spring.integration.projection.IUser;
 import io.github.nextentity.spring.integration.projection.UserInterface;
 import io.github.nextentity.spring.integration.projection.UserModel;
 import io.github.nextentity.spring.integration.projection.UserRecord;
+import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static io.github.nextentity.core.util.Paths.get;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class QueryBuilderTest {
 
