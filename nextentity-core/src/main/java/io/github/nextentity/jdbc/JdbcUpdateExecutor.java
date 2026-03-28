@@ -114,11 +114,6 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> T patch(@NonNull T entity, @NonNull Class<T> entityClass) {
-        return updateAll(Collections.singletonList(entity), entityClass, true).get(0);
-    }
-
-    @Override
     public void doInTransaction(Runnable command) {
         try {
             connectionProvider.executeInTransaction(connection -> {

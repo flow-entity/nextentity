@@ -31,8 +31,6 @@ public interface UpdateExecutor {
         deleteAll(ImmutableList.of(entity), entityType);
     }
 
-    <T> T patch(@NonNull T entity, @NonNull Class<T> entityType);
-
     default void doInTransaction(Runnable command) {
         doInTransaction(() -> {
             command.run();

@@ -129,13 +129,6 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
         updateExecutor.delete(entity, entityType);
     }
 
-
-
-    @Transactional
-    public T patch(@NonNull T entity) {
-        return updateExecutor.patch(entity, entityType);
-    }
-
     protected void flush() {
         if (entityManager != null) {
             entityManager.flush();

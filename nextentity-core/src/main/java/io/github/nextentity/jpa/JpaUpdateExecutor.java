@@ -64,24 +64,6 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> T patch(@NonNull T entity, @NonNull Class<T> entityType) {
-        return doInTransaction(() -> {
-            Object id = requireId(entity);
-            T t = entityManager.find(entityType, id);
-            if (t == null) {
-                throw new IllegalArgumentException("id not found");
-            }
-            ReflectUtil.copyTargetNullFields(t, entity, entityType);
-            return entityManager.merge(entity);
-        });
-    }
-
-    private <T> Object requireId(T entity) {
-        Object id = util.getIdentifier(entity);
-        return Objects.requireNonNull(id);
-    }
-
-    @Override
     public <T> T doInTransaction(Supplier<T> command) {
         return transactionTemplate.executeInTransaction(entityManager, command);
     }

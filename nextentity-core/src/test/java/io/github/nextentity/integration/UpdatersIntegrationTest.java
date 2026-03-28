@@ -7,7 +7,6 @@ import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -144,34 +143,6 @@ public class UpdatersIntegrationTest {
             assertThat(after).isNull();
         }
 
-        @Disabled("BUG: PostgreSQL cannot determine data type for null parameters in patch")
-        @ParameterizedTest
-        @ArgumentsSource(IntegrationTestProvider.class)
-        @DisplayName("Should update non-null columns via patch")
-        void shouldPatchViaUpdatePatch(IntegrationTestContext context) {
-            // Given
-            Update<Employee> update = Updaters.create(context.getUpdateExecutor(), Employee.class);
-            Employee employee = createTestEmployee(8004L, "Patch Test");
-            update.insert(employee);
-
-            // When - update only name (set other fields to null)
-            Employee patch = new Employee();
-            patch.setId(8004L);
-            patch.setName("Patched Name");
-            // Other fields are null
-
-            Employee updated = update.patch(patch);
-
-            // Then
-            assertThat(updated).isNotNull();
-            assertThat(updated.getName()).isEqualTo("Patched Name");
-
-            // Verify other fields are not changed
-            Employee found = context.queryEmployees()
-                    .where(Employee::getId).eq(8004L)
-                    .getSingle();
-            assertThat(found.getSalary()).isEqualTo(50000.0); // Original value
-        }
     }
 
     @Nested

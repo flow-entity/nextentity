@@ -14,9 +14,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Update API integration tests.
@@ -175,53 +173,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 3. Patch Operations
-    // ========================================
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should patch employee")
-    void shouldPatchEmployee(IntegrationTestContext context) {
-        // Given
-        Employee employee = context.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .getSingle();
-        Double newSalary = employee.getSalary() + 5000;
-        employee.setSalary(newSalary);
-
-        // When
-        Employee patched = context.getUpdateExecutor().patch(employee, Employee.class);
-
-        // Then
-        assertThat(patched.getSalary()).isEqualTo(newSalary);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should patch employee with partial fields")
-    @Disabled("BUG: PostgreSQL cannot determine data type for null parameters in JDBC patch operation")
-    void shouldPatchEmployeeWithPartialFields(IntegrationTestContext context) {
-        // Given - get original employee
-        Employee original = context.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .getSingle();
-        String originalEmail = original.getEmail();
-
-        // Create a new employee with only id and changed name
-        Employee partial = new Employee();
-        partial.setId(1L);
-        partial.setName("Patched Name Only");
-
-        // When
-        Employee patched = context.getUpdateExecutor().patch(partial, Employee.class);
-
-        // Then
-        assertThat(patched.getName()).isEqualTo("Patched Name Only");
-        // Other fields should remain unchanged or be updated depending on implementation
-    }
-
-    // ========================================
-    // 4. Delete Operations
+    // 3. Delete Operations
     // ========================================
 
     @ParameterizedTest
@@ -263,7 +215,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 5. Transaction Operations
+    // 4. Transaction Operations
     // ========================================
 
     @ParameterizedTest
@@ -305,7 +257,6 @@ public class UpdateApiIntegrationTest {
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should rollback on exception")
-    @Disabled("BUG: Transaction rollback not working correctly in JDBC implementation - data persists after exception")
     void shouldRollbackOnException(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9052L, "Rollback Test");
@@ -323,7 +274,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 6. Empty Batch Operations
+    // 5. Empty Batch Operations
     // ========================================
 
     @ParameterizedTest
@@ -357,7 +308,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 7. Department Operations
+    // 6. Department Operations
     // ========================================
 
     @ParameterizedTest
@@ -399,7 +350,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 8. Duplicate Key Tests
+    // 7. Duplicate Key Tests
     // ========================================
 
     @ParameterizedTest
@@ -416,7 +367,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 9. Complex Transaction Tests
+    // 8. Complex Transaction Tests
     // ========================================
 
     @ParameterizedTest
@@ -443,7 +394,7 @@ public class UpdateApiIntegrationTest {
     }
 
     // ========================================
-    // 10. Status Enum Tests
+    // 9. Status Enum Tests
     // ========================================
 
     @ParameterizedTest

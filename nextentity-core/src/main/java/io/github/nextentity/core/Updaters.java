@@ -55,11 +55,6 @@ public class Updaters {
         }
 
         @Override
-        public T patch(@NonNull T entity) {
-            return updateExecutor.patch(entity, entityType);
-        }
-
-        @Override
         public String toString() {
             return "Updater(" + entityType.getSimpleName() + ')';
         }

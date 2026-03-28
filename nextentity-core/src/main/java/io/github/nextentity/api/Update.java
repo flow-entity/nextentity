@@ -57,12 +57,4 @@ public interface Update<T> {
      */
     void delete(@NonNull T entity);
 
-    /**
-     * Update non-null fields of the entity.
-     *
-     * @param entity Entity object
-     * @return Updated entity object
-     */
-    T patch(@NonNull T entity);
-
 }

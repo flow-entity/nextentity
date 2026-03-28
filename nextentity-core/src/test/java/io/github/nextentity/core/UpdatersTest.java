@@ -10,9 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for Updaters utility class.
@@ -158,25 +157,6 @@ class UpdatersTest {
 
         // then
         verify(updateExecutor).deleteAll(entities, TestEntity.class);
-    }
-
-    /**
-     * Test objective: Verify that patch delegates to patch.
-     * Test scenario: Update non-null columns of an entity.
-     * Expected result: updateExecutor.patch is called and returns updated entity.
-     */
-    @Test
-    void patch_ShouldDelegateToPatch() {
-        // given
-        TestEntity entity = new TestEntity(1L, "test");
-        when(updateExecutor.patch(entity, TestEntity.class)).thenReturn(entity);
-
-        // when
-        TestEntity result = updater.patch(entity);
-
-        // then
-        assertThat(result).isEqualTo(entity);
-        verify(updateExecutor).patch(entity, TestEntity.class);
     }
 
     /**
