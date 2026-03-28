@@ -13,10 +13,10 @@ import jakarta.persistence.Query;
 import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class JpaUpdateExecutor implements UpdateExecutor {
 
@@ -60,6 +60,10 @@ public class JpaUpdateExecutor implements UpdateExecutor {
 
             List<T> result = new ArrayList<>(list.size());
             for (T t : list) {
+                if (entityManager.contains(t)) {
+                    result.add(t);
+                    continue;
+                }
                 Object id = idAttribute.get(t);
                 Object version = versionAttribute != null ? versionAttribute.get(t) : null;
 
@@ -137,8 +141,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     private String getJpaEntityName(Class<?> entityType) {
-        jakarta.persistence.metamodel.EntityType<?> jpaEntityType =
-                entityManager.getMetamodel().entity(entityType);
+        var jpaEntityType = entityManager.getMetamodel().entity(entityType);
         return jpaEntityType.getName();
     }
 
@@ -153,18 +156,21 @@ public class JpaUpdateExecutor implements UpdateExecutor {
             String entityName = getJpaEntityName(entityType);
             EntityAttribute idAttribute = entity.id();
 
-            Set<Object> ids = list.stream()
-                    .map(idAttribute::get)
-                    .collect(Collectors.toSet());
-            if (ids.size() != list.size()) {
-                throw new IllegalArgumentException("Entity ids must be unique");
+            Set<Object> ids = new HashSet<>();
+            for (T t : list) {
+                if (!entityManager.contains(t)) {
+                    Object id = idAttribute.get(t);
+                    ids.add(id);
+                } else {
+                    entityManager.remove(t);
+                }
             }
 
-            String jpql = "DELETE FROM " + entityName + " e WHERE e." + idAttribute.name() + " IN :ids";
+            String jpql = "DELETE FROM " + entityName + " e WHERE e." + idAttribute.name() + " IN (:ids)";
             Query query = entityManager.createQuery(jpql);
             query.setParameter("ids", ids);
             int updated = query.executeUpdate();
-            if (updated != list.size()) {
+            if (updated != ids.size()) {
                 throw new IllegalStateException("Deleted " + updated + " entities, expected " + list.size());
             }
             return null;

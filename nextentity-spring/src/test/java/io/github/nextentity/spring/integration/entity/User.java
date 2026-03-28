@@ -11,7 +11,8 @@ import java.util.Objects;
 
 import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
-@Entity(name = "\"user\"")
+@Entity
+@Table(name = "users")
 public class User extends EnableOptimisticLock implements Cloneable {
 
     @Id

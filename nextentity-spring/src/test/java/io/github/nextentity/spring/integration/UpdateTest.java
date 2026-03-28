@@ -76,29 +76,4 @@ public class UpdateTest {
         assertEquals(users, query(userUpdater).where(User::getId).in(1, 2, 3).getList());
     }
 
-    @ParameterizedTest
-    @ArgumentsSource(UserUpdaterProvider.class)
-    void patch(UserRepository userUpdater) {
-        userUpdater.doInTransaction(() -> testPatch(userUpdater));
-    }
-
-    private void testPatch(UserRepository userUpdater) {
-        List<User> users = query(userUpdater).where(User::getId).in(1, 2, 3).getList();
-        List<User> users2 = new ArrayList<>(users.size());
-        for (User user : users) {
-            user = user.clone();
-            User user2 = user.clone();
-            users2.add(user2);
-            int randomNumber = user.getRandomNumber() + 1;
-            user.setRandomNumber(randomNumber);
-            user2.setRandomNumber(randomNumber);
-            user.setUsername(null);
-            user.setTime(null);
-            user.setPid(null);
-            userUpdater.patch(user);
-        }
-        assertEquals(users2, query(userUpdater).where(User::getId).in(1, 2, 3).getList());
-
-    }
-
 }

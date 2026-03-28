@@ -1579,6 +1579,7 @@ class QueryBuilderTest {
 
         single = userQuery
                 .where(User::getId).le(10)
+                .orderBy(User::getId).asc()
                 .single(10).orElse(null);
         assertEquals(single, user);
 

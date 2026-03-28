@@ -34,7 +34,7 @@ public class Mysql extends AbstractTestcontainersDbConfigProvider {
 
     @Override
     public String setPidNullSql() {
-        return "update `user` set pid = null";
+        return "update `users` set pid = null";
     }
 
     @Override
