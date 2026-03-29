@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.core.util.Paths;
 import io.github.nextentity.integration.config.IntegrationTestContext;
@@ -552,6 +553,31 @@ public class NumericOperationsIntegrationTest {
     }
 
     /**
+     * Tests addition operation with literal expression in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should add literal expression to numeric field in SELECT")
+    void shouldAddLiteralValueInSelect(IntegrationTestContext context) {
+        // Given
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        var bonus = Paths.<Employee>root().literal(5000.0);
+
+        // When
+        List<Double> results = context.queryEmployees()
+                .select(get(Employee::getSalary).add(bonus))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary + 5000.0);
+    }
+
+    /**
      * Tests subtraction operation in SELECT clause.
      */
     @ParameterizedTest
@@ -574,6 +600,31 @@ public class NumericOperationsIntegrationTest {
         // Then
         assertThat(results).hasSize(1);
         assertThat(results.get(0)).isEqualTo(originalSalary - deduction);
+    }
+
+    /**
+     * Tests subtraction operation with literal expression in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should subtract literal expression from numeric field in SELECT")
+    void shouldSubtractLiteralValueInSelect(IntegrationTestContext context) {
+        // Given
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        var deduction = Paths.<Employee>root().literal(1000.0);
+
+        // When
+        List<Double> results = context.queryEmployees()
+                .select(get(Employee::getSalary).subtract(deduction))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary - 1000.0);
     }
 
     /**
@@ -602,6 +653,31 @@ public class NumericOperationsIntegrationTest {
     }
 
     /**
+     * Tests multiplication operation with literal expression in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should multiply numeric field with literal expression in SELECT")
+    void shouldMultiplyLiteralValueInSelect(IntegrationTestContext context) {
+        // Given
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        var multiplier = Paths.<Employee>root().literal(1.1); // 10% raise
+
+        // When
+        List<Double> results = context.queryEmployees()
+                .select(get(Employee::getSalary).multiply(multiplier))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary * 1.1);
+    }
+
+    /**
      * Tests division operation in SELECT clause.
      */
     @ParameterizedTest
@@ -627,6 +703,31 @@ public class NumericOperationsIntegrationTest {
     }
 
     /**
+     * Tests division operation with literal expression in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should divide numeric field with literal expression in SELECT")
+    void shouldDivideLiteralValueInSelect(IntegrationTestContext context) {
+        // Given
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getList();
+        Double originalSalary = employees.get(0).getSalary();
+        var divisor = Paths.<Employee>root().literal(12.0); // Monthly salary
+
+        // When
+        List<Double> results = context.queryEmployees()
+                .select(get(Employee::getSalary).divide(divisor))
+                .where(Employee::getId).eq(1L)
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0)).isEqualTo(originalSalary / 12.0);
+    }
+
+    /**
      * Tests modulo operation in SELECT clause with ID field.
      */
     @ParameterizedTest
@@ -646,6 +747,28 @@ public class NumericOperationsIntegrationTest {
         assertThat(results).isNotEmpty();
         // Verify modulo results are in expected range [0, modValue)
         assertThat(results).allMatch(n -> n >= 0 && n < modValue);
+    }
+
+    /**
+     * Tests modulo operation with literal expression in SELECT clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should modulo numeric field with literal expression in SELECT")
+    void shouldModuloLiteralValueInSelect(IntegrationTestContext context) {
+        // Given
+        var modValue = Paths.<Employee>root().literal(3L);
+
+        // When
+        List<Long> results = context.queryEmployees()
+                .select(get(Employee::getId).mod(modValue))
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        // Verify modulo results are in expected range [0, 3)
+        assertThat(results).allMatch(n -> n >= 0 && n < 3);
     }
 
     /**
@@ -743,6 +866,27 @@ public class NumericOperationsIntegrationTest {
     }
 
     /**
+     * Tests arithmetic operation with literal expression in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use arithmetic with literal expression in WHERE clause")
+    void shouldUseArithmeticWithLiteralInWhereClause(IntegrationTestContext context) {
+        // Given
+        double threshold = 70000.0;
+        var bonus = Paths.<Employee>root().literal(10000.0);
+
+        // When - Find employees where salary + literal(bonus) > threshold
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).add(bonus).gt(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() + 10000.0 > threshold);
+    }
+
+    /**
      * Tests subtraction in WHERE clause.
      */
     @ParameterizedTest
@@ -761,6 +905,27 @@ public class NumericOperationsIntegrationTest {
         // Then
         assertThat(employees).isNotEmpty();
         assertThat(employees).allMatch(e -> e.getSalary() - deduction >= threshold);
+    }
+
+    /**
+     * Tests subtraction with literal expression in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use subtraction with literal expression in WHERE clause")
+    void shouldUseSubtractionWithLiteralInWhereClause(IntegrationTestContext context) {
+        // Given
+        double threshold = 50000.0;
+        var deduction = Paths.<Employee>root().literal(5000.0);
+
+        // When - Find employees where salary - literal(deduction) >= threshold
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).subtract(deduction).ge(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() - 5000.0 >= threshold);
     }
 
     /**
@@ -785,6 +950,27 @@ public class NumericOperationsIntegrationTest {
     }
 
     /**
+     * Tests multiplication with literal expression in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use multiplication with literal expression in WHERE clause")
+    void shouldUseMultiplicationWithLiteralInWhereClause(IntegrationTestContext context) {
+        // Given
+        double threshold = 100000.0;
+        var multiplier = Paths.<Employee>root().literal(2.0);
+
+        // When - Find employees where salary * literal(multiplier) > threshold
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).multiply(multiplier).gt(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() * 2.0 > threshold);
+    }
+
+    /**
      * Tests division in WHERE clause.
      */
     @ParameterizedTest
@@ -806,6 +992,27 @@ public class NumericOperationsIntegrationTest {
     }
 
     /**
+     * Tests division with literal expression in WHERE clause.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use division with literal expression in WHERE clause")
+    void shouldUseDivisionWithLiteralInWhereClause(IntegrationTestContext context) {
+        // Given
+        double threshold = 5000.0; // Monthly salary threshold
+        var months = Paths.<Employee>root().literal(12.0);
+
+        // When - Find employees where salary / literal(12) > threshold
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getSalary).divide(months).gt(threshold)
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getSalary() / 12.0 > threshold);
+    }
+
+    /**
      * Tests modulo in WHERE clause with ID field.
      */
     @ParameterizedTest
@@ -824,6 +1031,27 @@ public class NumericOperationsIntegrationTest {
         // Then
         assertThat(employees).isNotEmpty();
         assertThat(employees).allMatch(e -> e.getId() % modValue == 0);
+    }
+
+    /**
+     * Tests modulo in WHERE clause with literal expression.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should use modulo with literal expression in WHERE clause")
+    void shouldUseModuloWithLiteralInWhereClause(IntegrationTestContext context) {
+        // Given
+        var modValue = Paths.<Employee>root().literal(2L);
+
+        // When - Find employees where id % literal(2) = 0 (even IDs)
+        List<Employee> employees = context.queryEmployees()
+                .where(Employee::getId).mod(modValue).eq(0L)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(employees).isNotEmpty();
+        assertThat(employees).allMatch(e -> e.getId() % 2 == 0);
     }
 
     /**
