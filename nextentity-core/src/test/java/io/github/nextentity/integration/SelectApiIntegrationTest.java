@@ -294,6 +294,22 @@ public class SelectApiIntegrationTest {
         assertThat(tuple.get5()).isEqualTo(1L);
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct six paths")
+    void shouldSelectDistinctSixPaths(IntegrationTestContext context) {
+        // When
+        List<Tuple6<Long, Boolean, String, Double, String, Long>> results = context.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive,
+                        Employee::getName, Employee::getSalary, Employee::getEmail,
+                        Employee::getId)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
+    }
+
     // ========================================
     // 7. Tuple7 Selection (Seven Paths)
     // ========================================
@@ -317,6 +333,22 @@ public class SelectApiIntegrationTest {
         assertThat(tuple.get1()).isEqualTo(tuple.get6()); // Both are name
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct seven paths")
+    void shouldSelectDistinctSevenPaths(IntegrationTestContext context) {
+        // When
+        List<Tuple7<Long, Boolean, String, Double, String, Long, String>> results = context.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive,
+                        Employee::getName, Employee::getSalary, Employee::getEmail,
+                        Employee::getId, Employee::getName)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
+    }
+
     // ========================================
     // 8. Tuple8 Selection (Eight Paths)
     // ========================================
@@ -338,6 +370,22 @@ public class SelectApiIntegrationTest {
         assertThat(results.get(0).get0()).isEqualTo(1L);
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct eight paths")
+    void shouldSelectDistinctEightPaths(IntegrationTestContext context) {
+        // When
+        List<Tuple8<Long, Boolean, String, Double, String, Long, String, Double>> results = context.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive,
+                        Employee::getName, Employee::getSalary, Employee::getEmail,
+                        Employee::getId, Employee::getName, Employee::getSalary)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
+    }
+
     // ========================================
     // 9. Tuple9 Selection (Nine Paths)
     // ========================================
@@ -357,6 +405,23 @@ public class SelectApiIntegrationTest {
         // Then
         assertThat(results).hasSize(1);
         assertThat(results.get(0).get0()).isEqualTo(1L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct nine paths")
+    void shouldSelectDistinctNinePaths(IntegrationTestContext context) {
+        // When
+        List<Tuple9<Long, Boolean, String, Double, String, Long, String, Double, Boolean>> results = context.queryEmployees()
+                .selectDistinct(Employee::getDepartmentId, Employee::getActive,
+                        Employee::getName, Employee::getSalary, Employee::getEmail,
+                        Employee::getId, Employee::getName, Employee::getSalary,
+                        Employee::getActive)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
     }
 
     // ========================================
@@ -567,6 +632,124 @@ public class SelectApiIntegrationTest {
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with four typed expressions")
+    void shouldSelectWithFourTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with five typed expressions")
+    void shouldSelectWithFiveTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple5<Double, Double, Double, Long, Double>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with six typed expressions")
+    void shouldSelectWithSixTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple6<Double, Double, Double, Long, Double, Long>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with seven typed expressions")
+    void shouldSelectWithSevenTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple7<Double, Double, Double, Long, Double, Long, Double>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with eight typed expressions")
+    void shouldSelectWithEightTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple8<Double, Double, Double, Long, Double, Long, Double, Double>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with nine typed expressions")
+    void shouldSelectWithNineTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple9<Double, Double, Double, Long, Double, Long, Double, Double, Double>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with ten typed expressions")
+    void shouldSelectWithTenTypedExpressions(IntegrationTestContext context) {
+        // When
+        List<Tuple10<Double, Double, Double, Long, Double, Long, Double, Double, Double, Long>> results = context.queryEmployees()
+                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.get(0).get3()).isEqualTo(results.get(0).get9());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct with list of typed expressions")
     void shouldSelectDistinctWithListOfTypedExpressions(IntegrationTestContext context) {
         // Given
@@ -584,6 +767,52 @@ public class SelectApiIntegrationTest {
         // Verify distinctness - all tuples should be unique
         long distinctCount = results.stream().distinct().count();
         assertThat(results.size()).isEqualTo((int) distinctCount);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with list of typed expressions (non-distinct)")
+    void shouldSelectWithListOfTypedExpressions(IntegrationTestContext context) {
+        // Given
+        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        expressions.add(get(Employee::getDepartmentId));
+        expressions.add(get(Employee::getActive));
+
+        // When
+        List<Tuple> results = context.queryEmployees()
+                .select(expressions)
+                .orderBy(Employee::getId).asc()
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(12);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select with list of typed expressions - aggregate functions")
+    void shouldSelectWithListOfTypedExpressionsAggregate(IntegrationTestContext context) {
+        // Given - using aggregate expressions as TypedExpression
+        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        expressions.add(get(Employee::getSalary).max());
+        expressions.add(get(Employee::getSalary).min());
+        expressions.add(get(Employee::getSalary).avg());
+
+        // When
+        List<Tuple> results = context.queryEmployees()
+                .select(expressions)
+                .getList();
+
+        // Then - aggregate results should produce one row
+        assertThat(results).hasSize(1);
+        Tuple tuple = results.get(0);
+        Double maxSalary = (Double) tuple.get(0);
+        Double minSalary = (Double) tuple.get(1);
+        Double avgSalary = (Double) tuple.get(2);
+        assertThat(maxSalary).isNotNull();
+        assertThat(minSalary).isNotNull();
+        assertThat(avgSalary).isNotNull();
+        assertThat(maxSalary).isGreaterThanOrEqualTo(minSalary);
     }
 
     @ParameterizedTest
@@ -627,6 +856,157 @@ public class SelectApiIntegrationTest {
 
         // Then - all department+name combinations should be distinct (12 employees)
         assertThat(results).hasSize(12);
+    }
+
+    // ========================================
+    // 13b. selectDistinct with TypedExpression varargs
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with two typed expressions varargs")
+    void shouldSelectDistinctWithTwoTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple2<Double, Double>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with three typed expressions varargs")
+    void shouldSelectDistinctWithThreeTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with four typed expressions varargs")
+    void shouldSelectDistinctWithFourTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with five typed expressions varargs")
+    void shouldSelectDistinctWithFiveTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple5<Double, Double, Double, Long, Double>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with six typed expressions varargs")
+    void shouldSelectDistinctWithSixTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple6<Double, Double, Double, Long, Double, Long>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with seven typed expressions varargs")
+    void shouldSelectDistinctWithSevenTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple7<Double, Double, Double, Long, Double, Long, Double>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with eight typed expressions varargs")
+    void shouldSelectDistinctWithEightTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple8<Double, Double, Double, Long, Double, Long, Double, Double>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with nine typed expressions varargs")
+    void shouldSelectDistinctWithNineTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple9<Double, Double, Double, Long, Double, Long, Double, Double, Double>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with ten typed expressions varargs")
+    void shouldSelectDistinctWithTenTypedExpressionsVarargs(IntegrationTestContext context) {
+        // When
+        List<Tuple10<Double, Double, Double, Long, Double, Long, Double, Double, Double, Long>> results = context.queryEmployees()
+                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
+                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
+                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
+                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .getList();
+
+        // Then
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.get(0).get3()).isEqualTo(results.get(0).get9());
     }
 
     // ========================================
