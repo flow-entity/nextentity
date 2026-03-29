@@ -9,8 +9,6 @@ import io.github.nextentity.integration.entity.EmployeeStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -34,8 +32,6 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @DisplayName("Aggregate Functions Integration Tests")
 public class AggregateFunctionsIntegrationTest {
-
-    private static final Logger log = LoggerFactory.getLogger(AggregateFunctionsIntegrationTest.class);
 
     /**
      * Tests COUNT aggregation.
@@ -234,10 +230,10 @@ public class AggregateFunctionsIntegrationTest {
 
         // Then
         assertNotNull(results);
-        assertTrue(results.size() > 0);
+        assertFalse(results.isEmpty());
 
         // Verify total count matches
-        long totalCount = results.stream().mapToLong(t -> t.get1()).sum();
+        long totalCount = results.stream().mapToLong(Tuple2::get1).sum();
         assertEquals(12, totalCount);
     }
 
@@ -322,7 +318,7 @@ public class AggregateFunctionsIntegrationTest {
 
         // Then
         assertNotNull(results);
-        assertTrue(results.size() > 0);
+        assertFalse(results.isEmpty());
 
         // Verify total count
         long totalCount = results.stream()
@@ -453,10 +449,10 @@ public class AggregateFunctionsIntegrationTest {
 
         // Then
         assertNotNull(results);
-        assertTrue(results.size() > 0);
+        assertFalse(results.isEmpty());
 
         // Verify total count
-        long totalCount = results.stream().mapToLong(t -> t.get1()).sum();
+        long totalCount = results.stream().mapToLong(Tuple2::get1).sum();
         assertEquals(12, totalCount);
     }
 }
