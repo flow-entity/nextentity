@@ -1,7 +1,6 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.SimpleExpression;
+import io.github.nextentity.api.PathRef;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.PathReference;
 import org.jspecify.annotations.NonNull;
@@ -268,7 +267,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.OR, nodes));
     }
 
-    protected PathNode appendPath(Path<?, ?> path) {
+    protected PathNode appendPath(PathRef<?, ?> path) {
         PathNode target = (PathNode) getRoot();
         String fieldName = PathReference.of(path).getFieldName();
         return target.get(fieldName);
@@ -292,17 +291,6 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
 
     protected ExpressionNode getNode(Object value) {
         return new LiteralNode(value);
-    }
-
-    protected final ExpressionNode getRootWithInitial(Supplier<ExpressionNode> supplier) {
-        if (root == null) {
-            synchronized (this) {
-                if (root == null) {
-                    root = supplier.get();
-                }
-            }
-        }
-        return root;
     }
 
     protected ExpressionNode operate(Operator operator) {

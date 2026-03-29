@@ -120,7 +120,7 @@ class ExpressionNodesTest {
         @Test
         void getNode_FromLiteralExpression_ReturnsNode() {
             // given
-            TypedExpression<?, String> expression = Expressions.of("test");
+            TypedExpression<?, String> expression = TypedExpression.of("test");
 
             // when
             ExpressionNode node = ExpressionNodes.getNode(expression);

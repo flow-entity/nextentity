@@ -9,7 +9,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
-import static io.github.nextentity.api.Path.NumberRef;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**

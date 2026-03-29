@@ -41,7 +41,7 @@ public interface OrderOperator<T, U> extends OrderByStep<T, U> {
     /// @param paths Collection of paths
     /// @return OrderOperator instance
     @Override
-    default OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths) {
+    default OrderOperator<T, U> orderBy(Collection<PathRef<T, ? extends Comparable<?>>> paths) {
         return asc().orderBy(paths);
     }
 

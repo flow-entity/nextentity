@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -10,7 +11,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -126,7 +126,7 @@ public class SubqueryIntegrationTest {
     void shouldCompareWithMaxExpression(IntegrationTestContext context) {
         // Given - Get max salary
         Double maxSalary = context.queryEmployees()
-                .select(get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         // When - Find employees with max salary
@@ -148,7 +148,7 @@ public class SubqueryIntegrationTest {
     void shouldCompareWithMinExpression(IntegrationTestContext context) {
         // Given - Get min salary
         Double minSalary = context.queryEmployees()
-                .select(get(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees with min salary
@@ -169,7 +169,7 @@ public class SubqueryIntegrationTest {
     void shouldCompareWithAverageExpression(IntegrationTestContext context) {
         // Given - Get average salary
         Double avgSalary = context.queryEmployees()
-                .select(get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         // When - Find employees above average
@@ -307,7 +307,7 @@ public class SubqueryIntegrationTest {
     void shouldAggregateWithFilter(IntegrationTestContext context) {
         // Given - Get min salary
         Double minSalary = context.queryEmployees()
-                .select(get(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees with salary above min
@@ -332,19 +332,19 @@ public class SubqueryIntegrationTest {
     void shouldCombineMultipleAggregations(IntegrationTestContext context) {
         // Given
         Long count = context.queryEmployees()
-                .select(get(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .getSingle();
 
         Double avg = context.queryEmployees()
-                .select(get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         Double max = context.queryEmployees()
-                .select(get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         Double min = context.queryEmployees()
-                .select(get(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees in various ranges

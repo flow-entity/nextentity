@@ -374,20 +374,20 @@ public interface ExpressionBuilder<T, U, B> {
         /// @param path Path
         /// @param <V> Path value type
         /// @return Path operator instance
-        <V> PathOperator<T, V, B> get(Path<U, V> path);
+        <V> PathOperator<T, V, B> get(PathRef<U, V> path);
 
         /// Gets the string operator of the specified string path.
         ///
         /// @param path String path
         /// @return String operator instance
-        StringOperator<T, B> get(Path.StringRef<U> path);
+        StringOperator<T, B> get(PathRef.StringRef<U> path);
 
         /// Gets the number operator of the specified number path.
         ///
         /// @param path Number path
         /// @param <V> Number type
         /// @return Number operator instance
-        <V extends Number> NumberOperator<T, V, B> get(Path.NumberRef<U, V> path);
+        <V extends Number> NumberOperator<T, V, B> get(PathRef.NumberRef<U, V> path);
 
     }
 
@@ -634,20 +634,20 @@ public interface ExpressionBuilder<T, U, B> {
         /// @param path Path
         /// @param <R> Path value type
         /// @return Path operator instance
-        <R> PathOperator<T, R, Conjunction<T>> and(Path<T, R> path);
+        <R> PathOperator<T, R, Conjunction<T>> and(PathRef<T, R> path);
 
         /// Joins with the number operator of the specified number path.
         ///
         /// @param path Number path
         /// @param <R> Number type
         /// @return Number operator instance
-        <R extends Number> NumberOperator<T, R, Conjunction<T>> and(Path.NumberRef<T, R> path);
+        <R extends Number> NumberOperator<T, R, Conjunction<T>> and(PathRef.NumberRef<T, R> path);
 
         /// Joins with the string operator of the specified string path.
         ///
         /// @param path String path
         /// @return String operator instance
-        StringOperator<T, Conjunction<T>> and(Path.StringRef<T> path);
+        StringOperator<T, Conjunction<T>> and(PathRef.StringRef<T> path);
 
         /// Joins with another expression.
         ///
@@ -678,20 +678,20 @@ public interface ExpressionBuilder<T, U, B> {
         /// @param path Path
         /// @param <N> Path value type
         /// @return Path operator instance
-        <N> PathOperator<T, N, Disjunction<T>> or(Path<T, N> path);
+        <N> PathOperator<T, N, Disjunction<T>> or(PathRef<T, N> path);
 
         /// Disjoins with the number operator of the specified number path.
         ///
         /// @param path Number path
         /// @param <N> Number type
         /// @return Number operator instance
-        <N extends Number> NumberOperator<T, N, Disjunction<T>> or(Path.NumberRef<T, N> path);
+        <N extends Number> NumberOperator<T, N, Disjunction<T>> or(PathRef.NumberRef<T, N> path);
 
         /// Disjoins with the string operator of the specified string path.
         ///
         /// @param path String path
         /// @return String operator instance
-        StringOperator<T, ? extends Disjunction<T>> or(Path.StringRef<T> path);
+        StringOperator<T, ? extends Disjunction<T>> or(PathRef.StringRef<T> path);
 
         /// Disjoins with another expression.
         ///

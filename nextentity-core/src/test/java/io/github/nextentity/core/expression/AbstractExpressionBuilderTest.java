@@ -1,11 +1,9 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.TypedExpression;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -323,8 +321,8 @@ class AbstractExpressionBuilderTest {
             assertThat(capturedNode).isInstanceOf(OperatorNode.class);
             OperatorNode opNode = (OperatorNode) capturedNode;
             assertThat(opNode.operator()).isEqualTo(Operator.NOT);
-            assertThat(opNode.operands().get(0)).isInstanceOf(OperatorNode.class);
-            OperatorNode innerOp = (OperatorNode) opNode.operands().get(0);
+            assertThat(opNode.operands().getFirst()).isInstanceOf(OperatorNode.class);
+            OperatorNode innerOp = (OperatorNode) opNode.operands().getFirst();
             assertThat(innerOp.operator()).isEqualTo(Operator.IN);
         }
     }

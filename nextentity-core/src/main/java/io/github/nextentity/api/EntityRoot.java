@@ -1,6 +1,6 @@
-package io.github.nextentity.api.model;
+package io.github.nextentity.api;
 
-import io.github.nextentity.api.*;
+import io.github.nextentity.core.util.DefaultEntityRoot;
 
 /// Entity root interface, providing entity attribute access and path building methods.
 ///
@@ -9,6 +9,10 @@ import io.github.nextentity.api.*;
 /// @since 1.0.0
 ///
 public interface EntityRoot<T> {
+
+    static <T> EntityRoot<T> of() {
+        return DefaultEntityRoot.of();
+    }
 
     ///
     /// Creates a literal expression.
@@ -26,7 +30,7 @@ public interface EntityRoot<T> {
     /// @param <U> Property type
     /// @return Entity path expression
     ///
-    <U> EntityPath<T, U> get(Path<T, U> path);
+    <U> EntityPath<T, U> get(PathRef<T, U> path);
 
     ///
     /// Gets the boolean path expression for the specified boolean property path.
@@ -34,7 +38,7 @@ public interface EntityRoot<T> {
     /// @param path Boolean property path
     /// @return Boolean path expression
     ///
-    BooleanPath<T> get(Path.BooleanRef<T> path);
+    BooleanPath<T> get(PathRef.BooleanRef<T> path);
 
     ///
     /// Gets the string path expression for the specified string property path.
@@ -42,7 +46,7 @@ public interface EntityRoot<T> {
     /// @param path String property path
     /// @return String path expression
     ///
-    StringPath<T> get(Path.StringRef<T> path);
+    StringPath<T> get(PathRef.StringRef<T> path);
 
     ///
     /// Gets the number path expression for the specified numeric property path.
@@ -51,7 +55,7 @@ public interface EntityRoot<T> {
     /// @param <U> Numeric type
     /// @return Number path expression
     ///
-    <U extends Number> NumberPath<T, U> get(Path.NumberRef<T, U> path);
+    <U extends Number> NumberPath<T, U> get(PathRef.NumberRef<T, U> path);
 
     ///
     /// Creates a path expression for the specified path.
@@ -60,7 +64,7 @@ public interface EntityRoot<T> {
     /// @param <U> Property type
     /// @return Path expression
     ///
-    <U> PathExpression<T, U> path(Path<T, U> path);
+    <U> Path<T, U> path(PathRef<T, U> path);
 
     ///
     /// Creates an entity path expression for the specified path.
@@ -69,7 +73,7 @@ public interface EntityRoot<T> {
     /// @param <U> Property type
     /// @return Entity path expression
     ///
-    <U> EntityPath<T, U> entity(Path<T, U> path);
+    <U> EntityPath<T, U> entity(PathRef<T, U> path);
 
     ///
     /// Creates a string path expression for the specified string path.
@@ -77,7 +81,7 @@ public interface EntityRoot<T> {
     /// @param path String property path
     /// @return String path expression
     ///
-    StringPath<T> string(Path<T, String> path);
+    StringPath<T> string(PathRef<T, String> path);
 
     ///
     /// Creates a number path expression for the specified numeric path.
@@ -86,7 +90,7 @@ public interface EntityRoot<T> {
     /// @param <U> Numeric type
     /// @return Number path expression
     ///
-    <U extends Number> NumberPath<T, U> number(Path<T, U> path);
+    <U extends Number> NumberPath<T, U> number(PathRef<T, U> path);
 
     ///
     /// Creates a boolean path expression for the specified boolean path.
@@ -94,7 +98,7 @@ public interface EntityRoot<T> {
     /// @param path Boolean property path
     /// @return Boolean path expression
     ///
-    BooleanPath<T> bool(Path<T, Boolean> path);
+    BooleanPath<T> bool(PathRef<T, Boolean> path);
 
     // type-unsafe
     ///
@@ -104,7 +108,7 @@ public interface EntityRoot<T> {
     /// @param <U> Property type
     /// @return Path expression
     ///
-    <U> PathExpression<T, U> path(String fieldName);
+    <U> Path<T, U> path(String fieldName);
 
     ///
     /// Creates an entity path expression by field name (type-unsafe).

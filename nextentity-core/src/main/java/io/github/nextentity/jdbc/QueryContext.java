@@ -59,7 +59,7 @@ public abstract class QueryContext {
         this.metamodel = metamodel;
         this.expandReferencePath = expandObjectAttribute;
         From from = structure.from();
-        this.entityType = from instanceof FromEntity fromEntity ? metamodel.getEntity(fromEntity.type()) : null;
+        this.entityType = from instanceof FromEntity(Class<?> type) ? metamodel.getEntity(type) : null;
     }
 
     public QueryContext newContext(QueryStructure structure) {

@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
@@ -11,7 +12,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -811,7 +811,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use startsWith predicate as where condition")
         void shouldUseStartsWithPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given - create predicate using startsWith
-            Predicate<Employee> predicate = get(Employee::getName).startsWith("Alice");
+            Predicate<Employee> predicate = Path.of(Employee::getName).startsWith("Alice");
 
             // When - pass predicate to where()
             List<Employee> employees = context.queryEmployees()
@@ -831,7 +831,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use endsWith predicate as where condition")
         void shouldUseEndsWithPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getEmail).endsWith("@example.com");
+            Predicate<Employee> predicate = Path.of(Employee::getEmail).endsWith("@example.com");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -851,7 +851,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use contains predicate as where condition")
         void shouldUseContainsPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).contains("John");
+            Predicate<Employee> predicate = Path.of(Employee::getName).contains("John");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -871,7 +871,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notStartsWith predicate as where condition")
         void shouldUseNotStartsWithPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).notStartsWith("A");
+            Predicate<Employee> predicate = Path.of(Employee::getName).notStartsWith("A");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -892,7 +892,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notEndsWith predicate as where condition")
         void shouldUseNotEndsWithPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getEmail).notEndsWith("@nonexistent.org");
+            Predicate<Employee> predicate = Path.of(Employee::getEmail).notEndsWith("@nonexistent.org");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -913,7 +913,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notContains predicate as where condition")
         void shouldUseNotContainsPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).notContains("Alice");
+            Predicate<Employee> predicate = Path.of(Employee::getName).notContains("Alice");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -934,7 +934,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use startsWithIfNotNull predicate as where condition")
         void shouldUseStartsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotNull("Alice");
+            Predicate<Employee> predicate = Path.of(Employee::getName).startsWithIfNotNull("Alice");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -955,7 +955,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         void shouldUseStartsWithIfNotNullNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
             long totalCount = context.queryEmployees().count();
-            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotNull(null);
+            Predicate<Employee> predicate = Path.of(Employee::getName).startsWithIfNotNull(null);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -974,7 +974,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use endsWithIfNotNull predicate as where condition")
         void shouldUseEndsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getEmail).endsWithIfNotNull("@example.com");
+            Predicate<Employee> predicate = Path.of(Employee::getEmail).endsWithIfNotNull("@example.com");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -994,7 +994,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use containsIfNotNull predicate as where condition")
         void shouldUseContainsIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).containsIfNotNull("John");
+            Predicate<Employee> predicate = Path.of(Employee::getName).containsIfNotNull("John");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1014,7 +1014,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use startsWithIfNotEmpty predicate as where condition")
         void shouldUseStartsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotEmpty("Alice");
+            Predicate<Employee> predicate = Path.of(Employee::getName).startsWithIfNotEmpty("Alice");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1035,7 +1035,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         void shouldUseStartsWithIfNotEmptyEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
             long totalCount = context.queryEmployees().count();
-            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotEmpty("");
+            Predicate<Employee> predicate = Path.of(Employee::getName).startsWithIfNotEmpty("");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1054,7 +1054,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use endsWithIfNotEmpty predicate as where condition")
         void shouldUseEndsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getEmail).endsWithIfNotEmpty("@example.com");
+            Predicate<Employee> predicate = Path.of(Employee::getEmail).endsWithIfNotEmpty("@example.com");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1074,7 +1074,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use containsIfNotEmpty predicate as where condition")
         void shouldUseContainsIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).containsIfNotEmpty("John");
+            Predicate<Employee> predicate = Path.of(Employee::getName).containsIfNotEmpty("John");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1094,7 +1094,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notStartsWithIfNotNull predicate as where condition")
         void shouldUseNotStartsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).notStartsWithIfNotNull("A");
+            Predicate<Employee> predicate = Path.of(Employee::getName).notStartsWithIfNotNull("A");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1115,7 +1115,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notEndsWithIfNotNull predicate as where condition")
         void shouldUseNotEndsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getEmail).notEndsWithIfNotNull("@nonexistent.org");
+            Predicate<Employee> predicate = Path.of(Employee::getEmail).notEndsWithIfNotNull("@nonexistent.org");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1136,7 +1136,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notContainsIfNotNull predicate as where condition")
         void shouldUseNotContainsIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).notContainsIfNotNull("Alice");
+            Predicate<Employee> predicate = Path.of(Employee::getName).notContainsIfNotNull("Alice");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1157,7 +1157,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notStartsWithIfNotEmpty predicate as where condition")
         void shouldUseNotStartsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).notStartsWithIfNotEmpty("A");
+            Predicate<Employee> predicate = Path.of(Employee::getName).notStartsWithIfNotEmpty("A");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1178,7 +1178,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notEndsWithIfNotEmpty predicate as where condition")
         void shouldUseNotEndsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getEmail).notEndsWithIfNotEmpty("@nonexistent.org");
+            Predicate<Employee> predicate = Path.of(Employee::getEmail).notEndsWithIfNotEmpty("@nonexistent.org");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1199,7 +1199,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use notContainsIfNotEmpty predicate as where condition")
         void shouldUseNotContainsIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).notContainsIfNotEmpty("Alice");
+            Predicate<Employee> predicate = Path.of(Employee::getName).notContainsIfNotEmpty("Alice");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1220,8 +1220,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should combine multiple string predicates with AND")
         void shouldCombineMultipleStringPredicatesWithAnd(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> namePredicate = get(Employee::getName).startsWith("A");
-            Predicate<Employee> emailPredicate = get(Employee::getEmail).endsWith("@example.com");
+            Predicate<Employee> namePredicate = Path.of(Employee::getName).startsWith("A");
+            Predicate<Employee> emailPredicate = Path.of(Employee::getEmail).endsWith("@example.com");
             Predicate<Employee> combined = namePredicate.and(emailPredicate);
 
             // When
@@ -1243,8 +1243,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should combine multiple string predicates with OR")
         void shouldCombineMultipleStringPredicatesWithOr(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> alicePredicate = get(Employee::getName).startsWith("Alice");
-            Predicate<Employee> johnPredicate = get(Employee::getName).contains("John");
+            Predicate<Employee> alicePredicate = Path.of(Employee::getName).startsWith("Alice");
+            Predicate<Employee> johnPredicate = Path.of(Employee::getName).contains("John");
             Predicate<Employee> combined = alicePredicate.or(johnPredicate);
 
             // When
@@ -1267,7 +1267,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should combine string predicate with other where conditions")
         void shouldCombineStringPredicateWithOtherConditions(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> namePredicate = get(Employee::getName).startsWith("A");
+            Predicate<Employee> namePredicate = Path.of(Employee::getName).startsWith("A");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1289,7 +1289,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use NOT on string predicate")
         void shouldUseNotOnStringPredicate(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> startsWithA = get(Employee::getName).startsWith("A");
+            Predicate<Employee> startsWithA = Path.of(Employee::getName).startsWith("A");
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1310,9 +1310,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should create complex predicate with string expressions")
         void shouldCreateComplexPredicateWithStringExpressions(IntegrationTestContext context) {
             // Given: (name starts with 'A' AND email ends with '@example.com') OR name contains 'John'
-            Predicate<Employee> nameStartsWithA = get(Employee::getName).startsWith("A");
-            Predicate<Employee> emailEndsWithExample = get(Employee::getEmail).endsWith("@example.com");
-            Predicate<Employee> nameContainsJohn = get(Employee::getName).contains("John");
+            Predicate<Employee> nameStartsWithA = Path.of(Employee::getName).startsWith("A");
+            Predicate<Employee> emailEndsWithExample = Path.of(Employee::getEmail).endsWith("@example.com");
+            Predicate<Employee> nameContainsJohn = Path.of(Employee::getName).contains("John");
             Predicate<Employee> complex = nameStartsWithA.and(emailEndsWithExample).or(nameContainsJohn);
 
             // When

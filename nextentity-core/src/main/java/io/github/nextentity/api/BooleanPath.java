@@ -5,5 +5,8 @@ package io.github.nextentity.api;
 /// @param <T> Entity type
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface BooleanPath<T> extends Predicate<T>, PathExpression<T, Boolean> {
+public interface BooleanPath<T> extends Predicate<T>, Path<T, Boolean> {
+    static <T> BooleanPath<T> of(PathRef.BooleanRef<T> path) {
+        return EntityRoot.<T>of().get(path);
+    }
 }

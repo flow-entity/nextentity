@@ -1,9 +1,7 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.Order;
-import io.github.nextentity.core.util.Paths;
 
 public class SimpleExpressionImpl<T, U>
         extends AbstractExpressionBuilder<T, U, Predicate<T>>
@@ -29,22 +27,22 @@ public class SimpleExpressionImpl<T, U>
     }
 
     @Override
-    public <R> EntityPath<T, R> get(Path<U, R> path) {
+    public <R> EntityPath<T, R> get(PathRef<U, R> path) {
         return new SimpleExpressionImpl<>(appendPath(path));
     }
 
     @Override
-    public StringPath<T> get(Path.StringRef<U> path) {
+    public StringPath<T> get(PathRef.StringRef<U> path) {
         return new StringExpressionImpl<>(appendPath(path));
     }
 
     @Override
-    public <R extends Number> NumberPath<T, R> get(Path.NumberRef<U, R> path) {
+    public <R extends Number> NumberPath<T, R> get(PathRef.NumberRef<U, R> path) {
         return new NumberExpressionImpl<>(appendPath(path));
     }
 
     @Override
-    public <R> PathExpression<T, R> get(PathExpression<U, R> path) {
+    public <R> Path<T, R> get(Path<U, R> path) {
         return new SimpleExpressionImpl<>(appendPath(path));
     }
 
@@ -54,7 +52,7 @@ public class SimpleExpressionImpl<T, U>
     }
 
     @Override
-    public BooleanPath<T> get(Path.BooleanRef<T> path) {
+    public BooleanPath<T> get(PathRef.BooleanRef<T> path) {
         return new PredicateImpl<>(appendPath(path));
     }
 

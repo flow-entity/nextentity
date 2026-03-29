@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -271,9 +272,8 @@ public class ErrorHandlingIntegrationTest {
         // When
         long count = context.queryEmployees().count();
         double avgSalary = context.queryEmployees()
-                .select(io.github.nextentity.core.util.Paths.get(Employee::getSalary).avg())
-                .getSingle()
-                .doubleValue();
+                .select(Path.of(Employee::getSalary).avg())
+                .getSingle();
 
         // Then
         assertThat(count).isPositive();
@@ -341,8 +341,8 @@ public class ErrorHandlingIntegrationTest {
 
         // Then
         assertThat(results).isNotEmpty();
-        assertThat(results.get(0).get0()).isNotNull();
-        assertThat(results.get(0).get1()).isNotNull();
+        assertThat(results.getFirst().get0()).isNotNull();
+        assertThat(results.getFirst().get1()).isNotNull();
     }
 
     /**

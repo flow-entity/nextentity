@@ -2,18 +2,14 @@ package io.github.nextentity.spring.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import io.github.nextentity.api.*;
 import io.github.nextentity.api.ExpressionBuilder.Conjunction;
-import io.github.nextentity.api.NumberPath;
-import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Predicate;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.core.util.Paths;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.entity.User;
@@ -28,7 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static io.github.nextentity.core.util.Predicates.*;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,7 +42,7 @@ public class GenericApiTest {
                 .where(User::getId).eq(10)
                 .getList();
 
-        NumberPath<User, Integer> id = Paths.get(User::getId);
+        NumberPath<User, Integer> id = Path.of(User::getId);
 
         log.info("{}", list.size());
         ImmutableList<Predicate<User>> predicates = ImmutableList.of(id.geIfNotNull(null), id.eqIfNotNull(null));
@@ -75,7 +70,7 @@ public class GenericApiTest {
                 .where(User::getRandomNumber).gt(100)
                 .where(User::getRandomNumber).ne(125)
                 .where(User::getRandomNumber).le(666)
-                .where(get(User::getRandomNumber).lt(106)
+                .where(Path.of(User::getRandomNumber).lt(106)
                         .or(User::getRandomNumber).gt(120)
                         .or(User::getRandomNumber).eq(109)
                 )
@@ -109,7 +104,7 @@ public class GenericApiTest {
                 .where(User::getRandomNumber).gt(100)
                 .where(User::getRandomNumber).ne(125)
                 .where(User::getRandomNumber).le(666)
-                .where(get(User::getRandomNumber).lt(106)
+                .where(Path.of(User::getRandomNumber).lt(106)
                         .or(User::getRandomNumber).gt(120)
                         .or(User::getRandomNumber).eq(109)
                 )
@@ -143,7 +138,7 @@ public class GenericApiTest {
                 .where(User::getRandomNumber).gt(100)
                 .where(User::getRandomNumber).ne(125)
                 .where(User::getRandomNumber).le(666)
-                .where(get(User::getRandomNumber).lt(106)
+                .where(Path.of(User::getRandomNumber).lt(106)
                         .or(User::getRandomNumber).gt(120)
                         .or(User::getRandomNumber).eq(109))
                 .where(User::getRandomNumber).ne(128)
@@ -168,21 +163,21 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testAndOr2(UserRepository userQuery) {
         User single = userQuery
-                .where(get(User::getId).eq(0))
+                .where(Path.of(User::getId).eq(0))
                 .getSingle();
         log.info("{}", single);
         List<User> dbList = userQuery
                 .where(and(
-                        get(User::getRandomNumber).ne(1),
-                        get(User::getRandomNumber).gt(100),
-                        get(User::getRandomNumber).ne(125),
-                        get(User::getRandomNumber).le(666),
+                        Path.of(User::getRandomNumber).ne(1),
+                        Path.of(User::getRandomNumber).gt(100),
+                        Path.of(User::getRandomNumber).ne(125),
+                        Path.of(User::getRandomNumber).le(666),
                         or(
-                                get(User::getRandomNumber).lt(106),
-                                get(User::getRandomNumber).gt(120),
-                                get(User::getRandomNumber).eq(109)
+                                Path.of(User::getRandomNumber).lt(106),
+                                Path.of(User::getRandomNumber).gt(120),
+                                Path.of(User::getRandomNumber).eq(109)
                         ),
-                        get(User::getRandomNumber).ne(128)
+                        Path.of(User::getRandomNumber).ne(128)
                 )).getList();
 
         List<User> ftList = userQuery.users().stream()
@@ -205,8 +200,8 @@ public class GenericApiTest {
     public void testComparablePredicateTesterGt(UserRepository userQuery) {
 
         List<User> qgt80 = userQuery
-                .where(get(User::getRandomNumber).gt(80))
-                .orderBy(get(User::getId).asc())
+                .where(Path.of(User::getRandomNumber).gt(80))
+                .orderBy(Path.of(User::getId).asc())
                 .getList();
         List<User> fgt80 = userQuery.users().stream()
                 .filter(it -> it.getRandomNumber() > 80)
@@ -219,7 +214,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     void te(UserRepository userQuery) {
 
-        userQuery.fetch(Paths.get(User::getParentUser).get(User::getId))
+        userQuery.fetch(EntityPath.of(User::getParentUser).get(User::getId))
                 .where(User::getId).eq(0)
                 .orderBy(User::getId)
                 .getList();
@@ -250,10 +245,10 @@ public class GenericApiTest {
         int userId = 20;
         User user = userQuery
                 .fetch(Arrays.asList(
-                        get(User::getParentUser),
-                        Paths.get(User::getParentUser).get(User::getParentUser)
+                        Path.of(User::getParentUser),
+                        EntityPath.of(User::getParentUser).get(User::getParentUser)
                 ))
-                .where(get(User::getId).eq(userId))
+                .where(Path.of(User::getId).eq(userId))
                 .getSingle();
         assertNotNull(user);
         assertEquals(user.getId(), userId);
@@ -300,7 +295,7 @@ public class GenericApiTest {
             assertEquals(u0.getTestUser(), u1.getTestUser());
         }
 
-        users = userQuery.fetch(ImmutableList.<Path<User, ?>>of(
+        users = userQuery.fetch(ImmutableList.<PathRef<User, ?>>of(
                         User::getParentUser,
                         User::getRandomUser,
                         User::getTestUser))
@@ -321,11 +316,11 @@ public class GenericApiTest {
     public void testAggregateFunction(UserRepository userQuery) {
 
         List<TypedExpression<User, ?>> selected = Arrays.asList(
-                get(User::getRandomNumber).min(),
-                get(User::getRandomNumber).max(),
-                get(User::getRandomNumber).count(),
-                get(User::getRandomNumber).avg(),
-                get(User::getRandomNumber).sum()
+                Path.of(User::getRandomNumber).min(),
+                Path.of(User::getRandomNumber).max(),
+                Path.of(User::getRandomNumber).count(),
+                Path.of(User::getRandomNumber).avg(),
+                Path.of(User::getRandomNumber).sum()
         );
         Tuple aggregated = userQuery
                 .select(selected)
@@ -340,8 +335,8 @@ public class GenericApiTest {
         assertEquals(getUserIdStream(userQuery).sum(), aggregated.<Number>get(4).intValue());
 
         List<Tuple> resultList = userQuery
-                .select(Arrays.asList(get(User::getId).min(), get(User::getRandomNumber)))
-                .where(get(User::isValid).eq(true))
+                .select(Arrays.asList(Path.of(User::getId).min(), Path.of(User::getRandomNumber)))
+                .where(Path.of(User::isValid).eq(true))
                 .groupBy(User::getRandomNumber)
                 .getList();
 
@@ -360,8 +355,8 @@ public class GenericApiTest {
         assertEquals(new HashSet<>(resultList), new HashSet<>(fObjects));
 
         Tuple one = userQuery
-                .select(Collections.singletonList(get(User::getId).sum()))
-                .where(get(User::isValid).eq(true))
+                .select(Collections.singletonList(Path.of(User::getId).sum()))
+                .where(Path.of(User::isValid).eq(true))
                 .requireSingle();
 
         int userId = userQuery.users().stream()
@@ -372,12 +367,12 @@ public class GenericApiTest {
 
         Integer first = userQuery
                 .select(User::getId)
-                .orderBy(get(User::getId).desc())
+                .orderBy(Path.of(User::getId).desc())
                 .getFirst();
         assertEquals(first, userQuery.users().get(userQuery.users().size() - 1).getId());
 
         Long count = userQuery
-                .select(get(User::getRandomNumber).countDistinct())
+                .select(Path.of(User::getRandomNumber).countDistinct())
                 .getSingle();
         long count1 = userQuery.users()
                 .stream().mapToInt(User::getRandomNumber)
@@ -428,8 +423,8 @@ public class GenericApiTest {
         long start = System.currentTimeMillis();
         userQuery
                 .orderBy(Arrays.asList(
-                        get(User::getRandomNumber).desc(),
-                        get(User::getId).asc()
+                        Path.of(User::getRandomNumber).desc(),
+                        Path.of(User::getId).asc()
                 ))
                 .getList();
         log.info("{}", System.currentTimeMillis() - start);
@@ -440,8 +435,8 @@ public class GenericApiTest {
     public void testOrderBy(UserRepository userQuery) {
         List<User> list = userQuery
                 .orderBy(Arrays.asList(
-                        get(User::getRandomNumber).desc(),
-                        get(User::getId).asc()
+                        Path.of(User::getRandomNumber).desc(),
+                        Path.of(User::getId).asc()
                 ))
 
                 .getList();
@@ -460,9 +455,9 @@ public class GenericApiTest {
         assertEquals(list, sorted);
 
         list = userQuery
-                .orderBy(Arrays.asList(get(User::getUsername).asc(),
-                        get(User::getRandomNumber).desc(),
-                        get(User::getId).asc()))
+                .orderBy(Arrays.asList(Path.of(User::getUsername).asc(),
+                        Path.of(User::getRandomNumber).desc(),
+                        Path.of(User::getId).asc()))
                 .getList();
         Comparator<User> comparator = Comparator.comparing(User::getUsername)
                 .thenComparing(Comparator.comparing(User::getRandomNumber).reversed())
@@ -472,14 +467,14 @@ public class GenericApiTest {
         list = userQuery
                 .orderBy(User::getUsername)
                 .orderBy(Arrays.asList(
-                        get(User::getRandomNumber).desc(),
-                        get(User::getId).asc()
+                        Path.of(User::getRandomNumber).desc(),
+                        Path.of(User::getId).asc()
                 ))
                 .getList();
         checkOrder(list, comparator);
 
         list = userQuery
-                .orderBy(get(User::getTime).asc())
+                .orderBy(Path.of(User::getTime).asc())
                 .getList();
         checkOrder(list, Comparator.comparing(User::getTime));
     }
@@ -506,8 +501,8 @@ public class GenericApiTest {
     public void testOrderBy2(UserRepository userQuery) {
         List<User> list = userQuery
                 .orderBy(
-                        get(User::getRandomNumber).desc(),
-                        get(User::getId).asc()
+                        Path.of(User::getRandomNumber).desc(),
+                        Path.of(User::getId).asc()
                 )
                 .getList();
         Comparator<User> comparator = Comparator
@@ -518,9 +513,9 @@ public class GenericApiTest {
 
         list = userQuery
                 .orderBy(
-                        get(User::getUsername).asc(),
-                        get(User::getRandomNumber).desc(),
-                        get(User::getId).asc()
+                        Path.of(User::getUsername).asc(),
+                        Path.of(User::getRandomNumber).desc(),
+                        Path.of(User::getId).asc()
                 )
                 .getList();
 
@@ -570,7 +565,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testPredicate(UserRepository userQuery) {
         List<User> qList = userQuery
-                .where(not(get(User::getRandomNumber).ge(10)
+                .where(not(Path.of(User::getRandomNumber).ge(10)
                         .or(User::getRandomNumber).lt(5)))
                 .orderBy(User::getId)
                 .getList();
@@ -581,7 +576,7 @@ public class GenericApiTest {
         assertEquals(qList, fList);
 
         qList = userQuery
-                .where(get(User::getUsername).ne("Jeremy Keynes").not())
+                .where(Path.of(User::getUsername).ne("Jeremy Keynes").not())
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -589,14 +584,14 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).eq("Jeremy Keynes"))
+        qList = userQuery.where(Path.of(User::getUsername).eq("Jeremy Keynes"))
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, fList);
 
         qList = userQuery.where(
-                        not(get(User::getUsername).eq("Jeremy Keynes")
-                                .or(get(User::getId).eq(3)))
+                        not(Path.of(User::getUsername).eq("Jeremy Keynes")
+                                .or(Path.of(User::getId).eq(3)))
                 )
                 .orderBy(User::getId)
                 .getList();
@@ -607,8 +602,8 @@ public class GenericApiTest {
         assertEquals(qList, fList);
 
         qList = userQuery
-                .where(not(get(User::getUsername).eq("Jeremy Keynes")
-                        .and(get(User::getId).eq(3))
+                .where(not(Path.of(User::getUsername).eq("Jeremy Keynes")
+                        .and(Path.of(User::getId).eq(3))
                 ))
                 .orderBy(User::getId)
                 .getList();
@@ -625,8 +620,8 @@ public class GenericApiTest {
     public void testPredicate2(UserRepository userQuery) {
         List<User> qList = userQuery
                 .where(or(
-                        get(User::getRandomNumber).ge(10),
-                        get(User::getRandomNumber).lt(5)
+                        Path.of(User::getRandomNumber).ge(10),
+                        Path.of(User::getRandomNumber).lt(5)
                 ).not())
                 .orderBy(User::getId)
                 .getList();
@@ -637,7 +632,7 @@ public class GenericApiTest {
         assertEquals(qList, fList);
 
         qList = userQuery
-                .where(get(User::getUsername).eq("Jeremy Keynes").not())
+                .where(Path.of(User::getUsername).eq("Jeremy Keynes").not())
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -645,15 +640,15 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).eq("Jeremy Keynes")
+        qList = userQuery.where(Path.of(User::getUsername).eq("Jeremy Keynes")
                         .not()
                 )
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, fList);
 
-        qList = userQuery.where(not(get(User::getUsername).eq("Jeremy Keynes")
-                        .or(get(User::getId).eq(3))
+        qList = userQuery.where(not(Path.of(User::getUsername).eq("Jeremy Keynes")
+                        .or(Path.of(User::getId).eq(3))
                 ))
                 .orderBy(User::getId)
                 .getList();
@@ -665,8 +660,8 @@ public class GenericApiTest {
 
         qList = userQuery
                 .where(and(
-                        get(User::getUsername).eq("Jeremy Keynes"),
-                        get(User::getId).eq(3)
+                        Path.of(User::getUsername).eq("Jeremy Keynes"),
+                        Path.of(User::getId).eq(3)
                 ).not())
                 .orderBy(User::getId)
                 .getList();
@@ -710,7 +705,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testIsNull(UserRepository userQuery) {
 
-        List<User> qList = userQuery.where(get(User::getPid).isNotNull())
+        List<User> qList = userQuery.where(Path.of(User::getPid).isNotNull())
                 .orderBy(User::getId)
                 .getList();
 
@@ -719,7 +714,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getPid).add(2).multiply(3).isNull())
+        qList = userQuery.where(Path.of(User::getPid).add(2).multiply(3).isNull())
                 .orderBy(User::getId)
                 .getList();
 
@@ -753,52 +748,52 @@ public class GenericApiTest {
         assertEquals(qList, userQuery.users());
 
 
-        qList = userQuery.where(get(User::getRandomNumber).eqIfNotNull(null))
+        qList = userQuery.where(Path.of(User::getRandomNumber).eqIfNotNull(null))
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, userQuery.users());
-        qList = userQuery.where(get(User::getRandomNumber).gtIfNotNull(null))
+        qList = userQuery.where(Path.of(User::getRandomNumber).gtIfNotNull(null))
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, userQuery.users());
-        qList = userQuery.where(get(User::getRandomNumber).geIfNotNull(null))
+        qList = userQuery.where(Path.of(User::getRandomNumber).geIfNotNull(null))
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, userQuery.users());
-        qList = userQuery.where(get(User::getRandomNumber).ltIfNotNull(null))
+        qList = userQuery.where(Path.of(User::getRandomNumber).ltIfNotNull(null))
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, userQuery.users());
-        qList = userQuery.where(get(User::getRandomNumber).leIfNotNull(null))
+        qList = userQuery.where(Path.of(User::getRandomNumber).leIfNotNull(null))
                 .orderBy(User::getId)
                 .getList();
         assertEquals(qList, userQuery.users());
 
 
-        qList = userQuery.where(get(User::getRandomNumber).eqIfNotNull(20)).getList();
+        qList = userQuery.where(Path.of(User::getRandomNumber).eqIfNotNull(20)).getList();
         fList = userQuery.users().stream().filter(u -> u.getRandomNumber() == 20)
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        Conjunction<User> predicate = get(User::getRandomNumber).eq(20).and(User::getUsername).eqIfNotNull(null);
+        Conjunction<User> predicate = Path.of(User::getRandomNumber).eq(20).and(User::getUsername).eqIfNotNull(null);
         qList = userQuery.where(predicate).getList();
 
         assertEquals(qList, fList);
-        qList = userQuery.where(get(User::getRandomNumber).gtIfNotNull(20)).getList();
+        qList = userQuery.where(Path.of(User::getRandomNumber).gtIfNotNull(20)).getList();
         fList = userQuery.users().stream().filter(u -> u.getRandomNumber() > 20)
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
-        qList = userQuery.where(get(User::getRandomNumber).geIfNotNull(20)).getList();
+        qList = userQuery.where(Path.of(User::getRandomNumber).geIfNotNull(20)).getList();
         fList = userQuery.users().stream().filter(u -> u.getRandomNumber() >= 20)
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
-        qList = userQuery.where(get(User::getRandomNumber).ltIfNotNull(20))
+        qList = userQuery.where(Path.of(User::getRandomNumber).ltIfNotNull(20))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream().filter(u -> u.getRandomNumber() < 20)
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
-        qList = userQuery.where(get(User::getRandomNumber).leIfNotNull(20))
+        qList = userQuery.where(Path.of(User::getRandomNumber).leIfNotNull(20))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream().filter(u -> u.getRandomNumber() <= 20)
@@ -951,7 +946,7 @@ public class GenericApiTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     public void testOperator2(UserRepository userQuery) {
-        Predicate<User> isValid = get(User::isValid);
+        Predicate<User> isValid = Path.of(User::isValid);
         userQuery.where(isValid
                         .and(User::getRandomNumber).notBetween(10, 15)
                         .and(User::getId).mod(3).eq(0)
@@ -963,7 +958,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testOperator(UserRepository userQuery) {
 
-        Predicate<User> isValid = get(User::isValid);
+        Predicate<User> isValid = Path.of(User::isValid);
         List<User> qList = userQuery.where(isValid)
                 .orderBy(User::getId)
                 .getList();
@@ -1061,28 +1056,28 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(isValid.and(User::getRandomNumber).ge(get(User::getPid)))
+        qList = userQuery.where(isValid.and(User::getRandomNumber).ge(Path.of(User::getPid)))
                 .orderBy(User::getId)
                 .getList();
         fList = validUsers.stream().filter(user -> user.getPid() != null && user.getRandomNumber() >= user.getPid())
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(isValid.and(User::getRandomNumber).gt(get(User::getPid)))
+        qList = userQuery.where(isValid.and(User::getRandomNumber).gt(Path.of(User::getPid)))
                 .orderBy(User::getId)
                 .getList();
         fList = validUsers.stream().filter(user -> user.getPid() != null && user.getRandomNumber() > user.getPid())
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(isValid.and(User::getRandomNumber).le(get(User::getPid)))
+        qList = userQuery.where(isValid.and(User::getRandomNumber).le(Path.of(User::getPid)))
                 .orderBy(User::getId)
                 .getList();
         fList = validUsers.stream().filter(user -> user.getPid() != null && user.getRandomNumber() <= user.getPid())
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(isValid.and(User::getRandomNumber).lt(get(User::getPid)))
+        qList = userQuery.where(isValid.and(User::getRandomNumber).lt(Path.of(User::getPid)))
                 .orderBy(User::getId)
                 .getList();
         fList = validUsers.stream().filter(user -> user.getPid() != null && user.getRandomNumber() < user.getPid())
@@ -1090,7 +1085,7 @@ public class GenericApiTest {
         assertEquals(qList, fList);
 
         qList = userQuery.where(isValid.and(User::getRandomNumber)
-                        .between(get(User::getRandomNumber), get(User::getPid)))
+                        .between(Path.of(User::getRandomNumber), Path.of(User::getPid)))
                 .orderBy(User::getId)
                 .getList();
         fList = validUsers.stream()
@@ -1104,7 +1099,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testPredicateAssembler(UserRepository userQuery) {
 
-        List<User> qList = userQuery.where(get(User::isValid).eq(true)
+        List<User> qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .and(User::getParentUser).get(User::getUsername).eq(username))
                 .orderBy(User::getId)
                 .getList();
@@ -1127,8 +1122,8 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEq(qList, fList);
 
-        Path<User, Number> getUsername = User::getRandomNumber;
-        qList = userQuery.where(get(User::isValid).eq(true)
+        PathRef<User, Number> getUsername = User::getRandomNumber;
+        qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .and(getUsername).eq(10))
                 .orderBy(User::getId)
                 .getList();
@@ -1139,7 +1134,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::isValid).eq(true)
+        qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .or(getUsername).eq(10))
                 .orderBy(User::getId)
                 .getList();
@@ -1150,7 +1145,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::isValid).eq(true)
+        qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .and(getUsername).ne(10))
                 .orderBy(User::getId)
                 .getList();
@@ -1161,7 +1156,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::isValid).eq(true)
+        qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .or(getUsername).ne(10))
                 .orderBy(User::getId)
                 .getList();
@@ -1174,9 +1169,9 @@ public class GenericApiTest {
 
         Date time = userQuery.users().get(20).getTime();
 
-        TypedExpression<User, Boolean> or = get(User::isValid).eq(true)
+        TypedExpression<User, Boolean> or = Path.of(User::isValid).eq(true)
                 .or(
-                        Paths.get(User::getParentUser)
+                        EntityPath.of(User::getParentUser)
                                 .get(User::getUsername)
                                 .eq(username)
                                 .and(User::getTime)
@@ -1187,8 +1182,8 @@ public class GenericApiTest {
 
         List<User> jeremy_keynes = userQuery
                 .fetch(User::getParentUser)
-                .where(get(User::isValid).eq(true)
-                        .or(Paths.get(User::getParentUser)
+                .where(Path.of(User::isValid).eq(true)
+                        .or(EntityPath.of(User::getParentUser)
                                 .get(User::getUsername).eq(username)
                                 .and(User::getTime).ge(time)
                         ))
@@ -1205,7 +1200,7 @@ public class GenericApiTest {
         assertEquals(qList, fList);
         assertEquals(qList, jeremy_keynes);
 
-        qList = userQuery.where(get(User::isValid).eq(true)
+        qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .and(User::getRandomNumber).ne(5))
                 .orderBy(User::getId)
                 .getList();
@@ -1216,7 +1211,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::isValid).eq(true)
+        qList = userQuery.where(Path.of(User::isValid).eq(true)
                         .or(User::getRandomNumber).eq(5))
                 .orderBy(User::getId)
                 .getList();
@@ -1227,7 +1222,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getRandomNumber).ne(6)
+        qList = userQuery.where(Path.of(User::getRandomNumber).ne(6)
                         .or(User::isValid).eq(false))
                 .orderBy(User::getId)
                 .getList();
@@ -1238,7 +1233,7 @@ public class GenericApiTest {
 
         assertEquals((qList), (fList));
 
-        qList = userQuery.where(get(User::getRandomNumber).ne(6)
+        qList = userQuery.where(Path.of(User::getRandomNumber).ne(6)
                         .and(User::getParentUser).get(User::isValid).eq(true))
                 .orderBy(User::getId)
                 .getList();
@@ -1249,7 +1244,7 @@ public class GenericApiTest {
 
         assertEquals((qList), (fList));
 
-        qList = userQuery.where(get(User::getRandomNumber).ne(6)
+        qList = userQuery.where(Path.of(User::getRandomNumber).ne(6)
                         .and(User::getParentUser).get(User::isValid).ne(true))
                 .orderBy(User::getId)
                 .getList();
@@ -1260,7 +1255,7 @@ public class GenericApiTest {
 
         assertEquals((qList), (fList));
 
-        qList = userQuery.where(get(User::getRandomNumber).ne(6)
+        qList = userQuery.where(Path.of(User::getRandomNumber).ne(6)
                         .or(User::getParentUser).get(User::isValid).ne(true))
                 .orderBy(User::getId)
                 .getList();
@@ -1271,7 +1266,7 @@ public class GenericApiTest {
 
         assertEquals((qList), (fList));
 
-        qList = userQuery.where(not(get(User::getRandomNumber).ge(10)
+        qList = userQuery.where(not(Path.of(User::getRandomNumber).ge(10)
                         .or(User::getRandomNumber).lt(5)
                 ))
                 .orderBy(User::getId)
@@ -1282,7 +1277,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(not(get(User::getRandomNumber).ge(10)
+        qList = userQuery.where(not(Path.of(User::getRandomNumber).ge(10)
                                 .and(User::getRandomNumber).le(15)
                         )
                 )
@@ -1295,7 +1290,7 @@ public class GenericApiTest {
         assertEquals(qList, fList);
 
         qList = userQuery.where(not(
-                        get(User::getRandomNumber).ge(10)
+                        Path.of(User::getRandomNumber).ge(10)
                                 .and(User::getUsername).eq(username)
                 ))
                 .orderBy(User::getId)
@@ -1305,7 +1300,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(not(get(User::getRandomNumber).ge(10)
+        qList = userQuery.where(not(Path.of(User::getRandomNumber).ge(10)
                                 .or(User::getUsername).eq(username)
                         )
                 )
@@ -1316,7 +1311,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(not(get(User::getRandomNumber).ge(10)
+        qList = userQuery.where(not(Path.of(User::getRandomNumber).ge(10)
                         .and(User::getUsername).eq(username))
                         .not()
                 )
@@ -1327,7 +1322,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(not(get(User::getRandomNumber).ge(10)
+        qList = userQuery.where(not(Path.of(User::getRandomNumber).ge(10)
                         .or(User::getUsername).eq(username))
                         .not()
                 )
@@ -1356,8 +1351,8 @@ public class GenericApiTest {
 
         userQuery
                 .fetch(User::getParentUser)
-                .where(get(User::isValid).eq(true)
-                        .or(Paths.get(User::getParentUser)
+                .where(Path.of(User::isValid).eq(true)
+                        .or(EntityPath.of(User::getParentUser)
                                 .get(User::getUsername).eq(username)
                                 .and(User::getTime).ge(time)
                         ))
@@ -1368,7 +1363,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testNumberPredicateTester(UserRepository userQuery) {
         List<User> list = userQuery
-                .where(get(User::getRandomNumber).add(2).ge(4))
+                .where(Path.of(User::getRandomNumber).add(2).ge(4))
                 .orderBy(User::getId)
                 .getList();
         List<User> fList = userQuery.users().stream()
@@ -1378,7 +1373,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).subtract(2).ge(4))
+                .where(Path.of(User::getRandomNumber).subtract(2).ge(4))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1388,7 +1383,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).multiply(2).ge(4))
+                .where(Path.of(User::getRandomNumber).multiply(2).ge(4))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1398,7 +1393,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).divide(2).ge(4))
+                .where(Path.of(User::getRandomNumber).divide(2).ge(4))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1408,7 +1403,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).mod(2).ge(1))
+                .where(Path.of(User::getRandomNumber).mod(2).ge(1))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1419,7 +1414,7 @@ public class GenericApiTest {
 
         ///
         list = userQuery
-                .where(get(User::getRandomNumber).add(get(User::getId)).ge(40))
+                .where(Path.of(User::getRandomNumber).add(Path.of(User::getId)).ge(40))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1429,7 +1424,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).subtract(get(User::getId)).ge(40))
+                .where(Path.of(User::getRandomNumber).subtract(Path.of(User::getId)).ge(40))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1439,7 +1434,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).multiply(get(User::getId)).ge(40))
+                .where(Path.of(User::getRandomNumber).multiply(Path.of(User::getId)).ge(40))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1449,7 +1444,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).divide(get(User::getId)).ge(40))
+                .where(Path.of(User::getRandomNumber).divide(Path.of(User::getId)).ge(40))
                 .where(User::getId).ne(0)
                 .orderBy(User::getId)
                 .getList();
@@ -1460,7 +1455,7 @@ public class GenericApiTest {
         assertEquals(list, fList);
 
         list = userQuery
-                .where(get(User::getRandomNumber).mod(get(User::getId)).ge(10))
+                .where(Path.of(User::getRandomNumber).mod(Path.of(User::getId)).ge(10))
                 .where(User::getId).ne(0)
                 .orderBy(User::getId)
                 .getList();
@@ -1477,7 +1472,7 @@ public class GenericApiTest {
     public void testStringPredicateTester(UserRepository userQuery) {
         String username = "Roy Sawyer";
 
-        List<User> qList = userQuery.where(get(User::getUsername).substring(2).eq("eremy Keynes"))
+        List<User> qList = userQuery.where(Path.of(User::getUsername).substring(2).eq("eremy Keynes"))
                 .orderBy(User::getId)
                 .getList();
         List<User> fList = userQuery.users().stream()
@@ -1486,7 +1481,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).substring(1, 1).eq("M"))
+        qList = userQuery.where(Path.of(User::getUsername).substring(1, 1).eq("M"))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1495,7 +1490,7 @@ public class GenericApiTest {
 
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).trim().like(username))
+        qList = userQuery.where(Path.of(User::getUsername).trim().like(username))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1503,7 +1498,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).trim().lower().notContains("i"))
+        qList = userQuery.where(Path.of(User::getUsername).trim().lower().notContains("i"))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1511,7 +1506,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).length().eq(username.length()))
+        qList = userQuery.where(Path.of(User::getUsername).length().eq(username.length()))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1519,7 +1514,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).startsWith("M"))
+        qList = userQuery.where(Path.of(User::getUsername).startsWith("M"))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1527,7 +1522,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).endsWith("s"))
+        qList = userQuery.where(Path.of(User::getUsername).endsWith("s"))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1535,7 +1530,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).lower().contains("s"))
+        qList = userQuery.where(Path.of(User::getUsername).lower().contains("s"))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1543,7 +1538,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(qList, fList);
 
-        qList = userQuery.where(get(User::getUsername).upper().contains("S"))
+        qList = userQuery.where(Path.of(User::getUsername).upper().contains("S"))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1570,12 +1565,12 @@ public class GenericApiTest {
 
         assertEquals(userIds, subUserIds);
 
-        resultList = userQuery.where(get(User::getId).in())
+        resultList = userQuery.where(Path.of(User::getId).in())
                 .orderBy(User::getId)
                 .getList();
         assertEquals(resultList.size(), 0);
 
-        resultList = userQuery.where(get(User::getId).notIn())
+        resultList = userQuery.where(Path.of(User::getId).notIn())
                 .orderBy(User::getId)
                 .getList();
         assertEquals(resultList, userQuery.users());
@@ -1588,7 +1583,7 @@ public class GenericApiTest {
                 .getFirst();
         assertEquals(first, userQuery.users().get(0));
 
-        first = userQuery.where(get(User::getId).eq(0)).requireSingle();
+        first = userQuery.where(Path.of(User::getId).eq(0)).requireSingle();
         assertEquals(first, userQuery.users().get(0));
 
         first = userQuery
@@ -1597,7 +1592,7 @@ public class GenericApiTest {
         assertEquals(first, userQuery.users().get(10));
 
         assertThrowsExactly(IllegalStateException.class, userQuery::requireSingle);
-        assertThrowsExactly(NullPointerException.class, () -> userQuery.where(get(User::getId).eq(-1)).requireSingle());
+        assertThrowsExactly(NullPointerException.class, () -> userQuery.where(Path.of(User::getId).eq(-1)).requireSingle());
 
         assertTrue(userQuery.exist());
         assertTrue(userQuery.exist(userQuery.users().size() - 1));
@@ -1695,13 +1690,13 @@ public class GenericApiTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     public void testAttr(UserRepository userQuery) {
-        User first = userQuery.orderBy(get(User::getId).desc()).getFirst();
+        User first = userQuery.orderBy(Path.of(User::getId).desc()).getFirst();
         ArrayList<User> users = new ArrayList<>(userQuery.users());
         users.sort((a, b) -> Integer.compare(b.getId(), a.getId()));
         User f = users.stream().findFirst().orElse(null);
         assertEquals(first, f);
 
-        first = userQuery.orderBy(get(User::getUsername).desc(), get(User::getId).asc())
+        first = userQuery.orderBy(Path.of(User::getUsername).desc(), Path.of(User::getId).asc())
                 .getFirst();
 
         users = new ArrayList<>(userQuery.users());
@@ -1709,14 +1704,14 @@ public class GenericApiTest {
         f = users.stream().findFirst().orElse(null);
         assertEquals(first, f);
 
-        first = userQuery.orderBy(get(User::isValid).desc(), get(User::getId).asc()).getFirst();
+        first = userQuery.orderBy(Path.of(User::isValid).desc(), Path.of(User::getId).asc()).getFirst();
         users = new ArrayList<>(userQuery.users());
         users.sort((a, b) -> Boolean.compare(b.isValid(), a.isValid()));
         f = users.stream().findFirst().orElse(null);
         assertEquals(first, f);
 
         first = userQuery
-                .where(get(User::isValid).eq(true))
+                .where(Path.of(User::isValid).eq(true))
                 .orderBy(User::getId)
                 .getFirst();
 
@@ -1727,7 +1722,7 @@ public class GenericApiTest {
         assertEquals(first, f);
 
         List<User> resultList = userQuery
-                .where(Paths.get(User::getParentUser).get(User::isValid)
+                .where(EntityPath.of(User::getParentUser).get(User::isValid)
                         .eq(true))
                 .orderBy(User::getId)
                 .getList();
@@ -1742,7 +1737,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testWhere(UserRepository userQuery) {
         List<User> resultList = userQuery
-                .where(Paths.get(User::getParentUser).get(User::getUsername).eq(username))
+                .where(EntityPath.of(User::getParentUser).get(User::getUsername).eq(username))
                 .orderBy(User::getId)
                 .getList();
         List<User> fList = userQuery.users().stream()
@@ -1751,7 +1746,7 @@ public class GenericApiTest {
         assertEquals(resultList, fList);
 
         resultList = userQuery
-                .where(Paths.get(User::getParentUser).get(User::getUsername).ne(username))
+                .where(EntityPath.of(User::getParentUser).get(User::getUsername).ne(username))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1760,7 +1755,7 @@ public class GenericApiTest {
         assertEquals(resultList, fList);
 
         resultList = userQuery
-                .where(get(User::getUsername).ne(username))
+                .where(Path.of(User::getUsername).ne(username))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1769,7 +1764,7 @@ public class GenericApiTest {
         assertEquals(resultList, fList);
 
         resultList = userQuery
-                .where(get(User::getUsername).ne(username))
+                .where(Path.of(User::getUsername).ne(username))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1778,7 +1773,7 @@ public class GenericApiTest {
         assertEquals(resultList, fList);
 
         resultList = userQuery
-                .where(get(User::getUsername).ne(username))
+                .where(Path.of(User::getUsername).ne(username))
                 .orderBy(User::getId)
                 .getList();
         fList = userQuery.users().stream()
@@ -1790,7 +1785,7 @@ public class GenericApiTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     public void testPathBuilder(UserRepository userQuery) {
-        List<User> resultList = userQuery.where(Paths.get(User::getParentUser)
+        List<User> resultList = userQuery.where(EntityPath.of(User::getParentUser)
                         .get(User::getParentUser).get(User::getUsername).eq(username))
                 .orderBy(User::getId)
                 .getList();
@@ -1802,7 +1797,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(resultList, fList);
 
-        resultList = userQuery.where(Paths.get(User::getParentUser)
+        resultList = userQuery.where(EntityPath.of(User::getParentUser)
                         .get(User::getRandomNumber).eq(5))
                 .orderBy(User::getId)
                 .getList();
@@ -1814,7 +1809,7 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
         assertEquals(resultList, fList);
 
-        resultList = userQuery.where(Paths.get(User::getParentUser)
+        resultList = userQuery.where(EntityPath.of(User::getParentUser)
                         .get(User::getRandomNumber).eq(5))
                 .orderBy(User::getId)
                 .getList();
@@ -1830,7 +1825,7 @@ public class GenericApiTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     public void testBigNum(UserRepository userQuery) {
-        List<User> users = userQuery.where(get(User::getTimestamp).eq(Double.MAX_VALUE))
+        List<User> users = userQuery.where(Path.of(User::getTimestamp).eq(Double.MAX_VALUE))
                 .getList();
         log.info("{}", users);
     }

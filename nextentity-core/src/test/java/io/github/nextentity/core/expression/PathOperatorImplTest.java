@@ -1,6 +1,6 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.Path;
+import io.github.nextentity.api.PathRef;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -54,7 +54,7 @@ class PathOperatorImplTest {
         @Test
         void get_ShouldAppendPath() {
             // when
-            var result = operator.get((Path.StringRef<Employee>) Employee::getName);
+            var result = operator.get((PathRef.StringRef<Employee>) Employee::getName);
             result.eq("test");
 
             // then
@@ -75,7 +75,7 @@ class PathOperatorImplTest {
         @Test
         void get_WithStringRef_ShouldReturnStringOperator() {
             // when
-            var result = operator.get((Path.StringRef<Employee>) Employee::getName);
+            var result = operator.get((PathRef.StringRef<Employee>) Employee::getName);
 
             // then
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
@@ -93,7 +93,7 @@ class PathOperatorImplTest {
         @Test
         void get_WithNumberRef_ShouldReturnNumberOperator() {
             // when
-            var result = operator.get((Path.NumberRef<Employee, Long>) Employee::getId);
+            var result = operator.get((PathRef.NumberRef<Employee, Long>) Employee::getId);
 
             // then
             assertThat(result).isInstanceOf(NumberOperatorImpl.class);
@@ -107,7 +107,7 @@ class PathOperatorImplTest {
         @Test
         void get_WithDoubleRef_ShouldReturnNumberOperator() {
             // when
-            var result = operator.get((Path.NumberRef<Employee, Double>) Employee::getSalary);
+            var result = operator.get((PathRef.NumberRef<Employee, Double>) Employee::getSalary);
 
             // then
             assertThat(result).isInstanceOf(NumberOperatorImpl.class);

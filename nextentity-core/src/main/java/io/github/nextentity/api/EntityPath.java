@@ -1,5 +1,7 @@
 package io.github.nextentity.api;
 
+import io.github.nextentity.core.util.DefaultEntityRoot;
+
 /// Entity path interface, representing the association path between entities.
 ///
 /// Extends PathExpression, used to handle association property access between entities.
@@ -8,33 +10,44 @@ package io.github.nextentity.api;
 /// @param <U> Property type
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface EntityPath<T, U> extends PathExpression<T, U> {
+public interface EntityPath<T, U> extends Path<T, U> {
+
+    static <T, U> EntityPath<T, U> of(PathRef<T, U> path) {
+        return DefaultEntityRoot.<T>of().entity(path);
+    }
+
+    // type-unsafe
+    static <T, U> EntityPath<T, U> of(String path) {
+        return DefaultEntityRoot.<T>of().entityPath(path);
+    }
+
+
     /// Gets the sub-path of the specified path.
     ///
     /// @param path Path
     /// @param <R> Result type
     /// @return Sub-path
-    <R> EntityPath<T, R> get(Path<U, R> path);
+    <R> EntityPath<T, R> get(PathRef<U, R> path);
 
     /// Gets the string path of the specified string reference.
     ///
     /// @param path String reference
     /// @return String path
-    StringPath<T> get(Path.StringRef<U> path);
+    StringPath<T> get(PathRef.StringRef<U> path);
 
     /// Gets the number path of the specified number reference.
     ///
     /// @param path Number reference
     /// @param <R> Number type
     /// @return Number path
-    <R extends Number> NumberPath<T, R> get(Path.NumberRef<U, R> path);
+    <R extends Number> NumberPath<T, R> get(PathRef.NumberRef<U, R> path);
 
     /// Gets the sub-path expression of the specified path expression.
     ///
     /// @param path Path expression
     /// @param <R> Result type
     /// @return Sub-path expression
-    <R> PathExpression<T, R> get(PathExpression<U, R> path);
+    <R> Path<T, R> get(Path<U, R> path);
 
     /// Gets the string path of the specified string path.
     ///
@@ -46,7 +59,7 @@ public interface EntityPath<T, U> extends PathExpression<T, U> {
     ///
     /// @param path Boolean reference
     /// @return Boolean path
-    BooleanPath<T> get(Path.BooleanRef<T> path);
+    BooleanPath<T> get(PathRef.BooleanRef<T> path);
 
     /// Gets the number path of the specified number path.
     ///

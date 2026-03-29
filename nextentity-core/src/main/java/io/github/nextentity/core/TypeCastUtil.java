@@ -2,7 +2,7 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.TypedExpression;
-import io.github.nextentity.api.model.EntityRoot;
+import io.github.nextentity.api.EntityRoot;
 import io.github.nextentity.core.util.ImmutableArray;
 import org.jspecify.annotations.Nullable;
 

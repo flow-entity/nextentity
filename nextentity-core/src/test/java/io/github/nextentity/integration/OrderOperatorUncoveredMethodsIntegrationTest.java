@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.OrderOperator;
-import io.github.nextentity.api.Path;
+import io.github.nextentity.api.PathRef;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Sliceable;
@@ -48,7 +48,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
     @DisplayName("Should orderBy Collection without explicit sort order")
     void shouldOrderByCollectionWithoutExplicitSortOrder(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
         paths.add(Employee::getId);
 
         // When - orderBy(Collection) on OrderOperator triggers default method
@@ -74,7 +74,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
     @DisplayName("Should orderBy Collection with multiple paths")
     void shouldOrderByCollectionWithMultiplePaths(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
         paths.add(Employee::getDepartmentId);
         paths.add(Employee::getName);
 
@@ -95,7 +95,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
     @DisplayName("Should orderBy Collection return OrderOperator for chaining")
     void shouldOrderByCollectionReturnOrderOperatorForChaining(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
         paths.add(Employee::getId);
 
         // When
@@ -220,7 +220,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
     @DisplayName("Should chain orderBy Collection with limit")
     void shouldChainOrderByCollectionWithLimit(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
         paths.add(Employee::getSalary);
 
         // When
@@ -240,7 +240,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
     @DisplayName("Should OrderOperator methods delegate to asc correctly")
     void shouldOrderOperatorMethodsDelegateToAscCorrectly(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ? extends Comparable<?>>> paths = new ArrayList<>();
         paths.add(Employee::getId);
 
         // When - using OrderOperator directly (triggers default methods)

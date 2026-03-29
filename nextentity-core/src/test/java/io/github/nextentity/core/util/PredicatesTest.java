@@ -2,7 +2,6 @@ package io.github.nextentity.core.util;
 
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.core.expression.ExpressionNodes;
-import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.expression.LiteralNode;
 import io.github.nextentity.core.expression.OperatorNode;
 import org.junit.jupiter.api.Nested;
@@ -34,7 +33,7 @@ class PredicatesTest {
         @Test
         void of_WithTrueExpression_ShouldCreatePredicateWithTrueNode() {
             // given
-            var trueExpr = Expressions.ofTrue();
+            var trueExpr = Predicate.ofTrue();
 
             // when
             Predicate<Object> predicate = Predicates.of(trueExpr);
@@ -52,7 +51,7 @@ class PredicatesTest {
         @Test
         void of_WithFalseExpression_ShouldCreatePredicateWithFalseNode() {
             // given
-            var falseExpr = Expressions.ofFalse();
+            var falseExpr = Predicate.ofFalse();
 
             // when
             Predicate<Object> predicate = Predicates.of(falseExpr);
@@ -74,8 +73,8 @@ class PredicatesTest {
         @Test
         void and_WithFalseAndTrue_ShouldReturnFalse() {
             // given
-            var falsePred = Expressions.ofFalse();
-            var truePred = Expressions.ofTrue();
+            var falsePred = Predicate.ofFalse();
+            var truePred = Predicate.ofTrue();
 
             // when
             Predicate<Object> result = Predicates.and(falsePred, truePred);
@@ -94,8 +93,8 @@ class PredicatesTest {
         @Test
         void and_WithTwoFalsePredicates_ShouldReturnFalse() {
             // given
-            var falsePred1 = Expressions.ofFalse();
-            var falsePred2 = Expressions.ofFalse();
+            var falsePred1 = Predicate.ofFalse();
+            var falsePred2 = Predicate.ofFalse();
 
             // when
             Predicate<Object> result = Predicates.and(falsePred1, falsePred2);
@@ -117,8 +116,8 @@ class PredicatesTest {
         @Test
         void or_WithTrueAndFalse_ShouldReturnTrue() {
             // given
-            var truePred = Expressions.ofTrue();
-            var falsePred = Expressions.ofFalse();
+            var truePred = Predicate.ofTrue();
+            var falsePred = Predicate.ofFalse();
 
             // when
             Predicate<Object> result = Predicates.or(truePred, falsePred);
@@ -137,8 +136,8 @@ class PredicatesTest {
         @Test
         void or_WithTwoFalsePredicates_ShouldCreateOperatorNode() {
             // given
-            var falsePred1 = Expressions.ofFalse();
-            var falsePred2 = Expressions.ofFalse();
+            var falsePred1 = Predicate.ofFalse();
+            var falsePred2 = Predicate.ofFalse();
 
             // when
             Predicate<Object> result = Predicates.or(falsePred1, falsePred2);

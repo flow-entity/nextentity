@@ -4,7 +4,6 @@ import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.ExpressionNodes;
-import io.github.nextentity.core.expression.OperatorNode;
 import io.github.nextentity.core.expression.PredicateImpl;
 
 import static io.github.nextentity.core.expression.Operator.NOT;

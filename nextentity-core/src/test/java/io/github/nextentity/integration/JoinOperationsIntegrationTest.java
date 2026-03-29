@@ -1,15 +1,13 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -30,8 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("JOIN Operations Integration Tests")
 public class JoinOperationsIntegrationTest {
 
-    private static final Logger log = LoggerFactory.getLogger(JoinOperationsIntegrationTest.class);
-
     /**
      * Tests fetching associated department for employees.
      */
@@ -50,7 +46,7 @@ public class JoinOperationsIntegrationTest {
         assertEquals(12, employees.size());
 
         // Verify departments are loaded
-        Employee emp = employees.get(0);
+        Employee emp = employees.getFirst();
         // TODO fix bug
         assertNotNull(emp.getDepartment());
         assertNotNull(emp.getDepartment().getId());
@@ -95,7 +91,7 @@ public class JoinOperationsIntegrationTest {
         assertEquals(5, departments.size());
 
         // Verify first department
-        Department dept = departments.get(0);
+        Department dept = departments.getFirst();
         assertEquals("Engineering", dept.getName());
         assertEquals("Building A", dept.getLocation());
     }
@@ -141,7 +137,7 @@ public class JoinOperationsIntegrationTest {
 
         // Then
         assertNotNull(employees);
-        assertTrue(employees.size() > 0);
+        assertFalse(employees.isEmpty());
 
         // Verify all are active and in department 1
         for (Employee emp : employees) {
@@ -159,7 +155,7 @@ public class JoinOperationsIntegrationTest {
     void shouldCalculateSalaryStatsPerDepartment(IntegrationTestContext context) {
         // When - get max salary in department 1
         Number maxSalary = context.queryEmployees()
-                .select(io.github.nextentity.core.util.Paths.get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .where(Employee::getDepartmentId).eq(1L)
                 .getSingle();
 
@@ -214,7 +210,7 @@ public class JoinOperationsIntegrationTest {
     void shouldGetDistinctDepartmentIds(IntegrationTestContext context) {
         // When
         List<Long> deptIds = context.queryEmployees()
-                .selectDistinct(io.github.nextentity.core.util.Paths.get(Employee::getDepartmentId))
+                .selectDistinct(Path.of(Employee::getDepartmentId))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -238,7 +234,7 @@ public class JoinOperationsIntegrationTest {
                 .getList();
 
         // Then
-        assertTrue(activeInDept1.size() > 0);
+        assertFalse(activeInDept1.isEmpty());
         for (Employee emp : activeInDept1) {
             assertTrue(emp.getActive());
             assertEquals(1L, emp.getDepartmentId());
@@ -259,7 +255,7 @@ public class JoinOperationsIntegrationTest {
                 .getList();
 
         // Then
-        assertTrue(activeDepts.size() > 0);
+        assertFalse(activeDepts.isEmpty());
         for (Department dept : activeDepts) {
             assertTrue(dept.getActive());
             assertNotNull(dept.getBudget());

@@ -1,6 +1,6 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.Path;
+import io.github.nextentity.api.PathRef;
 import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
@@ -68,7 +68,7 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     /// @param path the Path method reference
     /// @return a new PathNode instance
     ///
-    public static PathNode of(Path<?, ?> path) {
+    public static PathNode of(PathRef<?, ?> path) {
         String fieldName = PathReference.of(path).getFieldName();
         return new PathNode(new String[]{fieldName});
     }
@@ -79,7 +79,7 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     /// @param paths the Path references
     /// @return an immutable list of PathNode instances
     ///
-    public static ImmutableList<ExpressionNode> mapping(Collection<? extends Path<?, ?>> paths) {
+    public static ImmutableList<ExpressionNode> mapping(Collection<? extends PathRef<?, ?>> paths) {
         return paths.stream().map(PathNode::of).collect(ImmutableList.collector(paths.size()));
     }
 
@@ -89,7 +89,7 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     /// @param paths the Path references
     /// @return an immutable list of PathNode instances
     ///
-    public static ImmutableList<ExpressionNode> mapping(Path<?, ?>[] paths) {
+    public static ImmutableList<ExpressionNode> mapping(PathRef<?, ?>[] paths) {
         return Arrays.stream(paths).map(PathNode::of).collect(ImmutableList.collector(paths.length));
     }
 
@@ -110,7 +110,7 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     /// @param path the Path reference to append
     /// @return a new PathNode with the extended path
     ///
-    public PathNode append(Path<?, ?> path) {
+    public PathNode append(PathRef<?, ?> path) {
         String fieldName = PathReference.of(path).getFieldName();
         return get(fieldName);
     }

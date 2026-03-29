@@ -8,5 +8,7 @@ package io.github.nextentity.api;
 /// @since 1.0.0
 @SuppressWarnings("unused")
 public interface TypedExpression<T, U> extends Expression {
-
+    static <T, U> TypedExpression<T, U> of(U value) {
+        return EntityRoot.<T>of().literal(value);
+    }
 }

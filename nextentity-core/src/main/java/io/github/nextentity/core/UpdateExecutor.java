@@ -1,7 +1,6 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.core.util.ImmutableList;
-import jakarta.persistence.EntityTransaction;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -74,7 +73,7 @@ public interface UpdateExecutor {
     /// @throws NullPointerException if entity or entityType is null
     ///
     default <T> T update(@NonNull T entity, Class<T> entityType) {
-        return updateAll(ImmutableList.of(entity), entityType).get(0);
+        return updateAll(ImmutableList.of(entity), entityType).getFirst();
     }
 
     ///

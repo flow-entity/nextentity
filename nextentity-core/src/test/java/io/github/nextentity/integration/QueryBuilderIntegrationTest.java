@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
@@ -17,7 +18,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -74,7 +74,7 @@ class QueryBuilderIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     void where_WithMultipleConditions_ShouldFilterResults(IntegrationTestContext context) {
         // given
-        Predicate<Employee> isActive = get(Employee::getActive).eq(true);
+        Predicate<Employee> isActive = Path.of(Employee::getActive).eq(true);
 
         // when
         List<Employee> employees = context.queryEmployees()
@@ -261,7 +261,7 @@ class QueryBuilderIntegrationTest {
     void select_WithCount_ShouldReturnCount(IntegrationTestContext context) {
         // when
         Long count = context.queryEmployees()
-                .select(get(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .getFirst();
 
         // then
@@ -273,7 +273,7 @@ class QueryBuilderIntegrationTest {
     void select_WithSum_ShouldReturnSum(IntegrationTestContext context) {
         // when
         Double sum = context.queryEmployees()
-                .select(get(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).sum())
                 .getFirst();
 
         // then
@@ -285,7 +285,7 @@ class QueryBuilderIntegrationTest {
     void select_WithAvg_ShouldReturnAverage(IntegrationTestContext context) {
         // when
         Double avg = context.queryEmployees()
-                .select(get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getFirst();
 
         // then
@@ -297,7 +297,7 @@ class QueryBuilderIntegrationTest {
     void select_WithMax_ShouldReturnMax(IntegrationTestContext context) {
         // when
         Double max = context.queryEmployees()
-                .select(get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getFirst();
 
         // then
@@ -309,7 +309,7 @@ class QueryBuilderIntegrationTest {
     void select_WithMin_ShouldReturnMin(IntegrationTestContext context) {
         // when
         Double min = context.queryEmployees()
-                .select(get(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getFirst();
 
         // then
@@ -320,7 +320,7 @@ class QueryBuilderIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     void where_WithOrCondition_ShouldFilterResults(IntegrationTestContext context) {
         // given
-        Predicate<Employee> isAlice = get(Employee::getName).eq(ALICE_NAME);
+        Predicate<Employee> isAlice = Path.of(Employee::getName).eq(ALICE_NAME);
 
         // when
         List<Employee> employees = context.queryEmployees()
@@ -493,7 +493,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithCountExpression(IntegrationTestContext context) {
             // When
             Long count = context.queryEmployees()
-                    .select(get(Employee::getId).count())
+                    .select(Path.of(Employee::getId).count())
                     .getFirst();
 
             // Then
@@ -509,7 +509,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithSumExpression(IntegrationTestContext context) {
             // When
             Double sum = context.queryEmployees()
-                    .select(get(Employee::getSalary).sum())
+                    .select(Path.of(Employee::getSalary).sum())
                     .getFirst();
 
             // Then
@@ -526,9 +526,9 @@ class QueryBuilderIntegrationTest {
             // When
             var result = context.queryEmployees()
                     .select(
-                            get(Employee::getSalary).avg(),
-                            get(Employee::getSalary).max(),
-                            get(Employee::getSalary).min()
+                            Path.of(Employee::getSalary).avg(),
+                            Path.of(Employee::getSalary).max(),
+                            Path.of(Employee::getSalary).min()
                     )
                     .getFirst();
 
@@ -548,7 +548,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithArithmeticExpression(IntegrationTestContext context) {
             // When - select salary + 1000
             List<Double> salaries = context.queryEmployees()
-                    .select(get(Employee::getSalary).add(1000.0))
+                    .select(Path.of(Employee::getSalary).add(1000.0))
                     .orderBy(Employee::getId).asc()
                     .getList();
 
@@ -579,7 +579,7 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should use eq predicate as where condition")
         void shouldUseEqPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).eq(ALICE_NAME);
+            Predicate<Employee> predicate = Path.of(Employee::getName).eq(ALICE_NAME);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -599,7 +599,7 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should use gt predicate as where condition")
         void shouldUseGtPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).gt(70000.0);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).gt(70000.0);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -620,7 +620,7 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should use between predicate as where condition")
         void shouldUseBetweenPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).between(MIN_SALARY_RANGE, MAX_SALARY_RANGE);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).between(MIN_SALARY_RANGE, MAX_SALARY_RANGE);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -640,8 +640,8 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should combine predicates with AND")
         void shouldCombinePredicatesWithAnd(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> activePredicate = get(Employee::getActive).eq(true);
-            Predicate<Employee> salaryPredicate = get(Employee::getSalary).gt(50000.0);
+            Predicate<Employee> activePredicate = Path.of(Employee::getActive).eq(true);
+            Predicate<Employee> salaryPredicate = Path.of(Employee::getSalary).gt(50000.0);
             Predicate<Employee> combined = activePredicate.and(salaryPredicate);
 
             // When
@@ -662,8 +662,8 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should combine predicates with OR")
         void shouldCombinePredicatesWithOr(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> isAlice = get(Employee::getName).eq(ALICE_NAME);
-            Predicate<Employee> isBob = get(Employee::getName).eq(BOB_NAME);
+            Predicate<Employee> isAlice = Path.of(Employee::getName).eq(ALICE_NAME);
+            Predicate<Employee> isBob = Path.of(Employee::getName).eq(BOB_NAME);
             Predicate<Employee> combined = isAlice.or(isBob);
 
             // When
@@ -685,7 +685,7 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should use NOT on predicate")
         void shouldUseNotOnPredicate(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> isActive = get(Employee::getActive).eq(true);
+            Predicate<Employee> isActive = Path.of(Employee::getActive).eq(true);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -705,9 +705,9 @@ class QueryBuilderIntegrationTest {
         @DisplayName("Should create complex predicate expression")
         void shouldCreateComplexPredicateExpression(IntegrationTestContext context) {
             // Given: (active AND salary > 60000) OR name = 'Alice Johnson'
-            Predicate<Employee> activeHighSalary = get(Employee::getActive).eq(true)
-                    .and(get(Employee::getSalary).gt(60000.0));
-            Predicate<Employee> isAlice = get(Employee::getName).eq(ALICE_NAME);
+            Predicate<Employee> activeHighSalary = Path.of(Employee::getActive).eq(true)
+                    .and(Path.of(Employee::getSalary).gt(60000.0));
+            Predicate<Employee> isAlice = Path.of(Employee::getName).eq(ALICE_NAME);
             Predicate<Employee> complex = activeHighSalary.or(isAlice);
 
             // When

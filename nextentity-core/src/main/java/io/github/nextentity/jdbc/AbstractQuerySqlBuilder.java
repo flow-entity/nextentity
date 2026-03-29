@@ -59,8 +59,8 @@ public abstract class AbstractQuerySqlBuilder {
         this.context = context;
         String prefix;
         From from = context.getStructure().from();
-        if (from instanceof FromEntity fromEntity) {
-            prefix = shortAlias(fromEntity.type().getSimpleName());
+        if (from instanceof FromEntity(Class<?> type)) {
+            prefix = shortAlias(type.getSimpleName());
         } else {
             prefix = "t";
         }
@@ -110,14 +110,6 @@ public abstract class AbstractQuerySqlBuilder {
 
     protected void appendSelectAlias(SelectItem expression) {
         //
-    }
-
-    protected void appendSelectAlias(ExpressionNode expression) {
-        if (selectIndex.get() != 0 || !(expression instanceof PathNode pathNode) || pathNode.size() != 1) {
-            int index = selectIndex.getAndIncrement();
-            String alias = Integer.toString(index, Character.MAX_RADIX);
-            sql.append(" as _").append(alias);
-        }
     }
 
     protected void appendLockModeType(LockModeType lockModeType) {
@@ -211,16 +203,12 @@ public abstract class AbstractQuerySqlBuilder {
     }
 
     protected void appendExpression(ExpressionNode expression) {
-        if (expression instanceof LiteralNode literalNode) {
-            appendLiteral(literalNode);
-        } else if (expression instanceof PathNode) {
-            appendPaths((PathNode) expression);
-        } else if (expression instanceof OperatorNode) {
-            appendOperation((OperatorNode) expression);
-        } else if (expression instanceof QueryStructure) {
-            appendSubQuery(((QueryStructure) expression));
-        } else {
-            throw new UnsupportedOperationException("unknown type " + expression.getClass());
+        switch (expression) {
+            case LiteralNode literalNode -> appendLiteral(literalNode);
+            case PathNode strings -> appendPaths(strings);
+            case OperatorNode operatorNode -> appendOperation(operatorNode);
+            case QueryStructure queryStructure -> appendSubQuery(queryStructure);
+            default -> throw new UnsupportedOperationException("unknown type " + expression.getClass());
         }
     }
 

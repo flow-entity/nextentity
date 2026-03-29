@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.integration.config.IntegrationTestContext;
@@ -15,7 +16,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static io.github.nextentity.core.util.Predicates.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -58,8 +58,8 @@ public class AndOrPredicateIntegrationTest {
             // When: active AND departmentId = 1
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
-                            get(Employee::getDepartmentId).eq(1L)
+                            Path.of(Employee::getActive).eq(true),
+                            Path.of(Employee::getDepartmentId).eq(1L)
                     ))
                     .getList();
 
@@ -78,9 +78,9 @@ public class AndOrPredicateIntegrationTest {
             // When: active AND status = ACTIVE AND salary > 55000
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
-                            get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
-                            get(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
+                            Path.of(Employee::getActive).eq(true),
+                            Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
+                            Path.of(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
                     ))
                     .getList();
 
@@ -102,8 +102,8 @@ public class AndOrPredicateIntegrationTest {
             // When: salary > 60000 AND salary < 80000
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getSalary).gt(60000.0),
-                            get(Employee::getSalary).lt(HIGH_SALARY_THRESHOLD)
+                            Path.of(Employee::getSalary).gt(60000.0),
+                            Path.of(Employee::getSalary).lt(HIGH_SALARY_THRESHOLD)
                     ))
                     .orderBy(Employee::getSalary).asc()
                     .getList();
@@ -123,8 +123,8 @@ public class AndOrPredicateIntegrationTest {
             // When: name starts with 'A' AND active = true
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getName).startsWith("A"),
-                            get(Employee::getActive).eq(true)
+                            Path.of(Employee::getName).startsWith("A"),
+                            Path.of(Employee::getActive).eq(true)
                     ))
                     .getList();
 
@@ -143,8 +143,8 @@ public class AndOrPredicateIntegrationTest {
             // When: active AND budget > 300000
             List<Department> departments = context.queryDepartments()
                     .where(and(
-                            get(Department::getActive).eq(true),
-                            get(Department::getBudget).gt(300000.0)
+                            Path.of(Department::getActive).eq(true),
+                            Path.of(Department::getBudget).gt(300000.0)
                     ))
                     .getList();
 
@@ -163,10 +163,10 @@ public class AndOrPredicateIntegrationTest {
             // Given: active AND status AND dept AND salary > threshold
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
-                            get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
-                            get(Employee::getDepartmentId).eq(1L),
-                            get(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
+                            Path.of(Employee::getActive).eq(true),
+                            Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
+                            Path.of(Employee::getDepartmentId).eq(1L),
+                            Path.of(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
                     ))
                     .getList();
 
@@ -194,8 +194,8 @@ public class AndOrPredicateIntegrationTest {
             // When: name = 'Alice' OR name = 'Bob'
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getName).eq(ALICE_NAME),
-                            get(Employee::getName).eq(BOB_NAME)
+                            Path.of(Employee::getName).eq(ALICE_NAME),
+                            Path.of(Employee::getName).eq(BOB_NAME)
                     ))
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -216,9 +216,9 @@ public class AndOrPredicateIntegrationTest {
             // When: name = 'Alice' OR name = 'Bob' OR name = 'Charlie'
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getName).eq(ALICE_NAME),
-                            get(Employee::getName).eq(BOB_NAME),
-                            get(Employee::getName).eq(CHARLIE_NAME)
+                            Path.of(Employee::getName).eq(ALICE_NAME),
+                            Path.of(Employee::getName).eq(BOB_NAME),
+                            Path.of(Employee::getName).eq(CHARLIE_NAME)
                     ))
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -239,8 +239,8 @@ public class AndOrPredicateIntegrationTest {
             // When: salary > 80000 OR departmentId = 1
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD),
-                            get(Employee::getDepartmentId).eq(1L)
+                            Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD),
+                            Path.of(Employee::getDepartmentId).eq(1L)
                     ))
                     .getList();
 
@@ -259,8 +259,8 @@ public class AndOrPredicateIntegrationTest {
             // When: salary < 50000 OR salary > 80000
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getSalary).lt(50000.0),
-                            get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
+                            Path.of(Employee::getSalary).lt(50000.0),
+                            Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                     ))
                     .orderBy(Employee::getSalary).asc()
                     .getList();
@@ -280,8 +280,8 @@ public class AndOrPredicateIntegrationTest {
             // When: name starts with 'A' OR name starts with 'B'
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getName).startsWith("A"),
-                            get(Employee::getName).startsWith("B")
+                            Path.of(Employee::getName).startsWith("A"),
+                            Path.of(Employee::getName).startsWith("B")
                     ))
                     .getList();
 
@@ -300,8 +300,8 @@ public class AndOrPredicateIntegrationTest {
             // When: id = 1 OR id = 2
             List<Department> departments = context.queryDepartments()
                     .where(or(
-                            get(Department::getId).eq(1L),
-                            get(Department::getId).eq(2L)
+                            Path.of(Department::getId).eq(1L),
+                            Path.of(Department::getId).eq(2L)
                     ))
                     .orderBy(Department::getId).asc()
                     .getList();
@@ -322,10 +322,10 @@ public class AndOrPredicateIntegrationTest {
             // Given: name = 'Alice' OR 'Bob' OR 'Charlie' OR 'Diana'
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getName).eq(ALICE_NAME),
-                            get(Employee::getName).eq(BOB_NAME),
-                            get(Employee::getName).eq(CHARLIE_NAME),
-                            get(Employee::getName).eq(DIANA_NAME)
+                            Path.of(Employee::getName).eq(ALICE_NAME),
+                            Path.of(Employee::getName).eq(BOB_NAME),
+                            Path.of(Employee::getName).eq(CHARLIE_NAME),
+                            Path.of(Employee::getName).eq(DIANA_NAME)
                     ))
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -351,10 +351,10 @@ public class AndOrPredicateIntegrationTest {
             // Given: active AND (departmentId = 1 OR departmentId = 2)
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
+                            Path.of(Employee::getActive).eq(true),
                             or(
-                                    get(Employee::getDepartmentId).eq(1L),
-                                    get(Employee::getDepartmentId).eq(2L)
+                                    Path.of(Employee::getDepartmentId).eq(1L),
+                                    Path.of(Employee::getDepartmentId).eq(2L)
                             )
                     ))
                     .getList();
@@ -376,10 +376,10 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
-                                    get(Employee::getActive).eq(true),
-                                    get(Employee::getDepartmentId).eq(1L)
+                                    Path.of(Employee::getActive).eq(true),
+                                    Path.of(Employee::getDepartmentId).eq(1L)
                             ),
-                            get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
+                            Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                     ))
                     .getList();
 
@@ -400,13 +400,13 @@ public class AndOrPredicateIntegrationTest {
             //        (departmentId = 1 OR departmentId = 2 OR name = 'Alice')
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
-                            get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
-                            get(Employee::getSalary).gt(60000.0),
+                            Path.of(Employee::getActive).eq(true),
+                            Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
+                            Path.of(Employee::getSalary).gt(60000.0),
                             or(
-                                    get(Employee::getDepartmentId).eq(1L),
-                                    get(Employee::getDepartmentId).eq(2L),
-                                    get(Employee::getName).eq(ALICE_NAME)
+                                    Path.of(Employee::getDepartmentId).eq(1L),
+                                    Path.of(Employee::getDepartmentId).eq(2L),
+                                    Path.of(Employee::getName).eq(ALICE_NAME)
                             )
                     ))
                     .getList();
@@ -431,12 +431,12 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
-                                    get(Employee::getActive).eq(true),
-                                    get(Employee::getDepartmentId).eq(1L)
+                                    Path.of(Employee::getActive).eq(true),
+                                    Path.of(Employee::getDepartmentId).eq(1L)
                             ),
                             and(
-                                    get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD),
-                                    get(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
+                                    Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD),
+                                    Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                             )
                     ))
                     .getList();
@@ -460,12 +460,12 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
-                                    get(Employee::getActive).eq(true),
-                                    get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
+                                    Path.of(Employee::getActive).eq(true),
+                                    Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                             ),
                             or(
-                                    get(Employee::getDepartmentId).eq(1L),
-                                    get(Employee::getDepartmentId).eq(2L)
+                                    Path.of(Employee::getDepartmentId).eq(1L),
+                                    Path.of(Employee::getDepartmentId).eq(2L)
                             )
                     ))
                     .getList();
@@ -488,8 +488,8 @@ public class AndOrPredicateIntegrationTest {
             // Given
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getDepartmentId).eq(1L),
-                            get(Employee::getDepartmentId).eq(2L)
+                            Path.of(Employee::getDepartmentId).eq(1L),
+                            Path.of(Employee::getDepartmentId).eq(2L)
                     ))
                     .where(Employee::getActive).eq(true)
                     .getList();
@@ -513,15 +513,15 @@ public class AndOrPredicateIntegrationTest {
             // salary < 90000
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
-                            get(Employee::getStatus).isNotNull(),
-                            get(Employee::getSalary).gt(50000.0),
+                            Path.of(Employee::getActive).eq(true),
+                            Path.of(Employee::getStatus).isNotNull(),
+                            Path.of(Employee::getSalary).gt(50000.0),
                             or(
-                                    get(Employee::getDepartmentId).eq(1L),
-                                    get(Employee::getDepartmentId).eq(2L),
-                                    get(Employee::getName).eq(ALICE_NAME)
+                                    Path.of(Employee::getDepartmentId).eq(1L),
+                                    Path.of(Employee::getDepartmentId).eq(2L),
+                                    Path.of(Employee::getName).eq(ALICE_NAME)
                             ),
-                            get(Employee::getSalary).lt(90000.0)
+                            Path.of(Employee::getSalary).lt(90000.0)
                     ))
                     .getList();
 
@@ -550,8 +550,8 @@ public class AndOrPredicateIntegrationTest {
             // Given: active AND NOT(departmentId = 1)
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getActive).eq(true),
-                            not(get(Employee::getDepartmentId).eq(1L))
+                            Path.of(Employee::getActive).eq(true),
+                            not(Path.of(Employee::getDepartmentId).eq(1L))
                     ))
                     .getList();
 
@@ -570,8 +570,8 @@ public class AndOrPredicateIntegrationTest {
             // Given: active OR NOT(departmentId = 1)
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getActive).eq(true),
-                            not(get(Employee::getDepartmentId).eq(1L))
+                            Path.of(Employee::getActive).eq(true),
+                            not(Path.of(Employee::getDepartmentId).eq(1L))
                     ))
                     .getList();
 
@@ -590,8 +590,8 @@ public class AndOrPredicateIntegrationTest {
             // Given: NOT(active AND departmentId = 1)
             List<Employee> employees = context.queryEmployees()
                     .where(not(and(
-                            get(Employee::getActive).eq(true),
-                            get(Employee::getDepartmentId).eq(1L)
+                            Path.of(Employee::getActive).eq(true),
+                            Path.of(Employee::getDepartmentId).eq(1L)
                     )))
                     .getList();
 
@@ -610,8 +610,8 @@ public class AndOrPredicateIntegrationTest {
             // Given: NOT(departmentId = 1 OR departmentId = 2)
             List<Employee> employees = context.queryEmployees()
                     .where(not(or(
-                            get(Employee::getDepartmentId).eq(1L),
-                            get(Employee::getDepartmentId).eq(2L)
+                            Path.of(Employee::getDepartmentId).eq(1L),
+                            Path.of(Employee::getDepartmentId).eq(2L)
                     )))
                     .getList();
 
@@ -629,7 +629,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldHandleChainedNotOperations(IntegrationTestContext context) {
             // Given: NOT(NOT(active))
             List<Employee> employees = context.queryEmployees()
-                    .where(not(not(get(Employee::getActive).eq(true))))
+                    .where(not(not(Path.of(Employee::getActive).eq(true))))
                     .getList();
 
             // Then
@@ -647,10 +647,10 @@ public class AndOrPredicateIntegrationTest {
             // Given: NOT(active AND (departmentId = 1 OR departmentId = 2))
             List<Employee> employees = context.queryEmployees()
                     .where(not(and(
-                            get(Employee::getActive).eq(true),
+                            Path.of(Employee::getActive).eq(true),
                             or(
-                                    get(Employee::getDepartmentId).eq(1L),
-                                    get(Employee::getDepartmentId).eq(2L)
+                                    Path.of(Employee::getDepartmentId).eq(1L),
+                                    Path.of(Employee::getDepartmentId).eq(2L)
                             )
                     )))
                     .getList();
@@ -676,8 +676,8 @@ public class AndOrPredicateIntegrationTest {
             // When: email IS NOT NULL AND active = true
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getEmail).isNotNull(),
-                            get(Employee::getActive).eq(true)
+                            Path.of(Employee::getEmail).isNotNull(),
+                            Path.of(Employee::getActive).eq(true)
                     ))
                     .getList();
 
@@ -696,8 +696,8 @@ public class AndOrPredicateIntegrationTest {
             // When: email IS NULL OR active = false
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getEmail).isNull(),
-                            get(Employee::getActive).eq(false)
+                            Path.of(Employee::getEmail).isNull(),
+                            Path.of(Employee::getActive).eq(false)
                     ))
                     .getList();
 
@@ -715,8 +715,8 @@ public class AndOrPredicateIntegrationTest {
             // When: salary BETWEEN 60000 AND 75000 AND active = true
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getSalary).between(60000.0, 75000.0),
-                            get(Employee::getActive).eq(true)
+                            Path.of(Employee::getSalary).between(60000.0, 75000.0),
+                            Path.of(Employee::getActive).eq(true)
                     ))
                     .getList();
 
@@ -736,8 +736,8 @@ public class AndOrPredicateIntegrationTest {
             // When: departmentId IN (1, 2) OR salary > 80000
             List<Employee> employees = context.queryEmployees()
                     .where(or(
-                            get(Employee::getDepartmentId).in(1L, 2L),
-                            get(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
+                            Path.of(Employee::getDepartmentId).in(1L, 2L),
+                            Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                     ))
                     .getList();
 
@@ -758,8 +758,8 @@ public class AndOrPredicateIntegrationTest {
             // When: email LIKE '%example.com' AND active = true
             List<Employee> employees = context.queryEmployees()
                     .where(and(
-                            get(Employee::getEmail).like("%@example.com"),
-                            get(Employee::getActive).eq(true)
+                            Path.of(Employee::getEmail).like("%@example.com"),
+                            Path.of(Employee::getActive).eq(true)
                     ))
                     .getList();
 
@@ -781,12 +781,12 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(or(
                             and(
-                                    get(Employee::getActive).eq(true),
-                                    get(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
+                                    Path.of(Employee::getActive).eq(true),
+                                    Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                             ),
                             and(
-                                    not(get(Employee::getDepartmentId).in(1L, 2L)),
-                                    get(Employee::getSalary).gt(70000.0)
+                                    not(Path.of(Employee::getDepartmentId).in(1L, 2L)),
+                                    Path.of(Employee::getSalary).gt(70000.0)
                             )
                     ))
                     .getList();
@@ -806,9 +806,9 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should combine using Predicate.and() method")
         void shouldCombineUsingPredicateAndMethod(IntegrationTestContext context) {
             // Given: using Predicate.and() to chain
-            Predicate<Employee> p1 = get(Employee::getActive).eq(true);
-            Predicate<Employee> p2 = get(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
-            Predicate<Employee> p3 = get(Employee::getDepartmentId).eq(1L);
+            Predicate<Employee> p1 = Path.of(Employee::getActive).eq(true);
+            Predicate<Employee> p2 = Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
+            Predicate<Employee> p3 = Path.of(Employee::getDepartmentId).eq(1L);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -831,9 +831,9 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should combine using Predicate.or() method")
         void shouldCombineUsingPredicateOrMethod(IntegrationTestContext context) {
             // Given: using Predicate.or() to chain
-            Predicate<Employee> p1 = get(Employee::getName).eq(ALICE_NAME);
-            Predicate<Employee> p2 = get(Employee::getName).eq(BOB_NAME);
-            Predicate<Employee> p3 = get(Employee::getName).eq(CHARLIE_NAME);
+            Predicate<Employee> p1 = Path.of(Employee::getName).eq(ALICE_NAME);
+            Predicate<Employee> p2 = Path.of(Employee::getName).eq(BOB_NAME);
+            Predicate<Employee> p3 = Path.of(Employee::getName).eq(CHARLIE_NAME);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -855,9 +855,9 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should combine predicates with Iterable")
         void shouldCombinePredicatesWithIterable(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> isActive = get(Employee::getActive).eq(true);
-            Predicate<Employee> isStatusActive = get(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
-            Predicate<Employee> isDept1 = get(Employee::getDepartmentId).eq(1L);
+            Predicate<Employee> isActive = Path.of(Employee::getActive).eq(true);
+            Predicate<Employee> isStatusActive = Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
+            Predicate<Employee> isDept1 = Path.of(Employee::getDepartmentId).eq(1L);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -881,8 +881,8 @@ public class AndOrPredicateIntegrationTest {
         void shouldConvertConjunctionToPredicate(IntegrationTestContext context) {
 
             // Given
-            Predicate<Employee> predicate = get(Employee::getActive).eq(true)
-                    .and(get(Employee::getDepartmentId).eq(1L))
+            Predicate<Employee> predicate = Path.of(Employee::getActive).eq(true)
+                    .and(Path.of(Employee::getDepartmentId).eq(1L))
                     .toPredicate();
 
             // When
@@ -903,8 +903,8 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should convert Disjunction to Predicate")
         void shouldConvertDisjunctionToPredicate(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getName).eq(ALICE_NAME)
-                    .or(get(Employee::getName).eq(BOB_NAME))
+            Predicate<Employee> predicate = Path.of(Employee::getName).eq(ALICE_NAME)
+                    .or(Path.of(Employee::getName).eq(BOB_NAME))
                     .toPredicate();
 
             // When
@@ -925,9 +925,9 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should combine predicates with Iterable for OR")
         void shouldCombinePredicatesWithIterableForOr(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> isAlice = get(Employee::getName).eq(ALICE_NAME);
-            Predicate<Employee> isBob = get(Employee::getName).eq(BOB_NAME);
-            Predicate<Employee> isCharlie = get(Employee::getName).eq(CHARLIE_NAME);
+            Predicate<Employee> isAlice = Path.of(Employee::getName).eq(ALICE_NAME);
+            Predicate<Employee> isBob = Path.of(Employee::getName).eq(BOB_NAME);
+            Predicate<Employee> isCharlie = Path.of(Employee::getName).eq(CHARLIE_NAME);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -956,14 +956,14 @@ public class AndOrPredicateIntegrationTest {
             // Given
             @SuppressWarnings("unchecked")
             TypedExpression<Employee, Boolean>[] predicates = new TypedExpression[]{
-                    get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
-                    get(Employee::getDepartmentId).eq(1L),
-                    get(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
+                    Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
+                    Path.of(Employee::getDepartmentId).eq(1L),
+                    Path.of(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
             };
 
             // When
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true).and(predicates))
+                    .where(Path.of(Employee::getActive).eq(true).and(predicates))
                     .getList();
 
             // Then
@@ -985,14 +985,14 @@ public class AndOrPredicateIntegrationTest {
             // Given
             @SuppressWarnings("unchecked")
             TypedExpression<Employee, Boolean>[] predicates = new TypedExpression[]{
-                    get(Employee::getName).eq(BOB_NAME),
-                    get(Employee::getName).eq(CHARLIE_NAME),
-                    get(Employee::getName).eq(DIANA_NAME)
+                    Path.of(Employee::getName).eq(BOB_NAME),
+                    Path.of(Employee::getName).eq(CHARLIE_NAME),
+                    Path.of(Employee::getName).eq(DIANA_NAME)
             };
 
             // When
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME).or(predicates))
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME).or(predicates))
                     .orderBy(Employee::getId).asc()
                     .getList();
 
@@ -1011,7 +1011,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAndPathReturningPathOperator(IntegrationTestContext context) {
             // Given: active AND departmentId = 1 using fluent chaining
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L))
                     .getList();
 
@@ -1029,7 +1029,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainMultipleAndPathCalls(IntegrationTestContext context) {
             // Given: active AND departmentId = 1 AND status = ACTIVE
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L)
                             .and(Employee::getStatus).eq(EmployeeStatus.ACTIVE))
                     .getList();
@@ -1051,7 +1051,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainOrPathReturningPathOperator(IntegrationTestContext context) {
             // Given: name = 'Alice' OR departmentId = 1
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME)
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getDepartmentId).eq(1L))
                     .getList();
 
@@ -1070,7 +1070,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainMultipleOrPathCalls(IntegrationTestContext context) {
             // Given: name = 'Alice' OR name = 'Bob' OR name = 'Charlie'
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME)
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getName).eq(BOB_NAME)
                             .or(Employee::getName).eq(CHARLIE_NAME))
                     .orderBy(Employee::getId).asc()
@@ -1091,7 +1091,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAndNumberRefReturningNumberOperator(IntegrationTestContext context) {
             // Given: active AND salary > 60000
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getSalary).gt(60000.0))
                     .orderBy(Employee::getSalary).asc()
                     .getList();
@@ -1110,7 +1110,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAndNumberRefWithArithmeticOperations(IntegrationTestContext context) {
             // Given: active AND salary + 10000 > 80000
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getSalary).add(10000.0).gt(80000.0))
                     .orderBy(Employee::getSalary).asc()
                     .getList();
@@ -1129,7 +1129,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainOrNumberRefReturningNumberOperator(IntegrationTestContext context) {
             // Given: name = 'Alice' OR salary > 80000
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME)
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD))
                     .getList();
 
@@ -1148,7 +1148,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAndStringRefReturningStringOperator(IntegrationTestContext context) {
             // Given: active AND name starts with 'A'
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getName).startsWith("A"))
                     .getList();
 
@@ -1166,7 +1166,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAndStringRefWithStringFunctions(IntegrationTestContext context) {
             // Given: active AND lower(name) starts with 'a'
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getName).lower().startsWith("a"))
                     .getList();
 
@@ -1185,7 +1185,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainOrStringRefReturningStringOperator(IntegrationTestContext context) {
             // Given: departmentId = 1 OR name contains 'Brown'
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getDepartmentId).eq(1L)
+                    .where(Path.of(Employee::getDepartmentId).eq(1L)
                             .or(Employee::getName).contains("Brown"))
                     .getList();
 
@@ -1205,7 +1205,7 @@ public class AndOrPredicateIntegrationTest {
             // Given: (name = 'Alice' OR name = 'Bob') AND active = true
             // Using toPredicate() to convert Disjunction to Predicate, then chain and()
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME)
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getName).eq(BOB_NAME)
                             .toPredicate()
                             .and(Employee::getActive).eq(true))
@@ -1228,8 +1228,8 @@ public class AndOrPredicateIntegrationTest {
         void shouldHandleComplexFluentChainLikeTestPredicateAssembler(IntegrationTestContext context) {
             // Given: active AND (status = ACTIVE OR salary > 70000)
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
-                            .and(get(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
+                    .where(Path.of(Employee::getActive).eq(true)
+                            .and(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                                     .or(Employee::getSalary).gt(70000.0)))
                     .getList();
 
@@ -1249,7 +1249,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAfterPredicateNot(IntegrationTestContext context) {
             // Given: NOT(active) AND departmentId = 1
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true).not()
+                    .where(Path.of(Employee::getActive).eq(true).not()
                             .and(Employee::getDepartmentId).eq(1L))
                     .getList();
 
@@ -1267,7 +1267,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainOrAfterPredicateNot(IntegrationTestContext context) {
             // Given: NOT(departmentId = 1) OR active = true
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getDepartmentId).eq(1L).not()
+                    .where(Path.of(Employee::getDepartmentId).eq(1L).not()
                             .or(Employee::getActive).eq(true))
                     .getList();
 
@@ -1285,9 +1285,9 @@ public class AndOrPredicateIntegrationTest {
         void shouldHandleComplexChainWithNotAndOr(IntegrationTestContext context) {
             // Given: active AND NOT(departmentId = 1) AND (status = ACTIVE OR salary > 60000)
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
-                            .and(get(Employee::getDepartmentId).eq(1L).not())
-                            .and(get(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
+                    .where(Path.of(Employee::getActive).eq(true)
+                            .and(Path.of(Employee::getDepartmentId).eq(1L).not())
+                            .and(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                                     .or(Employee::getSalary).gt(60000.0)))
                     .getList();
 
@@ -1308,13 +1308,13 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainAndIterableForFurtherOperations(IntegrationTestContext context) {
             // Given
             List<TypedExpression<Employee, Boolean>> predicates = Arrays.asList(
-                    get(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
-                    get(Employee::getDepartmentId).eq(1L)
+                    Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
+                    Path.of(Employee::getDepartmentId).eq(1L)
             );
 
             // When: active AND (status = ACTIVE AND departmentId = 1) AND salary > 50000
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(predicates)
                             .and(Employee::getSalary).gt(50000.0))
                     .getList();
@@ -1337,13 +1337,13 @@ public class AndOrPredicateIntegrationTest {
         void shouldChainOrIterableForFurtherOperations(IntegrationTestContext context) {
             // Given
             List<TypedExpression<Employee, Boolean>> predicates = Arrays.asList(
-                    get(Employee::getName).eq(BOB_NAME),
-                    get(Employee::getName).eq(CHARLIE_NAME)
+                    Path.of(Employee::getName).eq(BOB_NAME),
+                    Path.of(Employee::getName).eq(CHARLIE_NAME)
             );
 
             // When: name = 'Alice' OR (name = 'Bob' OR name = 'Charlie') OR name = 'Diana'
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME)
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(predicates)
                             .or(Employee::getName).eq(DIANA_NAME))
                     .orderBy(Employee::getId).asc()
@@ -1366,7 +1366,7 @@ public class AndOrPredicateIntegrationTest {
             // Note: This is (active AND departmentId = 1) OR salary > 80000
             // Using toPredicate() to convert Conjunction to Predicate, then chain or()
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getActive).eq(true)
+                    .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L)
                             .toPredicate()
                             .or(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD))
@@ -1390,7 +1390,7 @@ public class AndOrPredicateIntegrationTest {
             // Note: This is (name = 'Alice' OR departmentId = 1) AND active = true
             // Using toPredicate() to convert Disjunction to Predicate, then chain and()
             List<Employee> employees = context.queryEmployees()
-                    .where(get(Employee::getName).eq(ALICE_NAME)
+                    .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getDepartmentId).eq(1L)
                             .toPredicate()
                             .and(Employee::getActive).eq(true))

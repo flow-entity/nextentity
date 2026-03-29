@@ -23,17 +23,6 @@ public record OperatorNode(
 ) implements ExpressionNode, SelectItem {
 
     ///
-    /// Creates a new OperatorNode with the specified operands and operator.
-    ///
-    /// @param operands the operand expressions
-    /// @param operator the operator
-    ///
-    public OperatorNode(ImmutableList<ExpressionNode> operands, Operator operator) {
-        this.operands = operands;
-        this.operator = operator;
-    }
-
-    ///
     /// Applies an operator to this node with additional operands.
     /// <p>
     /// Includes optimizations:
@@ -49,7 +38,7 @@ public record OperatorNode(
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (operator == Operator.NOT && this.operator == Operator.NOT) {
-            return operands.get(0);
+            return operands.getFirst();
         }
 
         if (operator.isMultivalued() && this.operator == operator) {
@@ -67,7 +56,7 @@ public record OperatorNode(
     /// @return the first operand expression
     ///
     public ExpressionNode firstOperand() {
-        return operands.get(0);
+        return operands.getFirst();
     }
 
     ///

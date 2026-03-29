@@ -1,14 +1,12 @@
 package io.github.nextentity.spring.integration;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.expression.Expressions;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.core.util.Paths;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.domain.Page;
@@ -29,7 +27,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.junit.jupiter.api.Assertions.*;
 
 class QueryBuilderTest {
@@ -101,23 +98,23 @@ class QueryBuilderTest {
         User first = userQuery.select(User.class)
                 .orderBy(User::getId)
                 .getFirst();
-        assertEquals(first, userQuery.users().get(0));
+        assertEquals(first, userQuery.users().getFirst());
 
         Integer firstUserid = userQuery.select(User::getId)
                 .orderBy(User::getId)
                 .getFirst();
-        assertEquals(firstUserid, userQuery.users().get(0).getId());
+        assertEquals(firstUserid, userQuery.users().getFirst().getId());
 
         Tuple2<Integer, Integer> array = userQuery.select(User::getId, User::getRandomNumber)
                 .orderBy(User::getId)
                 .getFirst();
-        assertEquals(array.get0(), userQuery.users().get(0).getId());
-        assertEquals(array.get1(), userQuery.users().get(0).getRandomNumber());
+        assertEquals(array.get0(), userQuery.users().getFirst().getId());
+        assertEquals(array.get1(), userQuery.users().getFirst().getRandomNumber());
 
         UserModel model = userQuery.select(UserModel.class)
                 .orderBy(User::getId)
                 .getFirst();
-        assertEquals(model, new UserModel(userQuery.users().get(0)));
+        assertEquals(model, new UserModel(userQuery.users().getFirst()));
 
         UserInterface ui = userQuery.select(UserInterface.class)
                 .orderBy(User::getId)
@@ -129,16 +126,11 @@ class QueryBuilderTest {
                 .getFirst();
         assertEquals(model.asMap(), ui.asMap());
 
-        Long count = userQuery.select(get(User::getId).count())
+        Long count = userQuery.select(Path.of(User::getId).count())
                 .getSingle();
         assertEquals(count, userQuery.users().size());
 
-        Tuple aggArray = userQuery.select(ImmutableList.of(
-                get(User::getId).count(),
-                get(User::getRandomNumber).max(),
-                get(User::getRandomNumber).min(),
-                get(User::getRandomNumber).sum(),
-                get(User::getRandomNumber).avg()
+        Tuple aggArray = userQuery.select(ImmutableList.of(Path.of(User::getId).count(), Path.of(User::getRandomNumber).max(), Path.of(User::getRandomNumber).min(), Path.of(User::getRandomNumber).sum(), Path.of(User::getRandomNumber).avg()
         )).getSingle();
 
         int max = Integer.MIN_VALUE;
@@ -278,8 +270,7 @@ class QueryBuilderTest {
 
 
         assertEquals(
-                userQuery
-                        .select(ImmutableList.<Path<User, ?>>of(User::getId, User::getRandomNumber, User::getTime, User::getPid,
+                userQuery.select(ImmutableList.<PathRef<User, ?>>of(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong, User::getTestInteger))
                         .orderBy(User::getId)
@@ -522,8 +513,7 @@ class QueryBuilderTest {
 
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -533,8 +523,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -544,8 +533,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -556,9 +544,7 @@ class QueryBuilderTest {
 
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -569,9 +555,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -582,9 +566,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -595,9 +577,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -608,10 +588,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant),
-                                get(User::getTestLong))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -623,10 +600,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant),
-                                get(User::getTestLong), get(User::getTestInteger))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -640,10 +614,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery
-                        .select(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant),
-                                get(User::getTestLong), get(User::getTestInteger))
+                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -658,8 +629,7 @@ class QueryBuilderTest {
 
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -670,8 +640,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -681,8 +650,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -693,9 +661,7 @@ class QueryBuilderTest {
 
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -706,9 +672,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -719,9 +683,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -732,9 +694,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -745,10 +705,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant),
-                                get(User::getTestLong))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -760,10 +717,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant),
-                                get(User::getTestLong), get(User::getTestInteger))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -777,10 +731,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery
-                        .selectDistinct(get(User::getId), get(User::getRandomNumber), get(User::getTime), get(User::getPid),
-                                get(User::getTimestamp), get(User::isValid), get(User::getGender), get(User::getInstant),
-                                get(User::getTestLong), get(User::getTestInteger))
+                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -816,11 +767,11 @@ class QueryBuilderTest {
         assertDistinctEquals(list, collect);
 
 
-        list = userQuery.selectDistinct(get(User::getRandomNumber))
+        list = userQuery.selectDistinct(Path.of(User::getRandomNumber))
                 .getList();
         assertDistinctEquals(list, collect);
 
-        List<Tuple> tuples = userQuery.selectDistinct(ImmutableList.<Path<User, ?>>of(User::getRandomNumber, User::getUsername))
+        List<Tuple> tuples = userQuery.selectDistinct(ImmutableList.<PathRef<User, ?>>of(User::getRandomNumber, User::getUsername))
                 .getList();
 
         List<Tuple> collect2 = userQuery.users().stream()
@@ -848,7 +799,7 @@ class QueryBuilderTest {
             }
         }
 
-        users = userQuery.fetch(Paths.get(User::getParentUser).get(User::getParentUser))
+        users = userQuery.fetch(EntityPath.of(User::getParentUser).get(User::getParentUser))
                 .orderBy(User::getId)
                 .getList();
 
@@ -872,9 +823,7 @@ class QueryBuilderTest {
     @ArgumentsSource(UserQueryProvider.class)
     void groupBy(UserRepository userQuery) {
         List<Tuple> list = userQuery
-                .select(ImmutableList.of(
-                        get(User::getRandomNumber),
-                        get(User::getId).count()
+                .select(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
                 ))
                 .groupBy(User::getRandomNumber)
                 .getList();
@@ -889,11 +838,8 @@ class QueryBuilderTest {
         }
 
         list = userQuery
-                .select(ImmutableList.of(
-                        get(User::getRandomNumber),
-                        get(User::getId).count()
-                ))
-                .groupBy(ImmutableList.<Path<User, ?>>of(User::getRandomNumber))
+                .select(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
+                )).groupBy(ImmutableList.<PathRef<User, ?>>of(User::getRandomNumber))
                 .getList();
 
         assertEquals(list.size(), count.size());
@@ -952,8 +898,8 @@ class QueryBuilderTest {
                     .orderBy(User::getRandomNumber, User::getId)
                     .slice(0, 1);
             assertEquals(slice.total(), sorted.size());
-            EntityRoot<User> root = Paths.root();
-            assertEquals(root, Paths.root());
+            EntityRoot<User> root = EntityRoot.of();
+            assertEquals(root, EntityRoot.of());
 
             users = checker.collector.orderBy(User::getRandomNumber, User::getId)
                     .getList();
@@ -1028,38 +974,33 @@ class QueryBuilderTest {
         String username = users.get(10).getUsername();
 
         BaseWhereStep<User, User> userQuery = check.collector;
-        OrderByStep<User, User> collector = userQuery
-                .where(Paths.get(User::getParentUser).get(User::getUsername).eq(username));
+        OrderByStep<User, User> collector = userQuery.where(EntityPath.of(User::getParentUser).get(User::getUsername).eq(username));
         Stream<User> stream = newStream(check)
                 .filter(user -> user.getParentUser() != null && username.equals(user.getParentUser().getUsername()));
         result.add(new Checker<>(stream, collector));
 
         stream = newStream(check)
                 .filter(user -> user.getParentUser() != null && !username.equals(user.getParentUser().getUsername()));
-        collector = userQuery
-                .where(Paths.get(User::getParentUser).get(User::getUsername).ne(username));
+        collector = userQuery.where(EntityPath.of(User::getParentUser).get(User::getUsername).ne(username));
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery
-                .where(get(User::getUsername).ne(username));
+        collector = userQuery.where(Path.of(User::getUsername).ne(username));
         stream = newStream(check)
                 .filter(user -> !username.equals(user.getUsername()));
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery
-                .where(get(User::getUsername).ne(username));
+        collector = userQuery.where(Path.of(User::getUsername).ne(username));
         stream = newStream(check)
                 .filter(user -> !username.equals(user.getUsername()));
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery
-                .where(get(User::getUsername).ne(username));
+        collector = userQuery.where(Path.of(User::getUsername).ne(username));
         stream = newStream(check)
                 .filter(user -> !username.equals(user.getUsername()));
         result.add(new Checker<>(stream, collector));
 
 
-        Predicate<User> isValid = get(User::isValid);
+        Predicate<User> isValid = Path.of(User::isValid);
         collector = userQuery.where(isValid);
         stream = users.stream().filter(User::isValid);
 
@@ -1118,30 +1059,28 @@ class QueryBuilderTest {
                 && user.getId() % 3 == 0);
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery.where(isValid.and(User::getRandomNumber).ge(get(User::getPid)));
+        collector = userQuery.where(isValid.and(User::getRandomNumber).ge(Path.of(User::getPid)));
         stream = newStream(check).filter(User::isValid)
                 .filter(user -> user.getPid() != null && user.getRandomNumber() >= user.getPid());
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery.where(isValid.and(User::getRandomNumber).gt(get(User::getPid)));
+        collector = userQuery.where(isValid.and(User::getRandomNumber).gt(Path.of(User::getPid)));
         stream = newStream(check).filter(User::isValid)
                 .filter(user -> user.getPid() != null && user.getRandomNumber() > user.getPid());
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery.where(isValid.and(User::getRandomNumber).le(get(User::getPid)));
+        collector = userQuery.where(isValid.and(User::getRandomNumber).le(Path.of(User::getPid)));
         stream = newStream(check).filter(User::isValid)
                 .filter(user -> user.getPid() != null && user.getRandomNumber() <= user.getPid());
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery.where(isValid.and(User::getRandomNumber).lt(get(User::getPid)));
+        collector = userQuery.where(isValid.and(User::getRandomNumber).lt(Path.of(User::getPid)));
         stream = newStream(check).filter(User::isValid)
                 .filter(user -> user.getPid() != null && user.getRandomNumber() < user.getPid());
         result.add(new Checker<>(stream, collector));
 
-        collector = userQuery.where(isValid.and(User::getRandomNumber)
-                .between(get(User::getRandomNumber), get(User::getPid)));
-        stream = newStream(check).filter(User::isValid)
-                .filter(user -> user.getPid() != null && user.getRandomNumber() >= user.getRandomNumber() && user.getRandomNumber() <= user.getPid());
+        collector = userQuery.where(isValid.and(User::getRandomNumber).between(Path.of(User::getRandomNumber), Path.of(User::getPid)));
+        stream = newStream(check).filter(User::isValid).filter(user -> user.getPid() != null && user.getRandomNumber() <= user.getPid());
         result.add(new Checker<>(stream, collector));
         for (Checker<User, OrderByStep<User, User>> checker : getExpressionOperatorCase(check)) {
             addTestCaseAndCheck(result, checker);
@@ -1157,37 +1096,36 @@ class QueryBuilderTest {
         result.add(new Checker<>(users, collector));
         collector = check.collector.where(User::getRandomNumber).eq(1);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).eq(1));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(1));
         result.add(new Checker<>(users, collector));
         users = check.expected.stream()
                 .filter(it -> it.getRandomNumber() == 1 || it.getRandomNumber() == 2)
                 .collect(Collectors.toList());
-        collector = check.collector.where(get(User::getRandomNumber).eq(1).or(User::getRandomNumber).eq(2));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(1).or(User::getRandomNumber).eq(2));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).eq(1).or(User::getRandomNumber).eq(2));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(1).or(User::getRandomNumber).eq(2));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).eq(1).or(ImmutableList.of(get(User::getRandomNumber).eq(2))));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(1).or(ImmutableList.of(Path.of(User::getRandomNumber).eq(2))));
         result.add(new Checker<>(users, collector));
         users = check.expected.stream()
                 .filter(it -> it.getRandomNumber() == 1 && it.isValid())
                 .collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).eq(1).where(User::isValid).eq(true);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).eq(1)
-                .where((Path<User, Boolean>) User::isValid).eq(Expressions.ofTrue());
+        collector = check.collector.where(User::getRandomNumber).eq(1).where((PathRef<User, Boolean>) User::isValid).eq(Predicate.ofTrue());
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).eq(1).and(User::isValid).eq(true));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(1).and(User::isValid).eq(true));
         result.add(new Checker<>(users, collector));
 
-        collector = check.collector.where(get(User::getRandomNumber).eq(1).and(ImmutableList.of(get(User::isValid))));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(1).and(ImmutableList.of(Path.of(User::isValid))));
         result.add(new Checker<>(users, collector));
 
         //
         //    B eq(ExpressionHolder<T, U> expression);
         users = check.expected.stream().filter(it -> it.getRandomNumber() == it.getId()).collect(Collectors.toList());
-        collector = check.collector.where(User::getRandomNumber).eq(get(User::getId));
+        collector = check.collector.where(User::getRandomNumber).eq(Path.of(User::getId));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).eq(get(User::getId)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).eq(Path.of(User::getId)));
         result.add(new Checker<>(users, collector));
 
         //
@@ -1195,14 +1133,14 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getRandomNumber() != 1).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).ne(1);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).ne(1));
+        collector = check.collector.where(Path.of(User::getRandomNumber).ne(1));
         result.add(new Checker<>(users, collector));
         //
         //    B ne(ExpressionHolder<T, U> expression);
         users = check.expected.stream().filter(it -> it.getRandomNumber() != it.getId()).collect(Collectors.toList());
-        collector = check.collector.where(User::getRandomNumber).ne(get(User::getId));
+        collector = check.collector.where(User::getRandomNumber).ne(Path.of(User::getId));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).ne(get(User::getId)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).ne(Path.of(User::getId)));
         result.add(new Checker<>(users, collector));
         users = check.expected.stream().filter(User::isValid).collect(Collectors.toList());
         collector = check.collector.where(User::isValid).eq(true);
@@ -1222,32 +1160,31 @@ class QueryBuilderTest {
             result.add(new Checker<>(users, collector));
             collector = check.collector.where(User::getRandomNumber).in(values);
             result.add(new Checker<>(users, collector));
-            collector = check.collector.where(get(User::getRandomNumber).in(nums));
+            collector = check.collector.where(Path.of(User::getRandomNumber).in(nums));
             result.add(new Checker<>(users, collector));
-            collector = check.collector.where(get(User::getRandomNumber).in(values));
+            collector = check.collector.where(Path.of(User::getRandomNumber).in(values));
             result.add(new Checker<>(users, collector));
 
-            List<TypedExpression<User, Integer>> collect = values.stream()
-                    .<TypedExpression<User, Integer>>map(Expressions::of)
+            List<TypedExpression<User, Integer>> collect = values.stream().<TypedExpression<User, Integer>>map(TypedExpression::of)
                     .collect(Collectors.toList());
             collector = check.collector.where(User::getRandomNumber).in(collect);
             result.add(new Checker<>(users, collector));
-            collector = check.collector.where(get(User::getRandomNumber).in(collect));
+            collector = check.collector.where(Path.of(User::getRandomNumber).in(collect));
             result.add(new Checker<>(users, collector));
 
             users = check.expected.stream().filter(it -> !values.contains(it.getRandomNumber()))
                     .collect(Collectors.toList());
             collector = check.collector.where(User::getRandomNumber).notIn(nums);
             result.add(new Checker<>(users, collector));
-            collector = check.collector.where(get(User::getRandomNumber).notIn(nums));
+            collector = check.collector.where(Path.of(User::getRandomNumber).notIn(nums));
             result.add(new Checker<>(users, collector));
             collector = check.collector.where(User::getRandomNumber).notIn(values);
             result.add(new Checker<>(users, collector));
-            collector = check.collector.where(get(User::getRandomNumber).notIn(values));
+            collector = check.collector.where(Path.of(User::getRandomNumber).notIn(values));
             result.add(new Checker<>(users, collector));
             collector = check.collector.where(User::getRandomNumber).notIn(collect);
             result.add(new Checker<>(users, collector));
-            collector = check.collector.where(get(User::getRandomNumber).notIn(collect));
+            collector = check.collector.where(Path.of(User::getRandomNumber).notIn(collect));
             result.add(new Checker<>(users, collector));
 
         }
@@ -1257,14 +1194,14 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getPid() == null).collect(Collectors.toList());
         collector = check.collector.where(User::getPid).isNull();
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getPid).isNull());
+        collector = check.collector.where(Path.of(User::getPid).isNull());
         result.add(new Checker<>(users, collector));
         //
         //    B isNotNull();
         users = check.expected.stream().filter(it -> it.getPid() != null).collect(Collectors.toList());
         collector = check.collector.where(User::getPid).isNotNull();
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getPid).isNotNull());
+        collector = check.collector.where(Path.of(User::getPid).isNotNull());
         result.add(new Checker<>(users, collector));
 
 
@@ -1272,11 +1209,11 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getRandomNumber() >= 50).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).ge(50);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).ge(50));
+        collector = check.collector.where(Path.of(User::getRandomNumber).ge(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).ge(Expressions.of(50));
+        collector = check.collector.where(User::getRandomNumber).ge(TypedExpression.of(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).ge(Expressions.of(50)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).ge(TypedExpression.of(50)));
         result.add(new Checker<>(users, collector));
 
         //
@@ -1284,33 +1221,33 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getRandomNumber() > 50).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).gt(50);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).gt(50));
+        collector = check.collector.where(Path.of(User::getRandomNumber).gt(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).gt(Expressions.of(50));
+        collector = check.collector.where(User::getRandomNumber).gt(TypedExpression.of(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).gt(Expressions.of(50)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).gt(TypedExpression.of(50)));
         result.add(new Checker<>(users, collector));
         //
         //        B le(U value);
         users = check.expected.stream().filter(it -> it.getRandomNumber() <= 50).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).le(50);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).le(50));
+        collector = check.collector.where(Path.of(User::getRandomNumber).le(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).le(Expressions.of(50));
+        collector = check.collector.where(User::getRandomNumber).le(TypedExpression.of(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).le(Expressions.of(50)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).le(TypedExpression.of(50)));
         result.add(new Checker<>(users, collector));
         //
         //        B lt(U value);
         users = check.expected.stream().filter(it -> it.getRandomNumber() < 50).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).lt(50);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).lt(50));
+        collector = check.collector.where(Path.of(User::getRandomNumber).lt(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).lt(Expressions.of(50));
+        collector = check.collector.where(User::getRandomNumber).lt(TypedExpression.of(50));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).lt(Expressions.of(50)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).lt(TypedExpression.of(50)));
         result.add(new Checker<>(users, collector));
         //
         //        B between(U l, U r);
@@ -1322,21 +1259,19 @@ class QueryBuilderTest {
                 .collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).between(25, 73);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).between(25, 73));
+        collector = check.collector.where(Path.of(User::getRandomNumber).between(25, 73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).between(25, Expressions.of(73));
+        collector = check.collector.where(User::getRandomNumber).between(25, TypedExpression.of(73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).between(25, Expressions.of(73)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).between(25, TypedExpression.of(73)));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).between(Expressions.of(25), 73);
+        collector = check.collector.where(User::getRandomNumber).between(TypedExpression.of(25), 73);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).between(Expressions.of(25), 73));
+        collector = check.collector.where(Path.of(User::getRandomNumber).between(TypedExpression.of(25), 73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber)
-                .between(Expressions.of(25), Expressions.of(73));
+        collector = check.collector.where(User::getRandomNumber).between(TypedExpression.of(25), TypedExpression.of(73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber)
-                .between(Expressions.of(25), Expressions.of(73)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).between(TypedExpression.of(25), TypedExpression.of(73)));
         result.add(new Checker<>(users, collector));
 
         //
@@ -1348,32 +1283,30 @@ class QueryBuilderTest {
                 .collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).notBetween(25, 73);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).notBetween(25, 73));
+        collector = check.collector.where(Path.of(User::getRandomNumber).notBetween(25, 73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).notBetween(25, Expressions.of(73));
+        collector = check.collector.where(User::getRandomNumber).notBetween(25, TypedExpression.of(73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).notBetween(25, Expressions.of(73)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).notBetween(25, TypedExpression.of(73)));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).notBetween(Expressions.of(25), 73);
+        collector = check.collector.where(User::getRandomNumber).notBetween(TypedExpression.of(25), 73);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).notBetween(Expressions.of(25), 73));
+        collector = check.collector.where(Path.of(User::getRandomNumber).notBetween(TypedExpression.of(25), 73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber)
-                .notBetween(Expressions.of(25), Expressions.of(73));
+        collector = check.collector.where(User::getRandomNumber).notBetween(TypedExpression.of(25), TypedExpression.of(73));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber)
-                .notBetween(Expressions.of(25), Expressions.of(73)));
+        collector = check.collector.where(Path.of(User::getRandomNumber).notBetween(TypedExpression.of(25), TypedExpression.of(73)));
         result.add(new Checker<>(users, collector));
 
         //   NumberOperator<T, U, B> add(U value);
         users = check.expected.stream().filter(it -> it.getRandomNumber() + 1 == 5).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).add(1).eq(5);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).add(1).eq(5));
+        collector = check.collector.where(Path.of(User::getRandomNumber).add(1).eq(5));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).add(Expressions.of(1)).eq(5);
+        collector = check.collector.where(User::getRandomNumber).add(TypedExpression.of(1)).eq(5);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).add(Expressions.of(1)).eq(5));
+        collector = check.collector.where(Path.of(User::getRandomNumber).add(TypedExpression.of(1)).eq(5));
         result.add(new Checker<>(users, collector));
 
         //
@@ -1381,33 +1314,33 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getRandomNumber() - 1 == 5).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).subtract(1).eq(5);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).subtract(1).eq(5));
+        collector = check.collector.where(Path.of(User::getRandomNumber).subtract(1).eq(5));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).subtract(Expressions.of(1)).eq(5);
+        collector = check.collector.where(User::getRandomNumber).subtract(TypedExpression.of(1)).eq(5);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).subtract(Expressions.of(1)).eq(5));
+        collector = check.collector.where(Path.of(User::getRandomNumber).subtract(TypedExpression.of(1)).eq(5));
         result.add(new Checker<>(users, collector));
         //
         //        NumberOperator<T, U, B> multiply(U value);
         users = check.expected.stream().filter(it -> it.getRandomNumber() * 3 == 45).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).multiply(3).eq(45);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).multiply(3).eq(45));
+        collector = check.collector.where(Path.of(User::getRandomNumber).multiply(3).eq(45));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).multiply(Expressions.of(3)).eq(45);
+        collector = check.collector.where(User::getRandomNumber).multiply(TypedExpression.of(3)).eq(45);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).multiply(Expressions.of(3)).eq(45));
+        collector = check.collector.where(Path.of(User::getRandomNumber).multiply(TypedExpression.of(3)).eq(45));
         result.add(new Checker<>(users, collector));
         //
         //        NumberOperator<T, U, B> divide(U value);
         users = check.expected.stream().filter(it -> it.getRandomNumber() / 3. == 12).collect(Collectors.toList());
         collector = check.collector.<Number>where(User::getRandomNumber).divide(3.0).eq(12);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(Paths.<User, Number>get(User::getRandomNumber).divide(3.).eq(12));
+        collector = check.collector.where(Path.<User, Number>of(User::getRandomNumber).divide(3.).eq(12));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).divide(Expressions.of(3)).eq(12);
+        collector = check.collector.where(User::getRandomNumber).divide(TypedExpression.of(3)).eq(12);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).divide(Expressions.of(3)).eq(12));
+        collector = check.collector.where(Path.of(User::getRandomNumber).divide(TypedExpression.of(3)).eq(12));
         result.add(new Checker<>(users, collector));
 
         //
@@ -1416,11 +1349,11 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getRandomNumber() % 8 == 2).collect(Collectors.toList());
         collector = check.collector.where(User::getRandomNumber).mod(8).eq(2);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).mod(8).eq(2));
+        collector = check.collector.where(Path.of(User::getRandomNumber).mod(8).eq(2));
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(User::getRandomNumber).mod(Expressions.of(8)).eq(2);
+        collector = check.collector.where(User::getRandomNumber).mod(TypedExpression.of(8)).eq(2);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getRandomNumber).mod(Expressions.of(8)).eq(2));
+        collector = check.collector.where(Path.of(User::getRandomNumber).mod(TypedExpression.of(8)).eq(2));
         result.add(new Checker<>(users, collector));
 
 
@@ -1429,11 +1362,11 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getUsername().contains("one")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).like("%one%");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).like("%one%"));
+        collector = check.collector.where(Path.of(User::getUsername).like("%one%"));
         result.add(new Checker<>(users, collector));
         collector = check.collector.where(User::getUsername).contains("one");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).contains("one"));
+        collector = check.collector.where(Path.of(User::getUsername).contains("one"));
         result.add(new Checker<>(users, collector));
         //
         //        default B startsWith(String value) {
@@ -1442,7 +1375,7 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getUsername().startsWith("Ja")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).startsWith("Ja");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).startsWith("Ja"));
+        collector = check.collector.where(Path.of(User::getUsername).startsWith("Ja"));
         result.add(new Checker<>(users, collector));
         //
         //        default B endsWith(String value) {
@@ -1451,19 +1384,18 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> it.getUsername().endsWith("win")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).endsWith("win");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).endsWith("win"));
+        collector = check.collector.where(Path.of(User::getUsername).endsWith("win"));
         result.add(new Checker<>(users, collector));
 
 
-        ////
         users = check.expected.stream().filter(it -> !it.getUsername().contains("one")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).notLike("%one%");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).notLike("%one%"));
+        collector = check.collector.where(Path.of(User::getUsername).notLike("%one%"));
         result.add(new Checker<>(users, collector));
         collector = check.collector.where(User::getUsername).notContains("one");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).notContains("one"));
+        collector = check.collector.where(Path.of(User::getUsername).notContains("one"));
         result.add(new Checker<>(users, collector));
         //
         //        default B startsWith(String value) {
@@ -1472,7 +1404,7 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> !it.getUsername().startsWith("Ja")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).notStartsWith("Ja");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).notStartsWith("Ja"));
+        collector = check.collector.where(Path.of(User::getUsername).notStartsWith("Ja"));
         result.add(new Checker<>(users, collector));
         //
         //        default B endsWith(String value) {
@@ -1481,7 +1413,7 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> !it.getUsername().endsWith("win")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).notEndsWith("win");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).notEndsWith("win"));
+        collector = check.collector.where(Path.of(User::getUsername).notEndsWith("win"));
         result.add(new Checker<>(users, collector));
 
         //
@@ -1489,21 +1421,21 @@ class QueryBuilderTest {
         users = check.expected.stream().filter(it -> !it.getUsername().toLowerCase().startsWith("ja")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).lower().notStartsWith("ja");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).lower().notStartsWith("ja"));
+        collector = check.collector.where(Path.of(User::getUsername).lower().notStartsWith("ja"));
         result.add(new Checker<>(users, collector));
         //
         //        StringOperator<T, B> upper();
         users = check.expected.stream().filter(it -> !it.getUsername().toUpperCase().startsWith("JA")).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).upper().notStartsWith("JA");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).upper().notStartsWith("JA"));
+        collector = check.collector.where(Path.of(User::getUsername).upper().notStartsWith("JA"));
         result.add(new Checker<>(users, collector));
         //
         //        StringOperator<T, B> substring(int a, int b);
         users = check.expected.stream().filter(it -> it.getUsername().startsWith("ar", 1)).collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).substring(2, 2).eq("ar");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).substring(2, 2).eq("ar"));
+        collector = check.collector.where(Path.of(User::getUsername).substring(2, 2).eq("ar"));
         result.add(new Checker<>(users, collector));
         //
         //        StringOperator<T, B> substring(int a);
@@ -1514,7 +1446,7 @@ class QueryBuilderTest {
                 .collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).substring(15).eq("ing");
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).substring(15).eq("ing"));
+        collector = check.collector.where(Path.of(User::getUsername).substring(15).eq("ing"));
         result.add(new Checker<>(users, collector));
 
         users = check.expected.stream().filter(it -> {
@@ -1524,7 +1456,7 @@ class QueryBuilderTest {
                 .collect(Collectors.toList());
         collector = check.collector.where(User::getUsername).length().eq(17);
         result.add(new Checker<>(users, collector));
-        collector = check.collector.where(get(User::getUsername).length().eq(17));
+        collector = check.collector.where(Path.of(User::getUsername).length().eq(17));
         result.add(new Checker<>(users, collector));
 
         users = check.expected.stream().filter(it -> {
@@ -1603,7 +1535,7 @@ class QueryBuilderTest {
         user = userQuery
                 .orderBy(User::getId)
                 .getFirst();
-        assertEquals(user, userQuery.users().get(0));
+        assertEquals(user, userQuery.users().getFirst());
         user = userQuery
                 .orderBy(User::getId)
                 .getFirst(10);
@@ -1659,7 +1591,7 @@ class QueryBuilderTest {
                 user = userQuery
                         .orderBy(User::getId)
                         .getFirst(lockModeType);
-                assertEquals(user, userQuery.users().get(0));
+                assertEquals(user, userQuery.users().getFirst());
                 user = userQuery
                         .orderBy(User::getId)
                         .getFirst(10, lockModeType);
@@ -1681,11 +1613,11 @@ class QueryBuilderTest {
                 List<User> users = userQuery.where(User::getId).eq(0)
                         .orderBy(User::getId)
                         .getList(lockModeType);
-                assertEquals(users.get(0), userQuery.users().get(0));
+                assertEquals(users.getFirst(), userQuery.users().getFirst());
                 users = userQuery.where(User::getId).eq(0)
                         .orderBy(User::getId)
                         .getList(lockModeType);
-                assertEquals(users.get(0), userQuery.users().get(0));
+                assertEquals(users.getFirst(), userQuery.users().getFirst());
 
             } catch (Exception e) {
                 log.error(lockModeType.name(), e);

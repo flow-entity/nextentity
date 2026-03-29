@@ -1,6 +1,6 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Path;
+import io.github.nextentity.api.PathRef;
 import io.github.nextentity.core.exception.ReflectiveException;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class PathReference {
 
-    private static final Map<Path<?, ?>, PathReference> PATH_CACHE = new ConcurrentHashMap<>();
+    private static final Map<PathRef<?, ?>, PathReference> PATH_CACHE = new ConcurrentHashMap<>();
 
     private final String fieldName;
     private final Class<?> returnType;
@@ -35,7 +35,7 @@ public class PathReference {
     /// @param path the path to get reference for
     /// @return PathReference instance
     ///
-    public static <T, R> PathReference of(Path<T, R> path) {
+    public static <T, R> PathReference of(PathRef<T, R> path) {
         Objects.requireNonNull(path, "path must not be null");
         PathReference existing = PATH_CACHE.get(path);
         if (existing != null) {
@@ -46,7 +46,7 @@ public class PathReference {
         return newValue;
     }
 
-    private static PathReference createPathReference(Path<?, ?> path) {
+    private static PathReference createPathReference(PathRef<?, ?> path) {
         try {
             Class<? extends Serializable> clazz = path.getClass();
             Method method = clazz.getDeclaredMethod("writeReplace");

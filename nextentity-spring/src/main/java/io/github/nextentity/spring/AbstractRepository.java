@@ -1,13 +1,11 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.core.QueryBuilder;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.util.Paths;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.ResolvableType;
@@ -81,7 +79,7 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
     }
 
     protected EntityRoot<T> root() {
-        return Paths.root();
+        return EntityRoot.of();
     }
 
     public Class<ID> idType() {
@@ -141,55 +139,55 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
     /// @param path the path to convert
     /// @return PathNode representing the path
     ///
-    protected PathNode getPathNode(Path<?, ?> path) {
+    protected PathNode getPathNode(PathRef<?, ?> path) {
         return PathNode.of(path);
     }
 
-    protected BooleanPath<T> path(Path.BooleanRef<T> path) {
+    protected BooleanPath<T> path(PathRef.BooleanRef<T> path) {
         return new PredicateImpl<>(getPathNode(path));
     }
 
-    protected StringPath<T> path(Path.StringRef<T> path) {
+    protected StringPath<T> path(PathRef.StringRef<T> path) {
         return new StringExpressionImpl<>(getPathNode(path));
     }
 
-    protected <U extends Number> NumberPath<T, U> path(Path.NumberRef<T, U> path) {
+    protected <U extends Number> NumberPath<T, U> path(PathRef.NumberRef<T, U> path) {
         return getNumberExpression(path);
     }
 
-    private <U extends Number> @NonNull NumberExpressionImpl<T, U> getNumberExpression(Path.NumberRef<T, U> path) {
+    private <U extends Number> @NonNull NumberExpressionImpl<T, U> getNumberExpression(PathRef.NumberRef<T, U> path) {
         return new NumberExpressionImpl<>(getPathNode(path));
     }
 
-    protected NumberPath<T, Long> path(Path.LongRef<T> path) {
+    protected NumberPath<T, Long> path(PathRef.LongRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected NumberPath<T, Integer> path(Path.IntegerRef<T> path) {
+    protected NumberPath<T, Integer> path(PathRef.IntegerRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected NumberPath<T, Short> path(Path.ShortRef<T> path) {
+    protected NumberPath<T, Short> path(PathRef.ShortRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected NumberPath<T, Byte> path(Path.ByteRef<T> path) {
+    protected NumberPath<T, Byte> path(PathRef.ByteRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected NumberPath<T, Double> path(Path.DoubleRef<T> path) {
+    protected NumberPath<T, Double> path(PathRef.DoubleRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected NumberPath<T, Float> path(Path.FloatRef<T> path) {
+    protected NumberPath<T, Float> path(PathRef.FloatRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected NumberPath<T, BigDecimal> path(Path.BigDecimalRef<T> path) {
+    protected NumberPath<T, BigDecimal> path(PathRef.BigDecimalRef<T> path) {
         return getNumberExpression(path);
     }
 
-    protected <U> PathExpression<T, U> path(Path<T, U> path) {
+    protected <U> Path<T, U> path(PathRef<T, U> path) {
         return new SimpleExpressionImpl<>(getPathNode(path));
     }
 

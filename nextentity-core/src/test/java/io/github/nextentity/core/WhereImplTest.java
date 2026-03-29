@@ -70,7 +70,7 @@ class WhereImplTest {
         @Test
         void where_WithTruePredicate_ShouldReturnSameInstance() {
             // when
-            TypedExpression<Employee, Boolean> truePredicate = Expressions.ofTrue();
+            TypedExpression<Employee, Boolean> truePredicate = Predicate.ofTrue();
             var result = whereImpl.where(truePredicate);
 
             // then
@@ -137,7 +137,7 @@ class WhereImplTest {
         @Test
         void where_WithStringPath_ShouldReturnStringOperator() {
             // when
-            var operator = whereImpl.where((Path.StringRef<Employee>) Employee::getName);
+            var operator = whereImpl.where((PathRef.StringRef<Employee>) Employee::getName);
 
             // then
             assertThat(operator).isNotNull();
@@ -172,7 +172,7 @@ class WhereImplTest {
         @Test
         void groupBy_WithExpressionList_ShouldAddAllGroupings() {
             // given
-            List<Path<Employee, ?>> expressions = Arrays.asList(
+            List<PathRef<Employee, ?>> expressions = Arrays.asList(
                     Employee::getId,
                     Employee::getName
             );
@@ -208,7 +208,7 @@ class WhereImplTest {
         @Test
         void groupBy_WithPathCollection_ShouldAddAllGroupings() {
             // given
-            List<Path<Employee, ?>> paths = Arrays.asList(
+            List<PathRef<Employee, ?>> paths = Arrays.asList(
                     Employee::getId,
                     Employee::getStatus
             );
@@ -233,7 +233,7 @@ class WhereImplTest {
         @Test
         void having_WithPredicate_ShouldAddCondition() {
             // given
-            TypedExpression<Employee, Boolean> predicate = Expressions.ofTrue();
+            TypedExpression<Employee, Boolean> predicate = Predicate.ofTrue();
 
             // when
             var result = whereImpl.having(predicate);
@@ -257,7 +257,7 @@ class WhereImplTest {
         void orderBy_WithOrderList_ShouldAddSorting() {
             // given
             // Use the existing orderBy API with Path references
-            List<Path<Employee, ? extends Comparable<?>>> paths = Arrays.asList(
+            List<PathRef<Employee, ? extends Comparable<?>>> paths = Arrays.asList(
                     Employee::getName,
                     Employee::getSalary
             );
@@ -279,7 +279,7 @@ class WhereImplTest {
         @Test
         void orderBy_WithPathCollection_ShouldReturnOrderOperator() {
             // given
-            List<Path<Employee, ? extends Comparable<?>>> paths = Arrays.asList(
+            List<PathRef<Employee, ? extends Comparable<?>>> paths = Arrays.asList(
                     Employee::getName,
                     Employee::getSalary
             );
@@ -494,7 +494,6 @@ class WhereImplTest {
          * Expected result: Returns a TypedExpression for count.
          */
         @Test
-        @SuppressWarnings("unchecked")
         void subQuery_count_ShouldReturnCountExpression() {
             // when
             var countExpr = whereImpl.asSubQuery().count();
@@ -510,7 +509,6 @@ class WhereImplTest {
          * Expected result: Returns a TypedExpression for slice.
          */
         @Test
-        @SuppressWarnings("unchecked")
         void subQuery_slice_ShouldReturnSliceExpression() {
             // when
             var sliceExpr = whereImpl.asSubQuery().slice(0, 10);
@@ -525,7 +523,6 @@ class WhereImplTest {
          * Expected result: Returns a TypedExpression for single result.
          */
         @Test
-        @SuppressWarnings("unchecked")
         void subQuery_getSingle_ShouldReturnSingleExpression() {
             // when
             var singleExpr = whereImpl.asSubQuery().getSingle(0);
@@ -540,7 +537,6 @@ class WhereImplTest {
          * Expected result: Returns a TypedExpression for first result.
          */
         @Test
-        @SuppressWarnings("unchecked")
         void subQuery_getFirst_ShouldReturnFirstExpression() {
             // when
             var firstExpr = whereImpl.asSubQuery().getFirst(0);
@@ -651,7 +647,7 @@ class WhereImplTest {
         @Test
         void groupBy_WithNullExpression_ShouldThrowException() {
             // when/then
-            assertThatThrownBy(() -> whereImpl.groupBy((Path<Employee, ?>) null))
+            assertThatThrownBy(() -> whereImpl.groupBy((PathRef<Employee, ?>) null))
                     .isInstanceOf(NullPointerException.class);
         }
 
@@ -661,7 +657,7 @@ class WhereImplTest {
         @Test
         void groupBy_WithNullExpressionsList_ShouldThrowException() {
             // when/then
-            assertThatThrownBy(() -> whereImpl.groupBy((List<Path<Employee, ?>>) null))
+            assertThatThrownBy(() -> whereImpl.groupBy((List<PathRef<Employee, ?>>) null))
                     .isInstanceOf(NullPointerException.class);
         }
 
@@ -671,7 +667,7 @@ class WhereImplTest {
         @Test
         void having_WithNullPredicate_ShouldThrowException() {
             // when/then
-            assertThatThrownBy(() -> whereImpl.having((TypedExpression<Employee, Boolean>) null))
+            assertThatThrownBy(() -> whereImpl.having(null))
                     .isInstanceOf(NullPointerException.class);
         }
 
@@ -693,7 +689,7 @@ class WhereImplTest {
         @Test
         void where_WithTruePredicate_ShouldReturnSameInstance() {
             // when
-            var result = whereImpl.where(Expressions.ofTrue());
+            var result = whereImpl.where(Predicate.ofTrue());
 
             // then
             assertThat(result).isSameAs(whereImpl);
@@ -705,7 +701,7 @@ class WhereImplTest {
         @Test
         void where_WithFalsePredicate_ShouldReturnNewInstance() {
             // when
-            var result = whereImpl.where(Expressions.ofFalse());
+            var result = whereImpl.where(Predicate.ofFalse());
 
             // then
             assertThat(result).isNotNull();

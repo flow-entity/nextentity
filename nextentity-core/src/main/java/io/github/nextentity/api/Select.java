@@ -37,13 +37,13 @@ public interface Select<T> extends FetchStep<T> {
     /// @param path Path
     /// @param <R> Path result type
     /// @return Multi-row query condition construction step
-    <R> WhereStep<T, R> select(Path<T, ? extends R> path);
+    <R> WhereStep<T, R> select(PathRef<T, ? extends R> path);
 
     /// Select results of multiple paths.
     ///
     /// @param paths Collection of paths
     /// @return Multi-row query condition construction step
-    WhereStep<T, Tuple> select(Collection<Path<T, ?>> paths);
+    WhereStep<T, Tuple> select(Collection<PathRef<T, ?>> paths);
 
     /// Select results of two paths.
     ///
@@ -52,7 +52,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <A> First path type
     /// @param <B> Second path type
     /// @return Multi-row query condition construction step
-    <A, B> WhereStep<T, Tuple2<A, B>> select(Path<T, A> a, Path<T, B> b);
+    <A, B> WhereStep<T, Tuple2<A, B>> select(PathRef<T, A> a, PathRef<T, B> b);
 
     /**
      * Select results of three paths.
@@ -65,7 +65,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <C> Third path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C> WhereStep<T, Tuple3<A, B, C>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c);
+    <A, B, C> WhereStep<T, Tuple3<A, B, C>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c);
 
     /**
      * Select results of four paths.
@@ -80,7 +80,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <D> Fourth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d);
+    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d);
 
     /**
      * Select results of five paths.
@@ -97,7 +97,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <E> Fifth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e);
+    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e);
 
     /**
      * Select results of six paths.
@@ -116,7 +116,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <F> Sixth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f);
+    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f);
 
     /**
      * Select results of seven paths.
@@ -137,7 +137,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <G> Seventh path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g);
+    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g);
 
     /**
      * Select results of eight paths.
@@ -160,7 +160,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <H> Eighth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h);
+    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h);
 
     /**
      * Select results of nine paths.
@@ -185,7 +185,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <I> Ninth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i);
+    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i);
 
     /**
      * Select results of ten paths.
@@ -212,7 +212,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <J> Tenth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i, Path<T, J> j);
+    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i, PathRef<T, J> j);
 
     /**
      * Select results of two expressions.
@@ -418,7 +418,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <R> Path result type
      * @return Multi-row query condition construction step
      */
-    <R> WhereStep<T, R> selectDistinct(Path<T, ? extends R> path);
+    <R> WhereStep<T, R> selectDistinct(PathRef<T, ? extends R> path);
 
     /**
      * Select distinct results of multiple paths.
@@ -426,7 +426,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param paths Collection of paths
      * @return Multi-row query condition construction step
      */
-    WhereStep<T, Tuple> selectDistinct(Collection<Path<T, ?>> paths);
+    WhereStep<T, Tuple> selectDistinct(Collection<PathRef<T, ?>> paths);
 
     /**
      * Select distinct results of two paths.
@@ -437,7 +437,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <B> Second path type
      * @return Multi-row query condition construction step
      */
-    <A, B> WhereStep<T, Tuple2<A, B>> selectDistinct(Path<T, A> a, Path<T, B> b);
+    <A, B> WhereStep<T, Tuple2<A, B>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b);
 
     /**
      * Select distinct results of three paths.
@@ -450,7 +450,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <C> Third path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c);
+    <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c);
 
     /**
      * Select distinct results of four paths.
@@ -465,7 +465,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <D> Fourth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d);
+    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d);
 
     /**
      * Select distinct results of five paths.
@@ -482,7 +482,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <E> Fifth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e);
+    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e);
 
     /**
      * Select distinct results of six paths.
@@ -501,7 +501,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <F> Sixth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f);
+    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f);
 
     /**
      * Select distinct results of seven paths.
@@ -522,7 +522,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <G> Seventh path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g);
+    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g);
 
     /**
      * Select distinct results of eight paths.
@@ -545,7 +545,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <H> Eighth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h);
+    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h);
 
     /**
      * Select distinct results of nine paths.
@@ -570,7 +570,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <I> Ninth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i);
+    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i);
 
     /**
      * Select distinct results of ten paths.
@@ -597,7 +597,7 @@ public interface Select<T> extends FetchStep<T> {
      * @param <J> Tenth path type
      * @return Multi-row query condition construction step
      */
-    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i, Path<T, J> j);
+    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i, PathRef<T, J> j);
 
     /**
      * Select distinct results of two expressions.

@@ -25,7 +25,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         super(queryStructure, metamodel, executor);
     }
 
-    public WhereStep<T, T> fetch(List<PathExpression<T, ?>> expressions) {
+    public WhereStep<T, T> fetch(List<Path<T, ?>> expressions) {
         if (expressions == null || expressions.isEmpty()) {
             return this;
         }
@@ -33,7 +33,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         ImmutableList.Builder<PathNode> builder = new ImmutableList.Builder<>(select.fetch().size() + expressions.size());
         builder.addAll(select.fetch().asList());
         EntityType entityType = metamodel.getEntity(fromType());
-        for (PathExpression<T, ?> expression : expressions) {
+        for (Path<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
             Attribute attribute = entityPath.getAttribute(entityType);
             if (!attribute.isObject()) {
@@ -70,20 +70,20 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return updateSelected(select);
     }
 
-    public <R> WhereStep<T, R> selectDistinct(Path<T, ? extends R> path) {
+    public <R> WhereStep<T, R> selectDistinct(PathRef<T, ? extends R> path) {
         return select(true, path);
     }
 
-    public <R> WhereStep<T, R> select(Path<T, ? extends R> path) {
+    public <R> WhereStep<T, R> select(PathRef<T, ? extends R> path) {
         return select(false, path);
     }
 
-    public <R> WhereStep<T, R> select(boolean distinct, Path<T, ? extends R> path) {
+    public <R> WhereStep<T, R> select(boolean distinct, PathRef<T, ? extends R> path) {
         SelectExpression select = new SelectExpression(PathNode.of(path), distinct);
         return updateSelected(select);
     }
 
-    public WhereStep<T, Tuple> selectDistinct(Collection<Path<T, ?>> paths) {
+    public WhereStep<T, Tuple> selectDistinct(Collection<PathRef<T, ?>> paths) {
         ImmutableList<ExpressionNode> nodes = paths.stream()
                 .map(PathNode::of)
                 .collect(ImmutableList.collector(paths.size()));
@@ -95,53 +95,53 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return updateSelected(selected);
     }
 
-    public WhereStep<T, Tuple> select(Collection<Path<T, ?>> paths) {
+    public WhereStep<T, Tuple> select(Collection<PathRef<T, ?>> paths) {
         ImmutableList<ExpressionNode> mapping = PathNode.mapping(paths);
         return select(false, mapping);
     }
 
     @Override
-    public <A, B> WhereStep<T, Tuple2<A, B>> select(Path<T, A> a, Path<T, B> b) {
+    public <A, B> WhereStep<T, Tuple2<A, B>> select(PathRef<T, A> a, PathRef<T, B> b) {
         return selectTuple(false, a, b);
     }
 
     @Override
-    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c) {
+    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c) {
         return selectTuple(false, a, b, c);
     }
 
     @Override
-    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d) {
+    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d) {
         return selectTuple(false, a, b, c, d);
     }
 
     @Override
-    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e) {
+    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e) {
         return selectTuple(false, a, b, c, d, e);
     }
 
     @Override
-    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f) {
+    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f) {
         return selectTuple(false, a, b, c, d, e, f);
     }
 
     @Override
-    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g) {
+    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g) {
         return selectTuple(false, a, b, c, d, e, f, g);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h) {
+    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h) {
         return selectTuple(false, a, b, c, d, e, f, g, h);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i) {
+    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i) {
         return selectTuple(false, a, b, c, d, e, f, g, h, i);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i, Path<T, J> j) {
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i, PathRef<T, J> j) {
         return selectTuple(false, a, b, c, d, e, f, g, h, i, j);
     }
 
@@ -150,47 +150,47 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @Override
-    public <A, B> WhereStep<T, Tuple2<A, B>> selectDistinct(Path<T, A> a, Path<T, B> b) {
+    public <A, B> WhereStep<T, Tuple2<A, B>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b) {
         return selectTuple(true, a, b);
     }
 
     @Override
-    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c) {
+    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c) {
         return selectTuple(true, a, b, c);
     }
 
     @Override
-    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d) {
+    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d) {
         return selectTuple(true, a, b, c, d);
     }
 
     @Override
-    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e) {
+    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e) {
         return selectTuple(true, a, b, c, d, e);
     }
 
     @Override
-    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f) {
+    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f) {
         return selectTuple(true, a, b, c, d, e, f);
     }
 
     @Override
-    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g) {
+    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g) {
         return selectTuple(true, a, b, c, d, e, f, g);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h) {
+    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h) {
         return selectTuple(true, a, b, c, d, e, f, g, h);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i) {
+    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i) {
         return selectTuple(true, a, b, c, d, e, f, g, h, i);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(Path<T, A> a, Path<T, B> b, Path<T, C> c, Path<T, D> d, Path<T, E> e, Path<T, F> f, Path<T, G> g, Path<T, H> h, Path<T, I> i, Path<T, J> j) {
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(PathRef<T, A> a, PathRef<T, B> b, PathRef<T, C> c, PathRef<T, D> d, PathRef<T, E> e, PathRef<T, F> f, PathRef<T, G> g, PathRef<T, H> h, PathRef<T, I> i, PathRef<T, J> j) {
         return selectTuple(true, a, b, c, d, e, f, g, h, i, j);
     }
 
@@ -199,7 +199,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return select(false, nodes);
     }
 
-    protected <R extends Tuple> WhereStep<T, R> selectTuple(boolean distinct, Path<?, ?>... paths) {
+    protected <R extends Tuple> WhereStep<T, R> selectTuple(boolean distinct, PathRef<?, ?>... paths) {
         ImmutableList<ExpressionNode> nodes = PathNode.mapping(paths);
         SelectExpressions select = new SelectExpressions(nodes, distinct);
         return updateSelected(select);

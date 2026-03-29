@@ -1,17 +1,9 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.Path;
-import io.github.nextentity.api.model.Tuple;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.api.model.Tuple4;
-import io.github.nextentity.api.model.Tuple5;
-import io.github.nextentity.api.model.Tuple6;
-import io.github.nextentity.api.model.Tuple7;
-import io.github.nextentity.api.model.Tuple8;
-import io.github.nextentity.api.model.Tuple9;
-import io.github.nextentity.api.model.Tuple10;
+import io.github.nextentity.api.PathRef;
+import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.api.model.*;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -24,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -61,7 +52,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(names).hasSize(12);
-        assertThat(names.get(0)).isEqualTo("Alice Johnson");
+        assertThat(names.getFirst()).isEqualTo("Alice Johnson");
     }
 
     @ParameterizedTest
@@ -125,7 +116,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple2<String, String> tuple = results.get(0);
+        Tuple2<String, String> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo("Alice Johnson");
         assertThat(tuple.get1()).isEqualTo("alice@example.com");
     }
@@ -179,7 +170,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple3<String, String, Double> tuple = results.get(0);
+        Tuple3<String, String, Double> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo("Alice Johnson");
         assertThat(tuple.get1()).isEqualTo("alice@example.com");
         assertThat(tuple.get2()).isNotNull();
@@ -214,7 +205,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple4<Long, String, String, Double> tuple = results.get(0);
+        Tuple4<Long, String, String, Double> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo(1L);
         assertThat(tuple.get1()).isEqualTo("Alice Johnson");
         assertThat(tuple.get2()).isEqualTo("alice@example.com");
@@ -251,7 +242,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple5<Long, String, String, Double, Boolean> tuple = results.get(0);
+        Tuple5<Long, String, String, Double, Boolean> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo(1L);
         assertThat(tuple.get1()).isEqualTo("Alice Johnson");
         assertThat(tuple.get4()).isTrue();
@@ -289,7 +280,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple6<Long, String, String, Double, Boolean, Long> tuple = results.get(0);
+        Tuple6<Long, String, String, Double, Boolean, Long> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo(1L);
         assertThat(tuple.get5()).isEqualTo(1L);
     }
@@ -328,7 +319,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple7<Long, String, String, Double, Boolean, Long, String> tuple = results.get(0);
+        Tuple7<Long, String, String, Double, Boolean, Long, String> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo(1L);
         assertThat(tuple.get1()).isEqualTo(tuple.get6()); // Both are name
     }
@@ -367,7 +358,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get0()).isEqualTo(1L);
+        assertThat(results.getFirst().get0()).isEqualTo(1L);
     }
 
     @ParameterizedTest
@@ -404,7 +395,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get0()).isEqualTo(1L);
+        assertThat(results.getFirst().get0()).isEqualTo(1L);
     }
 
     @ParameterizedTest
@@ -443,7 +434,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long> tuple = results.get(0);
+        Tuple10<Long, String, String, Double, Boolean, Long, String, Double, Boolean, Long> tuple = results.getFirst();
         assertThat(tuple.get0()).isEqualTo(1L);
         assertThat(tuple.get0()).isEqualTo(tuple.get9()); // Both are ID
     }
@@ -474,7 +465,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select with collection of paths")
     void shouldSelectWithCollectionOfPaths(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ?>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ?>> paths = new ArrayList<>();
         paths.add(Employee::getName);
         paths.add(Employee::getEmail);
 
@@ -486,7 +477,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple tuple = results.get(0);
+        Tuple tuple = results.getFirst();
         assertThat((String) tuple.get(0)).isEqualTo("Alice Johnson");
         assertThat((String) tuple.get(1)).isEqualTo("alice@example.com");
     }
@@ -496,7 +487,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select distinct with collection of paths")
     void shouldSelectDistinctWithCollectionOfPaths(IntegrationTestContext context) {
         // Given
-        Collection<Path<Employee, ?>> paths = new ArrayList<>();
+        Collection<PathRef<Employee, ?>> paths = new ArrayList<>();
         paths.add(Employee::getDepartmentId);
         paths.add(Employee::getActive);
 
@@ -520,7 +511,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionMax(IntegrationTestContext context) {
         // When
         Double maxSalary = context.queryEmployees()
-                .select(get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         // Then
@@ -534,7 +525,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionMin(IntegrationTestContext context) {
         // When
         Double minSalary = context.queryEmployees()
-                .select(get(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // Then
@@ -548,7 +539,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionCount(IntegrationTestContext context) {
         // When
         Long count = context.queryEmployees()
-                .select(get(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .getSingle();
 
         // Then
@@ -561,7 +552,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionSum(IntegrationTestContext context) {
         // When
         Double sum = context.queryEmployees()
-                .select(get(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).sum())
                 .getSingle();
 
         // Then
@@ -575,7 +566,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionAvg(IntegrationTestContext context) {
         // When
         Double avg = context.queryEmployees()
-                .select(get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         // Then
@@ -589,7 +580,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithTypedExpression(IntegrationTestContext context) {
         // When
         Long distinctDeptCount = context.queryEmployees()
-                .selectDistinct(get(Employee::getDepartmentId).count())
+                .selectDistinct(Path.of(Employee::getDepartmentId).count())
                 .getSingle();
 
         // Then
@@ -606,12 +597,12 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTwoTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple2<Double, Double>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        Tuple2<Double, Double> tuple = results.get(0);
+        Tuple2<Double, Double> tuple = results.getFirst();
         assertThat(tuple.get0()).isLessThanOrEqualTo(tuple.get1());
     }
 
@@ -621,13 +612,13 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithThreeTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+        assertThat(results.getFirst().get0()).isLessThanOrEqualTo(results.getFirst().get1());
     }
 
     @ParameterizedTest
@@ -636,13 +627,13 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithFourTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -651,14 +642,14 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithFiveTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple5<Double, Double, Double, Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -667,14 +658,14 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithSixTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple6<Double, Double, Double, Long, Double, Long>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -683,15 +674,15 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithSevenTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple7<Double, Double, Double, Long, Double, Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -700,15 +691,15 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithEightTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple8<Double, Double, Double, Long, Double, Long, Double, Double>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -717,16 +708,16 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithNineTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple9<Double, Double, Double, Long, Double, Long, Double, Double, Double>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -735,17 +726,17 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTenTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple10<Double, Double, Double, Long, Double, Long, Double, Double, Double, Long>> results = context.queryEmployees()
-                .select(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
-        assertThat(results.get(0).get3()).isEqualTo(results.get(0).get9());
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(results.getFirst().get9());
     }
 
     @ParameterizedTest
@@ -754,8 +745,8 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithListOfTypedExpressions(IntegrationTestContext context) {
         // Given
         List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
-        expressions.add(get(Employee::getDepartmentId));
-        expressions.add(get(Employee::getActive));
+        expressions.add(Path.of(Employee::getDepartmentId));
+        expressions.add(Path.of(Employee::getActive));
 
         // When
         List<Tuple> results = context.queryEmployees()
@@ -775,8 +766,8 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithListOfTypedExpressions(IntegrationTestContext context) {
         // Given
         List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
-        expressions.add(get(Employee::getDepartmentId));
-        expressions.add(get(Employee::getActive));
+        expressions.add(Path.of(Employee::getDepartmentId));
+        expressions.add(Path.of(Employee::getActive));
 
         // When
         List<Tuple> results = context.queryEmployees()
@@ -794,9 +785,9 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithListOfTypedExpressionsAggregate(IntegrationTestContext context) {
         // Given - using aggregate expressions as TypedExpression
         List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
-        expressions.add(get(Employee::getSalary).max());
-        expressions.add(get(Employee::getSalary).min());
-        expressions.add(get(Employee::getSalary).avg());
+        expressions.add(Path.of(Employee::getSalary).max());
+        expressions.add(Path.of(Employee::getSalary).min());
+        expressions.add(Path.of(Employee::getSalary).avg());
 
         // When
         List<Tuple> results = context.queryEmployees()
@@ -805,10 +796,10 @@ public class SelectApiIntegrationTest {
 
         // Then - aggregate results should produce one row
         assertThat(results).hasSize(1);
-        Tuple tuple = results.get(0);
-        Double maxSalary = (Double) tuple.get(0);
-        Double minSalary = (Double) tuple.get(1);
-        Double avgSalary = (Double) tuple.get(2);
+        Tuple tuple = results.getFirst();
+        Double maxSalary = tuple.get(0);
+        Double minSalary = tuple.get(1);
+        Double avgSalary = tuple.get(2);
         assertThat(maxSalary).isNotNull();
         assertThat(minSalary).isNotNull();
         assertThat(avgSalary).isNotNull();
@@ -821,8 +812,8 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithListOfTypedExpressionsAggregate(IntegrationTestContext context) {
         // Given - using aggregate expressions as TypedExpression
         List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
-        expressions.add(get(Employee::getSalary).max());
-        expressions.add(get(Employee::getSalary).min());
+        expressions.add(Path.of(Employee::getSalary).max());
+        expressions.add(Path.of(Employee::getSalary).min());
 
         // When
         List<Tuple> results = context.queryEmployees()
@@ -831,9 +822,9 @@ public class SelectApiIntegrationTest {
 
         // Then - aggregate results should produce one row
         assertThat(results).hasSize(1);
-        Tuple tuple = results.get(0);
-        Double maxSalary = (Double) tuple.get(0);
-        Double minSalary = (Double) tuple.get(1);
+        Tuple tuple = results.getFirst();
+        Double maxSalary = tuple.get(0);
+        Double minSalary = tuple.get(1);
         assertThat(maxSalary).isNotNull();
         assertThat(minSalary).isNotNull();
         assertThat(maxSalary).isGreaterThanOrEqualTo(minSalary);
@@ -845,8 +836,8 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithListOfPathsAsTypedExpressions(IntegrationTestContext context) {
         // Given - EntityPath extends TypedExpression
         List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
-        expressions.add(get(Employee::getDepartmentId));
-        expressions.add(get(Employee::getName));
+        expressions.add(Path.of(Employee::getDepartmentId));
+        expressions.add(Path.of(Employee::getName));
 
         // When
         List<Tuple> results = context.queryEmployees()
@@ -868,12 +859,12 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithTwoTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple2<Double, Double>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+        assertThat(results.getFirst().get0()).isLessThanOrEqualTo(results.getFirst().get1());
     }
 
     @ParameterizedTest
@@ -882,13 +873,13 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithThreeTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+        assertThat(results.getFirst().get0()).isLessThanOrEqualTo(results.getFirst().get1());
     }
 
     @ParameterizedTest
@@ -897,13 +888,13 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithFourTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -912,14 +903,14 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithFiveTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple5<Double, Double, Double, Long, Double>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -928,14 +919,14 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithSixTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple6<Double, Double, Double, Long, Double, Long>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -944,15 +935,15 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithSevenTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple7<Double, Double, Double, Long, Double, Long, Double>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -961,15 +952,15 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithEightTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple8<Double, Double, Double, Long, Double, Long, Double, Double>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min(), get(Employee::getSalary).max())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -978,16 +969,16 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithNineTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple9<Double, Double, Double, Long, Double, Long, Double, Double, Double>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
     }
 
     @ParameterizedTest
@@ -996,17 +987,17 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithTenTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple10<Double, Double, Double, Long, Double, Long, Double, Double, Double, Long>> results = context.queryEmployees()
-                .selectDistinct(get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count(),
-                        get(Employee::getSalary).sum(), get(Employee::getDepartmentId).count(),
-                        get(Employee::getSalary).min(), get(Employee::getSalary).max(),
-                        get(Employee::getSalary).avg(), get(Employee::getId).count())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
+                        Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get3()).isEqualTo(12L);
-        assertThat(results.get(0).get3()).isEqualTo(results.get(0).get9());
+        assertThat(results.getFirst().get3()).isEqualTo(12L);
+        assertThat(results.getFirst().get3()).isEqualTo(results.getFirst().get9());
     }
 
     // ========================================
@@ -1025,7 +1016,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(employees).hasSize(1);
-        assertThat(employees.get(0).getName()).isEqualTo("Alice Johnson");
+        assertThat(employees.getFirst().getName()).isEqualTo("Alice Johnson");
     }
 
     @ParameterizedTest
@@ -1040,7 +1031,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(employees).hasSize(12);
-        assertThat(employees.get(0)).isInstanceOf(Employee.class);
+        assertThat(employees.getFirst()).isInstanceOf(Employee.class);
     }
 
     @ParameterizedTest
@@ -1094,7 +1085,7 @@ public class SelectApiIntegrationTest {
 
         // Then
         assertThat(results).hasSize(5);
-        assertThat(results.get(0).get0()).isEqualTo(1L);
+        assertThat(results.getFirst().get0()).isEqualTo(1L);
     }
 
     @ParameterizedTest
@@ -1129,7 +1120,7 @@ public class SelectApiIntegrationTest {
         // Then
         assertThat(results).hasSize(1);
         // Email could be null
-        assertThat(results.get(0).get0()).isNotNull();
+        assertThat(results.getFirst().get0()).isNotNull();
     }
 
     @ParameterizedTest

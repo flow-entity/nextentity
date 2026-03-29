@@ -31,7 +31,7 @@ class ExpressionsTest {
             String value = "test";
 
             // when
-            TypedExpression<?, String> expression = Expressions.of(value);
+            TypedExpression<?, String> expression = TypedExpression.of(value);
 
             // then
             assertThat(expression).isNotNull();
@@ -49,7 +49,7 @@ class ExpressionsTest {
         @Test
         void of_WithNull_ReturnsTypedExpressionWithNull() {
             // when
-            TypedExpression<?, Object> expression = Expressions.of(null);
+            TypedExpression<?, Object> expression = TypedExpression.of(null);
 
             // then
             assertThat(expression).isNotNull();
@@ -71,7 +71,7 @@ class ExpressionsTest {
         @Test
         void ofTrue_ReturnsTruePredicate() {
             // when
-            Predicate<Object> predicate = Expressions.ofTrue();
+            Predicate<Object> predicate = Predicate.ofTrue();
 
             // then
             assertThat(predicate).isNotNull();
@@ -87,7 +87,7 @@ class ExpressionsTest {
         @Test
         void ofFalse_ReturnsFalsePredicate() {
             // when
-            Predicate<Object> predicate = Expressions.ofFalse();
+            Predicate<Object> predicate = Predicate.ofFalse();
 
             // then
             assertThat(predicate).isNotNull();
@@ -96,26 +96,4 @@ class ExpressionsTest {
         }
     }
 
-    @Nested
-    class OfPredicate {
-
-        /**
-         * Test objective: Verify ofPredicate() converts expression
-         * Test scenario: Convert expression to predicate
-         * Expected result: Predicate wrapping the expression
-         */
-        @Test
-        void ofPredicate_ConvertsExpression() {
-            // given
-            Predicate<Object> original = Expressions.ofTrue();
-
-            // when
-            Predicate<Object> converted = Expressions.ofPredicate(original);
-
-            // then
-            assertThat(converted).isNotNull();
-            ExpressionNode node = ExpressionNodes.getNode(converted);
-            assertThat(node).isSameAs(LiteralNode.TRUE);
-        }
-    }
 }

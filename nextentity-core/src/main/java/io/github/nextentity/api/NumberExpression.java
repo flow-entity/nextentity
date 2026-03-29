@@ -1,8 +1,5 @@
 package io.github.nextentity.api;
 
-import io.github.nextentity.api.model.EntityRoot;
-import io.github.nextentity.core.util.Paths;
-
 /// Number expression interface, providing number-type expression operation methods.
 ///
 /// Extends SimpleExpression, providing basic expression operation methods and adding number-specific operations.
@@ -143,6 +140,6 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
     }
 
     private EntityRoot<T> root() {
-        return Paths.root();
+        return EntityRoot.of();
     }
 }

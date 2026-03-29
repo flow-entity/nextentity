@@ -14,7 +14,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.Arrays;
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -46,7 +45,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should return PathOperator with PathExpression")
         void shouldReturnPathOperator_WithPathExpression(IntegrationTestContext context) {
             // Given - create PathExpression using Paths utility
-            PathExpression<Employee, Long> idPath = path(Employee::getId);
+            Path<Employee, Long> idPath = Path.of(Employee::getId);
 
             // When
             ExpressionBuilder.PathOperator<Employee, Long, ?> operator = context.queryEmployees()
@@ -65,11 +64,11 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should execute query with PathExpression condition")
         void shouldExecuteQuery_WithPathExpressionCondition(IntegrationTestContext context) {
             // Given
-            PathExpression<Employee, Long> idPath = path(Employee::getId);
+            Path<Employee, Long> idPath = Path.of(Employee::getId);
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList();
-            Long firstId = allEmployees.get(0).getId();
+            Long firstId = allEmployees.getFirst().getId();
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -78,7 +77,7 @@ public class WhereImplIntegrationTest {
 
             // Then
             assertThat(result).hasSize(1);
-            assertThat(result.get(0).getId()).isEqualTo(firstId);
+            assertThat(result.getFirst().getId()).isEqualTo(firstId);
         }
 
         /**
@@ -89,11 +88,11 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should use comparison operators with PathExpression")
         void shouldUseComparisonOperators_WithPathExpression(IntegrationTestContext context) {
             // Given
-            PathExpression<Employee, Long> idPath = path(Employee::getId);
+            Path<Employee, Long> idPath = Path.of(Employee::getId);
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList();
-            Long firstId = allEmployees.get(0).getId();
+            Long firstId = allEmployees.getFirst().getId();
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -103,7 +102,7 @@ public class WhereImplIntegrationTest {
 
             // Then
             assertThat(result).isNotEmpty();
-            assertThat(result.get(0).getId()).isEqualTo(firstId);
+            assertThat(result.getFirst().getId()).isEqualTo(firstId);
         }
 
         /**
@@ -114,7 +113,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should use in operator with PathExpression")
         void shouldUseInOperator_WithPathExpression(IntegrationTestContext context) {
             // Given
-            PathExpression<Employee, Long> idPath = path(Employee::getId);
+            Path<Employee, Long> idPath = Path.of(Employee::getId);
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
                     .getList();
@@ -145,7 +144,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should return NumberOperator with NumberPath")
         void shouldReturnNumberOperator_WithNumberPath(IntegrationTestContext context) {
             // Given - create NumberPath using Paths utility
-            NumberPath<Employee, Double> salaryPath = number(Employee::getSalary);
+            NumberPath<Employee, Double> salaryPath = Path.of(Employee::getSalary);
 
             // When
             ExpressionBuilder.NumberOperator<Employee, Double, ?> operator = context.queryEmployees()
@@ -163,7 +162,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should support comparison operations with NumberPath")
         void shouldSupportComparisonOperations_WithNumberPath(IntegrationTestContext context) {
             // Given
-            NumberPath<Employee, Double> salaryPath = number(Employee::getSalary);
+            NumberPath<Employee, Double> salaryPath = Path.of(Employee::getSalary);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -187,11 +186,11 @@ public class WhereImplIntegrationTest {
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getSalary).asc()
                     .getList();
-            double minSalary = allEmployees.get(0).getSalary();
-            double maxSalary = allEmployees.get(allEmployees.size() - 1).getSalary();
+            double minSalary = allEmployees.getFirst().getSalary();
+            double maxSalary = allEmployees.getLast().getSalary();
             double midSalary = allEmployees.get(allEmployees.size() / 2).getSalary();
 
-            NumberPath<Employee, Double> salaryPath = number(Employee::getSalary);
+            NumberPath<Employee, Double> salaryPath = Path.of(Employee::getSalary);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -212,7 +211,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should combine NumberPath with orderBy")
         void shouldCombineNumberPath_WithOrderBy(IntegrationTestContext context) {
             // Given
-            NumberPath<Employee, Double> salaryPath = number(Employee::getSalary);
+            NumberPath<Employee, Double> salaryPath = Path.of(Employee::getSalary);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -242,7 +241,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should return StringOperator with StringPath")
         void shouldReturnStringOperator_WithStringPath(IntegrationTestContext context) {
             // Given - create StringPath using Paths utility
-            StringPath<Employee> namePath = string(Employee::getName);
+            StringPath<Employee> namePath = Path.of(Employee::getName);
 
             // When
             ExpressionBuilder.StringOperator<Employee, ?> operator = context.queryEmployees()
@@ -260,7 +259,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should support like operation with StringPath")
         void shouldSupportLikeOperation_WithStringPath(IntegrationTestContext context) {
             // Given
-            StringPath<Employee> namePath = string(Employee::getName);
+            StringPath<Employee> namePath = Path.of(Employee::getName);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -281,7 +280,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should support startsWith operation with StringPath")
         void shouldSupportStartsWithOperation_WithStringPath(IntegrationTestContext context) {
             // Given
-            StringPath<Employee> namePath = string(Employee::getName);
+            StringPath<Employee> namePath = Path.of(Employee::getName);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -302,7 +301,7 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should support contains operation with StringPath")
         void shouldSupportContainsOperation_WithStringPath(IntegrationTestContext context) {
             // Given
-            StringPath<Employee> namePath = string(Employee::getName);
+            StringPath<Employee> namePath = Path.of(Employee::getName);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -328,12 +327,12 @@ public class WhereImplIntegrationTest {
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should group by single TypedExpression")
         void shouldGroupBy_SingleTypedExpression(IntegrationTestContext context) {
-            // Given - create TypedExpression using Paths.get()
-            var departmentPath = get(Employee::getDepartmentId);
+            // Given - create TypedExpression using Path.of()
+            var departmentPath = Path.of(Employee::getDepartmentId);
 
             // When
             var results = context.queryEmployees()
-                    .select(departmentPath, get(Employee::getId).count())
+                    .select(departmentPath, Path.of(Employee::getId).count())
                     .groupBy(departmentPath)
                     .orderBy(Employee::getDepartmentId).asc()
                     .getList();
@@ -350,11 +349,11 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should group by TypedExpression with aggregate")
         void shouldGroupBy_TypedExpressionWithAggregate(IntegrationTestContext context) {
             // Given
-            var activePath = get(Employee::getActive);
+            var activePath = Path.of(Employee::getActive);
 
             // When
             var results = context.queryEmployees()
-                    .select(activePath, get(Employee::getSalary).avg())
+                    .select(activePath, Path.of(Employee::getSalary).avg())
                     .groupBy(activePath)
                     .getList();
 
@@ -378,7 +377,7 @@ public class WhereImplIntegrationTest {
             // Given - use Path references directly for groupBy
             // When
             var results = context.queryEmployees()
-                    .select(get(Employee::getDepartmentId), get(Employee::getActive), get(Employee::getId).count())
+                    .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
                     .groupBy(Employee::getDepartmentId, Employee::getActive)
                     .orderBy(Employee::getDepartmentId).asc()
                     .getList();
@@ -396,9 +395,9 @@ public class WhereImplIntegrationTest {
         void shouldGroupByList_WithHavingClause(IntegrationTestContext context) {
             // When
             var results = context.queryEmployees()
-                    .select(get(Employee::getDepartmentId), get(Employee::getActive), get(Employee::getId).count())
+                    .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
                     .groupBy(Employee::getDepartmentId, Employee::getActive)
-                    .having(get(Employee::getId).count().gt(1L))
+                    .having(Path.of(Employee::getId).count().gt(1L))
                     .orderBy(Employee::getDepartmentId).asc()
                     .getList();
 
@@ -420,8 +419,8 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should order by list of Order expressions")
         void shouldOrderBy_ListOfOrderExpressions(IntegrationTestContext context) {
             // Given - create Order list using OrderImpl
-            Order<Employee> nameOrder = new OrderImpl<>(get(Employee::getName), SortOrder.ASC);
-            Order<Employee> salaryOrder = new OrderImpl<>(get(Employee::getSalary), SortOrder.DESC);
+            Order<Employee> nameOrder = new OrderImpl<>(Path.of(Employee::getName), SortOrder.ASC);
+            Order<Employee> salaryOrder = new OrderImpl<>(Path.of(Employee::getSalary), SortOrder.DESC);
             List<Order<Employee>> orders = Arrays.asList(nameOrder, salaryOrder);
 
             // When
@@ -447,8 +446,8 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should order by single Order in list")
         void shouldOrderBy_SingleOrderInList(IntegrationTestContext context) {
             // Given
-            Order<Employee> salaryOrder = new OrderImpl<>(get(Employee::getSalary), SortOrder.DESC);
-            List<Order<Employee>> orders = Arrays.asList(salaryOrder);
+            Order<Employee> salaryOrder = new OrderImpl<>(Path.of(Employee::getSalary), SortOrder.DESC);
+            List<Order<Employee>> orders = List.of(salaryOrder);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -473,8 +472,8 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should combine orderBy list with where condition")
         void shouldCombineOrderByList_WithWhereCondition(IntegrationTestContext context) {
             // Given
-            Order<Employee> nameOrder = new OrderImpl<>(get(Employee::getName), SortOrder.ASC);
-            List<Order<Employee>> orders = Arrays.asList(nameOrder);
+            Order<Employee> nameOrder = new OrderImpl<>(Path.of(Employee::getName), SortOrder.ASC);
+            List<Order<Employee>> orders = List.of(nameOrder);
 
             // When
             List<Employee> result = context.queryEmployees()
@@ -495,8 +494,8 @@ public class WhereImplIntegrationTest {
         @DisplayName("Should order by multiple Order expressions")
         void shouldOrderBy_MultipleOrderExpressions(IntegrationTestContext context) {
             // Given
-            Order<Employee> activeOrder = new OrderImpl<>(get(Employee::getActive), SortOrder.DESC);
-            Order<Employee> salaryOrder = new OrderImpl<>(get(Employee::getSalary), SortOrder.ASC);
+            Order<Employee> activeOrder = new OrderImpl<>(Path.of(Employee::getActive), SortOrder.DESC);
+            Order<Employee> salaryOrder = new OrderImpl<>(Path.of(Employee::getSalary), SortOrder.ASC);
             List<Order<Employee>> orders = Arrays.asList(activeOrder, salaryOrder);
 
             // When

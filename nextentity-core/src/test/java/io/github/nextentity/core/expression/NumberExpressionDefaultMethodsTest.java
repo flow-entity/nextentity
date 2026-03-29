@@ -2,7 +2,7 @@ package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.NumberExpression;
 import io.github.nextentity.api.NumberPath;
-import io.github.nextentity.core.util.Paths;
+import io.github.nextentity.api.Path;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * These tests verify that the default methods in NumberExpression interface
  * correctly handle null values by returning the same expression instance.
  * <p>
- * Uses Paths.get() to obtain NumberPath instances which implement NumberExpression.
+ * Uses Path.of() to obtain NumberPath instances which implement NumberExpression.
  *
  * @author HuangChengwei
  * @see io.github.nextentity.api.NumberExpression
@@ -41,7 +41,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("addIfNotNull with non-null value should return new expression with ADD operation")
         void addIfNotNull_withNonNull_shouldReturnNewExpression() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with non-null value
             NumberExpression<TestEntity, Double> result = path.addIfNotNull(100.0);
@@ -55,7 +55,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("addIfNotNull with null value should return same expression instance")
         void addIfNotNull_withNull_shouldReturnSameInstance() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with null value
             NumberExpression<TestEntity, Double> result = path.addIfNotNull(null);
@@ -76,7 +76,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("subtractIfNotNull with non-null value should return new expression with SUBTRACT operation")
         void subtractIfNotNull_withNonNull_shouldReturnNewExpression() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with non-null value
             NumberExpression<TestEntity, Double> result = path.subtractIfNotNull(50.0);
@@ -90,7 +90,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("subtractIfNotNull with null value should return same expression instance")
         void subtractIfNotNull_withNull_shouldReturnSameInstance() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with null value
             NumberExpression<TestEntity, Double> result = path.subtractIfNotNull(null);
@@ -111,7 +111,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("multiplyIfNotNull with non-null value should return new expression with MULTIPLY operation")
         void multiplyIfNotNull_withNonNull_shouldReturnNewExpression() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with non-null value
             NumberExpression<TestEntity, Double> result = path.multiplyIfNotNull(2.0);
@@ -125,7 +125,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("multiplyIfNotNull with null value should return same expression instance")
         void multiplyIfNotNull_withNull_shouldReturnSameInstance() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with null value
             NumberExpression<TestEntity, Double> result = path.multiplyIfNotNull(null);
@@ -146,7 +146,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("divideIfNotNull with non-null value should return new expression with DIVIDE operation")
         void divideIfNotNull_withNonNull_shouldReturnNewExpression() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with non-null value
             NumberExpression<TestEntity, Double> result = path.divideIfNotNull(10.0);
@@ -160,7 +160,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("divideIfNotNull with null value should return same expression instance")
         void divideIfNotNull_withNull_shouldReturnSameInstance() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with null value
             NumberExpression<TestEntity, Double> result = path.divideIfNotNull(null);
@@ -181,7 +181,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("modIfNotNull with non-null value should return new expression with MOD operation")
         void modIfNotNull_withNonNull_shouldReturnNewExpression() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with non-null value
             NumberExpression<TestEntity, Double> result = path.modIfNotNull(3.0);
@@ -195,7 +195,7 @@ class NumberExpressionDefaultMethodsTest {
         @DisplayName("modIfNotNull with null value should return same expression instance")
         void modIfNotNull_withNull_shouldReturnSameInstance() {
             // Given
-            NumberPath<TestEntity, Double> path = Paths.get(TestEntity::getAmount);
+            NumberPath<TestEntity, Double> path = Path.of(TestEntity::getAmount);
 
             // When - call default method with null value
             NumberExpression<TestEntity, Double> result = path.modIfNotNull(null);

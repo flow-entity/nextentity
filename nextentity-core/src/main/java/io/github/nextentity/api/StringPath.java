@@ -5,5 +5,8 @@ package io.github.nextentity.api;
 /// @param <T> Entity type
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface StringPath<T> extends StringExpression<T>, PathExpression<T, String> {
+public interface StringPath<T> extends StringExpression<T>, Path<T, String> {
+    static <T> StringPath<T> of(PathRef.StringRef<T> path) {
+        return EntityRoot.<T>of().get(path);
+    }
 }

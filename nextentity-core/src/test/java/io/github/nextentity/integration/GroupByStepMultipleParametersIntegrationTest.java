@@ -1,6 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.model.Tuple2;
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.api.model.Tuple4;
 import io.github.nextentity.api.model.Tuple5;
@@ -16,7 +16,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.time.LocalDate;
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -48,9 +47,9 @@ public class GroupByStepMultipleParametersIntegrationTest {
         // When
         List<Tuple3<Long, Boolean, Long>> results = context.queryEmployees()
                 .select(
-                        get(Employee::getDepartmentId),
-                        get(Employee::getActive),
-                        get(Employee::getId).count()
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getActive),
+                        Path.of(Employee::getId).count()
                 )
                 .groupBy(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -70,9 +69,9 @@ public class GroupByStepMultipleParametersIntegrationTest {
         // When
         List<Tuple3<Long, Boolean, Double>> results = context.queryEmployees()
                 .select(
-                        get(Employee::getDepartmentId),
-                        get(Employee::getActive),
-                        get(Employee::getSalary).sum()
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getActive),
+                        Path.of(Employee::getSalary).sum()
                 )
                 .groupBy(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
                 .orderBy(Employee::getDepartmentId).asc()
@@ -94,10 +93,10 @@ public class GroupByStepMultipleParametersIntegrationTest {
         // When
         List<Tuple4<Long, Boolean, EmployeeStatus, Long>> results = context.queryEmployees()
                 .select(
-                        get(Employee::getDepartmentId),
-                        get(Employee::getActive),
-                        get(Employee::getStatus),
-                        get(Employee::getId).count()
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getActive),
+                        Path.of(Employee::getStatus),
+                        Path.of(Employee::getId).count()
                 )
                 .groupBy(
                         Employee::getDepartmentId,
@@ -124,11 +123,11 @@ public class GroupByStepMultipleParametersIntegrationTest {
         // When
         List<Tuple5<Long, Boolean, EmployeeStatus, LocalDate, Long>> results = context.queryEmployees()
                 .select(
-                        get(Employee::getDepartmentId),
-                        get(Employee::getActive),
-                        get(Employee::getStatus),
-                        get(Employee::getHireDate),
-                        get(Employee::getId).count()
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getActive),
+                        Path.of(Employee::getStatus),
+                        Path.of(Employee::getHireDate),
+                        Path.of(Employee::getId).count()
                 )
                 .groupBy(
                         Employee::getDepartmentId,
@@ -156,12 +155,12 @@ public class GroupByStepMultipleParametersIntegrationTest {
         // When
         List<Tuple6<Long, Boolean, EmployeeStatus, LocalDate, String, Long>> results = context.queryEmployees()
                 .select(
-                        get(Employee::getDepartmentId),
-                        get(Employee::getActive),
-                        get(Employee::getStatus),
-                        get(Employee::getHireDate),
-                        get(Employee::getName),
-                        get(Employee::getId).count()
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getActive),
+                        Path.of(Employee::getStatus),
+                        Path.of(Employee::getHireDate),
+                        Path.of(Employee::getName),
+                        Path.of(Employee::getId).count()
                 )
                 .groupBy(
                         Employee::getDepartmentId,
@@ -190,12 +189,12 @@ public class GroupByStepMultipleParametersIntegrationTest {
         // When
         List<Tuple3<Long, Boolean, Long>> results = context.queryEmployees()
                 .select(
-                        get(Employee::getDepartmentId),
-                        get(Employee::getActive),
-                        get(Employee::getId).count()
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getActive),
+                        Path.of(Employee::getId).count()
                 )
                 .groupBy(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
-                .having(get(Employee::getId).count().gt(0L))
+                .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 

@@ -52,13 +52,13 @@ public interface OrderByStep<T, U> extends Collector<U> {
     ///
     /// @param paths Collection of paths
     /// @return OrderOperator instance
-    OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths);
+    OrderOperator<T, U> orderBy(Collection<PathRef<T, ? extends Comparable<?>>> paths);
 
     /// Sort by a single path.
     ///
     /// @param path Path
     /// @return OrderOperator instance
-    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> path) {
+    default OrderOperator<T, U> orderBy(PathRef<T, ? extends Comparable<?>> path) {
         return orderBy(List.of(path));
     }
 
@@ -67,7 +67,7 @@ public interface OrderByStep<T, U> extends Collector<U> {
     /// @param p1 First path
     /// @param p2 Second path
     /// @return OrderOperator instance
-    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> p1, Path<T, ? extends Comparable<?>> p2) {
+    default OrderOperator<T, U> orderBy(PathRef<T, ? extends Comparable<?>> p1, PathRef<T, ? extends Comparable<?>> p2) {
         return orderBy(List.of(p1, p2));
     }
 
@@ -77,7 +77,7 @@ public interface OrderByStep<T, U> extends Collector<U> {
     /// @param p2 Second path
     /// @param p3 Third path
     /// @return OrderOperator instance
-    default OrderOperator<T, U> orderBy(Path<T, ? extends Comparable<?>> p1, Path<T, ? extends Comparable<?>> p2, Path<T, ? extends Comparable<?>> p3) {
+    default OrderOperator<T, U> orderBy(PathRef<T, ? extends Comparable<?>> p1, PathRef<T, ? extends Comparable<?>> p2, PathRef<T, ? extends Comparable<?>> p3) {
         return orderBy(List.of(p1, p2, p3));
     }
 

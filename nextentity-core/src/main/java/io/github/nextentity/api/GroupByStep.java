@@ -27,20 +27,20 @@ public interface GroupByStep<T, U> extends OrderByStep<T, U> {
     ///
     /// @param path Path
     /// @return Query having step after grouping
-    HavingStep<T, U> groupBy(Path<T, ?> path);
+    HavingStep<T, U> groupBy(PathRef<T, ?> path);
 
     /// Add multiple paths as grouping conditions.
     ///
     /// @param paths Collection of paths
     /// @return Query having step after grouping
-    HavingStep<T, U> groupBy(Collection<Path<T, ?>> paths);
+    HavingStep<T, U> groupBy(Collection<PathRef<T, ?>> paths);
 
     /// Add two paths as grouping conditions.
     ///
     /// @param p0 First path
     /// @param p1 Second path
     /// @return Query having step after grouping
-    default HavingStep<T, U> groupBy(Path<T, ?> p0, Path<T, ?> p1) {
+    default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1) {
         return groupBy(List.of(p0, p1));
     }
 
@@ -50,7 +50,7 @@ public interface GroupByStep<T, U> extends OrderByStep<T, U> {
     /// @param p1 Second path
     /// @param p2 Third path
     /// @return Query having step after grouping
-    default HavingStep<T, U> groupBy(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p2) {
+    default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2) {
         return groupBy(List.of(p0, p1, p2));
     }
 
@@ -61,7 +61,7 @@ public interface GroupByStep<T, U> extends OrderByStep<T, U> {
     /// @param p2 Third path
     /// @param p3 Fourth path
     /// @return Query having step after grouping
-    default HavingStep<T, U> groupBy(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p2, Path<T, ?> p3) {
+    default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2, PathRef<T, ?> p3) {
         return groupBy(List.of(p0, p1, p2, p3));
     }
 
@@ -73,7 +73,7 @@ public interface GroupByStep<T, U> extends OrderByStep<T, U> {
     /// @param p3 Fourth path
     /// @param p4 Fifth path
     /// @return Query having step after grouping
-    default HavingStep<T, U> groupBy(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p2, Path<T, ?> p3, Path<T, ?> p4) {
+    default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2, PathRef<T, ?> p3, PathRef<T, ?> p4) {
         return groupBy(List.of(p0, p1, p2, p3, p4));
     }
 
@@ -86,7 +86,7 @@ public interface GroupByStep<T, U> extends OrderByStep<T, U> {
     /// @param p4 Fifth path
     /// @param p5 Sixth path
     /// @return Query having step after grouping
-    default HavingStep<T, U> groupBy(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p2, Path<T, ?> p3, Path<T, ?> p4, Path<T, ?> p5) {
+    default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2, PathRef<T, ?> p3, PathRef<T, ?> p4, PathRef<T, ?> p5) {
         return groupBy(List.of(p0, p1, p2, p3, p4, p5));
     }
 }

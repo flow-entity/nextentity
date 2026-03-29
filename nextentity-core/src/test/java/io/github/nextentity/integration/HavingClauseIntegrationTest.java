@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -43,15 +43,15 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingCountGt(IntegrationTestContext context) {
         // When - Find departments with more than 2 employees
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(2L))
+                .having(Path.of(Employee::getId).count().gt(2L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
         // Then
         assertThat(results).isNotEmpty();
-        assertThat(results.get(0).get1()).isGreaterThan(2L);
+        assertThat(results.getFirst().get1()).isGreaterThan(2L);
     }
 
     @ParameterizedTest
@@ -60,9 +60,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingCountGe(IntegrationTestContext context) {
         // When - Find departments with at least 2 employees
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().ge(2L))
+                .having(Path.of(Employee::getId).count().ge(2L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -77,16 +77,16 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingCountEq(IntegrationTestContext context) {
         // When - Find departments with exactly 5 employees
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().eq(5L))
+                .having(Path.of(Employee::getId).count().eq(5L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
         // Then
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).get0()).isEqualTo(1L);
-        assertThat(results.get(0).get1()).isEqualTo(5L);
+        assertThat(results.getFirst().get0()).isEqualTo(1L);
+        assertThat(results.getFirst().get1()).isEqualTo(5L);
     }
 
     @ParameterizedTest
@@ -95,9 +95,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingCountLt(IntegrationTestContext context) {
         // When - Find departments with less than 3 employees
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().lt(3L))
+                .having(Path.of(Employee::getId).count().lt(3L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -116,9 +116,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingSumGt(IntegrationTestContext context) {
         // When - Find departments where total salary > 250000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).sum().gt(250000.0))
+                .having(Path.of(Employee::getSalary).sum().gt(250000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -133,9 +133,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingSumGe(IntegrationTestContext context) {
         // When - Find departments where total salary >= 200000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).sum().ge(200000.0))
+                .having(Path.of(Employee::getSalary).sum().ge(200000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -154,9 +154,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingAvgGt(IntegrationTestContext context) {
         // When - Find departments where average salary > 55000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).avg().gt(55000.0))
+                .having(Path.of(Employee::getSalary).avg().gt(55000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -171,9 +171,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingAvgBetween(IntegrationTestContext context) {
         // When - Find departments where average salary between 50000 and 60000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).avg())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).avg().between(50000.0, 60000.0))
+                .having(Path.of(Employee::getSalary).avg().between(50000.0, 60000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -192,9 +192,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingMaxGt(IntegrationTestContext context) {
         // When - Find departments where max salary > 70000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).max())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).max())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).max().gt(70000.0))
+                .having(Path.of(Employee::getSalary).max().gt(70000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -209,9 +209,9 @@ public class HavingClauseIntegrationTest {
     void shouldFilterGroupsWithHavingMinGt(IntegrationTestContext context) {
         // When - Find departments where min salary > 55000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).min())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).min())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).min().gt(55000.0))
+                .having(Path.of(Employee::getSalary).min().gt(55000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -229,10 +229,10 @@ public class HavingClauseIntegrationTest {
     void shouldCombineWhereGroupByHaving(IntegrationTestContext context) {
         // When - Find active employees grouped by department with count > 1
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(1L))
+                .having(Path.of(Employee::getId).count().gt(1L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -247,10 +247,10 @@ public class HavingClauseIntegrationTest {
     void shouldCombineWhereWithAggregateHaving(IntegrationTestContext context) {
         // When - Find departments with active employees having total salary > 100000
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getSalary).sum())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).sum())
                 .where(Employee::getActive).eq(true)
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getSalary).sum().gt(100000.0))
+                .having(Path.of(Employee::getSalary).sum().gt(100000.0))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -268,9 +268,9 @@ public class HavingClauseIntegrationTest {
     void shouldCombineHavingWithOrderBy(IntegrationTestContext context) {
         // When - Find departments with count > 1, ordered by department id
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(1L))
+                .having(Path.of(Employee::getId).count().gt(1L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -292,9 +292,9 @@ public class HavingClauseIntegrationTest {
     void shouldCombineHavingWithLimit(IntegrationTestContext context) {
         // When - Find departments with count > 0, limit 2
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(0L))
+                .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .limit(2);
 
@@ -312,9 +312,9 @@ public class HavingClauseIntegrationTest {
     void shouldCombineHavingWithPagination(IntegrationTestContext context) {
         // When - Find departments with count > 0, page 1 (offset 0, limit 2)
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(0L))
+                .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList(0, 2);
 
@@ -328,9 +328,9 @@ public class HavingClauseIntegrationTest {
     void shouldCombineHavingWithOffset(IntegrationTestContext context) {
         // When - Find departments with count > 0, page 2 (offset 1, limit 2)
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(0L))
+                .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList(1, 2);
 
@@ -348,9 +348,9 @@ public class HavingClauseIntegrationTest {
     void shouldCountWithHavingClause(IntegrationTestContext context) {
         // When - Count departments with employees > 1
         long count = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(1L))
+                .having(Path.of(Employee::getId).count().gt(1L))
                 .count();
 
         // Then
@@ -367,9 +367,9 @@ public class HavingClauseIntegrationTest {
     void shouldCheckExistenceWithHaving(IntegrationTestContext context) {
         // When - Check if departments with employees > 3 exist
         boolean exists = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
-                .having(get(Employee::getId).count().gt(3L))
+                .having(Path.of(Employee::getId).count().gt(3L))
                 .exist();
 
         // Then
@@ -386,9 +386,9 @@ public class HavingClauseIntegrationTest {
     void shouldGroupByStatusWithHaving(IntegrationTestContext context) {
         // When - Group by status with count > 0
         List<Tuple2<EmployeeStatus, Long>> results = context.queryEmployees()
-                .select(get(Employee::getStatus), get(Employee::getId).count())
+                .select(Path.of(Employee::getStatus), Path.of(Employee::getId).count())
                 .groupBy(Employee::getStatus)
-                .having(get(Employee::getId).count().gt(0L))
+                .having(Path.of(Employee::getId).count().gt(0L))
                 .getList();
 
         // Then
@@ -409,9 +409,9 @@ public class HavingClauseIntegrationTest {
     void shouldGroupByMultipleColumnsWithHaving(IntegrationTestContext context) {
         // When - Group by department and active status with count > 0
         var results = context.queryEmployees()
-                .select(get(Employee::getDepartmentId), get(Employee::getActive), get(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId, Employee::getActive)
-                .having(get(Employee::getId).count().gt(0L))
+                .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -429,9 +429,9 @@ public class HavingClauseIntegrationTest {
     void shouldUseHavingWithCountDistinct(IntegrationTestContext context) {
         // When - Group by active status with distinct department count > 2
         var results = context.queryEmployees()
-                .select(get(Employee::getActive), get(Employee::getDepartmentId).countDistinct())
+                .select(Path.of(Employee::getActive), Path.of(Employee::getDepartmentId).countDistinct())
                 .groupBy(Employee::getActive)
-                .having(get(Employee::getDepartmentId).countDistinct().gt(2L))
+                .having(Path.of(Employee::getDepartmentId).countDistinct().gt(2L))
                 .getList();
 
         // Then
@@ -448,9 +448,9 @@ public class HavingClauseIntegrationTest {
     void shouldUseHavingOnDepartmentQuery(IntegrationTestContext context) {
         // When - Group departments by active status with budget sum > 100000
         var results = context.queryDepartments()
-                .select(get(Department::getActive), get(Department::getBudget).sum())
+                .select(Path.of(Department::getActive), Path.of(Department::getBudget).sum())
                 .groupBy(Department::getActive)
-                .having(get(Department::getBudget).sum().gt(100000.0))
+                .having(Path.of(Department::getBudget).sum().gt(100000.0))
                 .getList();
 
         // Then

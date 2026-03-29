@@ -87,7 +87,7 @@ public interface Collector<T> {
     /// @return First result, null if not exists
     default T getFirst(int offset) {
         List<T> list = getList(offset, 1);
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     /// Gets a single result, throws an exception if not exists.
@@ -130,7 +130,7 @@ public interface Collector<T> {
         if (list.size() > 1) {
             throw new IllegalStateException("found more than one");
         }
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     /// Gets all results.
@@ -179,7 +179,7 @@ public interface Collector<T> {
     /// @return First result, null if not exists
     default T getFirst(int offset, LockModeType lockModeType) {
         List<T> list = getList(offset, 1, lockModeType);
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     /// Gets a single result, throws an exception if not exists, and specifies lock mode.
@@ -227,7 +227,7 @@ public interface Collector<T> {
         if (list.size() > 1) {
             throw new IllegalStateException("found more than one");
         }
-        return list.isEmpty() ? null : list.get(0);
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     /// Gets all results from the specified offset, and specifies lock mode.

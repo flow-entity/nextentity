@@ -1,11 +1,10 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.EntityPath;
-import io.github.nextentity.api.PathExpression;
+import io.github.nextentity.api.Path;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
-import io.github.nextentity.core.util.Paths;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -41,11 +40,11 @@ public class FetchStepMultipleParametersIntegrationTest {
     @DisplayName("Should fetch two path expressions")
     void shouldFetchTwoPathExpressions(IntegrationTestContext context) {
         // Given
-        EntityPath<Employee, ?> departmentPath = Paths.get(Employee::getDepartment);
+        EntityPath<Employee, ?> departmentPath = EntityPath.of(Employee::getDepartment);
 
         // When
         List<Employee> employees = context.queryEmployees()
-                .fetch(departmentPath, Paths.get(Employee::getDepartment))
+                .fetch(departmentPath, Path.of(Employee::getDepartment))
                 .orderBy(Employee::getId).asc()
                 .getList();
 
@@ -63,11 +62,11 @@ public class FetchStepMultipleParametersIntegrationTest {
     @DisplayName("Should fetch three path expressions")
     void shouldFetchThreePathExpressions(IntegrationTestContext context) {
         // Given
-        EntityPath<Employee, ?> departmentPath = Paths.get(Employee::getDepartment);
+        EntityPath<Employee, ?> departmentPath = EntityPath.of(Employee::getDepartment);
 
         // When
         List<Employee> employees = context.queryEmployees()
-                .fetch(departmentPath, Paths.get(Employee::getDepartment), Paths.get(Employee::getDepartment))
+                .fetch(departmentPath, Path.of(Employee::getDepartment), Path.of(Employee::getDepartment))
                 .orderBy(Employee::getId).asc()
                 .getList();
 

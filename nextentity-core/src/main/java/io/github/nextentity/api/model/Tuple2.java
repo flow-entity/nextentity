@@ -1,7 +1,5 @@
 package io.github.nextentity.api.model;
 
-import java.util.List;
-
 ///
 /// 2-tuple interface, representing a tuple containing 2 elements.
 /// <p>

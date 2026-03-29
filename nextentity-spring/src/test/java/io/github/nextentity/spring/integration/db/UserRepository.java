@@ -204,19 +204,19 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().where(predicate);
     }
 
+    public <N> ExpressionBuilder.PathOperator<User, N, ? extends BaseWhereStep<User, User>> where(PathRef<User, N> path) {
+        return getQuery().where(path);
+    }
+
+    public <N extends Number> ExpressionBuilder.NumberOperator<User, N, ? extends BaseWhereStep<User, User>> where(PathRef.NumberRef<User, N> path) {
+        return getQuery().where(path);
+    }
+
+    public ExpressionBuilder.StringOperator<User, ? extends BaseWhereStep<User, User>> where(PathRef.StringRef<User> path) {
+        return getQuery().where(path);
+    }
+
     public <N> ExpressionBuilder.PathOperator<User, N, ? extends BaseWhereStep<User, User>> where(Path<User, N> path) {
-        return getQuery().where(path);
-    }
-
-    public <N extends Number> ExpressionBuilder.NumberOperator<User, N, ? extends BaseWhereStep<User, User>> where(Path.NumberRef<User, N> path) {
-        return getQuery().where(path);
-    }
-
-    public ExpressionBuilder.StringOperator<User, ? extends BaseWhereStep<User, User>> where(Path.StringRef<User> path) {
-        return getQuery().where(path);
-    }
-
-    public <N> ExpressionBuilder.PathOperator<User, N, ? extends BaseWhereStep<User, User>> where(PathExpression<User, N> path) {
         return getQuery().where(path);
     }
 
@@ -244,19 +244,19 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().orderBy(order1, order2, order3);
     }
 
-    public OrderOperator<User, User> orderBy(Collection<Path<User, ? extends Comparable<?>>> paths) {
+    public OrderOperator<User, User> orderBy(Collection<PathRef<User, ? extends Comparable<?>>> paths) {
         return getQuery().orderBy(paths);
     }
 
-    public OrderOperator<User, User> orderBy(Path<User, ? extends Comparable<?>> path) {
+    public OrderOperator<User, User> orderBy(PathRef<User, ? extends Comparable<?>> path) {
         return getQuery().orderBy(path);
     }
 
-    public OrderOperator<User, User> orderBy(Path<User, ? extends Comparable<?>> p1, Path<User, ? extends Comparable<?>> p2) {
+    public OrderOperator<User, User> orderBy(PathRef<User, ? extends Comparable<?>> p1, PathRef<User, ? extends Comparable<?>> p2) {
         return getQuery().orderBy(p1, p2);
     }
 
-    public OrderOperator<User, User> orderBy(Path<User, ? extends Comparable<?>> p1, Path<User, ? extends Comparable<?>> p2, Path<User, ? extends Comparable<?>> p3) {
+    public OrderOperator<User, User> orderBy(PathRef<User, ? extends Comparable<?>> p1, PathRef<User, ? extends Comparable<?>> p2, PathRef<User, ? extends Comparable<?>> p3) {
         return getQuery().orderBy(p1, p2, p3);
     }
 
@@ -276,11 +276,11 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b, c, d, e, f, g, h);
     }
 
-    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d) {
+    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d) {
         return getQuery().selectDistinct(a, b, c, d);
     }
 
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g, Path<User, H> h, Path<User, I> i, Path<User, J> j) {
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i, PathRef<User, J> j) {
         return getQuery().selectDistinct(a, b, c, d, e, f, g, h, i, j);
     }
 
@@ -292,7 +292,7 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(a, b, c, d, e);
     }
 
-    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e) {
+    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e) {
         return getQuery().selectDistinct(a, b, c, d, e);
     }
 
@@ -300,7 +300,7 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b, c);
     }
 
-    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g, Path<User, H> h, Path<User, I> i) {
+    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i) {
         return getQuery().selectDistinct(a, b, c, d, e, f, g, h, i);
     }
 
@@ -316,11 +316,11 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b, c, d);
     }
 
-    public <R> WhereStep<User, R> select(Path<User, ? extends R> path) {
+    public <R> WhereStep<User, R> select(PathRef<User, ? extends R> path) {
         return getQuery().select(path);
     }
 
-    public WhereStep<User, Tuple> select(Collection<Path<User, ?>> paths) {
+    public WhereStep<User, Tuple> select(Collection<PathRef<User, ?>> paths) {
         return getQuery().select(paths);
     }
 
@@ -340,31 +340,31 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(paths);
     }
 
-    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g, Path<User, H> h) {
+    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h) {
         return getQuery().select(a, b, c, d, e, f, g, h);
     }
 
-    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f) {
+    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f) {
         return getQuery().selectDistinct(a, b, c, d, e, f);
     }
 
-    public <A, B> WhereStep<User, Tuple2<A, B>> select(Path<User, A> a, Path<User, B> b) {
+    public <A, B> WhereStep<User, Tuple2<A, B>> select(PathRef<User, A> a, PathRef<User, B> b) {
         return getQuery().select(a, b);
     }
 
-    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c) {
+    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c) {
         return getQuery().select(a, b, c);
     }
 
-    public <R> WhereStep<User, R> selectDistinct(Path<User, ? extends R> path) {
+    public <R> WhereStep<User, R> selectDistinct(PathRef<User, ? extends R> path) {
         return getQuery().selectDistinct(path);
     }
 
-    public <A, B> WhereStep<User, Tuple2<A, B>> selectDistinct(Path<User, A> a, Path<User, B> b) {
+    public <A, B> WhereStep<User, Tuple2<A, B>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b) {
         return getQuery().selectDistinct(a, b);
     }
 
-    public WhereStep<User, Tuple> selectDistinct(Collection<Path<User, ?>> paths) {
+    public WhereStep<User, Tuple> selectDistinct(Collection<PathRef<User, ?>> paths) {
         return getQuery().selectDistinct(paths);
     }
 
@@ -372,19 +372,19 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(a, b, c, d, e, f, g, h);
     }
 
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g, Path<User, H> h, Path<User, I> i, Path<User, J> j) {
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i, PathRef<User, J> j) {
         return getQuery().select(a, b, c, d, e, f, g, h, i, j);
     }
 
-    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g) {
+    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g) {
         return getQuery().selectDistinct(a, b, c, d, e, f, g);
     }
 
-    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c) {
+    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c) {
         return getQuery().selectDistinct(a, b, c);
     }
 
-    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d) {
+    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d) {
         return getQuery().select(a, b, c, d);
     }
 
@@ -396,15 +396,15 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(a, b, c, d);
     }
 
-    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g, Path<User, H> h, Path<User, I> i) {
+    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i) {
         return getQuery().select(a, b, c, d, e, f, g, h, i);
     }
 
-    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g, Path<User, H> h) {
+    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h) {
         return getQuery().selectDistinct(a, b, c, d, e, f, g, h);
     }
 
-    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e) {
+    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e) {
         return getQuery().select(a, b, c, d, e);
     }
 
@@ -416,7 +416,7 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b);
     }
 
-    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f) {
+    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f) {
         return getQuery().select(a, b, c, d, e, f);
     }
 
@@ -436,28 +436,12 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(expression);
     }
 
-    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> select(Path<User, A> a, Path<User, B> b, Path<User, C> c, Path<User, D> d, Path<User, E> e, Path<User, F> f, Path<User, G> g) {
+    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g) {
         return getQuery().select(a, b, c, d, e, f, g);
     }
 
-    public BaseWhereStep<User, User> fetch(List<PathExpression<User, ?>> pathExpressions) {
+    public BaseWhereStep<User, User> fetch(List<Path<User, ?>> pathExpressions) {
         return getQuery().fetch(pathExpressions);
-    }
-
-    public BaseWhereStep<User, User> fetch(PathExpression<User, ?> path) {
-        return getQuery().fetch(path);
-    }
-
-    public BaseWhereStep<User, User> fetch(PathExpression<User, ?> p0, PathExpression<User, ?> p1) {
-        return getQuery().fetch(p0, p1);
-    }
-
-    public BaseWhereStep<User, User> fetch(PathExpression<User, ?> p0, PathExpression<User, ?> p1, PathExpression<User, ?> p3) {
-        return getQuery().fetch(p0, p1, p3);
-    }
-
-    public BaseWhereStep<User, User> fetch(Collection<Path<User, ?>> paths) {
-        return getQuery().fetch(paths);
     }
 
     public BaseWhereStep<User, User> fetch(Path<User, ?> path) {
@@ -469,6 +453,22 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     public BaseWhereStep<User, User> fetch(Path<User, ?> p0, Path<User, ?> p1, Path<User, ?> p3) {
+        return getQuery().fetch(p0, p1, p3);
+    }
+
+    public BaseWhereStep<User, User> fetch(Collection<PathRef<User, ?>> paths) {
+        return getQuery().fetch(paths);
+    }
+
+    public BaseWhereStep<User, User> fetch(PathRef<User, ?> path) {
+        return getQuery().fetch(path);
+    }
+
+    public BaseWhereStep<User, User> fetch(PathRef<User, ?> p0, PathRef<User, ?> p1) {
+        return getQuery().fetch(p0, p1);
+    }
+
+    public BaseWhereStep<User, User> fetch(PathRef<User, ?> p0, PathRef<User, ?> p1, PathRef<User, ?> p3) {
         return getQuery().fetch(p0, p1, p3);
     }
 

@@ -3,8 +3,8 @@ package io.github.nextentity.api;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.Path.NumberRef;
-import io.github.nextentity.api.Path.StringRef;
+import io.github.nextentity.api.PathRef.NumberRef;
+import io.github.nextentity.api.PathRef.StringRef;
 
 /// Query condition building step interface, providing methods to add query conditions.
 ///
@@ -25,7 +25,7 @@ public interface BaseWhereStep<T, U> extends OrderByStep<T, U> {
     /// @param path Path
     /// @param <N> Path type
     /// @return Path operator
-    <N> PathOperator<T, N, ? extends BaseWhereStep<T, U>> where(Path<T, N> path);
+    <N> PathOperator<T, N, ? extends BaseWhereStep<T, U>> where(PathRef<T, N> path);
 
     /// Adds number path as query condition.
     ///
@@ -45,7 +45,7 @@ public interface BaseWhereStep<T, U> extends OrderByStep<T, U> {
     /// @param path Path expression
     /// @param <N> Path type
     /// @return Path operator
-    <N> PathOperator<T, N, ? extends BaseWhereStep<T, U>> where(PathExpression<T, N> path);
+    <N> PathOperator<T, N, ? extends BaseWhereStep<T, U>> where(Path<T, N> path);
 
     /// Adds number path as query condition.
     ///

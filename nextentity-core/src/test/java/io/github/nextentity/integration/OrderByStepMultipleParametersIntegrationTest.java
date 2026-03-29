@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.Order;
-import io.github.nextentity.core.util.Paths;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -41,7 +41,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
     @DisplayName("Should order by single Order object")
     void shouldOrderBySingleOrder(IntegrationTestContext context) {
         // Given
-        Order<Employee> order = Paths.get(Employee::getName).asc();
+        Order<Employee> order = Path.of(Employee::getName).asc();
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -66,8 +66,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
     @DisplayName("Should order by two Order objects")
     void shouldOrderByTwoOrders(IntegrationTestContext context) {
         // Given
-        Order<Employee> salaryOrder = Paths.get(Employee::getSalary).desc();
-        Order<Employee> nameOrder = Paths.get(Employee::getName).asc();
+        Order<Employee> salaryOrder = Path.of(Employee::getSalary).desc();
+        Order<Employee> nameOrder = Path.of(Employee::getName).asc();
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -92,8 +92,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
     @DisplayName("Should order by two ascending Order objects")
     void shouldOrderByTwoAscendingOrders(IntegrationTestContext context) {
         // Given
-        Order<Employee> idOrder = Paths.get(Employee::getId).asc();
-        Order<Employee> nameOrder = Paths.get(Employee::getName).asc();
+        Order<Employee> idOrder = Path.of(Employee::getId).asc();
+        Order<Employee> nameOrder = Path.of(Employee::getName).asc();
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -115,9 +115,9 @@ public class OrderByStepMultipleParametersIntegrationTest {
     @DisplayName("Should order by three Order objects")
     void shouldOrderByThreeOrders(IntegrationTestContext context) {
         // Given
-        Order<Employee> salaryOrder = Paths.get(Employee::getSalary).desc();
-        Order<Employee> nameOrder = Paths.get(Employee::getName).asc();
-        Order<Employee> idOrder = Paths.get(Employee::getId).asc();
+        Order<Employee> salaryOrder = Path.of(Employee::getSalary).desc();
+        Order<Employee> nameOrder = Path.of(Employee::getName).asc();
+        Order<Employee> idOrder = Path.of(Employee::getId).asc();
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -215,8 +215,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
     @DisplayName("Should combine multiple orders with where clause")
     void shouldCombineMultipleOrdersWithWhere(IntegrationTestContext context) {
         // Given
-        Order<Employee> salaryOrder = Paths.get(Employee::getSalary).desc();
-        Order<Employee> nameOrder = Paths.get(Employee::getName).asc();
+        Order<Employee> salaryOrder = Path.of(Employee::getSalary).desc();
+        Order<Employee> nameOrder = Path.of(Employee::getName).asc();
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -237,8 +237,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
     @DisplayName("Should count with multiple Order objects")
     void shouldCountWithMultipleOrders(IntegrationTestContext context) {
         // Given
-        Order<Employee> salaryOrder = Paths.get(Employee::getSalary).desc();
-        Order<Employee> idOrder = Paths.get(Employee::getId).asc();
+        Order<Employee> salaryOrder = Path.of(Employee::getSalary).desc();
+        Order<Employee> idOrder = Path.of(Employee::getId).asc();
 
         // When
         long count = context.queryEmployees()

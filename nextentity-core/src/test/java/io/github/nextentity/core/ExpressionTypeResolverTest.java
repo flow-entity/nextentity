@@ -34,7 +34,7 @@ class ExpressionTypeResolverTest {
         @Test
         void getLiteralType_Integer_ReturnsIntegerClass() {
             // given
-            LiteralNode node = new LiteralNode(Integer.valueOf(42));
+            LiteralNode node = new LiteralNode(42);
 
             // when
             Class<?> result = ExpressionTypeResolver.getLiteralType(node);

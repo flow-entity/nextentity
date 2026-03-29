@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.time.LocalDate;
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -697,7 +697,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use ge predicate as where condition")
         void shouldUseGePredicateAsWhereCondition(IntegrationTestContext context) {
             // Given - create predicate using ge
-            Predicate<Employee> predicate = get(Employee::getSalary).ge(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).ge(SALARY_THRESHOLD);
 
             // When - pass predicate to where()
             List<Employee> employees = context.queryEmployees()
@@ -718,7 +718,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use gt predicate as where condition")
         void shouldUseGtPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).gt(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).gt(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -739,7 +739,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use le predicate as where condition")
         void shouldUseLePredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).le(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).le(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -760,7 +760,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use lt predicate as where condition")
         void shouldUseLtPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).lt(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).lt(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -783,7 +783,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // Given
             double minSalary = 55000.0;
             double maxSalary = 75000.0;
-            Predicate<Employee> predicate = get(Employee::getSalary).between(minSalary, maxSalary);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).between(minSalary, maxSalary);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -806,7 +806,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // Given
             double minSalary = 55000.0;
             double maxSalary = 75000.0;
-            Predicate<Employee> predicate = get(Employee::getSalary).notBetween(minSalary, maxSalary);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).notBetween(minSalary, maxSalary);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -827,7 +827,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use geIfNotNull predicate as where condition")
         void shouldUseGeIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).geIfNotNull(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).geIfNotNull(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -849,7 +849,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         void shouldUseGeIfNotNullNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
             long totalCount = context.queryEmployees().count();
-            Predicate<Employee> predicate = get(Employee::getSalary).geIfNotNull(null);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).geIfNotNull(null);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -868,7 +868,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use gtIfNotNull predicate as where condition")
         void shouldUseGtIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).gtIfNotNull(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).gtIfNotNull(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -889,7 +889,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use leIfNotNull predicate as where condition")
         void shouldUseLeIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).leIfNotNull(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).leIfNotNull(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -910,7 +910,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use ltIfNotNull predicate as where condition")
         void shouldUseLtIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> predicate = get(Employee::getSalary).ltIfNotNull(SALARY_THRESHOLD);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).ltIfNotNull(SALARY_THRESHOLD);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -931,8 +931,8 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should combine multiple comparison predicates with AND")
         void shouldCombineMultiplePredicatesWithAnd(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> minSalaryPredicate = get(Employee::getSalary).ge(50000.0);
-            Predicate<Employee> maxSalaryPredicate = get(Employee::getSalary).le(80000.0);
+            Predicate<Employee> minSalaryPredicate = Path.of(Employee::getSalary).ge(50000.0);
+            Predicate<Employee> maxSalaryPredicate = Path.of(Employee::getSalary).le(80000.0);
             Predicate<Employee> combined = minSalaryPredicate.and(maxSalaryPredicate);
 
             // When
@@ -954,8 +954,8 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should combine multiple comparison predicates with OR")
         void shouldCombineMultiplePredicatesWithOr(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> lowSalaryPredicate = get(Employee::getSalary).lt(55000.0);
-            Predicate<Employee> highSalaryPredicate = get(Employee::getSalary).gt(75000.0);
+            Predicate<Employee> lowSalaryPredicate = Path.of(Employee::getSalary).lt(55000.0);
+            Predicate<Employee> highSalaryPredicate = Path.of(Employee::getSalary).gt(75000.0);
             Predicate<Employee> combined = lowSalaryPredicate.or(highSalaryPredicate);
 
             // When
@@ -977,7 +977,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should combine comparison predicate with other where conditions")
         void shouldCombinePredicateWithOtherConditions(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> salaryPredicate = get(Employee::getSalary).ge(50000.0);
+            Predicate<Employee> salaryPredicate = Path.of(Employee::getSalary).ge(50000.0);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -998,7 +998,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should use NOT on comparison predicate")
         void shouldUseNotOnComparisonPredicate(IntegrationTestContext context) {
             // Given
-            Predicate<Employee> highSalary = get(Employee::getSalary).gt(80000.0);
+            Predicate<Employee> highSalary = Path.of(Employee::getSalary).gt(80000.0);
 
             // When
             List<Employee> employees = context.queryEmployees()
@@ -1019,9 +1019,9 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         @DisplayName("Should create complex predicate with comparison expressions")
         void shouldCreateComplexPredicateWithComparisonExpressions(IntegrationTestContext context) {
             // Given: (salary >= 50000 AND salary <= 80000) OR id < 3
-            Predicate<Employee> salaryRange = get(Employee::getSalary).ge(50000.0)
-                    .and(get(Employee::getSalary).le(80000.0));
-            Predicate<Employee> lowId = get(Employee::getId).lt(3L);
+            Predicate<Employee> salaryRange = Path.of(Employee::getSalary).ge(50000.0)
+                    .and(Path.of(Employee::getSalary).le(80000.0));
+            Predicate<Employee> lowId = Path.of(Employee::getId).lt(3L);
             Predicate<Employee> complex = salaryRange.or(lowId);
 
             // When
@@ -1048,7 +1048,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                     .select(Employee::getSalary)
                     .where(Employee::getId).eq(1L)
                     .getSingle();
-            Predicate<Employee> predicate = get(Employee::getSalary).between(employee1Salary, 80000.0);
+            Predicate<Employee> predicate = Path.of(Employee::getSalary).between(employee1Salary, 80000.0);
 
             // When
             List<Employee> employees = context.queryEmployees()

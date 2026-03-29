@@ -1,7 +1,7 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.api.Path;
+import io.github.nextentity.api.PathRef;
 import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
@@ -37,17 +37,17 @@ public class ExpressionNodes {
         return ImmutableList.concat(nodes.asList(), getNode(expressions));
     }
 
-    public static <T> ImmutableList<ExpressionNode> join(ImmutableArray<ExpressionNode> nodes, Path<T, ?> path) {
+    public static <T> ImmutableList<ExpressionNode> join(ImmutableArray<ExpressionNode> nodes, PathRef<T, ?> path) {
         ImmutableList.Builder<ExpressionNode> builder = new ImmutableList.Builder<>(nodes.size() + 1);
         builder.addAll(nodes);
         builder.add(PathNode.of(path));
         return builder.build();
     }
 
-    public static <T> ImmutableList<ExpressionNode> join(ImmutableArray<ExpressionNode> nodes, Collection<Path<T, ?>> paths) {
+    public static <T> ImmutableList<ExpressionNode> join(ImmutableArray<ExpressionNode> nodes, Collection<PathRef<T, ?>> paths) {
         ImmutableList.Builder<ExpressionNode> builder = new ImmutableList.Builder<>(nodes.size() + paths.size());
         builder.addAll(nodes);
-        for (Path<T, ?> path : paths) {
+        for (PathRef<T, ?> path : paths) {
             builder.add(PathNode.of(path));
         }
         return builder.build();

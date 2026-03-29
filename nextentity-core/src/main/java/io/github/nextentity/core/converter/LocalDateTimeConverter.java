@@ -26,25 +26,29 @@ public class LocalDateTimeConverter implements TypeConverter {
         if (value == null || targetType.isInstance(value)) {
             return value;
         }
-        if (value instanceof java.sql.Date && targetType == LocalDate.class) {
-            return ((java.sql.Date) value).toLocalDate();
-        }
-        if (value instanceof Timestamp && targetType == LocalDateTime.class) {
-            return ((Timestamp) value).toLocalDateTime();
-        }
-        if (value instanceof Time && targetType == LocalTime.class) {
-            return ((Time) value).toLocalTime();
-        }
-        if (value instanceof java.util.Date) {
-            long time = ((java.util.Date) value).getTime();
-            if (targetType == LocalDate.class) {
-                return new java.sql.Date(time).toLocalDate();
+        switch (value) {
+            case java.sql.Date date when targetType == LocalDate.class -> {
+                return date.toLocalDate();
             }
-            if (targetType == LocalDateTime.class) {
-                return (new Timestamp(time)).toLocalDateTime();
+            case Timestamp timestamp when targetType == LocalDateTime.class -> {
+                return timestamp.toLocalDateTime();
             }
-            if (targetType == LocalTime.class) {
-                return (new Time(time)).toLocalTime();
+            case Time time1 when targetType == LocalTime.class -> {
+                return time1.toLocalTime();
+            }
+            case java.util.Date date -> {
+                long time = date.getTime();
+                if (targetType == LocalDate.class) {
+                    return new java.sql.Date(time).toLocalDate();
+                }
+                if (targetType == LocalDateTime.class) {
+                    return (new Timestamp(time)).toLocalDateTime();
+                }
+                if (targetType == LocalTime.class) {
+                    return (new Time(time)).toLocalTime();
+                }
+            }
+            default -> {
             }
         }
         return value;

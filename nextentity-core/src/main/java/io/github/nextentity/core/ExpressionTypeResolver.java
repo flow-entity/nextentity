@@ -104,7 +104,7 @@ public class ExpressionTypeResolver {
 
     private static Class<?> getFirstOperandType(OperatorNode expression, EntityType entityType) {
         if (!expression.operands().isEmpty()) {
-            return getExpressionType(expression.operands().get(0), entityType);
+            return getExpressionType(expression.operands().getFirst(), entityType);
         }
         return Object.class;
     }

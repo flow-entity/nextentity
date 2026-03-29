@@ -3,8 +3,8 @@ package io.github.nextentity.api;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
-import io.github.nextentity.api.Path.NumberRef;
-import io.github.nextentity.api.Path.StringRef;
+import io.github.nextentity.api.PathRef.NumberRef;
+import io.github.nextentity.api.PathRef.StringRef;
 
 /// Rows select where step interface, providing condition construction methods for row selection.
 ///
@@ -27,7 +27,7 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     /// @param path Path
     /// @param <N> Path type
     /// @return PathOperator instance
-    <N> PathOperator<T, N, WhereStep<T, U>> where(Path<T, N> path);
+    <N> PathOperator<T, N, WhereStep<T, U>> where(PathRef<T, N> path);
 
     /// Build conditions based on the specified number path.
     ///
@@ -47,7 +47,7 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     /// @param path Path expression
     /// @param <N> Path type
     /// @return PathOperator instance
-    <N> PathOperator<T, N, WhereStep<T, U>> where(PathExpression<T, N> path);
+    <N> PathOperator<T, N, WhereStep<T, U>> where(Path<T, N> path);
 
     /// Build conditions based on the specified number path expression.
     ///

@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
@@ -12,7 +13,6 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
-import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -79,8 +79,8 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with OR condition")
     void shouldFilterWithOr(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> isAlice = get(Employee::getName).eq("Alice Johnson");
-        Predicate<Employee> isBob = get(Employee::getName).eq("Bob Smith");
+        Predicate<Employee> isAlice = Path.of(Employee::getName).eq("Alice Johnson");
+        Predicate<Employee> isBob = Path.of(Employee::getName).eq("Bob Smith");
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -102,8 +102,8 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with OR on different fields")
     void shouldFilterWithOrDifferentFields(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> isHighSalary = get(Employee::getSalary).gt(80000.0);
-        Predicate<Employee> isDepartment1 = get(Employee::getDepartmentId).eq(1L);
+        Predicate<Employee> isHighSalary = Path.of(Employee::getSalary).gt(80000.0);
+        Predicate<Employee> isDepartment1 = Path.of(Employee::getDepartmentId).eq(1L);
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -123,7 +123,7 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with NOT condition")
     void shouldFilterWithNot(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> isActive = get(Employee::getActive).eq(true);
+        Predicate<Employee> isActive = Path.of(Employee::getActive).eq(true);
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -143,9 +143,9 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with complex AND-OR combination")
     void shouldFilterWithComplexAndOr(IntegrationTestContext context) {
         // Given: (active AND departmentId = 1) OR (salary > 80000)
-        Predicate<Employee> activeAndDept1 = get(Employee::getActive).eq(true)
-                .and(get(Employee::getDepartmentId).eq(1L));
-        Predicate<Employee> highSalary = get(Employee::getSalary).gt(80000.0);
+        Predicate<Employee> activeAndDept1 = Path.of(Employee::getActive).eq(true)
+                .and(Path.of(Employee::getDepartmentId).eq(1L));
+        Predicate<Employee> highSalary = Path.of(Employee::getSalary).gt(80000.0);
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -166,9 +166,9 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with nested OR conditions")
     void shouldFilterWithNestedOr(IntegrationTestContext context) {
         // Given: name = 'Alice' OR (name = 'Bob' AND active = true)
-        Predicate<Employee> isAlice = get(Employee::getName).eq("Alice Johnson");
-        Predicate<Employee> isBobAndActive = get(Employee::getName).eq("Bob Smith")
-                .and(get(Employee::getActive).eq(true));
+        Predicate<Employee> isAlice = Path.of(Employee::getName).eq("Alice Johnson");
+        Predicate<Employee> isBobAndActive = Path.of(Employee::getName).eq("Bob Smith")
+                .and(Path.of(Employee::getActive).eq(true));
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -190,7 +190,7 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should combine Predicate with where clause")
     void shouldCombinePredicateWithWhere(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> isDepartment1 = get(Employee::getDepartmentId).eq(1L);
+        Predicate<Employee> isDepartment1 = Path.of(Employee::getDepartmentId).eq(1L);
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -211,9 +211,9 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with multiple OR conditions")
     void shouldFilterWithMultipleOr(IntegrationTestContext context) {
         // Given: name = 'Alice' OR name = 'Bob' OR name = 'Charlie'
-        Predicate<Employee> isAlice = get(Employee::getName).eq("Alice Johnson");
-        Predicate<Employee> isBob = get(Employee::getName).eq("Bob Smith");
-        Predicate<Employee> isCharlie = get(Employee::getName).eq("Charlie Brown");
+        Predicate<Employee> isAlice = Path.of(Employee::getName).eq("Alice Johnson");
+        Predicate<Employee> isBob = Path.of(Employee::getName).eq("Bob Smith");
+        Predicate<Employee> isCharlie = Path.of(Employee::getName).eq("Charlie Brown");
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -236,8 +236,8 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with NOT and OR")
     void shouldFilterWithNotAndOr(IntegrationTestContext context) {
         // Given: NOT (departmentId = 1 OR departmentId = 2)
-        Predicate<Employee> dept1Or2 = get(Employee::getDepartmentId).eq(1L)
-                .or(get(Employee::getDepartmentId).eq(2L));
+        Predicate<Employee> dept1Or2 = Path.of(Employee::getDepartmentId).eq(1L)
+                .or(Path.of(Employee::getDepartmentId).eq(2L));
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -257,10 +257,10 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with complex nested predicates")
     void shouldFilterWithComplexNested(IntegrationTestContext context) {
         // Given: (active = true AND status = ACTIVE) OR (salary > 75000 AND departmentId = 1)
-        Predicate<Employee> activeAndStatusActive = get(Employee::getActive).eq(true)
-                .and(get(Employee::getStatus).eq(EmployeeStatus.ACTIVE));
-        Predicate<Employee> highSalaryDept1 = get(Employee::getSalary).gt(75000.0)
-                .and(get(Employee::getDepartmentId).eq(1L));
+        Predicate<Employee> activeAndStatusActive = Path.of(Employee::getActive).eq(true)
+                .and(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE));
+        Predicate<Employee> highSalaryDept1 = Path.of(Employee::getSalary).gt(75000.0)
+                .and(Path.of(Employee::getDepartmentId).eq(1L));
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -282,8 +282,8 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter departments with predicates")
     void shouldFilterDepartmentsWithPredicates(IntegrationTestContext context) {
         // Given
-        Predicate<Department> isActive = get(Department::getActive).eq(true);
-        Predicate<Department> highBudget = get(Department::getBudget).gt(400000.0);
+        Predicate<Department> isActive = Path.of(Department::getActive).eq(true);
+        Predicate<Department> highBudget = Path.of(Department::getBudget).gt(400000.0);
 
         // When
         List<Department> departments = context.queryDepartments()
@@ -303,8 +303,8 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should combine predicates from different sources")
     void shouldCombinePredicatesFromDifferentSources(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> activePredicate = get(Employee::getActive).eq(true);
-        Predicate<Employee> statusPredicate = get(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
+        Predicate<Employee> activePredicate = Path.of(Employee::getActive).eq(true);
+        Predicate<Employee> statusPredicate = Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
         Predicate<Employee> combined = activePredicate.and(statusPredicate);
 
         // When
@@ -330,7 +330,7 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with predicate and IN clause")
     void shouldFilterWithPredicateAndIn(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> activePredicate = get(Employee::getActive).eq(true);
+        Predicate<Employee> activePredicate = Path.of(Employee::getActive).eq(true);
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -352,7 +352,7 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with predicate and LIKE")
     void shouldFilterWithPredicateAndLike(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> activePredicate = get(Employee::getActive).eq(true);
+        Predicate<Employee> activePredicate = Path.of(Employee::getActive).eq(true);
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -391,9 +391,9 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with triple AND")
     void shouldFilterWithTripleAnd(IntegrationTestContext context) {
         // Given
-        Predicate<Employee> p1 = get(Employee::getActive).eq(true);
-        Predicate<Employee> p2 = get(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
-        Predicate<Employee> p3 = get(Employee::getDepartmentId).eq(1L);
+        Predicate<Employee> p1 = Path.of(Employee::getActive).eq(true);
+        Predicate<Employee> p2 = Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE);
+        Predicate<Employee> p3 = Path.of(Employee::getDepartmentId).eq(1L);
         Predicate<Employee> combined = p1.and(p2).and(p3);
 
         // When
@@ -417,8 +417,8 @@ public class ComplexPredicateIntegrationTest {
     @DisplayName("Should filter with predicate negation")
     void shouldFilterWithPredicateNegation(IntegrationTestContext context) {
         // Given: NOT (active = true AND status = ACTIVE)
-        Predicate<Employee> activeAndStatus = get(Employee::getActive).eq(true)
-                .and(get(Employee::getStatus).eq(EmployeeStatus.ACTIVE));
+        Predicate<Employee> activeAndStatus = Path.of(Employee::getActive).eq(true)
+                .and(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE));
 
         // When
         List<Employee> employees = context.queryEmployees()

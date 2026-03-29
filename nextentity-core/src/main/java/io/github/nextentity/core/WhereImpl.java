@@ -38,22 +38,22 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public <N> ExpressionBuilder.PathOperator<T, N, WhereStep<T, U>> where(Path<T, N> path) {
+    public <N> ExpressionBuilder.PathOperator<T, N, WhereStep<T, U>> where(PathRef<T, N> path) {
         return new PathOperatorImpl<>(PathNode.of(path), this::andWhere);
     }
 
     @Override
-    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, WhereStep<T, U>> where(Path.NumberRef<T, N> path) {
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, WhereStep<T, U>> where(PathRef.NumberRef<T, N> path) {
         return new NumberOperatorImpl<>(PathNode.of(path), this::andWhere);
     }
 
     @Override
-    public ExpressionBuilder.StringOperator<T, WhereStep<T, U>> where(Path.StringRef<T> path) {
+    public ExpressionBuilder.StringOperator<T, WhereStep<T, U>> where(PathRef.StringRef<T> path) {
         return new StringOperatorImpl<>(PathNode.of(path), this::andWhere);
     }
 
     @Override
-    public <N> ExpressionBuilder.PathOperator<T, N, WhereStep<T, U>> where(PathExpression<T, N> path) {
+    public <N> ExpressionBuilder.PathOperator<T, N, WhereStep<T, U>> where(Path<T, N> path) {
         return new PathOperatorImpl<>(ExpressionNodes.getNode(path), this::andWhere);
     }
 
@@ -78,13 +78,13 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public HavingStep<T, U> groupBy(Path<T, ?> path) {
+    public HavingStep<T, U> groupBy(PathRef<T, ?> path) {
         ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), path);
         return update(queryStructure.groupBy(newList));
     }
 
     @Override
-    public HavingStep<T, U> groupBy(Collection<Path<T, ?>> paths) {
+    public HavingStep<T, U> groupBy(Collection<PathRef<T, ?>> paths) {
         ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), paths);
         return update(queryStructure.groupBy(newList));
     }
@@ -103,7 +103,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public OrderOperator<T, U> orderBy(Collection<Path<T, ? extends Comparable<?>>> paths) {
+    public OrderOperator<T, U> orderBy(Collection<PathRef<T, ? extends Comparable<?>>> paths) {
         ImmutableList<ExpressionNode> add = PathNode.mapping(paths);
         return new OrderOperatorImpl<>(this, add);
     }
