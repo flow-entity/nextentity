@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
@@ -562,6 +563,70 @@ public class SelectApiIntegrationTest {
         // Then
         assertThat(results).hasSize(1);
         assertThat(results.get(0).get0()).isLessThanOrEqualTo(results.get(0).get1());
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with list of typed expressions")
+    void shouldSelectDistinctWithListOfTypedExpressions(IntegrationTestContext context) {
+        // Given
+        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        expressions.add(get(Employee::getDepartmentId));
+        expressions.add(get(Employee::getActive));
+
+        // When
+        List<Tuple> results = context.queryEmployees()
+                .selectDistinct(expressions)
+                .getList();
+
+        // Then
+        assertThat(results).isNotEmpty();
+        // Verify distinctness - all tuples should be unique
+        long distinctCount = results.stream().distinct().count();
+        assertThat(results.size()).isEqualTo((int) distinctCount);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with list of typed expressions - aggregate functions")
+    void shouldSelectDistinctWithListOfTypedExpressionsAggregate(IntegrationTestContext context) {
+        // Given - using aggregate expressions as TypedExpression
+        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        expressions.add(get(Employee::getSalary).max());
+        expressions.add(get(Employee::getSalary).min());
+
+        // When
+        List<Tuple> results = context.queryEmployees()
+                .selectDistinct(expressions)
+                .getList();
+
+        // Then - aggregate results should produce one row
+        assertThat(results).hasSize(1);
+        Tuple tuple = results.get(0);
+        Double maxSalary = (Double) tuple.get(0);
+        Double minSalary = (Double) tuple.get(1);
+        assertThat(maxSalary).isNotNull();
+        assertThat(minSalary).isNotNull();
+        assertThat(maxSalary).isGreaterThanOrEqualTo(minSalary);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should select distinct with list of paths as typed expressions")
+    void shouldSelectDistinctWithListOfPathsAsTypedExpressions(IntegrationTestContext context) {
+        // Given - EntityPath extends TypedExpression
+        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        expressions.add(get(Employee::getDepartmentId));
+        expressions.add(get(Employee::getName));
+
+        // When
+        List<Tuple> results = context.queryEmployees()
+                .selectDistinct(expressions)
+                .orderBy(Employee::getDepartmentId).asc()
+                .getList();
+
+        // Then - all department+name combinations should be distinct (12 employees)
+        assertThat(results).hasSize(12);
     }
 
     // ========================================
