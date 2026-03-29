@@ -315,7 +315,7 @@ public class GenericApiTest {
     @ArgumentsSource(UserQueryProvider.class)
     public void testAggregateFunction(UserRepository userQuery) {
 
-        List<TypedExpression<User, ?>> selected = Arrays.asList(
+        List<Expression<User, ?>> selected = Arrays.asList(
                 Path.of(User::getRandomNumber).min(),
                 Path.of(User::getRandomNumber).max(),
                 Path.of(User::getRandomNumber).count(),
@@ -1169,7 +1169,7 @@ public class GenericApiTest {
 
         Date time = userQuery.users().get(20).getTime();
 
-        TypedExpression<User, Boolean> or = Path.of(User::isValid).eq(true)
+        Expression<User, Boolean> or = Path.of(User::isValid).eq(true)
                 .or(
                         EntityPath.of(User::getParentUser)
                                 .get(User::getUsername)
@@ -1833,7 +1833,7 @@ public class GenericApiTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     public void subQueryTest(UserRepository userQuery) {
-        TypedExpression<User, List<Integer>> ids = userQuery
+        Expression<User, List<Integer>> ids = userQuery
                 .select(User::getId).where(User::getId)
                 .in(1, 2, 3)
                 .asSubQuery();

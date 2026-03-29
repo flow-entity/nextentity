@@ -1,7 +1,7 @@
 package io.github.nextentity.core.expression;
 
+import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.ExpressionBuilder;
-import io.github.nextentity.api.TypedExpression;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Function;
@@ -37,31 +37,31 @@ public class NumberOperatorImpl<T, U extends Number, B> extends ExpressionBuilde
     }
 
     @Override
-    public NumberOperator<T, U, B> add(TypedExpression<T, U> expression) {
+    public NumberOperator<T, U, B> add(Expression<T, U> expression) {
         return operateToNumber(Operator.ADD, expression);
     }
 
     @Override
-    public NumberOperator<T, U, B> subtract(TypedExpression<T, U> expression) {
+    public NumberOperator<T, U, B> subtract(Expression<T, U> expression) {
         return operateToNumber(Operator.SUBTRACT, expression);
     }
 
     @Override
-    public NumberOperator<T, U, B> multiply(TypedExpression<T, U> expression) {
+    public NumberOperator<T, U, B> multiply(Expression<T, U> expression) {
         return operateToNumber(Operator.MULTIPLY, expression);
     }
 
     @Override
-    public NumberOperator<T, U, B> divide(TypedExpression<T, U> expression) {
+    public NumberOperator<T, U, B> divide(Expression<T, U> expression) {
         return operateToNumber(Operator.DIVIDE, expression);
     }
 
     @Override
-    public NumberOperator<T, U, B> mod(TypedExpression<T, U> expression) {
+    public NumberOperator<T, U, B> mod(Expression<T, U> expression) {
         return operateToNumber(Operator.MOD, expression);
     }
 
-    private @NonNull NumberOperatorImpl<T, U, B> operateToNumber(Operator operator, TypedExpression<T, U> value) {
+    private @NonNull NumberOperatorImpl<T, U, B> operateToNumber(Operator operator, Expression<T, U> value) {
         return new NumberOperatorImpl<>(operate(operator, getNode(value)), operatedCallback);
     }
 

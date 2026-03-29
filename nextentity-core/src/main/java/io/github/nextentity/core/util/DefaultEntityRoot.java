@@ -16,7 +16,7 @@ public class DefaultEntityRoot<T> implements EntityRoot<T> {
     }
 
     @Override
-    public <U> TypedExpression<T, U> literal(U value) {
+    public <U> Expression<T, U> literal(U value) {
         return new SimpleExpressionImpl<>(new LiteralNode(value));
     }
 

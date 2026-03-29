@@ -1,8 +1,8 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.PathRef;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
@@ -744,7 +744,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select distinct with list of typed expressions")
     void shouldSelectDistinctWithListOfTypedExpressions(IntegrationTestContext context) {
         // Given
-        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        List<Expression<Employee, ?>> expressions = new ArrayList<>();
         expressions.add(Path.of(Employee::getDepartmentId));
         expressions.add(Path.of(Employee::getActive));
 
@@ -765,7 +765,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select with list of typed expressions (non-distinct)")
     void shouldSelectWithListOfTypedExpressions(IntegrationTestContext context) {
         // Given
-        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        List<Expression<Employee, ?>> expressions = new ArrayList<>();
         expressions.add(Path.of(Employee::getDepartmentId));
         expressions.add(Path.of(Employee::getActive));
 
@@ -784,7 +784,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select with list of typed expressions - aggregate functions")
     void shouldSelectWithListOfTypedExpressionsAggregate(IntegrationTestContext context) {
         // Given - using aggregate expressions as TypedExpression
-        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        List<Expression<Employee, ?>> expressions = new ArrayList<>();
         expressions.add(Path.of(Employee::getSalary).max());
         expressions.add(Path.of(Employee::getSalary).min());
         expressions.add(Path.of(Employee::getSalary).avg());
@@ -811,7 +811,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select distinct with list of typed expressions - aggregate functions")
     void shouldSelectDistinctWithListOfTypedExpressionsAggregate(IntegrationTestContext context) {
         // Given - using aggregate expressions as TypedExpression
-        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        List<Expression<Employee, ?>> expressions = new ArrayList<>();
         expressions.add(Path.of(Employee::getSalary).max());
         expressions.add(Path.of(Employee::getSalary).min());
 
@@ -835,7 +835,7 @@ public class SelectApiIntegrationTest {
     @DisplayName("Should select distinct with list of paths as typed expressions")
     void shouldSelectDistinctWithListOfPathsAsTypedExpressions(IntegrationTestContext context) {
         // Given - EntityPath extends TypedExpression
-        List<TypedExpression<Employee, ?>> expressions = new ArrayList<>();
+        List<Expression<Employee, ?>> expressions = new ArrayList<>();
         expressions.add(Path.of(Employee::getDepartmentId));
         expressions.add(Path.of(Employee::getName));
 

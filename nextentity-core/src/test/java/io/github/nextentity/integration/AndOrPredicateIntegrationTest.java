@@ -1,8 +1,8 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Predicate;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -955,7 +955,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldCombineWithVarargsArrayUsingPredicateAnd(IntegrationTestContext context) {
             // Given
             @SuppressWarnings("unchecked")
-            TypedExpression<Employee, Boolean>[] predicates = new TypedExpression[]{
+            Expression<Employee, Boolean>[] predicates = new Expression[]{
                     Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
                     Path.of(Employee::getDepartmentId).eq(1L),
                     Path.of(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
@@ -984,7 +984,7 @@ public class AndOrPredicateIntegrationTest {
         void shouldCombineWithVarargsArrayUsingPredicateOr(IntegrationTestContext context) {
             // Given
             @SuppressWarnings("unchecked")
-            TypedExpression<Employee, Boolean>[] predicates = new TypedExpression[]{
+            Expression<Employee, Boolean>[] predicates = new Expression[]{
                     Path.of(Employee::getName).eq(BOB_NAME),
                     Path.of(Employee::getName).eq(CHARLIE_NAME),
                     Path.of(Employee::getName).eq(DIANA_NAME)
@@ -1307,7 +1307,7 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should chain and(Iterable) for further operations")
         void shouldChainAndIterableForFurtherOperations(IntegrationTestContext context) {
             // Given
-            List<TypedExpression<Employee, Boolean>> predicates = Arrays.asList(
+            List<Expression<Employee, Boolean>> predicates = Arrays.asList(
                     Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
                     Path.of(Employee::getDepartmentId).eq(1L)
             );
@@ -1336,7 +1336,7 @@ public class AndOrPredicateIntegrationTest {
         @DisplayName("Should chain or(Iterable) for further operations")
         void shouldChainOrIterableForFurtherOperations(IntegrationTestContext context) {
             // Given
-            List<TypedExpression<Employee, Boolean>> predicates = Arrays.asList(
+            List<Expression<Employee, Boolean>> predicates = Arrays.asList(
                     Path.of(Employee::getName).eq(BOB_NAME),
                     Path.of(Employee::getName).eq(CHARLIE_NAME)
             );

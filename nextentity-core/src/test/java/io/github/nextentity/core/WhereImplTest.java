@@ -1,6 +1,9 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.*;
+import io.github.nextentity.api.Expression;
+import io.github.nextentity.api.PathRef;
+import io.github.nextentity.api.Predicate;
+import io.github.nextentity.api.SubQueryBuilder;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
@@ -56,7 +59,7 @@ class WhereImplTest {
         @Test
         void where_WithNullPredicate_ShouldReturnSameInstance() {
             // when
-            var result = whereImpl.where((TypedExpression<Employee, Boolean>) null);
+            var result = whereImpl.where((Expression<Employee, Boolean>) null);
 
             // then
             assertThat(result).isSameAs(whereImpl);
@@ -70,7 +73,7 @@ class WhereImplTest {
         @Test
         void where_WithTruePredicate_ShouldReturnSameInstance() {
             // when
-            TypedExpression<Employee, Boolean> truePredicate = Predicate.ofTrue();
+            Expression<Employee, Boolean> truePredicate = Predicate.ofTrue();
             var result = whereImpl.where(truePredicate);
 
             // then
@@ -233,7 +236,7 @@ class WhereImplTest {
         @Test
         void having_WithPredicate_ShouldAddCondition() {
             // given
-            TypedExpression<Employee, Boolean> predicate = Predicate.ofTrue();
+            Expression<Employee, Boolean> predicate = Predicate.ofTrue();
 
             // when
             var result = whereImpl.having(predicate);

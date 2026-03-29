@@ -12,7 +12,7 @@ import java.util.List;
 /// @param <U> Expression value type
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
+public interface SimpleExpression<T, U> extends Expression<T, U> {
 
     /// Counts the number of expression values.
     ///
@@ -40,7 +40,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
     ///
     /// @param value Another expression
     /// @return Predicate object
-    Predicate<T> eq(TypedExpression<T, U> value);
+    Predicate<T> eq(Expression<T, U> value);
 
     /// Not equals the specified value.
     ///
@@ -58,13 +58,13 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
     ///
     /// @param value Another expression
     /// @return Predicate object
-    Predicate<T> ne(TypedExpression<T, U> value);
+    Predicate<T> ne(Expression<T, U> value);
 
     /// In the values of the specified expression list.
     ///
     /// @param expressions Expression list
     /// @return Predicate object
-    Predicate<T> in(@NonNull TypedExpression<T, List<U>> expressions);
+    Predicate<T> in(@NonNull Expression<T, List<U>> expressions);
 
     /// In the specified value array.
     ///
@@ -77,7 +77,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
     ///
     /// @param values Expression list
     /// @return Predicate object
-    Predicate<T> in(@NonNull List<? extends TypedExpression<T, U>> values);
+    Predicate<T> in(@NonNull List<? extends Expression<T, U>> values);
 
     /// In the specified collection.
     ///
@@ -96,7 +96,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
     ///
     /// @param values Expression list
     /// @return Predicate object
-    Predicate<T> notIn(@NonNull List<? extends TypedExpression<T, U>> values);
+    Predicate<T> notIn(@NonNull List<? extends Expression<T, U>> values);
 
     /// Not in the specified collection.
     ///
@@ -118,39 +118,39 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
     ///
     /// @param expression Another expression
     /// @return Predicate object
-    Predicate<T> ge(TypedExpression<T, U> expression);
+    Predicate<T> ge(Expression<T, U> expression);
 
     /// Greater than the value of another expression.
     ///
     /// @param expression Another expression
     /// @return Predicate object
-    Predicate<T> gt(TypedExpression<T, U> expression);
+    Predicate<T> gt(Expression<T, U> expression);
 
     /// Less than or equal to the value of another expression.
     ///
     /// @param expression Another expression
     /// @return Predicate object
-    Predicate<T> le(TypedExpression<T, U> expression);
+    Predicate<T> le(Expression<T, U> expression);
 
     /// Less than the value of another expression.
     ///
     /// @param expression Another expression
     /// @return Predicate object
-    Predicate<T> lt(TypedExpression<T, U> expression);
+    Predicate<T> lt(Expression<T, U> expression);
 
     /// Between the values of two expressions.
     ///
     /// @param l Left boundary expression
     /// @param r Right boundary expression
     /// @return Predicate object
-    Predicate<T> between(TypedExpression<T, U> l, TypedExpression<T, U> r);
+    Predicate<T> between(Expression<T, U> l, Expression<T, U> r);
 
     /// Not between the values of two expressions.
     ///
     /// @param l Left boundary expression
     /// @param r Right boundary expression
     /// @return Predicate object
-    Predicate<T> notBetween(TypedExpression<T, U> l, TypedExpression<T, U> r);
+    Predicate<T> notBetween(Expression<T, U> l, Expression<T, U> r);
 
     /// Sorts in ascending order.
     ///
@@ -239,28 +239,28 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
     /// @param l Left boundary expression
     /// @param r Right boundary value
     /// @return Predicate object
-    Predicate<T> between(TypedExpression<T, U> l, U r);
+    Predicate<T> between(Expression<T, U> l, U r);
 
     /// Between value and expression.
     ///
     /// @param l Left boundary value
     /// @param r Right boundary expression
     /// @return Predicate object
-    Predicate<T> between(U l, TypedExpression<T, U> r);
+    Predicate<T> between(U l, Expression<T, U> r);
 
     /// Not between expression and value.
     ///
     /// @param l Left boundary expression
     /// @param r Right boundary value
     /// @return Predicate object
-    Predicate<T> notBetween(TypedExpression<T, U> l, U r);
+    Predicate<T> notBetween(Expression<T, U> l, U r);
 
     /// Not between value and expression.
     ///
     /// @param l Left boundary value
     /// @param r Right boundary expression
     /// @return Predicate object
-    Predicate<T> notBetween(U l, TypedExpression<T, U> r);
+    Predicate<T> notBetween(U l, Expression<T, U> r);
 
     /// Gets the maximum value of the expression.
     ///

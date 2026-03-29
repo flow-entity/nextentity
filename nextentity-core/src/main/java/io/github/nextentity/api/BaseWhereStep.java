@@ -18,7 +18,7 @@ public interface BaseWhereStep<T, U> extends OrderByStep<T, U> {
     ///
     /// @param predicate Boolean expression
     /// @return Query condition building step
-    BaseWhereStep<T, U> where(TypedExpression<T, Boolean> predicate);
+    BaseWhereStep<T, U> where(Expression<T, Boolean> predicate);
 
     /// Adds path as query condition.
     ///

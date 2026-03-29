@@ -20,7 +20,7 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     ///
     /// @param predicate Condition predicate
     /// @return WhereStep instance
-    WhereStep<T, U> where(TypedExpression<T, Boolean> predicate);
+    WhereStep<T, U> where(Expression<T, Boolean> predicate);
 
     /// Build conditions based on the specified path.
     ///

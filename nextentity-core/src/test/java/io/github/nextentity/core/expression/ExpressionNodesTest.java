@@ -1,6 +1,6 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.api.Expression;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ class ExpressionNodesTest {
         @Test
         void isNullOrTrue_Null_ReturnsTrue() {
             // when
-            boolean result = ExpressionNodes.isNullOrTrue((TypedExpression<?, ?>) null);
+            boolean result = ExpressionNodes.isNullOrTrue((Expression<?, ?>) null);
 
             // then
             assertThat(result).isTrue();
@@ -120,7 +120,7 @@ class ExpressionNodesTest {
         @Test
         void getNode_FromLiteralExpression_ReturnsNode() {
             // given
-            TypedExpression<?, String> expression = TypedExpression.of("test");
+            Expression<?, String> expression = Expression.of("test");
 
             // when
             ExpressionNode node = ExpressionNodes.getNode(expression);

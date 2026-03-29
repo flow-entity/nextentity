@@ -13,31 +13,31 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
     ///
     /// @param expression Another expression
     /// @return Addition result expression
-    NumberExpression<T, U> add(TypedExpression<T, U> expression);
+    NumberExpression<T, U> add(Expression<T, U> expression);
 
     /// Subtraction operation, subtracts another expression.
     ///
     /// @param expression Another expression
     /// @return Subtraction result expression
-    NumberExpression<T, U> subtract(TypedExpression<T, U> expression);
+    NumberExpression<T, U> subtract(Expression<T, U> expression);
 
     /// Multiplication operation, multiplies another expression.
     ///
     /// @param expression Another expression
     /// @return Multiplication result expression
-    NumberExpression<T, U> multiply(TypedExpression<T, U> expression);
+    NumberExpression<T, U> multiply(Expression<T, U> expression);
 
     /// Division operation, divides another expression.
     ///
     /// @param expression Another expression
     /// @return Division result expression
-    NumberExpression<T, U> divide(TypedExpression<T, U> expression);
+    NumberExpression<T, U> divide(Expression<T, U> expression);
 
     /// Modulo operation, modulo another expression.
     ///
     /// @param expression Another expression
     /// @return Modulo result expression
-    NumberExpression<T, U> mod(TypedExpression<T, U> expression);
+    NumberExpression<T, U> mod(Expression<T, U> expression);
 
     /// Sum operation.
     ///

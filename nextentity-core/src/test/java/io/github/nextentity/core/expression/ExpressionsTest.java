@@ -1,7 +1,7 @@
 package io.github.nextentity.core.expression;
 
+import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.Predicate;
-import io.github.nextentity.api.TypedExpression;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class ExpressionsTest {
             String value = "test";
 
             // when
-            TypedExpression<?, String> expression = TypedExpression.of(value);
+            Expression<?, String> expression = Expression.of(value);
 
             // then
             assertThat(expression).isNotNull();
@@ -49,7 +49,7 @@ class ExpressionsTest {
         @Test
         void of_WithNull_ReturnsTypedExpressionWithNull() {
             // when
-            TypedExpression<?, Object> expression = TypedExpression.of(null);
+            Expression<?, Object> expression = Expression.of(null);
 
             // then
             assertThat(expression).isNotNull();

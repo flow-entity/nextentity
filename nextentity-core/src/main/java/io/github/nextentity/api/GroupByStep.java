@@ -15,13 +15,13 @@ public interface GroupByStep<T, U> extends OrderByStep<T, U> {
     ///
     /// @param expressions Expression
     /// @return Query having step after grouping
-    HavingStep<T, U> groupBy(TypedExpression<T, ?> expressions);
+    HavingStep<T, U> groupBy(Expression<T, ?> expressions);
 
     /// Add multiple expressions as grouping conditions.
     ///
     /// @param expressions List of expressions
     /// @return Query having step after grouping
-    HavingStep<T, U> groupBy(List<? extends TypedExpression<T, ?>> expressions);
+    HavingStep<T, U> groupBy(List<? extends Expression<T, ?>> expressions);
 
     /// Add a single path as a grouping condition.
     ///

@@ -32,7 +32,7 @@ public interface ExpressionBuilder<T, U, B> {
     ///
     /// @param expression Another expression
     /// @return Builder instance
-    B eq(TypedExpression<T, U> expression);
+    B eq(Expression<T, U> expression);
 
     /// Not equals the specified value.
     ///
@@ -50,7 +50,7 @@ public interface ExpressionBuilder<T, U, B> {
     ///
     /// @param expression Another expression
     /// @return Builder instance
-    B ne(TypedExpression<T, U> expression);
+    B ne(Expression<T, U> expression);
 
     /// In the specified value array.
     ///
@@ -63,13 +63,13 @@ public interface ExpressionBuilder<T, U, B> {
     ///
     /// @param expressions Expression list
     /// @return Builder instance
-    B in(@NonNull List<? extends TypedExpression<T, U>> expressions);
+    B in(@NonNull List<? extends Expression<T, U>> expressions);
 
     /// In the value list of the specified expression.
     ///
     /// @param expressions Expression
     /// @return Builder instance
-    B in(@NonNull TypedExpression<T, List<U>> expressions);
+    B in(@NonNull Expression<T, List<U>> expressions);
 
     /// In the specified value collection.
     ///
@@ -88,7 +88,7 @@ public interface ExpressionBuilder<T, U, B> {
     ///
     /// @param expressions Expression list
     /// @return Builder instance
-    B notIn(@NonNull List<? extends TypedExpression<T, U>> expressions);
+    B notIn(@NonNull List<? extends Expression<T, U>> expressions);
 
     /// Not in the specified value collection.
     ///
@@ -168,91 +168,71 @@ public interface ExpressionBuilder<T, U, B> {
     /// @return Builder instance
     B notBetween(U l, U r);
 
-    /**
-     * Greater than or equal to another expression.
-     *
-     * @param expression Another expression
-     * @return Builder instance
-     */
-    B ge(TypedExpression<T, U> expression);
+    /// Greater than or equal to another expression.
+    ///
+    /// @param expression Another expression
+    /// @return Builder instance
+    B ge(Expression<T, U> expression);
 
-    /**
-     * Greater than another expression.
-     *
-     * @param expression Another expression
-     * @return Builder instance
-     */
-    B gt(TypedExpression<T, U> expression);
+    /// Greater than another expression.
+    ///
+    /// @param expression Another expression
+    /// @return Builder instance
+    B gt(Expression<T, U> expression);
 
-    /**
-     * Less than or equal to another expression.
-     *
-     * @param expression Another expression
-     * @return Builder instance
-     */
-    B le(TypedExpression<T, U> expression);
+    /// Less than or equal to another expression.
+    ///
+    /// @param expression Another expression
+    /// @return Builder instance
+    B le(Expression<T, U> expression);
 
-    /**
-     * Less than another expression.
-     *
-     * @param expression Another expression
-     * @return Builder instance
-     */
-    B lt(TypedExpression<T, U> expression);
+    /// Less than another expression.
+    ///
+    /// @param expression Another expression
+    /// @return Builder instance
+    B lt(Expression<T, U> expression);
 
-    /**
-     * Between two expressions.
-     *
-     * @param l Left boundary expression
-     * @param r Right boundary expression
-     * @return Builder instance
-     */
-    B between(TypedExpression<T, U> l, TypedExpression<T, U> r);
+    /// Between two expressions.
+    ///
+    /// @param l Left boundary expression
+    /// @param r Right boundary expression
+    /// @return Builder instance
+    B between(Expression<T, U> l, Expression<T, U> r);
 
-    /**
-     * Between expression and value.
-     *
-     * @param l Left boundary expression
-     * @param r Right boundary value
-     * @return Builder instance
-     */
-    B between(TypedExpression<T, U> l, U r);
+    /// Between expression and value.
+    ///
+    /// @param l Left boundary expression
+    /// @param r Right boundary value
+    /// @return Builder instance
+    B between(Expression<T, U> l, U r);
 
-    /**
-     * Between value and expression.
-     *
-     * @param l Left boundary value
-     * @param r Right boundary expression
-     * @return Builder instance
-     */
-    B between(U l, TypedExpression<T, U> r);
+    /// Between value and expression.
+    ///
+    /// @param l Left boundary value
+    /// @param r Right boundary expression
+    /// @return Builder instance
+    B between(U l, Expression<T, U> r);
 
-    /**
-     * Not between two expressions.
-     *
-     * @param l Left boundary expression
-     * @param r Right boundary expression
-     * @return Builder instance
-     */
-    B notBetween(TypedExpression<T, U> l, TypedExpression<T, U> r);
+    /// Not between two expressions.
+    ///
+    /// @param l Left boundary expression
+    /// @param r Right boundary expression
+    /// @return Builder instance
+    B notBetween(Expression<T, U> l, Expression<T, U> r);
 
-    /**
-     * Not between expression and value.
-     *
-     * @param l Left boundary expression
-     * @param r Right boundary value
-     * @return Builder instance
-     */
-    B notBetween(TypedExpression<T, U> l, U r);
+    /// Not between expression and value.
+    ///
+    /// @param l Left boundary expression
+    /// @param r Right boundary value
+    /// @return Builder instance
+    B notBetween(Expression<T, U> l, U r);
 
-    /**
-     * Not between value and expression.
-     *
-     * @param l Left boundary value
-     * @param r Right boundary expression
-     * @return Builder instance
-     */
-    B notBetween(U l, TypedExpression<T, U> r);
+    /// Not between value and expression.
+    ///
+    /// @param l Left boundary value
+    /// @param r Right boundary expression
+    /// @return Builder instance
+    B notBetween(U l, Expression<T, U> r);
 
     /// Number operator interface, providing number-specific operation methods.
     ///
@@ -334,31 +314,31 @@ public interface ExpressionBuilder<T, U, B> {
         ///
         /// @param expression Another expression
         /// @return Number operator instance
-        NumberOperator<T, U, B> add(TypedExpression<T, U> expression);
+        NumberOperator<T, U, B> add(Expression<T, U> expression);
 
         /// Subtraction operation, subtracts another expression.
         ///
         /// @param expression Another expression
         /// @return Number operator instance
-        NumberOperator<T, U, B> subtract(TypedExpression<T, U> expression);
+        NumberOperator<T, U, B> subtract(Expression<T, U> expression);
 
         /// Multiplication operation, multiplies another expression.
         ///
         /// @param expression Another expression
         /// @return Number operator instance
-        NumberOperator<T, U, B> multiply(TypedExpression<T, U> expression);
+        NumberOperator<T, U, B> multiply(Expression<T, U> expression);
 
         /// Division operation, divides another expression.
         ///
         /// @param expression Another expression
         /// @return Number operator instance
-        NumberOperator<T, U, B> divide(TypedExpression<T, U> expression);
+        NumberOperator<T, U, B> divide(Expression<T, U> expression);
 
         /// Modulo operation, modulo another expression.
         ///
         /// @param expression Another expression
         /// @return Number operator instance
-        NumberOperator<T, U, B> mod(TypedExpression<T, U> expression);
+        NumberOperator<T, U, B> mod(Expression<T, U> expression);
 
     }
 
@@ -602,12 +582,10 @@ public interface ExpressionBuilder<T, U, B> {
         /// @return String operator instance
         StringOperator<T, B> substring(int offset, int length);
 
-        /**
-         * Substrings the string, from the specified offset to the end.
-         *
-         * @param offset Offset
-         * @return String operator instance
-         */
+        /// Substrings the string, from the specified offset to the end.
+        ///
+        /// @param offset Offset
+        /// @return String operator instance
         default StringOperator<T, B> substring(int offset) {
             return substring(offset, Integer.MAX_VALUE);
         }
@@ -627,7 +605,7 @@ public interface ExpressionBuilder<T, U, B> {
     /// Conjunction operator interface, providing logical AND operations.
     ///
     /// @param <T> Entity type
-    interface Conjunction<T> extends TypedExpression<T, Boolean> {
+    interface Conjunction<T> extends Expression<T, Boolean> {
 
         /// Joins with the path operator of the specified path.
         ///
@@ -653,13 +631,13 @@ public interface ExpressionBuilder<T, U, B> {
         ///
         /// @param expression Another expression
         /// @return Conjunction operator instance
-        Conjunction<T> and(TypedExpression<T, Boolean> expression);
+        Conjunction<T> and(Expression<T, Boolean> expression);
 
         /// Joins with multiple expressions.
         ///
         /// @param expressions Expression collection
         /// @return Conjunction operator instance
-        Conjunction<T> and(Iterable<? extends TypedExpression<T, Boolean>> expressions);
+        Conjunction<T> and(Iterable<? extends Expression<T, Boolean>> expressions);
 
         /// Converts to predicate.
         ///
@@ -671,7 +649,7 @@ public interface ExpressionBuilder<T, U, B> {
     /// Disjunction operator interface, providing logical OR operations.
     ///
     /// @param <T> Entity type
-    interface Disjunction<T> extends TypedExpression<T, Boolean> {
+    interface Disjunction<T> extends Expression<T, Boolean> {
 
         /// Disjoins with the path operator of the specified path.
         ///
@@ -697,13 +675,13 @@ public interface ExpressionBuilder<T, U, B> {
         ///
         /// @param predicate Another expression
         /// @return Disjunction operator instance
-        Disjunction<T> or(TypedExpression<T, Boolean> predicate);
+        Disjunction<T> or(Expression<T, Boolean> predicate);
 
         /// Disjoins with multiple expressions.
         ///
         /// @param expressions Expression collection
         /// @return Disjunction operator instance
-        Disjunction<T> or(Iterable<? extends TypedExpression<T, Boolean>> expressions);
+        Disjunction<T> or(Iterable<? extends Expression<T, Boolean>> expressions);
 
         /// Converts to predicate.
         ///

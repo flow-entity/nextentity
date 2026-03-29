@@ -1,14 +1,13 @@
 package io.github.nextentity.core.expression;
 
+import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.PathRef;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.PathReference;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
 ///
@@ -62,7 +61,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return value == null ? operateNull() : eq(value);
     }
 
-    public B eq(TypedExpression<T, U> value) {
+    public B eq(Expression<T, U> value) {
         return next(operate(Operator.EQ, getNode(value)));
     }
 
@@ -74,11 +73,11 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return value == null ? operateNull() : ne(value);
     }
 
-    public B ne(TypedExpression<T, U> value) {
+    public B ne(Expression<T, U> value) {
         return next(operate(Operator.NE, getNode(value)));
     }
 
-    public B in(@NonNull TypedExpression<T, List<U>> expressions) {
+    public B in(@NonNull Expression<T, List<U>> expressions) {
         return next(operate(Operator.IN, getNode(expressions)));
     }
 
@@ -88,7 +87,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.IN, nodes));
     }
 
-    public B in(@NonNull List<? extends TypedExpression<T, U>> values) {
+    public B in(@NonNull List<? extends Expression<T, U>> values) {
         ExpressionNode[] nodes = values.stream().map(this::getNode).toArray(ExpressionNode[]::new);
         return next(operate(Operator.IN, nodes));
     }
@@ -104,7 +103,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.IN, nodes).operate(Operator.NOT));
     }
 
-    public B notIn(@NonNull List<? extends TypedExpression<T, U>> values) {
+    public B notIn(@NonNull List<? extends Expression<T, U>> values) {
         ExpressionNode[] nodes = values.stream().map(this::getNode).toArray(ExpressionNode[]::new);
         return next(operate(Operator.IN, nodes).operate(Operator.NOT));
     }
@@ -122,27 +121,27 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.IS_NOT_NULL));
     }
 
-    public B ge(TypedExpression<T, U> expression) {
+    public B ge(Expression<T, U> expression) {
         return next(operate(Operator.GE, getNode(expression)));
     }
 
-    public B gt(TypedExpression<T, U> expression) {
+    public B gt(Expression<T, U> expression) {
         return next(operate(Operator.GT, getNode(expression)));
     }
 
-    public B le(TypedExpression<T, U> expression) {
+    public B le(Expression<T, U> expression) {
         return next(operate(Operator.LE, getNode(expression)));
     }
 
-    public B lt(TypedExpression<T, U> expression) {
+    public B lt(Expression<T, U> expression) {
         return next(operate(Operator.LT, getNode(expression)));
     }
 
-    public B between(TypedExpression<T, U> l, TypedExpression<T, U> r) {
+    public B between(Expression<T, U> l, Expression<T, U> r) {
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)));
     }
 
-    public B notBetween(TypedExpression<T, U> l, TypedExpression<T, U> r) {
+    public B notBetween(Expression<T, U> l, Expression<T, U> r) {
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)).operate(Operator.NOT));
     }
 
@@ -186,19 +185,19 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)).operate(Operator.NOT));
     }
 
-    public B between(TypedExpression<T, U> l, U r) {
+    public B between(Expression<T, U> l, U r) {
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)));
     }
 
-    public B between(U l, TypedExpression<T, U> r) {
+    public B between(U l, Expression<T, U> r) {
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)));
     }
 
-    public B notBetween(TypedExpression<T, U> l, U r) {
+    public B notBetween(Expression<T, U> l, U r) {
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)).operate(Operator.NOT));
     }
 
-    public B notBetween(U l, TypedExpression<T, U> r) {
+    public B notBetween(U l, Expression<T, U> r) {
         return next(operate(Operator.BETWEEN, getNode(l), getNode(r)).operate(Operator.NOT));
     }
 
@@ -235,32 +234,32 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.NOT));
     }
 
-    public B and(TypedExpression<T, Boolean> predicate) {
+    public B and(Expression<T, Boolean> predicate) {
         return next(operate(Operator.AND, getNode(predicate)));
     }
 
-    public B or(TypedExpression<T, Boolean> predicate) {
+    public B or(Expression<T, Boolean> predicate) {
         return next(operate(Operator.OR, getNode(predicate)));
     }
 
-    public B and(TypedExpression<T, Boolean>[] predicate) {
+    public B and(Expression<T, Boolean>[] predicate) {
         ExpressionNode[] nodes = Arrays.stream(predicate).map(this::getNode).toArray(ExpressionNode[]::new);
         return next(operate(Operator.AND, nodes));
     }
 
-    public B or(TypedExpression<T, Boolean>[] predicate) {
+    public B or(Expression<T, Boolean>[] predicate) {
         ExpressionNode[] nodes = Arrays.stream(predicate).map(this::getNode).toArray(ExpressionNode[]::new);
         return next(operate(Operator.OR, nodes));
     }
 
-    public B and(Iterable<? extends TypedExpression<T, Boolean>> predicates) {
+    public B and(Iterable<? extends Expression<T, Boolean>> predicates) {
         ExpressionNode[] nodes = StreamSupport.stream(predicates.spliterator(), false)
                 .map(this::getNode).filter(it -> !(it instanceof EmptyNode))
                 .toArray(ExpressionNode[]::new);
         return next(operate(Operator.AND, nodes));
     }
 
-    public B or(Iterable<? extends TypedExpression<T, Boolean>> predicates) {
+    public B or(Iterable<? extends Expression<T, Boolean>> predicates) {
         ExpressionNode[] nodes = StreamSupport.stream(predicates.spliterator(), false)
                 .map(this::getNode)
                 .toArray(ExpressionNode[]::new);
@@ -273,7 +272,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return target.get(fieldName);
     }
 
-    protected PathNode appendPath(TypedExpression<?, ?> path) {
+    protected PathNode appendPath(Expression<?, ?> path) {
         PathNode target = (PathNode) getRoot();
         PathNode next = (PathNode) getNode(path);
         return target.get(next);
@@ -285,8 +284,8 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
 
     abstract protected B next(ExpressionNode operate);
 
-    protected ExpressionNode getNode(TypedExpression<?, ?> typedExpression) {
-        return ((ExpressionTree) typedExpression).getRoot();
+    protected ExpressionNode getNode(Expression<?, ?> expression) {
+        return ((ExpressionTree) expression).getRoot();
     }
 
     protected ExpressionNode getNode(Object value) {

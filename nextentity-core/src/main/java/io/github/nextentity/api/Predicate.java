@@ -1,6 +1,5 @@
 package io.github.nextentity.api;
 
-import io.github.nextentity.core.expression.LiteralNode;
 import io.github.nextentity.core.expression.PredicateImpl;
 
 /// Predicate interface, representing query conditions.
@@ -12,11 +11,19 @@ import io.github.nextentity.core.expression.PredicateImpl;
 /// @since 1.0.0
 public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBuilder.Conjunction<T>, ExpressionBuilder.Disjunction<T> {
 
+    /// Creates a predicate that always evaluates to true.
+    ///
+    /// @param <T> Entity type
+    /// @return True predicate
     @SuppressWarnings("unchecked")
     static <T> Predicate<T> ofTrue() {
         return (Predicate<T>) PredicateImpl.TRUE;
     }
 
+    /// Creates a predicate that always evaluates to false.
+    ///
+    /// @param <T> Entity type
+    /// @return False predicate
     @SuppressWarnings("unchecked")
     static <T> Predicate<T> ofFalse() {
         return (Predicate<T>) PredicateImpl.FALSE;
@@ -31,35 +38,35 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
     ///
     /// @param predicate Another predicate
     /// @return Combined predicate
-    Predicate<T> and(TypedExpression<T, Boolean> predicate);
+    Predicate<T> and(Expression<T, Boolean> predicate);
 
     /// Logical OR operation, combined with another predicate.
     ///
     /// @param predicate Another predicate
     /// @return Combined predicate
-    Predicate<T> or(TypedExpression<T, Boolean> predicate);
+    Predicate<T> or(Expression<T, Boolean> predicate);
 
     /// Logical AND operation, combined with multiple predicates.
     ///
     /// @param predicate Predicate array
     /// @return Combined predicate
-    Predicate<T> and(TypedExpression<T, Boolean>[] predicate);
+    Predicate<T> and(Expression<T, Boolean>[] predicate);
 
     /// Logical OR operation, combined with multiple predicates.
     ///
     /// @param predicate Predicate array
     /// @return Combined predicate
-    Predicate<T> or(TypedExpression<T, Boolean>[] predicate);
+    Predicate<T> or(Expression<T, Boolean>[] predicate);
 
     /// Logical AND operation, combined with multiple predicates.
     ///
     /// @param predicates Predicate iterator
     /// @return Combined predicate
-    Predicate<T> and(Iterable<? extends TypedExpression<T, Boolean>> predicates);
+    Predicate<T> and(Iterable<? extends Expression<T, Boolean>> predicates);
 
     /// Logical OR operation, combined with multiple predicates.
     ///
     /// @param predicates Predicate iterator
     /// @return Combined predicate
-    Predicate<T> or(Iterable<? extends TypedExpression<T, Boolean>> predicates);
+    Predicate<T> or(Iterable<? extends Expression<T, Boolean>> predicates);
 }

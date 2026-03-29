@@ -12,11 +12,24 @@ import io.github.nextentity.core.util.DefaultEntityRoot;
 /// @since 1.0.0
 public interface EntityPath<T, U> extends Path<T, U> {
 
+    /// Creates an entity path from the specified path reference.
+    ///
+    /// @param path Path reference
+    /// @param <T>  Entity type
+    /// @param <U>  Property type
+    /// @return Entity path
     static <T, U> EntityPath<T, U> of(PathRef<T, U> path) {
         return DefaultEntityRoot.<T>of().entity(path);
     }
 
     // type-unsafe
+
+    /// Creates an entity path from the specified field name (type-unsafe).
+    ///
+    /// @param path Field name
+    /// @param <T> Entity type
+    /// @param <U> Property type
+    /// @return Entity path
     static <T, U> EntityPath<T, U> of(String path) {
         return DefaultEntityRoot.<T>of().entityPath(path);
     }

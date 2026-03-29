@@ -2,7 +2,6 @@ package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.PathRef;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 
@@ -12,7 +11,7 @@ import java.util.List;
 
 public class ExpressionNodes {
 
-    public static boolean isNullOrTrue(TypedExpression<?, ?> expression) {
+    public static boolean isNullOrTrue(Expression<?, ?> expression) {
         if (expression == null) {
             return true;
         }
@@ -29,11 +28,11 @@ public class ExpressionNodes {
         return ((ExpressionTree) expression).getRoot();
     }
 
-    public static ImmutableList<ExpressionNode> getNode(List<? extends TypedExpression<?, ?>> expressions) {
+    public static ImmutableList<ExpressionNode> getNode(List<? extends Expression<?, ?>> expressions) {
         return expressions.stream().map(ExpressionNodes::getNode).collect(ImmutableList.collector(expressions.size()));
     }
 
-    public static ImmutableList<ExpressionNode> join(ImmutableArray<ExpressionNode> nodes, List<? extends TypedExpression<?, ?>> expressions) {
+    public static ImmutableList<ExpressionNode> join(ImmutableArray<ExpressionNode> nodes, List<? extends Expression<?, ?>> expressions) {
         return ImmutableList.concat(nodes.asList(), getNode(expressions));
     }
 
@@ -53,11 +52,11 @@ public class ExpressionNodes {
         return builder.build();
     }
 
-    public static <T> ImmutableList<ExpressionNode> mapping(Collection<? extends TypedExpression<T, ?>> expressions) {
+    public static <T> ImmutableList<ExpressionNode> mapping(Collection<? extends Expression<T, ?>> expressions) {
         return expressions.stream().map(ExpressionNodes::getNode).collect(ImmutableList.collector(expressions.size()));
     }
 
-    public static <T> ImmutableList<ExpressionNode> mapping(TypedExpression<T, ?>[] expressions) {
+    public static <T> ImmutableList<ExpressionNode> mapping(Expression<T, ?>[] expressions) {
         return Arrays.stream(expressions).map(ExpressionNodes::getNode).collect(ImmutableList.collector(expressions.length));
     }
 

@@ -1,6 +1,6 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.TypedExpression;
+import io.github.nextentity.api.Expression;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -28,7 +28,7 @@ class NumberExpressionImplTest {
             // given
             PathNode pathNode = new PathNode("amount");
             NumberExpressionImpl<Object, Integer> expr = new NumberExpressionImpl<>(pathNode);
-            var other = TypedExpression.of(10);
+            var other = Expression.of(10);
 
             // when
             var result = expr.add(other);
@@ -52,7 +52,7 @@ class NumberExpressionImplTest {
             // given
             PathNode pathNode = new PathNode("amount");
             NumberExpressionImpl<Object, Integer> expr = new NumberExpressionImpl<>(pathNode);
-            var other = TypedExpression.of(5);
+            var other = Expression.of(5);
 
             // when
             var result = expr.subtract(other);
@@ -76,7 +76,7 @@ class NumberExpressionImplTest {
             // given
             PathNode pathNode = new PathNode("price");
             NumberExpressionImpl<Object, Integer> expr = new NumberExpressionImpl<>(pathNode);
-            var other = TypedExpression.of(2);
+            var other = Expression.of(2);
 
             // when
             var result = expr.multiply(other);
@@ -100,7 +100,7 @@ class NumberExpressionImplTest {
             // given
             PathNode pathNode = new PathNode("total");
             NumberExpressionImpl<Object, Integer> expr = new NumberExpressionImpl<>(pathNode);
-            var other = TypedExpression.of(10);
+            var other = Expression.of(10);
 
             // when
             var result = expr.divide(other);
@@ -124,7 +124,7 @@ class NumberExpressionImplTest {
             // given
             PathNode pathNode = new PathNode("value");
             NumberExpressionImpl<Object, Integer> expr = new NumberExpressionImpl<>(pathNode);
-            var other = TypedExpression.of(3);
+            var other = Expression.of(3);
 
             // when
             var result = expr.mod(other);

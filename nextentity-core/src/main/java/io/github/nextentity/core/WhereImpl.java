@@ -3,7 +3,6 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.expression.OrderOperatorImpl;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
@@ -29,7 +28,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public WhereStep<T, U> where(TypedExpression<T, Boolean> predicate) {
+    public WhereStep<T, U> where(Expression<T, Boolean> predicate) {
         if (ExpressionNodes.isNullOrTrue(predicate)) {
             return this;
         }
@@ -67,12 +66,12 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
         return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::andWhere);
     }
 
-    public final HavingStep<T, U> groupBy(TypedExpression<T, ?> expressions) {
+    public final HavingStep<T, U> groupBy(Expression<T, ?> expressions) {
         return groupBy(Collections.singletonList(expressions));
     }
 
     @Override
-    public HavingStep<T, U> groupBy(List<? extends TypedExpression<T, ?>> typedExpressions) {
+    public HavingStep<T, U> groupBy(List<? extends Expression<T, ?>> typedExpressions) {
         ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), typedExpressions);
         return update(queryStructure.groupBy(newList));
     }
@@ -90,7 +89,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public OrderByStep<T, U> having(TypedExpression<T, Boolean> predicate) {
+    public OrderByStep<T, U> having(Expression<T, Boolean> predicate) {
         ExpressionNode newHaving = queryStructure.having().operate(Operator.AND, ExpressionNodes.getNode(predicate));
         return update(queryStructure.having(newHaving));
     }
@@ -224,24 +223,24 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     public class SubQueryBuilderImpl<X> implements SubQueryBuilder<X, U>, ExpressionTree {
 
         @Override
-        public TypedExpression<X, Long> count() {
+        public Expression<X, Long> count() {
             return new NumberExpressionImpl<>(buildCountData());
         }
 
         @Override
-        public TypedExpression<X, List<U>> slice(int offset, int maxResult) {
+        public Expression<X, List<U>> slice(int offset, int maxResult) {
             QueryStructure structure = getQueryListStructure(offset, maxResult, null);
             return new SimpleExpressionImpl<>(structure);
         }
 
         @Override
-        public TypedExpression<X, U> getSingle(int offset) {
+        public Expression<X, U> getSingle(int offset) {
             QueryStructure structure = getQueryListStructure(offset, 2, null);
             return new SimpleExpressionImpl<>(structure);
         }
 
         @Override
-        public TypedExpression<X, U> getFirst(int offset) {
+        public Expression<X, U> getFirst(int offset) {
             QueryStructure structure = getQueryListStructure(offset, 1, null);
             return new SimpleExpressionImpl<>(structure);
         }

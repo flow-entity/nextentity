@@ -10,6 +10,10 @@ import io.github.nextentity.core.util.DefaultEntityRoot;
 ///
 public interface EntityRoot<T> {
 
+    /// Creates an entity root instance.
+    ///
+    /// @param <T> Entity type
+    /// @return Entity root instance
     static <T> EntityRoot<T> of() {
         return DefaultEntityRoot.of();
     }
@@ -21,7 +25,7 @@ public interface EntityRoot<T> {
     /// @param <U> Literal type
     /// @return Literal expression
     ///
-    <U> TypedExpression<T, U> literal(U value);
+    <U> Expression<T, U> literal(U value);
 
     ///
     /// Gets the entity path expression for the specified path.

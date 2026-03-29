@@ -1,8 +1,7 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.Expression;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.api.EntityRoot;
+import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.util.ImmutableArray;
 import org.jspecify.annotations.Nullable;
 
@@ -68,7 +67,7 @@ public final class TypeCastUtil {
     /// @param <U>        the result type
     /// @return the cast typed expression
     ///
-    public static <T, U> TypedExpression<T, U> cast(Expression expression) {
+    public static <T, U> Expression<T, U> cast(Expression expression) {
         return unsafeCast(expression);
     }
 

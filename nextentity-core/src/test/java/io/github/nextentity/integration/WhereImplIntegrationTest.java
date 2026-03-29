@@ -317,7 +317,7 @@ public class WhereImplIntegrationTest {
 
     @Nested
     @DisplayName("groupBy(TypedExpression) Integration Tests")
-    class GroupByTypedExpressionTests {
+    class GroupByExpressionTests {
 
         /**
          * Test objective: Verify that groupBy(TypedExpression) adds grouping.
@@ -364,7 +364,7 @@ public class WhereImplIntegrationTest {
 
     @Nested
     @DisplayName("groupBy(List<TypedExpression>) Integration Tests")
-    class GroupByTypedExpressionListTests {
+    class GroupByExpressionListTests {
 
         /**
          * Test objective: Verify that groupBy(List<TypedExpression>) adds all groupings.

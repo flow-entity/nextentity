@@ -2,7 +2,6 @@ package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.api.Predicate;
-import io.github.nextentity.api.TypedExpression;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.util.Paths;
 
@@ -10,7 +9,7 @@ import io.github.nextentity.core.util.Paths;
 public class Expressions {
 
     @Deprecated
-    public static <T, U> TypedExpression<T, U> of(U value) {
+    public static <T, U> Expression<T, U> of(U value) {
         return Paths.<T>root().literal(value);
     }
 
@@ -30,7 +29,7 @@ public class Expressions {
     }
 
     @Deprecated
-    static <T extends TypedExpression<?, ?>> T toTypedExpression(Expression expression) {
+    static <T extends Expression<?, ?>> T toTypedExpression(Expression expression) {
         return TypeCastUtil.unsafeCast(expression);
     }
 

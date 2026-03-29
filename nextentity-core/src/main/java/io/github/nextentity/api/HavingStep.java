@@ -14,6 +14,6 @@ public interface HavingStep<T, U> extends OrderByStep<T, U> {
     ///
     /// @param predicate Condition predicate
     /// @return OrderByStep instance
-    OrderByStep<T, U> having(TypedExpression<T, Boolean> predicate);
+    OrderByStep<T, U> having(Expression<T, Boolean> predicate);
 
 }
