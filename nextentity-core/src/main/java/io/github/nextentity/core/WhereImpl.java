@@ -221,13 +221,6 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
         return false;
     }
 
-    public OrderByStep<T, U> addOrderBy(@NonNull List<SortExpression> orderList) {
-        ImmutableList<SortExpression> sortExpressions = queryStructure.orderBy();
-        ImmutableList<SortExpression> newExpressions = ImmutableList.concat(sortExpressions, orderList);
-        return update(queryStructure.orderBy(newExpressions));
-    }
-
-
     public class SubQueryBuilderImpl<X> implements SubQueryBuilder<X, U>, ExpressionTree {
 
         @Override

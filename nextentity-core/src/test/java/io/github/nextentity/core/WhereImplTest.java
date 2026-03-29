@@ -616,30 +616,6 @@ class WhereImplTest {
     }
 
     @Nested
-    class AddOrderBy {
-
-        /**
-         * Test objective: Verify that addOrderBy appends sort expressions.
-         * Test scenario: Call addOrderBy with a list of sort expressions.
-         * Expected result: Query structure contains combined sort expressions.
-         */
-        @Test
-        void addOrderBy_ShouldAppendSortExpressions() {
-            // given
-            List<SortExpression> sortExpressions = Arrays.asList(
-                    new SortExpression(new PathNode("name"), SortOrder.ASC)
-            );
-
-            // when
-            var result = whereImpl.addOrderBy(sortExpressions);
-
-            // then
-            QueryStructure structure = ((WhereImpl<?, ?>) result).getQueryStructure();
-            assertThat(structure.orderBy().asList()).hasSize(1);
-        }
-    }
-
-    @Nested
     class ExceptionAndEdgeCases {
 
         /**
