@@ -576,24 +576,4 @@ class StringExpressionDefaultMethodsTest {
         }
     }
 
-    // ==================== root() method ====================
-
-    @Nested
-    @DisplayName("root() method from SimpleExpression")
-    class RootMethod {
-
-        @Test
-        @DisplayName("root() should return EntityRoot instance")
-        void root_shouldReturnEntityRoot() {
-            // Given
-            StringPath<TestEntity> path = Paths.get(TestEntity::getName);
-
-            // When
-            EntityRoot<TestEntity> root = path.root();
-
-            // Then
-            assertThat(root).isNotNull();
-            assertThat(root).isInstanceOf(Paths.RootImpl.class);
-        }
-    }
 }

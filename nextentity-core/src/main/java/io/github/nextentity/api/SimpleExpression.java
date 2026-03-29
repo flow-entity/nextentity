@@ -2,6 +2,7 @@ package io.github.nextentity.api;
 
 import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.Order;
+import io.github.nextentity.core.util.Paths;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
@@ -17,12 +18,9 @@ import java.util.List;
  */
 public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
 
-    /**
-     * Gets the entity root object.
-     *
-     * @return Entity root object
-     */
-    EntityRoot<T> root();
+    private EntityRoot<T> root() {
+        return Paths.root();
+    }
 
     /**
      * Counts the number of expression values.

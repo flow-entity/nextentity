@@ -18,7 +18,7 @@ public interface EntityPath<T, U> extends PathExpression<T, U> {
      * @param <R> Result type
      * @return Sub-path
      */
-    <R> io.github.nextentity.api.EntityPath<T, R> get(Path<U, R> path);
+    <R> EntityPath<T, R> get(Path<U, R> path);
 
     /**
      * Gets the string path of the specified string reference.

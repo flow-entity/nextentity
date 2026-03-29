@@ -15,7 +15,7 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      *
      * @return Negated predicate
      */
-    io.github.nextentity.api.Predicate<T> not();
+    Predicate<T> not();
 
     /**
      * Logical AND operation, combined with another predicate.
@@ -23,7 +23,7 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      * @param predicate Another predicate
      * @return Combined predicate
      */
-    io.github.nextentity.api.Predicate<T> and(TypedExpression<T, Boolean> predicate);
+    Predicate<T> and(TypedExpression<T, Boolean> predicate);
 
     /**
      * Logical OR operation, combined with another predicate.
@@ -31,7 +31,7 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      * @param predicate Another predicate
      * @return Combined predicate
      */
-    io.github.nextentity.api.Predicate<T> or(TypedExpression<T, Boolean> predicate);
+    Predicate<T> or(TypedExpression<T, Boolean> predicate);
 
     /**
      * Logical AND operation, combined with multiple predicates.
@@ -39,7 +39,7 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      * @param predicate Predicate array
      * @return Combined predicate
      */
-    io.github.nextentity.api.Predicate<T> and(TypedExpression<T, Boolean>[] predicate);
+    Predicate<T> and(TypedExpression<T, Boolean>[] predicate);
 
     /**
      * Logical OR operation, combined with multiple predicates.
@@ -47,7 +47,7 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      * @param predicate Predicate array
      * @return Combined predicate
      */
-    io.github.nextentity.api.Predicate<T> or(TypedExpression<T, Boolean>[] predicate);
+    Predicate<T> or(TypedExpression<T, Boolean>[] predicate);
 
     /**
      * Logical AND operation, combined with multiple predicates.
@@ -55,7 +55,7 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      * @param predicates Predicate iterator
      * @return Combined predicate
      */
-    io.github.nextentity.api.Predicate<T> and(Iterable<? extends TypedExpression<T, Boolean>> predicates);
+    Predicate<T> and(Iterable<? extends TypedExpression<T, Boolean>> predicates);
 
     /**
      * Logical OR operation, combined with multiple predicates.
@@ -63,5 +63,5 @@ public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBu
      * @param predicates Predicate iterator
      * @return Combined predicate
      */
-    io.github.nextentity.api.Predicate<T> or(Iterable<? extends TypedExpression<T, Boolean>> predicates);
+    Predicate<T> or(Iterable<? extends TypedExpression<T, Boolean>> predicates);
 }

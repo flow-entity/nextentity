@@ -242,14 +242,14 @@ public interface StringExpression<T> extends SimpleExpression<T, String> {
      *
      * @return Lowercase string expression
      */
-    io.github.nextentity.api.StringExpression<T> lower();
+    StringExpression<T> lower();
 
     /**
      * Converts the string to uppercase.
      *
      * @return Uppercase string expression
      */
-    io.github.nextentity.api.StringExpression<T> upper();
+    StringExpression<T> upper();
 
     /**
      * Substrings the string.
@@ -258,7 +258,7 @@ public interface StringExpression<T> extends SimpleExpression<T, String> {
      * @param length Substring length
      * @return Substring expression
      */
-    io.github.nextentity.api.StringExpression<T> substring(int offset, int length);
+    StringExpression<T> substring(int offset, int length);
 
     /**
      * Substrings the string starting from the specified offset.
@@ -275,7 +275,7 @@ public interface StringExpression<T> extends SimpleExpression<T, String> {
      *
      * @return Trimmed string expression
      */
-    io.github.nextentity.api.StringExpression<T> trim();
+    StringExpression<T> trim();
 
     /**
      * Gets the length of the string.

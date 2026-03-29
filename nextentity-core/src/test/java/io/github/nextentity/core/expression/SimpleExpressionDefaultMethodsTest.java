@@ -1,12 +1,12 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.model.EntityRoot;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.util.Paths;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.lang.NonNull;
 
 import java.math.BigDecimal;
 
@@ -52,11 +52,6 @@ class SimpleExpressionDefaultMethodsTest {
         }
 
         @Override
-        public EntityRoot<TestEntity> root() {
-            return delegate.root();
-        }
-
-        @Override
         public NumberExpression<TestEntity, Long> count() {
             return delegate.count();
         }
@@ -97,7 +92,7 @@ class SimpleExpressionDefaultMethodsTest {
         }
 
         @Override
-        public Predicate<TestEntity> in(TypedExpression<TestEntity, java.util.List<Integer>> expressions) {
+        public Predicate<TestEntity> in(@NonNull TypedExpression<TestEntity, java.util.List<Integer>> expressions) {
             return delegate.in(expressions);
         }
 
@@ -107,12 +102,12 @@ class SimpleExpressionDefaultMethodsTest {
         }
 
         @Override
-        public Predicate<TestEntity> in(java.util.List<? extends TypedExpression<TestEntity, Integer>> values) {
+        public Predicate<TestEntity> in(@NonNull java.util.List<? extends TypedExpression<TestEntity, Integer>> values) {
             return delegate.in(values);
         }
 
         @Override
-        public Predicate<TestEntity> in(java.util.Collection<? extends Integer> values) {
+        public Predicate<TestEntity> in(@NonNull java.util.Collection<? extends Integer> values) {
             return delegate.in(values);
         }
 
@@ -122,12 +117,12 @@ class SimpleExpressionDefaultMethodsTest {
         }
 
         @Override
-        public Predicate<TestEntity> notIn(java.util.List<? extends TypedExpression<TestEntity, Integer>> values) {
+        public Predicate<TestEntity> notIn(@NonNull java.util.List<? extends TypedExpression<TestEntity, Integer>> values) {
             return delegate.notIn(values);
         }
 
         @Override
-        public Predicate<TestEntity> notIn(java.util.Collection<? extends Integer> values) {
+        public Predicate<TestEntity> notIn(@NonNull java.util.Collection<? extends Integer> values) {
             return delegate.notIn(values);
         }
 
@@ -574,42 +569,6 @@ class SimpleExpressionDefaultMethodsTest {
             // Then
             assertThat(order).isNotNull();
             assertThat(order).isInstanceOf(OrderImpl.class);
-        }
-    }
-
-    // ==================== Root Method ====================
-
-    @Nested
-    @DisplayName("root() method")
-    class RootMethod {
-
-        @Test
-        @DisplayName("root() should return EntityRoot instance")
-        void root_shouldReturnEntityRoot() {
-            // Given
-            NumberPath<TestEntity, Integer> path = Paths.get(TestEntity::getCount);
-
-            // When
-            EntityRoot<TestEntity> root = path.root();
-
-            // Then
-            assertThat(root).isNotNull();
-            assertThat(root).isInstanceOf(Paths.RootImpl.class);
-        }
-
-        @Test
-        @DisplayName("root().literal(value) should create literal expression")
-        void root_literal_shouldCreateLiteralExpression() {
-            // Given
-            NumberPath<TestEntity, Integer> path = Paths.get(TestEntity::getCount);
-            EntityRoot<TestEntity> root = path.root();
-
-            // When
-            TypedExpression<TestEntity, Integer> literal = root.literal(100);
-
-            // Then
-            assertThat(literal).isNotNull();
-            assertThat(literal).isInstanceOf(SimpleExpressionImpl.class);
         }
     }
 

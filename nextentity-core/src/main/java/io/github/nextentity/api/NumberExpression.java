@@ -1,5 +1,8 @@
 package io.github.nextentity.api;
 
+import io.github.nextentity.api.model.EntityRoot;
+import io.github.nextentity.core.util.Paths;
+
 /**
  * Number expression interface, providing number-type expression operation methods.
  * <p>
@@ -17,7 +20,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param expression Another expression
      * @return Addition result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> add(TypedExpression<T, U> expression);
+    NumberExpression<T, U> add(TypedExpression<T, U> expression);
 
     /**
      * Subtraction operation, subtracts another expression.
@@ -25,7 +28,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param expression Another expression
      * @return Subtraction result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> subtract(TypedExpression<T, U> expression);
+    NumberExpression<T, U> subtract(TypedExpression<T, U> expression);
 
     /**
      * Multiplication operation, multiplies another expression.
@@ -33,7 +36,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param expression Another expression
      * @return Multiplication result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> multiply(TypedExpression<T, U> expression);
+    NumberExpression<T, U> multiply(TypedExpression<T, U> expression);
 
     /**
      * Division operation, divides another expression.
@@ -41,7 +44,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param expression Another expression
      * @return Division result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> divide(TypedExpression<T, U> expression);
+    NumberExpression<T, U> divide(TypedExpression<T, U> expression);
 
     /**
      * Modulo operation, modulo another expression.
@@ -49,35 +52,35 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param expression Another expression
      * @return Modulo result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> mod(TypedExpression<T, U> expression);
+    NumberExpression<T, U> mod(TypedExpression<T, U> expression);
 
     /**
      * Sum operation.
      *
      * @return Sum result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> sum();
+    NumberExpression<T, U> sum();
 
     /**
      * Average operation.
      *
      * @return Average result expression
      */
-    io.github.nextentity.api.NumberExpression<T, Double> avg();
+    NumberExpression<T, Double> avg();
 
     /**
      * Maximum operation.
      *
      * @return Maximum result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> max();
+    NumberExpression<T, U> max();
 
     /**
      * Minimum operation.
      *
      * @return Minimum result expression
      */
-    io.github.nextentity.api.NumberExpression<T, U> min();
+    NumberExpression<T, U> min();
 
     /**
      * Addition operation, adds the specified value.
@@ -85,7 +88,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to add
      * @return Addition result expression
      */
-    default io.github.nextentity.api.NumberExpression<T, U> add(U value) {
+    default NumberExpression<T, U> add(U value) {
         return add(root().literal(value));
     }
 
@@ -95,7 +98,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to subtract
      * @return Subtraction result expression
      */
-    default io.github.nextentity.api.NumberExpression<T, U> subtract(U value) {
+    default NumberExpression<T, U> subtract(U value) {
         return subtract(root().literal(value));
     }
 
@@ -105,7 +108,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to multiply
      * @return Multiplication result expression
      */
-    default io.github.nextentity.api.NumberExpression<T, U> multiply(U value) {
+    default NumberExpression<T, U> multiply(U value) {
         return multiply(root().literal(value));
     }
 
@@ -115,7 +118,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to divide
      * @return Division result expression
      */
-    default io.github.nextentity.api.NumberExpression<T, U> divide(U value) {
+    default NumberExpression<T, U> divide(U value) {
         return divide(root().literal(value));
     }
 
@@ -125,7 +128,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to modulo
      * @return Modulo result expression
      */
-    default io.github.nextentity.api.NumberExpression<T, U> mod(U value) {
+    default NumberExpression<T, U> mod(U value) {
         return mod(root().literal(value));
     }
 
@@ -135,7 +138,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to add
      * @return Addition result expression or current expression (if value is null)
      */
-    default io.github.nextentity.api.NumberExpression<T, U> addIfNotNull(U value) {
+    default NumberExpression<T, U> addIfNotNull(U value) {
         return value == null ? this : add(value);
     }
 
@@ -145,7 +148,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to subtract
      * @return Subtraction result expression or current expression (if value is null)
      */
-    default io.github.nextentity.api.NumberExpression<T, U> subtractIfNotNull(U value) {
+    default NumberExpression<T, U> subtractIfNotNull(U value) {
         return value == null ? this : subtract(value);
     }
 
@@ -155,7 +158,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to multiply
      * @return Multiplication result expression or current expression (if value is null)
      */
-    default io.github.nextentity.api.NumberExpression<T, U> multiplyIfNotNull(U value) {
+    default NumberExpression<T, U> multiplyIfNotNull(U value) {
         return value == null ? this : multiply(value);
     }
 
@@ -165,7 +168,7 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to divide
      * @return Division result expression or current expression (if value is null)
      */
-    default io.github.nextentity.api.NumberExpression<T, U> divideIfNotNull(U value) {
+    default NumberExpression<T, U> divideIfNotNull(U value) {
         return value == null ? this : divide(value);
     }
 
@@ -175,8 +178,11 @@ public interface NumberExpression<T, U extends Number> extends SimpleExpression<
      * @param value Value to modulo
      * @return Modulo result expression or current expression (if value is null)
      */
-    default io.github.nextentity.api.NumberExpression<T, U> modIfNotNull(U value) {
+    default NumberExpression<T, U> modIfNotNull(U value) {
         return value == null ? this : mod(value);
     }
 
+    private EntityRoot<T> root() {
+        return Paths.root();
+    }
 }
