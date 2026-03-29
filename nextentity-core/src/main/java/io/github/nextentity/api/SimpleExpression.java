@@ -238,9 +238,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param value Comparison value
      * @return Predicate object
      */
-    default Predicate<T> ge(U value) {
-        return ge(root().literal(value));
-    }
+    Predicate<T> ge(U value);
 
     /**
      * Greater than the specified value.
@@ -248,9 +246,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param value Comparison value
      * @return Predicate object
      */
-    default Predicate<T> gt(U value) {
-        return gt(root().literal(value));
-    }
+    Predicate<T> gt(U value);
 
     /**
      * Less than or equal to the specified value.
@@ -258,9 +254,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param value Comparison value
      * @return Predicate object
      */
-    default Predicate<T> le(U value) {
-        return le(root().literal(value));
-    }
+    Predicate<T> le(U value);
 
     /**
      * Less than the specified value.
@@ -268,9 +262,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param value Comparison value
      * @return Predicate object
      */
-    default Predicate<T> lt(U value) {
-        return lt(root().literal(value));
-    }
+    Predicate<T> lt(U value);
 
     /**
      * Greater than or equal to the specified value if not null.
@@ -311,10 +303,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param r Right boundary value
      * @return Predicate object
      */
-    default Predicate<T> between(U l, U r) {
-        EntityRoot<T> eb = root();
-        return between(eb.literal(l), eb.literal(r));
-    }
+    Predicate<T> between(U l, U r);
 
     /**
      * Not between two values.
@@ -323,10 +312,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param r Right boundary value
      * @return Predicate object
      */
-    default Predicate<T> notBetween(U l, U r) {
-        EntityRoot<T> eb = root();
-        return notBetween(eb.literal(l), eb.literal(r));
-    }
+    Predicate<T> notBetween(U l, U r);
 
     /**
      * Between expression and value.
@@ -335,9 +321,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param r Right boundary value
      * @return Predicate object
      */
-    default Predicate<T> between(TypedExpression<T, U> l, U r) {
-        return between(l, root().literal(r));
-    }
+    Predicate<T> between(TypedExpression<T, U> l, U r);
 
     /**
      * Between value and expression.
@@ -346,9 +330,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param r Right boundary expression
      * @return Predicate object
      */
-    default Predicate<T> between(U l, TypedExpression<T, U> r) {
-        return between(root().literal(l), r);
-    }
+    Predicate<T> between(U l, TypedExpression<T, U> r);
 
     /**
      * Not between expression and value.
@@ -357,9 +339,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param r Right boundary value
      * @return Predicate object
      */
-    default Predicate<T> notBetween(TypedExpression<T, U> l, U r) {
-        return notBetween(l, root().literal(r));
-    }
+    Predicate<T> notBetween(TypedExpression<T, U> l, U r);
 
     /**
      * Not between value and expression.
@@ -368,9 +348,7 @@ public interface SimpleExpression<T, U> extends TypedExpression<T, U> {
      * @param r Right boundary expression
      * @return Predicate object
      */
-    default Predicate<T> notBetween(U l, TypedExpression<T, U> r) {
-        return notBetween(root().literal(l), r);
-    }
+    Predicate<T> notBetween(U l, TypedExpression<T, U> r);
 
     /**
      * Gets the maximum value of the expression.

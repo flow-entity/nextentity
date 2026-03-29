@@ -1,15 +1,18 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Predicate;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.time.LocalDate;
 import java.util.List;
 
+import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -485,5 +488,577 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // Then - ge count should be >= gt count (since ge is inclusive)
         assertThat(geCount).isGreaterThanOrEqualTo(gtCount);
         assertThat(leCount).isGreaterThanOrEqualTo(ltCount);
+    }
+
+    // ==================== geIfNotNull/gtIfNotNull/leIfNotNull/ltIfNotNull Tests ====================
+
+    @Nested
+    @DisplayName("IfNotNull Operations Tests")
+    class IfNotNullOperationsTests {
+
+        /**
+         * Tests: geIfNotNull with non-null value.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should filter with geIfNotNull when value is not null")
+        void shouldFilterWithGeIfNotNullNonNull(IntegrationTestContext context) {
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).geIfNotNull(SALARY_THRESHOLD)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: geIfNotNull with null value - should skip condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should skip filter when geIfNotNull is null")
+        void shouldSkipFilterWhenGeIfNotNullNull(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).geIfNotNull(null)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: gtIfNotNull with non-null value.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should filter with gtIfNotNull when value is not null")
+        void shouldFilterWithGtIfNotNullNonNull(IntegrationTestContext context) {
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).gtIfNotNull(SALARY_THRESHOLD)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: gtIfNotNull with null value - should skip condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should skip filter when gtIfNotNull is null")
+        void shouldSkipFilterWhenGtIfNotNullNull(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).gtIfNotNull(null)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: leIfNotNull with non-null value.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should filter with leIfNotNull when value is not null")
+        void shouldFilterWithLeIfNotNullNonNull(IntegrationTestContext context) {
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).leIfNotNull(SALARY_THRESHOLD)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: leIfNotNull with null value - should skip condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should skip filter when leIfNotNull is null")
+        void shouldSkipFilterWhenLeIfNotNullNull(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).leIfNotNull(null)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: ltIfNotNull with non-null value.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should filter with ltIfNotNull when value is not null")
+        void shouldFilterWithLtIfNotNullNonNull(IntegrationTestContext context) {
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).ltIfNotNull(SALARY_THRESHOLD)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: ltIfNotNull with null value - should skip condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should skip filter when ltIfNotNull is null")
+        void shouldSkipFilterWhenLtIfNotNullNull(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).ltIfNotNull(null)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: Combining multiple IfNotNull conditions.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine multiple IfNotNull conditions")
+        void shouldCombineMultipleIfNotNullConditions(IntegrationTestContext context) {
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).geIfNotNull(50000.0)
+                    .where(Employee::getSalary).leIfNotNull(80000.0)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0);
+        }
+
+        /**
+         * Tests: Combining IfNotNull with null value (should skip).
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should skip null IfNotNull in combined conditions")
+        void shouldSkipNullIfNotNullInCombinedConditions(IntegrationTestContext context) {
+            // When - one null condition should be skipped
+            List<Employee> employees = context.queryEmployees()
+                    .where(Employee::getSalary).geIfNotNull(50000.0)
+                    .where(Employee::getId).gtIfNotNull(null)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then - should only filter by salary condition
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0);
+        }
+    }
+
+    // ==================== Predicate as Query Condition Tests ====================
+
+    @Nested
+    @DisplayName("Predicate as Query Condition Tests")
+    class PredicateAsQueryConditionTests {
+
+        /**
+         * Tests: ge(value) creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use ge predicate as where condition")
+        void shouldUseGePredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given - create predicate using ge
+            Predicate<Employee> predicate = get(Employee::getSalary).ge(SALARY_THRESHOLD);
+
+            // When - pass predicate to where()
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: gt(value) creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use gt predicate as where condition")
+        void shouldUseGtPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).gt(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: le(value) creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use le predicate as where condition")
+        void shouldUseLePredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).le(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: lt(value) creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use lt predicate as where condition")
+        void shouldUseLtPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).lt(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: between(value, value) creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use between predicate as where condition")
+        void shouldUseBetweenPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            double minSalary = 55000.0;
+            double maxSalary = 75000.0;
+            Predicate<Employee> predicate = get(Employee::getSalary).between(minSalary, maxSalary);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
+        }
+
+        /**
+         * Tests: notBetween(value, value) creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notBetween predicate as where condition")
+        void shouldUseNotBetweenPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            double minSalary = 55000.0;
+            double maxSalary = 75000.0;
+            Predicate<Employee> predicate = get(Employee::getSalary).notBetween(minSalary, maxSalary);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getSalary).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() < minSalary || e.getSalary() > maxSalary);
+        }
+
+        /**
+         * Tests: geIfNotNull creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use geIfNotNull predicate as where condition")
+        void shouldUseGeIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).geIfNotNull(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: geIfNotNull with null creates empty Predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use geIfNotNull null predicate as where condition")
+        void shouldUseGeIfNotNullNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+            Predicate<Employee> predicate = get(Employee::getSalary).geIfNotNull(null);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: gtIfNotNull creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use gtIfNotNull predicate as where condition")
+        void shouldUseGtIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).gtIfNotNull(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: leIfNotNull creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use leIfNotNull predicate as where condition")
+        void shouldUseLeIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).leIfNotNull(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: ltIfNotNull creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use ltIfNotNull predicate as where condition")
+        void shouldUseLtIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getSalary).ltIfNotNull(SALARY_THRESHOLD);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
+        }
+
+        /**
+         * Tests: Combining multiple comparison predicates with AND.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine multiple comparison predicates with AND")
+        void shouldCombineMultiplePredicatesWithAnd(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> minSalaryPredicate = get(Employee::getSalary).ge(50000.0);
+            Predicate<Employee> maxSalaryPredicate = get(Employee::getSalary).le(80000.0);
+            Predicate<Employee> combined = minSalaryPredicate.and(maxSalaryPredicate);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(combined)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0);
+        }
+
+        /**
+         * Tests: Combining multiple comparison predicates with OR.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine multiple comparison predicates with OR")
+        void shouldCombineMultiplePredicatesWithOr(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> lowSalaryPredicate = get(Employee::getSalary).lt(55000.0);
+            Predicate<Employee> highSalaryPredicate = get(Employee::getSalary).gt(75000.0);
+            Predicate<Employee> combined = lowSalaryPredicate.or(highSalaryPredicate);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(combined)
+                    .orderBy(Employee::getSalary).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() < 55000.0 || e.getSalary() > 75000.0);
+        }
+
+        /**
+         * Tests: Combining comparison predicate with other where conditions.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine comparison predicate with other where conditions")
+        void shouldCombinePredicateWithOtherConditions(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> salaryPredicate = get(Employee::getSalary).ge(50000.0);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(salaryPredicate)
+                    .where(Employee::getName).like("A%")
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0 && e.getName().startsWith("A"));
+        }
+
+        /**
+         * Tests: NOT on comparison predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use NOT on comparison predicate")
+        void shouldUseNotOnComparisonPredicate(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> highSalary = get(Employee::getSalary).gt(80000.0);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(highSalary.not())
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() <= 80000.0);
+        }
+
+        /**
+         * Tests: Complex predicate with comparison expressions.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should create complex predicate with comparison expressions")
+        void shouldCreateComplexPredicateWithComparisonExpressions(IntegrationTestContext context) {
+            // Given: (salary >= 50000 AND salary <= 80000) OR id < 3
+            Predicate<Employee> salaryRange = get(Employee::getSalary).ge(50000.0)
+                    .and(get(Employee::getSalary).le(80000.0));
+            Predicate<Employee> lowId = get(Employee::getId).lt(3L);
+            Predicate<Employee> complex = salaryRange.or(lowId);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(complex)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e ->
+                    (e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0) || e.getId() < 3L);
+        }
+
+        /**
+         * Tests: between predicate with expressions.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use between with expression as predicate")
+        void shouldUseBetweenWithExpressionAsPredicate(IntegrationTestContext context) {
+            // Given
+            Double employee1Salary = context.queryEmployees()
+                    .select(Employee::getSalary)
+                    .where(Employee::getId).eq(1L)
+                    .getSingle();
+            Predicate<Employee> predicate = get(Employee::getSalary).between(employee1Salary, 80000.0);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getSalary).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getSalary() >= employee1Salary && e.getSalary() <= 80000.0);
+        }
     }
 }

@@ -14,11 +14,6 @@ public class SimpleExpressionImpl<T, U>
     }
 
     @Override
-    public EntityRoot<T> root() {
-        return Paths.root();
-    }
-
-    @Override
     public NumberExpression<T, Long> count() {
         return new NumberExpressionImpl<>(operate(Operator.COUNT));
     }

@@ -114,26 +114,4 @@ class SimpleExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.MIN);
         }
     }
-
-    @Nested
-    class RootMethod {
-
-        /**
-         * Test objective: Verify root() returns EntityRoot
-         * Test scenario: Call root() on expression
-         * Expected result: Non-null EntityRoot
-         */
-        @Test
-        void root_ReturnsEntityRoot() {
-            // given
-            LiteralNode node = new LiteralNode("test");
-            SimpleExpressionImpl<Object, String> expression = new SimpleExpressionImpl<>(node);
-
-            // when
-            var result = expression.root();
-
-            // then
-            assertThat(result).isNotNull();
-        }
-    }
 }

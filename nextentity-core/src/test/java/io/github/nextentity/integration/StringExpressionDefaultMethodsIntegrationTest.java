@@ -1,14 +1,17 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.api.Predicate;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
 
+import static io.github.nextentity.core.util.Paths.get;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -789,5 +792,540 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
         // Then
         assertThat(exists).isTrue();
+    }
+
+    // ==================== Predicate as Query Condition Tests ====================
+
+    /**
+     * Tests using startsWith predicate as query condition.
+     */
+    @Nested
+    @DisplayName("Predicate as Query Condition Tests")
+    class PredicateAsQueryConditionTests {
+
+        /**
+         * Tests: startsWith creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use startsWith predicate as where condition")
+        void shouldUseStartsWithPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given - create predicate using startsWith
+            Predicate<Employee> predicate = get(Employee::getName).startsWith("Alice");
+
+            // When - pass predicate to where()
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
+        }
+
+        /**
+         * Tests: endsWith creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use endsWith predicate as where condition")
+        void shouldUseEndsWithPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getEmail).endsWith("@example.com");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
+        }
+
+        /**
+         * Tests: contains creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use contains predicate as where condition")
+        void shouldUseContainsPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).contains("John");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getName().contains("John"));
+        }
+
+        /**
+         * Tests: notStartsWith creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notStartsWith predicate as where condition")
+        void shouldUseNotStartsWithPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).notStartsWith("A");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
+        }
+
+        /**
+         * Tests: notEndsWith creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notEndsWith predicate as where condition")
+        void shouldUseNotEndsWithPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getEmail).notEndsWith("@nonexistent.org");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
+        }
+
+        /**
+         * Tests: notContains creates Predicate that can be passed to where().
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notContains predicate as where condition")
+        void shouldUseNotContainsPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).notContains("Alice");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
+        }
+
+        /**
+         * Tests: startsWithIfNotNull with non-null creates Predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use startsWithIfNotNull predicate as where condition")
+        void shouldUseStartsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotNull("Alice");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
+        }
+
+        /**
+         * Tests: startsWithIfNotNull with null creates empty Predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use startsWithIfNotNull null predicate as where condition")
+        void shouldUseStartsWithIfNotNullNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotNull(null);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: endsWithIfNotNull predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use endsWithIfNotNull predicate as where condition")
+        void shouldUseEndsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getEmail).endsWithIfNotNull("@example.com");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
+        }
+
+        /**
+         * Tests: containsIfNotNull predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use containsIfNotNull predicate as where condition")
+        void shouldUseContainsIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).containsIfNotNull("John");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getName().contains("John"));
+        }
+
+        /**
+         * Tests: startsWithIfNotEmpty with non-empty creates Predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use startsWithIfNotEmpty predicate as where condition")
+        void shouldUseStartsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotEmpty("Alice");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
+        }
+
+        /**
+         * Tests: startsWithIfNotEmpty with empty creates empty Predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use startsWithIfNotEmpty empty predicate as where condition")
+        void shouldUseStartsWithIfNotEmptyEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            long totalCount = context.queryEmployees().count();
+            Predicate<Employee> predicate = get(Employee::getName).startsWithIfNotEmpty("");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).hasSize((int) totalCount);
+        }
+
+        /**
+         * Tests: endsWithIfNotEmpty predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use endsWithIfNotEmpty predicate as where condition")
+        void shouldUseEndsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getEmail).endsWithIfNotEmpty("@example.com");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
+        }
+
+        /**
+         * Tests: containsIfNotEmpty predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use containsIfNotEmpty predicate as where condition")
+        void shouldUseContainsIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).containsIfNotEmpty("John");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> e.getName().contains("John"));
+        }
+
+        /**
+         * Tests: notStartsWithIfNotNull predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notStartsWithIfNotNull predicate as where condition")
+        void shouldUseNotStartsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).notStartsWithIfNotNull("A");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
+        }
+
+        /**
+         * Tests: notEndsWithIfNotNull predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notEndsWithIfNotNull predicate as where condition")
+        void shouldUseNotEndsWithIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getEmail).notEndsWithIfNotNull("@nonexistent.org");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
+        }
+
+        /**
+         * Tests: notContainsIfNotNull predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notContainsIfNotNull predicate as where condition")
+        void shouldUseNotContainsIfNotNullPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).notContainsIfNotNull("Alice");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
+        }
+
+        /**
+         * Tests: notStartsWithIfNotEmpty predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notStartsWithIfNotEmpty predicate as where condition")
+        void shouldUseNotStartsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).notStartsWithIfNotEmpty("A");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
+        }
+
+        /**
+         * Tests: notEndsWithIfNotEmpty predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notEndsWithIfNotEmpty predicate as where condition")
+        void shouldUseNotEndsWithIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getEmail).notEndsWithIfNotEmpty("@nonexistent.org");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
+        }
+
+        /**
+         * Tests: notContainsIfNotEmpty predicate as where condition.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use notContainsIfNotEmpty predicate as where condition")
+        void shouldUseNotContainsIfNotEmptyPredicateAsWhereCondition(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> predicate = get(Employee::getName).notContainsIfNotEmpty("Alice");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(predicate)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
+        }
+
+        /**
+         * Tests: Combining multiple string predicates with AND.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine multiple string predicates with AND")
+        void shouldCombineMultipleStringPredicatesWithAnd(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> namePredicate = get(Employee::getName).startsWith("A");
+            Predicate<Employee> emailPredicate = get(Employee::getEmail).endsWith("@example.com");
+            Predicate<Employee> combined = namePredicate.and(emailPredicate);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(combined)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e ->
+                    e.getName().startsWith("A") && e.getEmail().endsWith("@example.com"));
+        }
+
+        /**
+         * Tests: Combining multiple string predicates with OR.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine multiple string predicates with OR")
+        void shouldCombineMultipleStringPredicatesWithOr(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> alicePredicate = get(Employee::getName).startsWith("Alice");
+            Predicate<Employee> johnPredicate = get(Employee::getName).contains("John");
+            Predicate<Employee> combined = alicePredicate.or(johnPredicate);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(combined)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e ->
+                    e.getName().startsWith("Alice") || e.getName().contains("John"));
+        }
+
+        /**
+         * Tests: Combining string predicate with other conditions.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should combine string predicate with other where conditions")
+        void shouldCombineStringPredicateWithOtherConditions(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> namePredicate = get(Employee::getName).startsWith("A");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(namePredicate)
+                    .where(Employee::getActive).eq(true)
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e ->
+                    e.getName().startsWith("A") && e.getActive());
+        }
+
+        /**
+         * Tests: NOT on string predicate.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should use NOT on string predicate")
+        void shouldUseNotOnStringPredicate(IntegrationTestContext context) {
+            // Given
+            Predicate<Employee> startsWithA = get(Employee::getName).startsWith("A");
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(startsWithA.not())
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
+        }
+
+        /**
+         * Tests: Complex predicate with string expressions.
+         */
+        @ParameterizedTest
+        @ArgumentsSource(IntegrationTestProvider.class)
+        @DisplayName("Should create complex predicate with string expressions")
+        void shouldCreateComplexPredicateWithStringExpressions(IntegrationTestContext context) {
+            // Given: (name starts with 'A' AND email ends with '@example.com') OR name contains 'John'
+            Predicate<Employee> nameStartsWithA = get(Employee::getName).startsWith("A");
+            Predicate<Employee> emailEndsWithExample = get(Employee::getEmail).endsWith("@example.com");
+            Predicate<Employee> nameContainsJohn = get(Employee::getName).contains("John");
+            Predicate<Employee> complex = nameStartsWithA.and(emailEndsWithExample).or(nameContainsJohn);
+
+            // When
+            List<Employee> employees = context.queryEmployees()
+                    .where(complex)
+                    .orderBy(Employee::getId).asc()
+                    .getList();
+
+            // Then
+            assertThat(employees).isNotEmpty();
+            assertThat(employees).allMatch(e ->
+                    (e.getName().startsWith("A") && e.getEmail().endsWith("@example.com")) ||
+                    e.getName().contains("John"));
+        }
     }
 }
