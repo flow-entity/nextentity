@@ -6,6 +6,18 @@ import io.github.nextentity.core.reflect.schema.Attributes;
 
 import java.util.function.Function;
 
+/**
+ * Simple implementation of {@link JoinAttribute}.
+ * <p>
+ * This class provides a concrete implementation for join/association attributes
+ * with lazy attribute building via a supplied function.
+ * <p>
+ * Join attributes represent entity associations (Many-to-One, One-to-One) and
+ * contain metadata about join columns and referenced tables.
+ *
+ * @author HuangChengwei
+ * @since 1.0.0
+ */
 public class SimpleJoinAttribute extends AbstractSchemaAttribute implements JoinAttribute {
 
     private final Function<JoinAttribute, Attributes> attributesFunction;
@@ -15,6 +27,11 @@ public class SimpleJoinAttribute extends AbstractSchemaAttribute implements Join
     private EntityAttribute version;
     private String tableName;
 
+    /**
+     * Creates a new SimpleJoinAttribute instance.
+     *
+     * @param attributesFunction function to build target entity attributes
+     */
     public SimpleJoinAttribute(Function<JoinAttribute, Attributes> attributesFunction) {
         this.attributesFunction = attributesFunction;
     }
@@ -44,6 +61,11 @@ public class SimpleJoinAttribute extends AbstractSchemaAttribute implements Join
         return referencedColumnName;
     }
 
+    /**
+     * Builds the target entity attributes and extracts ID and version.
+     *
+     * @return the target entity attributes
+     */
     @Override
     protected Attributes buildAttributes() {
         Attributes attributes = attributesFunction.apply(this);
@@ -63,14 +85,29 @@ public class SimpleJoinAttribute extends AbstractSchemaAttribute implements Join
         return attributes;
     }
 
+    /**
+     * Sets the join column name.
+     *
+     * @param joinName the join column name
+     */
     public void setJoinName(String joinName) {
         this.joinName = joinName;
     }
 
+    /**
+     * Sets the referenced (foreign key) column name.
+     *
+     * @param referencedColumnName the referenced column name
+     */
     public void setReferencedColumnName(String referencedColumnName) {
         this.referencedColumnName = referencedColumnName;
     }
 
+    /**
+     * Sets the target entity table name.
+     *
+     * @param tableName the table name
+     */
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }

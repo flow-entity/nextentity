@@ -7,7 +7,20 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
+/**
+ * Simple implementation of {@link EntityType}.
+ * <p>
+ * This class provides a concrete implementation for entity type metadata
+ * with support for lazy projection type generation and caching.
+ * <p>
+ * Entity attributes including ID and version are set after construction
+ * via {@link #setAttributes(Attributes)}.
+ *
+ * @author HuangChengwei
+ * @since 1.0.0
+ */
 public class SimpleEntity implements EntityType {
+
     private final Map<Class<?>, ProjectionType> projections = new ConcurrentHashMap<>();
     private final Class<?> type;
     private final String tableName;
@@ -16,6 +29,13 @@ public class SimpleEntity implements EntityType {
     private EntityAttribute id;
     private EntityAttribute version;
 
+    /**
+     * Creates a new SimpleEntity instance.
+     *
+     * @param type the entity class
+     * @param tableName the database table name
+     * @param projectionTypeGenerator function to generate projection types
+     */
     public SimpleEntity(Class<?> type,
                         String tableName,
                         BiFunction<EntityType, Class<?>, ProjectionType> projectionTypeGenerator) {
@@ -24,6 +44,11 @@ public class SimpleEntity implements EntityType {
         this.projectionTypeGenerator = projectionTypeGenerator;
     }
 
+    /**
+     * Sets the entity attributes and extracts ID and version attributes.
+     *
+     * @param attributes the entity attributes
+     */
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
         EntityAttribute version = null;
@@ -41,6 +66,12 @@ public class SimpleEntity implements EntityType {
         this.version = version;
     }
 
+    /**
+     * Gets the projection type for the specified class, caching the result.
+     *
+     * @param type the projection class
+     * @return the cached or newly generated projection type
+     */
     @Override
     public ProjectionType getProjection(Class<?> type) {
         return projections.computeIfAbsent(type, this::generateProjectionType);
