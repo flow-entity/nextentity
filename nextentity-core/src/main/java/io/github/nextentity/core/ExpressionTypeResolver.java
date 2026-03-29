@@ -10,12 +10,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 
-/**
- * Utility class for resolving expression types.
- *
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// Utility class for resolving expression types.
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class ExpressionTypeResolver {
 
     private static final List<Class<? extends Number>> NUMBER_TYPES = ImmutableList.of(

@@ -24,30 +24,30 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-/**
- * Abstract base class for metamodel implementations.
- * <p>
- * This class provides the core functionality for building entity type metadata
- * from Java classes, including attribute discovery, type conversion, and
- * projection support.
- * <p>
- * Subclasses implement abstract methods to provide annotation-specific
- * metadata extraction for different persistence frameworks (JPA, JDBC, etc.).
- *
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// Abstract base class for metamodel implementations.
+///
+/// This class provides the core functionality for building entity type metadata
+/// from Java classes, including attribute discovery, type conversion, and
+/// projection support.
+///
+/// Subclasses implement abstract methods to provide annotation-specific
+/// metadata extraction for different persistence frameworks (JPA, JDBC, etc.).
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public abstract class AbstractMetamodel implements Metamodel {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(AbstractMetamodel.class);
     private final Map<Class<?>, EntityType> entityTypes = new ConcurrentHashMap<>();
 
-    /**
-     * Gets the entity type metadata for the specified class, caching the result.
-     *
-     * @param entityType the entity class
-     * @return the cached or newly created entity type metadata
-     */
+    ///
+    /// Gets the entity type metadata for the specified class, caching the result.
+    ///
+    /// @param entityType the entity class
+    /// @return the cached or newly created entity type metadata
+    ///
     @Override
     public EntityType getEntity(Class<?> entityType) {
         return entityTypes.computeIfAbsent(entityType, this::createEntityType);

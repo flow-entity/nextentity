@@ -4,10 +4,10 @@ import io.github.nextentity.core.TypeCastUtil;
 
 import java.util.Objects;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class Exceptions {
 
     public static RuntimeException sneakyThrow(Throwable throwable) {

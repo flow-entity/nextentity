@@ -9,10 +9,10 @@ import io.github.nextentity.core.expression.PredicateImpl;
 
 import static io.github.nextentity.core.expression.Operator.NOT;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public interface Predicates {
 
     static <T> Predicate<T> of(TypedExpression<T, Boolean> predicate) {

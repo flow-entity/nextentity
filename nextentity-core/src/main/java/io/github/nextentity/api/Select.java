@@ -5,67 +5,53 @@ import io.github.nextentity.api.model.*;
 import java.util.Collection;
 import java.util.List;
 
-/**
- * Query operation interface, providing multiple query methods.
- *
- * @param <T> Entity type
- * @author HuangChengwei
- * @since 1.0.0
- */
+/// Query operation interface, providing multiple query methods.
+///
+/// @param <T> Entity type
+/// @author HuangChengwei
+/// @since 1.0.0
 public interface Select<T> extends FetchStep<T> {
 
-    /**
-     * Select projection results of the specified type.
-     *
-     * @param projectionType Projection type
-     * @param <R> Projection result type
-     * @return Query condition construction step
-     */
+    /// Select projection results of the specified type.
+    ///
+    /// @param projectionType Projection type
+    /// @param <R> Projection result type
+    /// @return Query condition construction step
     <R> BaseWhereStep<T, R> select(Class<R> projectionType);
 
-    /**
-     * Select results of multiple expressions.
-     *
-     * @param paths List of expressions
-     * @return Multi-row query condition construction step
-     */
+    /// Select results of multiple expressions.
+    ///
+    /// @param paths List of expressions
+    /// @return Multi-row query condition construction step
     WhereStep<T, Tuple> select(List<? extends TypedExpression<T, ?>> paths);
 
-    /**
-     * Select result of a single expression.
-     *
-     * @param expression Expression
-     * @param <R> Expression result type
-     * @return Multi-row query condition construction step
-     */
+    /// Select result of a single expression.
+    ///
+    /// @param expression Expression
+    /// @param <R> Expression result type
+    /// @return Multi-row query condition construction step
     <R> WhereStep<T, R> select(TypedExpression<T, R> expression);
 
-    /**
-     * Select result of a single path.
-     *
-     * @param path Path
-     * @param <R> Path result type
-     * @return Multi-row query condition construction step
-     */
+    /// Select result of a single path.
+    ///
+    /// @param path Path
+    /// @param <R> Path result type
+    /// @return Multi-row query condition construction step
     <R> WhereStep<T, R> select(Path<T, ? extends R> path);
 
-    /**
-     * Select results of multiple paths.
-     *
-     * @param paths Collection of paths
-     * @return Multi-row query condition construction step
-     */
+    /// Select results of multiple paths.
+    ///
+    /// @param paths Collection of paths
+    /// @return Multi-row query condition construction step
     WhereStep<T, Tuple> select(Collection<Path<T, ?>> paths);
 
-    /**
-     * Select results of two paths.
-     *
-     * @param a First path
-     * @param b Second path
-     * @param <A> First path type
-     * @param <B> Second path type
-     * @return Multi-row query condition construction step
-     */
+    /// Select results of two paths.
+    ///
+    /// @param a First path
+    /// @param b Second path
+    /// @param <A> First path type
+    /// @param <B> Second path type
+    /// @return Multi-row query condition construction step
     <A, B> WhereStep<T, Tuple2<A, B>> select(Path<T, A> a, Path<T, B> b);
 
     /**

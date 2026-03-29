@@ -9,10 +9,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder {
 
     private QuerySqlBuilder querySqlBuilder;

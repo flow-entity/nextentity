@@ -29,12 +29,12 @@ public class PathReference {
         entityType = methodType.parameterType(0);
     }
 
-    /**
-     * Get or create a PathReference for the given path.
-     *
-     * @param path the path to get reference for
-     * @return PathReference instance
-     */
+    ///
+    /// Get or create a PathReference for the given path.
+    ///
+    /// @param path the path to get reference for
+    /// @return PathReference instance
+    ///
     public static <T, R> PathReference of(Path<T, R> path) {
         Objects.requireNonNull(path, "path must not be null");
         PathReference existing = PATH_CACHE.get(path);
@@ -99,9 +99,9 @@ public class PathReference {
         return this.entityType;
     }
 
-    /**
-     * Clear the path cache. Should be called when entity metadata changes.
-     */
+    ///
+    /// Clear the path cache. Should be called when entity metadata changes.
+    ///
     public static void clearCache() {
         PATH_CACHE.clear();
     }

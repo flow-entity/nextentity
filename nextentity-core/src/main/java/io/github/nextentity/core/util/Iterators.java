@@ -7,10 +7,10 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class Iterators {
 
     public static <T> List<T> toList(Iterable<T> iterable) {
@@ -46,12 +46,12 @@ public class Iterators {
         return objects;
     }
 
-    /**
-     * try to get iterable size
-     *
-     * @param iterable iterable
-     * @return size if iterable is Collection or Sizeable otherwise -1
-     */
+    ///
+    /// try to get iterable size
+    ///
+    /// @param iterable iterable
+    /// @return size if iterable is Collection or Sizeable otherwise -1
+    ///
     public static int sizeOf(Iterable<?> iterable) {
         if (iterable instanceof Collection<?>) {
             return ((Collection<?>) iterable).size();

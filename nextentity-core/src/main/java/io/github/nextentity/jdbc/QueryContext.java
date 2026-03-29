@@ -20,10 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public abstract class QueryContext {
 
     protected final QueryStructure structure;

@@ -1,9 +1,9 @@
 package io.github.nextentity.jdbc;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class BatchSqlStatement implements SqlStatement {
     private final String sql;
     private final Iterable<? extends Iterable<?>> parameters;

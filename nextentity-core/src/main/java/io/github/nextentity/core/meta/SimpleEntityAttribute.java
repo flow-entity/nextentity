@@ -4,12 +4,12 @@ import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.reflect.schema.SimpleAttribute;
 
-/**
- * Simple implementation of {@link EntityAttribute}.
- * <p>
- * This class provides a concrete implementation for entity attributes with
- * support for column mapping, value conversion, versioning, and identity.
- */
+///
+/// Simple implementation of {@link EntityAttribute}.
+///
+/// This class provides a concrete implementation for entity attributes with
+/// support for column mapping, value conversion, versioning, and identity.
+///
 public class SimpleEntityAttribute extends SimpleAttribute implements EntityAttribute {
     private String columnName;
     private ValueConverter<?, ?> valueConvertor;
@@ -73,14 +73,14 @@ public class SimpleEntityAttribute extends SimpleAttribute implements EntityAttr
         return String.join(".", path());
     }
 
-    /**
-     * Gets the expression path node for this attribute.
-     * <p>
-     * Uses double-checked locking for lazy initialization to ensure thread safety
-     * while avoiding unnecessary synchronization overhead.
-     *
-     * @return the path node expression
-     */
+    ///
+    /// Gets the expression path node for this attribute.
+    ///
+    /// Uses double-checked locking for lazy initialization to ensure thread safety
+    /// while avoiding unnecessary synchronization overhead.
+    ///
+    /// @return the path node expression
+    ///
     @Override
     public PathNode expression() {
         if (pathNode == null) {

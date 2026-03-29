@@ -133,14 +133,14 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
         }
     }
 
-    /**
-     * Convert a Path to PathNode, preserving the full path including nested properties.
-     * Uses PathNode.of() which internally uses PathReference to correctly extract
-     * the field name from method reference paths.
-     *
-     * @param path the path to convert
-     * @return PathNode representing the path
-     */
+    ///
+    /// Convert a Path to PathNode, preserving the full path including nested properties.
+    /// Uses PathNode.of() which internally uses PathReference to correctly extract
+    /// the field name from method reference paths.
+    ///
+    /// @param path the path to convert
+    /// @return PathNode representing the path
+    ///
     protected PathNode getPathNode(Path<?, ?> path) {
         return PathNode.of(path);
     }

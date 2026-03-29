@@ -5,10 +5,10 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class Updaters {
 
     public static <T> Update<T> create(UpdateExecutor updateExecutor, Class<T> type) {

@@ -2,10 +2,10 @@ package io.github.nextentity.jdbc;
 
 import java.util.List;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class QuerySqlStatement implements SqlStatement {
 
     private final String sql;

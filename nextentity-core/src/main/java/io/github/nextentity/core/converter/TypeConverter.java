@@ -4,10 +4,10 @@ import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.List;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public interface TypeConverter {
 
     Object convert(Object value, Class<?> targetType);

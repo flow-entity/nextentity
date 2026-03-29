@@ -6,10 +6,10 @@ import io.github.nextentity.api.model.Pageable;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class Pages {
 
     public static <T> Page<T> page(List<T> items, long total) {

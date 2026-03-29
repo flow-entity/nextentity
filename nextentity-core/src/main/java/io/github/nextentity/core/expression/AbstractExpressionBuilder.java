@@ -12,44 +12,44 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
-/**
- * Abstract base class for expression builders.
- * <p>
- * Provides common implementation for building expression trees with
- * support for comparison operators, logical operators, and null-safe
- * conditional operations.
- * <p>
- * Type parameters:
- * <ul>
- *   <li>T - the entity type</li>
- *   <li>U - the value type being compared</li>
- *   <li>B - the builder return type for method chaining</li>
- * </ul>
- *
- * @param <T> the entity type
- * @param <U> the value type
- * @param <B> the builder return type
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// Abstract base class for expression builders.
+/// <p>
+/// Provides common implementation for building expression trees with
+/// support for comparison operators, logical operators, and null-safe
+/// conditional operations.
+/// <p>
+/// Type parameters:
+/// <ul>
+///   <li>T - the entity type</li>
+///   <li>U - the value type being compared</li>
+///   <li>B - the builder return type for method chaining</li>
+/// </ul>
+///
+/// @param <T> the entity type
+/// @param <U> the value type
+/// @param <B> the builder return type
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTree {
 
     private volatile ExpressionNode root;
 
-    /**
-     * Creates a new expression builder with the specified root node.
-     *
-     * @param root the root expression node
-     */
+    ///
+    /// Creates a new expression builder with the specified root node.
+    ///
+    /// @param root the root expression node
+    ///
     public AbstractExpressionBuilder(ExpressionNode root) {
         this.root = root;
     }
 
-    /**
-     * Gets the root expression node.
-     *
-     * @return the root node
-     */
+    ///
+    /// Gets the root expression node.
+    ///
+    /// @return the root node
+    ///
     public ExpressionNode getRoot() {
         return root;
     }

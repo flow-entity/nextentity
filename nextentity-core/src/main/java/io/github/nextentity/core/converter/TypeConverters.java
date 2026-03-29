@@ -6,10 +6,10 @@ import io.github.nextentity.core.util.ImmutableList;
 import java.util.List;
 import java.util.stream.Stream;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class TypeConverters implements TypeConverter {
     private final List<TypeConverter> converters;
 

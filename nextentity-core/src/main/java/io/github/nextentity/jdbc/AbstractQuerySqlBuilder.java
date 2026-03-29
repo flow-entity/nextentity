@@ -15,10 +15,10 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public abstract class AbstractQuerySqlBuilder {
 
     protected static final String NONE_DELIMITER = "";

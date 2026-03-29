@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class PrimitiveTypes {
 
     private static final Map<Class<?>, Class<?>> PRIMITIVE_WRAPPER =

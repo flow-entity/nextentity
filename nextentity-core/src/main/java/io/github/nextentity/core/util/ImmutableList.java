@@ -11,42 +11,42 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
 import java.util.stream.Stream;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class ImmutableList<E> extends AbstractList<E> implements List<E>, RandomAccess, Cloneable, Serializable, ImmutableArray<E> {
 
     private static final ImmutableList<?> EMPTY = new ImmutableList<>(EmptyArrays.OBJECT);
 
     private final Object[] elements;
 
-    /**
-     * Creates an ImmutableList from the given elements.
-     * <p>
-     * NOTE: This method does NOT create a defensive copy of the input array.
-     * The returned list will directly reference the original array.
-     * Any modifications to the original array after calling this method
-     * will be reflected in the list, and vice versa.
-     * <p>
-     * <b>When to use this method:</b>
-     * <pre>
-     * - When you want to avoid the overhead of copying the array
-     * - When you know the array will not be modified after creating the list
-     * - When you are using a newly created array that won't be shared
-     * </pre>
-     * <b>When NOT to use this method:</b>
-     * <pre>
-     * - When the input array might be modified externally
-     * - When you need true immutability guarantees
-     * - When the array is shared with untrusted code
-     * </pre>
-     * For a version that creates a defensive copy, use {@link #copyOf(Object[])} instead.
-     *
-     * @param elements the elements to include in the list
-     * @param <T>      the type of elements
-     * @return an ImmutableList containing the specified elements
-     */
+    ///
+    /// Creates an ImmutableList from the given elements.
+    /// <p>
+    /// NOTE: This method does NOT create a defensive copy of the input array.
+    /// The returned list will directly reference the original array.
+    /// Any modifications to the original array after calling this method
+    /// will be reflected in the list, and vice versa.
+    /// <p>
+    /// <b>When to use this method:</b>
+    /// <pre>
+    /// - When you want to avoid the overhead of copying the array
+    /// - When you know the array will not be modified after creating the list
+    /// - When you are using a newly created array that won't be shared
+    /// </pre>
+    /// <b>When NOT to use this method:</b>
+    /// <pre>
+    /// - When the input array might be modified externally
+    /// - When you need true immutability guarantees
+    /// - When the array is shared with untrusted code
+    /// </pre>
+    /// For a version that creates a defensive copy, use {@link #copyOf(Object[])} instead.
+    ///
+    /// @param elements the elements to include in the list
+    /// @param <T>      the type of elements
+    /// @return an ImmutableList containing the specified elements
+    ///
     @SafeVarargs
     public static <T> ImmutableList<T> of(T... elements) {
         if (elements.length == 0) {
@@ -55,28 +55,28 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
         return new ImmutableList<>(elements);
     }
 
-    /**
-     * Creates an ImmutableList from the given array with a defensive copy.
-     * <p>
-     * This method creates a copy of the input array, ensuring that modifications
-     * to the original array will NOT affect the returned list, and vice versa.
-     * <p>
-     * <b>When to use this method:</b>
-     * <pre>
-     * - When you need true immutability guarantees
-     * - When the input array might be modified externally
-     * - When you want to ensure the list is independent of the source array
-     * </pre>
-     * <b>When to use {@link #of(Object[])} instead:</b>
-     * <pre>
-     * - When performance is critical and you can guarantee the array won't change
-     * - When working with newly created, private arrays
-     * </pre>
-     *
-     * @param array the array to copy and create list from
-     * @param <T>   the type of elements
-     * @return an ImmutableList containing a copy of the array elements
-     */
+    ///
+    /// Creates an ImmutableList from the given array with a defensive copy.
+    /// <p>
+    /// This method creates a copy of the input array, ensuring that modifications
+    /// to the original array will NOT affect the returned list, and vice versa.
+    /// <p>
+    /// <b>When to use this method:</b>
+    /// <pre>
+    /// - When you need true immutability guarantees
+    /// - When the input array might be modified externally
+    /// - When you want to ensure the list is independent of the source array
+    /// </pre>
+    /// <b>When to use {@link #of(Object[])} instead:</b>
+    /// <pre>
+    /// - When performance is critical and you can guarantee the array won't change
+    /// - When working with newly created, private arrays
+    /// </pre>
+    ///
+    /// @param array the array to copy and create list from
+    /// @param <T>   the type of elements
+    /// @return an ImmutableList containing a copy of the array elements
+    ///
     public static <T> ImmutableList<T> copyOf(T[] array) {
         if (array.length == 0) {
             return empty();
@@ -332,17 +332,17 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
 
     public static class Builder<E> {
         public static final int DEFAULT_INITIAL_CAPACITY = 8;
-        /**
-         * Maximum array length.
-         * The value is Integer.MAX_VALUE - 8 because some JVMs reserve header words in the array.
-         * This matches the behavior of ArrayList and other JDK collections.
-         * See: java.util.ArrayList.MAX_ARRAY_SIZE
-         */
+        ///
+        /// Maximum array length.
+        /// The value is Integer.MAX_VALUE - 8 because some JVMs reserve header words in the array.
+        /// This matches the behavior of ArrayList and other JDK collections.
+        /// See: java.util.ArrayList.MAX_ARRAY_SIZE
+        ///
         public static final int MAX_LENGTH = Integer.MAX_VALUE - 8;
-        /**
-         * Half of MAX_LENGTH, used to detect potential overflow when doubling capacity.
-         * If current capacity >= HALF_MAX_LENGTH, we directly set to MAX_LENGTH.
-         */
+        ///
+        /// Half of MAX_LENGTH, used to detect potential overflow when doubling capacity.
+        /// If current capacity >= HALF_MAX_LENGTH, we directly set to MAX_LENGTH.
+        ///
         public static final int HALF_MAX_LENGTH = MAX_LENGTH >> 1;
 
         Object[] elements;

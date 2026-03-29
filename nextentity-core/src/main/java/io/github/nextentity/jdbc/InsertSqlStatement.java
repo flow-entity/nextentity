@@ -1,9 +1,9 @@
 package io.github.nextentity.jdbc;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class InsertSqlStatement extends BatchSqlStatement implements SqlStatement {
     private final Iterable<?> entities;
     private final boolean returnGeneratedKeys;

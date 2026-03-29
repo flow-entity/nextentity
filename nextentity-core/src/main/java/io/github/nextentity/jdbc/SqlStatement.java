@@ -2,10 +2,10 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.SqlLogger;
 
-/**
- * @author HuangChengwei
- * @since 1.0.0
- */
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public interface SqlStatement {
     String sql();
 
