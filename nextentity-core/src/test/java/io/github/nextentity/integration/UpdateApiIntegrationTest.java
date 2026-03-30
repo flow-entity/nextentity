@@ -6,7 +6,6 @@ import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -126,8 +125,10 @@ public class UpdateApiIntegrationTest {
         employee.setName("Updated Name");
 
         // When
-        Employee updated = context.getUpdateExecutor().update(employee, Employee.class);
-
+        context.getUpdateExecutor().update(employee, Employee.class);
+        Employee updated = context.queryEmployees()
+                .where(Employee::getId).eq(1L)
+                .getSingle();
         // Then
         assertThat(updated.getName()).isEqualTo("Updated Name");
         assertThat(updated.getName()).isNotEqualTo(originalName);
@@ -152,7 +153,11 @@ public class UpdateApiIntegrationTest {
         }
 
         // When
-        List<Employee> updated = context.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, Employee.class);
+        List<Employee> updated = context.queryEmployees()
+                .where(Employee::getDepartmentId).eq(1L)
+                .getList();
+
 
         // Then
         assertThat(updated).hasSize(employees.size());

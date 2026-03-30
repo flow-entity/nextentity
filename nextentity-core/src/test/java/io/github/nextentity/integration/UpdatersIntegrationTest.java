@@ -115,7 +115,10 @@ public class UpdatersIntegrationTest {
 
             // When
             employee.setName("After Update");
-            Employee updated = update.update(employee);
+            update.update(employee);
+            Employee updated = context.queryEmployees()
+                    .where(Employee::getId).eq(employee.getId())
+                    .getSingle();
 
             // Then
             assertThat(updated).isNotNull();
@@ -195,7 +198,10 @@ public class UpdatersIntegrationTest {
             for (Employee emp : employees) {
                 emp.setName(emp.getName() + " Updated");
             }
-            List<Employee> updated = update.update(employees);
+            update.update(employees);
+            List<Employee> updated = context.queryEmployees()
+                    .where(Employee::getId).in(8021L, 8022L)
+                    .getList();
 
             // Then
             assertThat(updated).hasSize(2);
@@ -278,7 +284,10 @@ public class UpdatersIntegrationTest {
             // When
             dept.setName("Updated Name");
             dept.setBudget(200000.0);
-            Department updated = update.update(dept);
+            update.update(dept);
+            Department updated = context.queryDepartments()
+                    .where(Department::getId).eq(dept.getId())
+                    .getSingle();
 
             // Then
             assertThat(updated.getName()).isEqualTo("Updated Name");

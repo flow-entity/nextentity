@@ -372,7 +372,7 @@ public class ErrorHandlingIntegrationTest {
 
         // When - Update
         dept.setName("Updated Department");
-        dept = context.getUpdateExecutor().update(dept, Department.class);
+        context.getUpdateExecutor().update(dept, Department.class);
 
         // Then - Verify
         found = context.queryDepartments()

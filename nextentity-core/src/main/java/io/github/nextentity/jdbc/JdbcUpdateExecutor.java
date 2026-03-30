@@ -57,9 +57,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
         boolean excludeNull = false;
-        return updateAll(entities, entityClass, excludeNull);
+        updateAll(entities, entityClass, excludeNull);
     }
 
     protected <T> @NonNull List<@NonNull T> updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass, boolean excludeNull) {

@@ -46,22 +46,21 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> List<T> updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
-            return list;
+            return;
         }
-        return doInTransaction(() -> {
+        doInTransaction(() -> {
             EntityType entity = metamodel.getEntity(entityType);
             String entityName = getJpaEntityName(entityType);
             EntityAttribute idAttribute = entity.id();
             EntityAttribute versionAttribute = entity.version();
             ImmutableArray<? extends Attribute> attributes = entity.attributes().getPrimitives();
 
-            List<T> result = new ArrayList<>(list.size());
+            // List<T> result = new ArrayList<>(list.size());
             for (T t : list) {
                 if (entityManager.contains(t)) {
-                    result.add(t);
                     continue;
                 }
                 Object id = idAttribute.get(t);
@@ -116,9 +115,8 @@ public class JpaUpdateExecutor implements UpdateExecutor {
                 if (versionAttribute != null) {
                     incrementVersion(t, versionAttribute);
                 }
-                result.add(t);
             }
-            return result;
+            return null;
         });
     }
 

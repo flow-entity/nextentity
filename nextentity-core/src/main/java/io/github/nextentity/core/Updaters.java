@@ -3,8 +3,6 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.Update;
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
-
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
@@ -35,13 +33,13 @@ public class Updaters {
         }
 
         @Override
-        public List<T> update(@NonNull Iterable<T> entities) {
-            return updateExecutor.updateAll(entities, entityType);
+        public void update(@NonNull Iterable<T> entities) {
+            updateExecutor.updateAll(entities, entityType);
         }
 
         @Override
-        public T update(@NonNull T entity) {
-            return updateExecutor.update(entity, entityType);
+        public void update(@NonNull T entity) {
+            updateExecutor.update(entity, entityType);
         }
 
         @Override

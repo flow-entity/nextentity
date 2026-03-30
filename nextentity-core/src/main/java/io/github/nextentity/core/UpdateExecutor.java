@@ -3,7 +3,6 @@ package io.github.nextentity.core;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jspecify.annotations.NonNull;
 
-import java.util.List;
 import java.util.function.Supplier;
 
 ///
@@ -56,10 +55,9 @@ public interface UpdateExecutor {
     /// @param <T> the entity type
     /// @param entities the entities to update
     /// @param entityType the entity class
-    /// @return a list of updated entities
     /// @throws NullPointerException if entities or entityType is null
     ///
-    <T> List<T> updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
+    <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
 
     ///
     /// Updates a single entity in the database.
@@ -69,11 +67,10 @@ public interface UpdateExecutor {
     /// @param <T> the entity type
     /// @param entity the entity to update
     /// @param entityType the entity class
-    /// @return the updated entity
     /// @throws NullPointerException if entity or entityType is null
     ///
-    default <T> T update(@NonNull T entity, Class<T> entityType) {
-        return updateAll(ImmutableList.of(entity), entityType).getFirst();
+    default <T> void update(@NonNull T entity, Class<T> entityType) {
+        updateAll(ImmutableList.of(entity), entityType);
     }
 
     ///

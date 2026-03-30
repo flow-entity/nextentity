@@ -11,7 +11,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for Updaters utility class.
@@ -79,47 +78,6 @@ class UpdatersTest {
 
         // then
         verify(updateExecutor).insertAll(entities, TestEntity.class);
-    }
-
-    /**
-     * Test objective: Verify that update delegates to updateExecutor.
-     * Test scenario: Update a single entity.
-     * Expected result: updateExecutor.update is called and returns updated entity.
-     */
-    @Test
-    void update_SingleEntity_ShouldDelegateToUpdateExecutor() {
-        // given
-        TestEntity entity = new TestEntity(1L, "test");
-        when(updateExecutor.update(entity, TestEntity.class)).thenReturn(entity);
-
-        // when
-        TestEntity result = updater.update(entity);
-
-        // then
-        assertThat(result).isEqualTo(entity);
-        verify(updateExecutor).update(entity, TestEntity.class);
-    }
-
-    /**
-     * Test objective: Verify that update with iterable delegates to updateAll.
-     * Test scenario: Update multiple entities.
-     * Expected result: updateExecutor.updateAll is called and returns updated entities.
-     */
-    @Test
-    void update_MultipleEntities_ShouldDelegateToUpdateAll() {
-        // given
-        List<TestEntity> entities = Arrays.asList(
-                new TestEntity(1L, "test1"),
-                new TestEntity(2L, "test2")
-        );
-        when(updateExecutor.updateAll(entities, TestEntity.class)).thenReturn(entities);
-
-        // when
-        List<TestEntity> result = updater.update(entities);
-
-        // then
-        assertThat(result).isEqualTo(entities);
-        verify(updateExecutor).updateAll(entities, TestEntity.class);
     }
 
     /**
