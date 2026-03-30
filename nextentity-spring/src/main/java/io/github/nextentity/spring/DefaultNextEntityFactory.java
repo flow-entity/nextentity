@@ -1,5 +1,7 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.api.Select;
+import io.github.nextentity.core.QueryBuilder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.SqlException;
@@ -17,13 +19,13 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public record RepositoryArgs(
+public record DefaultNextEntityFactory(
         Metamodel metamodel,
         QueryExecutor queryExecutor,
         UpdateExecutor updateExecutor
-) {
+) implements NextEntityFactory {
 
-    public static RepositoryArgs jdbc(JdbcTemplate jdbcTemplate) {
+    public static DefaultNextEntityFactory jdbc(JdbcTemplate jdbcTemplate) {
         SqlDialectSelector sqlDialectSelector = new SqlDialectSelector();
         DataSource dataSource = jdbcTemplate.getDataSource();
         try {
@@ -36,12 +38,13 @@ public record RepositoryArgs(
 
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, connectionProvider, new JdbcResultCollector());
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(sqlDialectSelector, connectionProvider, metamodel);
-        return new RepositoryArgs(
+        return new DefaultNextEntityFactory(
                 metamodel,
                 jdbcQueryExecutor,
                 jdbcUpdateExecutor
         );
     }
+
 
     public static class NoneTransactionProvider implements ConnectionProvider, JpaTransactionTemplate {
         private final JdbcTemplate jdbcTemplate;
@@ -67,8 +70,8 @@ public record RepositoryArgs(
         }
     }
 
-    public static RepositoryArgs jpa(EntityManager entityManager,
-                                     JdbcTemplate jdbcTemplate) {
+    public static DefaultNextEntityFactory jpa(EntityManager entityManager,
+                                               JdbcTemplate jdbcTemplate) {
         SqlDialectSelector sqlDialectSelector = new SqlDialectSelector();
         DataSource dataSource = jdbcTemplate.getDataSource();
         try {
@@ -86,11 +89,20 @@ public record RepositoryArgs(
                 entityManager, metamodel, jdbcQueryExecutor);
         JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager, metamodel, noneTransactionProvider);
 
-        return new RepositoryArgs(
+        return new DefaultNextEntityFactory(
                 metamodel,
                 jpaQueryExecutor,
                 jpaUpdateExecutor
         );
     }
 
+    @Override
+    public <T> Select<T> queryBuilder(Class<T> entityType) {
+        return new QueryBuilder<>(metamodel, queryExecutor, entityType);
+    }
+
+    @Override
+    public UpdateExecutor updateExecutor() {
+        return updateExecutor;
+    }
 }

@@ -1,77 +1,47 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.core.QueryBuilder;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.core.exception.ConfigurationException;
-import io.github.nextentity.core.expression.*;
+import io.github.nextentity.jdbc.ConnectionProvider;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.ResolvableType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.function.Supplier;
 
-public abstract class AbstractRepository<T, ID extends Serializable> {
+public abstract class AbstractRepository<T, ID> {
 
-    private final Class<ID> idType;
-    private final Class<T> entityType;
+    protected final Class<ID> idType;
+    protected final Class<T> entityType;
 
-    private final Select<T> queryBuilder;
-    private final EntityManager entityManager;
-    private final UpdateExecutor updateExecutor;
+    protected final Select<T> queryBuilder;
+    protected final UpdateExecutor updateExecutor;
+    protected final JdbcTemplate jdbcTemplate;
 
-    public AbstractRepository(Class<T> entityType, Class<ID> idType, EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        this(entityType, idType, RepositoryArgs.jpa(entityManager, jdbcTemplate), entityManager);
-    }
-
-    public AbstractRepository(Class<T> entityType, Class<ID> idType, JdbcTemplate jdbcTemplate) {
-        this(entityType, idType, RepositoryArgs.jdbc(jdbcTemplate), null);
-    }
-
-    public AbstractRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        this(RepositoryArgs.jpa(entityManager, jdbcTemplate), entityManager);
-    }
-
-    public AbstractRepository(JdbcTemplate jdbcTemplate) {
-        this(RepositoryArgs.jdbc(jdbcTemplate), null);
-    }
-
-    protected AbstractRepository(RepositoryArgs args, EntityManager entityManager) {
-        ResolvableType type = ResolvableType.forClass(getClass()).as(AbstractRepository.class);
-        Class<T> entityType = TypeCastUtil.cast(type.resolveGeneric(0));
-        Class<ID> idType = TypeCastUtil.cast(type.resolveGeneric(1));
-        this.entityType = entityType;
-        if (this.entityType == null) {
-            throw new ConfigurationException("Cannot resolve entity type, AbstractRepository must specify generic parameter T");
-        }
+    public AbstractRepository(Class<ID> idType,
+                              Class<T> entityType,
+                              Select<T> queryBuilder,
+                              UpdateExecutor updateExecutor,
+                              JdbcTemplate jdbcTemplate) {
         this.idType = idType;
-        this.queryBuilder = new QueryBuilder<>(
-                args.metamodel(),
-                args.queryExecutor(),
-                entityType()
-        );
-        this.updateExecutor = args.updateExecutor();
-        this.entityManager = entityManager;
+        this.entityType = entityType;
+        this.queryBuilder = queryBuilder;
+        this.updateExecutor = updateExecutor;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
-    protected AbstractRepository(Class<T> entityType, Class<ID> idType, RepositoryArgs args, EntityManager entityManager) {
-        this.entityType = entityType;
-        if (this.entityType == null) {
-            throw new ConfigurationException("Cannot resolve entity type, AbstractRepository must specify generic parameter T");
-        }
-        this.idType = idType;
-        this.queryBuilder = new QueryBuilder<>(
-                args.metamodel(),
-                args.queryExecutor(),
-                entityType()
-        );
-        this.updateExecutor = args.updateExecutor();
-        this.entityManager = entityManager;
+    protected AbstractRepository(JdbcTemplate jdbcTemplate,
+                                 NextEntityFactory factory) {
+        GenericType<T, ID> genericType = getGenericType();
+        this.idType = genericType.idType();
+        this.entityType = genericType.entityType();
+        this.jdbcTemplate = jdbcTemplate;
+        this.queryBuilder = factory.queryBuilder(entityType);
+        this.updateExecutor = factory.updateExecutor();
     }
 
     protected Select<T> query() {
@@ -90,11 +60,6 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
         return entityType;
     }
 
-
-    protected EntityManager entityManager() {
-        return entityManager;
-    }
-
     @Transactional
     public void insert(@NonNull T entity) {
         updateExecutor.insert(entity, entityType);
@@ -106,13 +71,13 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
     }
 
     @Transactional
-    public List<T> updateAll(@NonNull Iterable<T> entities) {
-        return updateExecutor.updateAll(entities, entityType);
+    public void updateAll(@NonNull Iterable<T> entities) {
+        updateExecutor.updateAll(entities, entityType);
     }
 
     @Transactional
-    public T update(@NonNull T entity) {
-        return updateExecutor.update(entity, entityType);
+    public void update(@NonNull T entity) {
+        updateExecutor.update(entity, entityType);
     }
 
     @Transactional
@@ -125,71 +90,86 @@ public abstract class AbstractRepository<T, ID extends Serializable> {
         updateExecutor.delete(entity, entityType);
     }
 
-    protected void flush() {
-        if (entityManager != null) {
-            entityManager.flush();
-        }
-    }
-
-    ///
-    /// Convert a Path to PathNode, preserving the full path including nested properties.
-    /// Uses PathNode.of() which internally uses PathReference to correctly extract
-    /// the field name from method reference paths.
-    ///
-    /// @param path the path to convert
-    /// @return PathNode representing the path
-    ///
-    protected PathNode getPathNode(PathRef<?, ?> path) {
-        return PathNode.of(path);
-    }
-
     protected BooleanPath<T> path(PathRef.BooleanRef<T> path) {
-        return new PredicateImpl<>(getPathNode(path));
+        return Path.of(path);
     }
 
     protected StringPath<T> path(PathRef.StringRef<T> path) {
-        return new StringExpressionImpl<>(getPathNode(path));
+        return Path.of(path);
     }
 
     protected <U extends Number> NumberPath<T, U> path(PathRef.NumberRef<T, U> path) {
-        return getNumberExpression(path);
-    }
-
-    private <U extends Number> @NonNull NumberExpressionImpl<T, U> getNumberExpression(PathRef.NumberRef<T, U> path) {
-        return new NumberExpressionImpl<>(getPathNode(path));
+        return Path.of(path);
     }
 
     protected NumberPath<T, Long> path(PathRef.LongRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected NumberPath<T, Integer> path(PathRef.IntegerRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected NumberPath<T, Short> path(PathRef.ShortRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected NumberPath<T, Byte> path(PathRef.ByteRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected NumberPath<T, Double> path(PathRef.DoubleRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected NumberPath<T, Float> path(PathRef.FloatRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected NumberPath<T, BigDecimal> path(PathRef.BigDecimalRef<T> path) {
-        return getNumberExpression(path);
+        return Path.of(path);
     }
 
     protected <U> Path<T, U> path(PathRef<T, U> path) {
-        return new SimpleExpressionImpl<>(getPathNode(path));
+        return Path.of(path);
     }
 
+    protected GenericType<T, ID> getGenericType() {
+        ResolvableType type = ResolvableType.forClass(getClass()).as(AbstractRepository.class);
+        Class<T> entityType = TypeCastUtil.cast(type.resolveGeneric(0));
+        Class<ID> idType = TypeCastUtil.cast(type.resolveGeneric(1));
+        return new GenericType<>(entityType, idType);
+    }
+
+    protected record GenericType<T, ID>(Class<T> entityType, Class<ID> idType) {
+    }
+
+    @Transactional
+    protected <X> X doInTransaction(Supplier<X> command) {
+        return command.get();
+    }
+
+    private static class ConnectionProviderImpl implements ConnectionProvider {
+        AbstractRepository<?, ?> repository;
+        JdbcTemplate jdbcTemplate;
+
+        @Override
+        public <X> X execute(ConnectionCallback<X> action) {
+            return jdbcTemplate.execute(action::doInConnection);
+        }
+
+        @Override
+        public <X> X executeInTransaction(ConnectionCallback<X> action) {
+            return repository.doInTransaction(() -> execute(action));
+        }
+    }
+
+    protected static NextEntityFactory jdbc(JdbcTemplate jdbcTemplate) {
+        return DefaultNextEntityFactory.jdbc(jdbcTemplate);
+    }
+
+    protected static NextEntityFactory jpa(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        return DefaultNextEntityFactory.jpa(entityManager, jdbcTemplate);
+    }
 
 }
