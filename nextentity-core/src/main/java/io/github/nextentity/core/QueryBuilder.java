@@ -61,7 +61,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return select(false, projectionType);
     }
 
-    public <R> WhereStep<T, R> select(boolean distinct, Class<R> projectionType) {
+    protected <R> WhereStep<T, R> select(boolean distinct, Class<R> projectionType) {
         Class<?> entityType = fromType();
         if (projectionType == entityType) {
             return update(queryStructure);
@@ -70,19 +70,22 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return updateSelected(select);
     }
 
+    @Override
     public <R> WhereStep<T, R> selectDistinct(PathRef<T, ? extends R> path) {
         return select(true, path);
     }
 
+    @Override
     public <R> WhereStep<T, R> select(PathRef<T, ? extends R> path) {
         return select(false, path);
     }
 
-    public <R> WhereStep<T, R> select(boolean distinct, PathRef<T, ? extends R> path) {
+    protected <R> WhereStep<T, R> select(boolean distinct, PathRef<T, ? extends R> path) {
         SelectExpression select = new SelectExpression(PathNode.of(path), distinct);
         return updateSelected(select);
     }
 
+    @Override
     public WhereStep<T, Tuple> selectDistinct(Collection<PathRef<T, ?>> paths) {
         ImmutableList<ExpressionNode> nodes = paths.stream()
                 .map(PathNode::of)
@@ -95,6 +98,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return updateSelected(selected);
     }
 
+    @Override
     public WhereStep<T, Tuple> select(Collection<PathRef<T, ?>> paths) {
         ImmutableList<ExpressionNode> mapping = PathNode.mapping(paths);
         return select(false, mapping);
@@ -145,6 +149,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return selectTuple(false, a, b, c, d, e, f, g, h, i, j);
     }
 
+    @Override
     public WhereStep<T, Tuple> selectDistinct(List<? extends Expression<T, ?>> expressions) {
         return select(true, ExpressionNodes.mapping(expressions));
     }
@@ -194,6 +199,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return selectTuple(true, a, b, c, d, e, f, g, h, i, j);
     }
 
+    @Override
     public WhereStep<T, Tuple> select(List<? extends Expression<T, ?>> expressions) {
         ImmutableList<ExpressionNode> nodes = ExpressionNodes.mapping(expressions);
         return select(false, nodes);
@@ -296,22 +302,23 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @SafeVarargs
-    public final <R extends Tuple> WhereStep<T, R> selectTupleByExpr(boolean distinct, Expression<T, ?>... expressions) {
+    protected final <R extends Tuple> WhereStep<T, R> selectTupleByExpr(boolean distinct, Expression<T, ?>... expressions) {
         ImmutableList<ExpressionNode> nodes = ExpressionNodes.mapping(expressions);
         SelectExpressions select = new SelectExpressions(nodes, distinct);
         return updateSelected(select);
     }
 
+    @Override
     public <R> WhereStep<T, R> selectDistinct(Expression<T, R> expression) {
         return select(true, expression);
     }
 
+    @Override
     public <R> WhereStep<T, R> select(Expression<T, R> expression) {
         return select(false, expression);
     }
 
-
-    public <R> WhereStep<T, R> select(boolean distinct, Expression<T, R> expression) {
+    protected <R> WhereStep<T, R> select(boolean distinct, Expression<T, R> expression) {
         SelectExpression select = new SelectExpression(ExpressionNodes.getNode(expression), distinct);
         return updateSelected(select);
     }
@@ -333,8 +340,8 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
 
     private Class<?> fromType() {
         From from = queryStructure.from();
-        if (from instanceof FromEntity fromEntity) {
-            return fromEntity.type();
+        if (from instanceof FromEntity(Class<?> type)) {
+            return type;
         } else {
             throw new UnsupportedOperationException(
                     "Unsupported From type: " + from.getClass().getName() +
