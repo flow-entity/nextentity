@@ -66,12 +66,12 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
         return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::andWhere);
     }
 
-    public final HavingStep<T, U> groupBy(Expression<T, ?> expressions) {
-        return groupBy(Collections.singletonList(expressions));
+    public final HavingStep<T, U> groupByExpr(Expression<T, ?> expressions) {
+        return groupByExpr(Collections.singletonList(expressions));
     }
 
     @Override
-    public HavingStep<T, U> groupBy(List<? extends Expression<T, ?>> typedExpressions) {
+    public HavingStep<T, U> groupByExpr(List<? extends Expression<T, ?>> typedExpressions) {
         ImmutableList<ExpressionNode> newList = ExpressionNodes.join(queryStructure.groupBy(), typedExpressions);
         return update(queryStructure.groupBy(newList));
     }

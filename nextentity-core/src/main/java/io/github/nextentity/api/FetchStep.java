@@ -25,7 +25,7 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     /// @param path Path expression
     /// @return WhereStep instance
     default BaseWhereStep<T, T> fetch(Path<T, ?> path) {
-        return fetch(List.of(path));
+        return fetch(List.<Path<T, ?>>of(path));
     }
 
     /// Fetch associated data corresponding to the specified two path expressions.
@@ -34,7 +34,7 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     /// @param p1 Second path expression
     /// @return WhereStep instance
     default BaseWhereStep<T, T> fetch(Path<T, ?> p0, Path<T, ?> p1) {
-        return fetch(List.of(p0, p1));
+        return fetch(List.<Path<T, ?>>of(p0, p1));
     }
 
     /// Fetch associated data corresponding to the specified three path expressions.
@@ -44,7 +44,7 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     /// @param p3 Third path expression
     /// @return WhereStep instance
     default BaseWhereStep<T, T> fetch(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p3) {
-        return fetch(List.of(p0, p1, p3));
+        return fetch(List.<Path<T, ?>>of(p0, p1, p3));
     }
 
     /// Fetch associated data corresponding to the specified collection of paths.
