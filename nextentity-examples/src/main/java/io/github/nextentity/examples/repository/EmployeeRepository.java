@@ -446,107 +446,76 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     // ==================== Aggregation ====================
 
     /// Count all records
-    public int countAllEmployees() {
-        return query().getList().size();
+    public long countAllEmployees() {
+        return query().count();
     }
 
     /// Count with conditions
-    public int countActiveEmployees() {
+    public long countActiveEmployees() {
         return query()
                 .where(Employee::getActive).eq(true)
-                .getList()
-                .size();
+                .count();
     }
 
     /// Count by department
-    public int countByDepartment(Long departmentId) {
+    public long countByDepartment(Long departmentId) {
         return query()
                 .where(Employee::getDepartmentId).eq(departmentId)
-                .getList()
-                .size();
+                .count();
     }
 
     /// Count distinct values
-    public int countDistinctDepartments() {
+    public long countDistinctDepartments() {
         return query()
                 .selectDistinct(Employee::getDepartmentId)
-                .getList()
-                .size();
+                .count();
     }
 
     /// Calculate total salary using Java streams
     public double calculateTotalSalary() {
         return query()
-                .select(Employee::getSalary)
-                .getList()
-                .stream()
-                .filter(s -> s != null)
-                .mapToDouble(Double::doubleValue)
-                .sum();
+                .select(path(Employee::getSalary).sum())
+                .getSingle();
     }
 
     /// Sum with conditions - total salary for active employees
     public double calculateActiveTotalSalary() {
         return query()
-                .select(Employee::getSalary)
+                .select(path(Employee::getSalary).sum())
                 .where(Employee::getActive).eq(true)
-                .getList()
-                .stream()
-                .filter(s -> s != null)
-                .mapToDouble(Double::doubleValue)
-                .sum();
+                .getSingle();
     }
 
-    /// Calculate average salary using Java streams
+    /// Calculate average salary
     public double calculateAverageSalary() {
         return query()
-                .select(Employee::getSalary)
+                .select(path(Employee::getSalary).avg())
                 .where(Employee::getActive).eq(true)
-                .getList()
-                .stream()
-                .filter(s -> s != null)
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
+                .getSingle();
     }
 
     /// Average by department
     public double calculateAverageSalaryByDepartment(Long departmentId) {
         return query()
-                .select(Employee::getSalary)
+                .select(path(Employee::getSalary).avg())
                 .where(Employee::getDepartmentId).eq(departmentId)
-                .getList()
-                .stream()
-                .filter(s -> s != null)
-                .mapToDouble(Double::doubleValue)
-                .average()
-                .orElse(0.0);
+                .getSingle();
     }
 
     /// Find maximum salary
     public double findMaxSalary() {
         return query()
-                .select(Employee::getSalary)
+                .select(path(Employee::getSalary).max())
                 .where(Employee::getActive).eq(true)
-                .getList()
-                .stream()
-                .filter(s -> s != null)
-                .mapToDouble(Double::doubleValue)
-                .max()
-                .orElse(0.0);
+                .getSingle();
     }
 
     /// Find minimum salary
     public double findMinSalary() {
         return query()
-                .select(Employee::getSalary)
+                .select(path(Employee::getSalary).min())
                 .where(Employee::getActive).eq(true)
-                .getList()
-                .stream()
-                .filter(s -> s != null)
-                .mapToDouble(Double::doubleValue)
-                .min()
-                .orElse(0.0);
+                .getSingle();
     }
 
     /// Find employee with highest salary
@@ -578,9 +547,9 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public Map<EmployeeStatus, Long> countByStatus() {
         return query()
                 .select(Employee::getStatus)
+                .where(Employee::getStatus).isNotNull()
                 .getList()
                 .stream()
-                .filter(s -> s != null)
                 .collect(Collectors.groupingBy(
                         Function.identity(),
                         Collectors.counting()
@@ -591,9 +560,9 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public Map<Long, DoubleSummaryStatistics> salaryStatsByDepartment() {
         return query()
                 .where(Employee::getActive).eq(true)
+                .where(Employee::getSalary).isNotNull()
                 .getList()
                 .stream()
-                .filter(e -> e.getSalary() != null)
                 .collect(Collectors.groupingBy(
                         Employee::getDepartmentId,
                         Collectors.summarizingDouble(Employee::getSalary)
