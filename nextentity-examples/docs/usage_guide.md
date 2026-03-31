@@ -377,42 +377,75 @@ Department dept = employees.get(0).getDepartment();
 
 ## Aggregations
 
-While NextEntity focuses on type-safe queries, aggregations can be done with Java streams:
+NextEntity supports database-level aggregations using `path()` with aggregate functions:
+
+### Count
 
 ```java
-// Count
-long count = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .getList()
-    .size();
+// Count all
+long count = employeeRepository.query().count();
 
+// Count with conditions
+long activeCount = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
+    .count();
+
+// Count distinct
+long distinctDeptCount = employeeRepository.query()
+    .selectDistinct(Employee::getDepartmentId)
+    .count();
+```
+
+### Sum, Average, Max, Min
+
+```java
 // Sum
 double totalSalary = employeeRepository.query()
-    .select(Employee::getSalary)
-    .where(Employee::getActive).eq(true)
-    .getList()
-    .stream()
-    .filter(Objects::nonNull)
-    .mapToDouble(Double::doubleValue)
-    .sum();
+    .select(path(Employee::getSalary).sum())
+    .getSingle();
 
 // Average
 double avgSalary = employeeRepository.query()
-    .select(Employee::getSalary)
+    .select(path(Employee::getSalary).avg())
     .where(Employee::getActive).eq(true)
-    .getList()
-    .stream()
-    .filter(Objects::nonNull)
-    .mapToDouble(Double::doubleValue)
-    .average()
-    .orElse(0.0);
+    .getSingle();
 
-// Group by
+// Maximum
+double maxSalary = employeeRepository.query()
+    .select(path(Employee::getSalary).max())
+    .where(Employee::getActive).eq(true)
+    .getSingle();
+
+// Minimum
+double minSalary = employeeRepository.query()
+    .select(path(Employee::getSalary).min())
+    .where(Employee::getActive).eq(true)
+    .getSingle();
+```
+
+### Group By (Java Streams)
+
+For complex grouping operations, use Java streams after filtering at database level:
+
+```java
+// Group by - filter nulls in query, then group in Java
 Map<Long, List<Employee>> byDept = employeeRepository.query()
     .where(Employee::getActive).eq(true)
+    .where(Employee::getDepartmentId).isNotNull()
     .getList()
     .stream()
     .collect(Collectors.groupingBy(Employee::getDepartmentId));
+
+// Group by with statistics
+Map<Long, DoubleSummaryStatistics> statsByDept = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
+    .where(Employee::getSalary).isNotNull()
+    .getList()
+    .stream()
+    .collect(Collectors.groupingBy(
+        Employee::getDepartmentId,
+        Collectors.summarizingDouble(Employee::getSalary)
+    ));
 ```
 
 ---

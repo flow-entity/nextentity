@@ -210,8 +210,44 @@ Interface for fetching associations.
 | `getList()` | `List<U>` | Get all results |
 | `getList(int offset, int limit)` | `List<U>` | Get paginated results |
 | `getFirst()` | `U` | Get first result (null if empty) |
+| `getSingle()` | `U` | Get single result (for aggregations) |
+| `count()` | `long` | Count results |
 | `slice(int offset, int limit)` | `Slice<U>` | Get slice with metadata |
 | `stream()` | `Stream<U>` | Get result stream |
+
+---
+
+## Aggregation Functions
+
+Use `path()` method reference to build aggregate expressions:
+
+```java
+// Available aggregate functions
+path(Employee::getSalary).sum()    // Sum
+path(Employee::getSalary).avg()    // Average
+path(Employee::getSalary).max()    // Maximum
+path(Employee::getSalary).min()    // Minimum
+```
+
+### Aggregation Examples
+
+```java
+// Sum with conditions
+double totalSalary = query()
+    .select(path(Employee::getSalary).sum())
+    .where(Employee::getActive).eq(true)
+    .getSingle();
+
+// Count
+long count = query()
+    .where(Employee::getActive).eq(true)
+    .count();
+
+// Count distinct
+long distinctCount = query()
+    .selectDistinct(Employee::getDepartmentId)
+    .count();
+```
 
 ### Slice\<T\>
 
