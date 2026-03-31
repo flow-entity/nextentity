@@ -125,11 +125,11 @@ class QueryBuilderTest {
                 .getFirst();
         assertEquals(model.asMap(), ui.asMap());
 
-        Long count = userQuery.select(Path.of(User::getId).count())
+        Long count = userQuery.selectExpr(Path.of(User::getId).count())
                 .getSingle();
         assertEquals(count, userQuery.users().size());
 
-        Tuple aggArray = userQuery.select(ImmutableList.of(Path.of(User::getId).count(), Path.of(User::getRandomNumber).max(), Path.of(User::getRandomNumber).min(), Path.of(User::getRandomNumber).sum(), Path.of(User::getRandomNumber).avg()
+        Tuple aggArray = userQuery.selectExpr(ImmutableList.of(Path.of(User::getId).count(), Path.of(User::getRandomNumber).max(), Path.of(User::getRandomNumber).min(), Path.of(User::getRandomNumber).sum(), Path.of(User::getRandomNumber).avg()
         )).getSingle();
 
         int max = Integer.MIN_VALUE;
@@ -512,7 +512,7 @@ class QueryBuilderTest {
 
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -522,7 +522,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -532,7 +532,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -543,7 +543,7 @@ class QueryBuilderTest {
 
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -554,7 +554,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -565,7 +565,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -576,7 +576,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -587,7 +587,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -599,7 +599,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -613,7 +613,7 @@ class QueryBuilderTest {
         );
 
         assertEquals(
-                userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
+                userQuery.selectExpr(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -628,7 +628,7 @@ class QueryBuilderTest {
 
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -639,7 +639,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -649,7 +649,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -660,7 +660,7 @@ class QueryBuilderTest {
 
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -671,7 +671,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -682,7 +682,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -693,7 +693,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -704,7 +704,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -716,7 +716,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -730,7 +730,7 @@ class QueryBuilderTest {
         );
 
         assertDistinctEquals(
-                userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
+                userQuery.selectExprDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
                         .getList(),
 
@@ -766,7 +766,7 @@ class QueryBuilderTest {
         assertDistinctEquals(list, collect);
 
 
-        list = userQuery.selectDistinct(Path.of(User::getRandomNumber))
+        list = userQuery.selectExprDistinct(Path.of(User::getRandomNumber))
                 .getList();
         assertDistinctEquals(list, collect);
 
@@ -822,7 +822,7 @@ class QueryBuilderTest {
     @ArgumentsSource(UserQueryProvider.class)
     void groupBy(UserRepository userQuery) {
         List<Tuple> list = userQuery
-                .select(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
+                .selectExpr(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
                 ))
                 .groupBy(User::getRandomNumber)
                 .getList();
@@ -837,7 +837,7 @@ class QueryBuilderTest {
         }
 
         list = userQuery
-                .select(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
+                .selectExpr(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
                 )).groupBy(ImmutableList.<PathRef<User, ?>>of(User::getRandomNumber))
                 .getList();
 

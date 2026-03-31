@@ -426,7 +426,7 @@ public class NestedPathIntegrationTest {
         void shouldSelectDepartmentName_FromEmployees(IntegrationTestContext context) {
             // When
             List<String> deptNames = context.queryEmployees()
-                    .selectDistinct(EntityPath.of(Employee::getDepartment).get(Department::getName))
+                    .selectExprDistinct(EntityPath.of(Employee::getDepartment).get(Department::getName))
                     .getList();
 
             // Then - 5 distinct department names
@@ -444,7 +444,7 @@ public class NestedPathIntegrationTest {
         void shouldSelectDepartmentLocation_FromEmployees(IntegrationTestContext context) {
             // When
             List<String> locations = context.queryEmployees()
-                    .selectDistinct(EntityPath.of(Employee::getDepartment).get(Department::getLocation))
+                    .selectExprDistinct(EntityPath.of(Employee::getDepartment).get(Department::getLocation))
                     .getList();
 
             // Then - 4 distinct locations (Building A, B, C, D)

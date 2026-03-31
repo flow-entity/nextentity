@@ -272,7 +272,7 @@ public class ErrorHandlingIntegrationTest {
         // When
         long count = context.queryEmployees().count();
         double avgSalary = context.queryEmployees()
-                .select(Path.of(Employee::getSalary).avg())
+                .selectExpr(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         // Then

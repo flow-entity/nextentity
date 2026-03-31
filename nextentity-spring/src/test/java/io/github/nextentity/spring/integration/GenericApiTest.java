@@ -323,7 +323,7 @@ public class GenericApiTest {
                 Path.of(User::getRandomNumber).sum()
         );
         Tuple aggregated = userQuery
-                .select(selected)
+                .selectExpr(selected)
                 .requireSingle();
 
         assertNotNull(aggregated);
@@ -335,7 +335,7 @@ public class GenericApiTest {
         assertEquals(getUserIdStream(userQuery).sum(), aggregated.<Number>get(4).intValue());
 
         List<Tuple> resultList = userQuery
-                .select(Arrays.asList(Path.of(User::getId).min(), Path.of(User::getRandomNumber)))
+                .selectExpr(Arrays.asList(Path.of(User::getId).min(), Path.of(User::getRandomNumber)))
                 .where(Path.of(User::isValid).eq(true))
                 .groupBy(User::getRandomNumber)
                 .getList();
@@ -355,7 +355,7 @@ public class GenericApiTest {
         assertEquals(new HashSet<>(resultList), new HashSet<>(fObjects));
 
         Tuple one = userQuery
-                .select(Collections.singletonList(Path.of(User::getId).sum()))
+                .selectExpr(Collections.singletonList(Path.of(User::getId).sum()))
                 .where(Path.of(User::isValid).eq(true))
                 .requireSingle();
 
@@ -372,7 +372,7 @@ public class GenericApiTest {
         assertEquals(first, userQuery.users().get(userQuery.users().size() - 1).getId());
 
         Long count = userQuery
-                .select(Path.of(User::getRandomNumber).countDistinct())
+                .selectExpr(Path.of(User::getRandomNumber).countDistinct())
                 .getSingle();
         long count1 = userQuery.users()
                 .stream().mapToInt(User::getRandomNumber)

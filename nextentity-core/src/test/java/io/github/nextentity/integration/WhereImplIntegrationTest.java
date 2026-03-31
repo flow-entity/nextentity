@@ -332,8 +332,8 @@ public class WhereImplIntegrationTest {
 
             // When
             var results = context.queryEmployees()
-                    .select(departmentPath, Path.of(Employee::getId).count())
-                    .groupBy(departmentPath)
+                    .selectExpr(departmentPath, Path.of(Employee::getId).count())
+                    .groupByExpr(departmentPath)
                     .orderBy(Employee::getDepartmentId).asc()
                     .getList();
 
@@ -353,8 +353,8 @@ public class WhereImplIntegrationTest {
 
             // When
             var results = context.queryEmployees()
-                    .select(activePath, Path.of(Employee::getSalary).avg())
-                    .groupBy(activePath)
+                    .selectExpr(activePath, Path.of(Employee::getSalary).avg())
+                    .groupByExpr(activePath)
                     .getList();
 
             // Then
@@ -377,7 +377,7 @@ public class WhereImplIntegrationTest {
             // Given - use Path references directly for groupBy
             // When
             var results = context.queryEmployees()
-                    .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
+                    .selectExpr(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
                     .groupBy(Employee::getDepartmentId, Employee::getActive)
                     .orderBy(Employee::getDepartmentId).asc()
                     .getList();
@@ -395,7 +395,7 @@ public class WhereImplIntegrationTest {
         void shouldGroupByList_WithHavingClause(IntegrationTestContext context) {
             // When
             var results = context.queryEmployees()
-                    .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
+                    .selectExpr(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
                     .groupBy(Employee::getDepartmentId, Employee::getActive)
                     .having(Path.of(Employee::getId).count().gt(1L))
                     .orderBy(Employee::getDepartmentId).asc()

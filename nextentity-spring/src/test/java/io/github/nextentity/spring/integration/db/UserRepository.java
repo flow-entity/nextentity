@@ -260,20 +260,20 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().orderBy(p1, p2, p3);
     }
 
-    public WhereStep<User, Tuple> select(List<? extends Expression<User, ?>> paths) {
-        return getQuery().select(paths);
+    public WhereStep<User, Tuple> selectExpr(Collection<? extends Expression<User, ?>> paths) {
+        return getQuery().selectExpr(paths);
     }
 
-    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g) {
-        return getQuery().select(a, b, c, d, e, f, g);
+    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g) {
+        return getQuery().selectExpr(a, b, c, d, e, f, g);
     }
 
-    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f) {
-        return getQuery().selectDistinct(a, b, c, d, e, f);
+    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f) {
+        return getQuery().selectExprDistinct(a, b, c, d, e, f);
     }
 
-    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h) {
-        return getQuery().select(a, b, c, d, e, f, g, h);
+    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h) {
+        return getQuery().selectExpr(a, b, c, d, e, f, g, h);
     }
 
     public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d) {
@@ -284,36 +284,36 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(a, b, c, d, e, f, g, h, i, j);
     }
 
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i, Expression<User, J> j) {
-        return getQuery().selectDistinct(a, b, c, d, e, f, g, h, i, j);
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i, Expression<User, J> j) {
+        return getQuery().selectExprDistinct(a, b, c, d, e, f, g, h, i, j);
     }
 
-    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e) {
-        return getQuery().selectDistinct(a, b, c, d, e);
+    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e) {
+        return getQuery().selectExprDistinct(a, b, c, d, e);
     }
 
     public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e) {
         return getQuery().selectDistinct(a, b, c, d, e);
     }
 
-    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c) {
-        return getQuery().select(a, b, c);
+    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c) {
+        return getQuery().selectExpr(a, b, c);
     }
 
     public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i) {
         return getQuery().selectDistinct(a, b, c, d, e, f, g, h, i);
     }
 
-    public <A, B> WhereStep<User, Tuple2<A, B>> selectDistinct(Expression<User, A> a, Expression<User, B> b) {
-        return getQuery().selectDistinct(a, b);
+    public <A, B> WhereStep<User, Tuple2<A, B>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b) {
+        return getQuery().selectExprDistinct(a, b);
     }
 
-    public <R> WhereStep<User, R> select(Expression<User, R> expression) {
-        return getQuery().select(expression);
+    public <R> WhereStep<User, R> selectExpr(Expression<User, R> expression) {
+        return getQuery().selectExpr(expression);
     }
 
-    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d) {
-        return getQuery().select(a, b, c, d);
+    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d) {
+        return getQuery().selectExpr(a, b, c, d);
     }
 
     public <R> WhereStep<User, R> select(PathRef<User, ? extends R> path) {
@@ -324,20 +324,20 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(paths);
     }
 
-    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f) {
-        return getQuery().select(a, b, c, d, e, f);
+    public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f) {
+        return getQuery().selectExpr(a, b, c, d, e, f);
     }
 
-    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i) {
-        return getQuery().selectDistinct(a, b, c, d, e, f, g, h, i);
+    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i) {
+        return getQuery().selectExprDistinct(a, b, c, d, e, f, g, h, i);
     }
 
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i, Expression<User, J> j) {
-        return getQuery().select(a, b, c, d, e, f, g, h, i, j);
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i, Expression<User, J> j) {
+        return getQuery().selectExpr(a, b, c, d, e, f, g, h, i, j);
     }
 
-    public WhereStep<User, Tuple> selectDistinct(List<? extends Expression<User, ?>> paths) {
-        return getQuery().selectDistinct(paths);
+    public WhereStep<User, Tuple> selectExprDistinct(Collection<? extends Expression<User, ?>> paths) {
+        return getQuery().selectExprDistinct(paths);
     }
 
     public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h) {
@@ -368,8 +368,8 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().selectDistinct(paths);
     }
 
-    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h) {
-        return getQuery().selectDistinct(a, b, c, d, e, f, g, h);
+    public <A, B, C, D, E, F, G, H> WhereStep<User, Tuple8<A, B, C, D, E, F, G, H>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h) {
+        return getQuery().selectExprDistinct(a, b, c, d, e, f, g, h);
     }
 
     public <A, B, C, D, E, F, G, H, I, J> WhereStep<User, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i, PathRef<User, J> j) {
@@ -388,12 +388,12 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b, c, d);
     }
 
-    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i) {
-        return getQuery().select(a, b, c, d, e, f, g, h, i);
+    public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g, Expression<User, H> h, Expression<User, I> i) {
+        return getQuery().selectExpr(a, b, c, d, e, f, g, h, i);
     }
 
-    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d) {
-        return getQuery().selectDistinct(a, b, c, d);
+    public <A, B, C, D> WhereStep<User, Tuple4<A, B, C, D>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d) {
+        return getQuery().selectExprDistinct(a, b, c, d);
     }
 
     public <A, B, C, D, E, F, G, H, I> WhereStep<User, Tuple9<A, B, C, D, E, F, G, H, I>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g, PathRef<User, H> h, PathRef<User, I> i) {
@@ -408,32 +408,32 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b, c, d, e);
     }
 
-    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g) {
-        return getQuery().selectDistinct(a, b, c, d, e, f, g);
+    public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e, Expression<User, F> f, Expression<User, G> g) {
+        return getQuery().selectExprDistinct(a, b, c, d, e, f, g);
     }
 
-    public <A, B> WhereStep<User, Tuple2<A, B>> select(Expression<User, A> a, Expression<User, B> b) {
-        return getQuery().select(a, b);
+    public <A, B> WhereStep<User, Tuple2<A, B>> selectExpr(Expression<User, A> a, Expression<User, B> b) {
+        return getQuery().selectExpr(a, b);
     }
 
     public <A, B, C, D, E, F> WhereStep<User, Tuple6<A, B, C, D, E, F>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f) {
         return getQuery().select(a, b, c, d, e, f);
     }
 
-    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> select(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e) {
-        return getQuery().select(a, b, c, d, e);
+    public <A, B, C, D, E> WhereStep<User, Tuple5<A, B, C, D, E>> selectExpr(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c, Expression<User, D> d, Expression<User, E> e) {
+        return getQuery().selectExpr(a, b, c, d, e);
     }
 
     public <R> BaseWhereStep<User, R> selectDistinct(Class<R> projectionType) {
         return getQuery().selectDistinct(projectionType);
     }
 
-    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> selectDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c) {
-        return getQuery().selectDistinct(a, b, c);
+    public <A, B, C> WhereStep<User, Tuple3<A, B, C>> selectExprDistinct(Expression<User, A> a, Expression<User, B> b, Expression<User, C> c) {
+        return getQuery().selectExprDistinct(a, b, c);
     }
 
-    public <R> WhereStep<User, R> selectDistinct(Expression<User, R> expression) {
-        return getQuery().selectDistinct(expression);
+    public <R> WhereStep<User, R> selectExprDistinct(Expression<User, R> expression) {
+        return getQuery().selectExprDistinct(expression);
     }
 
     public <A, B, C, D, E, F, G> WhereStep<User, Tuple7<A, B, C, D, E, F, G>> select(PathRef<User, A> a, PathRef<User, B> b, PathRef<User, C> c, PathRef<User, D> d, PathRef<User, E> e, PathRef<User, F> f, PathRef<User, G> g) {

@@ -261,7 +261,7 @@ class QueryBuilderIntegrationTest {
     void select_WithCount_ShouldReturnCount(IntegrationTestContext context) {
         // when
         Long count = context.queryEmployees()
-                .select(Path.of(Employee::getId).count())
+                .selectExpr(Path.of(Employee::getId).count())
                 .getFirst();
 
         // then
@@ -273,7 +273,7 @@ class QueryBuilderIntegrationTest {
     void select_WithSum_ShouldReturnSum(IntegrationTestContext context) {
         // when
         Double sum = context.queryEmployees()
-                .select(Path.of(Employee::getSalary).sum())
+                .selectExpr(Path.of(Employee::getSalary).sum())
                 .getFirst();
 
         // then
@@ -285,7 +285,7 @@ class QueryBuilderIntegrationTest {
     void select_WithAvg_ShouldReturnAverage(IntegrationTestContext context) {
         // when
         Double avg = context.queryEmployees()
-                .select(Path.of(Employee::getSalary).avg())
+                .selectExpr(Path.of(Employee::getSalary).avg())
                 .getFirst();
 
         // then
@@ -297,7 +297,7 @@ class QueryBuilderIntegrationTest {
     void select_WithMax_ShouldReturnMax(IntegrationTestContext context) {
         // when
         Double max = context.queryEmployees()
-                .select(Path.of(Employee::getSalary).max())
+                .selectExpr(Path.of(Employee::getSalary).max())
                 .getFirst();
 
         // then
@@ -309,7 +309,7 @@ class QueryBuilderIntegrationTest {
     void select_WithMin_ShouldReturnMin(IntegrationTestContext context) {
         // when
         Double min = context.queryEmployees()
-                .select(Path.of(Employee::getSalary).min())
+                .selectExpr(Path.of(Employee::getSalary).min())
                 .getFirst();
 
         // then
@@ -493,7 +493,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithCountExpression(IntegrationTestContext context) {
             // When
             Long count = context.queryEmployees()
-                    .select(Path.of(Employee::getId).count())
+                    .selectExpr(Path.of(Employee::getId).count())
                     .getFirst();
 
             // Then
@@ -509,7 +509,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithSumExpression(IntegrationTestContext context) {
             // When
             Double sum = context.queryEmployees()
-                    .select(Path.of(Employee::getSalary).sum())
+                    .selectExpr(Path.of(Employee::getSalary).sum())
                     .getFirst();
 
             // Then
@@ -525,7 +525,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithMultipleExpressions(IntegrationTestContext context) {
             // When
             var result = context.queryEmployees()
-                    .select(
+                    .selectExpr(
                             Path.of(Employee::getSalary).avg(),
                             Path.of(Employee::getSalary).max(),
                             Path.of(Employee::getSalary).min()
@@ -548,7 +548,7 @@ class QueryBuilderIntegrationTest {
         void shouldSelectWithArithmeticExpression(IntegrationTestContext context) {
             // When - select salary + 1000
             List<Double> salaries = context.queryEmployees()
-                    .select(Path.of(Employee::getSalary).add(1000.0))
+                    .selectExpr(Path.of(Employee::getSalary).add(1000.0))
                     .orderBy(Employee::getId).asc()
                     .getList();
 

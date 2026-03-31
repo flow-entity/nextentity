@@ -155,7 +155,7 @@ public class JoinOperationsIntegrationTest {
     void shouldCalculateSalaryStatsPerDepartment(IntegrationTestContext context) {
         // When - get max salary in department 1
         Number maxSalary = context.queryEmployees()
-                .select(Path.of(Employee::getSalary).max())
+                .selectExpr(Path.of(Employee::getSalary).max())
                 .where(Employee::getDepartmentId).eq(1L)
                 .getSingle();
 
@@ -210,7 +210,7 @@ public class JoinOperationsIntegrationTest {
     void shouldGetDistinctDepartmentIds(IntegrationTestContext context) {
         // When
         List<Long> deptIds = context.queryEmployees()
-                .selectDistinct(Path.of(Employee::getDepartmentId))
+                .selectExprDistinct(Path.of(Employee::getDepartmentId))
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
