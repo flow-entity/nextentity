@@ -22,6 +22,16 @@ public abstract class AbstractRepository<T, ID> {
     protected final UpdateExecutor updateExecutor;
     protected final JdbcTemplate jdbcTemplate;
 
+    protected AbstractRepository(JdbcTemplate jdbcTemplate) {
+        NextEntityFactory factory = jdbc(jdbcTemplate);
+        this(jdbcTemplate, factory);
+    }
+
+    protected AbstractRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        NextEntityFactory factory = jpa(entityManager, jdbcTemplate);
+        this(jdbcTemplate, factory);
+    }
+
     public AbstractRepository(Class<ID> idType,
                               Class<T> entityType,
                               Select<T> queryBuilder,

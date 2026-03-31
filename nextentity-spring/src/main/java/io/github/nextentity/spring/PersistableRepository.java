@@ -4,6 +4,7 @@ import io.github.nextentity.api.Persistable;
 import io.github.nextentity.api.PathRef;
 import io.github.nextentity.api.Select;
 import io.github.nextentity.core.UpdateExecutor;
+import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,14 @@ import java.util.stream.Collectors;
 /// @author HuangChengwei
 /// @since 1.0.0
 public abstract class PersistableRepository<T extends Persistable<ID>, ID> extends AbstractRepository<T, ID> {
+
+    public PersistableRepository(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
+
+    public PersistableRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
+    }
 
     public PersistableRepository(Class<ID> idType,
                                  Class<T> entityType,

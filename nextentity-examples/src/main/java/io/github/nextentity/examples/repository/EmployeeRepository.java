@@ -867,6 +867,120 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
                 .getList();
     }
 
+    // ==================== Additional String Functions ====================
+
+    /// Convert to uppercase for comparison
+    public List<Employee> findByNameUppercase(String upperName) {
+        return query().where(Employee::getName).upper().eq(upperName.toUpperCase()).getList();
+    }
+
+    /// Trim whitespace and search
+    public List<Employee> findByNameTrimmed(String name) {
+        return query().where(Employee::getName).trim().eq(name.trim()).getList();
+    }
+
+    /// Search by substring
+    public List<Employee> findByNameSubstring(int start, int length, String expected) {
+        return query().where(Employee::getName).substring(start, length).eq(expected).getList();
+    }
+
+    /// Find employees with name length > N
+    public List<Employee> findByNameLongerThan(int minLen) {
+        return query().where(Employee::getName).length().gt(minLen).getList();
+    }
+
+    // ==================== Result Methods ====================
+
+    /// Get first result as Optional
+    public java.util.Optional<Employee> findFirstActive() {
+        return query()
+                .where(Employee::getActive).eq(true)
+                .orderBy(Employee::getName).asc()
+                .first();
+    }
+
+    /// Check if any active employee exists
+    public boolean hasActiveEmployees() {
+        return query()
+                .where(Employee::getActive).eq(true)
+                .exist();
+    }
+
+    /// Check if employee with email exists
+    public boolean existsByEmail(String email) {
+        return query()
+                .where(Employee::getEmail).eq(email)
+                .exist();
+    }
+
+    // ==================== Numeric Operations ====================
+
+    /// Find employees where salary + bonus > threshold
+    public List<Employee> findBySalaryWithBonus(Double bonus, Double threshold) {
+        return query()
+                .where(Employee::getSalary).add(bonus).gt(threshold)
+                .getList();
+    }
+
+    /// Find employees where salary * 12 (annual) > threshold
+    public List<Employee> findByAnnualSalary(Double threshold) {
+        return query()
+                .where(Employee::getSalary).multiply(12.0).gt(threshold)
+                .getList();
+    }
+
+    // ==================== Slice Methods ====================
+
+    /// Demonstrate slice methods
+    public void demonstrateSlice() {
+        Slice<Employee> slice = query()
+                .where(Employee::getActive).eq(true)
+                .orderBy(Employee::getId).asc()
+                .slice(0, 10);
+
+        List<Employee> data = slice.data();
+        long total = slice.total();
+        int offset = slice.offset();
+        int limit = slice.limit();
+        boolean hasNext = data.size() == limit;
+
+        System.out.println("Data: " + data.size() + ", Total: " + total +
+                          ", Offset: " + offset + ", Limit: " + limit +
+                          ", HasNext: " + hasNext);
+    }
+
+    // ==================== Aggregation with Path.of() ====================
+
+    /// Sum using Path.of() (for use outside Repository)
+    public Double calculateTotalSalaryExternal() {
+        return query()
+                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).sum())
+                .getSingle();
+    }
+
+    /// Average using Path.of()
+    public Double calculateAverageSalaryExternal() {
+        return query()
+                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).avg())
+                .where(Employee::getActive).eq(true)
+                .getSingle();
+    }
+
+    /// Max using Path.of()
+    public Double findMaxSalaryExternal() {
+        return query()
+                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).max())
+                .getSingle();
+    }
+
+    /// Min using Path.of()
+    public Double findMinSalaryExternal() {
+        return query()
+                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).min())
+                .where(Employee::getActive).eq(true)
+                .getSingle();
+    }
+
     // ==================== Helper Methods ====================
 
     private Employee createEmployee(Long id, String name, String email, Double salary) {

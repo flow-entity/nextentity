@@ -16,7 +16,7 @@ public class BaseRepository<T, ID> extends AbstractRepository<T, ID> {
         ApplicationContext context = NextEntityExampleApplication.context();
         JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
         EntityManager entityManager = context.getBean(EntityManager.class);
-        super(jdbcTemplate, jpa(entityManager, jdbcTemplate));
+        super(entityManager, jdbcTemplate);
         this.entityManager = entityManager;
     }
 
