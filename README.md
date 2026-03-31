@@ -1,86 +1,28 @@
-# 快速开始
+# NextEntity
 
-## [示例源码](https://github.com/nextentity/nextentity-example)
+一个类型安全的 Java SQL DSL 框架，提供流式 API 和 Spring Boot 集成。
 
-## POM
+## 特性
+
+- **类型安全**：使用方法引用，编译时检查
+- **流式 API**：链式调用构建复杂查询
+- **Spring 集成**：无缝集成 Spring Boot
+
+## 快速开始
+
+### 依赖
 
 ```xml
-
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-
-  <groupId>io.github.flow-entity</groupId>
-  <artifactId>nextentity-example-jdbc</artifactId>
-
-  <dependencies>
-    <dependency>
-      <groupId>io.github.flow-entity</groupId>
-      <artifactId>spring-boot-starter-nextentity-jdbc</artifactId>
-      <version>${nextentity.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>com.mysql</groupId>
-      <artifactId>mysql-connector-j</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.junit.jupiter</groupId>
-      <artifactId>junit-jupiter-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-test</artifactId>
-      <version>${spring.boot.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <version>${spring.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.microsoft.sqlserver</groupId>
-      <artifactId>mssql-jdbc</artifactId>
-    </dependency>
-
-  </dependencies>
-
-</project>
+<dependency>
+    <groupId>io.github.flow-entity</groupId>
+    <artifactId>nextentity-spring</artifactId>
+    <version>${nextentity.version}</version>
+</dependency>
 ```
 
-# 表结构
+`nextentity-spring` 同时支持 JDBC 和 JPA 两种后端，根据配置自动选择。
 
-```sql
-create table author
-(
-    id         integer primary key,
-    first_name varchar(255),
-    last_name  varchar(255),
-    age        integer
-);
-
-create table article
-(
-    id          integer primary key,
-    title       varchar(255) not null,
-    description varchar(255),
-    author_id   integer
-);
-```
-
-## 数据库配置
+### 数据库配置
 
 ```yaml
 spring:
@@ -91,130 +33,109 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 ```
 
-## 实体类
-
-### src/main/java/io/github/nextentity/example/entity/Article.java
+### 定义实体
 
 ```java
-
+@Entity
+@Table(name = "employee")
 @Data
-public class Article {
+public class Employee {
 
-    private Integer id;
-    private String title;
-    private String description;
+    @Id
+    private Long id;
 
-    private Integer authorId;
+    private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "authorId")
-    private Author author;
+    private String email;
 
+    private Double salary;
+
+    private Boolean active;
+
+    @Enumerated(EnumType.STRING)
+    private EmployeeStatus status;
+
+    private Long departmentId;
 }
 ```
 
-### src/main/java/io/github/nextentity/example/entity/Author.java
+### 创建 Repository
 
 ```java
+// JDBC 后端
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-@Data
-public class Author {
-    private Integer id;
-    private String firstName;
-    private String lastName;
-    private Integer age;
+    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
+}
+
+// JPA 后端
+@Repository
+public class DepartmentRepository extends AbstractRepository<Department, Long> {
+
+    public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
+    }
 }
 ```
 
-## 测试用例
+### 使用示例
 
 ```java
+@Service
+public class EmployeeService {
 
+    private final EmployeeRepository employeeRepository;
 
-@Slf4j
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@SpringBootTest
-public class ExampleTest {
-
-    @Autowired
-    Repository<Integer, Author> authorRepository;
-    @Autowired
-    Repository<Integer, Article> articleRepository;
-
-    @Test
-    @Order(0)
-    void insert() {
-        Author author = new Author();
-        author.setId(1);
-        author.setAge(26);
-        author.setFirstName("Michael");
-        author.setLastName("Jordan");
-        // sql: insert into `author` (`id`,`first_name`,`last_name`,`age`) values (?,?,?,?)
-        // parameters: 1, Michael, Jordan, 26
-        authorRepository.insert(author);
-
-        Article article = new Article();
-
-        article.setId(1);
-        article.setTitle("nextentity examples");
-        article.setDescription("A few examples of nextentity CRUD operations");
-        article.setAuthorId(author.getId());
-        // sql: insert into `article` (`id`,`title`,`description`,`author_id`) values (?,?,?,?)
-        // parameters: 1, nextentity examples, A few examples of nextentity CRUD operations, 1
-        articleRepository.insert(article);
+    // 查询
+    public List<Employee> findActiveEmployees() {
+        return employeeRepository.query()
+            .where(Employee::getActive).eq(true)
+            .orderBy(Employee::getName).asc()
+            .getList();
     }
 
-    @Test
-    @Order(1)
-    void update() {
-        Article article = articleRepository.get(1);
-        if (article != null) {
-            article.setDescription("A few examples of nextentity CRUD operations updated");
-            // sql: update `article` set `title`=?,`description`=?,`author_id`=? where `id`=?
-            // parameters: nextentity examples, A few examples of nextentity CRUD operations updated, 1, 1
-            articleRepository.update(article);
+    // 插入
+    public void createEmployee(Employee emp) {
+        employeeRepository.insert(emp);
+    }
+
+    // 更新
+    public void updateSalary(Long id, Double newSalary) {
+        Employee emp = employeeRepository.query()
+            .where(Employee::getId).eq(id)
+            .getFirst();
+        if (emp != null) {
+            emp.setSalary(newSalary);
+            employeeRepository.update(emp);
         }
     }
 
-    @Test
-    @Order(2)
-    void query() {
-        // select a_.`id`,a_.`title`,a_.`description`,a_.`author_id` 
-        // from `article` a_ where a_.`title`='nextentity examples'
-        List<Article> articles = articleRepository
-                .where(Article::getTitle).eq("nextentity examples")
-                .getList();
-        // [Article(id=1, title=nextentity examples, description=A few examples of nextentity CRUD operations updated, 
-        // authorId=1, author=null)]
-        log.info("{}", articles);
-
-        // select 
-        // a_.`id`,a_.`title`,a_.`description`,a_.`author_id`,a0_.`id` as _0,
-        // a0_.`first_name` as _1,a0_.`last_name` as _2,a0_.`age` as _3 
-        // from `article` a_ left join `author` a0_ on a_.author_id=a0_.id 
-        // where a_.`title`='nextentity examples'
-        articles = articleRepository
-                .fetch(Article::getAuthor)
-                .where(Article::getTitle).eq("nextentity examples")
-                .getList();
-        // [Article(id=1, title=nextentity examples, description=A few examples of nextentity CRUD operations updated, 
-        // authorId=1, author=Author(id=1, firstName=Michael, lastName=Jordan, age=26))]
-        log.info("{}", articles);
-
-    }
-
-    @Test
-    @Order(3)
-    void delete() {
-        Article article = articleRepository.get(1);
-        // sql: delete from `article` where `id`=?
-        // parameters: 1
-        articleRepository.delete(article);
-        Author author = authorRepository.get(1);
-        // sql: delete from `author` where `id`=?
-        // parameters: 1
-        authorRepository.delete(author);
+    // 删除
+    public void deleteEmployee(Employee emp) {
+        employeeRepository.delete(emp);
     }
 }
-
 ```
+
+## 文档
+
+- [快速入门](docs/guides/getting-started.md)
+- [Repository 模式](docs/guides/repository-pattern.md)
+- [查询构建](docs/guides/query-building.md)
+- [CRUD 操作](docs/guides/crud-operations.md)
+
+## 示例项目
+
+完整示例代码请参考 [nextentity-examples](nextentity-examples) 模块。
+
+## 环境要求
+
+- Java 25+
+- Spring Boot 4.0+
+
+## License
+
+Apache License 2.0

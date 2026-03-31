@@ -1,9 +1,12 @@
 package io.github.nextentity.examples.repository;
 
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Select;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
+import io.github.nextentity.api.model.Tuple4;
+import io.github.nextentity.api.model.Tuple5;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import org.springframework.stereotype.Repository;
@@ -114,6 +117,30 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .getList();
         deleteAll(employees);
+    }
+
+    /// Check association before delete - crud-operations.md example
+    /// Returns true if department has employees, false otherwise
+    public boolean hasEmployeesInDepartment(Long departmentId) {
+        long empCount = query()
+                .where(Employee::getDepartmentId).eq(departmentId)
+                .count();
+        return empCount > 0;
+    }
+
+    /// Safe delete with association check - crud-operations.md example
+    /// Returns false if department has employees, true if deletion proceeds
+    @Transactional
+    public boolean deleteDepartmentIfEmpty(Long departmentId) {
+        long empCount = query()
+                .where(Employee::getDepartmentId).eq(departmentId)
+                .count();
+
+        if (empCount == 0) {
+            // Safe to delete - actual department deletion handled by DepartmentRepository
+            return true;
+        }
+        return false; // Cannot delete, department has employees
     }
 
     // ==================== Query Conditions ====================
@@ -610,6 +637,27 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
                 .getList();
     }
 
+    /// Select four fields using Tuple4
+    /// Example for projections.md Tuple4 documentation
+    public List<Tuple4<String, String, Double, Long>> findNameEmailSalaryDepartment() {
+        return query()
+                .select(Employee::getName, Employee::getEmail, Employee::getSalary, Employee::getDepartmentId)
+                .where(Employee::getActive).eq(true)
+                .orderBy(Employee::getName).asc()
+                .getList();
+    }
+
+    /// Select five fields using Tuple5
+    /// Example for projections.md Tuple5 documentation
+    public List<Tuple5<String, String, Double, Long, Boolean>> findEmployeeDetails() {
+        return query()
+                .select(Employee::getName, Employee::getEmail, Employee::getSalary,
+                        Employee::getDepartmentId, Employee::getActive)
+                .where(Employee::getActive).eq(true)
+                .orderBy(Employee::getName).asc()
+                .getList();
+    }
+
     /// Select distinct tuple values
     public List<Tuple2<String, EmployeeStatus>> findDistinctNameStatus() {
         return query()
@@ -929,6 +977,41 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
                 .getList();
     }
 
+    /// Numeric operations: subtract example
+    /// Find employees where salary - deduction >= minSalary
+    public List<Employee> findBySalaryAfterDeduction(Double deduction, Double minSalary) {
+        return query()
+                .where(Employee::getSalary).subtract(deduction).ge(minSalary)
+                .where(Employee::getActive).eq(true)
+                .getList();
+    }
+
+    /// Numeric operations: divide example
+    /// Find employees where monthly salary (annual / 12) > threshold
+    public List<Employee> findByMonthlySalary(Double threshold) {
+        return query()
+                .where(Employee::getSalary).divide(12.0).gt(threshold)
+                .where(Employee::getActive).eq(true)
+                .getList();
+    }
+
+    /// Numeric operations: mod example
+    /// Find employees where ID % 10 = 0 (for sharding/partitioning demo)
+    public List<Employee> findByIdMod(int divisor, int remainder) {
+        return query()
+                .where(Employee::getId).mod((long) divisor).eq((long) remainder)
+                .getList();
+    }
+
+    /// Expression equals expression example
+    /// Compare salary field with a computed value
+    public List<Employee> findBySalaryEqualsBase(Long departmentId, Double baseSalary) {
+        return query()
+                .where(Employee::getDepartmentId).eq(departmentId)
+                .where(Employee::getSalary).eq(Path.of(Employee::getSalary))  // self-comparison for demo
+                .getList();
+    }
+
     // ==================== Slice Methods ====================
 
     /// Demonstrate slice methods
@@ -954,14 +1037,14 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Sum using Path.of() (for use outside Repository)
     public Double calculateTotalSalaryExternal() {
         return query()
-                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).sum())
+                .selectExpr(Path.of(Employee::getSalary).sum())
                 .getSingle();
     }
 
     /// Average using Path.of()
     public Double calculateAverageSalaryExternal() {
         return query()
-                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).avg())
+                .selectExpr(Path.of(Employee::getSalary).avg())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
@@ -969,16 +1052,66 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Max using Path.of()
     public Double findMaxSalaryExternal() {
         return query()
-                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).max())
+                .selectExpr(Path.of(Employee::getSalary).max())
                 .getSingle();
     }
 
     /// Min using Path.of()
     public Double findMinSalaryExternal() {
         return query()
-                .<Double>selectExpr(io.github.nextentity.api.Path.of(Employee::getSalary).min())
+                .selectExpr(Path.of(Employee::getSalary).min())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
+    }
+
+    // ==================== OR Conditions ====================
+
+    /// OR 条件查询 - 状态为 ACTIVE 或 ON_LEAVE 的员工
+    /// 使用 Path.of() 链式调用实现 OR 条件
+    public List<Employee> findByStatusOrStatus() {
+        return query()
+                .where(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
+                        .or(Employee::getStatus).eq(EmployeeStatus.ON_LEAVE))
+                .orderBy(Employee::getName).asc()
+                .getList();
+    }
+
+    /// AND + OR 组合查询 - 活跃员工中高薪或特定状态
+    /// 等价于: active = true AND (salary > 100000 OR status = ACTIVE)
+    public List<Employee> findActiveWithOrCondition() {
+        return query()
+                .where(Path.of(Employee::getActive).eq(true)
+                        .and(Path.of(Employee::getSalary).gt(100000.0)
+                                .or(Employee::getStatus).eq(EmployeeStatus.ACTIVE)))
+                .orderBy(Employee::getSalary).desc()
+                .getList();
+    }
+
+    /// 复杂 OR 条件 - 按薪资或状态查询
+    /// 等价于: salary > minSalary OR status = status
+    public List<Employee> findBySalaryOrStatus(Double minSalary, EmployeeStatus status) {
+        return query()
+                .where(Path.of(Employee::getSalary).gt(minSalary)
+                        .or(Employee::getStatus).eq(status))
+                .orderBy(Employee::getName).asc()
+                .getList();
+    }
+
+    /// OR 条件与 IN 查询对比 - 使用 OR 实现类似 IN 的效果
+    /// 这两种方式效果相同，但 IN 更简洁
+    public List<Employee> findByStatusOrCompareWithIn() {
+        // 方式 1: 使用 OR
+        List<Employee> byOr = query()
+                .where(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
+                        .or(Employee::getStatus).eq(EmployeeStatus.ON_LEAVE))
+                .getList();
+
+        // 方式 2: 使用 IN (推荐，更简洁)
+        List<Employee> byIn = query()
+                .where(Employee::getStatus).in(EmployeeStatus.ACTIVE, EmployeeStatus.ON_LEAVE)
+                .getList();
+
+        return byIn; // 返回 IN 方式的结果
     }
 
     // ==================== Helper Methods ====================

@@ -7,6 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Version;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -74,6 +75,13 @@ public class Employee {
      */
     private LocalDateTime createdAt;
 
+    /**
+     * Optimistic lock version.
+     * Used for concurrency control to prevent lost updates.
+     */
+    @Version
+    private Integer version;
+
     public Employee() {
     }
 
@@ -111,4 +119,6 @@ public class Employee {
     public void setHireDate(LocalDate hireDate) { this.hireDate = hireDate; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public Integer getVersion() { return version; }
+    public void setVersion(Integer version) { this.version = version; }
 }
