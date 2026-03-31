@@ -28,17 +28,17 @@ public class SimpleExpressionImpl<T, U>
 
     @Override
     public <R> EntityPath<T, R> get(PathRef<U, R> path) {
-        return new SimpleExpressionImpl<>(appendPath(path));
+        return new SimpleExpressionImpl<>(appendPathRef(path));
     }
 
     @Override
     public StringPath<T> get(PathRef.StringRef<U> path) {
-        return new StringExpressionImpl<>(appendPath(path));
+        return new StringExpressionImpl<>(appendPathRef(path));
     }
 
     @Override
     public <R extends Number> NumberPath<T, R> get(PathRef.NumberRef<U, R> path) {
-        return new NumberExpressionImpl<>(appendPath(path));
+        return new NumberExpressionImpl<>(appendPathRef(path));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class SimpleExpressionImpl<T, U>
 
     @Override
     public BooleanPath<T> get(PathRef.BooleanRef<T> path) {
-        return new PredicateImpl<>(appendPath(path));
+        return new PredicateImpl<>(appendPathRef(path));
     }
 
     @Override

@@ -95,4 +95,13 @@ public interface PathRef<T, R> extends Serializable {
     interface BigDecimalRef<T> extends NumberRef<T, BigDecimal> {
     }
 
+    /// Entity path reference interface, representing the path of an entity type attribute.
+    ///
+    /// Used for nested entity access in queries.
+    ///
+    /// @param <T> Entity type
+    /// @param <R> Attribute type (must be an Entity type)
+    interface EntityPathRef<T, R extends Entity> extends PathRef<T, R> {
+    }
+
 }

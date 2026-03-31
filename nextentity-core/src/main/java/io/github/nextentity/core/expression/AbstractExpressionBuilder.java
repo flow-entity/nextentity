@@ -266,7 +266,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.OR, nodes));
     }
 
-    protected PathNode appendPath(PathRef<?, ?> path) {
+    protected PathNode appendPathRef(PathRef<?, ?> path) {
         PathNode target = (PathNode) getRoot();
         String fieldName = PathReference.of(path).getFieldName();
         return target.get(fieldName);
