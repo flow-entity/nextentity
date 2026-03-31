@@ -4,7 +4,6 @@ import io.github.nextentity.api.Select;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import org.springframework.stereotype.Repository;
@@ -474,14 +473,14 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Calculate total salary using Java streams
     public double calculateTotalSalary() {
         return query()
-                .select(path(Employee::getSalary).sum())
+                .selectExpr(path(Employee::getSalary).sum())
                 .getSingle();
     }
 
     /// Sum with conditions - total salary for active employees
     public double calculateActiveTotalSalary() {
         return query()
-                .select(path(Employee::getSalary).sum())
+                .selectExpr(path(Employee::getSalary).sum())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
@@ -489,7 +488,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Calculate average salary
     public double calculateAverageSalary() {
         return query()
-                .select(path(Employee::getSalary).avg())
+                .selectExpr(path(Employee::getSalary).avg())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
@@ -497,7 +496,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Average by department
     public double calculateAverageSalaryByDepartment(Long departmentId) {
         return query()
-                .select(path(Employee::getSalary).avg())
+                .selectExpr(path(Employee::getSalary).avg())
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .getSingle();
     }
@@ -505,7 +504,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Find maximum salary
     public double findMaxSalary() {
         return query()
-                .select(path(Employee::getSalary).max())
+                .selectExpr(path(Employee::getSalary).max())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
@@ -513,7 +512,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Find minimum salary
     public double findMinSalary() {
         return query()
-                .select(path(Employee::getSalary).min())
+                .selectExpr(path(Employee::getSalary).min())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }

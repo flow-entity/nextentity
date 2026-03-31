@@ -134,6 +134,10 @@ public abstract class AbstractRepository<T, ID> {
         return Path.of(path);
     }
 
+    protected <U extends Entity> EntityPath<T, U> path(PathRef.EntityPathRef<T, U> path) {
+        return Path.of(path);
+    }
+
     protected GenericType<T, ID> getGenericType() {
         ResolvableType type = ResolvableType.forClass(getClass()).as(AbstractRepository.class);
         Class<T> entityType = TypeCastUtil.cast(type.resolveGeneric(0));
