@@ -68,7 +68,7 @@ Employee employee = employeeRepository.query()
     .getFirst();
 
 // 修改属性
-employee.setSalary(65000.0);
+employee.setSalary(BigDecimal.valueOf(65000.0));
 employee.setEmail("john.new@company.com");
 
 // 更新
@@ -179,7 +179,12 @@ List<Employee> employees = employeeRepository.query()
     .where(Employee::getDepartmentId).eq(1L)
     .getList();
 
-employees.forEach(e -> e.setSalary(e.getSalary() * 1.1));
+employees.forEach(e -> {
+    BigDecimal salary = e.getSalary();
+    if (salary != null) {
+        e.setSalary(salary.multiply(BigDecimal.valueOf(1.1)));
+    }
+});
 
 employeeRepository.updateAll(employees);
 ```
@@ -224,7 +229,7 @@ public class EmployeeService {
 
 ### Repository 内部事务
 
-对于 Repository 内部的事务操作，可以使用 `doInTransaction` 方法（protected 方法，仅限子类内部使用）：
+对于 Repository 内部的事务操作，直接使用 Spring 的 `@Transactional` 注解：
 
 ```java
 @Repository
@@ -262,12 +267,15 @@ public class EmployeeService {
             .where(Employee::getId).eq(empId)
             .getFirst();
 
-        emp.setDepartmentId(newDeptId);
-        employeeRepository.update(emp);
+        if (emp != null) {
+            Long oldDeptId = emp.getDepartmentId();
+            emp.setDepartmentId(newDeptId);
+            employeeRepository.update(emp);
 
-        // 更新部门统计
-        updateDepartmentStats(oldDeptId);
-        updateDepartmentStats(newDeptId);
+            // 更新部门统计
+            updateDepartmentStats(oldDeptId);
+            updateDepartmentStats(newDeptId);
+        }
     }
 }
 ```
@@ -305,7 +313,7 @@ Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(1L)
     .getFirst();
 
-emp.setSalary(65000.0);
+emp.setSalary(BigDecimal.valueOf(65000.0));
 
 employeeRepository.update(emp);  // 自动检查版本号并递增
 ```
@@ -359,11 +367,22 @@ for (Employee e : newEmployees) {
 ### 3. 合理使用事务
 
 ```java
-// 相关操作放在同一事务
-employeeRepository.doInTransaction(() -> {
-    departmentRepository.insert(dept);
-    employeeRepository.insertAll(employees);
-});
+// 使用 @Transactional 注解保证事务
+@Transactional
+public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
+    List<Employee> employees = query()
+        .where(Employee::getDepartmentId).eq(departmentId)
+        .where(Employee::getActive).eq(true)
+        .getList();
+
+    employees.forEach(e -> {
+        BigDecimal salary = e.getSalary();
+        if (salary != null) {
+            e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+        }
+    });
+    updateAll(employees);
+}
 ```
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`giveDepartmentRaise` 方法)

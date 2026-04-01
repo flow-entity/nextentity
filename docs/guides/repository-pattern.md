@@ -24,16 +24,14 @@ Repository 模式将数据访问逻辑封装在专用类中，提供类型安全
 继承 `AbstractRepository` 创建类型安全的 Repository：
 
 ```java
-// JDBC 后端
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 }
 
-// JPA 后端
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
@@ -49,7 +47,9 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
 ```java
 // 实体实现 Persistable 接口
+@Entity
 public class Product implements Persistable<Long> {
+    @Id
     private Long id;
 
     @Override
@@ -60,8 +60,8 @@ public class Product implements Persistable<Long> {
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
 
-    public ProductRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public ProductRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 自动获得 findById、getById、existsById、deleteById 等方法
@@ -78,8 +78,8 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 查询全部
@@ -116,21 +116,21 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 动态条件查询
-    public List<Employee> searchEmployees(String name, Long departmentId, Double minSalary) {
+    public List<Employee> searchEmployees(String name, Long departmentId, BigDecimal minSalary) {
         return query()
             .where(Employee::getName).containsIfNotEmpty(name)
             .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
-            .where(Employee::getSalary).gtIfNotNull(minSalary)
+            .where(Employee::getSalary).geIfNotNull(minSalary)
             .getList();
     }
 
     // 范围查询
-    public List<Employee> findBySalaryBetween(Double min, Double max) {
+    public List<Employee> findBySalaryBetween(BigDecimal min, BigDecimal max) {
         return query()
             .where(Employee::getSalary).between(min, max)
             .getList();
@@ -157,8 +157,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 分页查询
@@ -184,8 +184,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 单字段排序
@@ -211,8 +211,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 计数
@@ -227,7 +227,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 
     // 聚合查询（使用 selectExpr）
-    public Double calculateTotalSalary() {
+    public BigDecimal calculateTotalSalary() {
         return query()
             .selectExpr(path(Employee::getSalary).sum())
             .getSingle();
@@ -246,10 +246,16 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 public class EmployeeService {
 
     @Transactional
-    public void giveDepartmentRaise(Long departmentId, double percentage) {
+    public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
         List<Employee> employees = employeeRepository.query()
             .where(Employee::getDepartmentId).eq(departmentId)
             .getList();
+        employees.forEach(e -> {
+            BigDecimal salary = e.getSalary();
+            if (salary != null) {
+                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+            }
+        });
         employeeRepository.updateAll(employees);
     }
 

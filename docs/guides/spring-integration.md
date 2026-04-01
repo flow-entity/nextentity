@@ -78,24 +78,26 @@ spring:
 ### 创建 Repository
 
 ```java
-// JDBC 后端
+// 使用 JPA 后端（推荐，支持更多功能）
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
-    }
-}
-
-// JPA 后端
-@Repository
-public class DepartmentRepository extends AbstractRepository<Department, Long> {
-
-    public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
         super(entityManager, jdbcTemplate);
     }
 }
+
+// 使用纯 JDBC 后端（轻量级，无 JPA 依赖）
+@Repository
+public class LogRepository extends AbstractRepository<Log, Long> {
+
+    public LogRepository(JdbcTemplate jdbcTemplate) {
+        super(jdbcTemplate);
+    }
+}
 ```
+
+> **注意**：示例项目中的 Repository 使用了 `EntityManager + JdbcTemplate` 构造函数，因为项目配置了 JPA。如果只需纯 JDBC 功能，可使用只含 `JdbcTemplate` 的构造函数。
 
 ### 使用 Repository
 

@@ -114,13 +114,12 @@ LEFT JOIN department d ON e.department_id = d.id
 WHERE e.active = ?
 ```
 
-### 多个关联
+### Fetch 示例
 
 ```java
-// 同时加载部门和经理
+// 加载员工和部门
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
-    .fetch(Employee::getManager)  // 假设 Employee 有 manager 关联
     .where(Employee::getActive).eq(true)
     .getList();
 ```
@@ -241,19 +240,21 @@ List<Employee> employees = employeeRepository.query()
 
 ```java
 // 投影可以简化复杂关联查询
-public class EmployeeWithDeptName {
+// 使用 @EntityPath 注解映射关联字段
+public class EmployeeWithDept {
+    @EntityPath("name")
     private String employeeName;
+    @EntityPath("department.name")
     private String departmentName;
-    private Double salary;
 }
 
-List<EmployeeWithDeptName> results = employeeRepository.query()
-    .select(EmployeeWithDeptName.class)
+List<EmployeeWithDept> results = employeeRepository.query()
+    .select(EmployeeWithDept.class)
     .fetch(Employee::getDepartment)
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithManualJoin` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeWithDepartmentInfo` 方法)
 > 📍 **DTO 定义**: `EmployeeRepository.java` (`EmployeeWithDept` 类)
 
 ### 3. 注意外键配置

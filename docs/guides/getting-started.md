@@ -100,6 +100,21 @@ public class Employee {
 
 > 📍 **示例位置**: `entity/Employee.java` (完整实体定义)
 
+### 定义枚举
+
+`EmployeeStatus` 枚举配合 `@Enumerated(EnumType.STRING)` 使用，以字符串形式存储到数据库：
+
+```java
+public enum EmployeeStatus {
+    ACTIVE,      // 在职
+    INACTIVE,    // 未激活
+    ON_LEAVE,    // 休假中
+    TERMINATED   // 已离职
+}
+```
+
+> 📍 **示例位置**: `entity/EmployeeStatus.java`
+
 ---
 
 ## 创建 Repository
@@ -197,8 +212,7 @@ List<Employee> employeesBySalary = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findAllEmployees` 方法)
-> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeByEmail` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findAllEmployees`, `findEmployeeById`, `findActiveEmployees`, `findBySalaryBetween` 方法)
 
 ### CRUD 操作
 
@@ -208,13 +222,18 @@ Employee emp = new Employee();
 emp.setId(1L);
 emp.setName("John Doe");
 emp.setEmail("john@example.com");
+emp.setSalary(BigDecimal.valueOf(50000.0));
+emp.setActive(true);
+emp.setStatus(EmployeeStatus.ACTIVE);
+emp.setDepartmentId(1L);
+emp.setHireDate(LocalDate.now());
 employeeRepository.insert(emp);
 
 // 批量插入
 employeeRepository.insertAll(List.of(emp1, emp2, emp3));
 
 // 更新
-emp.setSalary(60000.0);
+emp.setSalary(BigDecimal.valueOf(60000.0));
 employeeRepository.update(emp);
 
 // 批量更新

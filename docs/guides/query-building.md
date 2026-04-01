@@ -67,7 +67,7 @@ List<Employee> employees = employeeRepository.query()
 .where(Employee::getStatus).ne(EmployeeStatus.TERMINATED)
 
 // 等于表达式
-.where(Employee::getSalary).eq(Path.of(Employee::getBaseSalary))
+.where(Employee::getSalary).eq(Path.of(Employee::getSalary))  // 自比较示例
 ```
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`findByStatus`, `findNotTerminated`, `findByStatusIfPresent` 方法)
@@ -141,7 +141,7 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 ### NOT IN
 
 ```java
-.where(Employee::getStatus).notIn(TERMINATED, SUSPENDED)
+.where(Employee::getStatus).notIn(TERMINATED, INACTIVE)
 .where(Employee::getId).notIn(excludedIds)
 ```
 
@@ -159,7 +159,7 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 .where(Employee::getEmail).isNotNull()
 
 // 组合使用
-.where(Employee::getManagerId).isNotNull()
+.where(Employee::getDepartmentId).isNotNull()
 .where(Employee::getEmail).isNull()
 ```
 
@@ -230,16 +230,16 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 
 ```java
 // 加法
-.where(Path.of(Employee::getSalary).add(1000)).gt(60000.0)
+.where(Path.of(Employee::getSalary).add(BigDecimal.valueOf(1000))).gt(BigDecimal.valueOf(60000.0))
 
 // 减法
-.where(Path.of(Employee::getSalary).subtract(5000)).ge(40000.0)
+.where(Path.of(Employee::getSalary).subtract(BigDecimal.valueOf(5000))).ge(BigDecimal.valueOf(40000.0))
 
 // 乘法
-.where(Path.of(Employee::getHours).multiply(rate)).gt(1000.0)
+.where(Path.of(Employee::getSalary).multiply(BigDecimal.valueOf(12))).gt(BigDecimal.valueOf(100000.0))
 
 // 除法
-.where(Path.of(Employee::getSalary).divide(12)).gt(5000.0)
+.where(Path.of(Employee::getSalary).divide(BigDecimal.valueOf(12))).gt(BigDecimal.valueOf(5000.0))
 
 // 取模
 .where(Path.of(Employee::getId).mod(10)).eq(0)
@@ -311,7 +311,7 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 ```java
 // 多个 where 自动组合为 AND
 .where(Employee::getActive).eq(true)
-.where(Employee::getSalary).gt(50000.0)
+.where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
 // 等价于: active = true AND salary > 50000
 ```
 
@@ -333,7 +333,7 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 ```java
 // AND + OR 组合
 .where(Path.of(Employee::getActive).eq(true)
-        .and(Path.of(Employee::getSalary).gt(100000.0)
+        .and(Path.of(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
                 .or(Employee::getStatus).eq(EmployeeStatus.ACTIVE)))
 // 等价于: active = true AND (salary > 100000 OR status = ACTIVE)
 ```
@@ -370,7 +370,7 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 
 ```java
 // NULL 值排在最后
-.orderBy(Employee::getManagerId).asc()
+.orderBy(Employee::getDepartmentId).asc()
 ```
 
 ---
@@ -460,7 +460,7 @@ employeeRepository.query()
 
 > 📍 **示例位置**:
 > - `getList()`: `EmployeeRepository.java` (`findAllEmployees`)
-> - `getFirst()`: `EmployeeRepository.java:78` (`findEmployeeByEmail`)
+> - `getFirst()`: `EmployeeRepository.java` (`findEmployeeByEmail`)
 > - `count()`: `EmployeeRepository.java` (`countAllEmployees`)
 > - `first()`: `EmployeeRepository.java` (`findFirstActive`)
 > - `exist()`: `EmployeeRepository.java` (`hasActiveEmployees`, `existsByEmail`)

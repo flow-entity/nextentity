@@ -120,7 +120,7 @@ Employee emp = repository.query()
 @Transactional
 public void updateSalary(Long id) {
     Employee emp = repository.query().where(Employee::getId).eq(id).getFirst();
-    emp.setSalary(60000.0);
+    emp.setSalary(BigDecimal.valueOf(60000.0));
     // 事务结束不会自动保存！
 }
 
@@ -128,7 +128,7 @@ public void updateSalary(Long id) {
 @Transactional
 public void updateSalary(Long id) {
     Employee emp = repository.query().where(Employee::getId).eq(id).getFirst();
-    emp.setSalary(60000.0);
+    emp.setSalary(BigDecimal.valueOf(60000.0));
     repository.update(emp);  // 必须显式调用
 }
 ```
@@ -220,7 +220,7 @@ public class Employee {
     private Long id;           // 主键
     private String name;
     private String email;
-    private Double salary;
+    private BigDecimal salary;
     private Boolean active;
     private Long departmentId;
 
@@ -234,6 +234,10 @@ public class Employee {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
+    }
 }
 ```
 
@@ -286,7 +290,7 @@ public void raiseSalary(Long id) {
     Employee emp = employeeRepository.query()
         .where(Employee::getId).eq(id)
         .getFirst();
-    emp.setSalary(emp.getSalary() * 1.1);
+    emp.setSalary(emp.getSalary().multiply(BigDecimal.valueOf(1.1)));
     // 事务结束不会自动保存！
 }
 
@@ -296,7 +300,7 @@ public void raiseSalary(Long id) {
     Employee emp = employeeRepository.query()
         .where(Employee::getId).eq(id)
         .getFirst();
-    emp.setSalary(emp.getSalary() * 1.1);
+    emp.setSalary(emp.getSalary().multiply(BigDecimal.valueOf(1.1)));
     employeeRepository.update(emp);  // 必须显式调用
 }
 ```
@@ -366,7 +370,7 @@ public class Employee {
 
     private String email;
 
-    private Double salary;
+    private BigDecimal salary;
 
     private Boolean active;
 
@@ -408,7 +412,7 @@ Department dept = emp.getDepartment();  // 自动加载
 
 ```java
 @Transactional
-public void updateSalary(Long id, Double salary) {
+public void updateSalary(Long id, BigDecimal salary) {
     Employee emp = employeeRepository.query()
         .where(Employee::getId).eq(id)
         .getFirst();
@@ -447,7 +451,7 @@ public class Employee {
 
 // 更新时自动检查版本
 Employee emp = employeeRepository.query().getFirst();
-emp.setSalary(60000.0);
+emp.setSalary(BigDecimal.valueOf(60000.0));
 employeeRepository.update(emp);  // 自动检查版本，冲突抛出异常
 ```
 

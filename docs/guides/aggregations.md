@@ -65,7 +65,7 @@ long activeCount = employeeRepository.query()
 
 // 统计高薪员工
 long highSalaryCount = employeeRepository.query()
-    .where(Employee::getSalary).gt(100000.0)
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
     .count();
 
 // 多条件统计
@@ -199,30 +199,8 @@ LocalDate latestHire = employeeRepository.query()
 ```java
 // 不同部门数量
 long distinctDeptCount = employeeRepository.query()
-    .selectDistinct(Employee::getDepartmentId)
-    .count();
-
-// 不同状态数量
-long distinctStatusCount = employeeRepository.query()
-    .selectDistinct(Employee::getStatus)
-    .count();
-
-// 不同薪资值数量
-long distinctSalaryCount = employeeRepository.query()
-    .selectDistinct(Employee::getSalary)
-    .count();
-```
-
-### Distinct Sum/Avg
-
-```java
-// 不同薪资值的总和
-Double distinctSum = employeeRepository.query()
-    .selectDistinct(Employee::getSalary)
-    .getList()
-    .stream()
-    .mapToDouble(Double::doubleValue)
-    .sum();
+    .selectExpr(Path.of(Employee::getDepartmentId).countDistinct())
+    .getSingle();
 ```
 
 ---
@@ -253,12 +231,12 @@ List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> statsByDept
 
 // 结果分析
 for (Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal> tuple : statsByDept) {
-    Long deptId = tuple.v1();           // 部门 ID
-    Long count = tuple.v2();            // 人数
-    BigDecimal sum = tuple.v3();        // 总薪资
-    Double avg = tuple.v4();            // 平均薪资
-    BigDecimal max = tuple.v5();        // 最高薪资
-    BigDecimal min = tuple.v6();        // 最低薪资
+    Long deptId = tuple.get0();           // 部门 ID
+    Long count = tuple.get1();            // 人数
+    BigDecimal sum = tuple.get2();        // 总薪资
+    Double avg = tuple.get3();            // 平均薪资
+    BigDecimal max = tuple.get4();        // 最高薪资
+    BigDecimal min = tuple.get5();        // 最低薪资
     
     System.out.println("部门 " + deptId + ": " +
         "人数=" + count +
@@ -287,7 +265,7 @@ List<Tuple4<Long, EmployeeStatus, Long, Double>> stats = employeeRepository.quer
     .getList();
 ```
 
-> 📍 **示例位置**: `GroupByStepMultipleParametersIntegrationTest.java` (`shouldGroupByThreePaths` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`salaryStatsByDepartment` 方法)
 
 ### Java Stream 分组（备选方案）
 
@@ -335,17 +313,7 @@ Double activeAvg = employeeRepository.query()
     .getSingle();
 ```
 
-### 3. 使用 first() 获取 Optional 结果
-
-```java
-// 获取 Optional 包装的结果
-Optional<BigDecimal> maxSalary = employeeRepository.query()
-    .selectExpr(Path.of(Employee::getSalary).max())
-    .where(Employee::getDepartmentId).eq(deptId)
-    .first();
-```
-
-### 4. 使用 exist() 检查存在性
+### 3. 使用 exist() 检查存在性
 
 ```java
 // 检查是否存在符合条件的记录
@@ -392,43 +360,6 @@ Double avg = employeeRepository.query()
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getSalary).isNotNull()
     .getList();
-```
-
----
-
-## 示例
-
-### 部门统计报告
-
-```java
-@Service
-public class DepartmentStatsService {
-
-    public DepartmentReport generateReport(Long departmentId) {
-        // 人数
-        long count = employeeRepository.query()
-            .where(Employee::getDepartmentId).eq(departmentId)
-            .count();
-
-        // 薪资统计
-        BigDecimal total = employeeRepository.query()
-            .selectExpr(Path.of(Employee::getSalary).sum())
-            .where(Employee::getDepartmentId).eq(departmentId)
-            .getSingle();
-
-        Double avg = employeeRepository.query()
-            .selectExpr(Path.of(Employee::getSalary).avg())
-            .where(Employee::getDepartmentId).eq(departmentId)
-            .getSingle();
-
-        BigDecimal max = employeeRepository.query()
-            .selectExpr(Path.of(Employee::getSalary).max())
-            .where(Employee::getDepartmentId).eq(departmentId)
-            .getSingle();
-
-        return new DepartmentReport(departmentId, count, total, avg, max);
-    }
-}
 ```
 
 ---

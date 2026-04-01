@@ -51,7 +51,7 @@ List<Long> deptIds = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:584-589` (`findEmployeeNames` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeNames` 方法)
 
 ### 带条件查询
 
@@ -65,11 +65,11 @@ List<String> activeNames = employeeRepository.query()
 // 高薪员工的邮箱
 List<String> highSalaryEmails = employeeRepository.query()
     .select(Employee::getEmail)
-    .where(Employee::getSalary).gt(100000.0)
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:584-589` (`findEmployeeNames` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeNames` 方法)
 
 ---
 
@@ -79,49 +79,49 @@ List<String> highSalaryEmails = employeeRepository.query()
 
 ```java
 // 姓名和薪资
-List<Tuple2<String, Double>> results = employeeRepository.query()
+List<Tuple2<String, BigDecimal>> results = employeeRepository.query()
     .select(Employee::getName, Employee::getSalary)
     .where(Employee::getActive).eq(true)
     .getList();
 
 // 访问结果
-for (Tuple2<String, Double> tuple : results) {
+for (Tuple2<String, BigDecimal> tuple : results) {
     String name = tuple.get0();
-    Double salary = tuple.get1();
+    BigDecimal salary = tuple.get1();
     System.out.println(name + ": " + salary);
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:599-604` (`findNameAndSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findNameAndSalary` 方法)
 
 ### Tuple3（三个字段）
 
 ```java
 // 姓名、邮箱和薪资
-List<Tuple3<String, String, Double>> results = employeeRepository.query()
+List<Tuple3<String, String, BigDecimal>> results = employeeRepository.query()
     .select(Employee::getName, Employee::getEmail, Employee::getSalary)
     .getList();
 
-for (Tuple3<String, String, Double> tuple : results) {
+for (Tuple3<String, String, BigDecimal> tuple : results) {
     String name = tuple.get0();
     String email = tuple.get1();
-    Double salary = tuple.get2();
+    BigDecimal salary = tuple.get2();
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:607-612` (`findNameEmailSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findNameEmailSalary` 方法)
 
 ### Tuple4 到 Tuple10
 
 ```java
 // 四个字段
-List<Tuple4<String, String, Double, Long>> results = employeeRepository.query()
+List<Tuple4<String, String, BigDecimal, Long>> results = employeeRepository.query()
     .select(Employee::getName, Employee::getEmail,
             Employee::getSalary, Employee::getDepartmentId)
     .getList();
 
 // 更多字段（最多 10 个）
-List<Tuple5<String, String, Double, Long, Boolean>> results =
+List<Tuple5<String, String, BigDecimal, Long, Boolean>> results =
     employeeRepository.query()
     .select(Employee::getName, Employee::getEmail,
             Employee::getSalary, Employee::getDepartmentId,
@@ -130,8 +130,8 @@ List<Tuple5<String, String, Double, Long, Boolean>> results =
 ```
 
 > 📍 **示例位置**:
-> - `Tuple4`: `EmployeeRepository.java:615-623` (`findNameEmailSalaryDepartment` 方法)
-> - `Tuple5`: `EmployeeRepository.java:626-634` (`findEmployeeDetails` 方法)
+> - `Tuple4`: `EmployeeRepository.java` (`findNameEmailSalaryDepartment` 方法)
+> - `Tuple5`: `EmployeeRepository.java` (`findEmployeeDetails` 方法)
 
 ---
 
@@ -144,19 +144,31 @@ public class EmployeeSummary {
 
     private String name;
     private String email;
-    private Double salary;
+    private BigDecimal salary;
+    private EmployeeStatus status;
 
     // 必须有无参构造函数
     public EmployeeSummary() {}
 
-    // 或者使用 Lombok
-    @Data
-    @NoArgsConstructor
-    public class EmployeeSummary {
-        private String name;
-        private String email;
-        private Double salary;
-    }
+    // Getter 和 Setter 方法
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public BigDecimal getSalary() { return salary; }
+    public void setSalary(BigDecimal salary) { this.salary = salary; }
+    public EmployeeStatus getStatus() { return status; }
+    public void setStatus(EmployeeStatus status) { this.status = status; }
+}
+
+// 或者使用 Lombok
+@Data
+@NoArgsConstructor
+public class EmployeeSummary {
+    private String name;
+    private String email;
+    private BigDecimal salary;
+    private EmployeeStatus status;
 }
 ```
 
@@ -173,8 +185,8 @@ for (EmployeeSummary summary : summaries) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:622-627` (`findEmployeeSummaries` 方法)
-> 📍 **DTO 定义**: `EmployeeRepository.java:1052-1075` (`EmployeeSummary` 类)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeSummaries` 方法)
+> 📍 **DTO 定义**: `EmployeeRepository.java` (`EmployeeSummary` 类)
 
 ### 字段映射规则
 
@@ -185,6 +197,7 @@ DTO 字段名称需要与实体字段名称匹配：
 | `name` | `name` | 名称相同 |
 | `email` | `email` | 名称相同 |
 | `salary` | `salary` | 名称相同 |
+| `status` | `status` | 名称相同 |
 
 ---
 
@@ -204,7 +217,7 @@ List<EmployeeStatus> distinctStatuses = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:592-596` (`findDistinctDepartmentIds` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findDistinctDepartmentIds` 方法)
 
 ### 多字段 Distinct
 
@@ -215,28 +228,23 @@ List<Tuple2<String, EmployeeStatus>> results = employeeRepository.query()
     .getList();
 
 // 不同的部门-薪资组合
-List<Tuple2<Long, Double>> results = employeeRepository.query()
+List<Tuple2<Long, BigDecimal>> results = employeeRepository.query()
     .selectDistinct(Employee::getDepartmentId, Employee::getSalary)
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:615-619` (`findDistinctNameStatus` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findDistinctNameStatus` 方法)
 
 ### Distinct Count
 
 ```java
 // 不同部门数量
 long distinctDeptCount = employeeRepository.query()
-    .selectDistinct(Employee::getDepartmentId)
-    .count();
-
-// 不同状态数量
-long distinctStatusCount = employeeRepository.query()
-    .selectDistinct(Employee::getStatus)
-    .count();
+    .selectExpr(Path.of(Employee::getDepartmentId).countDistinct())
+    .getSingle();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:468-472` (`countDistinctDepartments` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`countDistinctDepartments` 方法)
 
 ---
 
@@ -247,13 +255,13 @@ long distinctStatusCount = employeeRepository.query()
 ### Sum（求和）
 
 ```java
-Double totalSalary = employeeRepository.query()
+BigDecimal totalSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).sum())
     .where(Employee::getActive).eq(true)
     .getSingle();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:475-479` (`calculateTotalSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`calculateTotalSalary` 方法)
 
 ### Avg（平均值）
 
@@ -264,28 +272,28 @@ Double avgSalary = employeeRepository.query()
     .getSingle();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:490-495` (`calculateAverageSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`calculateAverageSalary` 方法)
 
 ### Max（最大值）
 
 ```java
-Double maxSalary = employeeRepository.query()
+BigDecimal maxSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).max())
     .getSingle();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:506-511` (`findMaxSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findMaxSalary` 方法)
 
 ### Min（最小值）
 
 ```java
-Double minSalary = employeeRepository.query()
+BigDecimal minSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).min())
     .where(Employee::getActive).eq(true)
     .getSingle();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:514-519` (`findMinSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findMinSalary` 方法)
 
 ### Count（计数）
 
@@ -295,7 +303,7 @@ long count = employeeRepository.query()
     .count();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:449-451` (`countAllEmployees` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`countAllEmployees` 方法)
 
 > **注意**：聚合表达式使用 `selectExpr()` 方法，而普通字段选择使用 `select()` 方法。
 
@@ -307,7 +315,7 @@ long count = employeeRepository.query()
 
 ```java
 // 推荐：只查询需要的字段
-List<Tuple2<String, Double>> results = employeeRepository.query()
+List<Tuple2<String, BigDecimal>> results = employeeRepository.query()
     .select(Employee::getName, Employee::getSalary)
     .getList();
 
@@ -317,32 +325,16 @@ List<Employee> employees = employeeRepository.query()
 // 然后只使用 name 和 salary
 ```
 
-### 2. DTO 投影用于复杂场景
-
-```java
-// 当需要多个字段且需要类型安全时
-public class DepartmentReport {
-    private Long departmentId;
-    private String departmentName;
-    private Double totalSalary;
-    private Long employeeCount;
-}
-
-List<DepartmentReport> reports = employeeRepository.query()
-    .select(DepartmentReport.class)
-    .getList();
-```
-
-### 3. 使用 Tuple 简化简单场景
+### 2. 使用 Tuple 简化简单场景
 
 ```java
 // 两个字段用 Tuple2
-List<Tuple2<String, Double>> nameSalary = employeeRepository.query()
+List<Tuple2<String, BigDecimal>> nameSalary = employeeRepository.query()
     .select(Employee::getName, Employee::getSalary)
     .getList();
 
 // 三个字段用 Tuple3
-List<Tuple3<String, String, Double>> details = employeeRepository.query()
+List<Tuple3<String, String, BigDecimal>> details = employeeRepository.query()
     .select(Employee::getName, Employee::getEmail, Employee::getSalary)
     .getList();
 ```
