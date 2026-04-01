@@ -3,6 +3,7 @@ package io.github.nextentity.integration;
 import io.github.nextentity.api.model.Page;
 import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
+import io.github.nextentity.core.Pages;
 import io.github.nextentity.api.model.Sliceable;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
@@ -284,7 +285,7 @@ public class AbstractCollectorIntegrationTest {
         @DisplayName("Should map results with getPage")
         void shouldMapResults_WithGetPage(IntegrationTestContext context) {
             // Given
-            Pageable pageable = createPageable(1, 5);
+            Pageable pageable = Pages.pageable(1, 5);
 
             // When
             Page<String> page = context.queryEmployees()
@@ -314,20 +315,6 @@ public class AbstractCollectorIntegrationTest {
             // Then
             assertThat(names).isNotEmpty();
             assertThat(names).allSatisfy(name -> assertThat(name).isNotNull());
-        }
-
-        private Pageable createPageable(int page, int size) {
-            return new Pageable() {
-                @Override
-                public int page() {
-                    return page;
-                }
-
-                @Override
-                public int size() {
-                    return size;
-                }
-            };
         }
     }
 }

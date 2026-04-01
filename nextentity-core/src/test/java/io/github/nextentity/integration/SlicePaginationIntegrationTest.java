@@ -3,6 +3,7 @@ package io.github.nextentity.integration;
 import io.github.nextentity.api.model.Page;
 import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
+import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -133,7 +134,7 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get page with Pageable")
     void shouldGetPageWithPageable(IntegrationTestContext context) {
         // Given
-        Pageable pageable = createPageable(1, 5);
+        Pageable pageable = Pages.pageable(1, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -153,7 +154,7 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get second page")
     void shouldGetSecondPage(IntegrationTestContext context) {
         // Given
-        Pageable pageable = createPageable(2, 5);
+        Pageable pageable = Pages.pageable(2, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -179,7 +180,7 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get last page with partial results")
     void shouldGetLastPage(IntegrationTestContext context) {
         // Given
-        Pageable pageable = createPageable(3, 5);
+        Pageable pageable = Pages.pageable(3, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -199,7 +200,7 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should handle page beyond data")
     void shouldHandlePageBeyondData(IntegrationTestContext context) {
         // Given
-        Pageable pageable = createPageable(10, 5);
+        Pageable pageable = Pages.pageable(10, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -291,7 +292,7 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get page with where condition")
     void shouldGetPageWithWhereCondition(IntegrationTestContext context) {
         // Given
-        Pageable pageable = createPageable(1, 3);
+        Pageable pageable = Pages.pageable(1, 3);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -359,7 +360,7 @@ public class SlicePaginationIntegrationTest {
         // When - Page size 1
         Page<Employee> page1 = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(createPageable(1, 1));
+                .getPage(Pages.pageable(1, 1));
 
         // Then
         assertThat(page1.getItems()).hasSize(1);
@@ -368,27 +369,10 @@ public class SlicePaginationIntegrationTest {
         // When - Page size 12
         Page<Employee> page2 = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(createPageable(1, 12));
+                .getPage(Pages.pageable(1, 12));
 
         // Then
         assertThat(page2.getItems()).hasSize(TOTAL_EMPLOYEES);
         assertThat(page2.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
-    }
-
-    /**
-     * Creates a Pageable instance.
-     */
-    private Pageable createPageable(int page, int size) {
-        return new Pageable() {
-            @Override
-            public int page() {
-                return page;
-            }
-
-            @Override
-            public int size() {
-                return size;
-            }
-        };
     }
 }

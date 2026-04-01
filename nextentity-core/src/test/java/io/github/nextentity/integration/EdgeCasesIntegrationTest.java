@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -536,17 +537,7 @@ public class EdgeCasesIntegrationTest {
     @DisplayName("Should handle page with empty results")
     void shouldHandlePageWithEmptyResults(IntegrationTestContext context) {
         // Given
-        var pageable = new io.github.nextentity.api.model.Pageable() {
-            @Override
-            public int page() {
-                return 1;
-            }
-
-            @Override
-            public int size() {
-                return 10;
-            }
-        };
+        var pageable = Pages.pageable(1, 10);
 
         // When
         var page = context.queryEmployees()

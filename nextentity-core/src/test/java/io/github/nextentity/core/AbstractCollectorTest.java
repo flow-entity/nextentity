@@ -78,7 +78,7 @@ class AbstractCollectorTest {
     @Test
     void getPage_WhenCountGreaterThanOffset_ShouldReturnPageWithContent() {
         // given
-        Pageable pageable = createPageable(1, 5);
+        Pageable pageable = Pages.pageable(1, 5);
         List<String> items = Arrays.asList("a", "b", "c");
         collector.setItems(items);
         collector.setCount(10L);
@@ -99,7 +99,7 @@ class AbstractCollectorTest {
     @Test
     void getPage_WhenCountLessThanOrEqualToOffset_ShouldReturnEmptyPage() {
         // given
-        Pageable pageable = createPageable(3, 5); // offset = (3-1) * 5 = 10
+        Pageable pageable = Pages.pageable(3, 5); // offset = (3-1) * 5 = 10
         collector.setCount(5L);
 
         // when
@@ -108,20 +108,6 @@ class AbstractCollectorTest {
         // then
         assertThat(page.getItems()).isEmpty();
         assertThat(page.getTotal()).isEqualTo(5L);
-    }
-
-    private Pageable createPageable(int page, int size) {
-        return new Pageable() {
-            @Override
-            public int page() {
-                return page;
-            }
-
-            @Override
-            public int size() {
-                return size;
-            }
-        };
     }
 
     /**

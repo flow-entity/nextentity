@@ -3,6 +3,7 @@ package io.github.nextentity.integration;
 import io.github.nextentity.api.model.Page;
 import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
+import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -312,7 +313,7 @@ public class CollectorExtendedMethodsIntegrationTest {
     @DisplayName("Should getPage with Pageable")
     void shouldGetPageWithPageable(IntegrationTestContext context) {
         // Given
-        Pageable pageable = createPageable(1, 10);
+        Pageable pageable = Pages.pageable(1, 10);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -333,7 +334,7 @@ public class CollectorExtendedMethodsIntegrationTest {
     void shouldGetPageWithSecondPage(IntegrationTestContext context) {
         // Given
         long totalCount = context.queryEmployees().count();
-        Pageable pageable = createPageable(2, 5);
+        Pageable pageable = Pages.pageable(2, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
@@ -402,22 +403,5 @@ public class CollectorExtendedMethodsIntegrationTest {
 
         // Then
         assertThat(subQuery).isNotNull();
-    }
-
-    /**
-     * Creates a Pageable instance.
-     */
-    private Pageable createPageable(int page, int size) {
-        return new Pageable() {
-            @Override
-            public int page() {
-                return page;
-            }
-
-            @Override
-            public int size() {
-                return size;
-            }
-        };
     }
 }
