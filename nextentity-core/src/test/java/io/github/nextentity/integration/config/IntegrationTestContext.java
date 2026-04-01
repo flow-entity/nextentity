@@ -1,6 +1,6 @@
 package io.github.nextentity.integration.config;
 
-import io.github.nextentity.core.QueryBuilder;
+import io.github.nextentity.core.DefaultQueryBuilder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.integration.entity.Department;
@@ -21,16 +21,16 @@ public interface IntegrationTestContext {
 
     UpdateExecutor getUpdateExecutor();
 
-    default QueryBuilder<Employee> queryEmployees() {
-        return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Employee.class);
+    default DefaultQueryBuilder<Employee> queryEmployees() {
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Employee.class);
     }
 
-    default QueryBuilder<Department> queryDepartments() {
-        return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Department.class);
+    default DefaultQueryBuilder<Department> queryDepartments() {
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Department.class);
     }
 
-    default QueryBuilder<LockableEntity> queryLockableEntities() {
-        return new QueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), LockableEntity.class);
+    default DefaultQueryBuilder<LockableEntity> queryLockableEntities() {
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), LockableEntity.class);
     }
 
     @NonNull IntegrationTestContext reset();

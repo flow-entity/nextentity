@@ -1,7 +1,7 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.Select;
-import io.github.nextentity.core.QueryBuilder;
+import io.github.nextentity.api.QueryBuilder;
+import io.github.nextentity.core.DefaultQueryBuilder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.SqlException;
@@ -97,8 +97,8 @@ public record DefaultNextEntityFactory(
     }
 
     @Override
-    public <T> Select<T> queryBuilder(Class<T> entityType) {
-        return new QueryBuilder<>(metamodel, queryExecutor, entityType);
+    public <T> QueryBuilder<T> queryBuilder(Class<T> entityType) {
+        return new DefaultQueryBuilder<>(metamodel, queryExecutor, entityType);
     }
 
     @Override

@@ -18,7 +18,7 @@ public abstract class AbstractRepository<T, ID> {
     protected final Class<ID> idType;
     protected final Class<T> entityType;
 
-    protected final Select<T> queryBuilder;
+    protected final QueryBuilder<T> queryBuilder;
     protected final UpdateExecutor updateExecutor;
     protected final JdbcTemplate jdbcTemplate;
 
@@ -34,7 +34,7 @@ public abstract class AbstractRepository<T, ID> {
 
     public AbstractRepository(Class<ID> idType,
                               Class<T> entityType,
-                              Select<T> queryBuilder,
+                              QueryBuilder<T> queryBuilder,
                               UpdateExecutor updateExecutor,
                               JdbcTemplate jdbcTemplate) {
         this.idType = idType;
@@ -54,7 +54,7 @@ public abstract class AbstractRepository<T, ID> {
         this.updateExecutor = factory.updateExecutor();
     }
 
-    protected Select<T> query() {
+    protected QueryBuilder<T> query() {
         return queryBuilder;
     }
 

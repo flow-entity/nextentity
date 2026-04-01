@@ -9,7 +9,7 @@ import java.util.Collection;
 /// @param <T> Entity type
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface Select<T> extends FetchStep<T> {
+public interface SelectStep<T> extends FetchStep<T> {
 
     /// Select projection results of the specified type.
     ///

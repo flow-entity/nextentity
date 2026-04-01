@@ -1,7 +1,7 @@
 package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.api.Path;
-import io.github.nextentity.api.Select;
+import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.examples.entity.Employee;
@@ -28,7 +28,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 
     @Override
-    public Select<Employee> query() {
+    public QueryBuilder<Employee> query() {
         return super.query();
     }
 

@@ -12,15 +12,15 @@ import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
-public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, FetchStep<T> {
+public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuilder<T>, FetchStep<T> {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(QueryBuilder.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);
 
-    public QueryBuilder(Metamodel metamodel, QueryExecutor executor, Class<T> entityType) {
+    public DefaultQueryBuilder(Metamodel metamodel, QueryExecutor executor, Class<T> entityType) {
         this(QueryStructure.of(entityType), metamodel, executor);
     }
 
-    protected QueryBuilder(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor executor) {
+    protected DefaultQueryBuilder(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor executor) {
         super(queryStructure, metamodel, executor);
     }
 

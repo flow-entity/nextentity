@@ -1,6 +1,6 @@
 package io.github.nextentity.examples.repository;
 
-import io.github.nextentity.api.Select;
+import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.spring.AbstractRepository;
 import jakarta.persistence.EntityManager;
@@ -17,7 +17,7 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
     }
 
     @Override
-    public Select<Department> query() {
+    public QueryBuilder<Department> query() {
         return super.query();
     }
 

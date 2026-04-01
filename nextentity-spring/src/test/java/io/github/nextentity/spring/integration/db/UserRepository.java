@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * @author HuangChengwei
  */
-public class UserRepository extends AbstractRepository<User, Integer> implements Select<User> {
+public class UserRepository extends AbstractRepository<User, Integer> implements QueryBuilder<User> {
 
     private List<User> users;
     private final String name;
@@ -48,11 +48,11 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     @Override
-    public Select<User> query() {
+    public QueryBuilder<User> query() {
         return super.query();
     }
 
-    public Select<User> getQuery() {
+    public QueryBuilder<User> getQuery() {
         return super.query();
     }
 

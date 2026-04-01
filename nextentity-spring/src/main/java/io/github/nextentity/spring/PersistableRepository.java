@@ -2,7 +2,7 @@ package io.github.nextentity.spring;
 
 import io.github.nextentity.api.Persistable;
 import io.github.nextentity.api.PathRef;
-import io.github.nextentity.api.Select;
+import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.core.UpdateExecutor;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
@@ -43,7 +43,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
 
     public PersistableRepository(Class<ID> idType,
                                  Class<T> entityType,
-                                 Select<T> queryBuilder,
+                                 QueryBuilder<T> queryBuilder,
                                  UpdateExecutor updateExecutor,
                                  JdbcTemplate jdbcTemplate) {
         super(idType, entityType, queryBuilder, updateExecutor, jdbcTemplate);
