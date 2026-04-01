@@ -1,6 +1,7 @@
 package io.github.nextentity.core.meta;
 
 import io.github.nextentity.core.PathReference;
+import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.SubSelect;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.reflect.ReflectUtil;
@@ -109,11 +110,11 @@ public abstract class AbstractMetamodel implements Metamodel {
     }
 
     private EntityAttribute getEntityAttributeByAnnotation(Attribute attribute, Schema entity) {
-        io.github.nextentity.core.annotation.EntityAttribute entityAttribute = getAnnotation(attribute, io.github.nextentity.core.annotation.EntityAttribute.class);
-        if (entityAttribute == null || entityAttribute.value().isEmpty()) {
+        EntityPath entityPath = getAnnotation(attribute, EntityPath.class);
+        if (entityPath == null || entityPath.value().isEmpty()) {
             return null;
         }
-        String value = entityAttribute.value();
+        String value = entityPath.value();
         String[] split = value.split("\\.");
         ReflectType cur = entity;
         for (String s : split) {

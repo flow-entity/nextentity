@@ -1,6 +1,6 @@
 package io.github.nextentity.spring.integration.projection;
 
-import io.github.nextentity.core.annotation.EntityAttribute;
+import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.spring.integration.entity.User;
 
 import java.util.Objects;
@@ -17,7 +17,7 @@ public class UserModel implements UserInterface {
 
     private boolean valid;
 
-    @EntityAttribute("parentUser.username")
+    @EntityPath("parentUser.username")
     private String parentUsername;
 
     public UserModel() {

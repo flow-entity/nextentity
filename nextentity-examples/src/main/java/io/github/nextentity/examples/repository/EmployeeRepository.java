@@ -3,7 +3,7 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Select;
 import io.github.nextentity.api.model.*;
-import io.github.nextentity.core.annotation.EntityAttribute;
+import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
@@ -1203,9 +1203,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     /// DTO combining employee and department info
     public static class EmployeeWithDept {
-        @EntityAttribute("name")
+        @EntityPath("name")
         private String employeeName;
-        @EntityAttribute("department.name")
+        @EntityPath("department.name")
         private String departmentName;
 
         public EmployeeWithDept() {}
