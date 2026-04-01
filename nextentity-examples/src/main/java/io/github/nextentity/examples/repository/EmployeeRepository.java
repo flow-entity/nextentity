@@ -3,6 +3,7 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Select;
 import io.github.nextentity.api.model.*;
+import io.github.nextentity.core.annotation.EntityAttribute;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -500,8 +500,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Count distinct values
     public long countDistinctDepartments() {
         return query()
-                .selectDistinct(Employee::getDepartmentId)
-                .count();
+                .selectExpr(path(Employee::getDepartmentId).countDistinct())
+                .getSingle();
     }
 
     /// Calculate total salary using Java streams
@@ -1203,7 +1203,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     /// DTO combining employee and department info
     public static class EmployeeWithDept {
+        @EntityAttribute("name")
         private String employeeName;
+        @EntityAttribute("department.name")
         private String departmentName;
 
         public EmployeeWithDept() {}

@@ -1,19 +1,19 @@
 package io.github.nextentity.examples.integration;
 
-import io.github.nextentity.examples.entity.Employee;
-import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple6;
+import io.github.nextentity.examples.entity.Employee;
+import io.github.nextentity.examples.entity.EmployeeStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +78,6 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("Should count distinct departments correctly")
-        @org.junit.jupiter.api.Disabled("Framework bug: selectDistinct with count throws NullPointerException")
         void shouldCountDistinctDepartmentsCorrectly() {
             // Given
             int expectedCount = (int) testEmployees.stream()
@@ -105,8 +104,8 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
         void shouldCalculateTotalSalaryCorrectly() {
             // Given
             BigDecimal expectedSum = testEmployees.stream()
-                    .filter(e -> e.getSalary() != null)
                     .map(Employee::getSalary)
+                    .filter(Objects::nonNull)
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             // When
@@ -227,7 +226,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
             // Given
             Employee expectedHighest = testEmployees.stream()
                     .filter(e -> e.getSalary() != null && e.getActive())
-                    .max((e1, e2) -> e1.getSalary().compareTo(e2.getSalary()))
+                    .max(Comparator.comparing(Employee::getSalary))
                     .orElse(null);
 
             // When
@@ -235,6 +234,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
 
             // Then
             assertThat(highestPaid).isNotNull();
+            assertThat(expectedHighest).isNotNull();
             assertThat(highestPaid.getSalary()).isEqualByComparingTo(expectedHighest.getSalary());
         }
 
@@ -244,7 +244,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
             // Given
             Employee expectedLowest = testEmployees.stream()
                     .filter(e -> e.getSalary() != null && e.getActive())
-                    .min((e1, e2) -> e1.getSalary().compareTo(e2.getSalary()))
+                    .min(Comparator.comparing(Employee::getSalary))
                     .orElse(null);
 
             // When
@@ -252,6 +252,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
 
             // Then
             assertThat(lowestPaid).isNotNull();
+            assertThat(expectedLowest).isNotNull();
             assertThat(lowestPaid.getSalary()).isEqualByComparingTo(expectedLowest.getSalary());
         }
     }
@@ -325,7 +326,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
                         .toList();
 
                 if (!deptEmployees.isEmpty()) {
-                    assertThat(count).isEqualTo((long) deptEmployees.size());
+                    assertThat(count).isEqualTo(deptEmployees.size());
 
                     BigDecimal expectedSum = deptEmployees.stream()
                             .map(Employee::getSalary)
@@ -418,7 +419,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
         @DisplayName("Should check if employee exists by email")
         void shouldCheckEmployeeExistsByEmail() {
             // Given
-            String email = testEmployees.get(0).getEmail();
+            String email = testEmployees.getFirst().getEmail();
 
             // When
             boolean exists = employeeRepository.existsByEmail(email);
@@ -504,7 +505,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
             // Given - employees hired > 1 year ago, active, ACTIVE status, salary < 50000
             LocalDate oneYearAgo = LocalDate.now().minusYears(1);
             int expectedCount = (int) testEmployees.stream()
-                    .filter(e -> e.getActive())
+                    .filter(Employee::getActive)
                     .filter(e -> e.getStatus() == EmployeeStatus.ACTIVE)
                     .filter(e -> e.getHireDate() != null && e.getHireDate().isBefore(oneYearAgo) || e.getHireDate().isEqual(oneYearAgo))
                     .filter(e -> e.getSalary() != null && e.getSalary().compareTo(new BigDecimal("50000.00")) < 0)
@@ -514,7 +515,7 @@ class AggregationIntegrationTest extends BaseIntegrationTest {
             List<Employee> employees = employeeRepository.findEmployeesDueForReview();
 
             // Then - verify all conditions
-            assertThat(employees).isNotEmpty();
+            assertThat(employees).hasSize(expectedCount);
             assertThat(employees).allMatch(Employee::getActive);
             assertThat(employees).allMatch(e -> e.getStatus() == EmployeeStatus.ACTIVE);
             assertThat(employees).allMatch(e -> e.getSalary().compareTo(new BigDecimal("50000.00")) < 0);

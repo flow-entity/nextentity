@@ -11,6 +11,7 @@ import io.github.nextentity.examples.repository.DepartmentRepository.DepartmentI
 import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeInfo;
 import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeSummary;
 import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeWithDept;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -287,7 +288,6 @@ class ProjectionIntegrationTest extends BaseIntegrationTest {
 
         @Test
         @DisplayName("Should select employee with department info as DTO correctly")
-        @org.junit.jupiter.api.Disabled("Projection limitation: EmployeeWithDept field names don't match Employee entity fields")
         void shouldSelectEmployeeWithDepartmentInfoCorrectly() {
             // Given
             int expectedCount = (int) testEmployees.stream()
