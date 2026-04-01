@@ -57,7 +57,7 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java:63-65` (`department` 字段定义)
+> 📍 **示例位置**: `entity/Employee.java` (`department` 字段定义)
 
 > **注意**: NextEntity 目前支持 ManyToOne 关联的 `fetch()` 操作。OneToMany 和 ManyToMany 关联需要通过外键字段手动查询。
 
@@ -77,7 +77,7 @@ List<Employee> employees = employeeRepository.query()
 Department dept = employees.get(0).getDepartment();  // 第二次查询
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:671-675` (`findWithLazyLoading` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findWithLazyLoading` 方法)
 
 ### 适用场景
 
@@ -102,7 +102,7 @@ List<Employee> employees = employeeRepository.query()
 Department dept = employees.get(0).getDepartment();  // 已加载
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:678-683` (`findWithDepartmentFetch` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findWithDepartmentFetch` 方法)
 
 生成的 SQL：
 
@@ -125,7 +125,7 @@ List<Employee> employees = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:686-691` (`findWithMultipleFetches` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findWithMultipleFetches` 方法)
 
 ---
 
@@ -157,7 +157,7 @@ List<EmployeeDepartmentDTO> results = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:711-716` (`findEmployeeWithDepartmentInfo` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeWithDepartmentInfo` 方法)
 
 ---
 
@@ -181,7 +181,7 @@ for (Employee e : employees) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:678-683` (`findWithDepartmentFetch` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findWithDepartmentFetch` 方法)
 
 ### 批量大小配置
 
@@ -214,7 +214,7 @@ public List<EmployeeWithDept> getWithDepartment() {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:678-683` (fetch 示例)
+> 📍 **示例位置**: `EmployeeRepository.java` (fetch 示例)
 
 ---
 
@@ -235,7 +235,7 @@ List<Employee> employees = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:671-683` (懒加载 vs 急加载对比)
+> 📍 **示例位置**: `EmployeeRepository.java` (懒加载 vs 急加载对比)
 
 ### 2. 使用投影替代复杂关联
 
@@ -253,8 +253,8 @@ List<EmployeeWithDeptName> results = employeeRepository.query()
     .getList();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:719-731` (`findWithManualJoin` 方法)
-> 📍 **DTO 定义**: `EmployeeRepository.java:1100-1115` (`EmployeeWithDept` 类)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findWithManualJoin` 方法)
+> 📍 **DTO 定义**: `EmployeeRepository.java` (`EmployeeWithDept` 类)
 
 ### 3. 注意外键配置
 
@@ -272,7 +272,7 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java:58-65` (外键和关联字段定义)
+> 📍 **示例位置**: `entity/Employee.java` (外键和关联字段定义)
 
 ---
 
@@ -295,7 +295,7 @@ List<Employee> employees = employeeRepository.query()
 // employee.getDepartment() 已加载
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:678-683` (`findWithDepartmentFetch` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findWithDepartmentFetch` 方法)
 
 ---
 

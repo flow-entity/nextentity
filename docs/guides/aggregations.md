@@ -84,7 +84,7 @@ long count = employeeRepository.query()
 
 ```java
 // 所有员工薪资总和
-Double totalSalary = employeeRepository.query()
+BigDecimal totalSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).sum())
     .getSingle();
 
@@ -95,23 +95,23 @@ Double totalSalary = employeeRepository.query()
 
 ```java
 // 活跃员工薪资总和
-Double activeTotal = employeeRepository.query()
+BigDecimal activeTotal = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).sum())
     .where(Employee::getActive).eq(true)
     .getSingle();
 
 // 某部门薪资总和
-Double deptTotal = employeeRepository.query()
+BigDecimal deptTotal = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).sum())
     .where(Employee::getDepartmentId).eq(1L)
     .getSingle();
 
 // 多条件求和
-Double total = employeeRepository.query()
+BigDecimal total = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).sum())
     .where(Employee::getActive).eq(true)
     .where(Employee::getDepartmentId).eq(1L)
-    .where(Employee::getSalary).gt(50000.0)
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
     .getSingle();
 ```
 
@@ -154,12 +154,12 @@ Double deptAvg = employeeRepository.query()
 
 ```java
 // 最高薪资
-Double maxSalary = employeeRepository.query()
+BigDecimal maxSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).max())
     .getSingle();
 
 // 活跃员工最高薪资
-Double activeMax = employeeRepository.query()
+BigDecimal activeMax = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).max())
     .where(Employee::getActive).eq(true)
     .getSingle();
@@ -174,12 +174,12 @@ LocalDate earliestHire = employeeRepository.query()
 
 ```java
 // 最低薪资
-Double minSalary = employeeRepository.query()
+BigDecimal minSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).min())
     .getSingle();
 
 // 活跃员工最低薪资
-Double activeMin = employeeRepository.query()
+BigDecimal activeMin = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).min())
     .where(Employee::getActive).eq(true)
     .getSingle();
@@ -244,7 +244,7 @@ List<Employee> employees = employeeRepository.query()
 Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
     .collect(Collectors.groupingBy(
         Employee::getDepartmentId,
-        Collectors.summarizingDouble(e -> e.getSalary() != null ? e.getSalary() : 0.0)
+        Collectors.summarizingDouble(e -> e.getSalary() != null ? e.getSalary().doubleValue() : 0.0)
     ));
 
 // 结果分析
@@ -271,7 +271,7 @@ Map<EmployeeStatus, List<Employee>> byStatus = employees.stream()
 Map<EmployeeStatus, Double> avgByStatus = employees.stream()
     .collect(Collectors.groupingBy(
         Employee::getStatus,
-        Collectors.averagingDouble(e -> e.getSalary())
+        Collectors.averagingDouble(e -> e.getSalary().doubleValue())
     ));
 ```
 
@@ -294,16 +294,16 @@ Map<Long, Map<EmployeeStatus, List<Employee>>> multiLevel = employees.stream()
 
 ```java
 // 推荐：数据库聚合
-Double total = employeeRepository.query()
+BigDecimal total = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).sum())
     .getSingle();
 
 // 避免：Java 流聚合（数据量大时性能差）
-Double total = employeeRepository.query()
+BigDecimal total = employeeRepository.query()
     .getList()
     .stream()
-    .mapToDouble(Employee::getSalary)
-    .sum();
+    .map(Employee::getSalary)
+    .reduce(BigDecimal.ZERO, BigDecimal::add);
 ```
 
 ### 2. 使用条件过滤
@@ -320,7 +320,7 @@ Double activeAvg = employeeRepository.query()
 
 ```java
 // 获取 Optional 包装的结果
-Optional<Double> maxSalary = employeeRepository.query()
+Optional<BigDecimal> maxSalary = employeeRepository.query()
     .selectExpr(Path.of(Employee::getSalary).max())
     .where(Employee::getDepartmentId).eq(deptId)
     .first();
@@ -331,11 +331,11 @@ Optional<Double> maxSalary = employeeRepository.query()
 ```java
 // 检查是否存在符合条件的记录
 boolean hasHighEarners = employeeRepository.query()
-    .where(Employee::getSalary).gt(100000.0)
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
     .exist();
 ```
 
-### 3. 合理使用分组
+### 5. 合理使用分组
 
 ```java
 // 数据量小：先查询再分组
@@ -346,24 +346,24 @@ List<Employee> employees = employeeRepository.query()
 Map<Long, Double> avgByDept = employees.stream()
     .collect(Collectors.groupingBy(
         Employee::getDepartmentId,
-        Collectors.averagingDouble(Employee::getSalary)
+        Collectors.averagingDouble(e -> e.getSalary().doubleValue())
     ));
 
 // 数据量大：按部门分别查询
 for (Long deptId : departmentIds) {
     Double avg = employeeRepository.query()
-        .select(Path.of(Employee::getSalary).avg())
+        .selectExpr(Path.of(Employee::getSalary).avg())
         .where(Employee::getDepartmentId).eq(deptId)
         .getSingle();
 }
 ```
 
-### 4. 处理 NULL 值
+### 6. 处理 NULL 值
 
 ```java
 // 过滤 NULL 值
 Double avg = employeeRepository.query()
-    .select(Path.of(Employee::getSalary).avg())
+    .selectExpr(Path.of(Employee::getSalary).avg())
     .where(Employee::getSalary).isNotNull()  // 排除 NULL
     .getSingle();
 
@@ -390,7 +390,7 @@ public class DepartmentStatsService {
             .count();
 
         // 薪资统计
-        Double total = employeeRepository.query()
+        BigDecimal total = employeeRepository.query()
             .selectExpr(Path.of(Employee::getSalary).sum())
             .where(Employee::getDepartmentId).eq(departmentId)
             .getSingle();
@@ -400,7 +400,7 @@ public class DepartmentStatsService {
             .where(Employee::getDepartmentId).eq(departmentId)
             .getSingle();
 
-        Double max = employeeRepository.query()
+        BigDecimal max = employeeRepository.query()
             .selectExpr(Path.of(Employee::getSalary).max())
             .where(Employee::getDepartmentId).eq(departmentId)
             .getSingle();

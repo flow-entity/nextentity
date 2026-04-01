@@ -3,16 +3,15 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.examples.NextEntityExampleApplication;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.examples.entity.Product;
 import io.github.nextentity.spring.PersistableRepository;
 import jakarta.persistence.EntityManager;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,7 @@ import java.util.Map;
 /// Product repository extending PersistableRepository.
 ///
 /// This repository demonstrates the benefits of using {@link io.github.nextentity.api.Persistable}
-/// interface. Unlike {@link EmployeeRepository} which needs manual ID-based queries,
+/// interface. Unlike EmployeeRepository which needs manual ID-based queries,
 /// this repository inherits convenient ID-based methods automatically:
 ///
 /// - {@link #findById(Long)} - Find by ID returning Optional
@@ -40,11 +39,8 @@ import java.util.Map;
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
 
-    public ProductRepository() {
-        ApplicationContext context = NextEntityExampleApplication.context();
-        JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
-        EntityManager entityManager = context.getBean(EntityManager.class);
-        super(jdbcTemplate, jpa(entityManager, jdbcTemplate));
+    public ProductRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // ==================== Inherited ID-based Methods ====================
@@ -125,17 +121,6 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .getList();
     }
 
-    /// Nested property access - query by category name using fetch and filter.
-    public List<Product> findByCategoryName(String categoryName) {
-        return query()
-                .fetch(Product::getCategory)
-                .where(Product::getActive).eq(true)
-                .getList()
-                .stream()
-                .filter(p -> p.getCategory() != null && categoryName.equals(p.getCategory().getName()))
-                .toList();
-    }
-
     /// Query by category using categoryId (simpler approach).
     public List<Product> findByCategoryNameSimple(Long categoryId, String categoryName) {
         return query()
@@ -174,7 +159,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 
     /// Three-field projection with association using nested path select.
     /// Select product name, price, and category name in one query.
-    public List<Tuple3<String, Double, String>> findProductNamePriceCategoryName() {
+    public List<Tuple3<String, BigDecimal, String>> findProductNamePriceCategoryName() {
         return query()
                 .select(
                         Product::getName,
@@ -237,7 +222,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     }
 
     /// Find products in price range
-    public List<Product> findByPriceBetween(Double min, Double max) {
+    public List<Product> findByPriceBetween(BigDecimal min, BigDecimal max) {
         return query()
                 .where(Product::getPrice).between(min, max)
                 .where(Product::getActive).eq(true)
@@ -263,7 +248,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     }
 
     /// Get product name and price pairs
-    public List<Tuple2<String, Double>> findProductNamePrices() {
+    public List<Tuple2<String, BigDecimal>> findProductNamePrices() {
         return query()
                 .select(Product::getName, Product::getPrice)
                 .where(Product::getActive).eq(true)
@@ -272,18 +257,19 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     }
 
     /// Calculate total stock value
-    public double calculateTotalStockValue() {
+    public BigDecimal calculateTotalStockValue() {
         List<Product> products = query()
                 .where(Product::getActive).eq(true)
+                .where(Product::getPrice).isNotNull()
                 .getList();
         return products.stream()
-                .mapToDouble(p -> p.getPrice() * p.getStock())
-                .sum();
+                .map(p -> p.getPrice().multiply(BigDecimal.valueOf(p.getStock())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     /// Update product price
     @Transactional
-    public void updatePrice(Long id, Double newPrice) {
+    public void updatePrice(Long id, BigDecimal newPrice) {
         Product product = getById(id);
         if (product != null) {
             product.setPrice(newPrice);
@@ -335,12 +321,12 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     /// DTO for product with category name
     public static class ProductWithCategory {
         private String name;
-        private Double price;
+        private BigDecimal price;
         private String categoryName;
 
         public ProductWithCategory() {}
 
-        public ProductWithCategory(String name, Double price, String categoryName) {
+        public ProductWithCategory(String name, BigDecimal price, String categoryName) {
             this.name = name;
             this.price = price;
             this.categoryName = categoryName;
@@ -348,8 +334,8 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 
         public String getName() { return name; }
         public void setName(String name) { this.name = name; }
-        public Double getPrice() { return price; }
-        public void setPrice(Double price) { this.price = price; }
+        public BigDecimal getPrice() { return price; }
+        public void setPrice(BigDecimal price) { this.price = price; }
         public String getCategoryName() { return categoryName; }
         public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     }
@@ -358,12 +344,12 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     public static class ProductCategoryInfo {
         private Long productId;
         private String productName;
-        private Double price;
+        private BigDecimal price;
         private String categoryName;
 
         public ProductCategoryInfo() {}
 
-        public ProductCategoryInfo(Long productId, String productName, Double price, String categoryName) {
+        public ProductCategoryInfo(Long productId, String productName, BigDecimal price, String categoryName) {
             this.productId = productId;
             this.productName = productName;
             this.price = price;
@@ -374,8 +360,8 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         public void setProductId(Long productId) { this.productId = productId; }
         public String getProductName() { return productName; }
         public void setProductName(String productName) { this.productName = productName; }
-        public Double getPrice() { return price; }
-        public void setPrice(Double price) { this.price = price; }
+        public BigDecimal getPrice() { return price; }
+        public void setPrice(BigDecimal price) { this.price = price; }
         public String getCategoryName() { return categoryName; }
         public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     }

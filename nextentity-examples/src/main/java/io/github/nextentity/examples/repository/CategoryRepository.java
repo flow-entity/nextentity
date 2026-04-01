@@ -1,10 +1,8 @@
 package io.github.nextentity.examples.repository;
 
-import io.github.nextentity.examples.NextEntityExampleApplication;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.spring.PersistableRepository;
 import jakarta.persistence.EntityManager;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,11 +17,8 @@ import java.util.List;
 @Repository
 public class CategoryRepository extends PersistableRepository<Category, Long> {
 
-    public CategoryRepository() {
-        ApplicationContext context = NextEntityExampleApplication.context();
-        JdbcTemplate jdbcTemplate = context.getBean(JdbcTemplate.class);
-        EntityManager entityManager = context.getBean(EntityManager.class);
-        super(jdbcTemplate, jpa(entityManager, jdbcTemplate));
+    public CategoryRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     /// Find all active categories

@@ -5,14 +5,12 @@ import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.examples.repository.DepartmentRepository;
 import io.github.nextentity.examples.repository.EmployeeRepository;
-import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -29,7 +27,6 @@ import java.util.List;
  */
 @SpringBootApplication
 public class NextEntityExampleApplication {
-    private static ApplicationContext applicationContext;
 
     static void main(String[] args) {
         SpringApplication.run(NextEntityExampleApplication.class, args);
@@ -69,12 +66,12 @@ public class NextEntityExampleApplication {
 
         // Create employees
         List<Employee> employees = List.of(
-                createEmployee(1L, "John Doe", "john@example.com", 75000.0, EmployeeStatus.ACTIVE, 1L),
-                createEmployee(2L, "Jane Smith", "jane@example.com", 85000.0, EmployeeStatus.ACTIVE, 1L),
-                createEmployee(3L, "Bob Johnson", "bob@example.com", 65000.0, EmployeeStatus.ACTIVE, 2L),
-                createEmployee(4L, "Alice Brown", "alice@example.com", 55000.0, EmployeeStatus.ON_LEAVE, 2L),
-                createEmployee(5L, "Charlie Wilson", "charlie@example.com", 95000.0, EmployeeStatus.ACTIVE, 1L),
-                createEmployee(6L, "Diana Lee", "diana@example.com", 45000.0, EmployeeStatus.INACTIVE, 3L)
+                createEmployee(1L, "John Doe", "john@example.com", BigDecimal.valueOf(75000.0), EmployeeStatus.ACTIVE, 1L),
+                createEmployee(2L, "Jane Smith", "jane@example.com", BigDecimal.valueOf(85000.0), EmployeeStatus.ACTIVE, 1L),
+                createEmployee(3L, "Bob Johnson", "bob@example.com", BigDecimal.valueOf(65000.0), EmployeeStatus.ACTIVE, 2L),
+                createEmployee(4L, "Alice Brown", "alice@example.com", BigDecimal.valueOf(55000.0), EmployeeStatus.ON_LEAVE, 2L),
+                createEmployee(5L, "Charlie Wilson", "charlie@example.com", BigDecimal.valueOf(95000.0), EmployeeStatus.ACTIVE, 1L),
+                createEmployee(6L, "Diana Lee", "diana@example.com", BigDecimal.valueOf(45000.0), EmployeeStatus.INACTIVE, 3L)
         );
 
         employeeRepository.insertAll(employees);
@@ -111,7 +108,7 @@ public class NextEntityExampleApplication {
         // Multiple conditions
         List<Employee> activeHighEarners = employeeRepository.query()
                 .where(Employee::getActive).eq(true)
-                .where(Employee::getSalary).gt(70000.0)
+                .where(Employee::getSalary).gt(BigDecimal.valueOf(70000.0))
                 .getList();
         System.out.println("Active employees earning > 70k: " + activeHighEarners.size());
 
@@ -123,7 +120,7 @@ public class NextEntityExampleApplication {
 
         // Between
         List<Employee> salaryRange = employeeRepository.query()
-                .where(Employee::getSalary).between(50000.0, 80000.0)
+                .where(Employee::getSalary).between(BigDecimal.valueOf(50000.0), BigDecimal.valueOf(80000.0))
                 .getList();
         System.out.println("Salary between 50k-80k: " + salaryRange.size());
 
@@ -180,7 +177,7 @@ public class NextEntityExampleApplication {
         System.out.println();
     }
 
-    private Employee createEmployee(Long id, String name, String email, Double salary,
+    private Employee createEmployee(Long id, String name, String email, BigDecimal salary,
                                     EmployeeStatus status, Long departmentId) {
         Employee employee = new Employee();
         employee.setId(id);
@@ -192,16 +189,5 @@ public class NextEntityExampleApplication {
         employee.setDepartmentId(departmentId);
         employee.setHireDate(LocalDate.now().minusYears(1));
         return employee;
-    }
-
-    @Component
-    protected static class Application implements BeanPostProcessor {
-        public Application(ApplicationContext applicationContext) {
-            NextEntityExampleApplication.applicationContext = applicationContext;
-        }
-    }
-
-    public static ApplicationContext context() {
-        return applicationContext;
     }
 }

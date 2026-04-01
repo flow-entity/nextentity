@@ -8,6 +8,7 @@ import io.github.nextentity.examples.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -101,13 +102,18 @@ public class EmployeeService {
      * Give raise to all employees in a department.
      */
     @Transactional
-    public void giveDepartmentRaise(Long departmentId, double percentage) {
+    public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
         List<Employee> employees = employeeRepository.query()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .where(Employee::getActive).eq(true)
                 .getList();
 
-        employees.forEach(e -> e.setSalary(e.getSalary() * (1 + percentage)));
+        employees.forEach(e -> {
+            BigDecimal salary = e.getSalary();
+            if (salary != null) {
+                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+            }
+        });
         employeeRepository.updateAll(employees);
     }
 

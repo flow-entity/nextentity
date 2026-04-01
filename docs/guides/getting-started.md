@@ -67,8 +67,6 @@ spring:
 
 ```java
 @Entity
-@Table(name = "employee")
-@Data  // Lombok
 public class Employee {
 
     @Id
@@ -78,7 +76,7 @@ public class Employee {
 
     private String email;
 
-    private Double salary;
+    private BigDecimal salary;
 
     private Boolean active;
 
@@ -86,8 +84,21 @@ public class Employee {
     private EmployeeStatus status;
 
     private Long departmentId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "departmentId", insertable = false, updatable = false)
+    private Department department;
+
+    private LocalDate hireDate;
+
+    private LocalDateTime createdAt;
+
+    @Version
+    private Integer version;
 }
 ```
+
+> 📍 **示例位置**: `entity/Employee.java` (完整实体定义)
 
 ---
 
@@ -95,27 +106,42 @@ public class Employee {
 
 ### AbstractRepository
 
-继承 `AbstractRepository` 创建类型安全的 Repository：
+继承 `AbstractRepository` 并使用构造器注入：
 
 ```java
-// JDBC 后端
+// Employee Repository
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
+
+    @Override
+    public Select<Employee> query() {
+        return super.query();
+    }
+
+    // 自动继承所有 CRUD 和查询方法
 }
 
-// JPA 后端
+// Department Repository
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
     public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
         super(entityManager, jdbcTemplate);
     }
+
+    @Override
+    public Select<Department> query() {
+        return super.query();
+    }
 }
 ```
+
+> 📍 **示例位置**: `repository/EmployeeRepository.java` (Employee Repository 定义)
+> 📍 **示例位置**: `repository/DepartmentRepository.java` (Department Repository 定义)
 
 ### PersistableRepository
 
@@ -134,13 +160,15 @@ public class Product implements Persistable<Long> {
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
 
-    public ProductRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
+    public ProductRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
     }
 
     // 自动获得 findById、getById、existsById、deleteById 等方法
 }
 ```
+
+> 📍 **示例位置**: `repository/ProductRepository.java` (Product Repository 定义)
 
 ---
 
@@ -154,7 +182,7 @@ List<Employee> employees = employeeRepository.query().getList();
 
 // 按 ID 查询
 Employee employee = employeeRepository.query()
-    .where(Employee::getId).eq(1L)
+    .where(Employee::getId).eq(id)
     .getFirst();
 
 // 条件查询
@@ -165,9 +193,12 @@ List<Employee> activeEmployees = employeeRepository.query()
 
 // 范围查询
 List<Employee> employeesBySalary = employeeRepository.query()
-    .where(Employee::getSalary).between(40000.0, 80000.0)
+    .where(Employee::getSalary).between(BigDecimal.valueOf(40000.0), BigDecimal.valueOf(80000.0))
     .getList();
 ```
+
+> 📍 **示例位置**: `EmployeeRepository.java` (`findAllEmployees` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeByEmail` 方法)
 
 ### CRUD 操作
 
@@ -195,6 +226,9 @@ employeeRepository.delete(emp);
 // 批量删除
 employeeRepository.deleteAll(employees);
 ```
+
+> 📍 **示例位置**: `EmployeeRepository.java` (`insertSingleEmployee` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`insertMultipleEmployees` 方法)
 
 ---
 

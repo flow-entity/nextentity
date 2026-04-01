@@ -9,6 +9,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Version;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -40,7 +41,7 @@ public class Employee {
     /**
      * Employee salary.
      */
-    private Double salary;
+    private BigDecimal salary;
 
     /**
      * Whether the employee is active.
@@ -85,7 +86,7 @@ public class Employee {
     public Employee() {
     }
 
-    public Employee(Long id, String name, String email, Double salary, Boolean active,
+    public Employee(Long id, String name, String email, BigDecimal salary, Boolean active,
                     EmployeeStatus status, Long departmentId, LocalDate hireDate) {
         this.id = id;
         this.name = name;
@@ -105,8 +106,8 @@ public class Employee {
     public void setName(String name) { this.name = name; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
-    public Double getSalary() { return salary; }
-    public void setSalary(Double salary) { this.salary = salary; }
+    public BigDecimal getSalary() { return salary; }
+    public void setSalary(BigDecimal salary) { this.salary = salary; }
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
     public EmployeeStatus getStatus() { return status; }

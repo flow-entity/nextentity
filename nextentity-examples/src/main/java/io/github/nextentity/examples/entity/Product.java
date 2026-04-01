@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Transient;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
@@ -43,7 +44,7 @@ public class Product implements Persistable<Long> {
     /**
      * Product price.
      */
-    private Double price;
+    private BigDecimal price;
 
     /**
      * Stock quantity.
@@ -82,7 +83,7 @@ public class Product implements Persistable<Long> {
     public Product() {
     }
 
-    public Product(Long id, String name, String sku, Double price, Integer stock, Long categoryId, Boolean active) {
+    public Product(Long id, String name, String sku, BigDecimal price, Integer stock, Long categoryId, Boolean active) {
         this.id = id;
         this.name = name;
         this.sku = sku;
@@ -119,11 +120,11 @@ public class Product implements Persistable<Long> {
         this.sku = sku;
     }
 
-    public Double getPrice() {
+    public BigDecimal getPrice() {
         return price;
     }
 
-    public void setPrice(Double price) {
+    public void setPrice(BigDecimal price) {
         this.price = price;
     }
 

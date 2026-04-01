@@ -23,13 +23,13 @@ Employee employee = new Employee();
 employee.setId(1L);
 employee.setName("John Doe");
 employee.setEmail("john@example.com");
-employee.setSalary(50000.0);
+employee.setSalary(BigDecimal.valueOf(50000.0));
 employee.setActive(true);
 
 employeeRepository.insert(employee);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:32-43` (`insertSingleEmployee` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`insertSingleEmployee` 方法)
 
 生成的 SQL：
 
@@ -45,7 +45,7 @@ Employee emp = new Employee();
 emp.setId(generateId());          // 主键
 emp.setName("Jane Smith");        // 必填字段
 emp.setEmail("jane@company.com"); // 必填字段
-emp.setSalary(60000.0);           // 可选字段
+emp.setSalary(BigDecimal.valueOf(60000.0)); // 可选字段
 emp.setActive(true);              // 状态
 emp.setStatus(EmployeeStatus.ACTIVE);
 emp.setDepartmentId(1L);          // 外键
@@ -53,7 +53,7 @@ emp.setDepartmentId(1L);          // 外键
 employeeRepository.insert(emp);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:32-43` (设置实体属性示例)
+> 📍 **示例位置**: `EmployeeRepository.java` (设置实体属性示例)
 
 ---
 
@@ -75,7 +75,7 @@ employee.setEmail("john.new@company.com");
 employeeRepository.update(employee);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:82-89` (`updateEmployeeSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`updateEmployeeSalary` 方法)
 
 生成的 SQL：
 
@@ -101,7 +101,7 @@ if (emp != null) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:82-89` (更新策略示例)
+> 📍 **示例位置**: `EmployeeRepository.java` (更新策略示例)
 
 ---
 
@@ -121,7 +121,7 @@ if (employee != null) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:103-109` (`deleteEmployee` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployee` 方法)
 
 生成的 SQL：
 
@@ -140,7 +140,7 @@ List<Employee> terminated = employeeRepository.query()
 employeeRepository.deleteAll(terminated);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:111-118` (`deleteEmployeesByDepartment` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployeesByDepartment` 方法)
 
 ---
 
@@ -159,7 +159,7 @@ List<Employee> newEmployees = List.of(
 employeeRepository.insertAll(newEmployees);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:46-54` (`insertMultipleEmployees` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`insertMultipleEmployees` 方法)
 
 生成的 SQL（JDBC 批量模式）：
 
@@ -184,7 +184,7 @@ employees.forEach(e -> e.setSalary(e.getSalary() * 1.1));
 employeeRepository.updateAll(employees);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:92-100` (`giveRaiseToDepartment` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`giveRaiseToDepartment` 方法)
 
 ### 批量删除
 
@@ -197,36 +197,16 @@ List<Employee> employees = employeeRepository.query()
 employeeRepository.deleteAll(employees);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:111-118` (`deleteEmployeesByDepartment` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployeesByDepartment` 方法)
 
 ---
 
 ## 事务处理
 
-### doInTransaction
+### Service 层推荐使用 @Transactional
 
-> **注意**：`doInTransaction` 是 `AbstractRepository` 的 `protected` 方法，只能在 Repository 子类内部使用。推荐在 Service 层使用 Spring 的 `@Transactional` 注解。
+推荐在 Service 层使用 Spring 的 `@Transactional` 注解：
 
-> 📍 **示例位置**: `BaseRepository.java:29-38` (`doInTransaction` 方法)
-
-**Repository 内部使用**：
-```java
-@Repository
-public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    // 返回值的事务操作
-    public Employee createWithDepartment(Employee emp, Department dept) {
-        return doInTransaction(() -> {
-            departmentRepository.insert(dept);
-            emp.setDepartmentId(dept.getId());
-            insert(emp);
-            return emp;
-        });
-    }
-}
-```
-
-**Service 层推荐使用 @Transactional**：
 ```java
 @Service
 public class EmployeeService {
@@ -240,7 +220,35 @@ public class EmployeeService {
 }
 ```
 
-> 📍 **示例位置**: `service/EmployeeService.java:46-52` (`createEmployeeWithDepartment` 方法)
+> 📍 **示例位置**: `service/EmployeeService.java` (`createEmployeeWithDepartment` 方法)
+
+### Repository 内部事务
+
+对于 Repository 内部的事务操作，可以使用 `doInTransaction` 方法（protected 方法，仅限子类内部使用）：
+
+```java
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    @Transactional
+    public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
+        List<Employee> employees = query()
+            .where(Employee::getDepartmentId).eq(departmentId)
+            .where(Employee::getActive).eq(true)
+            .getList();
+
+        employees.forEach(e -> {
+            BigDecimal salary = e.getSalary();
+            if (salary != null) {
+                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+            }
+        });
+        updateAll(employees);
+    }
+}
+```
+
+> 📍 **示例位置**: `EmployeeRepository.java` (`giveDepartmentRaise` 方法)
 
 ### Spring @Transactional
 
@@ -264,7 +272,7 @@ public class EmployeeService {
 }
 ```
 
-> 📍 **示例位置**: `service/EmployeeService.java:58-73` (`transferEmployee` 方法)
+> 📍 **示例位置**: `service/EmployeeService.java` (`transferEmployee` 方法)
 
 ---
 
@@ -288,7 +296,7 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java:79-82` (`version` 字段)
+> 📍 **示例位置**: `entity/Employee.java` (`version` 字段)
 
 ### 乐观锁行为
 
@@ -302,7 +310,7 @@ emp.setSalary(65000.0);
 employeeRepository.update(emp);  // 自动检查版本号并递增
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:82-89` (更新操作自动处理版本)
+> 📍 **示例位置**: `EmployeeRepository.java` (更新操作自动处理版本)
 
 生成的 SQL：
 
@@ -332,7 +340,7 @@ if (emp != null) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:82-89` (`updateEmployeeSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`updateEmployeeSalary` 方法)
 
 ### 2. 使用批量操作提升性能
 
@@ -346,7 +354,7 @@ for (Employee e : newEmployees) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:46-54` (`insertMultipleEmployees` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`insertMultipleEmployees` 方法)
 
 ### 3. 合理使用事务
 
@@ -358,7 +366,7 @@ employeeRepository.doInTransaction(() -> {
 });
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:798-809` (`giveDepartmentRaise` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`giveDepartmentRaise` 方法)
 
 ### 4. 删除前检查关联
 
@@ -373,7 +381,7 @@ if (empCount == 0) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:117-127` (`hasEmployeesInDepartment`, `deleteDepartmentIfEmpty` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`hasEmployeesInDepartment`, `deleteDepartmentIfEmpty` 方法)
 
 ### 5. 使用 Optional 包装结果
 
@@ -386,7 +394,7 @@ public Optional<Employee> findEmployee(Long id) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java:896-901` (`findFirstActive` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`findFirstActive` 方法)
 
 ---
 

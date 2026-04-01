@@ -9,18 +9,27 @@ import io.github.nextentity.api.model.Tuple4;
 import io.github.nextentity.api.model.Tuple5;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
+import io.github.nextentity.spring.AbstractRepository;
+import jakarta.persistence.EntityManager;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Repository
-public class EmployeeRepository extends BaseRepository<Employee, Long> {
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
+    }
 
     @Override
     public Select<Employee> query() {
@@ -36,7 +45,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
         employee.setId(1L);
         employee.setName("John Doe");
         employee.setEmail("john@example.com");
-        employee.setSalary(50000.0);
+        employee.setSalary(BigDecimal.valueOf(50000.0));
         employee.setActive(true);
         employee.setStatus(EmployeeStatus.ACTIVE);
         employee.setDepartmentId(1L);
@@ -48,9 +57,9 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     @Transactional
     public void insertMultipleEmployees() {
         List<Employee> employees = List.of(
-                createEmployee(1L, "Alice", "alice@example.com", 50000.0),
-                createEmployee(2L, "Bob", "bob@example.com", 55000.0),
-                createEmployee(3L, "Charlie", "charlie@example.com", 60000.0)
+                createEmployee(1L, "Alice", "alice@example.com", BigDecimal.valueOf(50000.0)),
+                createEmployee(2L, "Bob", "bob@example.com", BigDecimal.valueOf(55000.0)),
+                createEmployee(3L, "Charlie", "charlie@example.com", BigDecimal.valueOf(60000.0))
         );
         insertAll(employees);
     }
@@ -64,10 +73,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public Employee findEmployeeById(Long id) {
         return query()
                 .where(Employee::getId).eq(id)
-                .getList()
-                .stream()
-                .findFirst()
-                .orElse(null);
+                .getFirst();
     }
 
     /// Query employees by multiple IDs using IN clause
@@ -82,7 +88,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// Update an existing employee's salary
     @Transactional
-    public void updateEmployeeSalary(Long id, Double newSalary) {
+    public void updateEmployeeSalary(Long id, BigDecimal newSalary) {
         Employee employee = findEmployeeById(id);
         if (employee != null) {
             employee.setSalary(newSalary);
@@ -92,11 +98,16 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// Give raise to all employees in a department
     @Transactional
-    public List<Employee> giveRaiseToDepartment(Long departmentId, double percentage) {
+    public List<Employee> giveRaiseToDepartment(Long departmentId, BigDecimal percentage) {
         List<Employee> employees = query()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .getList();
-        employees.forEach(e -> e.setSalary(e.getSalary() * (1 + percentage)));
+        employees.forEach(e -> {
+            BigDecimal salary = e.getSalary();
+            if (salary != null) {
+                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+            }
+        });
         updateAll(employees);
         return employees;
     }
@@ -161,32 +172,32 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     }
 
     /// Greater than comparison
-    public List<Employee> findBySalaryGreaterThan(Double salary) {
+    public List<Employee> findBySalaryGreaterThan(BigDecimal salary) {
         return query().where(Employee::getSalary).gt(salary).getList();
     }
 
     /// Greater than or equal comparison
-    public List<Employee> findBySalaryGreaterOrEqual(Double salary) {
+    public List<Employee> findBySalaryGreaterOrEqual(BigDecimal salary) {
         return query().where(Employee::getSalary).ge(salary).getList();
     }
 
     /// Less than comparison
-    public List<Employee> findBySalaryLessThan(Double salary) {
+    public List<Employee> findBySalaryLessThan(BigDecimal salary) {
         return query().where(Employee::getSalary).lt(salary).getList();
     }
 
     /// Less than or equal comparison
-    public List<Employee> findBySalaryLessOrEqual(Double salary) {
+    public List<Employee> findBySalaryLessOrEqual(BigDecimal salary) {
         return query().where(Employee::getSalary).le(salary).getList();
     }
 
     /// Between comparison (inclusive range)
-    public List<Employee> findBySalaryBetween(Double min, Double max) {
+    public List<Employee> findBySalaryBetween(BigDecimal min, BigDecimal max) {
         return query().where(Employee::getSalary).between(min, max).getList();
     }
 
     /// Not between comparison
-    public List<Employee> findBySalaryNotBetween(Double min, Double max) {
+    public List<Employee> findBySalaryNotBetween(BigDecimal min, BigDecimal max) {
         return query().where(Employee::getSalary).notBetween(min, max).getList();
     }
 
@@ -250,7 +261,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public List<Employee> findActiveHighEarners() {
         return query()
                 .where(Employee::getActive).eq(true)
-                .where(Employee::getSalary).gt(50000.0)
+                .where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
                 .getList();
     }
 
@@ -436,7 +447,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Slice with conditions and ordering
     public Slice<Employee> findHighEarnerSlice(int page, int size) {
         return query()
-                .where(Employee::getSalary).gt(50000.0)
+                .where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getSalary).desc()
                 .slice(page * size, size);
@@ -498,48 +509,54 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     }
 
     /// Calculate total salary using Java streams
-    public double calculateTotalSalary() {
+    public BigDecimal calculateTotalSalary() {
         return query()
                 .selectExpr(path(Employee::getSalary).sum())
+                .where(Employee::getSalary).isNotNull()
                 .getSingle();
     }
 
     /// Sum with conditions - total salary for active employees
-    public double calculateActiveTotalSalary() {
+    public BigDecimal calculateActiveTotalSalary() {
         return query()
                 .selectExpr(path(Employee::getSalary).sum())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
 
     /// Calculate average salary
-    public double calculateAverageSalary() {
+    public Double calculateAverageSalary() {
         return query()
                 .selectExpr(path(Employee::getSalary).avg())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
 
     /// Average by department
-    public double calculateAverageSalaryByDepartment(Long departmentId) {
+    public Double calculateAverageSalaryByDepartment(Long departmentId) {
         return query()
                 .selectExpr(path(Employee::getSalary).avg())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .getSingle();
     }
 
     /// Find maximum salary
-    public double findMaxSalary() {
+    public BigDecimal findMaxSalary() {
         return query()
                 .selectExpr(path(Employee::getSalary).max())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
 
     /// Find minimum salary
-    public double findMinSalary() {
+    public BigDecimal findMinSalary() {
         return query()
                 .selectExpr(path(Employee::getSalary).min())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
@@ -548,6 +565,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public Employee findHighestPaidEmployee() {
         return query()
                 .where(Employee::getActive).eq(true)
+                .where(Employee::getSalary).isNotNull()
                 .orderBy(Employee::getSalary).desc()
                 .getFirst();
     }
@@ -556,6 +574,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public Employee findLowestPaidEmployee() {
         return query()
                 .where(Employee::getActive).eq(true)
+                .where(Employee::getSalary).isNotNull()
                 .orderBy(Employee::getSalary).asc()
                 .getFirst();
     }
@@ -591,12 +610,12 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
                 .stream()
                 .collect(Collectors.groupingBy(
                         Employee::getDepartmentId,
-                        Collectors.summarizingDouble(Employee::getSalary)
+                        Collectors.summarizingDouble(e -> e.getSalary().doubleValue())
                 ));
     }
 
     /// Select name and salary for analysis
-    public List<Tuple2<String, Double>> findNameSalaryPairs() {
+    public List<Tuple2<String, BigDecimal>> findNameSalaryPairs() {
         return query()
                 .select(Employee::getName, Employee::getSalary)
                 .where(Employee::getActive).eq(true)
@@ -622,7 +641,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     }
 
     /// Select two fields using Tuple2
-    public List<Tuple2<String, Double>> findNameAndSalary() {
+    public List<Tuple2<String, BigDecimal>> findNameAndSalary() {
         return query()
                 .select(Employee::getName, Employee::getSalary)
                 .where(Employee::getActive).eq(true)
@@ -630,7 +649,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     }
 
     /// Select three fields using Tuple3
-    public List<Tuple3<String, String, Double>> findNameEmailSalary() {
+    public List<Tuple3<String, String, BigDecimal>> findNameEmailSalary() {
         return query()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary)
                 .where(Employee::getActive).eq(true)
@@ -639,7 +658,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// Select four fields using Tuple4
     /// Example for projections.md Tuple4 documentation
-    public List<Tuple4<String, String, Double, Long>> findNameEmailSalaryDepartment() {
+    public List<Tuple4<String, String, BigDecimal, Long>> findNameEmailSalaryDepartment() {
         return query()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary, Employee::getDepartmentId)
                 .where(Employee::getActive).eq(true)
@@ -649,7 +668,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// Select five fields using Tuple5
     /// Example for projections.md Tuple5 documentation
-    public List<Tuple5<String, String, Double, Long, Boolean>> findEmployeeDetails() {
+    public List<Tuple5<String, String, BigDecimal, Long, Boolean>> findEmployeeDetails() {
         return query()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary,
                         Employee::getDepartmentId, Employee::getActive)
@@ -677,7 +696,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public List<EmployeeSummary> findHighEarnerSummaries() {
         return query()
                 .select(EmployeeSummary.class)
-                .where(Employee::getSalary).gt(50000.0)
+                .where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
                 .where(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                 .getList();
     }
@@ -705,7 +724,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     }
 
     /// Select specific fields using Tuple
-    public List<Tuple2<String, Double>> findEmployeeNamesAndSalaries() {
+    public List<Tuple2<String, BigDecimal>> findEmployeeNamesAndSalaries() {
         return query()
                 .select(Employee::getName, Employee::getSalary)
                 .where(Employee::getActive).eq(true)
@@ -784,14 +803,14 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
         return query()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getStatus).in(EmployeeStatus.ACTIVE, EmployeeStatus.ON_LEAVE)
-                .where(Employee::getSalary).between(40000.0, 80000.0)
+                .where(Employee::getSalary).between(BigDecimal.valueOf(40000.0), BigDecimal.valueOf(80000.0))
                 .where(Employee::getDepartmentId).isNotNull()
                 .orderBy(Employee::getName).asc()
                 .getList();
     }
 
     /// Employee search with optional filters using conditional operators
-    public List<Employee> searchEmployees(String name, Long departmentId, Double minSalary) {
+    public List<Employee> searchEmployees(String name, Long departmentId, BigDecimal minSalary) {
         return query()
                 .where(Employee::getName).containsIfNotEmpty(name)
                 .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
@@ -803,7 +822,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     /// Advanced search with many optional parameters
     public List<Employee> advancedSearch(
             String name, String email, Long departmentId, EmployeeStatus status,
-            Boolean active, Double minSalary, Double maxSalary, LocalDate hireAfter) {
+            Boolean active, BigDecimal minSalary, BigDecimal maxSalary, LocalDate hireAfter) {
 
         return query()
                 .where(Employee::getName).containsIfNotEmpty(name)
@@ -836,49 +855,48 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                 .where(Employee::getHireDate).le(oneYearAgo)
-                .where(Employee::getSalary).lt(50000.0)
+                .where(Employee::getSalary).lt(BigDecimal.valueOf(50000.0))
                 .orderBy(Employee::getHireDate).asc()
                 .getList();
     }
 
     /// Give a raise to all employees in a department within a transaction
     @Transactional
-    public void giveDepartmentRaise(Long departmentId, double percentage) {
-        doInTransaction(() -> {
-            List<Employee> employees = query()
-                    .where(Employee::getDepartmentId).eq(departmentId)
-                    .where(Employee::getActive).eq(true)
-                    .getList();
+    public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
+        List<Employee> employees = query()
+                .where(Employee::getDepartmentId).eq(departmentId)
+                .where(Employee::getActive).eq(true)
+                .getList();
 
-            employees.forEach(e -> e.setSalary(e.getSalary() * (1 + percentage)));
-            updateAll(employees);
+        employees.forEach(e -> {
+            BigDecimal salary = e.getSalary();
+            if (salary != null) {
+                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+            }
         });
+        updateAll(employees);
     }
 
     /// Transfer employees between departments within a transaction
     @Transactional
     public void transferEmployees(List<Long> employeeIds, Long newDepartmentId) {
-        doInTransaction(() -> {
-            List<Employee> employees = query()
-                    .where(Employee::getId).in(employeeIds)
-                    .getList();
+        List<Employee> employees = query()
+                .where(Employee::getId).in(employeeIds)
+                .getList();
 
-            employees.forEach(e -> e.setDepartmentId(newDepartmentId));
-            updateAll(employees);
-        });
+        employees.forEach(e -> e.setDepartmentId(newDepartmentId));
+        updateAll(employees);
     }
 
     /// Deactivate terminated employees within a transaction
     @Transactional
     public void deactivateTerminatedEmployees() {
-        doInTransaction(() -> {
-            List<Employee> employees = query()
-                    .where(Employee::getStatus).eq(EmployeeStatus.TERMINATED)
-                    .getList();
+        List<Employee> employees = query()
+                .where(Employee::getStatus).eq(EmployeeStatus.TERMINATED)
+                .getList();
 
-            employees.forEach(e -> e.setActive(false));
-            updateAll(employees);
-        });
+        employees.forEach(e -> e.setActive(false));
+        updateAll(employees);
     }
 
     /// Find employees with department eagerly loaded
@@ -940,7 +958,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     // ==================== Result Methods ====================
 
     /// Get first result as Optional
-    public java.util.Optional<Employee> findFirstActive() {
+    public Optional<Employee> findFirstActive() {
         return query()
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getName).asc()
@@ -964,22 +982,22 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     // ==================== Numeric Operations ====================
 
     /// Find employees where salary + bonus > threshold
-    public List<Employee> findBySalaryWithBonus(Double bonus, Double threshold) {
+    public List<Employee> findBySalaryWithBonus(BigDecimal bonus, BigDecimal threshold) {
         return query()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
                 .getList();
     }
 
     /// Find employees where salary * 12 (annual) > threshold
-    public List<Employee> findByAnnualSalary(Double threshold) {
+    public List<Employee> findByAnnualSalary(BigDecimal threshold) {
         return query()
-                .where(Employee::getSalary).multiply(12.0).gt(threshold)
+                .where(Employee::getSalary).multiply(BigDecimal.valueOf(12.0)).gt(threshold)
                 .getList();
     }
 
     /// Numeric operations: subtract example
     /// Find employees where salary - deduction >= minSalary
-    public List<Employee> findBySalaryAfterDeduction(Double deduction, Double minSalary) {
+    public List<Employee> findBySalaryAfterDeduction(BigDecimal deduction, BigDecimal minSalary) {
         return query()
                 .where(Employee::getSalary).subtract(deduction).ge(minSalary)
                 .where(Employee::getActive).eq(true)
@@ -988,9 +1006,9 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// Numeric operations: divide example
     /// Find employees where monthly salary (annual / 12) > threshold
-    public List<Employee> findByMonthlySalary(Double threshold) {
+    public List<Employee> findByMonthlySalary(BigDecimal threshold) {
         return query()
-                .where(Employee::getSalary).divide(12.0).gt(threshold)
+                .where(Employee::getSalary).divide(BigDecimal.valueOf(12.0)).gt(threshold)
                 .where(Employee::getActive).eq(true)
                 .getList();
     }
@@ -1005,7 +1023,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// Expression equals expression example
     /// Compare salary field with a computed value
-    public List<Employee> findBySalaryEqualsBase(Long departmentId, Double baseSalary) {
+    public List<Employee> findBySalaryEqualsBase(Long departmentId, BigDecimal baseSalary) {
         return query()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .where(Employee::getSalary).eq(Path.of(Employee::getSalary))  // self-comparison for demo
@@ -1035,9 +1053,10 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     // ==================== Aggregation with Path.of() ====================
 
     /// Sum using Path.of() (for use outside Repository)
-    public Double calculateTotalSalaryExternal() {
+    public BigDecimal calculateTotalSalaryExternal() {
         return query()
                 .selectExpr(Path.of(Employee::getSalary).sum())
+                .where(Employee::getSalary).isNotNull()
                 .getSingle();
     }
 
@@ -1045,21 +1064,24 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public Double calculateAverageSalaryExternal() {
         return query()
                 .selectExpr(Path.of(Employee::getSalary).avg())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
 
     /// Max using Path.of()
-    public Double findMaxSalaryExternal() {
+    public BigDecimal findMaxSalaryExternal() {
         return query()
                 .selectExpr(Path.of(Employee::getSalary).max())
+                .where(Employee::getSalary).isNotNull()
                 .getSingle();
     }
 
     /// Min using Path.of()
-    public Double findMinSalaryExternal() {
+    public BigDecimal findMinSalaryExternal() {
         return query()
                 .selectExpr(Path.of(Employee::getSalary).min())
+                .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
     }
@@ -1081,7 +1103,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public List<Employee> findActiveWithOrCondition() {
         return query()
                 .where(Path.of(Employee::getActive).eq(true)
-                        .and(Path.of(Employee::getSalary).gt(100000.0)
+                        .and(Path.of(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
                                 .or(Employee::getStatus).eq(EmployeeStatus.ACTIVE)))
                 .orderBy(Employee::getSalary).desc()
                 .getList();
@@ -1089,7 +1111,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     /// 复杂 OR 条件 - 按薪资或状态查询
     /// 等价于: salary > minSalary OR status = status
-    public List<Employee> findBySalaryOrStatus(Double minSalary, EmployeeStatus status) {
+    public List<Employee> findBySalaryOrStatus(BigDecimal minSalary, EmployeeStatus status) {
         return query()
                 .where(Path.of(Employee::getSalary).gt(minSalary)
                         .or(Employee::getStatus).eq(status))
@@ -1116,7 +1138,7 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
 
     // ==================== Helper Methods ====================
 
-    private Employee createEmployee(Long id, String name, String email, Double salary) {
+    private Employee createEmployee(Long id, String name, String email, BigDecimal salary) {
         Employee employee = new Employee();
         employee.setId(id);
         employee.setName(name);
@@ -1134,12 +1156,12 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
     public static class EmployeeSummary {
         private String name;
         private String email;
-        private Double salary;
+        private BigDecimal salary;
         private EmployeeStatus status;
 
         public EmployeeSummary() {}
 
-        public EmployeeSummary(String name, String email, Double salary, EmployeeStatus status) {
+        public EmployeeSummary(String name, String email, BigDecimal salary, EmployeeStatus status) {
             this.name = name;
             this.email = email;
             this.salary = salary;
@@ -1150,8 +1172,8 @@ public class EmployeeRepository extends BaseRepository<Employee, Long> {
         public void setName(String name) { this.name = name; }
         public String getEmail() { return email; }
         public void setEmail(String email) { this.email = email; }
-        public Double getSalary() { return salary; }
-        public void setSalary(Double salary) { this.salary = salary; }
+        public BigDecimal getSalary() { return salary; }
+        public void setSalary(BigDecimal salary) { this.salary = salary; }
         public EmployeeStatus getStatus() { return status; }
         public void setStatus(EmployeeStatus status) { this.status = status; }
     }
