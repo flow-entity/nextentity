@@ -1,6 +1,7 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.PathRef;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
@@ -24,8 +25,16 @@ public class ExpressionNodes {
                || (node instanceof LiteralNode literalNode) && Boolean.TRUE.equals(literalNode.value());
     }
 
-    public static ExpressionNode getNode(Expression expression) {
-        return ((ExpressionTree) expression).getRoot();
+    public static ExpressionNode getNode(Expression<?, ?> expression) {
+        ExpressionTree tree;
+        if (expression instanceof ExpressionTree expressionTree) {
+            tree = expressionTree;
+        } else if (expression instanceof PathRef<?, ?> path) {
+            tree = (ExpressionTree) Path.of(path);
+        } else {
+            throw new IllegalArgumentException(expression.getClass().getName());
+        }
+        return tree.getRoot();
     }
 
     public static ImmutableList<ExpressionNode> getNode(List<? extends Expression<?, ?>> expressions) {

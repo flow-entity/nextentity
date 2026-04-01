@@ -56,7 +56,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldCountWithExpression(IntegrationTestContext context) {
         // When
         Long count = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .getSingle();
 
         // Then
@@ -72,7 +72,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldCountDistinct(IntegrationTestContext context) {
         // When
         Long count = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getDepartmentId).countDistinct())
+                .select(Path.of(Employee::getDepartmentId).countDistinct())
                 .getSingle();
 
         // Then
@@ -88,7 +88,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldSumSalaries(IntegrationTestContext context) {
         // When
         Number sum = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).sum())
                 .getSingle();
 
         // Then
@@ -108,7 +108,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldCalculateAverageSalary(IntegrationTestContext context) {
         // When
         Number avg = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         // Then
@@ -129,7 +129,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldFindMaxSalary(IntegrationTestContext context) {
         // When
         Number max = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         // Then
@@ -150,7 +150,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldFindMinSalary(IntegrationTestContext context) {
         // When
         Number min = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // Then
@@ -171,7 +171,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldReturnMultipleAggregations(IntegrationTestContext context) {
         // When
         Tuple aggregations = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getSalary).min(),
                         Path.of(Employee::getSalary).max()
                 )
@@ -199,7 +199,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldGroupByDepartmentId(IntegrationTestContext context) {
         // When
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -223,7 +223,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldGroupByWithCount(IntegrationTestContext context) {
         // When
         List<Tuple2<Long, Long>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -246,7 +246,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldGroupByWithSum(IntegrationTestContext context) {
         // When
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).sum())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -276,7 +276,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldGroupByWithAvg(IntegrationTestContext context) {
         // When
         List<Tuple2<Long, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).avg())
+                .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
@@ -307,7 +307,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldGroupByMultipleColumns(IntegrationTestContext context) {
         // When
         List<?> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getId).count()
@@ -336,7 +336,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldAggregateWithWhereCondition(IntegrationTestContext context) {
         // When - count active employees
         Long activeCount = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
 
@@ -357,7 +357,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldFindMaxId(IntegrationTestContext context) {
         // When
         Number maxId = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).max())
+                .select(Path.of(Employee::getId).max())
                 .getSingle();
 
         // Then
@@ -378,7 +378,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldFindMinId(IntegrationTestContext context) {
         // When
         Number minId = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).min())
+                .select(Path.of(Employee::getId).min())
                 .getSingle();
 
         // Then
@@ -399,7 +399,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldCountActiveEmployees(IntegrationTestContext context) {
         // When
         Long count = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
                 .getSingle();
 
@@ -420,7 +420,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldSumSalariesForDepartment(IntegrationTestContext context) {
         // When
         Number sum = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).sum())
                 .where(Employee::getDepartmentId).eq(1L)
                 .getSingle();
 
@@ -443,7 +443,7 @@ public class AggregateFunctionsIntegrationTest {
     void shouldGroupByStatus(IntegrationTestContext context) {
         // When
         List<Tuple2<EmployeeStatus, Long>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getStatus), Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getStatus), Path.of(Employee::getId).count())
                 .groupBy(Employee::getStatus)
                 .getList();
 

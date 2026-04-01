@@ -69,6 +69,9 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     /// @return a new PathNode instance
     ///
     public static PathNode of(PathRef<?, ?> path) {
+        if (path instanceof ExpressionTree tree) {
+            return (PathNode) tree.getRoot();
+        }
         String fieldName = PathReference.of(path).getFieldName();
         return new PathNode(new String[]{fieldName});
     }

@@ -126,7 +126,7 @@ public class SubqueryIntegrationTest {
     void shouldCompareWithMaxExpression(IntegrationTestContext context) {
         // Given - Get max salary
         Double maxSalary = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         // When - Find employees with max salary
@@ -148,7 +148,7 @@ public class SubqueryIntegrationTest {
     void shouldCompareWithMinExpression(IntegrationTestContext context) {
         // Given - Get min salary
         Double minSalary = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees with min salary
@@ -169,7 +169,7 @@ public class SubqueryIntegrationTest {
     void shouldCompareWithAverageExpression(IntegrationTestContext context) {
         // Given - Get average salary
         Double avgSalary = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         // When - Find employees above average
@@ -307,7 +307,7 @@ public class SubqueryIntegrationTest {
     void shouldAggregateWithFilter(IntegrationTestContext context) {
         // Given - Get min salary
         Double minSalary = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees with salary above min
@@ -332,19 +332,19 @@ public class SubqueryIntegrationTest {
     void shouldCombineMultipleAggregations(IntegrationTestContext context) {
         // Given
         Long count = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .getSingle();
 
         Double avg = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         Double max = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         Double min = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // When - Find employees in various ranges

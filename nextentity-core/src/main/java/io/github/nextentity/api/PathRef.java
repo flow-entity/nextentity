@@ -26,7 +26,7 @@ import java.math.BigDecimal;
 /// @author HuangChengwei
 /// @since 1.0.0
 @FunctionalInterface
-public interface PathRef<T, R> extends Serializable {
+public interface PathRef<T, R> extends Serializable, Expression<T, R> {
 
     /// Applies the path to the entity and gets the attribute value.
     ///

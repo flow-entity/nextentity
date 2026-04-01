@@ -295,7 +295,7 @@ public class GenericApiTest {
             assertEquals(u0.getTestUser(), u1.getTestUser());
         }
 
-        users = userQuery.fetch(ImmutableList.<PathRef<User, ?>>of(
+        users = userQuery.fetch(ImmutableList.of(
                         User::getParentUser,
                         User::getRandomUser,
                         User::getTestUser))
@@ -323,7 +323,7 @@ public class GenericApiTest {
                 Path.of(User::getRandomNumber).sum()
         );
         Tuple aggregated = userQuery
-                .selectExpr(selected)
+                .select(selected)
                 .requireSingle();
 
         assertNotNull(aggregated);
@@ -335,7 +335,7 @@ public class GenericApiTest {
         assertEquals(getUserIdStream(userQuery).sum(), aggregated.<Number>get(4).intValue());
 
         List<Tuple> resultList = userQuery
-                .selectExpr(Arrays.asList(Path.of(User::getId).min(), Path.of(User::getRandomNumber)))
+                .select(Arrays.asList(Path.of(User::getId).min(), Path.of(User::getRandomNumber)))
                 .where(Path.of(User::isValid).eq(true))
                 .groupBy(User::getRandomNumber)
                 .getList();
@@ -355,7 +355,7 @@ public class GenericApiTest {
         assertEquals(new HashSet<>(resultList), new HashSet<>(fObjects));
 
         Tuple one = userQuery
-                .selectExpr(Collections.singletonList(Path.of(User::getId).sum()))
+                .select(Collections.singletonList(Path.of(User::getId).sum()))
                 .where(Path.of(User::isValid).eq(true))
                 .requireSingle();
 
@@ -372,7 +372,7 @@ public class GenericApiTest {
         assertEquals(first, userQuery.users().get(userQuery.users().size() - 1).getId());
 
         Long count = userQuery
-                .selectExpr(Path.of(User::getRandomNumber).countDistinct())
+                .select(Path.of(User::getRandomNumber).countDistinct())
                 .getSingle();
         long count1 = userQuery.users()
                 .stream().mapToInt(User::getRandomNumber)

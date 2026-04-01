@@ -500,14 +500,14 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Count distinct values
     public long countDistinctDepartments() {
         return query()
-                .selectExpr(path(Employee::getDepartmentId).countDistinct())
+                .select(path(Employee::getDepartmentId).countDistinct())
                 .getSingle();
     }
 
     /// Calculate total salary using Java streams
     public BigDecimal calculateTotalSalary() {
         return query()
-                .selectExpr(path(Employee::getSalary).sum())
+                .select(path(Employee::getSalary).sum())
                 .where(Employee::getSalary).isNotNull()
                 .getSingle();
     }
@@ -515,7 +515,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Sum with conditions - total salary for active employees
     public BigDecimal calculateActiveTotalSalary() {
         return query()
-                .selectExpr(path(Employee::getSalary).sum())
+                .select(path(Employee::getSalary).sum())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
@@ -524,7 +524,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Calculate average salary
     public Double calculateAverageSalary() {
         return query()
-                .selectExpr(path(Employee::getSalary).avg())
+                .select(path(Employee::getSalary).avg())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
@@ -533,7 +533,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Average by department
     public Double calculateAverageSalaryByDepartment(Long departmentId) {
         return query()
-                .selectExpr(path(Employee::getSalary).avg())
+                .select(path(Employee::getSalary).avg())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .getSingle();
@@ -542,7 +542,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Find maximum salary
     public BigDecimal findMaxSalary() {
         return query()
-                .selectExpr(path(Employee::getSalary).max())
+                .select(path(Employee::getSalary).max())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
@@ -551,7 +551,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Find minimum salary
     public BigDecimal findMinSalary() {
         return query()
-                .selectExpr(path(Employee::getSalary).min())
+                .select(path(Employee::getSalary).min())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
@@ -601,7 +601,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Returns Tuple6 containing: departmentId, count, sum, avg, max, min
     public List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> salaryStatsByDepartment() {
         return query()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(),
@@ -1056,7 +1056,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Sum using Path.of() (for use outside Repository)
     public BigDecimal calculateTotalSalaryExternal() {
         return query()
-                .selectExpr(Path.of(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).sum())
                 .where(Employee::getSalary).isNotNull()
                 .getSingle();
     }
@@ -1064,7 +1064,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Average using Path.of()
     public Double calculateAverageSalaryExternal() {
         return query()
-                .selectExpr(Path.of(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();
@@ -1073,7 +1073,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Max using Path.of()
     public BigDecimal findMaxSalaryExternal() {
         return query()
-                .selectExpr(Path.of(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .where(Employee::getSalary).isNotNull()
                 .getSingle();
     }
@@ -1081,7 +1081,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Min using Path.of()
     public BigDecimal findMinSalaryExternal() {
         return query()
-                .selectExpr(Path.of(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .where(Employee::getSalary).isNotNull()
                 .where(Employee::getActive).eq(true)
                 .getSingle();

@@ -511,7 +511,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionMax(IntegrationTestContext context) {
         // When
         Double maxSalary = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).max())
                 .getSingle();
 
         // Then
@@ -525,7 +525,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionMin(IntegrationTestContext context) {
         // When
         Double minSalary = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min())
+                .select(Path.of(Employee::getSalary).min())
                 .getSingle();
 
         // Then
@@ -539,7 +539,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionCount(IntegrationTestContext context) {
         // When
         Long count = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getId).count())
+                .select(Path.of(Employee::getId).count())
                 .getSingle();
 
         // Then
@@ -552,7 +552,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionSum(IntegrationTestContext context) {
         // When
         Double sum = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).sum())
+                .select(Path.of(Employee::getSalary).sum())
                 .getSingle();
 
         // Then
@@ -566,7 +566,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTypedExpressionAvg(IntegrationTestContext context) {
         // When
         Double avg = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).avg())
+                .select(Path.of(Employee::getSalary).avg())
                 .getSingle();
 
         // Then
@@ -580,7 +580,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithTypedExpression(IntegrationTestContext context) {
         // When
         Long distinctDeptCount = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getDepartmentId).count())
+                .selectDistinct(Path.of(Employee::getDepartmentId).count())
                 .getSingle();
 
         // Then
@@ -597,7 +597,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTwoTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple2<Double, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
                 .getList();
 
         // Then
@@ -612,7 +612,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithThreeTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg())
                 .getList();
 
@@ -627,7 +627,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithFourTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
                 .getList();
 
@@ -642,7 +642,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithFiveTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple5<Double, Double, Double, Long, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum())
                 .getList();
@@ -658,7 +658,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithSixTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple6<Double, Double, Double, Long, Double, Long>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count())
                 .getList();
@@ -674,7 +674,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithSevenTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple7<Double, Double, Double, Long, Double, Long, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min())
@@ -691,7 +691,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithEightTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple8<Double, Double, Double, Long, Double, Long, Double, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
@@ -708,7 +708,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithNineTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple9<Double, Double, Double, Long, Double, Long, Double, Double, Double>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
@@ -726,7 +726,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectWithTenTypedExpressions(IntegrationTestContext context) {
         // When
         List<Tuple10<Double, Double, Double, Long, Double, Long, Double, Double, Double, Long>> results = context.queryEmployees()
-                .selectExpr(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
@@ -750,7 +750,7 @@ public class SelectApiIntegrationTest {
 
         // When
         List<Tuple> results = context.queryEmployees()
-                .selectExprDistinct(expressions)
+                .selectDistinct(expressions)
                 .getList();
 
         // Then
@@ -771,7 +771,7 @@ public class SelectApiIntegrationTest {
 
         // When
         List<Tuple> results = context.queryEmployees()
-                .selectExpr(expressions)
+                .select(expressions)
                 .orderBy(Employee::getId).asc()
                 .getList();
 
@@ -791,7 +791,7 @@ public class SelectApiIntegrationTest {
 
         // When
         List<Tuple> results = context.queryEmployees()
-                .selectExpr(expressions)
+                .select(expressions)
                 .getList();
 
         // Then - aggregate results should produce one row
@@ -817,7 +817,7 @@ public class SelectApiIntegrationTest {
 
         // When
         List<Tuple> results = context.queryEmployees()
-                .selectExprDistinct(expressions)
+                .selectDistinct(expressions)
                 .getList();
 
         // Then - aggregate results should produce one row
@@ -841,7 +841,7 @@ public class SelectApiIntegrationTest {
 
         // When
         List<Tuple> results = context.queryEmployees()
-                .selectExprDistinct(expressions)
+                .selectDistinct(expressions)
                 .orderBy(Employee::getDepartmentId).asc()
                 .getList();
 
@@ -859,7 +859,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithTwoTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple2<Double, Double>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
                 .getList();
 
         // Then
@@ -873,7 +873,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithThreeTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg())
                 .getList();
 
@@ -888,7 +888,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithFourTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
                 .getList();
 
@@ -903,7 +903,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithFiveTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple5<Double, Double, Double, Long, Double>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum())
                 .getList();
@@ -919,7 +919,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithSixTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple6<Double, Double, Double, Long, Double, Long>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count())
                 .getList();
@@ -935,7 +935,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithSevenTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple7<Double, Double, Double, Long, Double, Long, Double>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min())
@@ -952,7 +952,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithEightTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple8<Double, Double, Double, Long, Double, Long, Double, Double>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
@@ -969,7 +969,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithNineTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple9<Double, Double, Double, Long, Double, Long, Double, Double, Double>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
@@ -987,7 +987,7 @@ public class SelectApiIntegrationTest {
     void shouldSelectDistinctWithTenTypedExpressionsVarargs(IntegrationTestContext context) {
         // When
         List<Tuple10<Double, Double, Double, Long, Double, Long, Double, Double, Double, Long>> results = context.queryEmployees()
-                .selectExprDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
+                .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),

@@ -226,10 +226,10 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
             .count();
     }
 
-    // 聚合查询（使用 selectExpr）
+    // 聚合查询
     public BigDecimal calculateTotalSalary() {
         return query()
-            .selectExpr(path(Employee::getSalary).sum())
+            .select(path(Employee::getSalary).sum())
             .getSingle();
     }
 }

@@ -46,7 +46,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
     void shouldGroupByThreePaths(IntegrationTestContext context) {
         // When
         List<Tuple3<Long, Boolean, Long>> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getId).count()
@@ -68,7 +68,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
     void shouldGroupByThreePathsWithSum(IntegrationTestContext context) {
         // When
         List<Tuple3<Long, Boolean, Double>> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getSalary).sum()
@@ -92,7 +92,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
     void shouldGroupByFourPaths(IntegrationTestContext context) {
         // When
         List<Tuple4<Long, Boolean, EmployeeStatus, Long>> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getStatus),
@@ -122,7 +122,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
     void shouldGroupByFivePaths(IntegrationTestContext context) {
         // When
         List<Tuple5<Long, Boolean, EmployeeStatus, LocalDate, Long>> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getStatus),
@@ -154,7 +154,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
     void shouldGroupBySixPaths(IntegrationTestContext context) {
         // When
         List<Tuple6<Long, Boolean, EmployeeStatus, LocalDate, String, Long>> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getStatus),
@@ -188,7 +188,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
     void shouldCombineGroupByWithHaving(IntegrationTestContext context) {
         // When
         List<Tuple3<Long, Boolean, Long>> results = context.queryEmployees()
-                .selectExpr(
+                .select(
                         Path.of(Employee::getDepartmentId),
                         Path.of(Employee::getActive),
                         Path.of(Employee::getId).count()

@@ -1,8 +1,6 @@
 package io.github.nextentity.api;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 /// Fetch step interface, providing methods for fetching associated data.
@@ -18,7 +16,7 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     ///
     /// @param expressions List of path expressions
     /// @return WhereStep instance
-    BaseWhereStep<T, T> fetch(List<Path<T, ?>> expressions);
+    BaseWhereStep<T, T> fetch(Collection<? extends PathRef<T, ?>> expressions);
 
     /// Fetch associated data corresponding to the specified path expression.
     ///
@@ -45,20 +43,6 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     /// @return WhereStep instance
     default BaseWhereStep<T, T> fetch(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p3) {
         return fetch(List.<Path<T, ?>>of(p0, p1, p3));
-    }
-
-    /// Fetch associated data corresponding to the specified collection of paths.
-    ///
-    /// @param paths Collection of paths
-    /// @return WhereStep instance
-    default BaseWhereStep<T, T> fetch(Collection<PathRef<T, ?>> paths) {
-        List<Path<T, ?>> result = new ArrayList<>(paths.size());
-        for (PathRef<T, ?> path : paths) {
-            EntityPath<T, ?> tEntityPathExpression = EntityPath.of(path);
-            result.add(tEntityPathExpression);
-        }
-        List<Path<T, ?>> list = Collections.unmodifiableList(result);
-        return fetch(list);
     }
 
     /// Fetch associated data corresponding to the specified path.

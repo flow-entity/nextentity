@@ -10,7 +10,6 @@ import io.github.nextentity.core.util.ImmutableList;
 import org.slf4j.Logger;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, FetchStep<T> {
@@ -25,7 +24,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         super(queryStructure, metamodel, executor);
     }
 
-    public WhereStep<T, T> fetch(List<Path<T, ?>> expressions) {
+    public WhereStep<T, T> fetch(Collection<? extends PathRef<T, ?>> expressions) {
         if (expressions == null || expressions.isEmpty()) {
             return this;
         }
@@ -33,7 +32,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         ImmutableList.Builder<PathNode> builder = new ImmutableList.Builder<>(select.fetch().size() + expressions.size());
         builder.addAll(select.fetch().asList());
         EntityType entityType = metamodel.getEntity(fromType());
-        for (Path<T, ?> expression : expressions) {
+        for (PathRef<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
             Attribute attribute = entityPath.getAttribute(entityType);
             if (!attribute.isObject()) {
@@ -71,12 +70,12 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @Override
-    public <R> WhereStep<T, R> selectDistinct(PathRef<T, ? extends R> path) {
+    public <R> WhereStep<T, R> selectDistinct(PathRef<T, R> path) {
         return select(true, path);
     }
 
     @Override
-    public <R> WhereStep<T, R> select(PathRef<T, ? extends R> path) {
+    public <R> WhereStep<T, R> select(PathRef<T, R> path) {
         return select(false, path);
     }
 
@@ -85,23 +84,9 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
         return updateSelected(select);
     }
 
-    @Override
-    public WhereStep<T, Tuple> selectDistinct(Collection<PathRef<T, ?>> paths) {
-        ImmutableList<ExpressionNode> nodes = paths.stream()
-                .map(PathNode::of)
-                .collect(ImmutableList.collector(paths.size()));
-        return select(true, nodes);
-    }
-
     private WhereImpl<T, Tuple> select(boolean distinct, ImmutableList<ExpressionNode> expressionNodes) {
         SelectExpressions selected = new SelectExpressions(expressionNodes, distinct);
         return updateSelected(selected);
-    }
-
-    @Override
-    public WhereStep<T, Tuple> select(Collection<PathRef<T, ?>> paths) {
-        ImmutableList<ExpressionNode> mapping = PathNode.mapping(paths);
-        return select(false, mapping);
     }
 
     @Override
@@ -150,7 +135,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @Override
-    public WhereStep<T, Tuple> selectExprDistinct(Collection<? extends Expression<T, ?>> expressions) {
+    public WhereStep<T, Tuple> selectDistinct(Collection<? extends Expression<T, ?>> expressions) {
         return select(true, ExpressionNodes.mapping(expressions));
     }
 
@@ -200,7 +185,7 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @Override
-    public WhereStep<T, Tuple> selectExpr(Collection<? extends Expression<T, ?>> expressions) {
+    public WhereStep<T, Tuple> select(Collection<? extends Expression<T, ?>> expressions) {
         ImmutableList<ExpressionNode> nodes = ExpressionNodes.mapping(expressions);
         return select(false, nodes);
     }
@@ -212,92 +197,92 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @Override
-    public <A, B> WhereStep<T, Tuple2<A, B>> selectExpr(Expression<T, A> a, Expression<T, B> b) {
+    public <A, B> WhereStep<T, Tuple2<A, B>> select(Expression<T, A> a, Expression<T, B> b) {
         return selectTupleByExpr(false, a, b);
     }
 
     @Override
-    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c) {
+    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c) {
         return selectTupleByExpr(false, a, b, c);
     }
 
     @Override
-    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d) {
+    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d) {
         return selectTupleByExpr(false, a, b, c, d);
     }
 
     @Override
-    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e) {
+    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e) {
         return selectTupleByExpr(false, a, b, c, d, e);
     }
 
     @Override
-    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f) {
+    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f) {
         return selectTupleByExpr(false, a, b, c, d, e, f);
     }
 
     @Override
-    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g) {
+    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g) {
         return selectTupleByExpr(false, a, b, c, d, e, f, g);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h) {
+    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h) {
         return selectTupleByExpr(false, a, b, c, d, e, f, g, h);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i) {
+    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i) {
         return selectTupleByExpr(false, a, b, c, d, e, f, g, h, i);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j) {
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j) {
         return selectTupleByExpr(false, a, b, c, d, e, f, g, h, i, j);
     }
 
     @Override
-    public <A, B> WhereStep<T, Tuple2<A, B>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b) {
+    public <A, B> WhereStep<T, Tuple2<A, B>> selectDistinct(Expression<T, A> a, Expression<T, B> b) {
         return selectTupleByExpr(true, a, b);
     }
 
     @Override
-    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c) {
+    public <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c) {
         return selectTupleByExpr(true, a, b, c);
     }
 
     @Override
-    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d) {
+    public <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d) {
         return selectTupleByExpr(true, a, b, c, d);
     }
 
     @Override
-    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e) {
+    public <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e) {
         return selectTupleByExpr(true, a, b, c, d, e);
     }
 
     @Override
-    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f) {
+    public <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f) {
         return selectTupleByExpr(true, a, b, c, d, e, f);
     }
 
     @Override
-    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g) {
+    public <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g) {
         return selectTupleByExpr(true, a, b, c, d, e, f, g);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h) {
+    public <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h) {
         return selectTupleByExpr(true, a, b, c, d, e, f, g, h);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i) {
+    public <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i) {
         return selectTupleByExpr(true, a, b, c, d, e, f, g, h, i);
     }
 
     @Override
-    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j) {
+    public <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j) {
         return selectTupleByExpr(true, a, b, c, d, e, f, g, h, i, j);
     }
 
@@ -309,16 +294,16 @@ public class QueryBuilder<T> extends WhereImpl<T, T> implements Select<T>, Fetch
     }
 
     @Override
-    public <R> WhereStep<T, R> selectExprDistinct(Expression<T, R> expression) {
-        return select(true, expression);
+    public <R> WhereStep<T, R> selectDistinct(Expression<T, R> expression) {
+        return selectExpr(true, expression);
     }
 
     @Override
-    public <R> WhereStep<T, R> selectExpr(Expression<T, R> expression) {
-        return select(false, expression);
+    public <R> WhereStep<T, R> select(Expression<T, R> expression) {
+        return selectExpr(false, expression);
     }
 
-    protected <R> WhereStep<T, R> select(boolean distinct, Expression<T, R> expression) {
+    protected <R> WhereStep<T, R> selectExpr(boolean distinct, Expression<T, R> expression) {
         SelectExpression select = new SelectExpression(ExpressionNodes.getNode(expression), distinct);
         return updateSelected(select);
     }

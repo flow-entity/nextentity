@@ -22,27 +22,21 @@ public interface Select<T> extends FetchStep<T> {
     ///
     /// @param paths List of expressions
     /// @return Multi-row query condition construction step
-    WhereStep<T, Tuple> selectExpr(Collection<? extends Expression<T, ?>> paths);
+    WhereStep<T, Tuple> select(Collection<? extends Expression<T, ?>> paths);
 
     /// Select result of a single expression.
     ///
     /// @param expression Expression
     /// @param <R> Expression result type
     /// @return Multi-row query condition construction step
-    <R> WhereStep<T, R> selectExpr(Expression<T, R> expression);
+    <R> WhereStep<T, R> select(Expression<T, R> expression);
 
     /// Select result of a single path.
     ///
     /// @param path Path
     /// @param <R> Path result type
     /// @return Multi-row query condition construction step
-    <R> WhereStep<T, R> select(PathRef<T, ? extends R> path);
-
-    /// Select results of multiple paths.
-    ///
-    /// @param paths Collection of paths
-    /// @return Multi-row query condition construction step
-    WhereStep<T, Tuple> select(Collection<PathRef<T, ?>> paths);
+    <R> WhereStep<T, R> select(PathRef<T, R> path);
 
     /// Select results of two paths.
     ///
@@ -204,7 +198,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <A> First expression type
     /// @param <B> Second expression type
     /// @return Multi-row query condition construction step
-    <A, B> WhereStep<T, Tuple2<A, B>> selectExpr(Expression<T, A> a, Expression<T, B> b);
+    <A, B> WhereStep<T, Tuple2<A, B>> select(Expression<T, A> a, Expression<T, B> b);
 
     /// Select results of three expressions.
     ///
@@ -215,7 +209,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <B> Second expression type
     /// @param <C> Third expression type
     /// @return Multi-row query condition construction step
-    <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c);
+    <A, B, C> WhereStep<T, Tuple3<A, B, C>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c);
 
     /// Select results of four expressions.
     ///
@@ -228,7 +222,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <C> Third expression type
     /// @param <D> Fourth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d);
+    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d);
 
     /// Select results of five expressions.
     ///
@@ -243,7 +237,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <D> Fourth expression type
     /// @param <E> Fifth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e);
+    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e);
 
     /// Select results of six expressions.
     ///
@@ -260,7 +254,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <E> Fifth expression type
     /// @param <F> Sixth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f);
+    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f);
 
     /// Select results of seven expressions.
     ///
@@ -279,7 +273,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <F> Sixth expression type
     /// @param <G> Seventh expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g);
+    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g);
 
     /// Select results of eight expressions.
     ///
@@ -300,7 +294,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <G> Seventh expression type
     /// @param <H> Eighth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h);
+    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h);
 
     /// Select results of nine expressions.
     ///
@@ -323,7 +317,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <H> Eighth expression type
     /// @param <I> Ninth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i);
+    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i);
 
     /// Select results of ten expressions.
     ///
@@ -348,7 +342,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <I> Ninth expression type
     /// @param <J> Tenth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectExpr(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j);
+    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> select(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j);
 
     /// Select distinct projection results of the specified type.
     ///
@@ -361,27 +355,21 @@ public interface Select<T> extends FetchStep<T> {
     ///
     /// @param paths List of expressions
     /// @return Multi-row query condition construction step
-    WhereStep<T, Tuple> selectExprDistinct(Collection<? extends Expression<T, ?>> paths);
+    WhereStep<T, Tuple> selectDistinct(Collection<? extends Expression<T, ?>> paths);
 
     /// Select distinct result of a single expression.
     ///
     /// @param expression Expression
     /// @param <R> Expression result type
     /// @return Multi-row query condition construction step
-    <R> WhereStep<T, R> selectExprDistinct(Expression<T, R> expression);
+    <R> WhereStep<T, R> selectDistinct(Expression<T, R> expression);
 
     /// Select distinct result of a single path.
     ///
     /// @param path Path
     /// @param <R> Path result type
     /// @return Multi-row query condition construction step
-    <R> WhereStep<T, R> selectDistinct(PathRef<T, ? extends R> path);
-
-    /// Select distinct results of multiple paths.
-    ///
-    /// @param paths Collection of paths
-    /// @return Multi-row query condition construction step
-    WhereStep<T, Tuple> selectDistinct(Collection<PathRef<T, ?>> paths);
+    <R> WhereStep<T, R> selectDistinct(PathRef<T, R> path);
 
     /// Select distinct results of two paths.
     ///
@@ -543,7 +531,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <A> First expression type
     /// @param <B> Second expression type
     /// @return Multi-row query condition construction step
-    <A, B> WhereStep<T, Tuple2<A, B>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b);
+    <A, B> WhereStep<T, Tuple2<A, B>> selectDistinct(Expression<T, A> a, Expression<T, B> b);
 
     /// Select distinct results of three expressions.
     ///
@@ -554,7 +542,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <B> Second expression type
     /// @param <C> Third expression type
     /// @return Multi-row query condition construction step
-    <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c);
+    <A, B, C> WhereStep<T, Tuple3<A, B, C>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c);
 
     /// Select distinct results of four expressions.
     ///
@@ -567,7 +555,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <C> Third expression type
     /// @param <D> Fourth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d);
+    <A, B, C, D> WhereStep<T, Tuple4<A, B, C, D>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d);
 
     /// Select distinct results of five expressions.
     ///
@@ -582,7 +570,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <D> Fourth expression type
     /// @param <E> Fifth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e);
+    <A, B, C, D, E> WhereStep<T, Tuple5<A, B, C, D, E>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e);
 
     /// Select distinct results of six expressions.
     ///
@@ -599,7 +587,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <E> Fifth expression type
     /// @param <F> Sixth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f);
+    <A, B, C, D, E, F> WhereStep<T, Tuple6<A, B, C, D, E, F>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f);
 
     /// Select distinct results of seven expressions.
     ///
@@ -618,7 +606,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <F> Sixth expression type
     /// @param <G> Seventh expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g);
+    <A, B, C, D, E, F, G> WhereStep<T, Tuple7<A, B, C, D, E, F, G>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g);
 
     /// Select distinct results of eight expressions.
     ///
@@ -639,7 +627,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <G> Seventh expression type
     /// @param <H> Eighth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h);
+    <A, B, C, D, E, F, G, H> WhereStep<T, Tuple8<A, B, C, D, E, F, G, H>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h);
 
     /// Select distinct results of nine expressions.
     ///
@@ -662,7 +650,7 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <H> Eighth expression type
     /// @param <I> Ninth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i);
+    <A, B, C, D, E, F, G, H, I> WhereStep<T, Tuple9<A, B, C, D, E, F, G, H, I>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i);
 
     /// Select distinct results of ten expressions.
     ///
@@ -687,6 +675,6 @@ public interface Select<T> extends FetchStep<T> {
     /// @param <I> Ninth expression type
     /// @param <J> Tenth expression type
     /// @return Multi-row query condition construction step
-    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectExprDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j);
+    <A, B, C, D, E, F, G, H, I, J> WhereStep<T, Tuple10<A, B, C, D, E, F, G, H, I, J>> selectDistinct(Expression<T, A> a, Expression<T, B> b, Expression<T, C> c, Expression<T, D> d, Expression<T, E> e, Expression<T, F> f, Expression<T, G> g, Expression<T, H> h, Expression<T, I> i, Expression<T, J> j);
 
 }

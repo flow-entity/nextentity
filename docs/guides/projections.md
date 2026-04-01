@@ -240,7 +240,7 @@ List<Tuple2<Long, BigDecimal>> results = employeeRepository.query()
 ```java
 // 不同部门数量
 long distinctDeptCount = employeeRepository.query()
-    .selectExpr(Path.of(Employee::getDepartmentId).countDistinct())
+    .select(Path.of(Employee::getDepartmentId).countDistinct())
     .getSingle();
 ```
 
@@ -250,13 +250,13 @@ long distinctDeptCount = employeeRepository.query()
 
 ## 聚合投影
 
-使用 `Path.of()` 静态方法构建聚合表达式，配合 `selectExpr()` 方法：
+使用 `Path.of()` 静态方法构建聚合表达式，配合 `select()` 方法：
 
 ### Sum（求和）
 
 ```java
 BigDecimal totalSalary = employeeRepository.query()
-    .selectExpr(Path.of(Employee::getSalary).sum())
+    .select(Path.of(Employee::getSalary).sum())
     .where(Employee::getActive).eq(true)
     .getSingle();
 ```
@@ -267,7 +267,7 @@ BigDecimal totalSalary = employeeRepository.query()
 
 ```java
 Double avgSalary = employeeRepository.query()
-    .selectExpr(Path.of(Employee::getSalary).avg())
+    .select(Path.of(Employee::getSalary).avg())
     .where(Employee::getDepartmentId).eq(1L)
     .getSingle();
 ```
@@ -278,7 +278,7 @@ Double avgSalary = employeeRepository.query()
 
 ```java
 BigDecimal maxSalary = employeeRepository.query()
-    .selectExpr(Path.of(Employee::getSalary).max())
+    .select(Path.of(Employee::getSalary).max())
     .getSingle();
 ```
 
@@ -288,7 +288,7 @@ BigDecimal maxSalary = employeeRepository.query()
 
 ```java
 BigDecimal minSalary = employeeRepository.query()
-    .selectExpr(Path.of(Employee::getSalary).min())
+    .select(Path.of(Employee::getSalary).min())
     .where(Employee::getActive).eq(true)
     .getSingle();
 ```
@@ -305,7 +305,6 @@ long count = employeeRepository.query()
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`countAllEmployees` 方法)
 
-> **注意**：聚合表达式使用 `selectExpr()` 方法，而普通字段选择使用 `select()` 方法。
 
 ---
 
