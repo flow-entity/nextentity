@@ -2,11 +2,7 @@ package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.Select;
-import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.api.model.Tuple2;
-import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.api.model.Tuple4;
-import io.github.nextentity.api.model.Tuple5;
+import io.github.nextentity.api.model.*;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
@@ -601,17 +597,22 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 ));
     }
 
-    /// Calculate statistics per department
-    public Map<Long, DoubleSummaryStatistics> salaryStatsByDepartment() {
+    /// Calculate statistics per department using database-level aggregation
+    /// Returns Tuple6 containing: departmentId, count, sum, avg, max, min
+    public List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> salaryStatsByDepartment() {
         return query()
+                .selectExpr(
+                        Path.of(Employee::getDepartmentId),
+                        Path.of(Employee::getId).count(),
+                        Path.of(Employee::getSalary).sum(),
+                        Path.of(Employee::getSalary).avg(),
+                        Path.of(Employee::getSalary).max(),
+                        Path.of(Employee::getSalary).min()
+                )
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getSalary).isNotNull()
-                .getList()
-                .stream()
-                .collect(Collectors.groupingBy(
-                        Employee::getDepartmentId,
-                        Collectors.summarizingDouble(e -> e.getSalary().doubleValue())
-                ));
+                .groupBy(Employee::getDepartmentId)
+                .getList();
     }
 
     /// Select name and salary for analysis

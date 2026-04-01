@@ -229,62 +229,81 @@ Double distinctSum = employeeRepository.query()
 
 ## 分组统计
 
-NextEntity 在数据库层面完成聚合，分组可通过 Java Stream 处理：
+NextEntity 支持数据库层面的 GROUP BY 聚合，性能更优：
 
-### 按部门分组
+### 按部门分组（数据库聚合）
 
 ```java
-// 先在数据库查询并过滤
-List<Employee> employees = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .where(Employee::getDepartmentId).isNotNull()
-    .getList();
-
-// 在 Java 中分组统计
-Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
-    .collect(Collectors.groupingBy(
-        Employee::getDepartmentId,
-        Collectors.summarizingDouble(e -> e.getSalary() != null ? e.getSalary().doubleValue() : 0.0)
-    ));
+// 使用 selectExpr + groupBy 在数据库层面完成聚合
+// 返回 Tuple6: departmentId, count, sum, avg, max, min
+List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> statsByDept = 
+    employeeRepository.query()
+        .selectExpr(
+            Path.of(Employee::getDepartmentId),
+            Path.of(Employee::getId).count(),
+            Path.of(Employee::getSalary).sum(),
+            Path.of(Employee::getSalary).avg(),
+            Path.of(Employee::getSalary).max(),
+            Path.of(Employee::getSalary).min()
+        )
+        .where(Employee::getActive).eq(true)
+        .where(Employee::getSalary).isNotNull()
+        .groupBy(Employee::getDepartmentId)
+        .getList();
 
 // 结果分析
-for (Map.Entry<Long, DoubleSummaryStatistics> entry : statsByDept.entrySet()) {
-    Long deptId = entry.getKey();
-    DoubleSummaryStatistics stats = entry.getValue();
+for (Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal> tuple : statsByDept) {
+    Long deptId = tuple.v1();           // 部门 ID
+    Long count = tuple.v2();            // 人数
+    BigDecimal sum = tuple.v3();        // 总薪资
+    Double avg = tuple.v4();            // 平均薪资
+    BigDecimal max = tuple.v5();        // 最高薪资
+    BigDecimal min = tuple.v6();        // 最低薪资
+    
     System.out.println("部门 " + deptId + ": " +
-        "人数=" + stats.getCount() +
-        ", 总薪资=" + stats.getSum() +
-        ", 平均=" + stats.getAverage());
+        "人数=" + count +
+        ", 总薪资=" + sum +
+        ", 平均=" + avg +
+        ", 最高=" + max +
+        ", 最低=" + min);
 }
 ```
 
-### 按状态分组
+> 📍 **示例位置**: `EmployeeRepository.java` (`salaryStatsByDepartment` 方法)
+
+### 多字段分组
 
 ```java
-List<Employee> employees = employeeRepository.query()
+// 按部门和状态分组统计
+List<Tuple4<Long, EmployeeStatus, Long, Double>> stats = employeeRepository.query()
+    .selectExpr(
+        Path.of(Employee::getDepartmentId),
+        Path.of(Employee::getStatus),
+        Path.of(Employee::getId).count(),
+        Path.of(Employee::getSalary).avg()
+    )
     .where(Employee::getSalary).isNotNull()
+    .groupBy(Employee::getDepartmentId, Employee::getStatus)
+    .getList();
+```
+
+> 📍 **示例位置**: `GroupByStepMultipleParametersIntegrationTest.java` (`shouldGroupByThreePaths` 方法)
+
+### Java Stream 分组（备选方案）
+
+当需要灵活处理或数据量较小时，可使用 Java Stream：
+
+```java
+// 先查询数据，再在 Java 中分组
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
     .getList();
 
-Map<EmployeeStatus, List<Employee>> byStatus = employees.stream()
-    .collect(Collectors.groupingBy(Employee::getStatus));
-
-Map<EmployeeStatus, Double> avgByStatus = employees.stream()
-    .collect(Collectors.groupingBy(
-        Employee::getStatus,
-        Collectors.averagingDouble(e -> e.getSalary().doubleValue())
-    ));
+Map<Long, List<Employee>> byDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDepartmentId));
 ```
 
-### 多级分组
-
-```java
-// 先按部门，再按状态分组
-Map<Long, Map<EmployeeStatus, List<Employee>>> multiLevel = employees.stream()
-    .collect(Collectors.groupingBy(
-        Employee::getDepartmentId,
-        Collectors.groupingBy(Employee::getStatus)
-    ));
-```
+> 📍 **示例位置**: `EmployeeRepository.java` (`groupByDepartment` 方法)
 
 ---
 
@@ -335,27 +354,29 @@ boolean hasHighEarners = employeeRepository.query()
     .exist();
 ```
 
-### 5. 合理使用分组
+### 5. 优先使用数据库 GROUP BY
 
 ```java
-// 数据量小：先查询再分组
-List<Employee> employees = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .getList();
+// 推荐：数据库 GROUP BY（一条 SQL 完成聚合）
+List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> stats = 
+    employeeRepository.query()
+        .selectExpr(
+            Path.of(Employee::getDepartmentId),
+            Path.of(Employee::getId).count(),
+            Path.of(Employee::getSalary).sum(),
+            Path.of(Employee::getSalary).avg(),
+            Path.of(Employee::getSalary).max(),
+            Path.of(Employee::getSalary).min()
+        )
+        .groupBy(Employee::getDepartmentId)
+        .getList();
 
-Map<Long, Double> avgByDept = employees.stream()
+// 避免：Java Stream 分组（需要加载所有数据到内存）
+Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
     .collect(Collectors.groupingBy(
         Employee::getDepartmentId,
-        Collectors.averagingDouble(e -> e.getSalary().doubleValue())
+        Collectors.summarizingDouble(e -> e.getSalary().doubleValue())
     ));
-
-// 数据量大：按部门分别查询
-for (Long deptId : departmentIds) {
-    Double avg = employeeRepository.query()
-        .selectExpr(Path.of(Employee::getSalary).avg())
-        .where(Employee::getDepartmentId).eq(deptId)
-        .getSingle();
-}
 ```
 
 ### 6. 处理 NULL 值

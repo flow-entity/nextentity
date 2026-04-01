@@ -42,17 +42,16 @@ List<Employee> employees = employeeRepository.query()
 ### 使用方法引用
 
 ```java
-// 推荐：方法引用（类型安全）
+// 方法引用（类型安全）
 .where(Employee::getName).eq("John")
-
-// 不推荐：字符串（无类型检查）
-.where("name").eq("John")
 ```
 
 方法引用提供：
 - 编译时类型检查
 - IDE 自动补全
 - 重构安全
+
+> ⚠️ **注意**: 字符串形式的属性名（如 `.where("name")`）不被支持，必须使用方法引用。
 
 ---
 
