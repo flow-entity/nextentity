@@ -1081,7 +1081,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(results).hasSize(5);
@@ -1096,7 +1096,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
-                .limit(3);
+                .list(3);
 
         // Then
         assertThat(results).hasSize(3);

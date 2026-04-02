@@ -68,7 +68,7 @@ public class TuplesIntegrationTest {
             List<Tuple2<String, Double>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary)
                     .orderBy(Employee::getId).asc()
-                    .limit(5);
+                    .list(5);
 
             // Then
             assertThat(results).isNotEmpty();

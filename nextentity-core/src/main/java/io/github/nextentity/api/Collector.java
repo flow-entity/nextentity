@@ -8,25 +8,25 @@ import java.util.List;
 
 /// Query result collector interface.
 ///
-/// Provides terminal operations for retrieving results, plus windowed access
-/// helpers for offset/limit style queries.
+/// Provides terminal operations for retrieving results, including
+/// offset/limit style pagination queries.
 ///
 /// Usage examples:
 /// <pre>{@code
-/// // Basic query
+/// // Basic query - get all results
 /// List<User> users = repository.query()
 ///     .where(User::getStatus).eq("ACTIVE")
 ///     .list();
 ///
-/// // Top N results
+/// // Top N results - first 20 records
 /// List<User> users = repository.query()
 ///     .where(User::getStatus).eq("ACTIVE")
-///     .limit(20);
+///     .list(20);
 ///
-/// // Windowed results
+/// // Paginated results - skip 10, get next 20
 /// List<User> users = repository.query()
 ///     .where(User::getStatus).eq("ACTIVE")
-///     .window(10, 20);
+///     .list(10, 20);
 ///
 /// // With lock
 /// User user = repository.query()
@@ -61,26 +61,26 @@ public interface Collector<T> {
     /// @return List of all results
     List<T> list();
 
-    /// Gets the first {@code limit} results.
+    /// Gets the first {@code limit} results (offset = 0).
     ///
-    /// @param limit Maximum result count
-    /// @return Windowed result list starting at offset 0
-    default List<T> limit(int limit) {
-        return window(0, limit);
+    /// @param limit Maximum number of results to return
+    /// @return List of results
+    default List<T> list(int limit) {
+        return list(0, limit);
     }
 
-    /// Gets results using the specified offset and limit window.
+    /// Gets results with specified offset and limit.
     ///
     /// @param offset Number of records to skip
-    /// @param limit Maximum result count
-    /// @return Windowed result list
-    List<T> window(int offset, int limit);
+    /// @param limit Maximum number of results to return
+    /// @return List of results
+    List<T> list(int offset, int limit);
 
     /// Gets the first result.
     ///
     /// @return First result, null if not exists
     default T first() {
-        List<T> list = limit(1);
+        List<T> list = list(1);
         return list.isEmpty() ? null : list.getFirst();
     }
 
@@ -89,7 +89,7 @@ public interface Collector<T> {
     /// @return Single result, null if not exists
     /// @throws IllegalStateException If multiple results found
     default T single() {
-        List<T> list = window(0, 2);
+        List<T> list = list(0, 2);
         if (list.size() > 1) {
             throw new IllegalStateException("found more than one");
         }
@@ -106,7 +106,7 @@ public interface Collector<T> {
         if (count <= offset) {
             return new SliceImpl<>(ImmutableList.of(), count, offset, limit);
         }
-        return new SliceImpl<>(window(offset, limit), count, offset, limit);
+        return new SliceImpl<>(list(offset, limit), count, offset, limit);
     }
 
     /// Converts the query to a subquery builder.

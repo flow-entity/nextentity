@@ -27,9 +27,9 @@ NextEntity 是一个类型安全的 SQL DSL 框架，提供：
 
 ## 环境要求
 
-| 组件 | 版本 |
+| 组件 | 版本   |
 |------|------|
-| Java | 25+ |
+| Java | 25+  |
 | Spring Boot | 4.0+ |
 
 ---
@@ -98,7 +98,7 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java` (完整实体定义)
+> 📍 **示例位置**: `entity/Employee.java`
 
 ### 定义枚举
 
@@ -124,39 +124,16 @@ public enum EmployeeStatus {
 继承 `AbstractRepository` 并使用构造器注入：
 
 ```java
-// Employee Repository
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
         super(entityManager, jdbcTemplate);
     }
-
-    @Override
-    public Select<Employee> query() {
-        return super.query();
-    }
-
-    // 自动继承所有 CRUD 和查询方法
-}
-
-// Department Repository
-@Repository
-public class DepartmentRepository extends AbstractRepository<Department, Long> {
-
-    public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
-
-    @Override
-    public Select<Department> query() {
-        return super.query();
-    }
 }
 ```
 
-> 📍 **示例位置**: `repository/EmployeeRepository.java` (Employee Repository 定义)
-> 📍 **示例位置**: `repository/DepartmentRepository.java` (Department Repository 定义)
+> 📍 **示例位置**: `repository/EmployeeRepository.java`
 
 ### PersistableRepository
 
@@ -185,7 +162,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 }
 ```
 
-> 📍 **示例位置**: `repository/ProductRepository.java` (Product Repository 定义)
+> 📍 **示例位置**: `repository/ProductRepository.java`
 
 ---
 
@@ -195,23 +172,23 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 
 ```java
 // 查询全部
-List<Employee> employees = employeeRepository.query().getList();
+List<Employee> employees = employeeRepository.query().list();
 
 // 按 ID 查询
 Employee employee = employeeRepository.query()
     .where(Employee::getId).eq(id)
-    .getFirst();
+    .first();
 
 // 条件查询
 List<Employee> activeEmployees = employeeRepository.query()
     .where(Employee::getActive).eq(true)
     .orderBy(Employee::getName).asc()
-    .getList();
+    .list();
 
 // 范围查询
 List<Employee> employeesBySalary = employeeRepository.query()
     .where(Employee::getSalary).between(BigDecimal.valueOf(40000.0), BigDecimal.valueOf(80000.0))
-    .getList();
+    .list();
 ```
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`findAllEmployees`, `findEmployeeById`, `findActiveEmployees`, `findBySalaryBetween` 方法)
@@ -247,9 +224,6 @@ employeeRepository.delete(emp);
 // 批量删除
 employeeRepository.deleteAll(employees);
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`insertSingleEmployee` 方法)
-> 📍 **示例位置**: `EmployeeRepository.java` (`insertMultipleEmployees` 方法)
 
 ---
 

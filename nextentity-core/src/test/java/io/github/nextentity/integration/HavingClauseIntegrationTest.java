@@ -296,7 +296,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .limit(2);
+                .list(2);
 
         // Then
         assertThat(results).hasSize(2);
@@ -316,7 +316,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .limit(2);
+                .list(2);
 
         // Then
         assertThat(results).hasSize(2);
@@ -332,7 +332,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .window(1, 2);
+                .list(1, 2);
 
         // Then
         assertThat(results).isNotEmpty();

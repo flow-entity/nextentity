@@ -133,7 +133,7 @@ public class SlicePaginationIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(3, 5);
+                .list(3, 5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -149,7 +149,7 @@ public class SlicePaginationIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -170,7 +170,7 @@ public class SlicePaginationIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(5, TOTAL_EMPLOYEES);
+                .list(5, TOTAL_EMPLOYEES);
 
         // Then
         assertThat(employees).hasSize(TOTAL_EMPLOYEES - 5);

@@ -144,7 +144,7 @@ public class FetchStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment, Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).hasSize(5);

@@ -276,7 +276,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 10)
+                        .lock(LockModeType.PESSIMISTIC_READ).list(2, 10)
         );
 
         // Then
@@ -295,7 +295,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_WRITE).window(1, 10)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).list(1, 10)
         );
 
         // Then
@@ -334,7 +334,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_READ).limit(3)
+                        .lock(LockModeType.PESSIMISTIC_READ).list(3)
         );
 
         // Then
@@ -352,7 +352,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_WRITE).limit(2)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).list(2)
         );
 
         // Then
@@ -410,7 +410,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 1).getFirst()
+                        .lock(LockModeType.PESSIMISTIC_READ).list(2, 1).getFirst()
         );
 
         // Then
@@ -491,7 +491,7 @@ public class CollectorLockModeMethodsIntegrationTest {
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).lt(5L)
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_READ).window(1, 10)
+                        .lock(LockModeType.PESSIMISTIC_READ).list(1, 10)
         );
 
         // Then

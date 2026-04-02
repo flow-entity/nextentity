@@ -4,7 +4,6 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
@@ -163,7 +162,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     }
 
     @Override
-    public List<U> window(int offset, int limit) {
+    public List<U> list(int offset, int limit) {
         return queryExecutor.getList(buildQueryStructure(offset, limit));
     }
 
@@ -259,7 +258,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         }
 
         @Override
-        public Expression<X, List<U>> window(int offset, int maxResult) {
+        public Expression<X, List<U>> slice(int offset, int maxResult) {
             QueryStructure structure = new QueryStructure(
                     queryStructure.select(),
                     queryStructure.from(),
@@ -269,38 +268,6 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                     queryStructure.having(),
                     offset,
                     maxResult,
-                    null
-            );
-            return new SimpleExpressionImpl<>(structure);
-        }
-
-        @Override
-        public Expression<X, U> getSingle(int offset) {
-            QueryStructure structure = new QueryStructure(
-                    queryStructure.select(),
-                    queryStructure.from(),
-                    queryStructure.where(),
-                    queryStructure.groupBy(),
-                    queryStructure.orderBy(),
-                    queryStructure.having(),
-                    offset,
-                    2,
-                    null
-            );
-            return new SimpleExpressionImpl<>(structure);
-        }
-
-        @Override
-        public Expression<X, U> getFirst(int offset) {
-            QueryStructure structure = new QueryStructure(
-                    queryStructure.select(),
-                    queryStructure.from(),
-                    queryStructure.where(),
-                    queryStructure.groupBy(),
-                    queryStructure.orderBy(),
-                    queryStructure.having(),
-                    offset,
-                    1,
                     null
             );
             return new SimpleExpressionImpl<>(structure);

@@ -95,62 +95,6 @@ class QueryConditionsIntegrationTest extends BaseIntegrationTest {
     class NumericComparisonTests {
 
         @Test
-        @DisplayName("Should find employees with salary greater than threshold")
-        void shouldFindBySalaryGreaterThan() {
-            // Given
-            BigDecimal threshold = new BigDecimal("70000.00");
-
-            // When
-            List<Employee> employees = employeeRepository.findBySalaryGreaterThan(threshold);
-
-            // Then
-            assertThat(employees).isNotEmpty();
-            assertThat(employees).allMatch(e -> e.getSalary().compareTo(threshold) > 0);
-        }
-
-        @Test
-        @DisplayName("Should find employees with salary greater or equal")
-        void shouldFindBySalaryGreaterOrEqual() {
-            // Given
-            BigDecimal threshold = new BigDecimal("60000.00");
-
-            // When
-            List<Employee> employees = employeeRepository.findBySalaryGreaterOrEqual(threshold);
-
-            // Then
-            assertThat(employees).isNotEmpty();
-            assertThat(employees).allMatch(e -> e.getSalary().compareTo(threshold) >= 0);
-        }
-
-        @Test
-        @DisplayName("Should find employees with salary less than threshold")
-        void shouldFindBySalaryLessThan() {
-            // Given
-            BigDecimal threshold = new BigDecimal("60000.00");
-
-            // When
-            List<Employee> employees = employeeRepository.findBySalaryLessThan(threshold);
-
-            // Then
-            assertThat(employees).isNotEmpty();
-            assertThat(employees).allMatch(e -> e.getSalary().compareTo(threshold) < 0);
-        }
-
-        @Test
-        @DisplayName("Should find employees with salary less or equal")
-        void shouldFindBySalaryLessOrEqual() {
-            // Given
-            BigDecimal threshold = new BigDecimal("65000.00");
-
-            // When
-            List<Employee> employees = employeeRepository.findBySalaryLessOrEqual(threshold);
-
-            // Then
-            assertThat(employees).isNotEmpty();
-            assertThat(employees).allMatch(e -> e.getSalary().compareTo(threshold) <= 0);
-        }
-
-        @Test
         @DisplayName("Should find employees with salary between range")
         void shouldFindBySalaryBetween() {
             // Given
@@ -164,22 +108,6 @@ class QueryConditionsIntegrationTest extends BaseIntegrationTest {
             assertThat(employees).isNotEmpty();
             assertThat(employees).allMatch(e ->
                     e.getSalary().compareTo(min) >= 0 && e.getSalary().compareTo(max) <= 0);
-        }
-
-        @Test
-        @DisplayName("Should find employees with salary not between range")
-        void shouldFindBySalaryNotBetween() {
-            // Given
-            BigDecimal min = new BigDecimal("55000.00");
-            BigDecimal max = new BigDecimal("75000.00");
-
-            // When
-            List<Employee> employees = employeeRepository.findBySalaryNotBetween(min, max);
-
-            // Then
-            assertThat(employees).isNotEmpty();
-            assertThat(employees).allMatch(e ->
-                    e.getSalary().compareTo(min) < 0 || e.getSalary().compareTo(max) > 0);
         }
     }
 

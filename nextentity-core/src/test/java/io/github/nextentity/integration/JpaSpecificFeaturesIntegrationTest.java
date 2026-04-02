@@ -46,7 +46,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .lock(LockModeType.PESSIMISTIC_READ).limit(1)
+                    .lock(LockModeType.PESSIMISTIC_READ).list(1)
                     .get(0);
 
             // Then
@@ -67,7 +67,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .lock(LockModeType.PESSIMISTIC_WRITE).limit(1)
+                    .lock(LockModeType.PESSIMISTIC_WRITE).list(1)
                     .get(0);
 
             // Then
@@ -88,7 +88,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .lock(LockModeType.OPTIMISTIC).limit(1)
+                    .lock(LockModeType.OPTIMISTIC).list(1)
                     .get(0);
 
             // Then
@@ -108,7 +108,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT).limit(1)
+                    .lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT).list(1)
                     .get(0);
             // Then
             assertThat(entity).isNotNull();
@@ -125,7 +125,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When
         LockableEntity entity = context.queryLockableEntities()
                 .where(LockableEntity::getId).eq(1L)
-                .window(0, 1)
+                .list(0, 1)
                 .get(0);
 
         // Then
@@ -188,7 +188,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When - Lock and update
             LockableEntity locked = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(5001L)
-                    .lock(LockModeType.PESSIMISTIC_WRITE).limit(1)
+                    .lock(LockModeType.PESSIMISTIC_WRITE).list(1)
                     .get(0);
 
             locked.setName("Updated After Lock");
@@ -218,7 +218,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             List<LockableEntity> entities = context.queryLockableEntities()
                     .where(LockableEntity::getId).lt(4L)
                     .orderBy(LockableEntity::getId).asc()
-                    .lock(LockModeType.PESSIMISTIC_READ).limit(3);
+                    .lock(LockModeType.PESSIMISTIC_READ).list(3);
 
             // Then
             assertThat(entities).hasSize(3);

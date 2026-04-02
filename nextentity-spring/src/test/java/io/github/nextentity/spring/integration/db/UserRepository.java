@@ -67,11 +67,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public List<User> getList(int offset, int maxResult, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).window(offset, maxResult);
+        return getQuery().lock(lockModeType).list(offset, maxResult);
     }
 
     public List<User> getList(int offset, int maxResult) {
-        return getQuery().window(offset, maxResult);
+        return getQuery().list(offset, maxResult);
     }
 
     public boolean exists() {
@@ -83,11 +83,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public User getSingle(int offset) {
-        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User getSingle(int offset, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().lock(lockModeType).list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User getFirst(LockModeType lockModeType) {
@@ -103,7 +103,7 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public User single(int offset) {
-        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User first(LockModeType lockModeType) {
@@ -111,7 +111,7 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public List<User> limit(int limit) {
-        return getQuery().limit(limit);
+        return getQuery().list(limit);
     }
 
     public Collector<User> lock(LockModeType lockModeType) {
@@ -119,7 +119,7 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public User single(int offset, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().lock(lockModeType).list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public Slice<User> slice(int offset, int limit) {
@@ -133,11 +133,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public boolean exist(int offset) {
-        return !getQuery().window(offset, 1).isEmpty();
+        return !getQuery().list(offset, 1).isEmpty();
     }
 
     public User getFirst(int offset, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().lock(lockModeType).list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public List<User> getList() {
@@ -153,11 +153,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public List<User> offset(int offset, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).window(offset, Integer.MAX_VALUE);
+        return getQuery().lock(lockModeType).list(offset, Integer.MAX_VALUE);
     }
 
     public User first(int offset) {
-        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User single(LockModeType lockModeType) {
@@ -169,7 +169,7 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public List<User> limit(int limit, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).limit(limit);
+        return getQuery().lock(lockModeType).list(limit);
     }
 
     public User getFirst() {
@@ -181,11 +181,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     }
 
     public User first(int offset, LockModeType lockModeType) {
-        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().lock(lockModeType).list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User getFirst(int offset) {
-        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
+        return getQuery().list(offset, 1).stream().findFirst().orElse(null);
     }
 
     public BaseWhereStep<User, User> where(Expression<User, Boolean> predicate) {

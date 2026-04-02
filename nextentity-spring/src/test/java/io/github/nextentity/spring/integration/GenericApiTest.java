@@ -63,7 +63,7 @@ public class GenericApiTest {
         User single = userQuery
                 .where(User::getId).eq(0)
                 .orderBy(User::getId).asc()
-                .window(10, 1).stream().findFirst().orElse(null);
+                .list(10, 1).stream().findFirst().orElse(null);
         log.info("{}", single);
         List<User> dbList = userQuery
                 .where(User::getRandomNumber).ne(1)
@@ -1552,13 +1552,13 @@ public class GenericApiTest {
     public void testResultBuilder(UserRepository userQuery) {
         List<User> resultList = userQuery
                 .orderBy(User::getId)
-                .window(5, 10);
+                .list(5, 10);
         List<User> subList = userQuery.users().subList(5, 5 + 10);
         assertEquals(resultList, subList);
 
         List<Integer> userIds = userQuery.select(User::getId)
                 .orderBy(User::getId)
-                .window(5, 10);
+                .list(5, 10);
         List<Integer> subUserIds = userQuery.users().subList(5, 5 + 10)
                 .stream().map(User::getId)
                 .collect(Collectors.toList());
@@ -1588,7 +1588,7 @@ public class GenericApiTest {
 
         first = userQuery
                 .orderBy(User::getId)
-                .window(10, 1).stream().findFirst().orElse(null);
+                .list(10, 1).stream().findFirst().orElse(null);
         assertEquals(first, userQuery.users().get(10));
 
         assertTrue(userQuery.exist());

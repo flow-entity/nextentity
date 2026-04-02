@@ -104,7 +104,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // substring(1) returns characters starting from position 1 (0-indexed)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).substring(1).length().gt(2)
-                .limit(5);
+                .list(5);
 
         // Then - should find employees with names longer than 3 characters
         assertThat(employees).isNotEmpty();
@@ -120,7 +120,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - use substring(2) to skip first 2 characters and check length
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).substring(2).length().gt(1)
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -291,7 +291,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // Use mod with integer value to find employees with even salary thousands
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).modIfNotNull(2L).eq(0L)
-                .limit(5);
+                .list(5);
 
         // Then - should find employees with even IDs
         assertThat(employees).isNotEmpty();
@@ -308,7 +308,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // With null, mod is skipped, so we compare id > 0
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).modIfNotNull(null).gt(0L)
-                .limit(5);
+                .list(5);
 
         // Then - should find employees with id > 0
         assertThat(employees).isNotEmpty();

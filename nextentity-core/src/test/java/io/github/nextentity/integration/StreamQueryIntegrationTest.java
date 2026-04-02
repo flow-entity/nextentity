@@ -47,7 +47,7 @@ public class StreamQueryIntegrationTest {
     @DisplayName("Should get employees with limit")
     void shouldGetEmployeesWithLimit(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.queryEmployees().limit(5);
+        List<Employee> employees = context.queryEmployees().list(5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -60,7 +60,7 @@ public class StreamQueryIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(5, 10);
+                .list(5, 10);
 
         // Then
         assertThat(employees).hasSize(7);
@@ -74,7 +74,7 @@ public class StreamQueryIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(2, 3);
+                .list(2, 3);
 
         // Then
         assertThat(employees).hasSize(3);
@@ -120,7 +120,7 @@ public class StreamQueryIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(2, 1).stream().findFirst().orElse(null);
+                .list(2, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(employee).isNotNull();
@@ -228,7 +228,7 @@ public class StreamQueryIntegrationTest {
     void shouldExistWithOffset(IntegrationTestContext context) {
         // When
         boolean exists1 = context.queryEmployees().exists();
-        boolean exists2 = !context.queryEmployees().window(100, 1).isEmpty();
+        boolean exists2 = !context.queryEmployees().list(100, 1).isEmpty();
 
         // Then
         assertThat(exists1).isTrue();
@@ -246,7 +246,7 @@ public class StreamQueryIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
-                .limit(3);
+                .list(3);
 
         // Then
         assertThat(employees).hasSize(3);
@@ -263,7 +263,7 @@ public class StreamQueryIntegrationTest {
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getSalary).gt(60000.0)
                 .orderBy(Employee::getName).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).isNotEmpty();

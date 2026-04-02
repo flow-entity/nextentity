@@ -114,7 +114,7 @@ public class EmployeeService {
     public List<Employee> findActive() {
         return employeeRepository.query()
             .where(Employee::getActive).eq(true)
-            .getList();
+            .list();
     }
 }
 ```
@@ -141,7 +141,7 @@ public class EmployeeService {
 
     @Transactional(readOnly = true)
     public List<Employee> findAll() {
-        return employeeRepository.query().getList();
+        return employeeRepository.query().list();
     }
 }
 ```

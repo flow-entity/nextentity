@@ -82,21 +82,15 @@ public class NextEntityExampleApplication {
         System.out.println("--- Basic Queries ---");
 
         // Find all employees
-        List<Employee> allEmployees = employeeRepository.query()
-                .orderBy(Employee::getName).asc()
-                .list();
+        List<Employee> allEmployees = employeeRepository.findAllEmployees();
         System.out.println("All employees: " + allEmployees.size());
 
         // Find by ID
-        Employee employee = employeeRepository.query()
-                .where(Employee::getId).eq(1L)
-                .first();
+        Employee employee = employeeRepository.findEmployeeById(1L);
         System.out.println("Employee with ID 1: " + (employee != null ? employee.getName() : "not found"));
 
         // Find by department
-        List<Employee> engineering = employeeRepository.query()
-                .where(Employee::getDepartmentId).eq(1L)
-                .list();
+        List<Employee> engineering = employeeRepository.findByDepartmentId(1L);
         System.out.println("Engineering employees: " + engineering.size());
 
         System.out.println();
@@ -105,29 +99,20 @@ public class NextEntityExampleApplication {
     private void demonstrateConditions(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
         System.out.println("--- Query Conditions ---");
 
-        // Multiple conditions
-        List<Employee> activeHighEarners = employeeRepository.query()
-                .where(Employee::getActive).eq(true)
-                .where(Employee::getSalary).gt(BigDecimal.valueOf(70000.0))
-                .list();
-        System.out.println("Active employees earning > 70k: " + activeHighEarners.size());
+        // Active high earners
+        List<Employee> activeHighEarners = employeeRepository.findActiveHighEarners();
+        System.out.println("Active employees earning > 50k: " + activeHighEarners.size());
 
         // IN clause
-        List<Employee> specificStatuses = employeeRepository.query()
-                .where(Employee::getStatus).in(EmployeeStatus.ACTIVE, EmployeeStatus.ON_LEAVE)
-                .list();
+        List<Employee> specificStatuses = employeeRepository.findByStatuses(EmployeeStatus.ACTIVE, EmployeeStatus.ON_LEAVE);
         System.out.println("Active or on leave: " + specificStatuses.size());
 
         // Between
-        List<Employee> salaryRange = employeeRepository.query()
-                .where(Employee::getSalary).between(BigDecimal.valueOf(50000.0), BigDecimal.valueOf(80000.0))
-                .list();
+        List<Employee> salaryRange = employeeRepository.findBySalaryBetween(BigDecimal.valueOf(50000.0), BigDecimal.valueOf(80000.0));
         System.out.println("Salary between 50k-80k: " + salaryRange.size());
 
         // String contains
-        List<Employee> nameContains = employeeRepository.query()
-                .where(Employee::getName).contains("John")
-                .list();
+        List<Employee> nameContains = employeeRepository.findByNameContaining("John");
         System.out.println("Name contains 'John': " + nameContains.size());
 
         System.out.println();
@@ -137,17 +122,11 @@ public class NextEntityExampleApplication {
         System.out.println("--- Projections ---");
 
         // Single field
-        List<String> names = employeeRepository.query()
-                .select(Employee::getName)
-                .orderBy(Employee::getName).asc()
-                .list();
+        List<String> names = employeeRepository.findEmployeeNames();
         System.out.println("Employee names: " + names);
 
         // Tuple projection
-        List<?> nameSalaries = employeeRepository.query()
-                .select(Employee::getName, Employee::getSalary)
-                .orderBy(Employee::getSalary).desc()
-                .list();
+        var nameSalaries = employeeRepository.findNameAndSalary();
         System.out.println("Name-Salary pairs: " + nameSalaries.size() + " records");
 
         System.out.println();
@@ -157,21 +136,15 @@ public class NextEntityExampleApplication {
         System.out.println("--- Pagination ---");
 
         // Page 1
-        List<Employee> page1 = employeeRepository.query()
-                .orderBy(Employee::getId).asc()
-                .limit(3);
+        List<Employee> page1 = employeeRepository.findPage(0, 3);
         System.out.println("Page 1 (first 3): " + page1.stream().map(Employee::getName).toList());
 
         // Page 2
-        List<Employee> page2 = employeeRepository.query()
-                .orderBy(Employee::getId).asc()
-                .window(3, 3);
+        List<Employee> page2 = employeeRepository.findPage(1, 3);
         System.out.println("Page 2 (next 3): " + page2.stream().map(Employee::getName).toList());
 
         // Top earners
-        List<Employee> topEarners = employeeRepository.query()
-                .orderBy(Employee::getSalary).desc()
-                .limit(3);
+        List<Employee> topEarners = employeeRepository.findTopEarners(3);
         System.out.println("Top 3 earners: " + topEarners.stream().map(Employee::getName).toList());
 
         System.out.println();

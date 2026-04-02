@@ -576,44 +576,10 @@ public class WhereImplIntegrationTest {
             var sliceExpr = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
                     .toSubQuery()
-                    .window(0, 10);
+                    .slice(0, 10);
 
             // Then
             assertThat(sliceExpr).isNotNull();
-        }
-
-        /**
-         * Test objective: Verify that subquery getFirst works.
-         */
-        @ParameterizedTest
-        @ArgumentsSource(IntegrationTestProvider.class)
-        @DisplayName("Should create getFirst expression from subquery")
-        void shouldCreateGetFirstExpression_FromSubquery(IntegrationTestContext context) {
-            // When
-            var firstExpr = context.queryEmployees()
-                    .where(Employee::getActive).eq(true)
-                    .toSubQuery()
-                    .getFirst();
-
-            // Then
-            assertThat(firstExpr).isNotNull();
-        }
-
-        /**
-         * Test objective: Verify that subquery getSingle works.
-         */
-        @ParameterizedTest
-        @ArgumentsSource(IntegrationTestProvider.class)
-        @DisplayName("Should create getSingle expression from subquery")
-        void shouldCreateGetSingleExpression_FromSubquery(IntegrationTestContext context) {
-            // When
-            var singleExpr = context.queryEmployees()
-                    .where(Employee::getActive).eq(true)
-                    .toSubQuery()
-                    .getSingle();
-
-            // Then
-            assertThat(singleExpr).isNotNull();
         }
     }
 }

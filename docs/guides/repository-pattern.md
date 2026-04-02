@@ -85,28 +85,28 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     // 查询全部
     public List<Employee> findAllEmployees() {
-        return query().getList();
+        return query().list();
     }
 
     // 按 ID 查询
     public Employee findEmployeeById(Long id) {
         return query()
             .where(Employee::getId).eq(id)
-            .getFirst();
+            .first();
     }
 
     // 查询活跃员工
     public List<Employee> findActiveEmployees() {
         return query()
             .where(Employee::getActive).eq(true)
-            .getList();
+            .list();
     }
 
     // 按部门查询
     public List<Employee> findByDepartmentId(Long departmentId) {
         return query()
             .where(Employee::getDepartmentId).eq(departmentId)
-            .getList();
+            .list();
     }
 }
 ```
@@ -127,27 +127,27 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
             .where(Employee::getName).containsIfNotEmpty(name)
             .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
             .where(Employee::getSalary).geIfNotNull(minSalary)
-            .getList();
+            .list();
     }
 
     // 范围查询
     public List<Employee> findBySalaryBetween(BigDecimal min, BigDecimal max) {
         return query()
             .where(Employee::getSalary).between(min, max)
-            .getList();
+            .list();
     }
 
     // IN 查询
     public List<Employee> findByStatus(EmployeeStatus status) {
         return query()
             .where(Employee::getStatus).eq(status)
-            .getList();
+            .list();
     }
 
     public List<Employee> findByIds(Long... ids) {
         return query()
             .where(Employee::getId).in(ids)
-            .getList();
+            .list();
     }
 }
 ```
@@ -167,8 +167,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         int offset = pageNumber * pageSize;
         return query()
             .orderBy(Employee::getId).asc()
-            .offset(offset).limit(pageSize)
-            .getList();
+            .list(offset, pageSize);
     }
 
     // Slice 分页
@@ -194,7 +193,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     public List<Employee> findOrderedByNameAsc() {
         return query()
             .orderBy(Employee::getName).asc()
-            .getList();
+            .list();
     }
 
     // 多字段排序
@@ -202,7 +201,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query()
             .orderBy(Employee::getDepartmentId).asc()
             .orderBy(Employee::getSalary).desc()
-            .getList();
+            .list();
     }
 }
 ```
@@ -232,7 +231,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     public BigDecimal calculateTotalSalary() {
         return query()
             .select(path(Employee::getSalary).sum())
-            .getSingle();
+            .single();
     }
 }
 ```
@@ -265,39 +264,70 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 }
 ```
 
-这种写法更适合统一字段更新或大批量删除，因为它避免了“先查出实体，再逐个回写”的开销。
+这种写法更适合统一字段更新或大批量删除，因为它避免了"先查出实体，再逐个回写"的开销。
 
 ---
 
 ## 事务处理
 
-> **注意**：推荐在 Service 层使用 Spring 的 `@Transactional` 注解。
+> **重要**: 推荐在 Service 层使用 Spring 的 `@Transactional` 注解，Service 应调用 Repository 的公共方法，而非直接使用 `query()`。
+
+Service 层应该调用 Repository 提供的公共查询方法，而不是直接访问 `query()` 方法（`query()` 在 `AbstractRepository` 中是 `protected` 的）。
 
 ```java
 @Service
 public class EmployeeService {
 
+    private final EmployeeRepository employeeRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
+
+    // 正确做法：调用 Repository 的公共方法
     @Transactional
     public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
-        List<Employee> employees = employeeRepository.query()
+        employeeRepository.giveRaiseToDepartment(departmentId, percentage);
+    }
+
+    @Transactional
+    public void transferEmployees(List<Long> employeeIds, Long newDepartmentId) {
+        employeeRepository.transferEmployees(employeeIds, newDepartmentId);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Employee> findActiveEmployees() {
+        return employeeRepository.findActiveEmployees();
+    }
+}
+```
+
+如果需要自定义查询，应在 Repository 中添加公共方法：
+
+```java
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    // 在 Repository 内部使用 query()，对外提供公共接口
+    public List<Employee> findActiveEmployees() {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .list();
+    }
+
+    @Transactional
+    public List<Employee> giveRaiseToDepartment(Long departmentId, BigDecimal percentage) {
+        List<Employee> employees = query()
             .where(Employee::getDepartmentId).eq(departmentId)
-            .getList();
+            .list();
         employees.forEach(e -> {
             BigDecimal salary = e.getSalary();
             if (salary != null) {
                 e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
             }
         });
-        employeeRepository.updateAll(employees);
-    }
-
-    @Transactional
-    public void transferEmployees(List<Long> employeeIds, Long newDepartmentId) {
-        List<Employee> employees = employeeRepository.query()
-            .where(Employee::getId).in(employeeIds)
-            .getList();
-        employees.forEach(e -> e.setDepartmentId(newDepartmentId));
-        employeeRepository.updateAll(employees);
+        updateAll(employees);
+        return employees;
     }
 }
 ```

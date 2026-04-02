@@ -86,7 +86,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         // When
         boolean exists = !context.queryEmployees()
                 .orderBy(Employee::getId)
-                .window((int) totalCount + 10, 1).isEmpty();
+                .list((int) totalCount + 10, 1).isEmpty();
 
         // Then
         assertThat(exists).isFalse();
@@ -141,7 +141,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId)
-                .window(0, 5);
+                .list(0, 5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -179,7 +179,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(50000.0)
                 .orderBy(Employee::getId)
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).isNotEmpty();

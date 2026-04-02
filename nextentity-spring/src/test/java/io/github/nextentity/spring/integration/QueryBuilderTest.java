@@ -38,14 +38,14 @@ class QueryBuilderTest {
         List<Tuple2<Integer, Integer>> list = userQuery.selectDistinct(
                         User::getId, User::getRandomNumber)
                 // .orderBy(User::getId)
-                .window(10, 20);
+                .list(10, 20);
         log.info("{}", list);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select3(UserRepository userQuery) {
-        IUser first1 = userQuery.select(IUser.class).window(90, 1).stream().findFirst().orElse(null);
+        IUser first1 = userQuery.select(IUser.class).list(90, 1).stream().findFirst().orElse(null);
         log.info("{}", first1);
     }
 
@@ -73,8 +73,8 @@ class QueryBuilderTest {
     void select(UserRepository userQuery) {
 
         int offset = 90;
-        User f2 = userQuery.fetch(User::getParentUser).orderBy(User::getId).window(offset, 1).stream().findFirst().orElse(null);
-        IUser first1 = userQuery.select(IUser.class).orderBy(User::getId).window(offset, 1).stream().findFirst().orElse(null);
+        User f2 = userQuery.fetch(User::getParentUser).orderBy(User::getId).list(offset, 1).stream().findFirst().orElse(null);
+        IUser first1 = userQuery.select(IUser.class).orderBy(User::getId).list(offset, 1).stream().findFirst().orElse(null);
         Assertions.assertEquals(first1.getUsername(), f2.getUsername());
         Assertions.assertEquals(first1.getId(), f2.getId());
         Assertions.assertEquals(first1.getRandomNumber(), f2.getRandomNumber());
@@ -84,12 +84,12 @@ class QueryBuilderTest {
             Assertions.assertEquals(first1.getParentUser().randomNumber(), f2.getParentUser().getRandomNumber());
         }
 
-        User first3 = userQuery.fetch(User::getParentUser).window(offset, 1).stream().findFirst().orElse(null);
+        User first3 = userQuery.fetch(User::getParentUser).list(offset, 1).stream().findFirst().orElse(null);
         log.info("{}", first3);
         log.info("{}", first3.getParentUser());
         IUser.U first2 = userQuery.select(IUser.U.class)
                 .orderBy(User::getId)
-                .window(offset, 1).stream().findFirst().orElse(null);
+                .list(offset, 1).stream().findFirst().orElse(null);
         Assertions.assertEquals(first2.username(), f2.getUsername());
         Assertions.assertEquals(first2.id(), f2.getId());
         Assertions.assertEquals(first2.randomNumber(), f2.getRandomNumber());
@@ -941,12 +941,12 @@ class QueryBuilderTest {
 
         users = userQuery
                 .orderBy(User::getId)
-                .limit(10);
+                .list(10);
         assertEquals(users, userQuery.users().subList(0, 10));
 
         users = userQuery
                 .orderBy(User::getId)
-                .window(100, 15);
+                .list(100, 15);
         assertEquals(users, userQuery.users().subList(100, 115));
 
     }
@@ -1484,7 +1484,7 @@ class QueryBuilderTest {
                 .where(User::getId).le(10)
                 .orderBy(User::getId).asc()
                 .orderBy(User::getId)
-                .window(10, 1).stream().findFirst().orElse(null);
+                .list(10, 1).stream().findFirst().orElse(null);
         User user = userQuery.users().get(10);
         assertEquals(single, user);
         single = userQuery
@@ -1502,12 +1502,12 @@ class QueryBuilderTest {
         single = userQuery
                 .where(User::getId).le(10)
                 .orderBy(User::getId).asc()
-                .window(10, 1).stream().findFirst().orElse(null);
+                .list(10, 1).stream().findFirst().orElse(null);
         assertEquals(single, user);
 
         assertTrue(userQuery
                 .where(User::getId).le(10)
-                .window(11, 1).stream().findFirst().orElse(null) == null);
+                .list(11, 1).stream().findFirst().orElse(null) == null);
 
         Slice<User> slice = userQuery
                 .orderBy(User::getId)
@@ -1540,7 +1540,7 @@ class QueryBuilderTest {
         assertEquals(user, userQuery.users().getFirst());
         user = userQuery
                 .orderBy(User::getId)
-                .window(10, 1).stream().findFirst().orElse(null);
+                .list(10, 1).stream().findFirst().orElse(null);
         assertEquals(user, userQuery.users().get(10));
         user = userQuery
                 .orderBy(User::getId)
@@ -1548,7 +1548,7 @@ class QueryBuilderTest {
         assertEquals(user, userQuery.users().get(0));
         user = userQuery
                 .orderBy(User::getId)
-                .window(8, 1).stream().findFirst().orElse(null);
+                .list(8, 1).stream().findFirst().orElse(null);
         assertEquals(user, userQuery.users().get(8));
 
     }
@@ -1565,7 +1565,7 @@ class QueryBuilderTest {
             try {
                 User single = userQuery
                         .where(User::getId).le(10)
-                        .lock(lockModeType).window(10, 1).stream().findFirst().orElse(null);
+                        .lock(lockModeType).list(10, 1).stream().findFirst().orElse(null);
                 User user = userQuery.users().get(10);
                 assertEquals(single, user);
                 single = userQuery
@@ -1582,12 +1582,12 @@ class QueryBuilderTest {
 
                 single = userQuery
                         .where(User::getId).le(10)
-                        .window(10, 1).stream().findFirst().orElse(null);
+                        .list(10, 1).stream().findFirst().orElse(null);
                 assertEquals(single, user);
 
                 assertTrue(userQuery
                         .where(User::getId).le(10)
-                        .lock(lockModeType).window(11, 1).stream().findFirst().orElse(null) == null);
+                        .lock(lockModeType).list(11, 1).stream().findFirst().orElse(null) == null);
 
 
                 user = userQuery
@@ -1596,7 +1596,7 @@ class QueryBuilderTest {
                 assertEquals(user, userQuery.users().getFirst());
                 user = userQuery
                         .orderBy(User::getId)
-                        .lock(lockModeType).window(10, 1).stream().findFirst().orElse(null);
+                        .lock(lockModeType).list(10, 1).stream().findFirst().orElse(null);
                 assertEquals(user, userQuery.users().get(10));
                 user = userQuery
                         .orderBy(User::getId)
@@ -1604,7 +1604,7 @@ class QueryBuilderTest {
                 assertEquals(user, userQuery.users().get(0));
                 user = userQuery
                         .orderBy(User::getId)
-                        .lock(lockModeType).window(8, 1).stream().findFirst().orElse(null);
+                        .lock(lockModeType).list(8, 1).stream().findFirst().orElse(null);
                 assertEquals(user, userQuery.users().get(8));
 
                 user = userQuery.where(User::getId).eq(0)

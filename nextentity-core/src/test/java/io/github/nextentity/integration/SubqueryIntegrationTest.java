@@ -77,44 +77,10 @@ public class SubqueryIntegrationTest {
         var sliceExpr = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .toSubQuery()
-                .window(0, 5);
+                .slice(0, 5);
 
         // When - Just verify slice can be created
         assertThat(sliceExpr).isNotNull();
-    }
-
-    /**
-     * Tests subquery getSingle.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get single from subquery")
-    void shouldGetSingleFromSubquery(IntegrationTestContext context) {
-        // Given
-        var singleExpr = context.queryEmployees()
-                .where(Employee::getId).eq(1L)
-                .toSubQuery()
-                .getSingle();
-
-        // When - Just verify single can be created
-        assertThat(singleExpr).isNotNull();
-    }
-
-    /**
-     * Tests subquery getFirst.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get first from subquery")
-    void shouldGetFirstFromSubquery(IntegrationTestContext context) {
-        // Given
-        var firstExpr = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .toSubQuery()
-                .getFirst();
-
-        // When - Just verify first can be created
-        assertThat(firstExpr).isNotNull();
     }
 
     /**
@@ -372,7 +338,7 @@ public class SubqueryIntegrationTest {
         // Given - Get top 3 salary IDs
         List<Long> topSalaryIds = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
-                .limit(3)
+                .list(3)
                 .stream()
                 .map(Employee::getId)
                 .toList();

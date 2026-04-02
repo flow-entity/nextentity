@@ -318,7 +318,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertEquals(5, employees.size());
@@ -336,7 +336,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(5, 3);
+                .list(5, 3);
 
         // Then
         assertEquals(3, employees.size());

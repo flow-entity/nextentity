@@ -56,7 +56,7 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         Employee first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(2, 1).stream().findFirst().orElse(null);
+                .list(2, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(first).isNotNull();
@@ -76,7 +76,7 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         Employee first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window((int) totalCount + 10, 1).stream().findFirst().orElse(null);
+                .list((int) totalCount + 10, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(first).isNull();
@@ -151,7 +151,7 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         var first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(1, 1).stream().findFirst().orElse(null);
+                .list(1, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(first).isNotNull();
@@ -236,7 +236,7 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         boolean exists = !context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window((int) totalCount - 1, 1).isEmpty();
+                .list((int) totalCount - 1, 1).isEmpty();
 
         // Then
         assertThat(exists).isTrue();
@@ -255,7 +255,7 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         boolean exists = !context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window((int) totalCount + 10, 1).isEmpty();
+                .list((int) totalCount + 10, 1).isEmpty();
 
         // Then
         assertThat(exists).isFalse();

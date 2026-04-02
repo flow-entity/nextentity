@@ -133,7 +133,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .limit(3);
+                .list(3);
 
         // Then
         assertThat(employees).hasSize(3);
@@ -150,7 +150,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).hasSize(5);

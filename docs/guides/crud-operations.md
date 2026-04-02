@@ -29,8 +29,6 @@ employee.setActive(true);
 employeeRepository.insert(employee);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`insertSingleEmployee` 方法)
-
 生成的 SQL：
 
 ```sql
@@ -53,8 +51,6 @@ emp.setDepartmentId(1L);          // 外键
 employeeRepository.insert(emp);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (设置实体属性示例)
-
 ---
 
 ## Update 更新
@@ -65,7 +61,7 @@ employeeRepository.insert(emp);
 // 先查询
 Employee employee = employeeRepository.query()
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 
 // 修改属性
 employee.setSalary(BigDecimal.valueOf(65000.0));
@@ -74,8 +70,6 @@ employee.setEmail("john.new@company.com");
 // 更新
 employeeRepository.update(employee);
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`updateEmployeeSalary` 方法)
 
 生成的 SQL：
 
@@ -93,15 +87,13 @@ WHERE id = ?
 // 部分更新需要先查询再修改
 Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 
 if (emp != null) {
     emp.setSalary(newSalary);  // 只修改薪资
     employeeRepository.update(emp);  // 其他字段保持不变
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (更新策略示例)
 
 ### 按条件批量更新
 
@@ -115,8 +107,6 @@ int updated = employeeRepository.updateWhere()
     .execute();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`deactivateEmployeesByDepartment` 方法)
-
 这种方式更适合批量状态切换、标记删除、统一字段回填等场景。
 
 ---
@@ -129,15 +119,13 @@ int updated = employeeRepository.updateWhere()
 // 先查询
 Employee employee = employeeRepository.query()
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 
 // 删除
 if (employee != null) {
     employeeRepository.delete(employee);
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployee` 方法)
 
 生成的 SQL：
 
@@ -151,12 +139,10 @@ DELETE FROM employee WHERE id = ?
 // 查询后批量删除
 List<Employee> terminated = employeeRepository.query()
     .where(Employee::getStatus).eq(EmployeeStatus.TERMINATED)
-    .getList();
+    .list();
 
 employeeRepository.deleteAll(terminated);
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployeesByDepartment` 方法)
 
 ### 直接条件批量删除
 
@@ -167,8 +153,6 @@ int deleted = employeeRepository.deleteWhere()
     .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
     .execute();
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`deleteInactiveEmployees` 方法)
 
 ---
 
@@ -187,8 +171,6 @@ List<Employee> newEmployees = List.of(
 employeeRepository.insertAll(newEmployees);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`insertMultipleEmployees` 方法)
-
 生成的 SQL（JDBC 批量模式）：
 
 ```sql
@@ -205,7 +187,7 @@ INSERT INTO employee (id, name, email, ...) VALUES (?, ?, ?, ...)
 // 批量涨薪
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getDepartmentId).eq(1L)
-    .getList();
+    .list();
 
 employees.forEach(e -> {
     BigDecimal salary = e.getSalary();
@@ -217,8 +199,6 @@ employees.forEach(e -> {
 employeeRepository.updateAll(employees);
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`giveRaiseToDepartment` 方法)
-
 如果更新内容对所有匹配记录都相同，优先考虑 `updateWhere()`，SQL 更直接，内存占用也更低。
 
 ### 批量删除
@@ -227,12 +207,10 @@ employeeRepository.updateAll(employees);
 // 删除某部门所有员工
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getDepartmentId).eq(deptId)
-    .getList();
+    .list();
 
 employeeRepository.deleteAll(employees);
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployeesByDepartment` 方法)
 
 若只是按条件整批删除，优先使用 `deleteWhere()`，避免多一次查询和实体构建。
 
@@ -257,8 +235,6 @@ public class EmployeeService {
 }
 ```
 
-> 📍 **示例位置**: `service/EmployeeService.java` (`createEmployeeWithDepartment` 方法)
-
 ### Repository 内部事务
 
 对于 Repository 内部的事务操作，直接使用 Spring 的 `@Transactional` 注解：
@@ -272,7 +248,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         List<Employee> employees = query()
             .where(Employee::getDepartmentId).eq(departmentId)
             .where(Employee::getActive).eq(true)
-            .getList();
+            .list();
 
         employees.forEach(e -> {
             BigDecimal salary = e.getSalary();
@@ -284,35 +260,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`giveDepartmentRaise` 方法)
-
-### Spring @Transactional
-
-```java
-@Service
-public class EmployeeService {
-
-    @Transactional
-    public void transferEmployee(Long empId, Long newDeptId) {
-        Employee emp = employeeRepository.query()
-            .where(Employee::getId).eq(empId)
-            .getFirst();
-
-        if (emp != null) {
-            Long oldDeptId = emp.getDepartmentId();
-            emp.setDepartmentId(newDeptId);
-            employeeRepository.update(emp);
-
-            // 更新部门统计
-            updateDepartmentStats(oldDeptId);
-            updateDepartmentStats(newDeptId);
-        }
-    }
-}
-```
-
-> 📍 **示例位置**: `service/EmployeeService.java` (`transferEmployee` 方法)
 
 ---
 
@@ -336,21 +283,17 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java` (`version` 字段)
-
 ### 乐观锁行为
 
 ```java
 Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 
 emp.setSalary(BigDecimal.valueOf(65000.0));
 
 employeeRepository.update(emp);  // 自动检查版本号并递增
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (更新操作自动处理版本)
 
 生成的 SQL：
 
@@ -372,7 +315,7 @@ WHERE id = ? AND version = ?
 // 需要基于当前实体值计算时：查询后修改
 Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(id)
-    .getFirst();
+    .first();
 
 if (emp != null) {
     emp.setSalary(newSalary);
@@ -386,8 +329,6 @@ employeeRepository.updateWhere()
     .execute();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`updateEmployeeSalary`, `deactivateEmployeesByDepartment` 方法)
-
 ### 2. 使用批量操作提升性能
 
 ```java
@@ -400,58 +341,78 @@ for (Employee e : newEmployees) {
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`insertMultipleEmployees` 方法)
-
 ### 3. 合理使用事务
 
-```java
-// 使用 @Transactional 注解保证事务
-@Transactional
-public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
-    List<Employee> employees = query()
-        .where(Employee::getDepartmentId).eq(departmentId)
-        .where(Employee::getActive).eq(true)
-        .getList();
+在 Repository 中使用 `@Transactional` 注解，内部可使用 `query()` 方法：
 
-    employees.forEach(e -> {
-        BigDecimal salary = e.getSalary();
-        if (salary != null) {
-            e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
-        }
-    });
-    updateAll(employees);
+```java
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    @Transactional
+    public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
+        List<Employee> employees = query()
+            .where(Employee::getDepartmentId).eq(departmentId)
+            .where(Employee::getActive).eq(true)
+            .list();;
+
+        employees.forEach(e -> {
+            BigDecimal salary = e.getSalary();
+            if (salary != null) {
+                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
+            }
+        });
+        updateAll(employees);
+    }
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`giveDepartmentRaise` 方法)
 
 ### 4. 删除前检查关联
 
 ```java
-// 删除部门前检查是否有员工
-long empCount = employeeRepository.query()
-    .where(Employee::getDepartmentId).eq(deptId)
-    .count();
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-if (empCount == 0) {
-    departmentRepository.delete(dept);
+    public boolean canDeleteDepartment(Long deptId) {
+        long empCount = query()
+            .where(Employee::getDepartmentId).eq(deptId)
+            .count();
+        return empCount == 0;
+    }
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`hasEmployeesInDepartment`, `deleteDepartmentIfEmpty` 方法)
+Service 层调用：
+
+```java
+@Service
+public class DepartmentService {
+
+    @Transactional
+    public void deleteDepartmentIfEmpty(Long deptId) {
+        if (employeeRepository.canDeleteDepartment(deptId)) {
+            departmentRepository.delete(dept);
+        }
+    }
+}
+```
 
 ### 5. 使用 Optional 包装结果
 
+在 Repository 中提供 Optional 返回的方法：
+
 ```java
-public Optional<Employee> findEmployee(Long id) {
-    Employee emp = employeeRepository.query()
-        .where(Employee::getId).eq(id)
-        .getFirst();
-    return Optional.ofNullable(emp);
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    public Optional<Employee> findByIdOptional(Long id) {
+        Employee emp = query()
+            .where(Employee::getId).eq(id)
+            .first();;
+        return Optional.ofNullable(emp);
+    }
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findFirstActive` 方法)
 
 ---
 

@@ -71,13 +71,13 @@ public interface OrderOperator<T, U> extends OrderByStep<T, U> {
     }
 
     @Override
-    default List<U> limit(int limit) {
-        return asc().limit(limit);
+    default List<U> list(int limit) {
+        return asc().list(limit);
     }
 
     @Override
-    default List<U> window(int offset, int limit) {
-        return asc().window(offset, limit);
+    default List<U> list(int offset, int limit) {
+        return asc().list(offset, limit);
     }
 
     @Override

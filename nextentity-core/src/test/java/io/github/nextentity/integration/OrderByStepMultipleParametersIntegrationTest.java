@@ -260,7 +260,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary, Employee::getName)
                 .desc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).hasSize(5);

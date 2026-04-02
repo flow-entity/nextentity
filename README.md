@@ -94,7 +94,7 @@ public class EmployeeService {
         return employeeRepository.query()
             .where(Employee::getActive).eq(true)
             .orderBy(Employee::getName).asc()
-            .getList();
+            .list();
     }
 
     // 插入
@@ -106,7 +106,7 @@ public class EmployeeService {
     public void updateSalary(Long id, Double newSalary) {
         Employee emp = employeeRepository.query()
             .where(Employee::getId).eq(id)
-            .getFirst();
+            .first();
         if (emp != null) {
             emp.setSalary(newSalary);
             employeeRepository.update(emp);

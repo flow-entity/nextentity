@@ -104,13 +104,13 @@ public class Employee {
     private Department department;
 }
 
-Employee emp = repository.query().getFirst();
+Employee emp = repository.query().first();
 Department dept = emp.getDepartment();  // JDBC: 返回 null
 
 // ✅ 正确做法：显式 fetch
 Employee emp = repository.query()
     .fetch(Employee::getDepartment)
-    .getFirst();
+    .first();
 ```
 
 #### 2. 无自动脏检查
@@ -119,7 +119,7 @@ Employee emp = repository.query()
 // ❌ JDBC 后端：事务内修改不会自动更新
 @Transactional
 public void updateSalary(Long id) {
-    Employee emp = repository.query().where(Employee::getId).eq(id).getFirst();
+    Employee emp = repository.query().where(Employee::getId).eq(id).first();
     emp.setSalary(BigDecimal.valueOf(60000.0));
     // 事务结束不会自动保存！
 }
@@ -127,7 +127,7 @@ public void updateSalary(Long id) {
 // ✅ 正确做法：显式调用 update
 @Transactional
 public void updateSalary(Long id) {
-    Employee emp = repository.query().where(Employee::getId).eq(id).getFirst();
+    Employee emp = repository.query().where(Employee::getId).eq(id).first();
     emp.setSalary(BigDecimal.valueOf(60000.0));
     repository.update(emp);  // 必须显式调用
 }
@@ -137,13 +137,13 @@ public void updateSalary(Long id) {
 
 ```java
 // ❌ JDBC 后端：同一实体查询多次返回不同对象
-Employee emp1 = repository.query().where(Employee::getId).eq(1L).getFirst();
-Employee emp2 = repository.query().where(Employee::getId).eq(1L).getFirst();
+Employee emp1 = repository.query().where(Employee::getId).eq(1L).first();
+Employee emp2 = repository.query().where(Employee::getId).eq(1L).first();
 // emp1 != emp2（不同对象实例）
 
 // ✅ JPA 后端：一级缓存保证同一对象
-Employee emp1 = repository.query().where(Employee::getId).eq(1L).getFirst();
-Employee emp2 = repository.query().where(Employee::getId).eq(1L).getFirst();
+Employee emp1 = repository.query().where(Employee::getId).eq(1L).first();
+Employee emp2 = repository.query().where(Employee::getId).eq(1L).first();
 // emp1 == emp2（同一对象实例）
 ```
 
@@ -270,14 +270,14 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 // ❌ 错误：依赖懒加载（JDBC 无效）
 Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 Department dept = emp.getDepartment();  // 返回 null！
 
 // ✅ 正确：显式 fetch
 Employee emp = employeeRepository.query()
     .fetch(Employee::getDepartment)  // 显式加载
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 Department dept = emp.getDepartment();  // 已加载
 ```
 
@@ -289,7 +289,7 @@ Department dept = emp.getDepartment();  // 已加载
 public void raiseSalary(Long id) {
     Employee emp = employeeRepository.query()
         .where(Employee::getId).eq(id)
-        .getFirst();
+        .first();
     emp.setSalary(emp.getSalary().multiply(BigDecimal.valueOf(1.1)));
     // 事务结束不会自动保存！
 }
@@ -299,7 +299,7 @@ public void raiseSalary(Long id) {
 public void raiseSalary(Long id) {
     Employee emp = employeeRepository.query()
         .where(Employee::getId).eq(id)
-        .getFirst();
+        .first();
     emp.setSalary(emp.getSalary().multiply(BigDecimal.valueOf(1.1)));
     employeeRepository.update(emp);  // 必须显式调用
 }
@@ -402,7 +402,7 @@ public class Employee {
 // 查询时不加载关联
 Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(1L)
-    .getFirst();
+    .first();
 
 // 访问时自动加载（触发额外查询）
 Department dept = emp.getDepartment();  // 自动加载
@@ -415,7 +415,7 @@ Department dept = emp.getDepartment();  // 自动加载
 public void updateSalary(Long id, BigDecimal salary) {
     Employee emp = employeeRepository.query()
         .where(Employee::getId).eq(id)
-        .getFirst();
+        .first();
 
     emp.setSalary(salary);
     // 事务结束自动更新，无需显式调用 update()
@@ -429,9 +429,9 @@ public void updateSalary(Long id, BigDecimal salary) {
 @Transactional
 public void demo() {
     Employee emp1 = employeeRepository.query()
-        .where(Employee::getId).eq(1L).getFirst();
+        .where(Employee::getId).eq(1L).first();
     Employee emp2 = employeeRepository.query()
-        .where(Employee::getId).eq(1L).getFirst();
+        .where(Employee::getId).eq(1L).first();
 
     System.out.println(emp1 == emp2);  // true（同一实例）
 }
@@ -450,7 +450,7 @@ public class Employee {
 }
 
 // 更新时自动检查版本
-Employee emp = employeeRepository.query().getFirst();
+Employee emp = employeeRepository.query().first();
 emp.setSalary(BigDecimal.valueOf(60000.0));
 employeeRepository.update(emp);  // 自动检查版本，冲突抛出异常
 ```
@@ -651,7 +651,7 @@ public class Employee {
 public void processOrder(Long orderId) {
     Order order = orderRepository.query()
         .where(Order::getId).eq(orderId)
-        .getFirst();
+        .first();
 
     // 懒加载 - JDBC 会返回 null
     Customer customer = order.getCustomer();
@@ -666,7 +666,7 @@ public void processOrder(Long orderId) {
     Order order = orderRepository.query()
         .fetch(Order::getCustomer)     // 显式 fetch
         .where(Order::getId).eq(orderId)
-        .getFirst();
+        .first();
 
     Customer customer = order.getCustomer();  // 已加载
 
@@ -725,16 +725,16 @@ hibernate.jdbc.batch_size=50
 // JDBC：始终使用 fetch
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
-    .getList();
+    .list();
 
 // JPA：按需使用 fetch 或懒加载
 List<Employee> employees = employeeRepository.query()
-    .getList();  // 懒加载
+    .list();  // 懒加载
 
 // 或显式 fetch
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
-    .getList();
+    .list();
 ```
 
 ---

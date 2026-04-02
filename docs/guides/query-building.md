@@ -25,15 +25,23 @@
 NextEntity 使用流式 API 构建查询：
 
 ```
-query() → where() → orderBy() → offset()/limit()/lock() → getList()/first()/single()/count()
+query() → where() → orderBy() → list()/list(offset, limit)/slice(offset, limit)/first()/single()/count()
 ```
 
+> **重要**: `query()` 方法在 `AbstractRepository` 中是 `protected` 的，只能在 Repository 内部使用。以下示例均为 Repository 内部的方法实现。
+
 ```java
-List<Employee> employees = employeeRepository.query()
-    .where(Employee::getActive).eq(true)    // 条件
-    .orderBy(Employee::getName).asc()        // 排序
-    .offset(0).limit(10)                     // 分页
-    .getList();                              // 执行
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    // Repository 内部使用 query() 的示例
+    public List<Employee> findActiveEmployees() {
+        return query()
+            .where(Employee::getActive).eq(true)    // 条件
+            .orderBy(Employee::getName).asc()        // 排序
+            .list(0, 10);                            // 分页获取
+    }
+}
 ```
 
 ---
@@ -71,8 +79,6 @@ List<Employee> employees = employeeRepository.query()
 .where(Employee::getSalary).eq(Path.of(Employee::getSalary))  // 自比较示例
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByStatus`, `findNotTerminated`, `findByStatusIfPresent` 方法)
-
 ### 大小比较
 
 ```java
@@ -89,8 +95,6 @@ List<Employee> employees = employeeRepository.query()
 .where(Employee::getSalary).le(BigDecimal.valueOf(100000.0))
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findBySalaryGreaterThan`, `findBySalaryGreaterOrEqual` 等方法)
-
 ---
 
 ## 范围运算符
@@ -106,9 +110,6 @@ List<Employee> employees = employeeRepository.query()
 .where(Employee::getHireDate).between(startDate, endDate)
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findBySalaryBetween`, `findBySalaryNotBetween` 方法)
-> 📍 **日期范围**: `EmployeeRepository.java` (`findHiredBetween` 方法)
-
 ---
 
 ## IN 运算符
@@ -123,8 +124,6 @@ List<Employee> employees = employeeRepository.query()
 .where(Employee::getStatus).in(ACTIVE, ON_LEAVE, INACTIVE)
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByIds`, `findByStatuses` 方法)
-
 ### Collection 参数
 
 ```java
@@ -137,16 +136,12 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 .where(Employee::getStatus).in(statuses)
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByIdsCollection` 方法)
-
 ### NOT IN
 
 ```java
 .where(Employee::getStatus).notIn(TERMINATED, INACTIVE)
 .where(Employee::getId).notIn(excludedIds)
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByStatusNotIn` 方法)
 
 ---
 
@@ -163,8 +158,6 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 .where(Employee::getDepartmentId).isNotNull()
 .where(Employee::getEmail).isNull()
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithoutEmail`, `findWithEmail` 方法)
 
 ---
 
@@ -189,13 +182,6 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 .where(Employee::getName).notLike("%test%")
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (字符串匹配方法)
-> - `findByNameLike`
-> - `findByNameStartingWith`
-> - `findByEmailEndingWith`
-> - `findByNameContaining`
-> - `findByNameNotLike`
-
 ### 字符串函数
 
 ```java
@@ -212,12 +198,6 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 // 子串
 .where(Employee::getName).substring(0, 4).eq("John")
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (字符串函数方法)
-> - `findByNameUppercase`
-> - `findByNameTrimmed`
-> - `findByNameSubstring`
-> - `findByNameLongerThan`
 
 ---
 
@@ -246,14 +226,6 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 .where(Path.of(Employee::getId).mod(10)).eq(0)
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (数值运算方法)
-> - `findBySalaryWithBonus` (add)
-> - `findByAnnualSalary` (multiply)
-> - `findBySalaryAfterDeduction` (subtract)
-> - `findByMonthlySalary` (divide)
-> - `findByIdMod` (mod)
-> - `findBySalaryEqualsBase` (表达式比较)
-
 ---
 
 ## 条件运算符
@@ -263,17 +235,18 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 ### `eqIfNotNull` / `neIfNotNull`
 
 ```java
-// 当值为 null 时跳过该条件
-public List<Employee> search(Long departmentId, EmployeeStatus status) {
-    return employeeRepository.query()
-        .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
-        .where(Employee::getStatus).eqIfNotNull(status)
-        .getList();
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    // 当值为 null 时跳过该条件
+    public List<Employee> search(Long departmentId, EmployeeStatus status) {
+        return query()
+            .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
+            .where(Employee::getStatus).eqIfNotNull(status)
+            .list();
+    }
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByStatusIfPresent` 方法)
-> 📍 **多条件搜索**: `EmployeeRepository.java` (`searchEmployees` 方法)
 
 ### 比较条件
 
@@ -284,8 +257,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 .where(Employee::getSalary).leIfNotNull(maxSalary)
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`advancedSearch` 方法)
-
 ### 字符串条件
 
 ```java
@@ -295,8 +266,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 .where(Employee::getName).startsWithIfNotNull(prefix)
 .where(Employee::getName).endsWithIfNotNull(suffix)
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (条件字符串方法)
 
 ---
 
@@ -316,8 +285,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 // 等价于: active = true AND salary > 50000
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (多条件 AND 查询)
-
 ### OR 组合
 
 ```java
@@ -326,8 +293,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
         .or(Employee::getStatus).eq(EmployeeStatus.ON_LEAVE))
 // 等价于: status = ACTIVE OR status = ON_LEAVE
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByStatusOrStatus` 方法)
 
 ### 复杂组合
 
@@ -338,8 +303,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
                 .or(Employee::getStatus).eq(EmployeeStatus.ACTIVE)))
 // 等价于: active = true AND (salary > 100000 OR status = ACTIVE)
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findActiveWithOrCondition` 方法)
 
 ---
 
@@ -355,8 +318,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 .orderBy(Employee::getSalary).desc()
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findOrderedByNameAsc`, `findOrderedBySalaryDesc` 方法)
-
 ### 多字段排序
 
 ```java
@@ -364,8 +325,6 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 .orderBy(Employee::getDepartmentId).asc()
 .orderBy(Employee::getSalary).desc()
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findByDepartmentThenSalary` 方法)
 
 ### Null 排序处理
 
@@ -378,29 +337,24 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 
 ## 分页
 
-### Offset + Limit
+### list(offset, limit)
 
 ```java
 // 第一页（10条）
 List<Employee> page1 = employeeRepository.query()
     .orderBy(Employee::getId).asc()
-    .offset(0).limit(10)
-    .getList();
+    .list(0, 10);
 
 // 第二页（10条）
 List<Employee> page2 = employeeRepository.query()
     .orderBy(Employee::getId).asc()
-    .offset(10).limit(10)
-    .getList();
+    .list(10, 10);
 
 // 第三页（10条）
 List<Employee> page3 = employeeRepository.query()
     .orderBy(Employee::getId).asc()
-    .offset(20).limit(10)
-    .getList();
+    .list(20, 10);
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findFirstPage`, `findPage` 方法)
 
 ### Slice（带元数据）
 
@@ -418,9 +372,6 @@ int limit = slice.limit();                // 限制数量
 boolean hasNext = slice.data().size() == slice.limit();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`findFirstSlice`, `findHighEarnerSlice` 方法)
-> 📍 **Slice 演示**: `EmployeeRepository.java` (`demonstrateSlice` 方法)
-
 ---
 
 ## 结果获取
@@ -429,56 +380,62 @@ boolean hasNext = slice.data().size() == slice.limit();
 
 | 方法 | 返回类型 | 描述 |
 |------|----------|------|
-| `getList()` | `List<T>` | 获取全部结果 |
-| `offset(int)` | `Collector<T>` | 设置偏移量 |
-| `limit(int)` | `Collector<T>` | 设置结果数量上限 |
+| `list()` | `List<T>` | 获取全部结果 |
+| `list(int limit)` | `List<T>` | 获取前 N 条结果 |
+| `list(int offset, int limit)` | `List<T>` | 分页获取结果 |
+| `slice(int offset, int limit)` | `Slice<T>` | 分片结果（带元数据） |
 | `lock(LockModeType)` | `Collector<T>` | 设置锁模式 |
-| `getFirst()` | `T` | 获取第一条（null 如果空） |
-| `first()` | `Optional<T>` | 以 Optional 形式获取第一条 |
-| `getSingle()` | `T` | 获取单个结果（聚合用） |
-| `single()` | `Optional<T>` | 以 Optional 形式获取单个结果 |
-| `requireSingle()` | `T` | 获取单个结果，不存在时抛异常 |
+| `first()` | `T` | 获取第一条（null 如果空） |
+| `single()` | `T` | 获取单个结果（不存在或多条时抛异常） |
 | `exists()` | `boolean` | 判断是否存在结果 |
+| `exists(int offset)` | `boolean` | 判断指定偏移量后是否存在结果 |
 | `count()` | `long` | 统计数量 |
-| `slice(offset, limit)` | `Slice<T>` | 分片结果 |
 
 ### 使用示例
 
+以下示例均为 Repository 内部方法：
+
 ```java
-// 获取全部
-List<Employee> all = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .getList();
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-// 获取第一条
-Employee first = employeeRepository.query()
-    .where(Employee::getId).eq(1L)
-    .getFirst();
+    // 获取全部
+    public List<Employee> findAllActive() {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .list();
+    }
 
-// 以 Optional 获取第一条
-Optional<Employee> maybeFirst = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .orderBy(Employee::getName).asc()
-    .first();
+    // 获取前 20 条
+    public List<Employee> findTop20Active() {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .list(20);
+    }
 
-// 统计数量
-long count = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .count();
+    // 分页获取（跳过 10 条，取 20 条）
+    public List<Employee> findPage(int offset, int limit) {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .orderBy(Employee::getName).asc()
+            .list(offset, limit);
+    }
 
-// 分页后获取结果
-List<Employee> page = employeeRepository.query()
-    .where(Employee::getActive).eq(true)
-    .offset(20).limit(10)
-    .getList();
+    // 获取第一条
+    public Employee findById(Long id) {
+        return query()
+            .where(Employee::getId).eq(id)
+            .first();
+    }
+
+    // 统计数量
+    public long countActive() {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .count();
+    }
+}
 ```
-
-> 📍 **示例位置**:
-> - `getList()`: `EmployeeRepository.java` (`findAllEmployees`)
-> - `getFirst()`: `EmployeeRepository.java` (`findEmployeeByEmail`)
-> - `count()`: `EmployeeRepository.java` (`countAllEmployees`)
-> - `first()`: `EmployeeRepository.java` (`findFirstActive`)
-> - `exists()`: `EmployeeRepository.java` (`hasActiveEmployees`, `existsByEmail`)
 
 ---
 

@@ -307,16 +307,6 @@ class PaginationOrderingIntegrationTest extends BaseIntegrationTest {
                         .isGreaterThanOrEqualTo(0);
             }
         }
-
-        @Test
-        @DisplayName("Should demonstrate slice methods correctly")
-        void shouldDemonstrateSliceMethodsCorrectly() {
-            // When - call demonstrate method (it uses System.out, but we can verify it runs)
-            employeeRepository.demonstrateSlice();
-
-            // Then - method should run without exception
-            // The method demonstrates slice properties internally
-        }
     }
 
     // ==================== Recently Hired Tests ====================

@@ -51,9 +51,7 @@ public class EmployeeService {
      */
     @Transactional
     public void transferEmployee(Long empId, Long newDeptId) {
-        Employee emp = employeeRepository.query()
-                .where(Employee::getId).eq(empId)
-                .first();
+        Employee emp = employeeRepository.findEmployeeById(empId);
 
         if (emp != null) {
             Long oldDeptId = emp.getDepartmentId();
@@ -84,9 +82,7 @@ public class EmployeeService {
      */
     @Transactional
     public void terminateEmployee(Long empId) {
-        Employee emp = employeeRepository.query()
-                .where(Employee::getId).eq(empId)
-                .first();
+        Employee emp = employeeRepository.findEmployeeById(empId);
 
         if (emp != null) {
             emp.setStatus(EmployeeStatus.TERMINATED);
@@ -103,18 +99,7 @@ public class EmployeeService {
      */
     @Transactional
     public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
-        List<Employee> employees = employeeRepository.query()
-                .where(Employee::getDepartmentId).eq(departmentId)
-                .where(Employee::getActive).eq(true)
-                .list();
-
-        employees.forEach(e -> {
-            BigDecimal salary = e.getSalary();
-            if (salary != null) {
-                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
-            }
-        });
-        employeeRepository.updateAll(employees);
+        employeeRepository.giveRaiseToDepartment(departmentId, percentage);
     }
 
     /**
@@ -122,12 +107,7 @@ public class EmployeeService {
      */
     @Transactional
     public void transferEmployees(List<Long> employeeIds, Long newDepartmentId) {
-        List<Employee> employees = employeeRepository.query()
-                .where(Employee::getId).in(employeeIds)
-                .list();
-
-        employees.forEach(e -> e.setDepartmentId(newDepartmentId));
-        employeeRepository.updateAll(employees);
+        employeeRepository.transferEmployees(employeeIds, newDepartmentId);
     }
 
     // ==================== Read-only Transactional ====================
@@ -137,10 +117,7 @@ public class EmployeeService {
      */
     @Transactional(readOnly = true)
     public List<Employee> findActiveEmployees() {
-        return employeeRepository.query()
-                .where(Employee::getActive).eq(true)
-                .orderBy(Employee::getName).asc()
-                .list();
+        return employeeRepository.findActiveEmployees();
     }
 
     /**
@@ -148,10 +125,7 @@ public class EmployeeService {
      */
     @Transactional(readOnly = true)
     public List<Employee> findByDepartment(Long departmentId) {
-        return employeeRepository.query()
-                .where(Employee::getDepartmentId).eq(departmentId)
-                .orderBy(Employee::getName).asc()
-                .list();
+        return employeeRepository.findByDepartmentId(departmentId);
     }
 
     // ==================== Helper Methods ====================

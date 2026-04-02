@@ -14,11 +14,15 @@ public interface SubQueryBuilder<T, U> extends Expression<T, List<U>> {
     /// @return Count expression
     Expression<T, Long> count();
 
+    default Expression<T, List<U>> limit(int limit) {
+        return slice(0, limit);
+    }
+
     /// Slices a part of the query results.
     ///
     /// @param offset Starting offset
     /// @param limit Maximum number of results
     /// @return Sliced results expression
-    Expression<T, List<U>> window(int offset, int limit);
+    Expression<T, List<U>> slice(int offset, int limit);
 
 }

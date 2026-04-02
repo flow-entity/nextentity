@@ -136,7 +136,7 @@ class QueryBuilderIntegrationTest {
     void limit_ShouldRestrictResultCount(IntegrationTestContext context) {
         // when
         List<Employee> employees = context.queryEmployees()
-                .limit(PAGE_SIZE);
+                .list(PAGE_SIZE);
 
         // then
         assertThat(employees).hasSize(PAGE_SIZE);
@@ -153,7 +153,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> pagedEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(OFFSET, PAGE_SIZE);
+                .list(OFFSET, PAGE_SIZE);
 
         // then
         assertThat(pagedEmployees).hasSize(PAGE_SIZE);

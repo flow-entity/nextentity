@@ -109,7 +109,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(results).hasSize(5);
@@ -231,7 +231,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .orderBy(Employee::getId).asc()
-                .limit(3);
+                .list(3);
 
         // Then
         assertThat(results).hasSize(3);
@@ -384,7 +384,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(results).hasSize(5);
@@ -525,7 +525,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .orderBy(Employee::getId).asc()
-                .limit(3);
+                .list(3);
 
         // Then
         assertThat(results).hasSize(3);
@@ -539,7 +539,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
-                .limit(3);
+                .list(3);
 
         // Then
         assertThat(results).hasSize(3);

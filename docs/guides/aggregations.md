@@ -19,6 +19,8 @@
 
 NextEntity 提供数据库级别的聚合操作，在 SQL 层面完成统计计算。
 
+> **重要**: `query()` 方法在 `AbstractRepository` 中是 `protected` 的，以下示例均为 Repository 内部方法实现。
+
 ### 可用聚合函数
 
 | 函数 | 描述 | SQL 对应 |
@@ -85,7 +87,7 @@ long count = employeeRepository.query()
 // 所有员工薪资总和
 BigDecimal totalSalary = employeeRepository.query()
     .select(Path.of(Employee::getSalary).sum())
-    .getSingle();
+    .single();
 
 // 生成的 SQL: SELECT SUM(salary) FROM employee
 ```
@@ -97,13 +99,13 @@ BigDecimal totalSalary = employeeRepository.query()
 BigDecimal activeTotal = employeeRepository.query()
     .select(Path.of(Employee::getSalary).sum())
     .where(Employee::getActive).eq(true)
-    .getSingle();
+    .single();
 
 // 某部门薪资总和
 BigDecimal deptTotal = employeeRepository.query()
     .select(Path.of(Employee::getSalary).sum())
     .where(Employee::getDepartmentId).eq(1L)
-    .getSingle();
+    .single();
 
 // 多条件求和
 BigDecimal total = employeeRepository.query()
@@ -111,7 +113,7 @@ BigDecimal total = employeeRepository.query()
     .where(Employee::getActive).eq(true)
     .where(Employee::getDepartmentId).eq(1L)
     .where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
-    .getSingle();
+    .single();
 ```
 
 ---
@@ -124,7 +126,7 @@ BigDecimal total = employeeRepository.query()
 // 平均薪资
 Double avgSalary = employeeRepository.query()
     .select(Path.of(Employee::getSalary).avg())
-    .getSingle();
+    .single();
 
 // 生成的 SQL: SELECT AVG(salary) FROM employee
 ```
@@ -136,13 +138,13 @@ Double avgSalary = employeeRepository.query()
 Double activeAvg = employeeRepository.query()
     .select(Path.of(Employee::getSalary).avg())
     .where(Employee::getActive).eq(true)
-    .getSingle();
+    .single();
 
 // 某部门平均薪资
 Double deptAvg = employeeRepository.query()
     .select(Path.of(Employee::getSalary).avg())
     .where(Employee::getDepartmentId).eq(1L)
-    .getSingle();
+    .single();
 ```
 
 ---
@@ -155,18 +157,18 @@ Double deptAvg = employeeRepository.query()
 // 最高薪资
 BigDecimal maxSalary = employeeRepository.query()
     .select(Path.of(Employee::getSalary).max())
-    .getSingle();
+    .single();
 
 // 活跃员工最高薪资
 BigDecimal activeMax = employeeRepository.query()
     .select(Path.of(Employee::getSalary).max())
     .where(Employee::getActive).eq(true)
-    .getSingle();
+    .single();
 
 // 最早入职日期
 LocalDate earliestHire = employeeRepository.query()
     .select(Path.of(Employee::getHireDate).min())
-    .getSingle();
+    .single();
 ```
 
 ### 最小值
@@ -175,18 +177,18 @@ LocalDate earliestHire = employeeRepository.query()
 // 最低薪资
 BigDecimal minSalary = employeeRepository.query()
     .select(Path.of(Employee::getSalary).min())
-    .getSingle();
+    .single();
 
 // 活跃员工最低薪资
 BigDecimal activeMin = employeeRepository.query()
     .select(Path.of(Employee::getSalary).min())
     .where(Employee::getActive).eq(true)
-    .getSingle();
+    .single();
 
 // 最近入职日期
 LocalDate latestHire = employeeRepository.query()
     .select(Path.of(Employee::getHireDate).max())
-    .getSingle();
+    .single();
 ```
 
 ---
@@ -199,7 +201,7 @@ LocalDate latestHire = employeeRepository.query()
 // 不同部门数量
 long distinctDeptCount = employeeRepository.query()
     .select(Path.of(Employee::getDepartmentId).countDistinct())
-    .getSingle();
+    .single();
 ```
 
 ---
@@ -226,7 +228,7 @@ List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> statsByDept
         .where(Employee::getActive).eq(true)
         .where(Employee::getSalary).isNotNull()
         .groupBy(Employee::getDepartmentId)
-        .getList();
+        .list();
 
 // 结果分析
 for (Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal> tuple : statsByDept) {
@@ -246,8 +248,6 @@ for (Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal> tuple : stat
 }
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`salaryStatsByDepartment` 方法)
-
 ### 多字段分组
 
 ```java
@@ -261,10 +261,8 @@ List<Tuple4<Long, EmployeeStatus, Long, Double>> stats = employeeRepository.quer
     )
     .where(Employee::getSalary).isNotNull()
     .groupBy(Employee::getDepartmentId, Employee::getStatus)
-    .getList();
+    .list();
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`salaryStatsByDepartment` 方法)
 
 ### Java Stream 分组（备选方案）
 
@@ -274,13 +272,11 @@ List<Tuple4<Long, EmployeeStatus, Long, Double>> stats = employeeRepository.quer
 // 先查询数据，再在 Java 中分组
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 
 Map<Long, List<Employee>> byDept = employees.stream()
     .collect(Collectors.groupingBy(Employee::getDepartmentId));
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`groupByDepartment` 方法)
 
 ---
 
@@ -292,11 +288,11 @@ Map<Long, List<Employee>> byDept = employees.stream()
 // 推荐：数据库聚合
 BigDecimal total = employeeRepository.query()
     .select(Path.of(Employee::getSalary).sum())
-    .getSingle();
+    .single();
 
 // 避免：Java 流聚合（数据量大时性能差）
 BigDecimal total = employeeRepository.query()
-    .getList()
+    .list();
     .stream()
     .map(Employee::getSalary)
     .reduce(BigDecimal.ZERO, BigDecimal::add);
@@ -309,7 +305,7 @@ BigDecimal total = employeeRepository.query()
 Double activeAvg = employeeRepository.query()
     .select(Path.of(Employee::getSalary).avg())
     .where(Employee::getActive).eq(true)  // 数据库过滤
-    .getSingle();
+    .single();
 ```
 
 ### 3. 使用 exists() 检查存在性
@@ -336,7 +332,7 @@ List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> stats =
             Path.of(Employee::getSalary).min()
         )
         .groupBy(Employee::getDepartmentId)
-        .getList();
+        .list();
 
 // 避免：Java Stream 分组（需要加载所有数据到内存）
 Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
@@ -353,12 +349,12 @@ Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
 Double avg = employeeRepository.query()
     .select(Path.of(Employee::getSalary).avg())
     .where(Employee::getSalary).isNotNull()  // 排除 NULL
-    .getSingle();
+    .single();
 
 // 在 Java 中处理 NULL 值
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getSalary).isNotNull()
-    .getList();
+    .list();
 ```
 
 ---

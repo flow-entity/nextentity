@@ -297,7 +297,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Page beyond data
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(1000, 10);
+                .list(1000, 10);
 
         // Then
         assertThat(employees).isEmpty();
@@ -305,7 +305,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Zero limit
         employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .limit(0);
+                .list(0);
 
         // Then - Should handle gracefully
         assertThat(employees).isNotNull();

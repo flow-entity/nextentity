@@ -375,7 +375,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(expected);
 
             // when
-            List<Employee> result = whereImpl.lock(LockModeType.NONE).limit(10);
+            List<Employee> result = whereImpl.lock(LockModeType.NONE).list(10);
 
             // then
             assertThat(result).isEqualTo(expected);
@@ -392,7 +392,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.emptyList());
 
             // when
-            whereImpl.lock(LockModeType.PESSIMISTIC_WRITE).limit(10);
+            whereImpl.lock(LockModeType.PESSIMISTIC_WRITE).list(10);
 
             // then
             verify(queryExecutor).getList(argThat(structure ->
@@ -466,7 +466,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.emptyList());
 
             // when
-            whereImpl.window(10, 1);
+            whereImpl.list(10, 1);
 
             // then
             verify(queryExecutor).<Employee>getList(argThat(structure ->
@@ -514,38 +514,10 @@ class WhereImplTest {
         @Test
         void subQuery_slice_ShouldReturnSliceExpression() {
             // when
-            var sliceExpr = whereImpl.toSubQuery().window(0, 10);
+            var sliceExpr = whereImpl.toSubQuery().slice(0, 10);
 
             // then
             assertThat(sliceExpr).isNotNull();
-        }
-
-        /**
-         * Test objective: Verify that subQuery getSingle creates single result expression.
-         * Test scenario: Call getSingle on subquery builder.
-         * Expected result: Returns a TypedExpression for single result.
-         */
-        @Test
-        void subQuery_getSingle_ShouldReturnSingleExpression() {
-            // when
-            var singleExpr = whereImpl.toSubQuery().getSingle();
-
-            // then
-            assertThat(singleExpr).isNotNull();
-        }
-
-        /**
-         * Test objective: Verify that subQuery getFirst creates first result expression.
-         * Test scenario: Call getFirst on subquery builder.
-         * Expected result: Returns a TypedExpression for first result.
-         */
-        @Test
-        void subQuery_getFirst_ShouldReturnFirstExpression() {
-            // when
-            var firstExpr = whereImpl.toSubQuery().getFirst();
-
-            // then
-            assertThat(firstExpr).isNotNull();
         }
     }
 

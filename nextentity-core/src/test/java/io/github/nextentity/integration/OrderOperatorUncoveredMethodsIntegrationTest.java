@@ -30,7 +30,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(50000.0)
                 .orderBy(paths)
-                .limit(5);
+                .list(5);
 
         assertThat(employees).isNotEmpty();
         for (int i = 1; i < employees.size(); i++) {
@@ -48,7 +48,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
 
         List<Employee> employees = context.queryEmployees()
                 .orderBy(paths)
-                .limit(10);
+                .list(10);
 
         assertThat(employees).isNotEmpty();
     }
@@ -61,7 +61,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
         paths.add(Employee::getId);
 
         OrderOperator<Employee, Employee> orderOperator = context.queryEmployees().orderBy(paths);
-        List<Employee> employees = orderOperator.limit(5);
+        List<Employee> employees = orderOperator.list(5);
 
         assertThat(employees).isNotEmpty();
     }
@@ -100,7 +100,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId)
                 .orderBy(orders)
-                .limit(5);
+                .list(5);
 
         assertThat(employees).isNotEmpty();
     }
@@ -114,7 +114,7 @@ public class OrderOperatorUncoveredMethodsIntegrationTest {
 
         List<Employee> employees = context.queryEmployees()
                 .orderBy(paths)
-                .limit(3);
+                .list(3);
 
         assertThat(employees).hasSize(3);
     }

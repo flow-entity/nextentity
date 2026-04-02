@@ -20,6 +20,20 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * Employee Repository demonstrating NextEntity query capabilities.
+ * <p>
+ * This repository shows core patterns for:
+ * - Basic CRUD operations
+ * - Query conditions (comparison, IN, null checks)
+ * - String operations (LIKE, contains)
+ * - Ordering and pagination
+ * - Aggregation (count, sum, avg, min, max)
+ * - Projection (Tuple, DTO)
+ * - Association fetch
+ * - Complex queries with conditional operators
+ * - Transaction management
+ */
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
@@ -27,38 +41,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         super(entityManager, jdbcTemplate);
     }
 
-    @Override
-    public QueryBuilder<Employee> query() {
-        return super.query();
-    }
-
     // ==================== Basic CRUD Operations ====================
-
-    /// Insert a single employee
-    @Transactional
-    public void insertSingleEmployee() {
-        Employee employee = new Employee();
-        employee.setId(1L);
-        employee.setName("John Doe");
-        employee.setEmail("john@example.com");
-        employee.setSalary(BigDecimal.valueOf(50000.0));
-        employee.setActive(true);
-        employee.setStatus(EmployeeStatus.ACTIVE);
-        employee.setDepartmentId(1L);
-        employee.setHireDate(LocalDate.now());
-        insert(employee);
-    }
-
-    /// Batch insert multiple employees
-    @Transactional
-    public void insertMultipleEmployees() {
-        List<Employee> employees = List.of(
-                createEmployee(1L, "Alice", "alice@example.com", BigDecimal.valueOf(50000.0)),
-                createEmployee(2L, "Bob", "bob@example.com", BigDecimal.valueOf(55000.0)),
-                createEmployee(3L, "Charlie", "charlie@example.com", BigDecimal.valueOf(60000.0))
-        );
-        insertAll(employees);
-    }
 
     /// Query all employees
     public List<Employee> findAllEmployees() {
@@ -144,28 +127,20 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .execute();
     }
 
-    /// Check association before delete - crud-operations.md example
-    /// Returns true if department has employees, false otherwise
+    /// Check if department has employees
     public boolean hasEmployeesInDepartment(Long departmentId) {
-        long empCount = query()
+        return query()
                 .where(Employee::getDepartmentId).eq(departmentId)
-                .count();
-        return empCount > 0;
+                .exists();
     }
 
-    /// Safe delete with association check - crud-operations.md example
-    /// Returns false if department has employees, true if deletion proceeds
+    /// Safe delete with association check
     @Transactional
     public boolean deleteDepartmentIfEmpty(Long departmentId) {
         long empCount = query()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .count();
-
-        if (empCount == 0) {
-            // Safe to delete - actual department deletion handled by DepartmentRepository
-            return true;
-        }
-        return false; // Cannot delete, department has employees
+        return empCount == 0;
     }
 
     // ==================== Query Conditions ====================
@@ -185,34 +160,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query().where(Employee::getStatus).eqIfNotNull(status).list();
     }
 
-    /// Greater than comparison
-    public List<Employee> findBySalaryGreaterThan(BigDecimal salary) {
-        return query().where(Employee::getSalary).gt(salary).list();
-    }
-
-    /// Greater than or equal comparison
-    public List<Employee> findBySalaryGreaterOrEqual(BigDecimal salary) {
-        return query().where(Employee::getSalary).ge(salary).list();
-    }
-
-    /// Less than comparison
-    public List<Employee> findBySalaryLessThan(BigDecimal salary) {
-        return query().where(Employee::getSalary).lt(salary).list();
-    }
-
-    /// Less than or equal comparison
-    public List<Employee> findBySalaryLessOrEqual(BigDecimal salary) {
-        return query().where(Employee::getSalary).le(salary).list();
-    }
-
     /// Between comparison (inclusive range)
     public List<Employee> findBySalaryBetween(BigDecimal min, BigDecimal max) {
         return query().where(Employee::getSalary).between(min, max).list();
-    }
-
-    /// Not between comparison
-    public List<Employee> findBySalaryNotBetween(BigDecimal min, BigDecimal max) {
-        return query().where(Employee::getSalary).notBetween(min, max).list();
     }
 
     /// IN operator with varargs
@@ -245,7 +195,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query().where(Employee::getEmail).isNotNull().list();
     }
 
-    /// Date comparison - after a specific date
+    /// Date range query
     public List<Employee> findHiredAfter(LocalDate date) {
         return query().where(Employee::getHireDate).gt(date).list();
     }
@@ -260,14 +210,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(departmentId)
-                .list();
-    }
-
-    /// Active employees by department with active status
-    public List<Employee> findActiveEmployeesByDepartment(Long departmentId) {
-        return query()
-                .where(Employee::getDepartmentId).eq(departmentId)
-                .where(Employee::getActive).eq(true)
                 .list();
     }
 
@@ -331,49 +273,10 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query().where(Employee::getName).containsIfNotEmpty(text).list();
     }
 
-    /// Starts with if not null
-    public List<Employee> findByNameStartingWithIfPresent(String prefix) {
-        return query().where(Employee::getName).startsWithIfNotNull(prefix).list();
-    }
-
-    /// Ends with if not null
-    public List<Employee> findByEmailEndingWithIfPresent(String suffix) {
-        return query().where(Employee::getEmail).endsWithIfNotNull(suffix).list();
-    }
-
-    /// Equals if string is not empty
-    public List<Employee> findByEmailIfNotEmpty(String email) {
-        return query().where(Employee::getEmail).eqIfNotEmpty(email).list();
-    }
-
     /// Case-insensitive search using lower()
     public List<Employee> findByNameContainingIgnoreCase(String text) {
         String lowerText = text.toLowerCase();
         return query().where(Employee::getName).lower().contains(lowerText).list();
-    }
-
-    /// Case-insensitive email search
-    public List<Employee> findByEmailDomainIgnoreCase(String domain) {
-        String lowerDomain = domain.toLowerCase();
-        return query().where(Employee::getEmail).lower().endsWith(lowerDomain).list();
-    }
-
-    /// Search employees by name with multiple options
-    public List<Employee> searchByName(String firstName, String lastName) {
-        return query()
-                .where(Employee::getName).startsWithIfNotNull(firstName)
-                .where(Employee::getName).endsWithIfNotNull(lastName)
-                .orderBy(Employee::getName).asc()
-                .list();
-    }
-
-    /// Email validation patterns - find corporate emails
-    public List<Employee> findCorporateEmails(String companyDomain) {
-        return query()
-                .where(Employee::getEmail).endsWith("@" + companyDomain)
-                .where(Employee::getEmail).notContains("temp")
-                .where(Employee::getEmail).notContains("test")
-                .list();
     }
 
     /// Find employees with valid emails
@@ -429,18 +332,18 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     // ==================== Pagination ====================
 
-    /// Basic pagination with offset and limit
+    /// Basic pagination with limit
     public List<Employee> findFirstPage() {
         return query()
                 .orderBy(Employee::getId).asc()
-                .limit(10);
+                .list(10);
     }
 
     /// Pagination with page number
     public List<Employee> findPage(int pageNumber, int pageSize) {
         return query()
                 .orderBy(Employee::getId).asc()
-                .window(pageNumber * pageSize, pageSize);
+                .list(pageNumber * pageSize, pageSize);
     }
 
     /// Pagination with conditions
@@ -448,7 +351,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query()
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getName).asc()
-                .window(offset, limit);
+                .list(offset, limit);
     }
 
     /// Slice-based pagination with metadata
@@ -475,7 +378,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .where(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                 .orderBy(Employee::getHireDate).desc()
                 .orderBy(Employee::getName).asc()
-                .window(offset, limit);
+                .list(offset, limit);
     }
 
     /// Top N results
@@ -483,7 +386,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query()
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getSalary).desc()
-                .limit(n);
+                .list(n);
     }
 
     /// Get single result - highest paid employee
@@ -492,6 +395,15 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getSalary).desc()
                 .first();
+    }
+
+    /// Find employees hired within recent days
+    public List<Employee> findRecentlyHired(int days) {
+        LocalDate recentDate = LocalDate.now().minusDays(days);
+        return query()
+                .where(Employee::getHireDate).ge(recentDate)
+                .orderBy(Employee::getHireDate).desc()
+                .list();
     }
 
     // ==================== Aggregation ====================
@@ -522,7 +434,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .single();
     }
 
-    /// Calculate total salary using Java streams
+    /// Calculate total salary
     public BigDecimal calculateTotalSalary() {
         return query()
                 .select(path(Employee::getSalary).sum())
@@ -530,7 +442,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .single();
     }
 
-    /// Sum with conditions - total salary for active employees
+    /// Sum with conditions
     public BigDecimal calculateActiveTotalSalary() {
         return query()
                 .select(path(Employee::getSalary).sum())
@@ -616,7 +528,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 
     /// Calculate statistics per department using database-level aggregation
-    /// Returns Tuple6 containing: departmentId, count, sum, avg, max, min
     public List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> salaryStatsByDepartment() {
         return query()
                 .select(
@@ -676,7 +587,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 
     /// Select four fields using Tuple4
-    /// Example for projections.md Tuple4 documentation
     public List<Tuple4<String, String, BigDecimal, Long>> findNameEmailSalaryDepartment() {
         return query()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary, Employee::getDepartmentId)
@@ -686,7 +596,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 
     /// Select five fields using Tuple5
-    /// Example for projections.md Tuple5 documentation
     public List<Tuple5<String, String, BigDecimal, Long, Boolean>> findEmployeeDetails() {
         return query()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary,
@@ -742,33 +651,10 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// Select specific fields using Tuple
-    public List<Tuple2<String, BigDecimal>> findEmployeeNamesAndSalaries() {
-        return query()
-                .select(Employee::getName, Employee::getSalary)
-                .where(Employee::getActive).eq(true)
-                .list();
-    }
-
     // ==================== Association Fetch ====================
-
-    /// Lazy loading (default behavior) - department loaded on first access
-    public List<Employee> findWithLazyLoading() {
-        return query()
-                .where(Employee::getActive).eq(true)
-                .list();
-    }
 
     /// Eager fetch association - load employees with departments in one query
     public List<Employee> findWithDepartmentFetch() {
-        return query()
-                .fetch(Employee::getDepartment)
-                .where(Employee::getActive).eq(true)
-                .list();
-    }
-
-    /// Fetch multiple associations
-    public List<Employee> findWithMultipleFetches() {
         return query()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getActive).eq(true)
@@ -817,7 +703,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     // ==================== Complex Query ====================
 
-    /// Multi-condition employee search combining multiple operators
+    /// Multi-condition employee search
     public List<Employee> findEmployeesByMultipleConditions() {
         return query()
                 .where(Employee::getActive).eq(true)
@@ -828,7 +714,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// Employee search with optional filters using conditional operators
+    /// Employee search with optional filters
     public List<Employee> searchEmployees(String name, Long departmentId, BigDecimal minSalary) {
         return query()
                 .where(Employee::getName).containsIfNotEmpty(name)
@@ -866,7 +752,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .entrySet().stream().toList();
     }
 
-    /// Find employees due for review (hired > 1 year ago, active, below-average salary)
+    /// Find employees due for review
     public List<Employee> findEmployeesDueForReview() {
         LocalDate oneYearAgo = LocalDate.now().minusYears(1);
 
@@ -879,24 +765,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// Give a raise to all employees in a department within a transaction
-    @Transactional
-    public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
-        List<Employee> employees = query()
-                .where(Employee::getDepartmentId).eq(departmentId)
-                .where(Employee::getActive).eq(true)
-                .list();
-
-        employees.forEach(e -> {
-            BigDecimal salary = e.getSalary();
-            if (salary != null) {
-                e.setSalary(salary.multiply(BigDecimal.ONE.add(percentage)));
-            }
-        });
-        updateAll(employees);
-    }
-
-    /// Transfer employees between departments within a transaction
+    /// Transfer employees between departments
     @Transactional
     public void transferEmployees(List<Long> employeeIds, Long newDepartmentId) {
         List<Employee> employees = query()
@@ -905,36 +774,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
         employees.forEach(e -> e.setDepartmentId(newDepartmentId));
         updateAll(employees);
-    }
-
-    /// Deactivate terminated employees within a transaction
-    @Transactional
-    public void deactivateTerminatedEmployees() {
-        List<Employee> employees = query()
-                .where(Employee::getStatus).eq(EmployeeStatus.TERMINATED)
-                .list();
-
-        employees.forEach(e -> e.setActive(false));
-        updateAll(employees);
-    }
-
-    /// Find employees with department eagerly loaded
-    public List<Employee> findEmployeesWithDepartment() {
-        return query()
-                .fetch(Employee::getDepartment)
-                .where(Employee::getActive).eq(true)
-                .orderBy(Employee::getName).asc()
-                .list();
-    }
-
-    /// Find employees hired within recent days
-    public List<Employee> findRecentlyHired(int days) {
-        LocalDate recentDate = LocalDate.now().minusDays(days);
-
-        return query()
-                .where(Employee::getHireDate).ge(recentDate)
-                .orderBy(Employee::getHireDate).desc()
-                .list();
     }
 
     /// Find employees without department
@@ -950,28 +789,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query()
                 .where(Employee::getEmail).isNull()
                 .list();
-    }
-
-    // ==================== Additional String Functions ====================
-
-    /// Convert to uppercase for comparison
-    public List<Employee> findByNameUppercase(String upperName) {
-        return query().where(Employee::getName).upper().eq(upperName.toUpperCase()).list();
-    }
-
-    /// Trim whitespace and search
-    public List<Employee> findByNameTrimmed(String name) {
-        return query().where(Employee::getName).trim().eq(name.trim()).list();
-    }
-
-    /// Search by substring
-    public List<Employee> findByNameSubstring(int start, int length, String expected) {
-        return query().where(Employee::getName).substring(start, length).eq(expected).list();
-    }
-
-    /// Find employees with name length > N
-    public List<Employee> findByNameLongerThan(int minLen) {
-        return query().where(Employee::getName).length().gt(minLen).list();
     }
 
     // ==================== Result Methods ====================
@@ -1014,7 +831,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// Numeric operations: subtract example
     /// Find employees where salary - deduction >= minSalary
     public List<Employee> findBySalaryAfterDeduction(BigDecimal deduction, BigDecimal minSalary) {
         return query()
@@ -1023,92 +839,16 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// Numeric operations: divide example
-    /// Find employees where monthly salary (annual / 12) > threshold
-    public List<Employee> findByMonthlySalary(BigDecimal threshold) {
-        return query()
-                .where(Employee::getSalary).divide(BigDecimal.valueOf(12.0)).gt(threshold)
-                .where(Employee::getActive).eq(true)
-                .list();
-    }
-
-    /// Numeric operations: mod example
-    /// Find employees where ID % 10 = 0 (for sharding/partitioning demo)
+    /// Find employees where ID % divisor = remainder
     public List<Employee> findByIdMod(int divisor, int remainder) {
         return query()
                 .where(Employee::getId).mod((long) divisor).eq((long) remainder)
                 .list();
     }
 
-    /// Expression equals expression example
-    /// Compare salary field with a computed value
-    public List<Employee> findBySalaryEqualsBase(Long departmentId, BigDecimal baseSalary) {
-        return query()
-                .where(Employee::getDepartmentId).eq(departmentId)
-                .where(Employee::getSalary).eq(Path.of(Employee::getSalary))  // self-comparison for demo
-                .list();
-    }
-
-    // ==================== Slice Methods ====================
-
-    /// Demonstrate slice methods
-    public void demonstrateSlice() {
-        Slice<Employee> slice = query()
-                .where(Employee::getActive).eq(true)
-                .orderBy(Employee::getId).asc()
-                .slice(0, 10);
-
-        List<Employee> data = slice.data();
-        long total = slice.total();
-        int offset = slice.offset();
-        int limit = slice.limit();
-        boolean hasNext = data.size() == limit;
-
-        System.out.println("Data: " + data.size() + ", Total: " + total +
-                          ", Offset: " + offset + ", Limit: " + limit +
-                          ", HasNext: " + hasNext);
-    }
-
-    // ==================== Aggregation with Path.of() ====================
-
-    /// Sum using Path.of() (for use outside Repository)
-    public BigDecimal calculateTotalSalaryExternal() {
-        return query()
-                .select(Path.of(Employee::getSalary).sum())
-                .where(Employee::getSalary).isNotNull()
-                .single();
-    }
-
-    /// Average using Path.of()
-    public Double calculateAverageSalaryExternal() {
-        return query()
-                .select(Path.of(Employee::getSalary).avg())
-                .where(Employee::getSalary).isNotNull()
-                .where(Employee::getActive).eq(true)
-                .single();
-    }
-
-    /// Max using Path.of()
-    public BigDecimal findMaxSalaryExternal() {
-        return query()
-                .select(Path.of(Employee::getSalary).max())
-                .where(Employee::getSalary).isNotNull()
-                .single();
-    }
-
-    /// Min using Path.of()
-    public BigDecimal findMinSalaryExternal() {
-        return query()
-                .select(Path.of(Employee::getSalary).min())
-                .where(Employee::getSalary).isNotNull()
-                .where(Employee::getActive).eq(true)
-                .single();
-    }
-
     // ==================== OR Conditions ====================
 
-    /// OR 条件查询 - 状态为 ACTIVE 或 ON_LEAVE 的员工
-    /// 使用 Path.of() 链式调用实现 OR 条件
+    /// OR condition query
     public List<Employee> findByStatusOrStatus() {
         return query()
                 .where(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
@@ -1117,8 +857,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// AND + OR 组合查询 - 活跃员工中高薪或特定状态
-    /// 等价于: active = true AND (salary > 100000 OR status = ACTIVE)
+    /// AND + OR combined query
     public List<Employee> findActiveWithOrCondition() {
         return query()
                 .where(Path.of(Employee::getActive).eq(true)
@@ -1128,45 +867,13 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
-    /// 复杂 OR 条件 - 按薪资或状态查询
-    /// 等价于: salary > minSalary OR status = status
+    /// Complex OR condition
     public List<Employee> findBySalaryOrStatus(BigDecimal minSalary, EmployeeStatus status) {
         return query()
                 .where(Path.of(Employee::getSalary).gt(minSalary)
                         .or(Employee::getStatus).eq(status))
                 .orderBy(Employee::getName).asc()
                 .list();
-    }
-
-    /// OR 条件与 IN 查询对比 - 使用 OR 实现类似 IN 的效果
-    /// 这两种方式效果相同，但 IN 更简洁
-    public List<Employee> findByStatusOrCompareWithIn() {
-        // 方式 1: 使用 OR
-        List<Employee> byOr = query()
-                .where(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
-                        .or(Employee::getStatus).eq(EmployeeStatus.ON_LEAVE))
-                .list();
-
-        // 方式 2: 使用 IN (推荐，更简洁)
-        List<Employee> byIn = query()
-                .where(Employee::getStatus).in(EmployeeStatus.ACTIVE, EmployeeStatus.ON_LEAVE)
-                .list();
-
-        return byIn; // 返回 IN 方式的结果
-    }
-
-    // ==================== Helper Methods ====================
-
-    private Employee createEmployee(Long id, String name, String email, BigDecimal salary) {
-        Employee employee = new Employee();
-        employee.setId(id);
-        employee.setName(name);
-        employee.setEmail(email);
-        employee.setSalary(salary);
-        employee.setActive(true);
-        employee.setStatus(EmployeeStatus.ACTIVE);
-        employee.setHireDate(LocalDate.now());
-        return employee;
     }
 
     // ==================== DTO Classes ====================
@@ -1239,4 +946,3 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
     }
 }
-

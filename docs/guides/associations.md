@@ -18,17 +18,25 @@
 
 NextEntity 支持 JPA 标准关联关系，提供懒加载和急加载两种策略。
 
+> **重要**: `query()` 方法在 `AbstractRepository` 中是 `protected` 的，以下示例均为 Repository 内部方法实现。
+
 ### N+1 问题
 
 当查询主实体后，逐个访问关联实体时会产生额外查询：
 
 ```java
-// 查询员工（1 次查询）
-List<Employee> employees = employeeRepository.query().getList();
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-// 访问每个员工的部门（N 次查询）
-for (Employee e : employees) {
-    Department dept = e.getDepartment();  // 每次触发一次查询
+    // 查询员工（1 次查询）
+    public List<Employee> findAll() {
+        return query().list();;
+    }
+
+    // 外部访问每个员工的部门时会产生 N 次查询
+    // for (Employee e : employees) {
+    //     Department dept = e.getDepartment();  // 每次触发一次查询
+    // }
 }
 ```
 
@@ -57,8 +65,6 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java` (`department` 字段定义)
-
 > **注意**: NextEntity 目前支持 ManyToOne 关联的 `fetch()` 操作。OneToMany 和 ManyToMany 关联需要通过外键字段手动查询。
 
 ---
@@ -71,13 +77,11 @@ public class Employee {
 // 查询员工（Department 不加载）
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 
 // 访问部门时才加载（触发额外查询）
 Department dept = employees.get(0).getDepartment();  // 第二次查询
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithLazyLoading` 方法)
 
 ### 适用场景
 
@@ -96,13 +100,11 @@ Department dept = employees.get(0).getDepartment();  // 第二次查询
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)  // 急加载部门
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 
 // 访问部门无需额外查询
 Department dept = employees.get(0).getDepartment();  // 已加载
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithDepartmentFetch` 方法)
 
 生成的 SQL：
 
@@ -121,10 +123,8 @@ WHERE e.active = ?
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithMultipleFetches` 方法)
 
 ---
 
@@ -137,7 +137,7 @@ List<Employee> employees = employeeRepository.query()
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
     // 部门的关联需要额外处理
-    .getList();
+    .list();
 ```
 
 ### 处理建议
@@ -148,15 +148,13 @@ List<Employee> employees = employeeRepository.query()
 // 方案 1：先查询主实体，再查询关联
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
-    .getList();
+    .list();
 
 // 方案 2：使用投影避免复杂关联
 List<EmployeeDepartmentDTO> results = employeeRepository.query()
     .select(EmployeeDepartmentDTO.class)
-    .getList();
+    .list();
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeWithDepartmentInfo` 方法)
 
 ---
 
@@ -166,7 +164,7 @@ List<EmployeeDepartmentDTO> results = employeeRepository.query()
 
 ```java
 // 问题：N+1 查询
-List<Employee> employees = employeeRepository.query().getList();
+List<Employee> employees = employeeRepository.query().list();
 for (Employee e : employees) {
     System.out.println(e.getDepartment().getName());  // 每次触发查询
 }
@@ -174,13 +172,11 @@ for (Employee e : employees) {
 // 解决：使用 fetch
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)  // 一次 JOIN 查询
-    .getList();
+    .list();
 for (Employee e : employees) {
     System.out.println(e.getDepartment().getName());  // 无额外查询
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithDepartmentFetch` 方法)
 
 ### 批量大小配置
 
@@ -202,18 +198,16 @@ public List<EmployeeSummary> getSummaries() {
     // 不需要关联，不用 fetch
     return employeeRepository.query()
         .select(EmployeeSummary.class)
-        .getList();
+        .list();
 }
 
 public List<EmployeeWithDept> getWithDepartment() {
     // 需要关联，使用 fetch
     return employeeRepository.query()
         .fetch(Employee::getDepartment)
-        .getList();
+        .list();
 }
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (fetch 示例)
 
 ---
 
@@ -225,16 +219,14 @@ public List<EmployeeWithDept> getWithDepartment() {
 // 只需要员工信息：不 fetch
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 
 // 需要部门信息：fetch
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (懒加载 vs 急加载对比)
 
 ### 2. 使用投影替代复杂关联
 
@@ -251,11 +243,8 @@ public class EmployeeWithDept {
 List<EmployeeWithDept> results = employeeRepository.query()
     .select(EmployeeWithDept.class)
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findEmployeeWithDepartmentInfo` 方法)
-> 📍 **DTO 定义**: `EmployeeRepository.java` (`EmployeeWithDept` 类)
 
 ### 3. 注意外键配置
 
@@ -273,8 +262,6 @@ public class Employee {
 }
 ```
 
-> 📍 **示例位置**: `entity/Employee.java` (外键和关联字段定义)
-
 ---
 
 ## 示例
@@ -285,18 +272,16 @@ public class Employee {
 // 不加载部门
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 // employee.getDepartment() 为 null 或代理对象
 
 // 加载部门
 List<Employee> employees = employeeRepository.query()
     .fetch(Employee::getDepartment)
     .where(Employee::getActive).eq(true)
-    .getList();
+    .list();
 // employee.getDepartment() 已加载
 ```
-
-> 📍 **示例位置**: `EmployeeRepository.java` (`findWithDepartmentFetch` 方法)
 
 ---
 

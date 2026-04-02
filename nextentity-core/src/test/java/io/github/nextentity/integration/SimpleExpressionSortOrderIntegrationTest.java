@@ -327,7 +327,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(idAscOrder)
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -348,7 +348,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(idDescOrder)
-                .window(2, 10);
+                .list(2, 10);
 
         // Then
         assertThat(employees).hasSize((int) totalCount - 2);

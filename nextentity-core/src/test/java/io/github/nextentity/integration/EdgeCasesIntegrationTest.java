@@ -239,7 +239,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .limit(5);
+                .list(5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -255,7 +255,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(10000, 5);
+                .list(10000, 5);
 
         // Then
         assertThat(employees).isEmpty();
@@ -271,7 +271,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .limit(0);
+                .list(0);
 
         // Then - behavior may vary, just ensure no exception
         assertThat(employees).isNotNull();
@@ -287,7 +287,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .window(-1, 5);
+                .list(-1, 5);
 
         // Then - should handle gracefully (may treat as 0 or return all)
         assertThat(employees).isNotNull();
