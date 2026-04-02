@@ -59,7 +59,7 @@ public class ExceptionPropagationIntegrationTest {
     @DisplayName("Should throw exception for getSingle with multiple results")
     void shouldThrowExceptionForGetSingleWithMultipleResults(IntegrationTestContext context) {
         // When/Then - query that returns multiple results
-        assertThatThrownBy(() -> context.queryEmployees().getSingle())
+        assertThatThrownBy(() -> context.queryEmployees().single())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -73,7 +73,7 @@ public class ExceptionPropagationIntegrationTest {
         // When/Then - query that returns no results
         assertThatThrownBy(() -> context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .requireSingle())
+                .single())
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -87,7 +87,7 @@ public class ExceptionPropagationIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(employee).isNull();
@@ -106,8 +106,8 @@ public class ExceptionPropagationIntegrationTest {
                 .first();
 
         // Then
-        assertThat(employee).isPresent();
-        assertThat(employee.get().getId()).isEqualTo(1L);
+        assertThat(employee).isNotNull();
+        assertThat(employee.getId()).isEqualTo(1L);
     }
 
     /**
@@ -123,7 +123,7 @@ public class ExceptionPropagationIntegrationTest {
                 .first();
 
         // Then
-        assertThat(employee).isEmpty();
+        assertThat(employee).isNull();
     }
 
     /**
@@ -136,7 +136,7 @@ public class ExceptionPropagationIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -152,7 +152,7 @@ public class ExceptionPropagationIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isFalse();
@@ -184,7 +184,7 @@ public class ExceptionPropagationIntegrationTest {
         // When
         var employees = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isEmpty();
@@ -200,7 +200,7 @@ public class ExceptionPropagationIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getFirst();
+                .first();
 
         // Then
         assertThat(employee).isNotNull();

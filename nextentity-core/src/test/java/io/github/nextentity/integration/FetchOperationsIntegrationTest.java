@@ -45,7 +45,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(1);
@@ -66,7 +66,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(5);
@@ -95,7 +95,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(paths)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(1);
@@ -115,7 +115,7 @@ public class FetchOperationsIntegrationTest {
                 .fetch(Employee::getDepartment)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -133,7 +133,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .getList(0, 3);
+                .limit(3);
 
         // Then
         assertThat(employees).hasSize(3);
@@ -171,7 +171,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(12);
@@ -197,7 +197,7 @@ public class FetchOperationsIntegrationTest {
         // When - query without fetch
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(1);
@@ -234,7 +234,7 @@ public class FetchOperationsIntegrationTest {
         boolean exists = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).eq(1L)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -252,7 +252,7 @@ public class FetchOperationsIntegrationTest {
         Employee employee = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(employee).isNotNull();
@@ -275,8 +275,8 @@ public class FetchOperationsIntegrationTest {
                 .first();
 
         // Then
-        assertThat(employeeOpt).isPresent();
-        Employee employee = employeeOpt.get();
+        assertThat(employeeOpt).isNotNull();
+        Employee employee = employeeOpt;
         assertThat(employee.getId()).isEqualTo(1L);
         assertThat(employee.getName()).isNotNull();
     }
@@ -292,7 +292,7 @@ public class FetchOperationsIntegrationTest {
         // When
         List<Department> departments = context.queryDepartments()
                 .where(Department::getActive).eq(true)
-                .getList();
+                .list();
 
         // Then
         assertThat(departments).isNotEmpty();
@@ -314,7 +314,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).eq(deptId)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -341,7 +341,7 @@ public class FetchOperationsIntegrationTest {
                 .fetch(Employee::getDepartment)
                 .where(Employee::getSalary).ge(minSalary)
                 .where(Employee::getSalary).le(maxSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -363,7 +363,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getName).like("A%")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -386,7 +386,7 @@ public class FetchOperationsIntegrationTest {
                 .fetch(Employee::getDepartment)
                 .where(Employee::getId).in(1L, 2L, 3L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(3);
@@ -408,7 +408,7 @@ public class FetchOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).notIn(1L, 2L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -418,3 +418,4 @@ public class FetchOperationsIntegrationTest {
         }
     }
 }
+

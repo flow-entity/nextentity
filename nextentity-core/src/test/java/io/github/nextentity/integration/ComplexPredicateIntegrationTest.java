@@ -42,7 +42,7 @@ public class ComplexPredicateIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -61,7 +61,7 @@ public class ComplexPredicateIntegrationTest {
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -86,7 +86,7 @@ public class ComplexPredicateIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(isAlice.or(isBob))
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(2);
@@ -108,7 +108,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(isHighSalary.or(isDepartment1))
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -128,7 +128,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(isActive.not())
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -150,7 +150,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(activeAndDept1.or(highSalary))
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -173,7 +173,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(isAlice.or(isBobAndActive))
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -196,7 +196,7 @@ public class ComplexPredicateIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(isDepartment1)
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -218,7 +218,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(isAlice.or(isBob).or(isCharlie))
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -242,7 +242,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(dept1Or2.not())
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -265,7 +265,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(activeAndStatusActive.or(highSalaryDept1))
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -288,7 +288,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Department> departments = context.queryDepartments()
                 .where(isActive.and(highBudget))
-                .getList();
+                .list();
 
         // Then
         assertThat(departments).isNotEmpty();
@@ -312,7 +312,7 @@ public class ComplexPredicateIntegrationTest {
                 .where(combined)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -336,7 +336,7 @@ public class ComplexPredicateIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(activePredicate)
                 .where(Employee::getDepartmentId).in(1L, 2L, 3L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -358,7 +358,7 @@ public class ComplexPredicateIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(activePredicate)
                 .where(Employee::getName).like("A%")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -376,7 +376,7 @@ public class ComplexPredicateIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).isNotNull()
                 .where(Employee::getDepartmentId).isNotNull()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -399,7 +399,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(combined)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -423,7 +423,7 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(activeAndStatus.not())
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -440,11 +440,11 @@ public class ComplexPredicateIntegrationTest {
         // When
         List<Employee> activeEmployees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         List<Employee> inactiveEmployees = context.queryEmployees()
                 .where(Employee::getActive).eq(false)
-                .getList();
+                .list();
 
         // Then
         assertThat(activeEmployees).isNotEmpty();

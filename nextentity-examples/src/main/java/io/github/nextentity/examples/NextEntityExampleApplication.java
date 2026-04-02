@@ -84,19 +84,19 @@ public class NextEntityExampleApplication {
         // Find all employees
         List<Employee> allEmployees = employeeRepository.query()
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
         System.out.println("All employees: " + allEmployees.size());
 
         // Find by ID
         Employee employee = employeeRepository.query()
                 .where(Employee::getId).eq(1L)
-                .getFirst();
+                .first();
         System.out.println("Employee with ID 1: " + (employee != null ? employee.getName() : "not found"));
 
         // Find by department
         List<Employee> engineering = employeeRepository.query()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
         System.out.println("Engineering employees: " + engineering.size());
 
         System.out.println();
@@ -109,25 +109,25 @@ public class NextEntityExampleApplication {
         List<Employee> activeHighEarners = employeeRepository.query()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getSalary).gt(BigDecimal.valueOf(70000.0))
-                .getList();
+                .list();
         System.out.println("Active employees earning > 70k: " + activeHighEarners.size());
 
         // IN clause
         List<Employee> specificStatuses = employeeRepository.query()
                 .where(Employee::getStatus).in(EmployeeStatus.ACTIVE, EmployeeStatus.ON_LEAVE)
-                .getList();
+                .list();
         System.out.println("Active or on leave: " + specificStatuses.size());
 
         // Between
         List<Employee> salaryRange = employeeRepository.query()
                 .where(Employee::getSalary).between(BigDecimal.valueOf(50000.0), BigDecimal.valueOf(80000.0))
-                .getList();
+                .list();
         System.out.println("Salary between 50k-80k: " + salaryRange.size());
 
         // String contains
         List<Employee> nameContains = employeeRepository.query()
                 .where(Employee::getName).contains("John")
-                .getList();
+                .list();
         System.out.println("Name contains 'John': " + nameContains.size());
 
         System.out.println();
@@ -140,14 +140,14 @@ public class NextEntityExampleApplication {
         List<String> names = employeeRepository.query()
                 .select(Employee::getName)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
         System.out.println("Employee names: " + names);
 
         // Tuple projection
         List<?> nameSalaries = employeeRepository.query()
                 .select(Employee::getName, Employee::getSalary)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
         System.out.println("Name-Salary pairs: " + nameSalaries.size() + " records");
 
         System.out.println();
@@ -159,19 +159,19 @@ public class NextEntityExampleApplication {
         // Page 1
         List<Employee> page1 = employeeRepository.query()
                 .orderBy(Employee::getId).asc()
-                .getList(0, 3);
+                .limit(3);
         System.out.println("Page 1 (first 3): " + page1.stream().map(Employee::getName).toList());
 
         // Page 2
         List<Employee> page2 = employeeRepository.query()
                 .orderBy(Employee::getId).asc()
-                .getList(3, 3);
+                .window(3, 3);
         System.out.println("Page 2 (next 3): " + page2.stream().map(Employee::getName).toList());
 
         // Top earners
         List<Employee> topEarners = employeeRepository.query()
                 .orderBy(Employee::getSalary).desc()
-                .getList(0, 3);
+                .limit(3);
         System.out.println("Top 3 earners: " + topEarners.stream().map(Employee::getName).toList());
 
         System.out.println();

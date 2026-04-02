@@ -47,7 +47,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Engineering department has 5 employees
             assertThat(employees).hasSize(5);
@@ -71,7 +71,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Marketing"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Marketing department has 3 employees
             assertThat(employees).hasSize(3);
@@ -93,7 +93,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Sales"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Sales department has 2 employees
             assertThat(employees).hasSize(2);
@@ -115,7 +115,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("HR"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - HR department has 1 employee
             assertThat(employees).hasSize(1);
@@ -135,7 +135,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Finance"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Finance department has 1 employee
             assertThat(employees).hasSize(1);
@@ -153,7 +153,7 @@ public class NestedPathIntegrationTest {
             // When - query employees in non-existent department
             List<Employee> employees = context.queryEmployees()
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("IT"))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isEmpty();
@@ -176,7 +176,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getLocation).eq("Building A"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Engineering has 5 employees + HR has 1 = 6 employees
             assertThat(employees).hasSize(6);
@@ -198,7 +198,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getLocation).eq("Building B"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(3);
@@ -225,7 +225,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getBudget).gt(300000.0))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Engineering(5) + Sales(2) = 7 employees
             assertThat(employees).hasSize(7);
@@ -248,7 +248,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getBudget).between(200000.0, 400000.0))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Marketing(3) + Sales(2) + HR(1) + Finance(1) = 7 employees
             assertThat(employees).hasSize(7);
@@ -275,7 +275,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getActive).eq(true))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Engineering(5) + Marketing(3) + Sales(2) + HR(1) = 11 employees
             assertThat(employees).hasSize(11);
@@ -297,7 +297,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getActive).eq(false))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Finance has 1 employee
             assertThat(employees).hasSize(1);
@@ -324,7 +324,7 @@ public class NestedPathIntegrationTest {
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
                     .where(Employee::getActive).eq(true)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Engineering has 4 active employees (Eve Adams is inactive)
             assertThat(employees).hasSize(4);
@@ -348,7 +348,7 @@ public class NestedPathIntegrationTest {
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getActive).eq(true))
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getLocation).eq("Building A"))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - Engineering and HR are active and in Building A
             // Engineering(5) + HR(1) = 6 employees
@@ -373,7 +373,7 @@ public class NestedPathIntegrationTest {
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
                     .where(Employee::getSalary).gt(70000.0)
                     .orderBy(Employee::getSalary).desc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -401,7 +401,7 @@ public class NestedPathIntegrationTest {
                     .fetch(Employee::getDepartment)
                     .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
                     .orderBy(Employee::getSalary).desc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(5);
@@ -427,7 +427,7 @@ public class NestedPathIntegrationTest {
             // When
             List<String> deptNames = context.queryEmployees()
                     .selectDistinct(EntityPath.of(Employee::getDepartment).get(Department::getName))
-                    .getList();
+                    .list();
 
             // Then - 5 distinct department names
             assertThat(deptNames).hasSize(5);
@@ -445,7 +445,7 @@ public class NestedPathIntegrationTest {
             // When
             List<String> locations = context.queryEmployees()
                     .selectDistinct(EntityPath.of(Employee::getDepartment).get(Department::getLocation))
-                    .getList();
+                    .list();
 
             // Then - 4 distinct locations (Building A, B, C, D)
             assertThat(locations).hasSize(4);

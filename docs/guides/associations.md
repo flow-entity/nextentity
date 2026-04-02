@@ -250,7 +250,7 @@ public class EmployeeWithDept {
 
 List<EmployeeWithDept> results = employeeRepository.query()
     .select(EmployeeWithDept.class)
-    .fetch(Employee::getDepartment)
+    .where(Employee::getActive).eq(true)
     .getList();
 ```
 

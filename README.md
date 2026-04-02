@@ -113,6 +113,15 @@ public class EmployeeService {
         }
     }
 
+    // 条件批量更新
+    public int deactivateDepartment(Long departmentId) {
+        return employeeRepository.updateWhere()
+            .set(Employee::getActive, false)
+            .set(Employee::getStatus, EmployeeStatus.INACTIVE)
+            .where(Employee::getDepartmentId).eq(departmentId)
+            .execute();
+    }
+
     // 删除
     public void deleteEmployee(Employee emp) {
         employeeRepository.delete(emp);

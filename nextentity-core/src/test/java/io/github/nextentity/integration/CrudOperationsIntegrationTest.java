@@ -64,7 +64,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(100L)
-                .getList();
+                .list();
         assertThat(employees).hasSize(1);
         assertThat(employees.get(0).getName()).isEqualTo("Test User");
         assertThat(employees.get(0).getEmail()).isEqualTo("test@example.com");
@@ -90,7 +90,7 @@ public class CrudOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(200L, 201L, 202L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
         assertThat(employees).hasSize(3);
         assertThat(employees.get(0).getName()).isEqualTo("User 200");
         assertThat(employees.get(2).getName()).isEqualTo("User 202");
@@ -112,7 +112,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         List<Department> departments = context.queryDepartments()
                 .where(Department::getId).eq(100L)
-                .getList();
+                .list();
         assertThat(departments).hasSize(1);
         assertThat(departments.get(0).getName()).isEqualTo("IT");
         assertThat(departments.get(0).getLocation()).isEqualTo("Building E");
@@ -128,7 +128,7 @@ public class CrudOperationsIntegrationTest {
         // Given
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList().get(0);
+                .list().get(0);
         String originalName = employee.getName();
         employee.setName("Updated Name");
         employee.setSalary(99999.0);
@@ -139,7 +139,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList().get(0);
+                .list().get(0);
         assertThat(updated.getName()).isEqualTo("Updated Name");
         assertThat(updated.getSalary()).isEqualTo(99999.0);
         assertThat(updated.getName()).isNotEqualTo(originalName);
@@ -155,7 +155,7 @@ public class CrudOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         for (Employee emp : employees) {
             emp.setSalary(emp.getSalary() + 1000);
@@ -167,7 +167,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         List<Employee> updated = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
         assertThat(updated).hasSize(employees.size());
         for (int i = 0; i < employees.size(); i++) {
             assertThat(updated.get(i).getSalary()).isEqualTo(employees.get(i).getSalary());
@@ -188,7 +188,7 @@ public class CrudOperationsIntegrationTest {
         // Verify it exists
         List<Employee> before = context.queryEmployees()
                 .where(Employee::getId).eq(300L)
-                .getList();
+                .list();
         assertThat(before).hasSize(1);
 
         // When
@@ -197,7 +197,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         List<Employee> after = context.queryEmployees()
                 .where(Employee::getId).eq(300L)
-                .getList();
+                .list();
         assertThat(after).isEmpty();
     }
 
@@ -217,7 +217,7 @@ public class CrudOperationsIntegrationTest {
         // Verify they exist
         List<Employee> before = context.queryEmployees()
                 .where(Employee::getId).in(400L, 401L)
-                .getList();
+                .list();
         assertThat(before).hasSize(2);
 
         // When
@@ -226,7 +226,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         List<Employee> after = context.queryEmployees()
                 .where(Employee::getId).in(400L, 401L)
-                .getList();
+                .list();
         assertThat(after).isEmpty();
     }
 
@@ -244,13 +244,13 @@ public class CrudOperationsIntegrationTest {
         // When - delete using where clause
         Employee toDelete = context.queryEmployees()
                 .where(Employee::getId).eq(500L)
-                .getList().get(0);
+                .list().get(0);
         context.getUpdateExecutor().delete(toDelete, Employee.class);
 
         // Then
         List<Employee> after = context.queryEmployees()
                 .where(Employee::getId).eq(500L)
-                .getList();
+                .list();
         assertThat(after).isEmpty();
     }
 
@@ -264,7 +264,7 @@ public class CrudOperationsIntegrationTest {
         // Given
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList().get(0);
+                .list().get(0);
         EmployeeStatus originalStatus = employee.getStatus();
         employee.setStatus(EmployeeStatus.INACTIVE);
 
@@ -274,7 +274,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList().get(0);
+                .list().get(0);
         assertThat(updated.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
         assertThat(updated.getStatus()).isNotEqualTo(originalStatus);
     }
@@ -293,7 +293,7 @@ public class CrudOperationsIntegrationTest {
         // When - update the department
         Department dept = context.queryDepartments()
                 .where(Department::getId).eq(200L)
-                .getList().get(0);
+                .list().get(0);
         dept.setBudget(400000.0);
         dept.setLocation("Building G");
         context.getUpdateExecutor().update(dept, Department.class);
@@ -301,7 +301,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         Department updated = context.queryDepartments()
                 .where(Department::getId).eq(200L)
-                .getList().get(0);
+                .list().get(0);
         assertThat(updated.getBudget()).isEqualTo(400000.0);
         assertThat(updated.getLocation()).isEqualTo("Building G");
     }
@@ -330,7 +330,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(600L)
-                .getList().get(0);
+                .list().get(0);
         assertThat(inserted.getName()).isEqualTo("Full Employee");
         assertThat(inserted.getSalary()).isEqualTo(75000.0);
         assertThat(inserted.getStatus()).isEqualTo(EmployeeStatus.ACTIVE);
@@ -408,7 +408,7 @@ public class CrudOperationsIntegrationTest {
         // Then
         Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(700L)
-                .getList().get(0);
+                .list().get(0);
         assertThat(inserted.getName()).isEqualTo("No Email");
         assertThat(inserted.getEmail()).isNull();
     }
@@ -440,3 +440,4 @@ public class CrudOperationsIntegrationTest {
         return employee;
     }
 }
+

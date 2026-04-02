@@ -47,7 +47,7 @@ class QueryBuilderIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     void getList_ShouldReturnAllEntities(IntegrationTestContext context) {
         // when
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -60,7 +60,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).eq(ALICE_NAME)
-                .getList();
+                .list();
 
         // then
         assertThat(employees).hasSize(1);
@@ -79,7 +79,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(isActive.and(Employee::getStatus).eq(EmployeeStatus.ACTIVE))
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -92,7 +92,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -108,7 +108,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -124,7 +124,7 @@ class QueryBuilderIntegrationTest {
         // when
         Employee employee = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
-                .getFirst();
+                .first();
 
         // then
         assertThat(employee).isNotNull();
@@ -148,12 +148,12 @@ class QueryBuilderIntegrationTest {
         // given
         List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // when
         List<Employee> pagedEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(OFFSET, PAGE_SIZE);
+                .window(OFFSET, PAGE_SIZE);
 
         // then
         assertThat(pagedEmployees).hasSize(PAGE_SIZE);
@@ -166,7 +166,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<String> names = context.queryEmployees()
                 .select(Employee::getName)
-                .getList();
+                .list();
 
         // then
         assertThat(names).isNotEmpty();
@@ -180,7 +180,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Tuple2<String, Double>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getSalary)
-                .getList();
+                .list();
 
         // then
         assertThat(results).isNotEmpty();
@@ -197,7 +197,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
-                .getList();
+                .list();
 
         // then
         assertThat(deptIds).isNotEmpty();
@@ -210,7 +210,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(1L, 2L)
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -223,7 +223,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(MIN_SALARY_RANGE, MAX_SALARY_RANGE)
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -236,7 +236,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).like("%@example.com")
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -249,7 +249,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).isNotNull()
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -262,7 +262,7 @@ class QueryBuilderIntegrationTest {
         // when
         Long count = context.queryEmployees()
                 .select(Path.of(Employee::getId).count())
-                .getFirst();
+                .first();
 
         // then
         assertThat(count).isEqualTo(TOTAL_TEST_EMPLOYEES);
@@ -274,7 +274,7 @@ class QueryBuilderIntegrationTest {
         // when
         Double sum = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).sum())
-                .getFirst();
+                .first();
 
         // then
         assertThat(sum).isPositive();
@@ -286,7 +286,7 @@ class QueryBuilderIntegrationTest {
         // when
         Double avg = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getFirst();
+                .first();
 
         // then
         assertThat(avg).isPositive();
@@ -298,7 +298,7 @@ class QueryBuilderIntegrationTest {
         // when
         Double max = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
-                .getFirst();
+                .first();
 
         // then
         assertThat(max).isEqualTo(MAX_SALARY);
@@ -310,7 +310,7 @@ class QueryBuilderIntegrationTest {
         // when
         Double min = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getFirst();
+                .first();
 
         // then
         assertThat(min).isEqualTo(MIN_SALARY);
@@ -325,7 +325,7 @@ class QueryBuilderIntegrationTest {
         // when
         List<Employee> employees = context.queryEmployees()
                 .where(isAlice.or(Employee::getName).eq(BOB_NAME))
-                .getList();
+                .list();
 
         // then
         assertThat(employees).hasSize(2);
@@ -337,7 +337,7 @@ class QueryBuilderIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     void query_Departments_ShouldReturnAllDepartments(IntegrationTestContext context) {
         // when
-        List<Department> departments = context.queryDepartments().getList();
+        List<Department> departments = context.queryDepartments().list();
 
         // then
         assertThat(departments).hasSize(TOTAL_DEPARTMENTS);
@@ -350,7 +350,7 @@ class QueryBuilderIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .select(Employee.class)
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         // then
         assertThat(employees).isNotEmpty();
@@ -374,7 +374,7 @@ class QueryBuilderIntegrationTest {
             List<Tuple3<String, Double, Long>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary, Employee::getId)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -396,7 +396,7 @@ class QueryBuilderIntegrationTest {
             List<Tuple4<String, Double, Long, String>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary, Employee::getId, Employee::getEmail)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -419,7 +419,7 @@ class QueryBuilderIntegrationTest {
             List<Tuple5<String, Double, Long, String, Boolean>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary, Employee::getId, Employee::getEmail, Employee::getActive)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -449,7 +449,7 @@ class QueryBuilderIntegrationTest {
             // When
             List<Tuple2<Long, Boolean>> results = context.queryEmployees()
                     .selectDistinct(Employee::getDepartmentId, Employee::getActive)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -468,7 +468,7 @@ class QueryBuilderIntegrationTest {
             // When
             var results = context.queryEmployees()
                     .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -494,7 +494,7 @@ class QueryBuilderIntegrationTest {
             // When
             Long count = context.queryEmployees()
                     .select(Path.of(Employee::getId).count())
-                    .getFirst();
+                    .first();
 
             // Then
             assertThat(count).isEqualTo(TOTAL_TEST_EMPLOYEES);
@@ -510,7 +510,7 @@ class QueryBuilderIntegrationTest {
             // When
             Double sum = context.queryEmployees()
                     .select(Path.of(Employee::getSalary).sum())
-                    .getFirst();
+                    .first();
 
             // Then
             assertThat(sum).isPositive();
@@ -530,7 +530,7 @@ class QueryBuilderIntegrationTest {
                             Path.of(Employee::getSalary).max(),
                             Path.of(Employee::getSalary).min()
                     )
-                    .getFirst();
+                    .first();
 
             // Then
             assertThat(result).isNotNull();
@@ -550,7 +550,7 @@ class QueryBuilderIntegrationTest {
             List<Double> salaries = context.queryEmployees()
                     .select(Path.of(Employee::getSalary).add(1000.0))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(salaries).isNotEmpty();
@@ -558,7 +558,7 @@ class QueryBuilderIntegrationTest {
             List<Double> originalSalaries = context.queryEmployees()
                     .select(Employee::getSalary)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
             for (int i = 0; i < salaries.size(); i++) {
                 assertThat(salaries.get(i)).isEqualTo(originalSalaries.get(i) + 1000.0);
             }
@@ -584,7 +584,7 @@ class QueryBuilderIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(1);
@@ -605,7 +605,7 @@ class QueryBuilderIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -625,7 +625,7 @@ class QueryBuilderIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -647,7 +647,7 @@ class QueryBuilderIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(combined)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -669,7 +669,7 @@ class QueryBuilderIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(combined)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(2);
@@ -690,7 +690,7 @@ class QueryBuilderIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(isActive.not())
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -714,7 +714,7 @@ class QueryBuilderIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(complex)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -723,3 +723,5 @@ class QueryBuilderIntegrationTest {
         }
     }
 }
+
+

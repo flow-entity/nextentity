@@ -54,7 +54,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then - Verify the insert was committed
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7001L)
-                .getSingle();
+                .single();
         assertThat(found).isNotNull();
         assertThat(found.getName()).isEqualTo("Transaction Test");
 
@@ -80,7 +80,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then - Verify the update was committed
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7002L)
-                .getSingle();
+                .single();
         assertThat(found.getName()).isEqualTo("After Update");
 
         // Cleanup
@@ -104,7 +104,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then - Verify the delete was committed
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7003L)
-                .getSingle();
+                .single();
         assertThat(found).isNull();
     }
 
@@ -128,7 +128,7 @@ public class TransactionalOperationsIntegrationTest {
         for (int i = 0; i < 5; i++) {
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(7100L + i)
-                    .getSingle();
+                    .single();
             assertThat(found).isNotNull();
         }
 
@@ -160,7 +160,7 @@ public class TransactionalOperationsIntegrationTest {
         for (int i = 0; i < 3; i++) {
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(7200L + i)
-                    .getSingle();
+                    .single();
             assertThat(found.getName()).isEqualTo("After " + i);
         }
 
@@ -189,7 +189,7 @@ public class TransactionalOperationsIntegrationTest {
         for (int i = 0; i < 3; i++) {
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(7300L + i)
-                    .getSingle();
+                    .single();
             assertThat(found).isNull();
         }
     }
@@ -208,7 +208,7 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().insert(employee, Employee.class);
         Employee afterInsert = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
-                .getSingle();
+                .single();
         assertThat(afterInsert).isNotNull();
 
         // When - Update
@@ -216,14 +216,14 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().update(employee, Employee.class);
         Employee afterUpdate = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
-                .getSingle();
+                .single();
         assertThat(afterUpdate.getName()).isEqualTo("Updated Sequential");
 
         // When - Delete
         context.getUpdateExecutor().delete(employee, Employee.class);
         Employee afterDelete = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
-                .getSingle();
+                .single();
         assertThat(afterDelete).isNull();
     }
 
@@ -283,7 +283,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7600L)
-                .getSingle();
+                .single();
         assertThat(found.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
 
         // Cleanup
@@ -309,7 +309,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7700L)
-                .getSingle();
+                .single();
         assertThat(found.getSalary()).isEqualTo(60000.0);
 
         // Cleanup
@@ -335,7 +335,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7800L)
-                .getSingle();
+                .single();
         assertThat(found.getDepartmentId()).isEqualTo(2L);
 
         // Cleanup
@@ -361,7 +361,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(7900L)
-                .getSingle();
+                .single();
         assertThat(found.getActive()).isFalse();
 
         // When - Toggle back to true
@@ -371,7 +371,7 @@ public class TransactionalOperationsIntegrationTest {
         // Then
         found = context.queryEmployees()
                 .where(Employee::getId).eq(7900L)
-                .getSingle();
+                .single();
         assertThat(found.getActive()).isTrue();
 
         // Cleanup
@@ -392,7 +392,7 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().insert(employee, Employee.class);
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getId).eq(8000L)
-                .getList();
+                .list();
 
         // Then
         assertThat(found).hasSize(1);

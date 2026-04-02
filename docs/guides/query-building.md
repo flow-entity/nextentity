@@ -25,14 +25,15 @@
 NextEntity 使用流式 API 构建查询：
 
 ```
-query() → where() → orderBy() → limit/offset → execute()
+query() → where() → orderBy() → offset()/limit()/lock() → getList()/first()/single()/count()
 ```
 
 ```java
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getActive).eq(true)    // 条件
     .orderBy(Employee::getName).asc()        // 排序
-    .getList(0, 10);                         // 分页 + 执行
+    .offset(0).limit(10)                     // 分页
+    .getList();                              // 执行
 ```
 
 ---
@@ -206,7 +207,7 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 .where(Employee::getName).trim().eq("John")
 
 // 长度
-.where(Path.of(Employee::getName).length()).gt(5)
+.where(Employee::getName).length().gt(5)
 
 // 子串
 .where(Employee::getName).substring(0, 4).eq("John")
@@ -383,17 +384,20 @@ public List<Employee> search(Long departmentId, EmployeeStatus status) {
 // 第一页（10条）
 List<Employee> page1 = employeeRepository.query()
     .orderBy(Employee::getId).asc()
-    .getList(0, 10);
+    .offset(0).limit(10)
+    .getList();
 
 // 第二页（10条）
 List<Employee> page2 = employeeRepository.query()
     .orderBy(Employee::getId).asc()
-    .getList(10, 10);
+    .offset(10).limit(10)
+    .getList();
 
 // 第三页（10条）
 List<Employee> page3 = employeeRepository.query()
     .orderBy(Employee::getId).asc()
-    .getList(20, 10);
+    .offset(20).limit(10)
+    .getList();
 ```
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`findFirstPage`, `findPage` 方法)
@@ -426,12 +430,17 @@ boolean hasNext = slice.data().size() == slice.limit();
 | 方法 | 返回类型 | 描述 |
 |------|----------|------|
 | `getList()` | `List<T>` | 获取全部结果 |
-| `getList(offset, limit)` | `List<T>` | 分页获取 |
+| `offset(int)` | `Collector<T>` | 设置偏移量 |
+| `limit(int)` | `Collector<T>` | 设置结果数量上限 |
+| `lock(LockModeType)` | `Collector<T>` | 设置锁模式 |
 | `getFirst()` | `T` | 获取第一条（null 如果空） |
+| `first()` | `Optional<T>` | 以 Optional 形式获取第一条 |
 | `getSingle()` | `T` | 获取单个结果（聚合用） |
+| `single()` | `Optional<T>` | 以 Optional 形式获取单个结果 |
+| `requireSingle()` | `T` | 获取单个结果，不存在时抛异常 |
+| `exists()` | `boolean` | 判断是否存在结果 |
 | `count()` | `long` | 统计数量 |
 | `slice(offset, limit)` | `Slice<T>` | 分片结果 |
-| `stream()` | `Stream<T>` | 流式结果 |
 
 ### 使用示例
 
@@ -446,16 +455,22 @@ Employee first = employeeRepository.query()
     .where(Employee::getId).eq(1L)
     .getFirst();
 
+// 以 Optional 获取第一条
+Optional<Employee> maybeFirst = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
+    .orderBy(Employee::getName).asc()
+    .first();
+
 // 统计数量
 long count = employeeRepository.query()
     .where(Employee::getActive).eq(true)
     .count();
 
-// 流式处理
-employeeRepository.query()
+// 分页后获取结果
+List<Employee> page = employeeRepository.query()
     .where(Employee::getActive).eq(true)
-    .stream()
-    .forEach(System.out::println);
+    .offset(20).limit(10)
+    .getList();
 ```
 
 > 📍 **示例位置**:
@@ -463,7 +478,7 @@ employeeRepository.query()
 > - `getFirst()`: `EmployeeRepository.java` (`findEmployeeByEmail`)
 > - `count()`: `EmployeeRepository.java` (`countAllEmployees`)
 > - `first()`: `EmployeeRepository.java` (`findFirstActive`)
-> - `exist()`: `EmployeeRepository.java` (`hasActiveEmployees`, `existsByEmail`)
+> - `exists()`: `EmployeeRepository.java` (`hasActiveEmployees`, `existsByEmail`)
 
 ---
 

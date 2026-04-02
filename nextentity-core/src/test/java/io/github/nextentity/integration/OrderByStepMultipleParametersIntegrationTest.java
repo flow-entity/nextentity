@@ -46,7 +46,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(order)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -72,7 +72,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(salaryOrder, nameOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -98,7 +98,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(idOrder, nameOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -122,7 +122,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(salaryOrder, nameOrder, idOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -141,7 +141,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary, Employee::getName)
                 .asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -158,7 +158,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary, Employee::getId)
                 .desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -182,7 +182,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId, Employee::getSalary, Employee::getName)
                 .asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -199,7 +199,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId, Employee::getSalary, Employee::getId)
                 .desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -222,7 +222,7 @@ public class OrderByStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(50000.0)
                 .orderBy(salaryOrder, nameOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -266,3 +266,4 @@ public class OrderByStepMultipleParametersIntegrationTest {
         assertThat(employees).hasSize(5);
     }
 }
+

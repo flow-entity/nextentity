@@ -28,14 +28,14 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
         return query()
                 .where(Department::getActive).eq(true)
                 .orderBy(Department::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Find department by ID
     public Department findDepartmentById(Long id) {
         return query()
                 .where(Department::getId).eq(id)
-                .getFirst();
+                .first();
     }
 
     // ==================== Projection ====================
@@ -45,7 +45,7 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
         return query()
                 .select(Department::getName)
                 .where(Department::getActive).eq(true)
-                .getList();
+                .list();
     }
 
     /// Select department info into DTO
@@ -53,7 +53,7 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
         return query()
                 .select(DepartmentInfo.class)
                 .where(Department::getActive).eq(true)
-                .getList();
+                .list();
     }
 
     // ==================== DTO Classes ====================

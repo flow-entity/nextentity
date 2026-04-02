@@ -47,7 +47,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When - pass Order to orderBy
         List<Employee> employees = context.queryEmployees()
                 .orderBy(nameAscOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -70,7 +70,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(salaryAscOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -93,7 +93,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(idAscOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -118,7 +118,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(nameDescOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -141,7 +141,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(salaryDescOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -164,7 +164,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(idDescOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -190,7 +190,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(50000.0)
                 .orderBy(nameAscOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -215,7 +215,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(50000.0)
                 .orderBy(salaryDescOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -260,7 +260,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .orderBy(idDescOrder)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -281,7 +281,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         Employee first = context.queryEmployees()
                 .orderBy(idAscOrder)
-                .getFirst();
+                .first();
 
         // Then
         assertThat(first).isNotNull();
@@ -302,12 +302,12 @@ public class SimpleExpressionSortOrderIntegrationTest {
         long maxId = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).desc()
-                .getFirst();
+                .first();
 
         // When
         Employee first = context.queryEmployees()
                 .orderBy(idDescOrder)
-                .getFirst();
+                .first();
 
         // Then
         assertThat(first).isNotNull();
@@ -348,7 +348,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(idDescOrder)
-                .offset(2);
+                .window(2, 10);
 
         // Then
         assertThat(employees).hasSize((int) totalCount - 2);
@@ -370,7 +370,7 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(salaryDescOrder, idAscOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -391,9 +391,10 @@ public class SimpleExpressionSortOrderIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(salaryDescOrder, nameAscOrder, idAscOrder)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
     }
 }
+

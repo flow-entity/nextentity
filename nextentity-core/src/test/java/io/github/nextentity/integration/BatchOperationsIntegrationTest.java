@@ -58,7 +58,7 @@ public class BatchOperationsIntegrationTest {
         List<Employee> inserted = context.queryEmployees()
                 .where(Employee::getId).ge(1000L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
         assertThat(inserted).hasSize(BATCH_SIZE);
     }
 
@@ -104,7 +104,7 @@ public class BatchOperationsIntegrationTest {
         // Then
         List<Employee> updated = context.queryEmployees()
                 .where(Employee::getId).ge(3000L)
-                .getList();
+                .list();
         assertThat(updated).allMatch(e -> e.getSalary() >= 60000.0);
     }
 
@@ -197,7 +197,7 @@ public class BatchOperationsIntegrationTest {
         // Then
         Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(5000L)
-                .getSingle();
+                .single();
         assertThat(inserted).isNotNull();
         assertThat(inserted.getName()).isEqualTo("Single Employee");
     }
@@ -222,7 +222,7 @@ public class BatchOperationsIntegrationTest {
         List<Employee> inserted = context.queryEmployees()
                 .where(Employee::getId).in(6000L, 6001L, 6002L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
         assertThat(inserted).hasSize(3);
     }
 
@@ -248,7 +248,7 @@ public class BatchOperationsIntegrationTest {
         // Then
         List<Employee> updated = context.queryEmployees()
                 .where(Employee::getId).ge(7000L)
-                .getList();
+                .list();
         assertThat(updated).allMatch(e -> e.getStatus() == EmployeeStatus.INACTIVE);
     }
 

@@ -62,7 +62,7 @@ public class SlicePaginationIntegrationTest {
         // Given
         List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // When
         Slice<Employee> slice = context.queryEmployees()
@@ -134,12 +134,12 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get page with Pageable")
     void shouldGetPageWithPageable(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(1, 5);
+        Pageable<Employee> pageable = Pages.pageable(1, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).hasSize(5);
@@ -154,12 +154,12 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get second page")
     void shouldGetSecondPage(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(2, 5);
+        Pageable<Employee> pageable = Pages.pageable(2, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).hasSize(5);
@@ -168,7 +168,7 @@ public class SlicePaginationIntegrationTest {
         // Verify it's actually the second page
         List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
         assertThat(page.getItems().get(0).getId()).isEqualTo(allEmployees.get(5).getId());
     }
 
@@ -180,12 +180,12 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get last page with partial results")
     void shouldGetLastPage(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(3, 5);
+        Pageable<Employee> pageable = Pages.pageable(3, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).hasSize(2); // 12 - 10 = 2
@@ -200,12 +200,12 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should handle page beyond data")
     void shouldHandlePageBeyondData(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(10, 5);
+        Pageable<Employee> pageable = Pages.pageable(10, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).isEmpty();
@@ -222,7 +222,7 @@ public class SlicePaginationIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(3, 5);
+                .window(3, 5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -254,12 +254,12 @@ public class SlicePaginationIntegrationTest {
         // Given
         List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .offset(5);
+                .window(5, TOTAL_EMPLOYEES);
 
         // Then
         assertThat(employees).hasSize(TOTAL_EMPLOYEES - 5);
@@ -292,13 +292,13 @@ public class SlicePaginationIntegrationTest {
     @DisplayName("Should get page with where condition")
     void shouldGetPageWithWhereCondition(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(1, 3);
+        Pageable<Employee> pageable = Pages.pageable(1, 3);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).hasSize(3);
@@ -360,7 +360,7 @@ public class SlicePaginationIntegrationTest {
         // When - Page size 1
         Page<Employee> page1 = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(Pages.pageable(1, 1));
+                .slice(Pages.pageable(1, 1));
 
         // Then
         assertThat(page1.getItems()).hasSize(1);
@@ -369,10 +369,11 @@ public class SlicePaginationIntegrationTest {
         // When - Page size 12
         Page<Employee> page2 = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(Pages.pageable(1, 12));
+                .slice(Pages.pageable(1, 12));
 
         // Then
         assertThat(page2.getItems()).hasSize(TOTAL_EMPLOYEES);
         assertThat(page2.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
     }
 }
+

@@ -46,7 +46,7 @@ public class FetchStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(departmentPath, Path.of(Employee::getDepartment))
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -68,7 +68,7 @@ public class FetchStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(departmentPath, Path.of(Employee::getDepartment), Path.of(Employee::getDepartment))
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -87,7 +87,7 @@ public class FetchStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment, Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -106,7 +106,7 @@ public class FetchStepMultipleParametersIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment, Employee::getDepartment, Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -126,7 +126,7 @@ public class FetchStepMultipleParametersIntegrationTest {
                 .fetch(Employee::getDepartment, Employee::getDepartment)
                 .where(Employee::getSalary).gt(50000.0)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -150,3 +150,4 @@ public class FetchStepMultipleParametersIntegrationTest {
         assertThat(employees).hasSize(5);
     }
 }
+

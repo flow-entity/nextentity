@@ -46,7 +46,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).ge(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -61,14 +61,14 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
     @DisplayName("Should handle ge(value) with boundary value")
     void shouldHandleGeValueBoundary(IntegrationTestContext context) {
         // Given - find a specific salary to use as boundary
-        Employee first = context.queryEmployees().getFirst();
+        Employee first = context.queryEmployees().first();
         Double boundarySalary = first.getSalary();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).ge(boundarySalary)
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -87,7 +87,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -108,7 +108,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).gt(idThreshold)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -127,7 +127,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).le(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -142,14 +142,14 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
     @DisplayName("Should handle le(value) with boundary value")
     void shouldHandleLeValueBoundary(IntegrationTestContext context) {
         // Given - find a specific salary to use as boundary
-        Employee first = context.queryEmployees().getFirst();
+        Employee first = context.queryEmployees().first();
         Double boundarySalary = first.getSalary();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).le(boundarySalary)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -168,7 +168,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).lt(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -189,7 +189,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).lt(idThreshold)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -212,7 +212,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(minSalary, maxSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -235,7 +235,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).between(minId, maxId)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -256,7 +256,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getHireDate).between(minDate, maxDate)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -283,7 +283,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).notBetween(minSalary, maxSalary)
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -306,7 +306,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).notBetween(minId, maxId)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -327,12 +327,12 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         Double employee1Salary = context.queryEmployees()
                 .select(Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // When - salary between (salary of employee 1) and maxSalary
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(employee1Salary, maxSalary)
-                .getList();
+                .list();
 
         // Then - should return employees with salary >= employee 1's salary and <= maxSalary
         assertThat(employees).isNotEmpty();
@@ -353,12 +353,12 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         Double employee1Salary = context.queryEmployees()
                 .select(Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // When - salary between minSalary and (salary of employee 1)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(minSalary, employee1Salary)
-                .getList();
+                .list();
 
         // Then - should return employees with salary >= minSalary
         assertThat(employees).isNotEmpty();
@@ -379,13 +379,13 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         Double employee1Salary = context.queryEmployees()
                 .select(Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).notBetween(employee1Salary, maxSalary)
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -406,13 +406,13 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         Double employee1Salary = context.queryEmployees()
                 .select(Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).notBetween(minSalary, employee1Salary)
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -434,7 +434,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                 .where(Employee::getSalary).lt(80000.0)
                 .where(Employee::getId).gt(1L)
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -453,7 +453,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(50000.0, 80000.0)
                 .where(Employee::getName).like("A%")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -507,7 +507,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).geIfNotNull(SALARY_THRESHOLD)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -527,7 +527,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).geIfNotNull(null)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -544,7 +544,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).gtIfNotNull(SALARY_THRESHOLD)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -564,7 +564,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).gtIfNotNull(null)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -581,7 +581,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).leIfNotNull(SALARY_THRESHOLD)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -601,7 +601,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).leIfNotNull(null)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -618,7 +618,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).ltIfNotNull(SALARY_THRESHOLD)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -638,7 +638,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(Employee::getSalary).ltIfNotNull(null)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -656,7 +656,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                     .where(Employee::getSalary).geIfNotNull(50000.0)
                     .where(Employee::getSalary).leIfNotNull(80000.0)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -675,7 +675,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                     .where(Employee::getSalary).geIfNotNull(50000.0)
                     .where(Employee::getId).gtIfNotNull(null)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then - should only filter by salary condition
             assertThat(employees).isNotEmpty();
@@ -703,7 +703,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -724,7 +724,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -745,7 +745,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -766,7 +766,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -789,7 +789,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -812,7 +812,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -833,7 +833,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -854,7 +854,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -874,7 +874,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -895,7 +895,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -916,7 +916,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -939,7 +939,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(combined)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -962,7 +962,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(combined)
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -983,7 +983,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(salaryPredicate)
                     .where(Employee::getName).like("A%")
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1004,7 +1004,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(highSalary.not())
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1028,7 +1028,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(complex)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1047,14 +1047,14 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             Double employee1Salary = context.queryEmployees()
                     .select(Employee::getSalary)
                     .where(Employee::getId).eq(1L)
-                    .getSingle();
+                    .single();
             Predicate<Employee> predicate = Path.of(Employee::getSalary).between(employee1Salary, 80000.0);
 
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();

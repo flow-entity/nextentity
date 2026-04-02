@@ -43,7 +43,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - likeIfNotEmpty with non-empty value
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotEmpty("Ali%")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -64,7 +64,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - likeIfNotEmpty with empty value (should be skipped)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then - should return all records (filter was skipped)
         assertThat(employees).hasSize((int) totalCount);
@@ -84,7 +84,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - likeIfNotEmpty with null value (should be skipped)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).likeIfNotEmpty(null)
-                .getList();
+                .list();
 
         // Then - should return all records (filter was skipped)
         assertThat(employees).hasSize((int) totalCount);
@@ -139,7 +139,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // Find employees where (salary + 10000) > 90000, i.e., salary > 80000
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).addIfNotNull(10000.0).gt(90000.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -158,7 +158,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // Find employees where salary > 50000 directly (addition was skipped)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).addIfNotNull(null).gt(50000.0)
-                .getList();
+                .list();
 
         // Then - should compare salary > 50000 directly
         assertThat(employees).isNotEmpty();
@@ -178,7 +178,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // Find employees where (salary - 10000) > 60000, i.e., salary > 70000
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).subtractIfNotNull(10000.0).gt(60000.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -195,7 +195,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - subtractIfNotNull with null value (should be skipped)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).subtractIfNotNull(null).gt(60000.0)
-                .getList();
+                .list();
 
         // Then - should compare salary > 60000 directly
         assertThat(employees).isNotEmpty();
@@ -215,7 +215,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // Find employees where (salary * 0.1) > 7000, i.e., salary > 70000
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).multiplyIfNotNull(0.1).gt(7000.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -232,7 +232,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - multiplyIfNotNull with null value (should be skipped)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).multiplyIfNotNull(null).gt(50000.0)
-                .getList();
+                .list();
 
         // Then - should compare salary > 50000 directly
         assertThat(employees).isNotEmpty();
@@ -252,7 +252,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // Find employees where (salary / 1000) > 75, i.e., salary > 75000
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).divideIfNotNull(1000.0).gt(75.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -269,7 +269,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - divideIfNotNull with null value (should be skipped)
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).divideIfNotNull(null).gt(50000.0)
-                .getList();
+                .list();
 
         // Then - should compare salary > 50000 directly
         assertThat(employees).isNotEmpty();
@@ -330,7 +330,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
                 .addIfNotNull(5000.0)
                 .subtractIfNotNull(5000.0)
                 .gt(70000.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -351,7 +351,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
                 .addIfNotNull(null)  // skipped
                 .addIfNotNull(10000.0)  // applied
                 .gt(85000.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -371,7 +371,7 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("A%")
                 .where(Employee::getSalary).addIfNotNull(10000.0).gt(80000.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -388,20 +388,20 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         // When - use all numeric IfNotNull variants
         // This tests all 5 methods: add, subtract, multiply, divide, mod
         List<Employee> addEmployees = context.queryEmployees()
-                .where(Employee::getSalary).addIfNotNull(1000.0).gt(60000.0).getList();
+                .where(Employee::getSalary).addIfNotNull(1000.0).gt(60000.0).list();
 
         List<Employee> subtractEmployees = context.queryEmployees()
-                .where(Employee::getSalary).subtractIfNotNull(1000.0).gt(60000.0).getList();
+                .where(Employee::getSalary).subtractIfNotNull(1000.0).gt(60000.0).list();
 
         List<Employee> multiplyEmployees = context.queryEmployees()
-                .where(Employee::getSalary).multiplyIfNotNull(0.5).gt(30000.0).getList();
+                .where(Employee::getSalary).multiplyIfNotNull(0.5).gt(30000.0).list();
 
         List<Employee> divideEmployees = context.queryEmployees()
-                .where(Employee::getSalary).divideIfNotNull(2.0).gt(30000.0).getList();
+                .where(Employee::getSalary).divideIfNotNull(2.0).gt(30000.0).list();
 
         // Use ID for mod test since salary mod may have issues with some databases
         List<Employee> modEmployees = context.queryEmployees()
-                .where(Employee::getId).modIfNotNull(2L).eq(0L).getList();
+                .where(Employee::getId).modIfNotNull(2L).eq(0L).list();
 
         // Then - all should return results
         assertThat(addEmployees).isNotEmpty();
@@ -411,3 +411,4 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(modEmployees).isNotEmpty();
     }
 }
+

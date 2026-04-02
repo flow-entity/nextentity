@@ -57,7 +57,7 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Long count = context.queryEmployees()
                 .select(Path.of(Employee::getId).count())
-                .getSingle();
+                .single();
 
         // Then
         assertEquals(12L, count);
@@ -73,7 +73,7 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Long count = context.queryEmployees()
                 .select(Path.of(Employee::getDepartmentId).countDistinct())
-                .getSingle();
+                .single();
 
         // Then
         assertEquals(5L, count);
@@ -89,11 +89,11 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Number sum = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).sum())
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(sum);
-        double expectedSum = context.queryEmployees().getList().stream()
+        double expectedSum = context.queryEmployees().list().stream()
                 .mapToDouble(Employee::getSalary)
                 .sum();
         assertEquals(expectedSum, sum.doubleValue(), 0.01);
@@ -109,11 +109,11 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Number avg = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(avg);
-        double expectedAvg = context.queryEmployees().getList().stream()
+        double expectedAvg = context.queryEmployees().list().stream()
                 .mapToDouble(Employee::getSalary)
                 .average()
                 .orElse(0);
@@ -130,11 +130,11 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Number max = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(max);
-        double expectedMax = context.queryEmployees().getList().stream()
+        double expectedMax = context.queryEmployees().list().stream()
                 .mapToDouble(Employee::getSalary)
                 .max()
                 .orElse(0);
@@ -151,11 +151,11 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Number min = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(min);
-        double expectedMin = context.queryEmployees().getList().stream()
+        double expectedMin = context.queryEmployees().list().stream()
                 .mapToDouble(Employee::getSalary)
                 .min()
                 .orElse(0);
@@ -175,14 +175,14 @@ public class AggregateFunctionsIntegrationTest {
                         Path.of(Employee::getSalary).min(),
                         Path.of(Employee::getSalary).max()
                 )
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(aggregations);
         Number min = aggregations.get(0);
         Number max = aggregations.get(1);
 
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
         double expectedMin = employees.stream().mapToDouble(Employee::getSalary).min().orElse(0);
         double expectedMax = employees.stream().mapToDouble(Employee::getSalary).max().orElse(0);
 
@@ -202,7 +202,7 @@ public class AggregateFunctionsIntegrationTest {
                 .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(results);
@@ -226,7 +226,7 @@ public class AggregateFunctionsIntegrationTest {
                 .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(results);
@@ -249,7 +249,7 @@ public class AggregateFunctionsIntegrationTest {
                 .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).sum())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(results);
@@ -261,7 +261,7 @@ public class AggregateFunctionsIntegrationTest {
 
         double expectedSum = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList().stream()
+                .list().stream()
                 .mapToDouble(Employee::getSalary)
                 .sum();
         assertEquals(expectedSum, dept1.get1(), 0.01);
@@ -279,7 +279,7 @@ public class AggregateFunctionsIntegrationTest {
                 .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).avg())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(results);
@@ -291,7 +291,7 @@ public class AggregateFunctionsIntegrationTest {
 
         double expectedAvg = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList().stream()
+                .list().stream()
                 .mapToDouble(Employee::getSalary)
                 .average()
                 .orElse(0);
@@ -314,7 +314,7 @@ public class AggregateFunctionsIntegrationTest {
                 )
                 .groupBy(Employee::getDepartmentId, Employee::getActive)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(results);
@@ -338,13 +338,13 @@ public class AggregateFunctionsIntegrationTest {
         Long activeCount = context.queryEmployees()
                 .select(Path.of(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(activeCount);
         long expectedActive = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
-                .getList().size();
+                .list().size();
         assertEquals(expectedActive, activeCount);
     }
 
@@ -358,11 +358,11 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Number maxId = context.queryEmployees()
                 .select(Path.of(Employee::getId).max())
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(maxId);
-        long expectedMax = context.queryEmployees().getList().stream()
+        long expectedMax = context.queryEmployees().list().stream()
                 .mapToLong(Employee::getId)
                 .max()
                 .orElse(0);
@@ -379,11 +379,11 @@ public class AggregateFunctionsIntegrationTest {
         // When
         Number minId = context.queryEmployees()
                 .select(Path.of(Employee::getId).min())
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(minId);
-        long expectedMin = context.queryEmployees().getList().stream()
+        long expectedMin = context.queryEmployees().list().stream()
                 .mapToLong(Employee::getId)
                 .min()
                 .orElse(0);
@@ -401,13 +401,13 @@ public class AggregateFunctionsIntegrationTest {
         Long count = context.queryEmployees()
                 .select(Path.of(Employee::getId).count())
                 .where(Employee::getActive).eq(true)
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(count);
         long expectedCount = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
-                .getList().size();
+                .list().size();
         assertEquals(expectedCount, count);
     }
 
@@ -422,13 +422,13 @@ public class AggregateFunctionsIntegrationTest {
         Number sum = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).sum())
                 .where(Employee::getDepartmentId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(sum);
         double expectedSum = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList().stream()
+                .list().stream()
                 .mapToDouble(Employee::getSalary)
                 .sum();
         assertEquals(expectedSum, sum.doubleValue(), 0.01);
@@ -445,7 +445,7 @@ public class AggregateFunctionsIntegrationTest {
         List<Tuple2<EmployeeStatus, Long>> results = context.queryEmployees()
                 .select(Path.of(Employee::getStatus), Path.of(Employee::getId).count())
                 .groupBy(Employee::getStatus)
-                .getList();
+                .list();
 
         // Then
         assertNotNull(results);
@@ -456,3 +456,4 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(12, totalCount);
     }
 }
+

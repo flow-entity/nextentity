@@ -48,7 +48,7 @@ public class SelectApiIntegrationTest {
         List<String> names = context.queryEmployees()
                 .select(Employee::getName)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(names).hasSize(12);
@@ -63,7 +63,7 @@ public class SelectApiIntegrationTest {
         List<Double> salaries = context.queryEmployees()
                 .select(Employee::getSalary)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(salaries).hasSize(12);
@@ -79,7 +79,7 @@ public class SelectApiIntegrationTest {
                 .select(Employee::getName)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(names).hasSize(5);
@@ -93,7 +93,7 @@ public class SelectApiIntegrationTest {
         List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(deptIds).hasSize(5);
@@ -112,7 +112,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<String, String>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -129,7 +129,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<Long, Boolean>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -147,7 +147,7 @@ public class SelectApiIntegrationTest {
                 .select(Employee::getName, Employee::getSalary)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -166,7 +166,7 @@ public class SelectApiIntegrationTest {
         List<Tuple3<String, String, Double>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail, Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -183,7 +183,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple3<Long, Boolean, Double>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -201,7 +201,7 @@ public class SelectApiIntegrationTest {
         List<Tuple4<Long, String, String, Double>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName, Employee::getEmail, Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -219,7 +219,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple4<Long, Boolean, Double, String>> results = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive, Employee::getSalary, Employee::getName)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12); // All names are distinct
@@ -238,7 +238,7 @@ public class SelectApiIntegrationTest {
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -257,7 +257,7 @@ public class SelectApiIntegrationTest {
                 .selectDistinct(Employee::getDepartmentId, Employee::getActive,
                         Employee::getName, Employee::getSalary, Employee::getEmail)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -276,7 +276,7 @@ public class SelectApiIntegrationTest {
                 .select(Employee::getId, Employee::getName, Employee::getEmail,
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -295,7 +295,7 @@ public class SelectApiIntegrationTest {
                         Employee::getName, Employee::getSalary, Employee::getEmail,
                         Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -315,7 +315,7 @@ public class SelectApiIntegrationTest {
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName) // Reuse name for 7th
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -334,7 +334,7 @@ public class SelectApiIntegrationTest {
                         Employee::getName, Employee::getSalary, Employee::getEmail,
                         Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -354,7 +354,7 @@ public class SelectApiIntegrationTest {
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName, Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -371,7 +371,7 @@ public class SelectApiIntegrationTest {
                         Employee::getName, Employee::getSalary, Employee::getEmail,
                         Employee::getId, Employee::getName, Employee::getSalary)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -391,7 +391,7 @@ public class SelectApiIntegrationTest {
                         Employee::getSalary, Employee::getActive, Employee::getDepartmentId,
                         Employee::getName, Employee::getSalary, Employee::getActive)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -409,7 +409,7 @@ public class SelectApiIntegrationTest {
                         Employee::getId, Employee::getName, Employee::getSalary,
                         Employee::getActive)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -430,7 +430,7 @@ public class SelectApiIntegrationTest {
                         Employee::getName, Employee::getSalary, Employee::getActive,
                         Employee::getId)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -450,7 +450,7 @@ public class SelectApiIntegrationTest {
                         Employee::getName, Employee::getSalary, Employee::getActive,
                         Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -473,7 +473,7 @@ public class SelectApiIntegrationTest {
         List<Tuple> results = context.queryEmployees()
                 .select(paths)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -495,7 +495,7 @@ public class SelectApiIntegrationTest {
         List<Tuple> results = context.queryEmployees()
                 .selectDistinct(paths)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -512,7 +512,7 @@ public class SelectApiIntegrationTest {
         // When
         Double maxSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(maxSalary).isNotNull();
@@ -526,7 +526,7 @@ public class SelectApiIntegrationTest {
         // When
         Double minSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(minSalary).isNotNull();
@@ -540,7 +540,7 @@ public class SelectApiIntegrationTest {
         // When
         Long count = context.queryEmployees()
                 .select(Path.of(Employee::getId).count())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(count).isEqualTo(12L);
@@ -553,7 +553,7 @@ public class SelectApiIntegrationTest {
         // When
         Double sum = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).sum())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(sum).isNotNull();
@@ -567,7 +567,7 @@ public class SelectApiIntegrationTest {
         // When
         Double avg = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(avg).isNotNull();
@@ -581,7 +581,7 @@ public class SelectApiIntegrationTest {
         // When
         Long distinctDeptCount = context.queryEmployees()
                 .selectDistinct(Path.of(Employee::getDepartmentId).count())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(distinctDeptCount).isNotNull();
@@ -598,7 +598,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple2<Double, Double>> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -614,7 +614,7 @@ public class SelectApiIntegrationTest {
         List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -629,7 +629,7 @@ public class SelectApiIntegrationTest {
         List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -645,7 +645,7 @@ public class SelectApiIntegrationTest {
                 .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -661,7 +661,7 @@ public class SelectApiIntegrationTest {
                 .select(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -678,7 +678,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -695,7 +695,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -713,7 +713,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -731,7 +731,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -751,7 +751,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple> results = context.queryEmployees()
                 .selectDistinct(expressions)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -773,7 +773,7 @@ public class SelectApiIntegrationTest {
         List<Tuple> results = context.queryEmployees()
                 .select(expressions)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -792,7 +792,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple> results = context.queryEmployees()
                 .select(expressions)
-                .getList();
+                .list();
 
         // Then - aggregate results should produce one row
         assertThat(results).hasSize(1);
@@ -818,7 +818,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple> results = context.queryEmployees()
                 .selectDistinct(expressions)
-                .getList();
+                .list();
 
         // Then - aggregate results should produce one row
         assertThat(results).hasSize(1);
@@ -843,7 +843,7 @@ public class SelectApiIntegrationTest {
         List<Tuple> results = context.queryEmployees()
                 .selectDistinct(expressions)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then - all department+name combinations should be distinct (12 employees)
         assertThat(results).hasSize(12);
@@ -860,7 +860,7 @@ public class SelectApiIntegrationTest {
         // When
         List<Tuple2<Double, Double>> results = context.queryEmployees()
                 .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -875,7 +875,7 @@ public class SelectApiIntegrationTest {
         List<Tuple3<Double, Double, Double>> results = context.queryEmployees()
                 .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -890,7 +890,7 @@ public class SelectApiIntegrationTest {
         List<Tuple4<Double, Double, Double, Long>> results = context.queryEmployees()
                 .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -906,7 +906,7 @@ public class SelectApiIntegrationTest {
                 .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -922,7 +922,7 @@ public class SelectApiIntegrationTest {
                 .selectDistinct(Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -939,7 +939,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -956,7 +956,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count(),
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -974,7 +974,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -992,7 +992,7 @@ public class SelectApiIntegrationTest {
                         Path.of(Employee::getSalary).sum(), Path.of(Employee::getDepartmentId).count(),
                         Path.of(Employee::getSalary).min(), Path.of(Employee::getSalary).max(),
                         Path.of(Employee::getSalary).avg(), Path.of(Employee::getId).count())
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -1012,7 +1012,7 @@ public class SelectApiIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .select(Employee.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(1);
@@ -1027,7 +1027,7 @@ public class SelectApiIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .select(Employee.class)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(12);
@@ -1042,7 +1042,7 @@ public class SelectApiIntegrationTest {
         List<Department> departments = context.queryDepartments()
                 .selectDistinct(Department.class)
                 .orderBy(Department::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(departments).hasSize(5);
@@ -1061,7 +1061,7 @@ public class SelectApiIntegrationTest {
                 .select(Employee::getId, Employee::getName)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -1081,7 +1081,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .orderBy(Employee::getId).asc()
-                .getList(0, 5);
+                .limit(5);
 
         // Then
         assertThat(results).hasSize(5);
@@ -1115,7 +1115,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<String, String>> results = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -1131,7 +1131,7 @@ public class SelectApiIntegrationTest {
         List<Tuple2<Long, String>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .where(Employee::getId).eq(99999L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isEmpty();
@@ -1145,7 +1145,7 @@ public class SelectApiIntegrationTest {
         Tuple2<Long, String> result = context.queryEmployees()
                 .select(Employee::getId, Employee::getName)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(result).isNotNull();
@@ -1164,7 +1164,8 @@ public class SelectApiIntegrationTest {
                 .first();
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().get0()).isEqualTo(1L);
+        assertThat(result).isNotNull();
+        assertThat(result.get0()).isEqualTo(1L);
     }
 }
+

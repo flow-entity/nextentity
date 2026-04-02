@@ -7,25 +7,25 @@ import java.util.List;
 
 /// Sorting step interface for query result sorting construction.
 ///
-/// Extends Collector to specify the sorting method of query results.
+/// Extends LockStep to specify the sorting method of query results.
 ///
 /// @param <T> Entity type
 /// @param <U> Result type
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface OrderByStep<T, U> extends Collector<U> {
+public interface OrderByStep<T, U> extends LockStep<U> {
 
     /// Sort by the specified list of sorting rules.
     ///
     /// @param orders List of sorting rules
     /// @return Collector instance
-    Collector<U> orderBy(List<? extends Order<T>> orders);
+    LockStep<U> orderBy(List<? extends Order<T>> orders);
 
     /// Sort by a single sorting rule.
     ///
     /// @param order Sorting rule
     /// @return Collector instance
-    default Collector<U> orderBy(Order<T> order) {
+    default LockStep<U> orderBy(Order<T> order) {
         return orderBy(List.of(order));
     }
 
@@ -34,7 +34,7 @@ public interface OrderByStep<T, U> extends Collector<U> {
     /// @param p0 First sorting rule
     /// @param p1 Second sorting rule
     /// @return Collector instance
-    default Collector<U> orderBy(Order<T> p0, Order<T> p1) {
+    default LockStep<U> orderBy(Order<T> p0, Order<T> p1) {
         return orderBy(List.of(p0, p1));
     }
 
@@ -44,7 +44,7 @@ public interface OrderByStep<T, U> extends Collector<U> {
     /// @param order2 Second sorting rule
     /// @param order3 Third sorting rule
     /// @return Collector instance
-    default Collector<U> orderBy(Order<T> order1, Order<T> order2, Order<T> order3) {
+    default LockStep<U> orderBy(Order<T> order1, Order<T> order2, Order<T> order3) {
         return orderBy(List.of(order1, order2, order3));
     }
 

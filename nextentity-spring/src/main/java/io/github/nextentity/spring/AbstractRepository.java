@@ -21,6 +21,7 @@ public abstract class AbstractRepository<T, ID> {
     protected final QueryBuilder<T> queryBuilder;
     protected final UpdateExecutor updateExecutor;
     protected final JdbcTemplate jdbcTemplate;
+    protected final NextEntityFactory factory;
 
     protected AbstractRepository(JdbcTemplate jdbcTemplate) {
         NextEntityFactory factory = jdbc(jdbcTemplate);
@@ -42,6 +43,7 @@ public abstract class AbstractRepository<T, ID> {
         this.queryBuilder = queryBuilder;
         this.updateExecutor = updateExecutor;
         this.jdbcTemplate = jdbcTemplate;
+        this.factory = null;
     }
 
     protected AbstractRepository(JdbcTemplate jdbcTemplate,
@@ -52,6 +54,7 @@ public abstract class AbstractRepository<T, ID> {
         this.jdbcTemplate = jdbcTemplate;
         this.queryBuilder = factory.queryBuilder(entityType);
         this.updateExecutor = factory.updateExecutor();
+        this.factory = factory;
     }
 
     protected QueryBuilder<T> query() {
@@ -98,6 +101,45 @@ public abstract class AbstractRepository<T, ID> {
     @Transactional
     public void delete(@NonNull T entity) {
         updateExecutor.delete(entity, entityType);
+    }
+
+    /// Creates a conditional update builder for batch updates with WHERE conditions.
+    ///
+    /// Usage example:
+    /// <pre>{@code
+    /// int updated = repository.updateWhere()
+    ///     .set(User::getStatus, "ARCHIVED")
+    ///     .where(User::getLastLoginAt).lt(threshold)
+    ///     .execute();
+    /// }</pre>
+    ///
+    /// @return Update where step builder
+    /// @since 2.1
+    @Transactional
+    public UpdateWhereStep<T> updateWhere() {
+        if (factory == null) {
+            throw new IllegalStateException("Factory not available. Use constructor with NextEntityFactory.");
+        }
+        return factory.updateWhereStep(entityType);
+    }
+
+    /// Creates a conditional delete builder for batch deletes with WHERE conditions.
+    ///
+    /// Usage example:
+    /// <pre>{@code
+    /// int deleted = repository.deleteWhere()
+    ///     .where(User::getStatus).eq("INACTIVE")
+    ///     .execute();
+    /// }</pre>
+    ///
+    /// @return Delete where step builder
+    /// @since 2.1
+    @Transactional
+    public DeleteWhereStep<T> deleteWhere() {
+        if (factory == null) {
+            throw new IllegalStateException("Factory not available. Use constructor with NextEntityFactory.");
+        }
+        return factory.deleteWhereStep(entityType);
     }
 
     protected BooleanPath<T> path(PathRef.BooleanRef<T> path) {

@@ -164,7 +164,9 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
 ```java
 // 实体实现 Persistable 接口
+@Entity
 public class Product implements Persistable<Long> {
+    @Id
     private Long id;
 
     @Override

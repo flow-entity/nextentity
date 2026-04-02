@@ -38,23 +38,23 @@ class QueryBuilderTest {
         List<Tuple2<Integer, Integer>> list = userQuery.selectDistinct(
                         User::getId, User::getRandomNumber)
                 // .orderBy(User::getId)
-                .getList(10, 20);
+                .window(10, 20);
         log.info("{}", list);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select3(UserRepository userQuery) {
-        IUser first1 = userQuery.select(IUser.class).getFirst(90);
+        IUser first1 = userQuery.select(IUser.class).window(90, 1).stream().findFirst().orElse(null);
         log.info("{}", first1);
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select4(UserRepository userQuery) {
-        List<User> list = userQuery.selectDistinct(User::getParentUser).getList();
+        List<User> list = userQuery.selectDistinct(User::getParentUser).list();
         log.info("{}", list);
-        List<Tuple2<User, User>> list1 = userQuery.selectDistinct(User::getParentUser, User::getRandomUser).getList();
+        List<Tuple2<User, User>> list1 = userQuery.selectDistinct(User::getParentUser, User::getRandomUser).list();
         log.info("{}", list1);
     }
 
@@ -64,7 +64,7 @@ class QueryBuilderTest {
         UserRecord ui = userQuery.select(UserRecord.class)
                 .where(User::getPid).isNotNull()
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
 
         log.info("{}", ui);
     }
@@ -73,8 +73,8 @@ class QueryBuilderTest {
     void select(UserRepository userQuery) {
 
         int offset = 90;
-        User f2 = userQuery.fetch(User::getParentUser).orderBy(User::getId).getFirst(offset);
-        IUser first1 = userQuery.select(IUser.class).orderBy(User::getId).getFirst(offset);
+        User f2 = userQuery.fetch(User::getParentUser).orderBy(User::getId).window(offset, 1).stream().findFirst().orElse(null);
+        IUser first1 = userQuery.select(IUser.class).orderBy(User::getId).window(offset, 1).stream().findFirst().orElse(null);
         Assertions.assertEquals(first1.getUsername(), f2.getUsername());
         Assertions.assertEquals(first1.getId(), f2.getId());
         Assertions.assertEquals(first1.getRandomNumber(), f2.getRandomNumber());
@@ -84,53 +84,53 @@ class QueryBuilderTest {
             Assertions.assertEquals(first1.getParentUser().randomNumber(), f2.getParentUser().getRandomNumber());
         }
 
-        User first3 = userQuery.fetch(User::getParentUser).getFirst(offset);
+        User first3 = userQuery.fetch(User::getParentUser).window(offset, 1).stream().findFirst().orElse(null);
         log.info("{}", first3);
         log.info("{}", first3.getParentUser());
         IUser.U first2 = userQuery.select(IUser.U.class)
                 .orderBy(User::getId)
-                .getFirst(offset);
+                .window(offset, 1).stream().findFirst().orElse(null);
         Assertions.assertEquals(first2.username(), f2.getUsername());
         Assertions.assertEquals(first2.id(), f2.getId());
         Assertions.assertEquals(first2.randomNumber(), f2.getRandomNumber());
 
         User first = userQuery.select(User.class)
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(first, userQuery.users().getFirst());
 
         Integer firstUserid = userQuery.select(User::getId)
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(firstUserid, userQuery.users().getFirst().getId());
 
         Tuple2<Integer, Integer> array = userQuery.select(User::getId, User::getRandomNumber)
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(array.get0(), userQuery.users().getFirst().getId());
         assertEquals(array.get1(), userQuery.users().getFirst().getRandomNumber());
 
         UserModel model = userQuery.select(UserModel.class)
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(model, new UserModel(userQuery.users().getFirst()));
 
         UserInterface ui = userQuery.select(UserInterface.class)
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(model.asMap(), ui.asMap());
 
         ui = userQuery.selectDistinct(UserInterface.class)
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(model.asMap(), ui.asMap());
 
         Long count = userQuery.select(Path.of(User::getId).count())
-                .getSingle();
+                .single();
         assertEquals(count, userQuery.users().size());
 
         Tuple aggArray = userQuery.select(ImmutableList.of(Path.of(User::getId).count(), Path.of(User::getRandomNumber).max(), Path.of(User::getRandomNumber).min(), Path.of(User::getRandomNumber).sum(), Path.of(User::getRandomNumber).avg()
-        )).getSingle();
+        )).single();
 
         int max = Integer.MIN_VALUE;
         int min = Integer.MAX_VALUE;
@@ -153,7 +153,7 @@ class QueryBuilderTest {
                 userQuery
                         .select(User::getId, User::getRandomNumber)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber()))
@@ -164,7 +164,7 @@ class QueryBuilderTest {
                 userQuery
                         .select(User::getId, User::getRandomNumber, User::getTime)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime()))
@@ -175,7 +175,7 @@ class QueryBuilderTest {
                 userQuery
                         .select(User::getId, User::getRandomNumber, User::getTime, User::getPid)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid()))
@@ -188,7 +188,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -201,7 +201,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -214,7 +214,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -227,7 +227,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -241,7 +241,7 @@ class QueryBuilderTest {
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -256,7 +256,7 @@ class QueryBuilderTest {
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong, User::getTestInteger)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -273,7 +273,7 @@ class QueryBuilderTest {
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong, User::getTestInteger))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -290,7 +290,7 @@ class QueryBuilderTest {
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong, User::getTestInteger)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -305,7 +305,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber()))
@@ -316,7 +316,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime()))
@@ -327,7 +327,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime(), it.getPid()))
@@ -340,7 +340,7 @@ class QueryBuilderTest {
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -353,7 +353,7 @@ class QueryBuilderTest {
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -366,7 +366,7 @@ class QueryBuilderTest {
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -379,7 +379,7 @@ class QueryBuilderTest {
                 userQuery
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -393,7 +393,7 @@ class QueryBuilderTest {
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getTestLocalDate(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -408,7 +408,7 @@ class QueryBuilderTest {
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong, User::getTestInteger)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -425,7 +425,7 @@ class QueryBuilderTest {
                         .selectDistinct(User::getTestLocalDate, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid, User::getGender, User::getInstant,
                                 User::getTestLong, User::getTestInteger)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -443,7 +443,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber)
                         .groupBy(User::getId, User::getRandomNumber)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber()))
@@ -456,7 +456,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber, User::getTime)
                         .groupBy(User::getId, User::getRandomNumber, User::getTime)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime()))
@@ -469,7 +469,7 @@ class QueryBuilderTest {
                         .select(User::getId, User::getRandomNumber, User::getTime, User::getPid)
                         .groupBy(User::getId, User::getRandomNumber, User::getTime, User::getPid)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid()))
@@ -485,7 +485,7 @@ class QueryBuilderTest {
                         .groupBy(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -501,7 +501,7 @@ class QueryBuilderTest {
                         .groupBy(User::getId, User::getRandomNumber, User::getTime, User::getPid,
                                 User::getTimestamp, User::isValid)
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -514,7 +514,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber()))
@@ -524,7 +524,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime()))
@@ -534,7 +534,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid()))
@@ -545,7 +545,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -556,7 +556,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -567,7 +567,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -578,7 +578,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -589,7 +589,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -601,7 +601,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -615,7 +615,7 @@ class QueryBuilderTest {
         assertEquals(
                 userQuery.select(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -630,7 +630,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber()))
@@ -641,7 +641,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime()))
@@ -651,7 +651,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid()))
@@ -662,7 +662,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -673,7 +673,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -684,7 +684,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -695,7 +695,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -706,7 +706,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(it -> Tuples.of(it.getId(), it.getRandomNumber(), it.getTime(), it.getPid(),
@@ -718,7 +718,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -732,7 +732,7 @@ class QueryBuilderTest {
         assertDistinctEquals(
                 userQuery.selectDistinct(Path.of(User::getId), Path.of(User::getRandomNumber), Path.of(User::getTime), Path.of(User::getPid), Path.of(User::getTimestamp), Path.of(User::isValid), Path.of(User::getGender), Path.of(User::getInstant), Path.of(User::getTestLong), Path.of(User::getTestInteger))
                         .orderBy(User::getId)
-                        .getList(),
+                        .list(),
 
                 userQuery.users().stream()
                         .map(user -> Tuples.of(
@@ -758,7 +758,7 @@ class QueryBuilderTest {
     @ArgumentsSource(UserQueryProvider.class)
     void selectDistinct(UserRepository userQuery) {
         List<Integer> list = userQuery.selectDistinct(User::getRandomNumber)
-                .getList();
+                .list();
         List<Integer> collect = userQuery.users()
                 .stream().map(User::getRandomNumber)
                 .distinct()
@@ -767,11 +767,11 @@ class QueryBuilderTest {
 
 
         list = userQuery.selectDistinct(Path.of(User::getRandomNumber))
-                .getList();
+                .list();
         assertDistinctEquals(list, collect);
 
         List<Tuple> tuples = userQuery.selectDistinct(ImmutableList.<PathRef<User, ?>>of(User::getRandomNumber, User::getUsername))
-                .getList();
+                .list();
 
         List<Tuple> collect2 = userQuery.users().stream()
                 .map(user -> Tuples.of(user.getRandomNumber(), user.getUsername()))
@@ -785,7 +785,7 @@ class QueryBuilderTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void fetch(UserRepository userQuery) {
-        List<User> users = userQuery.fetch(User::getParentUser).orderBy(User::getId).getList();
+        List<User> users = userQuery.fetch(User::getParentUser).orderBy(User::getId).list();
 
         assertEquals(users, userQuery.users());
         for (int i = 0; i < userQuery.users().size(); i++) {
@@ -800,7 +800,7 @@ class QueryBuilderTest {
 
         users = userQuery.fetch(EntityPath.of(User::getParentUser).get(User::getParentUser))
                 .orderBy(User::getId)
-                .getList();
+                .list();
 
         assertEquals(users, userQuery.users());
         for (int i = 0; i < userQuery.users().size(); i++) {
@@ -825,7 +825,7 @@ class QueryBuilderTest {
                 .select(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
                 ))
                 .groupBy(User::getRandomNumber)
-                .getList();
+                .list();
 
         Map<Object, Long> count = userQuery.users().stream()
                 .collect(Collectors.groupingBy(User::getRandomNumber, Collectors.counting()));
@@ -839,7 +839,7 @@ class QueryBuilderTest {
         list = userQuery
                 .select(ImmutableList.of(Path.of(User::getRandomNumber), Path.of(User::getId).count()
                 )).groupBy(ImmutableList.<PathRef<User, ?>>of(User::getRandomNumber))
-                .getList();
+                .list();
 
         assertEquals(list.size(), count.size());
         for (Tuple objects : list) {
@@ -853,13 +853,13 @@ class QueryBuilderTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void orderBy(UserRepository userQuery) {
-        testOrderBy(ImmutableList.of(new Checker<>(userQuery.users(), userQuery)));
+        testOrderBy(ImmutableList.of(new Checker<>(userQuery.users(), userQuery.query())));
     }
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void combinatorial(UserRepository userQuery) {
-        testOrderBy(getWhereTestCase(new Checker<>(userQuery.users(), userQuery), userQuery.users()));
+        testOrderBy(getWhereTestCase(new Checker<>(userQuery.users(), userQuery.query()), userQuery.users()));
     }
 
     @ParameterizedTest
@@ -867,7 +867,7 @@ class QueryBuilderTest {
     void testEmptyIn(UserRepository userQuery) {
         List<User> list = userQuery.where(User::getId).notIn()
                 .orderBy(User::getId)
-                .getList();
+                .list();
         assertEquals(list, userQuery.users());
     }
 
@@ -877,7 +877,7 @@ class QueryBuilderTest {
             sorted.sort(Comparator.comparingInt(User::getRandomNumber));
             List<User> users = checker.collector
                     .orderBy(User::getRandomNumber, User::getId).asc()
-                    .getList();
+                    .list();
             try {
                 assertEquals(users, sorted);
             } catch (Throwable e) {
@@ -891,7 +891,7 @@ class QueryBuilderTest {
 
             assertEquals(checker.collector
                     .orderBy(User::getRandomNumber, User::getId)
-                    .exist(0), !sorted.isEmpty());
+                    .exists(), !sorted.isEmpty());
 
             Slice<User> slice = checker.collector
                     .orderBy(User::getRandomNumber, User::getId)
@@ -901,10 +901,10 @@ class QueryBuilderTest {
             assertEquals(root, EntityRoot.of());
 
             users = checker.collector.orderBy(User::getRandomNumber, User::getId)
-                    .getList();
+                    .list();
             assertEquals(users, sorted);
             users = checker.collector.orderBy(User::getRandomNumber, User::getId).desc()
-                    .getList();
+                    .list();
             sorted = new ArrayList<>(checker.expected);
             sorted.sort((a, b) -> {
                 int compare = Integer.compare(b.getRandomNumber(), a.getRandomNumber());
@@ -917,7 +917,7 @@ class QueryBuilderTest {
 
             users = checker.collector.orderBy(User::getRandomNumber).desc()
                     .orderBy(User::getId)
-                    .getList();
+                    .list();
             sorted = new ArrayList<>(checker.expected);
             sorted.sort((a, b) -> {
                 int compare = Integer.compare(b.getRandomNumber(), a.getRandomNumber());
@@ -936,17 +936,17 @@ class QueryBuilderTest {
 
         List<User> users = userQuery
                 .orderBy(User::getId)
-                .getList();
+                .list();
         assertEquals(users.size(), userQuery.users().size());
 
         users = userQuery
                 .orderBy(User::getId)
-                .getList(0, 10);
+                .limit(10);
         assertEquals(users, userQuery.users().subList(0, 10));
 
         users = userQuery
                 .orderBy(User::getId)
-                .getList(100, 15);
+                .window(100, 15);
         assertEquals(users, userQuery.users().subList(100, 115));
 
     }
@@ -954,10 +954,10 @@ class QueryBuilderTest {
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void where(UserRepository userQuery) {
-        Checker<User, BaseWhereStep<User, User>> check = new Checker<>(userQuery.users(), userQuery);
+        Checker<User, BaseWhereStep<User, User>> check = new Checker<>(userQuery.users(), userQuery.query());
         var cases = getWhereTestCase(check, userQuery.users());
         for (Checker<User, OrderByStep<User, User>> checker : cases) {
-            List<User> actual = checker.collector.orderBy(User::getId).getList();
+            List<User> actual = checker.collector.orderBy(User::getId).list();
             assertEquals(checker.expected, actual);
         }
     }
@@ -1484,12 +1484,12 @@ class QueryBuilderTest {
                 .where(User::getId).le(10)
                 .orderBy(User::getId).asc()
                 .orderBy(User::getId)
-                .getSingle(10);
+                .window(10, 1).stream().findFirst().orElse(null);
         User user = userQuery.users().get(10);
         assertEquals(single, user);
         single = userQuery
                 .where(User::getId).eq(10)
-                .single().orElse(null);
+                .single();
         User user10 = null;
         for (User u : userQuery.users()) {
             if (u.getId() == 10) {
@@ -1502,12 +1502,12 @@ class QueryBuilderTest {
         single = userQuery
                 .where(User::getId).le(10)
                 .orderBy(User::getId).asc()
-                .single(10).orElse(null);
+                .window(10, 1).stream().findFirst().orElse(null);
         assertEquals(single, user);
 
         assertTrue(userQuery
                 .where(User::getId).le(10)
-                .single(11).isEmpty());
+                .window(11, 1).stream().findFirst().orElse(null) == null);
 
         Slice<User> slice = userQuery
                 .orderBy(User::getId)
@@ -1533,19 +1533,19 @@ class QueryBuilderTest {
 
         user = userQuery
                 .orderBy(User::getId)
-                .getFirst();
+                .first();
         assertEquals(user, userQuery.users().getFirst());
         user = userQuery
                 .orderBy(User::getId)
-                .getFirst(10);
+                .window(10, 1).stream().findFirst().orElse(null);
         assertEquals(user, userQuery.users().get(10));
         user = userQuery
                 .orderBy(User::getId)
-                .first().orElse(null);
+                .first();
         assertEquals(user, userQuery.users().get(0));
         user = userQuery
                 .orderBy(User::getId)
-                .first(8).orElse(null);
+                .window(8, 1).stream().findFirst().orElse(null);
         assertEquals(user, userQuery.users().get(8));
 
     }
@@ -1562,12 +1562,12 @@ class QueryBuilderTest {
             try {
                 User single = userQuery
                         .where(User::getId).le(10)
-                        .getSingle(10, lockModeType);
+                        .lock(lockModeType).window(10, 1).stream().findFirst().orElse(null);
                 User user = userQuery.users().get(10);
                 assertEquals(single, user);
                 single = userQuery
                         .where(User::getId).eq(10)
-                        .single(lockModeType).orElse(null);
+                        .lock(lockModeType).single();
                 User user10 = null;
                 for (User u : userQuery.users()) {
                     if (u.getId() == 10) {
@@ -1579,43 +1579,43 @@ class QueryBuilderTest {
 
                 single = userQuery
                         .where(User::getId).le(10)
-                        .single(10).orElse(null);
+                        .window(10, 1).stream().findFirst().orElse(null);
                 assertEquals(single, user);
 
                 assertTrue(userQuery
                         .where(User::getId).le(10)
-                        .single(11, lockModeType).isEmpty());
+                        .lock(lockModeType).window(11, 1).stream().findFirst().orElse(null) == null);
 
 
                 user = userQuery
                         .orderBy(User::getId)
-                        .getFirst(lockModeType);
+                        .lock(lockModeType).first();
                 assertEquals(user, userQuery.users().getFirst());
                 user = userQuery
                         .orderBy(User::getId)
-                        .getFirst(10, lockModeType);
+                        .lock(lockModeType).window(10, 1).stream().findFirst().orElse(null);
                 assertEquals(user, userQuery.users().get(10));
                 user = userQuery
                         .orderBy(User::getId)
-                        .first(lockModeType).orElse(null);
+                        .lock(lockModeType).first();
                 assertEquals(user, userQuery.users().get(0));
                 user = userQuery
                         .orderBy(User::getId)
-                        .first(8, lockModeType).orElse(null);
+                        .lock(lockModeType).window(8, 1).stream().findFirst().orElse(null);
                 assertEquals(user, userQuery.users().get(8));
 
                 user = userQuery.where(User::getId).eq(0)
                         .orderBy(User::getId)
-                        .requireSingle(lockModeType);
+                        .lock(lockModeType).single();
                 assertEquals(user, userQuery.users().get(0));
 
                 List<User> users = userQuery.where(User::getId).eq(0)
                         .orderBy(User::getId)
-                        .getList(lockModeType);
+                        .lock(lockModeType).list();
                 assertEquals(users.getFirst(), userQuery.users().getFirst());
                 users = userQuery.where(User::getId).eq(0)
                         .orderBy(User::getId)
-                        .getList(lockModeType);
+                        .lock(lockModeType).list();
                 assertEquals(users.getFirst(), userQuery.users().getFirst());
 
             } catch (Exception e) {
@@ -1641,3 +1641,4 @@ class QueryBuilderTest {
         }
     }
 }
+

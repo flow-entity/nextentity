@@ -99,7 +99,7 @@ public class UpdatersIntegrationTest {
             // Then
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(8001L)
-                    .getSingle();
+                    .single();
             assertThat(found).isNotNull();
             assertThat(found.getName()).isEqualTo("Update Test");
         }
@@ -118,7 +118,7 @@ public class UpdatersIntegrationTest {
             update.update(employee);
             Employee updated = context.queryEmployees()
                     .where(Employee::getId).eq(employee.getId())
-                    .getSingle();
+                    .single();
 
             // Then
             assertThat(updated).isNotNull();
@@ -126,7 +126,7 @@ public class UpdatersIntegrationTest {
 
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(8002L)
-                    .getSingle();
+                    .single();
             assertThat(found.getName()).isEqualTo("After Update");
         }
 
@@ -142,7 +142,7 @@ public class UpdatersIntegrationTest {
             // Verify exists
             Employee before = context.queryEmployees()
                     .where(Employee::getId).eq(8003L)
-                    .getSingle();
+                    .single();
             assertThat(before).isNotNull();
 
             // When
@@ -151,7 +151,7 @@ public class UpdatersIntegrationTest {
             // Then
             Employee after = context.queryEmployees()
                     .where(Employee::getId).eq(8003L)
-                    .getSingle();
+                    .single();
             assertThat(after).isNull();
         }
 
@@ -179,7 +179,7 @@ public class UpdatersIntegrationTest {
             List<Employee> found = context.queryEmployees()
                     .where(Employee::getId).in(8011L, 8012L, 8013L)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
             assertThat(found).hasSize(3);
         }
 
@@ -201,7 +201,7 @@ public class UpdatersIntegrationTest {
             update.update(employees);
             List<Employee> updated = context.queryEmployees()
                     .where(Employee::getId).in(8021L, 8022L)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(updated).hasSize(2);
@@ -223,7 +223,7 @@ public class UpdatersIntegrationTest {
             // Verify exists
             List<Employee> before = context.queryEmployees()
                     .where(Employee::getId).in(8031L, 8032L)
-                    .getList();
+                    .list();
             assertThat(before).hasSize(2);
 
             // When
@@ -232,7 +232,7 @@ public class UpdatersIntegrationTest {
             // Then
             List<Employee> after = context.queryEmployees()
                     .where(Employee::getId).in(8031L, 8032L)
-                    .getList();
+                    .list();
             assertThat(after).isEmpty();
         }
 
@@ -267,7 +267,7 @@ public class UpdatersIntegrationTest {
             // Then
             Department found = context.queryDepartments()
                     .where(Department::getId).eq(9001L)
-                    .getSingle();
+                    .single();
             assertThat(found).isNotNull();
             assertThat(found.getName()).isEqualTo("Test Dept");
         }
@@ -287,7 +287,7 @@ public class UpdatersIntegrationTest {
             update.update(dept);
             Department updated = context.queryDepartments()
                     .where(Department::getId).eq(dept.getId())
-                    .getSingle();
+                    .single();
 
             // Then
             assertThat(updated.getName()).isEqualTo("Updated Name");
@@ -309,7 +309,7 @@ public class UpdatersIntegrationTest {
             // Then
             Department found = context.queryDepartments()
                     .where(Department::getId).eq(9003L)
-                    .getSingle();
+                    .single();
             assertThat(found).isNull();
         }
     }

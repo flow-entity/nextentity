@@ -47,7 +47,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(2L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -64,7 +64,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().ge(2L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -81,7 +81,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().eq(5L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -99,7 +99,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().lt(3L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -120,7 +120,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).sum().gt(250000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -137,7 +137,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).sum().ge(200000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -158,7 +158,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).avg().gt(55000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -175,7 +175,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).avg().between(50000.0, 60000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -196,7 +196,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).max().gt(70000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -213,7 +213,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).min().gt(55000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotNull();
@@ -234,7 +234,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(1L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -252,7 +252,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getSalary).sum().gt(100000.0))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotNull();
@@ -272,7 +272,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(1L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -316,7 +316,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList(0, 2);
+                .limit(2);
 
         // Then
         assertThat(results).hasSize(2);
@@ -332,7 +332,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList(1, 2);
+                .window(1, 2);
 
         // Then
         assertThat(results).isNotEmpty();
@@ -370,7 +370,7 @@ public class HavingClauseIntegrationTest {
                 .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getId).count())
                 .groupBy(Employee::getDepartmentId)
                 .having(Path.of(Employee::getId).count().gt(3L))
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -389,7 +389,7 @@ public class HavingClauseIntegrationTest {
                 .select(Path.of(Employee::getStatus), Path.of(Employee::getId).count())
                 .groupBy(Employee::getStatus)
                 .having(Path.of(Employee::getId).count().gt(0L))
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -413,7 +413,7 @@ public class HavingClauseIntegrationTest {
                 .groupBy(Employee::getDepartmentId, Employee::getActive)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -432,7 +432,7 @@ public class HavingClauseIntegrationTest {
                 .select(Path.of(Employee::getActive), Path.of(Employee::getDepartmentId).countDistinct())
                 .groupBy(Employee::getActive)
                 .having(Path.of(Employee::getDepartmentId).countDistinct().gt(2L))
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotNull();
@@ -451,9 +451,10 @@ public class HavingClauseIntegrationTest {
                 .select(Path.of(Department::getActive), Path.of(Department::getBudget).sum())
                 .groupBy(Department::getActive)
                 .having(Path.of(Department::getBudget).sum().gt(100000.0))
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotNull();
     }
 }
+

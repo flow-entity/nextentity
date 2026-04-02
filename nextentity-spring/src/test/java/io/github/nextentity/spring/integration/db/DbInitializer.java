@@ -49,7 +49,7 @@ public class DbInitializer implements InitializingBean {
     }
 
     private List<User> queryAllUsers(UserRepository query) {
-        List<User> list = query.query().orderBy(User::getId).asc().getList();
+        List<User> list = query.query().orderBy(User::getId).asc().list();
         Map<Integer, User> map = list.stream().collect(Collectors.toMap(User::getId, Function.identity()));
         for (User user : list) {
             Integer pid = user.getPid();
@@ -67,3 +67,4 @@ public class DbInitializer implements InitializingBean {
         initialize();
     }
 }
+

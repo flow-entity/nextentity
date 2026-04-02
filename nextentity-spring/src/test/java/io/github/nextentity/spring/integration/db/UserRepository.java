@@ -2,6 +2,7 @@ package io.github.nextentity.spring.integration.db;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
+import io.github.nextentity.core.Pages;
 import io.github.nextentity.spring.AbstractRepository;
 import io.github.nextentity.spring.integration.entity.User;
 import jakarta.persistence.EntityManager;
@@ -13,14 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * @author HuangChengwei
  */
-public class UserRepository extends AbstractRepository<User, Integer> implements QueryBuilder<User> {
+public class UserRepository extends AbstractRepository<User, Integer> {
 
     private List<User> users;
     private final String name;
@@ -47,7 +47,6 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         super.updateAll(entities);
     }
 
-    @Override
     public QueryBuilder<User> query() {
         return super.query();
     }
@@ -60,7 +59,7 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(projectionType);
     }
 
-    public Optional<User> first() {
+    public User first() {
         return getQuery().first();
     }
 
@@ -69,63 +68,63 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     public List<User> getList(int offset, int maxResult, LockModeType lockModeType) {
-        return getQuery().getList(offset, maxResult, lockModeType);
+        return getQuery().lock(lockModeType).window(offset, maxResult);
     }
 
     public List<User> getList(int offset, int maxResult) {
-        return getQuery().getList(offset, maxResult);
+        return getQuery().window(offset, maxResult);
+    }
+
+    public boolean exists() {
+        return getQuery().exists();
     }
 
     public boolean exist() {
-        return getQuery().exist();
-    }
-
-    public <R> Collector<R> map(Function<? super User, ? extends R> mapper) {
-        return getQuery().map(mapper);
+        return getQuery().exists();
     }
 
     public User getSingle(int offset) {
-        return getQuery().getSingle(offset);
+        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User getSingle(int offset, LockModeType lockModeType) {
-        return getQuery().getSingle(offset, lockModeType);
+        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User getFirst(LockModeType lockModeType) {
-        return getQuery().getFirst(lockModeType);
+        return getQuery().lock(lockModeType).first();
     }
 
     public User getSingle(LockModeType lockModeType) {
-        return getQuery().getSingle(lockModeType);
+        return getQuery().lock(lockModeType).single();
     }
 
-    public List<User> offset(int offset) {
-        return getQuery().offset(offset);
-    }
-
-    public Optional<User> single() {
+    public User single() {
         return getQuery().single();
     }
 
-    public Optional<User> single(int offset) {
-        return getQuery().single(offset);
+    public User single(int offset) {
+        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
     }
 
-    public Optional<User> first(LockModeType lockModeType) {
-        return getQuery().first(lockModeType);
+    public User first(LockModeType lockModeType) {
+        return getQuery().lock(lockModeType).first();
     }
 
     public List<User> limit(int limit) {
         return getQuery().limit(limit);
     }
 
-    public Optional<User> single(int offset, LockModeType lockModeType) {
-        return getQuery().single(offset, lockModeType);
+    public Collector<User> lock(LockModeType lockModeType) {
+        return getQuery().lock(lockModeType);
+    }
+
+    public User single(int offset, LockModeType lockModeType) {
+        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User requireSingle() {
-        return getQuery().requireSingle();
+        return getQuery().single();
     }
 
     public Slice<User> slice(int offset, int limit) {
@@ -133,51 +132,51 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     public Page<User> getPage(Pageable pageable) {
-        return getQuery().getPage(pageable);
-    }
-
-    public List<User> getList() {
-        return getQuery().getList();
+        return getQuery().slice(pageable);
     }
 
     public boolean exist(int offset) {
-        return getQuery().exist(offset);
+        return !getQuery().window(offset, 1).isEmpty();
     }
 
     public User getFirst(int offset, LockModeType lockModeType) {
-        return getQuery().getFirst(offset, lockModeType);
+        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
+    }
+
+    public List<User> getList() {
+        return getQuery().list();
     }
 
     public List<User> getList(LockModeType lockModeType) {
-        return getQuery().getList(lockModeType);
+        return getQuery().lock(lockModeType).list();
     }
 
     public <X> SubQueryBuilder<X, User> asSubQuery() {
-        return getQuery().asSubQuery();
+        return getQuery().toSubQuery();
     }
 
     public List<User> offset(int offset, LockModeType lockModeType) {
-        return getQuery().offset(offset, lockModeType);
+        return getQuery().lock(lockModeType).window(offset, Integer.MAX_VALUE);
     }
 
-    public Optional<User> first(int offset) {
-        return getQuery().first(offset);
+    public User first(int offset) {
+        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
     }
 
-    public Optional<User> single(LockModeType lockModeType) {
-        return getQuery().single(lockModeType);
+    public User single(LockModeType lockModeType) {
+        return getQuery().lock(lockModeType).single();
     }
 
     public User requireSingle(LockModeType lockModeType) {
-        return getQuery().requireSingle(lockModeType);
+        return getQuery().lock(lockModeType).single();
     }
 
-    public <R> R getPage(PageCollector<User, R> collector) {
-        return getQuery().getPage(collector);
+    public <R> R getPage(Pageable<User> collector) {
+        return getQuery().slice(collector);
     }
 
     public List<User> limit(int limit, LockModeType lockModeType) {
-        return getQuery().limit(limit, lockModeType);
+        return getQuery().lock(lockModeType).limit(limit);
     }
 
     public <R> R slice(Sliceable<User, R> sliceable) {
@@ -185,19 +184,19 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
     }
 
     public User getFirst() {
-        return getQuery().getFirst();
+        return getQuery().first();
     }
 
     public User getSingle() {
-        return getQuery().getSingle();
+        return getQuery().single();
     }
 
-    public Optional<User> first(int offset, LockModeType lockModeType) {
-        return getQuery().first(offset, lockModeType);
+    public User first(int offset, LockModeType lockModeType) {
+        return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
     }
 
     public User getFirst(int offset) {
-        return getQuery().getFirst(offset);
+        return getQuery().window(offset, 1).stream().findFirst().orElse(null);
     }
 
     public BaseWhereStep<User, User> where(Expression<User, Boolean> predicate) {
@@ -432,13 +431,37 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return getQuery().select(a, b, c, d, e, f, g);
     }
 
+    public BaseWhereStep<User, User> fetch(Path<User, ?> path) {
+        return getQuery().fetch(path);
+    }
+
+    public BaseWhereStep<User, User> fetch(Path<User, ?> p0, Path<User, ?> p1) {
+        return getQuery().fetch(p0, p1);
+    }
+
+    public BaseWhereStep<User, User> fetch(Path<User, ?> p0, Path<User, ?> p1, Path<User, ?> p2) {
+        return getQuery().fetch(p0, p1, p2);
+    }
+
+    public BaseWhereStep<User, User> fetch(PathRef<User, ?> path) {
+        return getQuery().fetch(path);
+    }
+
+    public BaseWhereStep<User, User> fetch(PathRef<User, ?> p0, PathRef<User, ?> p1) {
+        return getQuery().fetch(p0, p1);
+    }
+
+    public BaseWhereStep<User, User> fetch(PathRef<User, ?> p0, PathRef<User, ?> p1, PathRef<User, ?> p2) {
+        return getQuery().fetch(p0, p1, p2);
+    }
+
     public BaseWhereStep<User, User> fetch(Collection<? extends PathRef<User, ?>> pathExpressions) {
         return getQuery().fetch(pathExpressions);
     }
 
     public List<User> users() {
         if (users == null) {
-            List<User> list = query().orderBy(User::getId).asc().getList();
+            List<User> list = query().orderBy(User::getId).asc().list();
             Map<Integer, User> map = list.stream().collect(Collectors.toMap(User::getId, Function.identity()));
             for (User user : list) {
                 Integer pid = user.getPid();
@@ -462,3 +485,5 @@ public class UserRepository extends AbstractRepository<User, Integer> implements
         return name;
     }
 }
+
+

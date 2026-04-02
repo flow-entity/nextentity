@@ -33,7 +33,7 @@ public class TuplesIntegrationTest {
             List<Tuple2<String, Double>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary)
                     .where(Employee::getId).eq(1L)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -50,7 +50,7 @@ public class TuplesIntegrationTest {
             List<Tuple3<String, Double, Boolean>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary, Employee::getActive)
                     .where(Employee::getId).eq(1L)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -68,7 +68,7 @@ public class TuplesIntegrationTest {
             List<Tuple2<String, Double>> results = context.queryEmployees()
                     .select(Employee::getName, Employee::getSalary)
                     .orderBy(Employee::getId).asc()
-                    .getList(0, 5);
+                    .limit(5);
 
             // Then
             assertThat(results).isNotEmpty();
@@ -79,3 +79,4 @@ public class TuplesIntegrationTest {
         }
     }
 }
+

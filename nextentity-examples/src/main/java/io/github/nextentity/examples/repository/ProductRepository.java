@@ -71,7 +71,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .where(Product::getCategoryId).eq(categoryId)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Find products by multiple category IDs.
@@ -81,7 +81,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getCategoryId).asc()
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Find products without category (categoryId is null).
@@ -89,7 +89,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         return query()
                 .where(Product::getCategoryId).isNull()
                 .where(Product::getActive).eq(true)
-                .getList();
+                .list();
     }
 
     /// Lazy loading (default) - category is loaded on first access.
@@ -98,7 +98,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         return query()
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Eager fetch - load products with categories in a single query.
@@ -108,7 +108,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .fetch(Product::getCategory)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Fetch with conditions - load products with categories filtered by category.
@@ -118,7 +118,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .where(Product::getCategoryId).eq(categoryId)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Query by category using categoryId (simpler approach).
@@ -127,7 +127,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .fetch(Product::getCategory)
                 .where(Product::getCategoryId).eq(categoryId)
                 .where(Product::getActive).eq(true)
-                .getList();
+                .list();
     }
 
     /// DTO projection with association data.
@@ -137,7 +137,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .select(ProductWithCategory.class)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Manual join using stream - for complex transformations.
@@ -145,7 +145,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         List<Product> products = query()
                 .fetch(Product::getCategory)
                 .where(Product::getActive).eq(true)
-                .getList();
+                .list();
 
         return products.stream()
                 .map(p -> new ProductCategoryInfo(
@@ -168,7 +168,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 )
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Two-field projection with association using nested path select.
@@ -181,7 +181,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 )
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Group products by category using stream.
@@ -190,7 +190,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         List<Product> products = query()
                 .fetch(Product::getCategory)
                 .where(Product::getActive).eq(true)
-                .getList();
+                .list();
 
         return products.stream()
                 .collect(java.util.stream.Collectors.groupingBy(
@@ -210,7 +210,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 
     /// Find product by SKU code
     public Product findBySku(String sku) {
-        return query().where(Product::getSku).eq(sku).getFirst();
+        return query().where(Product::getSku).eq(sku).first();
     }
 
     /// Find products by name containing text
@@ -218,7 +218,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         return query()
                 .where(Product::getName).contains(name)
                 .where(Product::getActive).eq(true)
-                .getList();
+                .list();
     }
 
     /// Find products in price range
@@ -227,7 +227,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .where(Product::getPrice).between(min, max)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getPrice).asc()
-                .getList();
+                .list();
     }
 
     /// Find products with low stock
@@ -236,7 +236,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .where(Product::getStock).lt(threshold)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getStock).asc()
-                .getList();
+                .list();
     }
 
     /// Find active products with pagination
@@ -253,7 +253,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .select(Product::getName, Product::getPrice)
                 .where(Product::getActive).eq(true)
                 .orderBy(Product::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Calculate total stock value
@@ -261,7 +261,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         List<Product> products = query()
                 .where(Product::getActive).eq(true)
                 .where(Product::getPrice).isNotNull()
-                .getList();
+                .list();
         return products.stream()
                 .map(p -> p.getPrice().multiply(BigDecimal.valueOf(p.getStock())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);

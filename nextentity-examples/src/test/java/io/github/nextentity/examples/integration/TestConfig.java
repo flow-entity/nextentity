@@ -56,7 +56,7 @@ public class TestConfig {
         }
 
         // Delete all departments
-        List<Department> departments = departmentRepository.query().getList();
+        List<Department> departments = departmentRepository.query().list();
         if (!departments.isEmpty()) {
             departmentRepository.deleteAll(departments);
         }

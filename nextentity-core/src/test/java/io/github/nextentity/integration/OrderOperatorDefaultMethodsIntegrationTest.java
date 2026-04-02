@@ -70,7 +70,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .orderBy(Employee::getId)
-                .exist(0);
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -87,9 +87,9 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         long totalCount = context.queryEmployees().count();
 
         // When
-        boolean exists = context.queryEmployees()
+        boolean exists = !context.queryEmployees()
                 .orderBy(Employee::getId)
-                .exist((int) totalCount + 10);
+                .window((int) totalCount + 10, 1).isEmpty();
 
         // Then
         assertThat(exists).isFalse();
@@ -134,43 +134,23 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
     // ==================== getPage(Pageable) Tests ====================
 
     /**
-     * Tests getPage(Pageable) without explicit asc()/desc().
-     * This triggers OrderOperator.getPage(Pageable) default method.
+     * Tests slice(PageCollector) without explicit asc()/desc().
+     * This triggers OrderOperator.slice(PageCollector) path via Collector.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getPage without explicit sort order")
     void shouldGetPageWithoutExplicitSortOrder(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(1, 5);
+        var pageable = Pages.<Employee>pageable(1, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId)
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).isNotEmpty();
-    }
-
-    // ==================== map(Function) Tests ====================
-
-    /**
-     * Tests map(Function) without explicit asc()/desc().
-     * This triggers OrderOperator.map(Function) default method.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map without explicit sort order")
-    void shouldMapWithoutExplicitSortOrder(IntegrationTestContext context) {
-        // When
-        List<String> names = context.queryEmployees()
-                .orderBy(Employee::getId)
-                .map(Employee::getName)
-                .limit(5);
-
-        // Then
-        assertThat(names).hasSize(5);
     }
 
     // ==================== getList(int, int, LockModeType) Tests ====================
@@ -186,7 +166,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId)
-                .getList(0, 5, null);
+                .window(0, 5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -196,7 +176,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
 
     /**
      * Tests asSubQuery() without explicit asc()/desc().
-     * This triggers OrderOperator.asSubQuery() default method.
+     * This triggers OrderOperator.toSubQuery() default method.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -205,7 +185,7 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         // When
         var subQuery = context.queryEmployees()
                 .orderBy(Employee::getId)
-                .asSubQuery();
+                .toSubQuery();
 
         // Then
         assertThat(subQuery).isNotNull();
@@ -231,3 +211,4 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 50000.0);
     }
 }
+

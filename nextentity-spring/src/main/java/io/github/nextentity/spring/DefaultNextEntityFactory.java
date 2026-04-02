@@ -1,17 +1,22 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.QueryBuilder;
+import io.github.nextentity.api.UpdateWhereStep;
 import io.github.nextentity.core.DefaultQueryBuilder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jpa.JpaDeleteWhereStep;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.jpa.JpaTransactionTemplate;
 import io.github.nextentity.jpa.JpaUpdateExecutor;
+import io.github.nextentity.jpa.JpaUpdateWhereStep;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
+import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -22,7 +27,10 @@ import java.util.function.Supplier;
 public record DefaultNextEntityFactory(
         Metamodel metamodel,
         QueryExecutor queryExecutor,
-        UpdateExecutor updateExecutor
+        UpdateExecutor updateExecutor,
+        @Nullable EntityManager entityManager,
+        @Nullable ConnectionProvider connectionProvider,
+        @Nullable SqlDialect sqlDialect
 ) implements NextEntityFactory {
 
     public static DefaultNextEntityFactory jdbc(JdbcTemplate jdbcTemplate) {
@@ -38,10 +46,17 @@ public record DefaultNextEntityFactory(
 
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, connectionProvider, new JdbcResultCollector());
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(sqlDialectSelector, connectionProvider, metamodel);
+
+        // Determine SQL dialect from the selector
+        SqlDialect sqlDialect = detectSqlDialect(sqlDialectSelector);
+
         return new DefaultNextEntityFactory(
                 metamodel,
                 jdbcQueryExecutor,
-                jdbcUpdateExecutor
+                jdbcUpdateExecutor,
+                null,
+                connectionProvider,
+                sqlDialect
         );
     }
 
@@ -92,8 +107,16 @@ public record DefaultNextEntityFactory(
         return new DefaultNextEntityFactory(
                 metamodel,
                 jpaQueryExecutor,
-                jpaUpdateExecutor
+                jpaUpdateExecutor,
+                entityManager,
+                null,
+                null
         );
+    }
+
+    private static SqlDialect detectSqlDialect(SqlDialectSelector selector) {
+        // Default to MySQL dialect, actual detection would require more information
+        return SqlDialect.MYSQL;
     }
 
     @Override
@@ -104,5 +127,25 @@ public record DefaultNextEntityFactory(
     @Override
     public UpdateExecutor updateExecutor() {
         return updateExecutor;
+    }
+
+    @Override
+    public <T> UpdateWhereStep<T> updateWhereStep(Class<T> entityType) {
+        if (entityManager != null) {
+            return new JpaUpdateWhereStep<>(entityType, metamodel, entityManager);
+        } else if (connectionProvider != null && sqlDialect != null) {
+            return new JdbcUpdateWhereStep<>(entityType, metamodel, updateExecutor, connectionProvider, sqlDialect);
+        }
+        throw new IllegalStateException("Neither JPA nor JDBC is properly configured");
+    }
+
+    @Override
+    public <T> DeleteWhereStep<T> deleteWhereStep(Class<T> entityType) {
+        if (entityManager != null) {
+            return new JpaDeleteWhereStep<>(entityType, metamodel, entityManager);
+        } else if (connectionProvider != null && sqlDialect != null) {
+            return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
+        }
+        throw new IllegalStateException("Neither JPA nor JDBC is properly configured");
     }
 }

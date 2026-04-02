@@ -39,7 +39,7 @@ public class JoinOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(employees);
@@ -64,7 +64,7 @@ public class JoinOperationsIntegrationTest {
                 .fetch(Employee::getDepartment)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(5, employees.size());
@@ -85,7 +85,7 @@ public class JoinOperationsIntegrationTest {
         // When
         List<Department> departments = context.queryDepartments()
                 .orderBy(Department::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(5, departments.size());
@@ -106,7 +106,7 @@ public class JoinOperationsIntegrationTest {
         // When - get employees for department 1
         List<Employee> dept1Employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(5, dept1Employees.size());
@@ -114,7 +114,7 @@ public class JoinOperationsIntegrationTest {
         // When - get employees for department 2
         List<Employee> dept2Employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(2L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(3, dept2Employees.size());
@@ -133,7 +133,7 @@ public class JoinOperationsIntegrationTest {
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(employees);
@@ -157,7 +157,7 @@ public class JoinOperationsIntegrationTest {
         Number maxSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
                 .where(Employee::getDepartmentId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertNotNull(maxSalary);
@@ -165,7 +165,7 @@ public class JoinOperationsIntegrationTest {
         // Verify max salary in department 1
         double expectedMax = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList().stream()
+                .list().stream()
                 .mapToDouble(Employee::getSalary)
                 .max()
                 .orElse(0);
@@ -183,7 +183,7 @@ public class JoinOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId).asc()
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(12, employees.size());
@@ -212,7 +212,7 @@ public class JoinOperationsIntegrationTest {
         List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertNotNull(deptIds);
@@ -231,7 +231,7 @@ public class JoinOperationsIntegrationTest {
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertFalse(activeInDept1.isEmpty());
@@ -252,7 +252,7 @@ public class JoinOperationsIntegrationTest {
         List<Department> activeDepts = context.queryDepartments()
                 .where(Department::getActive).eq(true)
                 .orderBy(Department::getBudget).desc()
-                .getList();
+                .list();
 
         // Then
         assertFalse(activeDepts.isEmpty());
@@ -262,3 +262,4 @@ public class JoinOperationsIntegrationTest {
         }
     }
 }
+

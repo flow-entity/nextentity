@@ -42,7 +42,7 @@ public class QueryOperationsIntegrationTest {
     @DisplayName("Should select all employees")
     void shouldSelectAllEmployees(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
 
         // Then
         assertNotNull(employees);
@@ -57,7 +57,7 @@ public class QueryOperationsIntegrationTest {
     @DisplayName("Should select all departments")
     void shouldSelectAllDepartments(IntegrationTestContext context) {
         // When
-        List<Department> departments = context.queryDepartments().getList();
+        List<Department> departments = context.queryDepartments().list();
 
         // Then
         assertNotNull(departments);
@@ -74,7 +74,7 @@ public class QueryOperationsIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList().get(0);
+                .list().get(0);
 
         // Then
         assertNotNull(employee);
@@ -92,7 +92,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).eq("Alice Johnson")
-                .getList();
+                .list();
 
         // Then
         assertEquals(1, employees.size());
@@ -109,7 +109,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).ne(1L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(11, employees.size());
@@ -126,7 +126,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).gt(10L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(2, employees.size());
@@ -143,7 +143,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).lt(4L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(3, employees.size());
@@ -160,7 +160,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(1L, 3L, 5L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(3, employees.size());
@@ -178,7 +178,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).notIn(1L, 3L, 5L)
-                .getList();
+                .list();
 
         // Then
         assertEquals(9, employees.size());
@@ -194,7 +194,7 @@ public class QueryOperationsIntegrationTest {
     @DisplayName("Should filter with isNull condition")
     void shouldFilterWithIsNullCondition(IntegrationTestContext context) {
         // First, update an employee to have null email
-        Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).getList().get(0);
+        Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).list().get(0);
         String email = employee.getEmail();
         employee.setEmail(null);
         context.getUpdateExecutor().update(employee, Employee.class);
@@ -202,7 +202,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).isNull()
-                .getList();
+                .list();
 
         // Then
         assertFalse(employees.isEmpty());
@@ -221,7 +221,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).isNotNull()
-                .getList();
+                .list();
 
         // Then
         assertTrue(employees.size() > 0);
@@ -238,7 +238,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         // Then
         assertTrue(employees.size() > 0);
@@ -255,7 +255,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(12, employees.size());
@@ -274,7 +274,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).desc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(12, employees.size());
@@ -294,7 +294,7 @@ public class QueryOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId).asc()
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(12, employees.size());
@@ -318,7 +318,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(0, 5);
+                .limit(5);
 
         // Then
         assertEquals(5, employees.size());
@@ -336,7 +336,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(5, 3);
+                .window(5, 3);
 
         // Then
         assertEquals(3, employees.size());
@@ -366,7 +366,7 @@ public class QueryOperationsIntegrationTest {
     @DisplayName("Should check if employees exist")
     void shouldCheckExistence(IntegrationTestContext context) {
         // When
-        boolean exists = context.queryEmployees().exist();
+        boolean exists = context.queryEmployees().exists();
 
         // Then
         assertTrue(exists);
@@ -382,14 +382,14 @@ public class QueryOperationsIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .exist();
+                .exists();
 
         // Then
         assertTrue(exists);
 
         boolean notExists = context.queryEmployees()
                 .where(Employee::getId).eq(999L)
-                .exist();
+                .exists();
 
         assertFalse(notExists);
     }
@@ -402,13 +402,13 @@ public class QueryOperationsIntegrationTest {
     @DisplayName("Should get first employee")
     void shouldGetFirstEmployee(IntegrationTestContext context) {
         // When
-        var firstOpt = context.queryEmployees()
+        var first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .first();
 
         // Then
-        assertTrue(firstOpt.isPresent());
-        assertEquals(1L, firstOpt.get().getId());
+        assertNotNull(first);
+        assertEquals(1L, first.getId());
     }
 
     /**
@@ -422,7 +422,7 @@ public class QueryOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertTrue(employees.size() > 0);
@@ -439,7 +439,7 @@ public class QueryOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("A%")
-                .getList();
+                .list();
 
         // Then
         assertTrue(employees.size() > 0);
@@ -457,8 +457,8 @@ public class QueryOperationsIntegrationTest {
         List<Tuple2<String, String>> tuples = context.queryEmployees()
                 .select(Employee::getName, Employee::getEmail)
                 .where(Employee::getId).eq(1L)
-                .getList();
-        Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).getSingle();
+                .list();
+        Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).single();
         System.out.println(employee);
         // Then
         assertEquals(1, tuples.size());
@@ -478,7 +478,7 @@ public class QueryOperationsIntegrationTest {
         List<Department> departments = context.queryDepartments()
                 .where(Department::getActive).eq(true)
                 .orderBy(Department::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(4, departments.size());
@@ -496,7 +496,7 @@ public class QueryOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertEquals(5, employees.size());
@@ -515,7 +515,7 @@ public class QueryOperationsIntegrationTest {
                 .where(Employee::getSalary).ge(60000.0)
                 .where(Employee::getSalary).le(80000.0)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertTrue(employees.size() > 0);
@@ -533,3 +533,5 @@ public class QueryOperationsIntegrationTest {
         }
     }
 }
+
+

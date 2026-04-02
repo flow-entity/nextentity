@@ -53,7 +53,7 @@ public class EmployeeService {
     public void transferEmployee(Long empId, Long newDeptId) {
         Employee emp = employeeRepository.query()
                 .where(Employee::getId).eq(empId)
-                .getFirst();
+                .first();
 
         if (emp != null) {
             Long oldDeptId = emp.getDepartmentId();
@@ -86,7 +86,7 @@ public class EmployeeService {
     public void terminateEmployee(Long empId) {
         Employee emp = employeeRepository.query()
                 .where(Employee::getId).eq(empId)
-                .getFirst();
+                .first();
 
         if (emp != null) {
             emp.setStatus(EmployeeStatus.TERMINATED);
@@ -106,7 +106,7 @@ public class EmployeeService {
         List<Employee> employees = employeeRepository.query()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         employees.forEach(e -> {
             BigDecimal salary = e.getSalary();
@@ -124,7 +124,7 @@ public class EmployeeService {
     public void transferEmployees(List<Long> employeeIds, Long newDepartmentId) {
         List<Employee> employees = employeeRepository.query()
                 .where(Employee::getId).in(employeeIds)
-                .getList();
+                .list();
 
         employees.forEach(e -> e.setDepartmentId(newDepartmentId));
         employeeRepository.updateAll(employees);
@@ -140,7 +140,7 @@ public class EmployeeService {
         return employeeRepository.query()
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
     }
 
     /**
@@ -151,7 +151,7 @@ public class EmployeeService {
         return employeeRepository.query()
                 .where(Employee::getDepartmentId).eq(departmentId)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
     }
 
     // ==================== Helper Methods ====================

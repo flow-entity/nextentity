@@ -39,7 +39,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -59,7 +59,7 @@ public class ProjectionQueryIntegrationTest {
                 .select(EmployeeSummary.class)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -78,7 +78,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -94,7 +94,7 @@ public class ProjectionQueryIntegrationTest {
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -109,7 +109,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .orderBy(Employee::getId).asc()
-                .getList(0, 5);
+                .limit(5);
 
         // Then
         assertThat(results).hasSize(5);
@@ -123,7 +123,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getId).eq(99999L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isEmpty();
@@ -141,7 +141,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -161,7 +161,7 @@ public class ProjectionQueryIntegrationTest {
                 .select(EmployeeNameAndSalary.class)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -179,7 +179,7 @@ public class ProjectionQueryIntegrationTest {
         List<DepartmentInfo> results = context.queryDepartments()
                 .select(DepartmentInfo.class)
                 .orderBy(io.github.nextentity.integration.entity.Department::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(5);
@@ -196,7 +196,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeWithStatus> results = context.queryEmployees()
                 .select(EmployeeWithStatus.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -216,7 +216,7 @@ public class ProjectionQueryIntegrationTest {
                 .select(EmployeeInfo.class)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -231,7 +231,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .orderBy(Employee::getId).asc()
-                .getList(0, 3);
+                .limit(3);
 
         // Then
         assertThat(results).hasSize(3);
@@ -245,7 +245,7 @@ public class ProjectionQueryIntegrationTest {
         EmployeeInfo result = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(result).isNotNull();
@@ -263,7 +263,7 @@ public class ProjectionQueryIntegrationTest {
                 .first();
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result).isNull();
     }
 
     // ========================================
@@ -278,7 +278,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -298,7 +298,7 @@ public class ProjectionQueryIntegrationTest {
                 .select(EmployeeNameSalary.class)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -316,7 +316,7 @@ public class ProjectionQueryIntegrationTest {
         List<DepartmentRecord> results = context.queryDepartments()
                 .select(DepartmentRecord.class)
                 .orderBy(io.github.nextentity.integration.entity.Department::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(5);
@@ -333,7 +333,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeDetailRecord> results = context.queryEmployees()
                 .select(EmployeeDetailRecord.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -353,7 +353,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -369,7 +369,7 @@ public class ProjectionQueryIntegrationTest {
                 .select(EmployeeRecord.class)
                 .where(Employee::getSalary).gt(70000.0)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -384,7 +384,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .orderBy(Employee::getId).asc()
-                .getList(0, 5);
+                .limit(5);
 
         // Then
         assertThat(results).hasSize(5);
@@ -398,7 +398,7 @@ public class ProjectionQueryIntegrationTest {
         EmployeeRecord result = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(result).isNotNull();
@@ -413,7 +413,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeRecord> results = context.queryEmployees()
                 .select(EmployeeRecord.class)
                 .where(Employee::getId).eq(99999L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isEmpty();
@@ -431,7 +431,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeSummary> results = context.queryEmployees()
                 .selectDistinct(EmployeeSummary.class)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12); // All names are distinct
@@ -445,7 +445,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeNameAndSalary> results = context.queryEmployees()
                 .selectDistinct(EmployeeNameAndSalary.class)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -459,7 +459,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeNameSalary> results = context.queryEmployees()
                 .selectDistinct(EmployeeNameSalary.class)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(12);
@@ -477,7 +477,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeBasicInfo> results = context.queryEmployees()
                 .select(EmployeeBasicInfo.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -493,7 +493,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeInfo> results = context.queryEmployees()
                 .select(EmployeeInfo.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -509,7 +509,7 @@ public class ProjectionQueryIntegrationTest {
         List<EmployeeNullableRecord> results = context.queryEmployees()
                 .select(EmployeeNullableRecord.class)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -555,7 +555,7 @@ public class ProjectionQueryIntegrationTest {
                 .where(Employee::getSalary).gt(50000.0)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -572,7 +572,7 @@ public class ProjectionQueryIntegrationTest {
                 .where(Employee::getSalary).gt(50000.0)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -589,10 +589,11 @@ public class ProjectionQueryIntegrationTest {
                 .where(Employee::getSalary).gt(50000.0)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
         assertThat(results).allMatch(r -> r.salary() > 50000.0);
     }
 }
+

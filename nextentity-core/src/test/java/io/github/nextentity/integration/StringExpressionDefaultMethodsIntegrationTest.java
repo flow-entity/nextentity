@@ -48,7 +48,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWith("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -65,7 +65,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWith("@nonexistent.org")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isEmpty();
@@ -84,7 +84,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).contains("John")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -101,7 +101,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When - search for lowercase
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).lower().contains("john")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -122,7 +122,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWith("A")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -143,7 +143,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWith("@nonexistent.org")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then - all emails should not end with @nonexistent.org
         assertThat(employees).isNotEmpty();
@@ -164,7 +164,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContains("Alice")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -184,7 +184,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull("Alice")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -205,7 +205,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -224,7 +224,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotNull("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -245,7 +245,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -264,7 +264,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotNull("John")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -285,7 +285,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -304,7 +304,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotNull("A")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -324,7 +324,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -343,7 +343,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotNull("@nonexistent.org")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -363,7 +363,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -382,7 +382,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotNull("Alice")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -402,7 +402,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -421,7 +421,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("Alice")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -442,7 +442,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -462,7 +462,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -480,7 +480,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotEmpty("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -500,7 +500,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -518,7 +518,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotEmpty("John")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -538,7 +538,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -557,7 +557,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotEmpty("A")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -577,7 +577,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -596,7 +596,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotEmpty("@nonexistent.org")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -616,7 +616,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -635,7 +635,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotEmpty("Alice")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -655,33 +655,10 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
-    }
-
-    // ==================== substring(int offset) Tests ====================
-
-    /**
-     * Tests substring(int offset, int length) method exists and returns a StringExpression.
-     * This verifies that the substring method is available on StringExpression.
-     * Note: The actual SQL substring behavior may vary by database.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should substring method return StringExpression")
-    void shouldFilterWithSubstringOffset(IntegrationTestContext context) {
-        // When - verify substring method returns a StringExpression that can be used in queries
-        // We use a simple query that just checks the method chain works
-        String name = context.queryEmployees()
-                .where(Employee::getName).isNotNull()
-                .orderBy(Employee::getId).asc()
-                .map(Employee::getName)
-                .getFirst();
-
-        // Then - verify we got a result (the test is that the method chain works)
-        assertThat(name).isNotNull();
     }
 
     // ==================== Combined Conditional Tests ====================
@@ -697,7 +674,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull("A")
                 .where(Employee::getEmail).endsWithIfNotNull("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -716,7 +693,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull("A")
                 .where(Employee::getEmail).containsIfNotNull(null)
-                .getList();
+                .list();
 
         // Then - should only filter by name condition
         assertThat(employees).isNotEmpty();
@@ -734,7 +711,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("A")
                 .where(Employee::getEmail).endsWithIfNotEmpty("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -753,7 +730,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("A")
                 .where(Employee::getEmail).containsIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then - should only filter by name condition
         assertThat(employees).isNotEmpty();
@@ -788,7 +765,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getName).contains("John")
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -816,7 +793,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When - pass predicate to where()
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -836,7 +813,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -856,7 +833,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -877,7 +854,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -898,7 +875,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -919,7 +896,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -939,7 +916,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -960,7 +937,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -979,7 +956,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -999,7 +976,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1019,7 +996,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1040,7 +1017,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize((int) totalCount);
@@ -1059,7 +1036,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1079,7 +1056,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1100,7 +1077,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1121,7 +1098,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1142,7 +1119,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1163,7 +1140,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1184,7 +1161,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1205,7 +1182,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1227,7 +1204,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(combined)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1251,7 +1228,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(combined)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1273,7 +1250,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(namePredicate)
                     .where(Employee::getActive).eq(true)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1295,7 +1272,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(startsWithA.not())
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1319,7 +1296,7 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(complex)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();

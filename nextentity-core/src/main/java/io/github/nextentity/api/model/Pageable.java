@@ -1,12 +1,6 @@
 package io.github.nextentity.api.model;
 
-///
-/// Pageable interface, defining the basic parameters for pagination.
-///
-/// @author HuangChengwei
-/// @since 1.0.0
-///
-public interface Pageable {
+public interface Pageable<T> extends Sliceable<T, Page<T>> {
 
     ///
     /// Gets the current page number.
@@ -23,12 +17,22 @@ public interface Pageable {
     int size();
 
     ///
-    /// Calculates the pagination offset.
+    /// Gets the pagination offset.
     ///
     /// @return Pagination offset
     ///
+    @Override
     default int offset() {
         return (page() - 1) * size();
     }
 
+    ///
+    /// Gets the page size as the slice limit.
+    ///
+    /// @return Page size
+    ///
+    @Override
+    default int limit() {
+        return size();
+    }
 }

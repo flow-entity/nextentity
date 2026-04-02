@@ -41,7 +41,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -58,7 +58,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).ge(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -75,7 +75,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).lt(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -92,7 +92,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).le(SALARY_THRESHOLD)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -113,7 +113,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(minSalary, maxSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -135,7 +135,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).between(minSalary, maxSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -153,7 +153,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(1L, 2L, 3L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -171,7 +171,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).notIn(1L, 2L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -188,7 +188,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -208,7 +208,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -228,7 +228,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -250,7 +250,7 @@ public class NumericOperationsIntegrationTest {
                 .where(Employee::getSalary).ge(50000.0)
                 .where(Employee::getSalary).le(80000.0)
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -269,7 +269,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> salaries = context.queryEmployees()
                 .select(Employee::getSalary)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(salaries).isNotEmpty();
@@ -287,7 +287,7 @@ public class NumericOperationsIntegrationTest {
         List<Long> ids = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(ids).isNotEmpty();
@@ -304,7 +304,7 @@ public class NumericOperationsIntegrationTest {
         // When
         Number sum = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).sum())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(sum).isNotNull();
@@ -321,7 +321,7 @@ public class NumericOperationsIntegrationTest {
         // When
         Number avg = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(avg).isNotNull();
@@ -338,12 +338,12 @@ public class NumericOperationsIntegrationTest {
         // When
         Number max = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(max).isNotNull();
         // Verify it's actually the max
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
         double expectedMax = employees.stream()
                 .mapToDouble(Employee::getSalary)
                 .max()
@@ -361,12 +361,12 @@ public class NumericOperationsIntegrationTest {
         // When
         Number min = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(min).isNotNull();
         // Verify it's actually the min
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
         double expectedMin = employees.stream()
                 .mapToDouble(Employee::getSalary)
                 .min()
@@ -385,7 +385,7 @@ public class NumericOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).gt(5L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -403,7 +403,7 @@ public class NumericOperationsIntegrationTest {
         List<Tuple2<Long, Double>> results = context.queryEmployees()
                 .select(Employee::getId, Employee::getSalary)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -421,7 +421,7 @@ public class NumericOperationsIntegrationTest {
         Number avg = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
                 .where(Employee::getDepartmentId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(avg).isNotNull();
@@ -439,7 +439,7 @@ public class NumericOperationsIntegrationTest {
         List<Long> deptIds = context.queryEmployees()
                 .selectDistinct(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(deptIds).isNotEmpty();
@@ -472,7 +472,7 @@ public class NumericOperationsIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getSalary).gt(100000.0)
-                .exist();
+                .exists();
 
         // Then - depends on test data
         // Just verify it returns a boolean
@@ -490,7 +490,7 @@ public class NumericOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getDepartmentId).asc()
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -517,7 +517,7 @@ public class NumericOperationsIntegrationTest {
         Employee employee = context.queryEmployees()
                 .where(Employee::getSalary).gt(SALARY_THRESHOLD)
                 .orderBy(Employee::getSalary).desc()
-                .getFirst();
+                .first();
 
         // Then
         assertThat(employee).isNotNull();
@@ -536,7 +536,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         Double bonus = 5000.0;
 
@@ -544,7 +544,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).add(bonus))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -561,7 +561,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         var bonus = EntityRoot.<Employee>of().literal(5000.0);
 
@@ -569,7 +569,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).add(bonus))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -586,7 +586,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         Double deduction = 1000.0;
 
@@ -594,7 +594,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).subtract(deduction))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -611,7 +611,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         var deduction = EntityRoot.<Employee>of().literal(1000.0);
 
@@ -619,7 +619,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).subtract(deduction))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -636,7 +636,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         Double multiplier = 1.1; // 10% raise
 
@@ -644,7 +644,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).multiply(multiplier))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -661,7 +661,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         var multiplier = EntityRoot.<Employee>of().literal(1.1); // 10% raise
 
@@ -669,7 +669,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).multiply(multiplier))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -686,7 +686,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         Double divisor = 12.0; // Monthly salary
 
@@ -694,7 +694,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).divide(divisor))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -711,7 +711,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         var divisor = EntityRoot.<Employee>of().literal(12.0); // Monthly salary
 
@@ -719,7 +719,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).divide(divisor))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -740,7 +740,7 @@ public class NumericOperationsIntegrationTest {
         List<Long> results = context.queryEmployees()
                 .select(Path.of(Employee::getId).mod(modValue))
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -762,7 +762,7 @@ public class NumericOperationsIntegrationTest {
         List<Long> results = context.queryEmployees()
                 .select(Path.of(Employee::getId).mod(modValue))
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -780,7 +780,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         // (salary + 1000) * 1.1 - 500
         Double expected = (originalSalary + 1000.0) * 1.1 - 500.0;
@@ -789,7 +789,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).add(1000.0).multiply(1.1).subtract(500.0))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -811,7 +811,7 @@ public class NumericOperationsIntegrationTest {
                 .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getSalary).multiply(multiplier).avg())
                 .groupBy(Employee::getDepartmentId)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -828,7 +828,7 @@ public class NumericOperationsIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         Double bonus = 1000.0;
 
@@ -836,7 +836,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).add(EntityRoot.<Employee>of().literal(bonus)))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -857,7 +857,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary + bonus > threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -878,7 +878,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary + literal(bonus) > threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -899,7 +899,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary - deduction >= threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).subtract(deduction).ge(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -920,7 +920,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary - literal(deduction) >= threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).subtract(deduction).ge(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -941,7 +941,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary * multiplier > threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).multiply(multiplier).gt(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -962,7 +962,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary * literal(multiplier) > threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).multiply(multiplier).gt(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -983,7 +983,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary / 12 > threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).divide(months).gt(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -1004,7 +1004,7 @@ public class NumericOperationsIntegrationTest {
         // When - Find employees where salary / literal(12) > threshold
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).divide(months).gt(threshold)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -1025,7 +1025,7 @@ public class NumericOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).mod(modValue).eq(0L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -1046,7 +1046,7 @@ public class NumericOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).mod(modValue).eq(0L)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -1068,7 +1068,7 @@ public class NumericOperationsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).add(bonus).gt(threshold)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -1088,14 +1088,14 @@ public class NumericOperationsIntegrationTest {
         // When - Select sum(salary * multiplier) as total projected payroll
         Double result = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).multiply(multiplier).sum())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(result).isNotNull();
         // Verify it's the sum of all salaries * multiplier (with delta for floating point precision)
         Double totalSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).sum())
-                .getSingle();
+                .single();
         assertThat(result).isCloseTo(totalSalary * multiplier, org.assertj.core.data.Offset.offset(0.01));
     }
 
@@ -1133,12 +1133,12 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).addIfNotNull(nullBonus))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         assertThat(results).hasSize(1);
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
@@ -1157,12 +1157,12 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).addIfNotNull(bonus))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         assertThat(results).hasSize(1);
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary() + bonus);
     }
@@ -1177,7 +1177,7 @@ public class NumericOperationsIntegrationTest {
         // Given - Calculate: (salary * 12 + 1000) / 12 - 100
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         Double originalSalary = employees.getFirst().getSalary();
         Double expected = (originalSalary * 12.0 + 1000.0) / 12.0 - 100.0;
 
@@ -1185,7 +1185,7 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).multiply(12.0).add(1000.0).divide(12.0).subtract(100.0))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).hasSize(1);
@@ -1205,7 +1205,7 @@ public class NumericOperationsIntegrationTest {
         // When
         List<Long> distinctResults = context.queryEmployees()
                 .selectDistinct(Path.of(Employee::getDepartmentId).mod(modValue))
-                .getList();
+                .list();
 
         // Then
         assertThat(distinctResults).isNotEmpty();
@@ -1227,14 +1227,14 @@ public class NumericOperationsIntegrationTest {
         List<Long> results = context.queryEmployees()
                 .select(Path.of(Employee::getId).add(offset))
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
         List<Long> originalIds = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
         for (int i = 0; i < results.size(); i++) {
             assertThat(results.get(i)).isEqualTo(originalIds.get(i) + offset);
         }
@@ -1254,12 +1254,12 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).subtractIfNotNull(nullDeduction))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         assertThat(results).hasSize(1);
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
@@ -1278,12 +1278,12 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).multiplyIfNotNull(nullMultiplier))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         assertThat(results).hasSize(1);
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
@@ -1302,12 +1302,12 @@ public class NumericOperationsIntegrationTest {
         List<Double> results = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).divideIfNotNull(nullDivisor))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         assertThat(results).hasSize(1);
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
@@ -1326,13 +1326,13 @@ public class NumericOperationsIntegrationTest {
         List<Long> results = context.queryEmployees()
                 .select(Path.of(Employee::getId).modIfNotNull(nullModValue))
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         List<Long> originalIds = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
         assertThat(results).hasSize(1);
         assertThat(results.getFirst()).isEqualTo(originalIds.getFirst());
     }

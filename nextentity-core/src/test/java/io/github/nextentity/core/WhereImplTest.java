@@ -375,7 +375,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(expected);
 
             // when
-            List<Employee> result = whereImpl.getList(0, 10, LockModeType.NONE);
+            List<Employee> result = whereImpl.lock(LockModeType.NONE).limit(10);
 
             // then
             assertThat(result).isEqualTo(expected);
@@ -392,7 +392,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.emptyList());
 
             // when
-            whereImpl.getList(0, 10, LockModeType.PESSIMISTIC_WRITE);
+            whereImpl.lock(LockModeType.PESSIMISTIC_WRITE).limit(10);
 
             // then
             verify(queryExecutor).getList(argThat(structure ->
@@ -414,7 +414,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.singletonList(new Employee()));
 
             // when
-            boolean result = whereImpl.exist(0);
+            boolean result = whereImpl.exists();
 
             // then
             assertThat(result).isTrue();
@@ -431,7 +431,7 @@ class WhereImplTest {
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.emptyList());
 
             // when
-            boolean result = whereImpl.exist(0);
+            boolean result = whereImpl.exists();
 
             // then
             assertThat(result).isFalse();
@@ -443,12 +443,12 @@ class WhereImplTest {
          * Expected result: Query structure contains limit of 1.
          */
         @Test
-        void exist_ShouldUseLimitOne() {
+        void exists_ShouldUseLimitOne() {
             // given
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.emptyList());
 
             // when
-            whereImpl.exist(5);
+            whereImpl.exists();
 
             // then
             verify(queryExecutor).<Employee>getList(argThat(structure ->
@@ -456,17 +456,17 @@ class WhereImplTest {
         }
 
         /**
-         * Test objective: Verify that exist with offset passes correct offset.
-         * Test scenario: Call exist with specific offset.
+         * Test objective: Verify that exists with offset passes correct offset.
+         * Test scenario: Call exists with specific offset.
          * Expected result: Query structure contains the specified offset.
          */
         @Test
-        void exist_WithOffset_ShouldSetOffset() {
+        void exists_WithOffset_ShouldSetOffset() {
             // given
             when(queryExecutor.<Employee>getList(any())).thenReturn(Collections.emptyList());
 
             // when
-            whereImpl.exist(10);
+            whereImpl.window(10, 1);
 
             // then
             verify(queryExecutor).<Employee>getList(argThat(structure ->
@@ -485,7 +485,7 @@ class WhereImplTest {
         @Test
         void asSubQuery_ShouldReturnSubQueryBuilder() {
             // when
-            SubQueryBuilder<Employee, Employee> subQuery = whereImpl.asSubQuery();
+            SubQueryBuilder<Employee, Employee> subQuery = whereImpl.toSubQuery();
 
             // then
             assertThat(subQuery).isNotNull();
@@ -499,7 +499,7 @@ class WhereImplTest {
         @Test
         void subQuery_count_ShouldReturnCountExpression() {
             // when
-            var countExpr = whereImpl.asSubQuery().count();
+            var countExpr = whereImpl.toSubQuery().count();
 
             // then
             assertThat(countExpr).isNotNull();
@@ -514,7 +514,7 @@ class WhereImplTest {
         @Test
         void subQuery_slice_ShouldReturnSliceExpression() {
             // when
-            var sliceExpr = whereImpl.asSubQuery().slice(0, 10);
+            var sliceExpr = whereImpl.toSubQuery().slice(0, 10);
 
             // then
             assertThat(sliceExpr).isNotNull();
@@ -528,7 +528,7 @@ class WhereImplTest {
         @Test
         void subQuery_getSingle_ShouldReturnSingleExpression() {
             // when
-            var singleExpr = whereImpl.asSubQuery().getSingle(0);
+            var singleExpr = whereImpl.toSubQuery().getSingle();
 
             // then
             assertThat(singleExpr).isNotNull();
@@ -542,7 +542,7 @@ class WhereImplTest {
         @Test
         void subQuery_getFirst_ShouldReturnFirstExpression() {
             // when
-            var firstExpr = whereImpl.asSubQuery().getFirst(0);
+            var firstExpr = whereImpl.toSubQuery().getFirst();
 
             // then
             assertThat(firstExpr).isNotNull();
@@ -711,3 +711,5 @@ class WhereImplTest {
         }
     }
 }
+
+

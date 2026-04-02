@@ -61,7 +61,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getActive).eq(true),
                             Path.of(Employee::getDepartmentId).eq(1L)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -82,7 +82,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE),
                             Path.of(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -106,7 +106,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getSalary).lt(HIGH_SALARY_THRESHOLD)
                     ))
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -126,7 +126,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getName).startsWith("A"),
                             Path.of(Employee::getActive).eq(true)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -146,7 +146,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Department::getActive).eq(true),
                             Path.of(Department::getBudget).gt(300000.0)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(departments).isNotEmpty();
@@ -168,7 +168,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getDepartmentId).eq(1L),
                             Path.of(Employee::getSalary).gt(LOW_SALARY_THRESHOLD)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -198,7 +198,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getName).eq(BOB_NAME)
                     ))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(2);
@@ -221,7 +221,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getName).eq(CHARLIE_NAME)
                     ))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(3);
@@ -242,7 +242,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD),
                             Path.of(Employee::getDepartmentId).eq(1L)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -263,7 +263,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                     ))
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -283,7 +283,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getName).startsWith("A"),
                             Path.of(Employee::getName).startsWith("B")
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -304,7 +304,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Department::getId).eq(2L)
                     ))
                     .orderBy(Department::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(departments).hasSize(2);
@@ -328,7 +328,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getName).eq(DIANA_NAME)
                     ))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(4);
@@ -357,7 +357,7 @@ public class AndOrPredicateIntegrationTest {
                                     Path.of(Employee::getDepartmentId).eq(2L)
                             )
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -381,7 +381,7 @@ public class AndOrPredicateIntegrationTest {
                             ),
                             Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -409,7 +409,7 @@ public class AndOrPredicateIntegrationTest {
                                     Path.of(Employee::getName).eq(ALICE_NAME)
                             )
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -439,7 +439,7 @@ public class AndOrPredicateIntegrationTest {
                                     Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                             )
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -468,7 +468,7 @@ public class AndOrPredicateIntegrationTest {
                                     Path.of(Employee::getDepartmentId).eq(2L)
                             )
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -492,7 +492,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getDepartmentId).eq(2L)
                     ))
                     .where(Employee::getActive).eq(true)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -523,7 +523,7 @@ public class AndOrPredicateIntegrationTest {
                             ),
                             Path.of(Employee::getSalary).lt(90000.0)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -553,7 +553,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getActive).eq(true),
                             not(Path.of(Employee::getDepartmentId).eq(1L))
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -573,7 +573,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getActive).eq(true),
                             not(Path.of(Employee::getDepartmentId).eq(1L))
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -593,7 +593,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getActive).eq(true),
                             Path.of(Employee::getDepartmentId).eq(1L)
                     )))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -613,7 +613,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getDepartmentId).eq(1L),
                             Path.of(Employee::getDepartmentId).eq(2L)
                     )))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -630,7 +630,7 @@ public class AndOrPredicateIntegrationTest {
             // Given: NOT(NOT(active))
             List<Employee> employees = context.queryEmployees()
                     .where(not(not(Path.of(Employee::getActive).eq(true))))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -653,7 +653,7 @@ public class AndOrPredicateIntegrationTest {
                                     Path.of(Employee::getDepartmentId).eq(2L)
                             )
                     )))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -679,7 +679,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getEmail).isNotNull(),
                             Path.of(Employee::getActive).eq(true)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -699,7 +699,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getEmail).isNull(),
                             Path.of(Employee::getActive).eq(false)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).allMatch(e -> e.getEmail() == null || !e.getActive());
@@ -718,7 +718,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getSalary).between(60000.0, 75000.0),
                             Path.of(Employee::getActive).eq(true)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -739,7 +739,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getDepartmentId).in(1L, 2L),
                             Path.of(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -761,7 +761,7 @@ public class AndOrPredicateIntegrationTest {
                             Path.of(Employee::getEmail).like("%@example.com"),
                             Path.of(Employee::getActive).eq(true)
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -789,7 +789,7 @@ public class AndOrPredicateIntegrationTest {
                                     Path.of(Employee::getSalary).gt(70000.0)
                             )
                     ))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -813,7 +813,7 @@ public class AndOrPredicateIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(p1.and(p2).and(p3))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -839,7 +839,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(p1.or(p2).or(p3))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(3);
@@ -862,7 +862,7 @@ public class AndOrPredicateIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(isActive.and(Arrays.asList(isStatusActive, isDept1)))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -888,7 +888,7 @@ public class AndOrPredicateIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -911,7 +911,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(predicate)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(2);
@@ -933,7 +933,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(isAlice.or(Arrays.asList(isBob, isCharlie)))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(3);
@@ -964,7 +964,7 @@ public class AndOrPredicateIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getActive).eq(true).and(predicates))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -994,7 +994,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getName).eq(ALICE_NAME).or(predicates))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(4);
@@ -1013,7 +1013,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1032,7 +1032,7 @@ public class AndOrPredicateIntegrationTest {
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getDepartmentId).eq(1L)
                             .and(Employee::getStatus).eq(EmployeeStatus.ACTIVE))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1053,7 +1053,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getDepartmentId).eq(1L))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1074,7 +1074,7 @@ public class AndOrPredicateIntegrationTest {
                             .or(Employee::getName).eq(BOB_NAME)
                             .or(Employee::getName).eq(CHARLIE_NAME))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(3);
@@ -1094,7 +1094,7 @@ public class AndOrPredicateIntegrationTest {
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getSalary).gt(60000.0))
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1113,7 +1113,7 @@ public class AndOrPredicateIntegrationTest {
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getSalary).add(10000.0).gt(80000.0))
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1131,7 +1131,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getName).eq(ALICE_NAME)
                             .or(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1150,7 +1150,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getName).startsWith("A"))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1168,7 +1168,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Employee::getName).lower().startsWith("a"))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1187,7 +1187,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getDepartmentId).eq(1L)
                             .or(Employee::getName).contains("Brown"))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1210,7 +1210,7 @@ public class AndOrPredicateIntegrationTest {
                             .toPredicate()
                             .and(Employee::getActive).eq(true))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1231,7 +1231,7 @@ public class AndOrPredicateIntegrationTest {
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                                     .or(Employee::getSalary).gt(70000.0)))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1251,7 +1251,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getActive).eq(true).not()
                             .and(Employee::getDepartmentId).eq(1L))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1269,7 +1269,7 @@ public class AndOrPredicateIntegrationTest {
             List<Employee> employees = context.queryEmployees()
                     .where(Path.of(Employee::getDepartmentId).eq(1L).not()
                             .or(Employee::getActive).eq(true))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1289,7 +1289,7 @@ public class AndOrPredicateIntegrationTest {
                             .and(Path.of(Employee::getDepartmentId).eq(1L).not())
                             .and(Path.of(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
                                     .or(Employee::getSalary).gt(60000.0)))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1317,7 +1317,7 @@ public class AndOrPredicateIntegrationTest {
                     .where(Path.of(Employee::getActive).eq(true)
                             .and(predicates)
                             .and(Employee::getSalary).gt(50000.0))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1347,7 +1347,7 @@ public class AndOrPredicateIntegrationTest {
                             .or(predicates)
                             .or(Employee::getName).eq(DIANA_NAME))
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).hasSize(4);
@@ -1370,7 +1370,7 @@ public class AndOrPredicateIntegrationTest {
                             .and(Employee::getDepartmentId).eq(1L)
                             .toPredicate()
                             .or(Employee::getSalary).gt(HIGH_SALARY_THRESHOLD))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();
@@ -1394,7 +1394,7 @@ public class AndOrPredicateIntegrationTest {
                             .or(Employee::getDepartmentId).eq(1L)
                             .toPredicate()
                             .and(Employee::getActive).eq(true))
-                    .getList();
+                    .list();
 
             // Then
             assertThat(employees).isNotEmpty();

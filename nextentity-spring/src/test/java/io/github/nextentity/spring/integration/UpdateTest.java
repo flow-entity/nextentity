@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class UpdateTest {
 
     QueryBuilder<User> query(UserRepository updater) {
-        return updater;
+        return updater.query();
     }
 
     @ParameterizedTest
@@ -30,24 +30,24 @@ public class UpdateTest {
 
     private void doInsert(UserRepository userUpdater) {
         List<User> existUsers = query(userUpdater).where(User::getId).in(10000000, 10000001, 10000002)
-                .getList();
+                .list();
         if (!existUsers.isEmpty()) {
             userUpdater.delete(existUsers);
         }
-        List<User> exist = query(userUpdater).where(User::getId).in(10000000, 10000001, 10000002).getList();
+        List<User> exist = query(userUpdater).where(User::getId).in(10000000, 10000001, 10000002).list();
         assertTrue(exist.isEmpty());
 
         User newUser = newUser(10000000);
         userUpdater.insert(newUser);
-        User single = query(userUpdater).where(User::getId).eq(10000000).getSingle();
+        User single = query(userUpdater).where(User::getId).eq(10000000).single();
         assertEquals(newUser, single);
         List<User> users = Arrays.asList(newUser(10000001), newUser(10000002));
         userUpdater.insert(users);
-        List<User> userList = query(userUpdater).where(User::getId).in(10000001, 10000002).getList();
+        List<User> userList = query(userUpdater).where(User::getId).in(10000001, 10000002).list();
         assertEquals(userList, new ArrayList<>(users));
         userUpdater.delete(newUser);
         userUpdater.delete(users);
-        exist = query(userUpdater).where(User::getId).in(10000000, 10000001, 10000002).getList();
+        exist = query(userUpdater).where(User::getId).in(10000000, 10000001, 10000002).list();
         assertTrue(exist.isEmpty());
     }
 
@@ -63,18 +63,19 @@ public class UpdateTest {
     }
 
     private void testUpdate(UserRepository userUpdater) {
-        List<User> users = query(userUpdater).where(User::getId).in(1, 2, 3).getList();
+        List<User> users = query(userUpdater).where(User::getId).in(1, 2, 3).list();
         for (User user : users) {
             user.setRandomNumber(user.getRandomNumber() + 1);
         }
         userUpdater.update(users);
-        assertEquals(users, query(userUpdater).where(User::getId).in(1, 2, 3).getList());
+        assertEquals(users, query(userUpdater).where(User::getId).in(1, 2, 3).list());
 
         for (User user : users) {
             user.setRandomNumber(user.getRandomNumber() + 1);
             userUpdater.update(user);
         }
-        assertEquals(users, query(userUpdater).where(User::getId).in(1, 2, 3).getList());
+        assertEquals(users, query(userUpdater).where(User::getId).in(1, 2, 3).list());
     }
 
 }
+

@@ -58,7 +58,7 @@ public class UpdateApiIntegrationTest {
         // Then
         Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(9001L)
-                .getSingle();
+                .single();
         assertThat(inserted).isNotNull();
         assertThat(inserted.getName()).isEqualTo("Test Insert");
     }
@@ -103,7 +103,7 @@ public class UpdateApiIntegrationTest {
         // Then
         Employee inserted = context.queryEmployees()
                 .where(Employee::getId).eq(9020L)
-                .getSingle();
+                .single();
         assertThat(inserted).isNotNull();
         assertThat(inserted.getName()).isEqualTo("Null Fields Test");
         assertThat(inserted.getEmail()).isNull();
@@ -120,7 +120,7 @@ public class UpdateApiIntegrationTest {
         // Given
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
         String originalName = employee.getName();
         employee.setName("Updated Name");
 
@@ -128,7 +128,7 @@ public class UpdateApiIntegrationTest {
         context.getUpdateExecutor().update(employee, Employee.class);
         Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
         // Then
         assertThat(updated.getName()).isEqualTo("Updated Name");
         assertThat(updated.getName()).isNotEqualTo(originalName);
@@ -136,7 +136,7 @@ public class UpdateApiIntegrationTest {
         // Verify in database
         Employee fromDb = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
         assertThat(fromDb.getName()).isEqualTo("Updated Name");
     }
 
@@ -147,7 +147,7 @@ public class UpdateApiIntegrationTest {
         // Given
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
         for (Employee emp : employees) {
             emp.setSalary(emp.getSalary() + 1000);
         }
@@ -156,7 +156,7 @@ public class UpdateApiIntegrationTest {
         context.getUpdateExecutor().updateAll(employees, Employee.class);
         List<Employee> updated = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
 
         // Then
@@ -173,7 +173,7 @@ public class UpdateApiIntegrationTest {
         // Given
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
         employee.setStatus(EmployeeStatus.INACTIVE);
 
         // When
@@ -182,7 +182,7 @@ public class UpdateApiIntegrationTest {
         // Then
         Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
         assertThat(updated.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
     }
 
@@ -199,13 +199,13 @@ public class UpdateApiIntegrationTest {
         context.getUpdateExecutor().insert(employee, Employee.class);
 
         // Verify inserted
-        assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exist()).isTrue();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exists()).isTrue();
 
         // When
         context.getUpdateExecutor().delete(employee, Employee.class);
 
         // Then
-        assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exist()).isFalse();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exists()).isFalse();
     }
 
     @ParameterizedTest
@@ -244,7 +244,7 @@ public class UpdateApiIntegrationTest {
             context.getUpdateExecutor().insert(employee, Employee.class);
             return context.queryEmployees()
                     .where(Employee::getId).eq(9050L)
-                    .getSingle();
+                    .single();
         });
 
         // Then
@@ -265,7 +265,7 @@ public class UpdateApiIntegrationTest {
         });
 
         // Then
-        assertThat(context.queryEmployees().where(Employee::getId).eq(9051L).exist()).isTrue();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9051L).exists()).isTrue();
     }
 
     @ParameterizedTest
@@ -284,7 +284,7 @@ public class UpdateApiIntegrationTest {
         ).isInstanceOf(RuntimeException.class);
 
         // Then - employee should not exist due to rollback
-        assertThat(context.queryEmployees().where(Employee::getId).eq(9052L).exist()).isFalse();
+        assertThat(context.queryEmployees().where(Employee::getId).eq(9052L).exists()).isFalse();
     }
 
     // ========================================
@@ -338,7 +338,7 @@ public class UpdateApiIntegrationTest {
         // Then
         Department inserted = context.queryDepartments()
                 .where(Department::getId).eq(9060L)
-                .getSingle();
+                .single();
         assertThat(inserted).isNotNull();
         assertThat(inserted.getName()).isEqualTo("Test Dept");
     }
@@ -350,7 +350,7 @@ public class UpdateApiIntegrationTest {
         // Given
         Department department = context.queryDepartments()
                 .where(Department::getId).eq(1L)
-                .getSingle();
+                .single();
         department.setBudget(department.getBudget() + 50000);
 
         // When
@@ -359,7 +359,7 @@ public class UpdateApiIntegrationTest {
         // Then
         Department updated = context.queryDepartments()
                 .where(Department::getId).eq(1L)
-                .getSingle();
+                .single();
         assertThat(updated.getBudget()).isGreaterThan(100000.0);
     }
 
@@ -395,7 +395,7 @@ public class UpdateApiIntegrationTest {
             context.getUpdateExecutor().insert(e1, Employee.class);
 
             // Update
-            Employee e2 = context.queryEmployees().where(Employee::getId).eq(1L).getSingle();
+            Employee e2 = context.queryEmployees().where(Employee::getId).eq(1L).single();
             e2.setSalary(e2.getSalary() + 1000);
             context.getUpdateExecutor().update(e2, Employee.class);
 
@@ -427,8 +427,8 @@ public class UpdateApiIntegrationTest {
         context.getUpdateExecutor().insert(inactive, Employee.class);
 
         // Then
-        Employee activeFromDb = context.queryEmployees().where(Employee::getId).eq(9080L).getSingle();
-        Employee inactiveFromDb = context.queryEmployees().where(Employee::getId).eq(9081L).getSingle();
+        Employee activeFromDb = context.queryEmployees().where(Employee::getId).eq(9080L).single();
+        Employee inactiveFromDb = context.queryEmployees().where(Employee::getId).eq(9081L).single();
 
         assertThat(activeFromDb.getStatus()).isEqualTo(EmployeeStatus.ACTIVE);
         assertThat(inactiveFromDb.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);

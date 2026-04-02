@@ -2,12 +2,18 @@ package io.github.nextentity.api;
 
 import org.jspecify.annotations.NonNull;
 
-/// Update operation interface, providing insert, update and delete methods.
+/// Entity-level CRUD operations interface.
+///
+/// This interface provides methods for insert, update, and delete operations
+/// on individual entities or batches of entities.
+///
+/// For conditional batch operations (UPDATE WHERE / DELETE WHERE),
+/// use {@link io.github.nextentity.spring.AbstractRepository#updateWhere()}
+/// and {@link io.github.nextentity.spring.AbstractRepository#deleteWhere()}.
 ///
 /// @param <T> Entity type
 /// @author HuangChengwei
 /// @since 1.0.0
-@Deprecated
 public interface Update<T> {
 
     /// Insert a single entity.

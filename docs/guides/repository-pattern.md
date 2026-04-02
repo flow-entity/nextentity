@@ -7,6 +7,7 @@
 - [简介](#简介)
 - [创建 Repository](#创建-repository)
 - [自定义查询方法](#自定义查询方法)
+- [条件批量操作](#条件批量操作)
 - [事务处理](#事务处理)
 
 ---
@@ -166,7 +167,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         int offset = pageNumber * pageSize;
         return query()
             .orderBy(Employee::getId).asc()
-            .getList(offset, pageSize);
+            .offset(offset).limit(pageSize)
+            .getList();
     }
 
     // Slice 分页
@@ -234,6 +236,36 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 }
 ```
+
+## 条件批量操作
+
+当你不需要先加载实体，只想直接执行批量更新或删除时，可以使用 `updateWhere()` 和 `deleteWhere()`：
+
+```java
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
+        super(entityManager, jdbcTemplate);
+    }
+
+    public int deactivateEmployeesByDepartment(Long departmentId) {
+        return updateWhere()
+            .set(Employee::getActive, false)
+            .set(Employee::getStatus, EmployeeStatus.INACTIVE)
+            .where(Employee::getDepartmentId).eq(departmentId)
+            .execute();
+    }
+
+    public int deleteInactiveEmployees() {
+        return deleteWhere()
+            .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
+            .execute();
+    }
+}
+```
+
+这种写法更适合统一字段更新或大批量删除，因为它避免了“先查出实体，再逐个回写”的开销。
 
 ---
 

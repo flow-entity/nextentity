@@ -67,13 +67,13 @@ public class WhereImplIntegrationTest {
             Path<Employee, Long> idPath = Path.of(Employee::getId);
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
             Long firstId = allEmployees.getFirst().getId();
 
             // When
             List<Employee> result = context.queryEmployees()
                     .where(idPath).eq(firstId)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).hasSize(1);
@@ -91,14 +91,14 @@ public class WhereImplIntegrationTest {
             Path<Employee, Long> idPath = Path.of(Employee::getId);
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
             Long firstId = allEmployees.getFirst().getId();
 
             // When
             List<Employee> result = context.queryEmployees()
                     .where(idPath).ge(firstId)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -116,7 +116,7 @@ public class WhereImplIntegrationTest {
             Path<Employee, Long> idPath = Path.of(Employee::getId);
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
             Long id1 = allEmployees.get(0).getId();
             Long id2 = allEmployees.get(1).getId();
 
@@ -124,7 +124,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(idPath).in(id1, id2)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).hasSize(2);
@@ -168,7 +168,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(salaryPath).gt(5000.0)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -185,7 +185,7 @@ public class WhereImplIntegrationTest {
             // Given - Get actual salary range from data
             List<Employee> allEmployees = context.queryEmployees()
                     .orderBy(Employee::getSalary).asc()
-                    .getList();
+                    .list();
             double minSalary = allEmployees.getFirst().getSalary();
             double maxSalary = allEmployees.getLast().getSalary();
             double midSalary = allEmployees.get(allEmployees.size() / 2).getSalary();
@@ -196,7 +196,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(salaryPath).between(minSalary, maxSalary)
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -217,7 +217,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(salaryPath).ge(5000.0)
                     .orderBy(Employee::getSalary).desc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -265,7 +265,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(namePath).like("J%")
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -286,7 +286,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(namePath).startsWith("J")
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -307,7 +307,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(namePath).contains("n")
                     .orderBy(Employee::getId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -335,7 +335,7 @@ public class WhereImplIntegrationTest {
                     .select(departmentPath, Path.of(Employee::getId).count())
                     .groupByExpr(departmentPath)
                     .orderBy(Employee::getDepartmentId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -355,7 +355,7 @@ public class WhereImplIntegrationTest {
             var results = context.queryEmployees()
                     .select(activePath, Path.of(Employee::getSalary).avg())
                     .groupByExpr(activePath)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -380,7 +380,7 @@ public class WhereImplIntegrationTest {
                     .select(Path.of(Employee::getDepartmentId), Path.of(Employee::getActive), Path.of(Employee::getId).count())
                     .groupBy(Employee::getDepartmentId, Employee::getActive)
                     .orderBy(Employee::getDepartmentId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -399,7 +399,7 @@ public class WhereImplIntegrationTest {
                     .groupBy(Employee::getDepartmentId, Employee::getActive)
                     .having(Path.of(Employee::getId).count().gt(1L))
                     .orderBy(Employee::getDepartmentId).asc()
-                    .getList();
+                    .list();
 
             // Then
             assertThat(results).isNotEmpty();
@@ -426,7 +426,7 @@ public class WhereImplIntegrationTest {
             // When
             List<Employee> result = context.queryEmployees()
                     .orderBy(orders)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -452,7 +452,7 @@ public class WhereImplIntegrationTest {
             // When
             List<Employee> result = context.queryEmployees()
                     .orderBy(orders)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -479,7 +479,7 @@ public class WhereImplIntegrationTest {
             List<Employee> result = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
                     .orderBy(orders)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -501,7 +501,7 @@ public class WhereImplIntegrationTest {
             // When
             List<Employee> result = context.queryEmployees()
                     .orderBy(orders)
-                    .getList();
+                    .list();
 
             // Then
             assertThat(result).isNotEmpty();
@@ -542,7 +542,7 @@ public class WhereImplIntegrationTest {
             // When
             var subQuery = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
-                    .asSubQuery();
+                    .toSubQuery();
 
             // Then
             assertThat(subQuery).isNotNull();
@@ -558,7 +558,7 @@ public class WhereImplIntegrationTest {
             // When
             var countExpr = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
-                    .asSubQuery()
+                    .toSubQuery()
                     .count();
 
             // Then
@@ -575,7 +575,7 @@ public class WhereImplIntegrationTest {
             // When
             var sliceExpr = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
-                    .asSubQuery()
+                    .toSubQuery()
                     .slice(0, 10);
 
             // Then
@@ -592,8 +592,8 @@ public class WhereImplIntegrationTest {
             // When
             var firstExpr = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
-                    .asSubQuery()
-                    .getFirst(0);
+                    .toSubQuery()
+                    .getFirst();
 
             // Then
             assertThat(firstExpr).isNotNull();
@@ -609,8 +609,8 @@ public class WhereImplIntegrationTest {
             // When
             var singleExpr = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
-                    .asSubQuery()
-                    .getSingle(0);
+                    .toSubQuery()
+                    .getSingle();
 
             // Then
             assertThat(singleExpr).isNotNull();

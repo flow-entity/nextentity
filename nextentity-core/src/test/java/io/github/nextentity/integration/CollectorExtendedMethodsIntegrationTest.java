@@ -19,11 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Integration tests for Collector extended methods.
  * <p>
  * Tests default methods in Collector interface including:
- * - first(int): Get first result with offset
- * - single(int): Get single result with offset
- * - first/singleton with LockModeType
- * - offset(int, LockModeType)
- * - getPage(PageCollector)
+ * - first(): Get first result or null
+ * - single(): Get single result or null
+ * - window/limit terminal operations
+ * - slice(PageCollector)
  * <p>
  * These tests run against MySQL and PostgreSQL using Testcontainers.
  *
@@ -33,19 +32,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @DisplayName("Collector Extended Methods Integration Tests")
 public class CollectorExtendedMethodsIntegrationTest {
 
-    // ==================== first(int offset) Tests ====================
+    // ==================== getFirst() Tests ====================
 
     /**
-     * Tests first(int) with zero offset.
+     * Tests getFirst() returns first result.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getFirst with zero offset")
-    void shouldGetFirstWithZeroOffset(IntegrationTestContext context) {
+    @DisplayName("Should getFirst return first result")
+    void shouldGetFirstReturnFirstResult(IntegrationTestContext context) {
         // When
         Employee first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getFirst(0);
+                .first();
 
         // Then
         assertThat(first).isNotNull();
@@ -53,7 +52,7 @@ public class CollectorExtendedMethodsIntegrationTest {
     }
 
     /**
-     * Tests first(int) with positive offset.
+     * Tests getFirst with positive offset.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -62,7 +61,7 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         Employee first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getFirst(2);
+                .window(2, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(first).isNotNull();
@@ -70,7 +69,7 @@ public class CollectorExtendedMethodsIntegrationTest {
     }
 
     /**
-     * Tests first(int) returns null when offset exceeds result count.
+     * Tests getFirst returns null when offset exceeds result count.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -82,31 +81,31 @@ public class CollectorExtendedMethodsIntegrationTest {
         // When
         Employee first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getFirst((int) totalCount + 10);
+                .window((int) totalCount + 10, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(first).isNull();
     }
 
-    // ==================== single(int offset) Tests ====================
+    // ==================== getSingle() Tests ====================
 
     /**
-     * Tests single(int) with zero offset.
+     * Tests getSingle with single result.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getSingle with zero offset")
-    void shouldGetSingleWithZeroOffset(IntegrationTestContext context) {
+    @DisplayName("Should getSingle with single result")
+    void shouldGetSingleWithSingleResult(IntegrationTestContext context) {
         // Given - ensure only one result
         Long firstId = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getFirst();
+                .first();
 
         // When
         Employee single = context.queryEmployees()
                 .where(Employee::getId).eq(firstId)
-                .getSingle(0);
+                .single();
 
         // Then
         assertThat(single).isNotNull();
@@ -114,7 +113,7 @@ public class CollectorExtendedMethodsIntegrationTest {
     }
 
     /**
-     * Tests single(int) throws exception when multiple results.
+     * Tests getSingle throws exception when multiple results.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -124,144 +123,144 @@ public class CollectorExtendedMethodsIntegrationTest {
         org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class, () -> {
             context.queryEmployees()
                     .where(Employee::getSalary).gt(50000.0)
-                    .getSingle(0);
+                    .single();
         });
     }
 
-    // ==================== first() Optional Tests ====================
+    // ==================== first() Tests ====================
 
     /**
-     * Tests first() returns Optional with value.
+     * Tests first() returns value.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should first return Optional with value")
-    void shouldFirstReturnOptionalWithValue(IntegrationTestContext context) {
+    @DisplayName("Should first return value")
+    void shouldFirstReturnValue(IntegrationTestContext context) {
         // When
-        var optional = context.queryEmployees()
+        var first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .first();
 
         // Then
-        assertThat(optional).isPresent();
-        assertThat(optional.get().getId()).isEqualTo(1L);
+        assertThat(first).isNotNull();
+        assertThat(first.getId()).isEqualTo(1L);
     }
 
     /**
-     * Tests first(int) returns Optional with value.
+     * Tests first with offset returns value.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should first with offset return Optional with value")
-    void shouldFirstWithOffsetReturnOptionalWithValue(IntegrationTestContext context) {
+    @DisplayName("Should first with offset return value")
+    void shouldFirstWithOffsetReturnValue(IntegrationTestContext context) {
         // When
-        var optional = context.queryEmployees()
+        var first = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .first(1);
+                .window(1, 1).stream().findFirst().orElse(null);
 
         // Then
-        assertThat(optional).isPresent();
-        assertThat(optional.get().getId()).isEqualTo(2L);
+        assertThat(first).isNotNull();
+        assertThat(first.getId()).isEqualTo(2L);
     }
 
-    // ==================== single() Optional Tests ====================
+    // ==================== single() Tests ====================
 
     /**
-     * Tests single() returns Optional with value.
+     * Tests single() returns value.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should single return Optional with value")
-    void shouldSingleReturnOptionalWithValue(IntegrationTestContext context) {
+    @DisplayName("Should single return value")
+    void shouldSingleReturnValue(IntegrationTestContext context) {
         // Given
         Long firstId = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getFirst();
+                .first();
 
         // When
-        var optional = context.queryEmployees()
+        var single = context.queryEmployees()
                 .where(Employee::getId).eq(firstId)
                 .single();
 
         // Then
-        assertThat(optional).isPresent();
-        assertThat(optional.get().getId()).isEqualTo(firstId);
+        assertThat(single).isNotNull();
+        assertThat(single.getId()).isEqualTo(firstId);
     }
 
     /**
-     * Tests single(int) returns Optional with value.
+     * Tests single with offset returns value.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should single with offset return Optional with value")
-    void shouldSingleWithOffsetReturnOptionalWithValue(IntegrationTestContext context) {
+    @DisplayName("Should single with offset return value")
+    void shouldSingleWithOffsetReturnValue(IntegrationTestContext context) {
         // Given
         Long firstId = context.queryEmployees()
                 .select(Employee::getId)
                 .orderBy(Employee::getId).asc()
-                .getFirst();
+                .first();
 
         // When
-        var optional = context.queryEmployees()
+        var single = context.queryEmployees()
                 .where(Employee::getId).eq(firstId)
-                .single(0);
+                .single();
 
         // Then
-        assertThat(optional).isPresent();
+        assertThat(single).isNotNull();
     }
 
-    // ==================== exist(int offset) Tests ====================
+    // ==================== exists() Tests ====================
 
     /**
-     * Tests exist(int) with zero offset.
+     * Tests exists returns true when results exist.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should exist with zero offset return true")
-    void shouldExistWithZeroOffsetReturnTrue(IntegrationTestContext context) {
+    @DisplayName("Should exists return true when results exist")
+    void shouldExistsReturnTrue(IntegrationTestContext context) {
         // When
         boolean exists = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .exist(0);
-
-        // Then
-        assertThat(exists).isTrue();
-    }
-
-    /**
-     * Tests exist(int) with offset within bounds.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should exist with offset within bounds return true")
-    void shouldExistWithOffsetWithinBoundsReturnTrue(IntegrationTestContext context) {
-        // Given
-        long totalCount = context.queryEmployees().count();
-
-        // When
-        boolean exists = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .exist((int) totalCount - 1);
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
     }
 
     /**
-     * Tests exist(int) with offset exceeding count.
+     * Tests exists with offset within bounds returns true.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should exist with offset exceeding count return false")
-    void shouldExistWithOffsetExceedingCountReturnFalse(IntegrationTestContext context) {
+    @DisplayName("Should exists with offset within bounds return true")
+    void shouldExistsWithOffsetWithinBoundsReturnTrue(IntegrationTestContext context) {
         // Given
         long totalCount = context.queryEmployees().count();
 
         // When
-        boolean exists = context.queryEmployees()
+        boolean exists = !context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .exist((int) totalCount + 10);
+                .window((int) totalCount - 1, 1).isEmpty();
+
+        // Then
+        assertThat(exists).isTrue();
+    }
+
+    /**
+     * Tests exists with offset exceeding count returns false.
+     */
+    @ParameterizedTest
+    @ArgumentsSource(IntegrationTestProvider.class)
+    @DisplayName("Should exists with offset exceeding count return false")
+    void shouldExistsWithOffsetExceedingCountReturnFalse(IntegrationTestContext context) {
+        // Given
+        long totalCount = context.queryEmployees().count();
+
+        // When
+        boolean exists = !context.queryEmployees()
+                .orderBy(Employee::getId).asc()
+                .window((int) totalCount + 10, 1).isEmpty();
 
         // Then
         assertThat(exists).isFalse();
@@ -313,12 +312,12 @@ public class CollectorExtendedMethodsIntegrationTest {
     @DisplayName("Should getPage with Pageable")
     void shouldGetPageWithPageable(IntegrationTestContext context) {
         // Given
-        Pageable pageable = Pages.pageable(1, 10);
+        Pageable<Employee> pageable = Pages.pageable(1, 10);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).isNotEmpty();
@@ -334,56 +333,18 @@ public class CollectorExtendedMethodsIntegrationTest {
     void shouldGetPageWithSecondPage(IntegrationTestContext context) {
         // Given
         long totalCount = context.queryEmployees().count();
-        Pageable pageable = Pages.pageable(2, 5);
+        Pageable<Employee> pageable = Pages.pageable(2, 5);
 
         // When
         Page<Employee> page = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         if (totalCount > 5) {
             assertThat(page.getItems()).isNotEmpty();
-            assertThat(page.getItems().get(0).getId()).isEqualTo(6L);
+            assertThat(page.getItems().getFirst().getId()).isEqualTo(6L);
         }
-    }
-
-    // ==================== map() Tests ====================
-
-    /**
-     * Tests map(Function) method.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map results to different type")
-    void shouldMapResultsToDifferentType(IntegrationTestContext context) {
-        // When
-        List<String> names = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .map(Employee::getName)
-                .limit(5);
-
-        // Then
-        assertThat(names).hasSize(5);
-        assertThat(names).doesNotContainNull();
-    }
-
-    /**
-     * Tests map with complex transformation.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map with complex transformation")
-    void shouldMapWithComplexTransformation(IntegrationTestContext context) {
-        // When
-        List<String> emailDomains = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .map(e -> e.getEmail().substring(e.getEmail().indexOf('@') + 1))
-                .limit(5);
-
-        // Then
-        assertThat(emailDomains).hasSize(5);
-        assertThat(emailDomains).allMatch(d -> d.contains("."));
     }
 
     // ==================== asSubQuery Tests ====================
@@ -399,9 +360,10 @@ public class CollectorExtendedMethodsIntegrationTest {
         var subQuery = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getSalary).gt(50000.0)
-                .asSubQuery();
+                .toSubQuery();
 
         // Then
         assertThat(subQuery).isNotNull();
     }
 }
+

@@ -38,7 +38,7 @@ public class SubqueryIntegrationTest {
         // When
         var subquery = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .asSubQuery();
+                .toSubQuery();
 
         // Then - just verify we can create the subquery
         assertThat(subquery).isNotNull();
@@ -76,7 +76,7 @@ public class SubqueryIntegrationTest {
         // Given
         var sliceExpr = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .asSubQuery()
+                .toSubQuery()
                 .slice(0, 5);
 
         // When - Just verify slice can be created
@@ -93,7 +93,7 @@ public class SubqueryIntegrationTest {
         // Given
         var singleExpr = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .asSubQuery()
+                .toSubQuery()
                 .getSingle();
 
         // When - Just verify single can be created
@@ -110,7 +110,7 @@ public class SubqueryIntegrationTest {
         // Given
         var firstExpr = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .asSubQuery()
+                .toSubQuery()
                 .getFirst();
 
         // When - Just verify first can be created
@@ -127,12 +127,12 @@ public class SubqueryIntegrationTest {
         // Given - Get max salary
         Double maxSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
-                .getSingle();
+                .single();
 
         // When - Find employees with max salary
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).eq(maxSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -149,12 +149,12 @@ public class SubqueryIntegrationTest {
         // Given - Get min salary
         Double minSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getSingle();
+                .single();
 
         // When - Find employees with min salary
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).eq(minSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -170,16 +170,16 @@ public class SubqueryIntegrationTest {
         // Given - Get average salary
         Double avgSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getSingle();
+                .single();
 
         // When - Find employees above average
         List<Employee> aboveAvg = context.queryEmployees()
                 .where(Employee::getSalary).gt(avgSalary)
-                .getList();
+                .list();
 
         List<Employee> belowAvg = context.queryEmployees()
                 .where(Employee::getSalary).lt(avgSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(aboveAvg).isNotEmpty();
@@ -197,12 +197,12 @@ public class SubqueryIntegrationTest {
         List<Long> activeDeptIds = context.queryDepartments()
                 .select(Department::getId)
                 .where(Department::getActive).eq(true)
-                .getList();
+                .list();
 
         // When - Find employees in active departments
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(activeDeptIds)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -222,7 +222,7 @@ public class SubqueryIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getDepartmentId).in(deptIds)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -240,12 +240,12 @@ public class SubqueryIntegrationTest {
         List<Long> activeIds = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(activeIds)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -263,12 +263,12 @@ public class SubqueryIntegrationTest {
         List<Long> highSalaryIds = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getSalary).gt(70000.0)
-                .getList();
+                .list();
 
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(highSalaryIds)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -286,12 +286,12 @@ public class SubqueryIntegrationTest {
         List<Long> dept1Ids = context.queryEmployees()
                 .select(Employee::getId)
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // When - Find employees NOT in department 1
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).notIn(dept1Ids)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -308,12 +308,12 @@ public class SubqueryIntegrationTest {
         // Given - Get min salary
         Double minSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getSingle();
+                .single();
 
         // When - Find employees with salary above min
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(minSalary)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -333,28 +333,28 @@ public class SubqueryIntegrationTest {
         // Given
         Long count = context.queryEmployees()
                 .select(Path.of(Employee::getId).count())
-                .getSingle();
+                .single();
 
         Double avg = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getSingle();
+                .single();
 
         Double max = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).max())
-                .getSingle();
+                .single();
 
         Double min = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).min())
-                .getSingle();
+                .single();
 
         // When - Find employees in various ranges
         List<Employee> aboveAvg = context.queryEmployees()
                 .where(Employee::getSalary).ge(avg)
-                .getList();
+                .list();
 
         List<Employee> belowAvg = context.queryEmployees()
                 .where(Employee::getSalary).le(avg)
-                .getList();
+                .list();
 
         // Then
         assertThat(count).isEqualTo(12L);
@@ -381,7 +381,7 @@ public class SubqueryIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(topSalaryIds)
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(3);
@@ -389,8 +389,9 @@ public class SubqueryIntegrationTest {
         // Verify these are indeed high-salary employees
         List<Employee> allEmployees = context.queryEmployees()
                 .orderBy(Employee::getSalary).desc()
-                .getList();
+                .list();
 
         assertThat(employees.get(0).getSalary()).isEqualTo(allEmployees.get(0).getSalary());
     }
 }
+

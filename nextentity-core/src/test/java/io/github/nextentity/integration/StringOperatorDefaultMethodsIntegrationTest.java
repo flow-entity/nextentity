@@ -38,7 +38,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull("Alice")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -58,7 +58,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -74,7 +74,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotNull("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -94,7 +94,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -110,7 +110,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotNull("John")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -130,7 +130,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -147,7 +147,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotNull("A")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -167,7 +167,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -184,7 +184,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotNull("@nonexistent.org")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then - all emails should not end with @nonexistent.org (which is all of them)
         assertThat(employees).isNotEmpty();
@@ -204,7 +204,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -221,7 +221,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotNull("Alice")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -241,7 +241,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotNull(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -259,7 +259,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("Alice")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -279,7 +279,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -298,7 +298,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty(null)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -314,7 +314,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotEmpty("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -334,7 +334,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).endsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -350,7 +350,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotEmpty("John")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -370,7 +370,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -387,7 +387,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotEmpty("A")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -407,7 +407,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notStartsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -424,7 +424,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotEmpty("@nonexistent.org")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then - all emails should not end with @nonexistent.org (which is all of them)
         assertThat(employees).isNotEmpty();
@@ -444,7 +444,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getEmail).notEndsWithIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -461,7 +461,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotEmpty("Alice")
                 .orderBy(Employee::getId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -481,7 +481,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).notContainsIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize((int) totalCount);
@@ -500,7 +500,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull("A")
                 .where(Employee::getEmail).containsIfNotNull("@")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -519,7 +519,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("A")
                 .where(Employee::getEmail).endsWithIfNotEmpty("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -538,7 +538,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).containsIfNotNull("John")
                 .where(Employee::getEmail).endsWithIfNotEmpty("@example.com")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -557,7 +557,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotNull("A")
                 .where(Employee::getEmail).containsIfNotNull(null)
-                .getList();
+                .list();
 
         // Then - should only filter by name condition
         assertThat(employees).isNotEmpty();
@@ -575,7 +575,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("A")
                 .where(Employee::getEmail).containsIfNotEmpty("")
-                .getList();
+                .list();
 
         // Then - should only filter by name condition
         assertThat(employees).isNotEmpty();
@@ -625,7 +625,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         Employee employee = context.queryEmployees()
                 .where(Employee::getName).containsIfNotNull("Alice")
                 .orderBy(Employee::getId).asc()
-                .getFirst();
+                .first();
 
         // Then
         assertThat(employee).isNotNull();
@@ -642,7 +642,7 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getName).startsWithIfNotEmpty("Alice")
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();

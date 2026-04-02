@@ -1,7 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.PageCollector;
+import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Sliceable;
 import io.github.nextentity.integration.config.IntegrationTestContext;
@@ -13,8 +13,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -22,17 +20,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Integration tests for Collector methods with LockModeType parameters.
  * <p>
  * Tests default methods in Collector interface that accept LockModeType:
- * - first(LockModeType): Get first result as Optional with lock
- * - getFirst(LockModeType): Get first result with lock
- * - requireSingle(LockModeType): Get single result or throw with lock
- * - single(LockModeType): Get single result as Optional with lock
- * - getSingle(LockModeType): Get single result with lock
- * - offset(int, LockModeType): Get results from offset with lock
- * - limit(int, LockModeType): Get limited results with lock
- * - getList(LockModeType): Get all results with lock
- * - first(int, LockModeType): Get first result with offset and lock
- * - single(int, LockModeType): Get single result with offset and lock
- * - getPage(PageCollector): Get page using PageCollector
+ * - first()/single() with lock
+ * - window()/limit()/list() with lock
+ * - slice(PageCollector)
  * <p>
  * These tests run against MySQL and PostgreSQL using Testcontainers.
  *
@@ -45,22 +35,22 @@ public class CollectorLockModeMethodsIntegrationTest {
     // ==================== first(LockModeType) Tests ====================
 
     /**
-     * Tests first(LockModeType) returns Optional with value.
+     * Tests first(LockModeType) returns value.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should first with LockModeType return Optional with value")
-    void shouldFirstWithLockModeReturnOptionalWithValue(IntegrationTestContext context) {
+    @DisplayName("Should first with LockModeType return value")
+    void shouldFirstWithLockModeReturnValue(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .first(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).first()
         );
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(1L);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     /**
@@ -71,15 +61,15 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should first with pessimistic write lock")
     void shouldFirstWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .first(LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).first()
         );
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(1L);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     // ==================== getFirst(LockModeType) Tests ====================
@@ -95,7 +85,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getFirst(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).first()
         );
 
         // Then
@@ -114,7 +104,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getFirst(LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).first()
         );
 
         // Then
@@ -135,7 +125,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .requireSingle(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
@@ -155,7 +145,7 @@ public class CollectorLockModeMethodsIntegrationTest {
                 context.getUpdateExecutor().doInTransaction(() ->
                         context.queryLockableEntities()
                                 .where(LockableEntity::getId).eq(999L)
-                                .requireSingle(LockModeType.PESSIMISTIC_READ)
+                                .lock(LockModeType.PESSIMISTIC_READ).single()
                 )
         ).isInstanceOf(NullPointerException.class);
     }
@@ -171,7 +161,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .requireSingle(LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).single()
         );
 
         // Then
@@ -182,22 +172,22 @@ public class CollectorLockModeMethodsIntegrationTest {
     // ==================== single(LockModeType) Tests ====================
 
     /**
-     * Tests single(LockModeType) returns Optional with value.
+     * Tests single(LockModeType) returns value.
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should single with LockModeType return Optional with value")
-    void shouldSingleWithLockModeReturnOptionalWithValue(IntegrationTestContext context) {
+    @DisplayName("Should single with LockModeType return value")
+    void shouldSingleWithLockModeReturnValue(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .single(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(1L);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(1L);
     }
 
     /**
@@ -208,14 +198,14 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should single with LockModeType return empty when no result")
     void shouldSingleWithLockModeReturnEmptyWhenNoResult(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(999L)
-                        .single(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
-        assertThat(result).isEmpty();
+        assertThat(result).isNull();
     }
 
     /**
@@ -226,14 +216,14 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should single with pessimistic write lock")
     void shouldSingleWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .single(LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).single()
         );
 
         // Then
-        assertThat(result).isPresent();
+        assertThat(result).isNotNull();
     }
 
     // ==================== getSingle(LockModeType) Tests ====================
@@ -249,7 +239,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getSingle(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
@@ -268,7 +258,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(999L)
-                        .getSingle(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
@@ -286,7 +276,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getSingle(LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).single()
         );
 
         // Then
@@ -306,7 +296,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .offset(2, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 10)
         );
 
         // Then
@@ -325,7 +315,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .offset(1, LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).window(1, 10)
         );
 
         // Then
@@ -344,7 +334,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .offset(0, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).list()
         );
 
         // Then
@@ -364,7 +354,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .limit(3, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).limit(3)
         );
 
         // Then
@@ -382,7 +372,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .limit(2, LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).limit(2)
         );
 
         // Then
@@ -402,7 +392,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getList(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).list()
         );
 
         // Then
@@ -420,7 +410,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getList(LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).list()
         );
 
         // Then
@@ -434,18 +424,18 @@ public class CollectorLockModeMethodsIntegrationTest {
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should first with offset and LockModeType return Optional")
-    void shouldFirstWithOffsetAndLockModeReturnOptional(IntegrationTestContext context) {
+    @DisplayName("Should first with offset and LockModeType return value")
+    void shouldFirstWithOffsetAndLockModeReturnValue(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .first(2, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 1).stream().findFirst().orElse(null)
         );
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(3L);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(3L);
     }
 
     // ==================== single(int, LockModeType) Tests ====================
@@ -455,18 +445,18 @@ public class CollectorLockModeMethodsIntegrationTest {
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should single with offset and LockModeType return Optional")
-    void shouldSingleWithOffsetAndLockModeReturnOptional(IntegrationTestContext context) {
+    @DisplayName("Should single with offset and LockModeType return value")
+    void shouldSingleWithOffsetAndLockModeReturnValue(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(3L)
-                        .single(0, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(3L);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(3L);
     }
 
     // ==================== slice(Sliceable) Tests ====================
@@ -502,12 +492,12 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getPage with PageCollector return page")
     void shouldGetPageWithPageCollectorReturnPage(IntegrationTestContext context) {
         // Given
-        PageCollector<LockableEntity, Page<LockableEntity>> collector = createPageCollector(1, 5);
+        Pageable<LockableEntity> collector = createPageCollector(1, 5);
 
         // When
         Page<LockableEntity> page = context.queryLockableEntities()
                 .orderBy(LockableEntity::getId).asc()
-                .getPage(collector);
+                .slice(collector);
 
         // Then
         assertThat(page).isNotNull();
@@ -523,13 +513,13 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getPage with PageCollector and where clause")
     void shouldGetPageWithPageCollectorAndWhereClause(IntegrationTestContext context) {
         // Given
-        PageCollector<LockableEntity, Page<LockableEntity>> collector = createPageCollector(1, 5);
+        Pageable<LockableEntity> collector = createPageCollector(1, 5);
 
         // When
         Page<LockableEntity> page = context.queryLockableEntities()
                 .where(LockableEntity::getId).lt(4L)
                 .orderBy(LockableEntity::getId).asc()
-                .getPage(collector);
+                .slice(collector);
 
         // Then
         assertThat(page).isNotNull();
@@ -547,16 +537,16 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should first with LockModeType and where clause")
     void shouldFirstWithLockModeAndWhereClause(IntegrationTestContext context) {
         // When
-        Optional<LockableEntity> result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).gt(2L)
                         .orderBy(LockableEntity::getId).asc()
-                        .first(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).first()
         );
 
         // Then
-        assertThat(result).isPresent();
-        assertThat(result.get().getId()).isEqualTo(3L);
+        assertThat(result).isNotNull();
+        assertThat(result.getId()).isEqualTo(3L);
     }
 
     /**
@@ -571,7 +561,7 @@ public class CollectorLockModeMethodsIntegrationTest {
                 context.getUpdateExecutor().doInTransaction(() ->
                         context.queryLockableEntities()
                                 .where(LockableEntity::getId).lt(3L)
-                                .getSingle(LockModeType.PESSIMISTIC_READ)
+                                .lock(LockModeType.PESSIMISTIC_READ).single()
                 )
         ).isInstanceOf(IllegalStateException.class)
           .hasMessageContaining("found more than one");
@@ -589,7 +579,7 @@ public class CollectorLockModeMethodsIntegrationTest {
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).lt(5L)
                         .orderBy(LockableEntity::getId).asc()
-                        .offset(1, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).window(1, 10)
         );
 
         // Then
@@ -638,8 +628,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         };
     }
 
-    private <T> PageCollector<T, Page<T>> createPageCollector(int page, int size) {
-        return new PageCollector<>() {
+    private <T> Pageable<T> createPageCollector(int page, int size) {
+        return new Pageable<>() {
             @Override
             public int page() {
                 return page;
@@ -647,11 +637,6 @@ public class CollectorLockModeMethodsIntegrationTest {
 
             @Override
             public int size() {
-                return size;
-            }
-
-            @Override
-            public int limit() {
                 return size;
             }
 
@@ -672,3 +657,4 @@ public class CollectorLockModeMethodsIntegrationTest {
         };
     }
 }
+

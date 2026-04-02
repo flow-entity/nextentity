@@ -13,18 +13,26 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, AbstractCollector<U> {
+public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Collector<U> {
 
     public static final SelectExpression SELECT_COUNT_ANY = new SelectExpression(new OperatorNode(ImmutableList.of(LiteralNode.TRUE), Operator.COUNT), false);
     public static final SelectExpression SELECT_ANY = new SelectExpression(LiteralNode.TRUE, false);
+
     protected final QueryStructure queryStructure;
     protected final Metamodel metamodel;
     protected final QueryExecutor queryExecutor;
+    protected final LockModeType lockModeType;
 
     public WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor) {
+        this(queryStructure, metamodel, queryExecutor, null);
+    }
+
+    private WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor,
+                      LockModeType lockModeType) {
         this.queryStructure = queryStructure;
         this.metamodel = metamodel;
         this.queryExecutor = queryExecutor;
+        this.lockModeType = lockModeType;
     }
 
     @Override
@@ -95,7 +103,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public Collector<U> orderBy(List<? extends Order<T>> orders) {
+    public LockStep<U> orderBy(List<? extends Order<T>> orders) {
         ImmutableList<SortExpression> add = SortExpression.mapping(orders);
         ImmutableList<SortExpression> newOrders = ImmutableList.concat(queryStructure.orderBy().asList(), add);
         return update(queryStructure.orderBy(newOrders));
@@ -113,27 +121,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     @Override
-    public List<U> getList(int offset, int maxResult, LockModeType lockModeType) {
-        QueryStructure structure = getQueryListStructure(offset, maxResult, lockModeType);
-        return queryExecutor.getList(structure);
-    }
-
-    private @NonNull QueryStructure getQueryListStructure(int offset, int maxResult, LockModeType lockModeType) {
-        return new QueryStructure(
-                queryStructure.select(),
-                queryStructure.from(),
-                queryStructure.where(),
-                queryStructure.groupBy(),
-                queryStructure.orderBy(),
-                queryStructure.having(),
-                offset,
-                maxResult,
-                lockModeType
-        );
-    }
-
-    @Override
-    public boolean exist(int offset) {
+    public boolean exists() {
         QueryStructure structure = new QueryStructure(
                 SELECT_ANY,
                 queryStructure.from(),
@@ -141,15 +129,30 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
                 queryStructure.groupBy(),
                 ImmutableList.of(),
                 queryStructure.having(),
-                offset,
                 1,
-                queryStructure.lockType()
+                1,
+                lockModeType
         );
         return !queryExecutor.getList(structure).isEmpty();
     }
 
     @Override
-    public <X> SubQueryBuilder<X, U> asSubQuery() {
+    public Collector<U> lock(LockModeType lockModeType) {
+        return new WhereImpl<>(queryStructure, metamodel, queryExecutor, lockModeType);
+    }
+
+    @Override
+    public List<U> list() {
+        return queryExecutor.getList(buildQueryStructure(null, null));
+    }
+
+    @Override
+    public List<U> window(int offset, int limit) {
+        return queryExecutor.getList(buildQueryStructure(offset, limit));
+    }
+
+    @Override
+    public <X> SubQueryBuilder<X, U> toSubQuery() {
         return new SubQueryBuilderImpl<>();
     }
 
@@ -163,7 +166,21 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
     }
 
     public <X, Y> WhereImpl<X, Y> update(QueryStructure structure) {
-        return new WhereImpl<>(structure, metamodel, queryExecutor);
+        return new WhereImpl<>(structure, metamodel, queryExecutor, lockModeType);
+    }
+
+    private QueryStructure buildQueryStructure(Integer offset, Integer limit) {
+        return new QueryStructure(
+                queryStructure.select(),
+                queryStructure.from(),
+                queryStructure.where(),
+                queryStructure.groupBy(),
+                queryStructure.orderBy(),
+                queryStructure.having(),
+                offset,
+                limit,
+                lockModeType
+        );
     }
 
     @NonNull
@@ -186,7 +203,6 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
                     null,
                     LockModeType.NONE);
         }
-
     }
 
     boolean requiredCountSubQuery(Selected select) {
@@ -229,19 +245,49 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Abstr
 
         @Override
         public Expression<X, List<U>> slice(int offset, int maxResult) {
-            QueryStructure structure = getQueryListStructure(offset, maxResult, null);
+            QueryStructure structure = new QueryStructure(
+                    queryStructure.select(),
+                    queryStructure.from(),
+                    queryStructure.where(),
+                    queryStructure.groupBy(),
+                    queryStructure.orderBy(),
+                    queryStructure.having(),
+                    offset,
+                    maxResult,
+                    null
+            );
             return new SimpleExpressionImpl<>(structure);
         }
 
         @Override
         public Expression<X, U> getSingle(int offset) {
-            QueryStructure structure = getQueryListStructure(offset, 2, null);
+            QueryStructure structure = new QueryStructure(
+                    queryStructure.select(),
+                    queryStructure.from(),
+                    queryStructure.where(),
+                    queryStructure.groupBy(),
+                    queryStructure.orderBy(),
+                    queryStructure.having(),
+                    offset,
+                    2,
+                    null
+            );
             return new SimpleExpressionImpl<>(structure);
         }
 
         @Override
         public Expression<X, U> getFirst(int offset) {
-            QueryStructure structure = getQueryListStructure(offset, 1, null);
+            QueryStructure structure = new QueryStructure(
+                    queryStructure.select(),
+                    queryStructure.from(),
+                    queryStructure.where(),
+                    queryStructure.groupBy(),
+                    queryStructure.orderBy(),
+                    queryStructure.having(),
+                    offset,
+                    1,
+                    null
+            );
             return new SimpleExpressionImpl<>(structure);
         }
 

@@ -26,7 +26,7 @@ public class CategoryRepository extends PersistableRepository<Category, Long> {
         return query()
                 .where(Category::getActive).eq(true)
                 .orderBy(Category::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Find root categories (no parent)
@@ -35,7 +35,7 @@ public class CategoryRepository extends PersistableRepository<Category, Long> {
                 .where(Category::getParentId).isNull()
                 .where(Category::getActive).eq(true)
                 .orderBy(Category::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Find subcategories by parent ID
@@ -44,13 +44,13 @@ public class CategoryRepository extends PersistableRepository<Category, Long> {
                 .where(Category::getParentId).eq(parentId)
                 .where(Category::getActive).eq(true)
                 .orderBy(Category::getName).asc()
-                .getList();
+                .list();
     }
 
     /// Find category by name
     public Category findByName(String name) {
         return query()
                 .where(Category::getName).eq(name)
-                .getFirst();
+                .first();
     }
 }

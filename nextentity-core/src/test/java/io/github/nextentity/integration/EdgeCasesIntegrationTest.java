@@ -14,8 +14,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -46,7 +44,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isEmpty();
@@ -78,7 +76,7 @@ public class EdgeCasesIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isFalse();
@@ -89,15 +87,15 @@ public class EdgeCasesIntegrationTest {
      */
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should return empty optional for first when no matches")
-    void shouldReturnEmptyOptionalForFirstWhenNoMatches(IntegrationTestContext context) {
+    @DisplayName("Should return null for first when no matches")
+    void shouldReturnNullForFirstWhenNoMatches(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = context.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
                 .first();
 
         // Then
-        assertThat(employee).isEmpty();
+        assertThat(employee).isNull();
     }
 
     /**
@@ -110,7 +108,7 @@ public class EdgeCasesIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(employee).isNull();
@@ -139,11 +137,11 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getId).eq(9001L)
-                .getList();
+                .list();
 
         // Then
         assertThat(found).hasSize(1);
-        assertThat(found.get(0).getEmail()).isNull();
+        assertThat(found.getFirst().getEmail()).isNull();
 
         // Cleanup
         context.getUpdateExecutor().delete(employee, Employee.class);
@@ -172,7 +170,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getEmail).isNull()
-                .getList();
+                .list();
 
         // Then
         assertThat(found).isNotEmpty();
@@ -192,7 +190,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getEmail).isNotNull()
-                .getList();
+                .list();
 
         // Then
         assertThat(found).isNotEmpty();
@@ -210,7 +208,7 @@ public class EdgeCasesIntegrationTest {
         List<Long> emptyList = Collections.emptyList();
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).in(emptyList)
-                .getList();
+                .list();
 
         // Then - should return empty or handle gracefully
         assertThat(employees).isEmpty();
@@ -243,7 +241,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(0, 5);
+                .limit(5);
 
         // Then
         assertThat(employees).hasSize(5);
@@ -259,7 +257,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(10000, 5);
+                .window(10000, 5);
 
         // Then
         assertThat(employees).isEmpty();
@@ -275,7 +273,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(0, 0);
+                .limit(0);
 
         // Then - behavior may vary, just ensure no exception
         assertThat(employees).isNotNull();
@@ -291,7 +289,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(-1, 5);
+                .window(-1, 5);
 
         // Then - should handle gracefully (may treat as 0 or return all)
         assertThat(employees).isNotNull();
@@ -320,11 +318,11 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getName).eq("O'Brien-Smith")
-                .getList();
+                .list();
 
         // Then
         assertThat(found).hasSize(1);
-        assertThat(found.get(0).getName()).isEqualTo("O'Brien-Smith");
+        assertThat(found.getFirst().getName()).isEqualTo("O'Brien-Smith");
 
         // Cleanup
         context.getUpdateExecutor().delete(employee, Employee.class);
@@ -353,11 +351,11 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getName).eq("张三")
-                .getList();
+                .list();
 
         // Then
         assertThat(found).hasSize(1);
-        assertThat(found.get(0).getName()).isEqualTo("张三");
+        assertThat(found.getFirst().getName()).isEqualTo("张三");
 
         // Cleanup
         context.getUpdateExecutor().delete(employee, Employee.class);
@@ -387,7 +385,7 @@ public class EdgeCasesIntegrationTest {
         // When
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(9005L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(found.getName()).isEqualTo(longName);
@@ -445,7 +443,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getSalary).eq(0.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(found).anyMatch(e -> e.getId() == 9007L);
@@ -477,7 +475,7 @@ public class EdgeCasesIntegrationTest {
         // When
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getSalary).lt(0.0)
-                .getList();
+                .list();
 
         // Then
         assertThat(found).anyMatch(e -> e.getId() == 9008L);
@@ -494,7 +492,7 @@ public class EdgeCasesIntegrationTest {
     @DisplayName("Should throw exception for getSingle with multiple results")
     void shouldThrowExceptionForGetSingleWithMultipleResults(IntegrationTestContext context) {
         // When/Then
-        assertThatThrownBy(() -> context.queryEmployees().getSingle())
+        assertThatThrownBy(() -> context.queryEmployees().single())
                 .isInstanceOf(IllegalStateException.class);
     }
 
@@ -508,7 +506,7 @@ public class EdgeCasesIntegrationTest {
         // When/Then
         assertThatThrownBy(() -> context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .requireSingle())
+                .single())
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -537,12 +535,12 @@ public class EdgeCasesIntegrationTest {
     @DisplayName("Should handle page with empty results")
     void shouldHandlePageWithEmptyResults(IntegrationTestContext context) {
         // Given
-        var pageable = Pages.pageable(1, 10);
+        var pageable = Pages.<Employee>pageable(1, 10);
 
         // When
         var page = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .getPage(pageable);
+                .slice(pageable);
 
         // Then
         assertThat(page.getItems()).isEmpty();
@@ -559,7 +557,7 @@ public class EdgeCasesIntegrationTest {
         // When - ordering by a field that might have nulls
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getEmail).asc()
-                .getList();
+                .list();
 
         // Then - should complete without error
         assertThat(employees).isNotNull();
@@ -621,7 +619,7 @@ public class EdgeCasesIntegrationTest {
         // When
         Department found = context.queryDepartments()
                 .where(Department::getId).eq(9999L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(found).isNotNull();
@@ -631,3 +629,4 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(dept, Department.class);
     }
 }
+

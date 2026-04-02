@@ -240,7 +240,7 @@ List<Tuple2<Long, BigDecimal>> results = employeeRepository.query()
 ```java
 // 不同部门数量
 long distinctDeptCount = employeeRepository.query()
-    .select(Path.of(Employee::getDepartmentId).countDistinct())
+    .select(path(Employee::getDepartmentId).countDistinct())
     .getSingle();
 ```
 
@@ -335,6 +335,16 @@ List<Tuple2<String, BigDecimal>> nameSalary = employeeRepository.query()
 // 三个字段用 Tuple3
 List<Tuple3<String, String, BigDecimal>> details = employeeRepository.query()
     .select(Employee::getName, Employee::getEmail, Employee::getSalary)
+    .getList();
+```
+
+### 3. 使用 DTO 处理复杂场景
+
+```java
+// 多字段使用 DTO
+List<EmployeeSummary> summaries = employeeRepository.query()
+    .select(EmployeeSummary.class)
+    .where(Employee::getActive).eq(true)
     .getList();
 ```
 

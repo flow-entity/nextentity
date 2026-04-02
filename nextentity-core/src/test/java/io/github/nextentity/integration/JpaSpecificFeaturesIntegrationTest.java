@@ -46,7 +46,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .getList(0, 1, LockModeType.PESSIMISTIC_READ)
+                    .lock(LockModeType.PESSIMISTIC_READ).limit(1)
                     .get(0);
 
             // Then
@@ -67,7 +67,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
+                    .lock(LockModeType.PESSIMISTIC_WRITE).limit(1)
                     .get(0);
 
             // Then
@@ -88,7 +88,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .getList(0, 1, LockModeType.OPTIMISTIC)
+                    .lock(LockModeType.OPTIMISTIC).limit(1)
                     .get(0);
 
             // Then
@@ -108,7 +108,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .getList(0, 1, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+                    .lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT).limit(1)
                     .get(0);
             // Then
             assertThat(entity).isNotNull();
@@ -125,7 +125,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When
         LockableEntity entity = context.queryLockableEntities()
                 .where(LockableEntity::getId).eq(1L)
-                .getList(0, 1, null)
+                .window(0, 1)
                 .get(0);
 
         // Then
@@ -144,8 +144,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .orderBy(LockableEntity::getId).asc()
-                    .first(0, LockModeType.PESSIMISTIC_READ)
-                    .orElse(null);
+                    .lock(LockModeType.PESSIMISTIC_READ).first();
 
             // Then
             assertThat(entity).isNotNull();
@@ -165,8 +164,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
-                    .single(0, LockModeType.PESSIMISTIC_READ)
-                    .orElse(null);
+                    .lock(LockModeType.PESSIMISTIC_READ).single();
 
             // Then
             assertThat(entity).isNotNull();
@@ -190,7 +188,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // When - Lock and update
             LockableEntity locked = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(5001L)
-                    .getList(0, 1, LockModeType.PESSIMISTIC_WRITE)
+                    .lock(LockModeType.PESSIMISTIC_WRITE).limit(1)
                     .get(0);
 
             locked.setName("Updated After Lock");
@@ -199,7 +197,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             // Then
             LockableEntity updated = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(5001L)
-                    .getSingle();
+                    .single();
             assertThat(updated.getName()).isEqualTo("Updated After Lock");
 
             // Cleanup
@@ -220,7 +218,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             List<LockableEntity> entities = context.queryLockableEntities()
                     .where(LockableEntity::getId).lt(4L)
                     .orderBy(LockableEntity::getId).asc()
-                    .getList(0, 3, LockModeType.PESSIMISTIC_READ);
+                    .lock(LockModeType.PESSIMISTIC_READ).limit(3);
 
             // Then
             assertThat(entities).hasSize(3);
@@ -249,7 +247,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getActive).eq(true)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isNotEmpty();
@@ -266,7 +264,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).hasSize(1);
@@ -287,14 +285,14 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When - Query and modify
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5002L)
-                .getSingle();
+                .single();
         found.setName("Modified State");
         context.getUpdateExecutor().update(found, Employee.class);
 
         // Then
         Employee verified = context.queryEmployees()
                 .where(Employee::getId).eq(5002L)
-                .getSingle();
+                .single();
         assertThat(verified.getName()).isEqualTo("Modified State");
 
         // Cleanup
@@ -317,7 +315,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // Then - Should be visible in new transaction
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5003L)
-                .getSingle();
+                .single();
         assertThat(found).isNotNull();
 
         // Cleanup
@@ -335,11 +333,11 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When - Execute same query twice
         List<Employee> first = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         List<Employee> second = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
-                .getList();
+                .list();
 
         // Then - Results should be consistent
         assertThat(first).hasSameSizeAs(second);
@@ -360,7 +358,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5004L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(found.getEmail()).isNull();
@@ -385,7 +383,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         Employee found = context.queryEmployees()
                 .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
                 .where(Employee::getId).eq(5005L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(found).isNotNull();
@@ -411,7 +409,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // When
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5006L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(found.getHireDate()).isEqualTo(hireDate);
@@ -444,3 +442,4 @@ public class JpaSpecificFeaturesIntegrationTest {
         return employee;
     }
 }
+

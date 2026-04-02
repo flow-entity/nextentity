@@ -103,6 +103,22 @@ if (emp != null) {
 
 > 📍 **示例位置**: `EmployeeRepository.java` (更新策略示例)
 
+### 按条件批量更新
+
+对于统一字段修改，推荐直接使用 `updateWhere()`，避免先查询实体再回写：
+
+```java
+int updated = employeeRepository.updateWhere()
+    .set(Employee::getActive, false)
+    .set(Employee::getStatus, EmployeeStatus.INACTIVE)
+    .where(Employee::getDepartmentId).eq(departmentId)
+    .execute();
+```
+
+> 📍 **示例位置**: `EmployeeRepository.java` (`deactivateEmployeesByDepartment` 方法)
+
+这种方式更适合批量状态切换、标记删除、统一字段回填等场景。
+
 ---
 
 ## Delete 删除
@@ -141,6 +157,18 @@ employeeRepository.deleteAll(terminated);
 ```
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployeesByDepartment` 方法)
+
+### 直接条件批量删除
+
+如果不需要先加载实体，可以直接使用 `deleteWhere()`：
+
+```java
+int deleted = employeeRepository.deleteWhere()
+    .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
+    .execute();
+```
+
+> 📍 **示例位置**: `EmployeeRepository.java` (`deleteInactiveEmployees` 方法)
 
 ---
 
@@ -191,6 +219,8 @@ employeeRepository.updateAll(employees);
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`giveRaiseToDepartment` 方法)
 
+如果更新内容对所有匹配记录都相同，优先考虑 `updateWhere()`，SQL 更直接，内存占用也更低。
+
 ### 批量删除
 
 ```java
@@ -203,6 +233,8 @@ employeeRepository.deleteAll(employees);
 ```
 
 > 📍 **示例位置**: `EmployeeRepository.java` (`deleteEmployeesByDepartment` 方法)
+
+若只是按条件整批删除，优先使用 `deleteWhere()`，避免多一次查询和实体构建。
 
 ---
 
@@ -334,10 +366,10 @@ WHERE id = ? AND version = ?
 
 ## 最佳实践
 
-### 1. 先查询再修改
+### 1. 区分实体更新与条件批量更新
 
 ```java
-// 推荐：查询后修改
+// 需要基于当前实体值计算时：查询后修改
 Employee emp = employeeRepository.query()
     .where(Employee::getId).eq(id)
     .getFirst();
@@ -346,9 +378,15 @@ if (emp != null) {
     emp.setSalary(newSalary);
     employeeRepository.update(emp);
 }
+
+// 统一字段批量修改时：直接条件更新
+employeeRepository.updateWhere()
+    .set(Employee::getActive, false)
+    .where(Employee::getDepartmentId).eq(departmentId)
+    .execute();
 ```
 
-> 📍 **示例位置**: `EmployeeRepository.java` (`updateEmployeeSalary` 方法)
+> 📍 **示例位置**: `EmployeeRepository.java` (`updateEmployeeSalary`, `deactivateEmployeesByDepartment` 方法)
 
 ### 2. 使用批量操作提升性能
 

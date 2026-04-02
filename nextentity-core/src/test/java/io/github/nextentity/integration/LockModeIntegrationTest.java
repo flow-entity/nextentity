@@ -44,7 +44,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).limit(10)
         );
 
         // Then
@@ -60,7 +60,7 @@ public class LockModeIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getSingle(0, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).single()
         );
 
         // Then
@@ -80,7 +80,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).limit(10)
         );
 
         // Then
@@ -96,7 +96,7 @@ public class LockModeIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getSingle(0, LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).single()
         );
 
         // Then
@@ -116,7 +116,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.OPTIMISTIC)
+                        .lock(LockModeType.OPTIMISTIC).limit(10)
         );
 
         // Then
@@ -132,7 +132,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.OPTIMISTIC_FORCE_INCREMENT)
+                        .lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT).limit(10)
         );
 
         // Then
@@ -152,7 +152,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.READ)
+                        .lock(LockModeType.READ).limit(10)
         );
 
         // Then
@@ -168,7 +168,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.WRITE)
+                        .lock(LockModeType.WRITE).limit(10)
         );
 
         // Then
@@ -188,7 +188,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, LockModeType.NONE)
+                        .lock(LockModeType.NONE).limit(10)
         );
 
         // Then
@@ -209,7 +209,7 @@ public class LockModeIntegrationTest {
                 context.queryLockableEntities()
                         .where(LockableEntity::getName).like("Lockable%")
                         .orderBy(LockableEntity::getId).asc()
-                        .getList(0, 10, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).limit(10)
         );
 
         // Then
@@ -226,7 +226,7 @@ public class LockModeIntegrationTest {
                 context.queryLockableEntities()
                         .where(LockableEntity::getName).like("Lockable%")
                         .where(LockableEntity::getId).lt(4L)
-                        .getList(0, 10, LockModeType.PESSIMISTIC_WRITE)
+                        .lock(LockModeType.PESSIMISTIC_WRITE).limit(10)
         );
 
         // Then
@@ -249,7 +249,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getList(0, 3, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).limit(3)
         );
 
         // Then
@@ -268,7 +268,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getList(2, 3, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 3)
         );
 
         // Then
@@ -288,7 +288,7 @@ public class LockModeIntegrationTest {
         LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .getFirst(0, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).first()
         );
 
         // Then
@@ -309,7 +309,7 @@ public class LockModeIntegrationTest {
                 context.getUpdateExecutor().doInTransaction(() -> {
                     context.queryLockableEntities()
                             .where(LockableEntity::getId).eq(1L)
-                            .getList(0, 10, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+                            .lock(LockModeType.PESSIMISTIC_FORCE_INCREMENT).limit(10);
                     return null;
                 })
         );
@@ -328,7 +328,7 @@ public class LockModeIntegrationTest {
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).in(1L, 2L, 3L)
                         .orderBy(LockableEntity::getId).asc()
-                        .getList(0, 10, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).limit(10)
         );
 
         // Then
@@ -347,7 +347,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
-                        .getList(0, 10, null)
+                        .limit(10)
         );
 
         // Then
@@ -367,7 +367,7 @@ public class LockModeIntegrationTest {
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .limit(3, LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).limit(3)
         );
 
         // Then
@@ -385,10 +385,11 @@ public class LockModeIntegrationTest {
         // When
         List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
-                        .getList(LockModeType.PESSIMISTIC_READ)
+                        .lock(LockModeType.PESSIMISTIC_READ).list()
         );
 
         // Then
         assertThat(entities).hasSize(5);
     }
 }
+

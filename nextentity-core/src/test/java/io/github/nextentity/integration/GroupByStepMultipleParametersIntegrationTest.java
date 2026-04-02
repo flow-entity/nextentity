@@ -53,7 +53,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
                 )
                 .groupBy(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -75,7 +75,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
                 )
                 .groupBy(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -105,7 +105,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
                         Employee::getHireDate
                 )
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -137,7 +137,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
                         Employee::getName
                 )
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -171,7 +171,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
                         Employee::getEmail
                 )
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -196,7 +196,7 @@ public class GroupByStepMultipleParametersIntegrationTest {
                 .groupBy(Employee::getDepartmentId, Employee::getActive, Employee::getStatus)
                 .having(Path.of(Employee::getId).count().gt(0L))
                 .orderBy(Employee::getDepartmentId).asc()
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();

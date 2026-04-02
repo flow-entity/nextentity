@@ -76,7 +76,7 @@ public class ErrorHandlingIntegrationTest {
             // If no exception, verify the entity wasn't accidentally created
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(99999L)
-                    .getSingle();
+                    .single();
             // Entity might have been created (JPA merge behavior) or not found
         } catch (Exception e) {
             // Some implementations might throw an exception
@@ -93,7 +93,7 @@ public class ErrorHandlingIntegrationTest {
     void shouldThrowExceptionWhenGetSingleFindsMultiple(IntegrationTestContext context) {
         // When/Then
         assertThatThrownBy(() ->
-                context.queryEmployees().getSingle())
+                context.queryEmployees().single())
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("more than one");
     }
@@ -109,7 +109,7 @@ public class ErrorHandlingIntegrationTest {
         assertThatThrownBy(() ->
                 context.queryEmployees()
                         .where(Employee::getId).eq(999999L)
-                        .requireSingle())
+                        .single())
                 .isInstanceOf(NullPointerException.class);
     }
 
@@ -123,7 +123,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Query with correct type
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getSalary).gt(50000.0)
-                .getList();
+                .list();
 
         // Then - Should work fine
         assertThat(employees).isNotNull();
@@ -190,7 +190,7 @@ public class ErrorHandlingIntegrationTest {
     @DisplayName("Should handle valid table query")
     void shouldHandleValidTableQuery(IntegrationTestContext context) {
         // When - Query existing table
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
 
         // Then - Should succeed
         assertThat(employees).isNotNull();
@@ -206,7 +206,7 @@ public class ErrorHandlingIntegrationTest {
         // Given - Get an existing employee's email
         Employee existing = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         Employee duplicateEmail = createTestEmployee(7777L, "Duplicate Email");
         duplicateEmail.setEmail(existing.getEmail());
@@ -239,7 +239,7 @@ public class ErrorHandlingIntegrationTest {
         // Then
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(6666L)
-                .getSingle();
+                .single();
         assertThat(found).isNull();
     }
 
@@ -256,7 +256,7 @@ public class ErrorHandlingIntegrationTest {
                 .where(Employee::getSalary).between(50000.0, 80000.0)
                 .where(Employee::getDepartmentId).in(1L, 2L, 3L)
                 .orderBy(Employee::getName).asc()
-                .getList();
+                .list();
 
         // Then - Should succeed
         assertThat(employees).isNotNull();
@@ -273,7 +273,7 @@ public class ErrorHandlingIntegrationTest {
         long count = context.queryEmployees().count();
         double avgSalary = context.queryEmployees()
                 .select(Path.of(Employee::getSalary).avg())
-                .getSingle();
+                .single();
 
         // Then
         assertThat(count).isPositive();
@@ -290,7 +290,7 @@ public class ErrorHandlingIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(999999L)
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isEmpty();
@@ -312,7 +312,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Page beyond data
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(1000, 10);
+                .window(1000, 10);
 
         // Then
         assertThat(employees).isEmpty();
@@ -320,7 +320,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Zero limit
         employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(0, 0);
+                .limit(0);
 
         // Then - Should handle gracefully
         assertThat(employees).isNotNull();
@@ -337,7 +337,7 @@ public class ErrorHandlingIntegrationTest {
         var results = context.queryEmployees()
                 .select(Employee::getName, Employee::getSalary)
                 .where(Employee::getId).eq(1L)
-                .getList();
+                .list();
 
         // Then
         assertThat(results).isNotEmpty();
@@ -366,7 +366,7 @@ public class ErrorHandlingIntegrationTest {
         // Then - Verify
         Department found = context.queryDepartments()
                 .where(Department::getId).eq(5555L)
-                .getSingle();
+                .single();
         assertThat(found).isNotNull();
         assertThat(found.getName()).isEqualTo("Test Department");
 
@@ -377,7 +377,7 @@ public class ErrorHandlingIntegrationTest {
         // Then - Verify
         found = context.queryDepartments()
                 .where(Department::getId).eq(5555L)
-                .getSingle();
+                .single();
         assertThat(found.getName()).isEqualTo("Updated Department");
 
         // When - Delete
@@ -386,7 +386,7 @@ public class ErrorHandlingIntegrationTest {
         // Then - Verify
         found = context.queryDepartments()
                 .where(Department::getId).eq(5555L)
-                .getSingle();
+                .single();
         assertThat(found).isNull();
     }
 
@@ -400,7 +400,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Pattern that matches nothing
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getName).like("ZZZZZZZ%")
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isEmpty();
@@ -408,7 +408,7 @@ public class ErrorHandlingIntegrationTest {
         // When - Pattern that matches all
         employees = context.queryEmployees()
                 .where(Employee::getName).like("%")
-                .getList();
+                .list();
 
         // Then - May or may not return all depending on database
         assertThat(employees).isNotNull();
@@ -425,7 +425,7 @@ public class ErrorHandlingIntegrationTest {
         List<Employee> employees = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .where(Employee::getId).eq(2L) // Contradictory
-                .getList();
+                .list();
 
         // Then
         assertThat(employees).isEmpty();
@@ -447,3 +447,4 @@ public class ErrorHandlingIntegrationTest {
         return employee;
     }
 }
+

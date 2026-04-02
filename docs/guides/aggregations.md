@@ -312,16 +312,16 @@ Double activeAvg = employeeRepository.query()
     .getSingle();
 ```
 
-### 3. 使用 exist() 检查存在性
+### 3. 使用 exists() 检查存在性
 
 ```java
 // 检查是否存在符合条件的记录
 boolean hasHighEarners = employeeRepository.query()
     .where(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
-    .exist();
+    .exists();
 ```
 
-### 5. 优先使用数据库 GROUP BY
+### 4. 优先使用数据库 GROUP BY
 
 ```java
 // 推荐：数据库 GROUP BY（一条 SQL 完成聚合）
@@ -346,7 +346,7 @@ Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
     ));
 ```
 
-### 6. 处理 NULL 值
+### 5. 处理 NULL 值
 
 ```java
 // 过滤 NULL 值
@@ -355,7 +355,7 @@ Double avg = employeeRepository.query()
     .where(Employee::getSalary).isNotNull()  // 排除 NULL
     .getSingle();
 
-// 在 Java 中处理 NULL
+// 在 Java 中处理 NULL 值
 List<Employee> employees = employeeRepository.query()
     .where(Employee::getSalary).isNotNull()
     .getList();

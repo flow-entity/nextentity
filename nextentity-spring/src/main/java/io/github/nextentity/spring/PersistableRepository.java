@@ -68,7 +68,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
     /// @param id Primary key value
     /// @return Optional containing the entity, or empty if not found
     public Optional<T> findById(ID id) {
-        return query().where(idPath()).eq(id).first();
+        return Optional.ofNullable(query().where(idPath()).eq(id).first());
     }
 
     /// Gets an entity by its primary key.
@@ -76,7 +76,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
     /// @param id Primary key value
     /// @return The entity, or null if not found
     public T getById(ID id) {
-        return query().where(idPath()).eq(id).getFirst();
+        return query().where(idPath()).eq(id).first();
     }
 
     /// Finds all entities by their primary keys.
@@ -87,7 +87,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
         if (ids.isEmpty()) {
             return List.of();
         }
-        return query().where(idPath()).in(ids).getList();
+        return query().where(idPath()).in(ids).list();
     }
 
     /// Gets all entities by their primary keys.
@@ -112,7 +112,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
     ///
     /// @return Map of ID to entity
     public Map<ID, T> findMapAll() {
-        return query().getList()
+        return query().list()
                 .stream()
                 .collect(Collectors.toMap(Persistable::getId, Function.identity()));
     }
@@ -122,7 +122,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
     /// @param id Primary key value
     /// @return true if entity exists, false otherwise
     public boolean existsById(ID id) {
-        return query().where(idPath()).eq(id).exist();
+        return query().where(idPath()).eq(id).exists();
     }
 
     /// Counts the number of entities with the given IDs.

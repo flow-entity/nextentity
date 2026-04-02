@@ -8,8 +8,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -30,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StreamQueryIntegrationTest {
 
     // ========================================
-    // 1. Basic List Operations
+    // Basic List Operations
     // ========================================
 
     @ParameterizedTest
@@ -38,7 +36,7 @@ public class StreamQueryIntegrationTest {
     @DisplayName("Should get all employees")
     void shouldGetAllEmployees(IntegrationTestContext context) {
         // When
-        List<Employee> employees = context.queryEmployees().getList();
+        List<Employee> employees = context.queryEmployees().list();
 
         // Then
         assertThat(employees).hasSize(12);
@@ -62,11 +60,11 @@ public class StreamQueryIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .offset(5);
+                .window(5, 10);
 
         // Then
         assertThat(employees).hasSize(7);
-        assertThat(employees.get(0).getId()).isEqualTo(6L);
+        assertThat(employees.getFirst().getId()).isEqualTo(6L);
     }
 
     @ParameterizedTest
@@ -76,15 +74,15 @@ public class StreamQueryIntegrationTest {
         // When
         List<Employee> employees = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getList(2, 3);
+                .window(2, 3);
 
         // Then
         assertThat(employees).hasSize(3);
-        assertThat(employees.get(0).getId()).isEqualTo(3L);
+        assertThat(employees.getFirst().getId()).isEqualTo(3L);
     }
 
     // ========================================
-    // 2. First and Single Operations
+    // First and Single Operations
     // ========================================
 
     @ParameterizedTest
@@ -94,7 +92,7 @@ public class StreamQueryIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getFirst();
+                .first();
 
         // Then
         assertThat(employee).isNotNull();
@@ -103,16 +101,16 @@ public class StreamQueryIntegrationTest {
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get first employee as optional")
-    void shouldGetFirstEmployeeAsOptional(IntegrationTestContext context) {
+    @DisplayName("Should get first employee")
+    void shouldGetFirstEmployeeViaFirstMethod(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = context.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .first();
 
         // Then
-        assertThat(employee).isPresent();
-        assertThat(employee.get().getId()).isEqualTo(1L);
+        assertThat(employee).isNotNull();
+        assertThat(employee.getId()).isEqualTo(1L);
     }
 
     @ParameterizedTest
@@ -122,7 +120,7 @@ public class StreamQueryIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
-                .getFirst(2);
+                .window(2, 1).stream().findFirst().orElse(null);
 
         // Then
         assertThat(employee).isNotNull();
@@ -136,7 +134,7 @@ public class StreamQueryIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .getSingle();
+                .single();
 
         // Then
         assertThat(employee).isNotNull();
@@ -145,79 +143,33 @@ public class StreamQueryIntegrationTest {
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get single as optional")
-    void shouldGetSingleAsOptional(IntegrationTestContext context) {
+    @DisplayName("Should get single")
+    void shouldGetSingleViaSingleMethod(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = context.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .single();
 
         // Then
-        assertThat(employee).isPresent();
-        assertThat(employee.get().getId()).isEqualTo(1L);
+        assertThat(employee).isNotNull();
+        assertThat(employee.getId()).isEqualTo(1L);
     }
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should return empty optional for non-existing")
-    void shouldReturnEmptyOptionalForNonExisting(IntegrationTestContext context) {
+    @DisplayName("Should return null for non-existing")
+    void shouldReturnNullForNonExisting(IntegrationTestContext context) {
         // When
-        Optional<Employee> employee = context.queryEmployees()
+        Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(999L)
                 .single();
 
         // Then
-        assertThat(employee).isEmpty();
+        assertThat(employee).isNull();
     }
 
     // ========================================
-    // 3. Map Transformation
-    // ========================================
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map employees to names")
-    void shouldMapEmployeesToNames(IntegrationTestContext context) {
-        // When
-        List<String> names = context.queryEmployees()
-                .map(Employee::getName)
-                .getList();
-
-        // Then
-        assertThat(names).hasSize(12);
-        assertThat(names).allMatch(name -> name != null && !name.isEmpty());
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map employees to salaries")
-    void shouldMapEmployeesToSalaries(IntegrationTestContext context) {
-        // When
-        List<Double> salaries = context.queryEmployees()
-                .map(Employee::getSalary)
-                .getList();
-
-        // Then
-        assertThat(salaries).hasSize(12);
-        assertThat(salaries).allMatch(s -> s > 0);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map with filter")
-    void shouldMapWithFilter(IntegrationTestContext context) {
-        // When
-        List<String> names = context.queryEmployees()
-                .where(Employee::getActive).eq(true)
-                .map(Employee::getName)
-                .getList();
-
-        // Then
-        assertThat(names).isNotEmpty();
-    }
-
-    // ========================================
-    // 4. Count and Exist Operations
+    // Count and Exist Operations
     // ========================================
 
     @ParameterizedTest
@@ -251,7 +203,7 @@ public class StreamQueryIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isTrue();
@@ -264,7 +216,7 @@ public class StreamQueryIntegrationTest {
         // When
         boolean exists = context.queryEmployees()
                 .where(Employee::getId).eq(999L)
-                .exist();
+                .exists();
 
         // Then
         assertThat(exists).isFalse();
@@ -275,8 +227,8 @@ public class StreamQueryIntegrationTest {
     @DisplayName("Should exist with offset")
     void shouldExistWithOffset(IntegrationTestContext context) {
         // When
-        boolean exists1 = context.queryEmployees().exist(0);
-        boolean exists2 = context.queryEmployees().exist(100);
+        boolean exists1 = context.queryEmployees().exists();
+        boolean exists2 = !context.queryEmployees().window(100, 1).isEmpty();
 
         // Then
         assertThat(exists1).isTrue();
@@ -284,22 +236,8 @@ public class StreamQueryIntegrationTest {
     }
 
     // ========================================
-    // 5. Chained Operations
+    // Chained Operations
     // ========================================
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should chain where and map")
-    void shouldChainWhereAndMap(IntegrationTestContext context) {
-        // When
-        List<String> names = context.queryEmployees()
-                .where(Employee::getDepartmentId).eq(1L)
-                .map(Employee::getName)
-                .getList();
-
-        // Then
-        assertThat(names).hasSize(5);
-    }
 
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
@@ -333,7 +271,7 @@ public class StreamQueryIntegrationTest {
     }
 
     // ========================================
-    // 6. Slice Operations
+    // Slice Operations
     // ========================================
 
     @ParameterizedTest
@@ -365,51 +303,7 @@ public class StreamQueryIntegrationTest {
     }
 
     // ========================================
-    // 7. Map to Primitive
-    // ========================================
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map to id list")
-    void shouldMapToIdList(IntegrationTestContext context) {
-        // When
-        List<Long> ids = context.queryEmployees()
-                .map(Employee::getId)
-                .getList();
-
-        // Then
-        assertThat(ids).hasSize(12);
-        assertThat(ids).contains(1L, 2L, 3L);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map and count")
-    void shouldMapAndCount(IntegrationTestContext context) {
-        // When
-        long count = context.queryEmployees()
-                .map(Employee::getName)
-                .count();
-
-        // Then
-        assertThat(count).isEqualTo(12);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should map and limit")
-    void shouldMapAndLimit(IntegrationTestContext context) {
-        // When
-        List<String> names = context.queryEmployees()
-                .map(Employee::getName)
-                .limit(3);
-
-        // Then
-        assertThat(names).hasSize(3);
-    }
-
-    // ========================================
-    // 8. Require Single
+    // Require Single
     // ========================================
 
     @ParameterizedTest
@@ -419,10 +313,11 @@ public class StreamQueryIntegrationTest {
         // When
         Employee employee = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
-                .requireSingle();
+                .single();
 
         // Then
         assertThat(employee).isNotNull();
         assertThat(employee.getId()).isEqualTo(1L);
     }
 }
+

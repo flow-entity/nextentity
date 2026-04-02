@@ -38,7 +38,7 @@ public class PagesIntegrationTest {
             // When - get first page
             List<Employee> page1 = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(0, 5);
+                    .limit(5);
 
             // Then
             assertThat(page1).isNotNull();
@@ -59,10 +59,10 @@ public class PagesIntegrationTest {
             // When
             List<Employee> page1 = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(0, 5);
+                    .limit(5);
             List<Employee> page2 = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(5, 5);
+                    .window(5, 5);
 
             // Then - pages should have different data
             assertThat(page1).isNotEmpty();
@@ -77,7 +77,7 @@ public class PagesIntegrationTest {
             // When
             List<Employee> page = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(10000, 10);
+                    .window(10000, 10);
 
             // Then
             assertThat(page).isEmpty();
@@ -90,7 +90,7 @@ public class PagesIntegrationTest {
             // When
             List<Employee> page = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(0, 3);
+                    .limit(3);
 
             // Then
             assertThat(page).isNotNull();
@@ -104,7 +104,7 @@ public class PagesIntegrationTest {
             // When
             List<Employee> page = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(0, 1);
+                    .limit(1);
 
             // Then
             assertThat(page).hasSize(1);
@@ -117,7 +117,7 @@ public class PagesIntegrationTest {
             // Given
             List<Employee> items = context.queryEmployees()
                     .orderBy(Employee::getId).asc()
-                    .getList(0, 10);
+                    .limit(10);
             long total = context.queryEmployees().count();
 
             // When
@@ -129,3 +129,4 @@ public class PagesIntegrationTest {
         }
     }
 }
+
