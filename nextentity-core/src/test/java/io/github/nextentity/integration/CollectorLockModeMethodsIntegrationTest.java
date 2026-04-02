@@ -1,9 +1,5 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.Pageable;
-import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.api.model.Sliceable;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.LockableEntity;
@@ -13,6 +9,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
 import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -22,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  * Tests default methods in Collector interface that accept LockModeType:
  * - first()/single() with lock
  * - window()/limit()/list() with lock
- * - slice(PageCollector)
+ * - slice(int, int)
  * <p>
  * These tests run against MySQL and PostgreSQL using Testcontainers.
  *
@@ -131,23 +128,6 @@ public class CollectorLockModeMethodsIntegrationTest {
         // Then
         assertThat(entity).isNotNull();
         assertThat(entity.getId()).isEqualTo(1L);
-    }
-
-    /**
-     * Tests requireSingle(LockModeType) throws when no result.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should requireSingle with LockModeType throw when no result")
-    void shouldRequireSingleWithLockModeThrowWhenNoResult(IntegrationTestContext context) {
-        // When & Then
-        assertThatThrownBy(() ->
-                context.getUpdateExecutor().doInTransaction(() ->
-                        context.queryLockableEntities()
-                                .where(LockableEntity::getId).eq(999L)
-                                .lock(LockModeType.PESSIMISTIC_READ).single()
-                )
-        ).isInstanceOf(NullPointerException.class);
     }
 
     /**
@@ -301,7 +281,7 @@ public class CollectorLockModeMethodsIntegrationTest {
 
         // Then
         assertThat(entities).isNotEmpty();
-        assertThat(entities.get(0).getId()).isEqualTo(3L);
+        assertThat(entities.getFirst().getId()).isEqualTo(3L);
     }
 
     /**
@@ -320,7 +300,7 @@ public class CollectorLockModeMethodsIntegrationTest {
 
         // Then
         assertThat(entities).isNotEmpty();
-        assertThat(entities.get(0).getId()).isEqualTo(2L);
+        assertThat(entities.getFirst().getId()).isEqualTo(2L);
     }
 
     /**
@@ -430,7 +410,7 @@ public class CollectorLockModeMethodsIntegrationTest {
         LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
-                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 1).stream().findFirst().orElse(null)
+                        .lock(LockModeType.PESSIMISTIC_READ).window(2, 1).getFirst()
         );
 
         // Then
@@ -457,74 +437,6 @@ public class CollectorLockModeMethodsIntegrationTest {
         // Then
         assertThat(result).isNotNull();
         assertThat(result.getId()).isEqualTo(3L);
-    }
-
-    // ==================== slice(Sliceable) Tests ====================
-
-    /**
-     * Tests slice(Sliceable) method.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should slice with Sliceable")
-    void shouldSliceWithSliceable(IntegrationTestContext context) {
-        // Given
-        Sliceable<LockableEntity, Slice<LockableEntity>> sliceable = createSliceable(0, 3);
-
-        // When
-        Slice<LockableEntity> slice = context.queryLockableEntities()
-                .orderBy(LockableEntity::getId).asc()
-                .slice(sliceable);
-
-        // Then
-        assertThat(slice.data()).hasSize(3);
-        assertThat(slice.offset()).isEqualTo(0);
-        assertThat(slice.limit()).isEqualTo(3);
-    }
-
-    // ==================== getPage(PageCollector) Tests ====================
-
-    /**
-     * Tests getPage(PageCollector) with custom collector.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getPage with PageCollector return page")
-    void shouldGetPageWithPageCollectorReturnPage(IntegrationTestContext context) {
-        // Given
-        Pageable<LockableEntity> collector = createPageCollector(1, 5);
-
-        // When
-        Page<LockableEntity> page = context.queryLockableEntities()
-                .orderBy(LockableEntity::getId).asc()
-                .slice(collector);
-
-        // Then
-        assertThat(page).isNotNull();
-        assertThat(page.getItems()).isNotEmpty();
-        assertThat(page.getTotal()).isEqualTo(5);
-    }
-
-    /**
-     * Tests getPage(PageCollector) with where clause.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getPage with PageCollector and where clause")
-    void shouldGetPageWithPageCollectorAndWhereClause(IntegrationTestContext context) {
-        // Given
-        Pageable<LockableEntity> collector = createPageCollector(1, 5);
-
-        // When
-        Page<LockableEntity> page = context.queryLockableEntities()
-                .where(LockableEntity::getId).lt(4L)
-                .orderBy(LockableEntity::getId).asc()
-                .slice(collector);
-
-        // Then
-        assertThat(page).isNotNull();
-        assertThat(page.getItems()).isNotEmpty();
-        assertThat(page.getTotal()).isEqualTo(3);
     }
 
     // ==================== Combined Tests ====================
@@ -584,77 +496,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
         // Then
         assertThat(entities).isNotEmpty();
-        assertThat(entities.get(0).getId()).isEqualTo(2L);
+        assertThat(entities.getFirst().getId()).isEqualTo(2L);
     }
 
-    // ==================== Helper Methods ====================
-
-    private <T> Sliceable<T, Slice<T>> createSliceable(int offset, int limit) {
-        return new Sliceable<>() {
-            @Override
-            public int offset() {
-                return offset;
-            }
-
-            @Override
-            public int limit() {
-                return limit;
-            }
-
-            @Override
-            public Slice<T> collect(List<T> data, long total) {
-                return new Slice<>() {
-                    @Override
-                    public List<T> data() {
-                        return data;
-                    }
-
-                    @Override
-                    public long total() {
-                        return total;
-                    }
-
-                    @Override
-                    public int offset() {
-                        return offset;
-                    }
-
-                    @Override
-                    public int limit() {
-                        return limit;
-                    }
-                };
-            }
-        };
-    }
-
-    private <T> Pageable<T> createPageCollector(int page, int size) {
-        return new Pageable<>() {
-            @Override
-            public int page() {
-                return page;
-            }
-
-            @Override
-            public int size() {
-                return size;
-            }
-
-            @Override
-            public Page<T> collect(List<T> data, long total) {
-                return new Page<>() {
-                    @Override
-                    public List<T> getItems() {
-                        return data;
-                    }
-
-                    @Override
-                    public long getTotal() {
-                        return total;
-                    }
-                };
-            }
-        };
-    }
 }
 

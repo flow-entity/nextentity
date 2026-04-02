@@ -1,9 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -129,28 +126,6 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         // Then
         assertThat(slice.data()).hasSize(5);
         assertThat(slice.offset()).isEqualTo(2);
-    }
-
-    // ==================== getPage(Pageable) Tests ====================
-
-    /**
-     * Tests slice(PageCollector) without explicit asc()/desc().
-     * This triggers OrderOperator.slice(PageCollector) path via Collector.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getPage without explicit sort order")
-    void shouldGetPageWithoutExplicitSortOrder(IntegrationTestContext context) {
-        // Given
-        var pageable = Pages.<Employee>pageable(1, 5);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId)
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).isNotEmpty();
     }
 
     // ==================== getList(int, int, LockModeType) Tests ====================

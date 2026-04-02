@@ -1519,15 +1519,18 @@ class QueryBuilderTest {
                 .toList();
         assertEquals(slice.data(), list);
 
-        Page<User> page = userQuery
+        Pageable<User> pageable = new Pageable<>(3, 10);
+        Slice<User> pageSlice = userQuery
                 .orderBy(User::getId)
-                .slice(new Pageable<>(3, 10));
+                .slice(pageable.offset(), pageable.getSize());
+        Page<User> page = pageable.collect(pageSlice.data(), pageSlice.total());
         assertEquals(page.getTotal(), userQuery.users().size());
         assertEquals(page.getList(), list);
 
-        page = userQuery
+        pageSlice = userQuery
                 .orderBy(User::getId)
-                .slice(new Pageable<>(3, 10));
+                .slice(pageable.offset(), pageable.getSize());
+        page = pageable.collect(pageSlice.data(), pageSlice.total());
         assertEquals(page.getTotal(), userQuery.users().size());
         assertEquals(page.getList(), list);
 

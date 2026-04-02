@@ -2,8 +2,6 @@ package io.github.nextentity.api;
 
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.api.model.SliceBuilder;
-import io.github.nextentity.api.model.Sliceable;
 import jakarta.persistence.LockModeType;
 
 import java.util.Collection;
@@ -58,6 +56,11 @@ public interface OrderOperator<T, U> extends OrderByStep<T, U> {
     }
 
     @Override
+    default boolean exists(int offset) {
+        return asc().exists(offset);
+    }
+
+    @Override
     default Collector<U> lock(LockModeType lockModeType) {
         return asc().lock(lockModeType);
     }
@@ -85,11 +88,6 @@ public interface OrderOperator<T, U> extends OrderByStep<T, U> {
     @Override
     default U single() {
         return asc().single();
-    }
-
-    @Override
-    default <R> R slice(Sliceable<U, R> sliceable) {
-        return asc().slice(sliceable);
     }
 
     @Override

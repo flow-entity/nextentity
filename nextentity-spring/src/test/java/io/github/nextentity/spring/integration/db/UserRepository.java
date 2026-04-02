@@ -2,7 +2,6 @@ package io.github.nextentity.spring.integration.db;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
-import io.github.nextentity.core.Pages;
 import io.github.nextentity.spring.AbstractRepository;
 import io.github.nextentity.spring.integration.entity.User;
 import jakarta.persistence.EntityManager;
@@ -123,16 +122,14 @@ public class UserRepository extends AbstractRepository<User, Integer> {
         return getQuery().lock(lockModeType).window(offset, 1).stream().findFirst().orElse(null);
     }
 
-    public User requireSingle() {
-        return getQuery().single();
-    }
-
     public Slice<User> slice(int offset, int limit) {
         return getQuery().slice(offset, limit);
     }
 
-    public Page<User> getPage(Pageable pageable) {
-        return getQuery().slice(pageable);
+    public io.github.nextentity.spring.integration.domain.Page<User> getPage(
+            io.github.nextentity.spring.integration.domain.Pageable<User> pageable) {
+        Slice<User> slice = getQuery().slice(pageable.offset(), pageable.getSize());
+        return new io.github.nextentity.spring.integration.domain.Page<>(slice.data(), slice.total(), pageable);
     }
 
     public boolean exist(int offset) {
@@ -171,16 +168,8 @@ public class UserRepository extends AbstractRepository<User, Integer> {
         return getQuery().lock(lockModeType).single();
     }
 
-    public <R> R getPage(Pageable<User> collector) {
-        return getQuery().slice(collector);
-    }
-
     public List<User> limit(int limit, LockModeType lockModeType) {
         return getQuery().lock(lockModeType).limit(limit);
-    }
-
-    public <R> R slice(Sliceable<User, R> sliceable) {
-        return getQuery().slice(sliceable);
     }
 
     public User getFirst() {

@@ -1,17 +1,12 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -22,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  * - first(): Get first result or null
  * - single(): Get single result or null
  * - window/limit terminal operations
- * - slice(PageCollector)
+ * - slice(int, int) and page assembly via Pages
  * <p>
  * These tests run against MySQL and PostgreSQL using Testcontainers.
  *
@@ -300,51 +295,6 @@ public class CollectorExtendedMethodsIntegrationTest {
         // Then
         assertThat(slice.data()).hasSize(3);
         assertThat(slice.data().get(0).getId()).isEqualTo(3L);
-    }
-
-    // ==================== getPage Tests ====================
-
-    /**
-     * Tests getPage(Pageable) method.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getPage with Pageable")
-    void shouldGetPageWithPageable(IntegrationTestContext context) {
-        // Given
-        Pageable<Employee> pageable = Pages.pageable(1, 10);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).isNotEmpty();
-        assertThat(page.getItems()).hasSize(Math.min(10, (int) context.queryEmployees().count()));
-    }
-
-    /**
-     * Tests getPage with second page.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should getPage with second page")
-    void shouldGetPageWithSecondPage(IntegrationTestContext context) {
-        // Given
-        long totalCount = context.queryEmployees().count();
-        Pageable<Employee> pageable = Pages.pageable(2, 5);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        if (totalCount > 5) {
-            assertThat(page.getItems()).isNotEmpty();
-            assertThat(page.getItems().getFirst().getId()).isEqualTo(6L);
-        }
     }
 
     // ==================== asSubQuery Tests ====================

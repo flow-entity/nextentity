@@ -99,21 +99,6 @@ public class ErrorHandlingIntegrationTest {
     }
 
     /**
-     * Tests requireSingle with no results.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should throw exception when requireSingle finds no results")
-    void shouldThrowExceptionWhenRequireSingleFindsNone(IntegrationTestContext context) {
-        // When/Then
-        assertThatThrownBy(() ->
-                context.queryEmployees()
-                        .where(Employee::getId).eq(999999L)
-                        .single())
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    /**
      * Tests query with invalid field comparison.
      */
     @ParameterizedTest

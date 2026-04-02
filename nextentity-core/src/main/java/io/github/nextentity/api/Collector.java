@@ -1,7 +1,6 @@
 package io.github.nextentity.api;
 
 import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.api.model.Sliceable;
 import io.github.nextentity.core.expression.SliceImpl;
 import io.github.nextentity.core.util.ImmutableList;
 
@@ -51,6 +50,12 @@ public interface Collector<T> {
     /// @return Whether records exist
     boolean exists();
 
+    /// Checks if records exist starting from the specified offset.
+    ///
+    /// @param offset Number of records to skip before checking existence
+    /// @return Whether records exist at or after the given offset
+    boolean exists(int offset);
+
     /// Gets all results as a list.
     ///
     /// @return List of all results
@@ -89,21 +94,6 @@ public interface Collector<T> {
             throw new IllegalStateException("found more than one");
         }
         return list.isEmpty() ? null : list.getFirst();
-    }
-
-    /// Slices results using the specified slicer.
-    ///
-    /// @param sliceable Slicer
-    /// @param <R> Result type
-    /// @return Slice result
-    default <R> R slice(Sliceable<T, R> sliceable) {
-        long count = count();
-        int offset = sliceable.offset();
-        int limit = sliceable.limit();
-        if (count <= offset) {
-            return sliceable.collect(ImmutableList.of(), count);
-        }
-        return sliceable.collect(window(offset, limit), count);
     }
 
     /// Slices results with the specified offset and limit.

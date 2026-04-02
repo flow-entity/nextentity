@@ -1,10 +1,8 @@
 package io.github.nextentity.spring.integration.domain;
 
-import io.github.nextentity.api.model.Sliceable;
-
 import java.util.List;
 
-public class Pageable<T> implements Sliceable<T, Page<T>> {
+public class Pageable<T> {
 
     private int page;
     private int size;
@@ -17,17 +15,14 @@ public class Pageable<T> implements Sliceable<T, Page<T>> {
         this.size = size;
     }
 
-    @Override
     public int offset() {
         return (page - 1) * size;
     }
 
-    @Override
     public int limit() {
         return size;
     }
 
-    @Override
     public Page<T> collect(List<T> list, long total) {
         return new Page<>(list, total, this);
     }

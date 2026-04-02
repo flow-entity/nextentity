@@ -64,20 +64,6 @@ public class ExceptionPropagationIntegrationTest {
     }
 
     /**
-     * Tests requireSingle with no results.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should throw exception for requireSingle with no results")
-    void shouldThrowExceptionForRequireSingleWithNoResults(IntegrationTestContext context) {
-        // When/Then - query that returns no results
-        assertThatThrownBy(() -> context.queryEmployees()
-                .where(Employee::getId).eq(999999L)
-                .single())
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    /**
      * Tests invalid query returns null for getSingle with no results.
      */
     @ParameterizedTest

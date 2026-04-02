@@ -1,6 +1,5 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -14,9 +13,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import static org.assertj.core.api.Assertions.*;
 
 /**
  * Edge cases integration tests.
@@ -497,20 +495,6 @@ public class EdgeCasesIntegrationTest {
     }
 
     /**
-     * Tests requireSingle throws exception when no results.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should throw exception for requireSingle when no results")
-    void shouldThrowExceptionForRequireSingleWhenNoResults(IntegrationTestContext context) {
-        // When/Then
-        assertThatThrownBy(() -> context.queryEmployees()
-                .where(Employee::getId).eq(999999L)
-                .single())
-                .isInstanceOf(NullPointerException.class);
-    }
-
-    /**
      * Tests slice with empty results.
      */
     @ParameterizedTest
@@ -525,26 +509,6 @@ public class EdgeCasesIntegrationTest {
         // Then
         assertThat(slice.data()).isEmpty();
         assertThat(slice.total()).isZero();
-    }
-
-    /**
-     * Tests page with empty results.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should handle page with empty results")
-    void shouldHandlePageWithEmptyResults(IntegrationTestContext context) {
-        // Given
-        var pageable = Pages.<Employee>pageable(1, 10);
-
-        // When
-        var page = context.queryEmployees()
-                .where(Employee::getId).eq(999999L)
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).isEmpty();
-        assertThat(page.getTotal()).isZero();
     }
 
     /**

@@ -1,9 +1,6 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.model.Page;
-import io.github.nextentity.api.model.Pageable;
 import io.github.nextentity.api.model.Slice;
-import io.github.nextentity.core.Pages;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -72,7 +69,7 @@ public class SlicePaginationIntegrationTest {
         // Then
         assertThat(slice.data()).hasSize(5);
         assertThat(slice.offset()).isEqualTo(5);
-        assertThat(slice.data().get(0).getId()).isEqualTo(allEmployees.get(5).getId());
+        assertThat(slice.data().getFirst().getId()).isEqualTo(allEmployees.get(5).getId());
     }
 
     /**
@@ -127,92 +124,6 @@ public class SlicePaginationIntegrationTest {
     }
 
     /**
-     * Tests getPage with Pageable.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get page with Pageable")
-    void shouldGetPageWithPageable(IntegrationTestContext context) {
-        // Given
-        Pageable<Employee> pageable = Pages.pageable(1, 5);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).hasSize(5);
-        assertThat(page.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
-    }
-
-    /**
-     * Tests getPage for second page.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get second page")
-    void shouldGetSecondPage(IntegrationTestContext context) {
-        // Given
-        Pageable<Employee> pageable = Pages.pageable(2, 5);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).hasSize(5);
-        assertThat(page.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
-
-        // Verify it's actually the second page
-        List<Employee> allEmployees = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .list();
-        assertThat(page.getItems().get(0).getId()).isEqualTo(allEmployees.get(5).getId());
-    }
-
-    /**
-     * Tests getPage for last page.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get last page with partial results")
-    void shouldGetLastPage(IntegrationTestContext context) {
-        // Given
-        Pageable<Employee> pageable = Pages.pageable(3, 5);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).hasSize(2); // 12 - 10 = 2
-        assertThat(page.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
-    }
-
-    /**
-     * Tests getPage with page beyond data.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should handle page beyond data")
-    void shouldHandlePageBeyondData(IntegrationTestContext context) {
-        // Given
-        Pageable<Employee> pageable = Pages.pageable(10, 5);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).isEmpty();
-        assertThat(page.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
-    }
-
-    /**
      * Tests getList with offset and limit.
      */
     @ParameterizedTest
@@ -263,7 +174,7 @@ public class SlicePaginationIntegrationTest {
 
         // Then
         assertThat(employees).hasSize(TOTAL_EMPLOYEES - 5);
-        assertThat(employees.get(0).getId()).isEqualTo(allEmployees.get(5).getId());
+        assertThat(employees.getFirst().getId()).isEqualTo(allEmployees.get(5).getId());
     }
 
     /**
@@ -282,27 +193,6 @@ public class SlicePaginationIntegrationTest {
         // Then
         assertThat(slice.data()).hasSize(5);
         assertThat(slice.data()).allMatch(Employee::getActive);
-    }
-
-    /**
-     * Tests page with where condition.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should get page with where condition")
-    void shouldGetPageWithWhereCondition(IntegrationTestContext context) {
-        // Given
-        Pageable<Employee> pageable = Pages.pageable(1, 3);
-
-        // When
-        Page<Employee> page = context.queryEmployees()
-                .where(Employee::getDepartmentId).eq(1L)
-                .orderBy(Employee::getId).asc()
-                .slice(pageable);
-
-        // Then
-        assertThat(page.getItems()).hasSize(3);
-        assertThat(page.getItems()).allMatch(e -> e.getDepartmentId() == 1L);
     }
 
     /**
@@ -348,32 +238,6 @@ public class SlicePaginationIntegrationTest {
 
         // Then
         assertThat(slice.total()).isEqualTo(expectedCount);
-    }
-
-    /**
-     * Tests page with different page sizes.
-     */
-    @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
-    @DisplayName("Should handle different page sizes")
-    void shouldHandleDifferentPageSizes(IntegrationTestContext context) {
-        // When - Page size 1
-        Page<Employee> page1 = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(Pages.pageable(1, 1));
-
-        // Then
-        assertThat(page1.getItems()).hasSize(1);
-        assertThat(page1.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
-
-        // When - Page size 12
-        Page<Employee> page2 = context.queryEmployees()
-                .orderBy(Employee::getId).asc()
-                .slice(Pages.pageable(1, 12));
-
-        // Then
-        assertThat(page2.getItems()).hasSize(TOTAL_EMPLOYEES);
-        assertThat(page2.getTotal()).isEqualTo(TOTAL_EMPLOYEES);
     }
 }
 

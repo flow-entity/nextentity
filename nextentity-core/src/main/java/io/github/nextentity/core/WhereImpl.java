@@ -117,7 +117,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public long count() {
-        return queryExecutor.<Number>getList(buildCountData()).get(0).longValue();
+        return queryExecutor.<Number>getList(buildCountData()).getFirst().longValue();
     }
 
     @Override
@@ -129,7 +129,23 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.groupBy(),
                 ImmutableList.of(),
                 queryStructure.having(),
+                queryStructure.offset(),
                 1,
+                lockModeType
+        );
+        return !queryExecutor.getList(structure).isEmpty();
+    }
+
+    @Override
+    public boolean exists(int offset) {
+        QueryStructure structure = new QueryStructure(
+                SELECT_ANY,
+                queryStructure.from(),
+                queryStructure.where(),
+                queryStructure.groupBy(),
+                ImmutableList.of(),
+                queryStructure.having(),
+                offset,
                 1,
                 lockModeType
         );
@@ -220,11 +236,10 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     }
 
     protected boolean requiredCountSubQuery(ExpressionNode expression) {
-        if (expression instanceof OperatorNode operation) {
-            if (operation.operator().isAgg()) {
+        if (expression instanceof OperatorNode(ImmutableList<ExpressionNode> args, Operator operator)) {
+            if (operator.isAgg()) {
                 return true;
             }
-            ImmutableArray<ExpressionNode> args = operation.operands();
             if (args != null) {
                 for (ExpressionNode arg : args) {
                     if (requiredCountSubQuery(arg)) {

@@ -1591,9 +1591,6 @@ public class GenericApiTest {
                 .window(10, 1).stream().findFirst().orElse(null);
         assertEquals(first, userQuery.users().get(10));
 
-        assertThrowsExactly(IllegalStateException.class, userQuery::requireSingle);
-        assertThrowsExactly(NullPointerException.class, () -> userQuery.where(Path.of(User::getId).eq(-1)).single());
-
         assertTrue(userQuery.exist());
         assertTrue(userQuery.exist(userQuery.users().size() - 1));
         assertFalse(userQuery.exist(userQuery.users().size()));
