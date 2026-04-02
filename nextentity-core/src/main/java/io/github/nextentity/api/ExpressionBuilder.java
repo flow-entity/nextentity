@@ -5,687 +5,771 @@ import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 import java.util.List;
 
-/// Expression builder interface, providing methods to build various expressions.
+/// 表达式构建器接口，提供构建各种表达式的方法。
 ///
-/// Used to build query condition expressions, supporting operations such as equals, not equals, greater than, less than, etc.
+/// 用于构建查询条件表达式，支持等于、不等于、大于、小于等操作。
 ///
-/// @param <T> Entity type
-/// @param <U> Expression value type
-/// @param <B> Builder return type
+/// ## 基本用法
+///
+/// ```java
+/// // 等于操作
+/// repository.query()
+///     .where(User::getName).eq("张三")
+///     .getList();
+///
+/// // 条件操作（仅当值不为 null 时才添加条件）
+/// repository.query()
+///     .where(User::getAge).gtIfNotNull(minAge)
+///     .where(User::getStatus).eqIfNotNull(status)
+///     .getList();
+///
+/// // 范围查询
+/// repository.query()
+///     .where(User::getAge).between(18, 60)
+///     .getList();
+///
+/// // IN 查询
+/// repository.query()
+///     .where(User::getId).in(1L, 2L, 3L)
+///     .getList();
+///
+/// // 空值判断
+/// repository.query()
+///     .where(User::getEmail).isNotNull()
+///     .getList();
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 表达式值类型
+/// @param <B> 构建器返回类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface ExpressionBuilder<T, U, B> {
 
-    /// Equals the specified value.
+    /// 等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B eq(U value);
 
-    /// Equals the specified value if the value is not null.
+    /// 如果值不为 null，则等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// 适用于可选参数的场景：
+    /// ```java
+    /// public List<User> search(String name) {
+    ///     return repository.query()
+    ///         .where(User::getName).eqIfNotNull(name)
+    ///         .getList();
+    /// }
+    /// ```
+    ///
+    /// @param value 比较值
+    /// @return 构建器实例
     B eqIfNotNull(U value);
 
-    /// Equals another expression.
+    /// 等于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Builder instance
+    /// @param expression 另一个表达式
+    /// @return 构建器实例
     B eq(Expression<T, U> expression);
 
-    /// Not equals the specified value.
+    /// 不等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B ne(U value);
 
-    /// Not equals the specified value if the value is not null.
+    /// 如果值不为 null，则不等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B neIfNotNull(U value);
 
-    /// Not equals another expression.
+    /// 不等于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Builder instance
+    /// @param expression 另一个表达式
+    /// @return 构建器实例
     B ne(Expression<T, U> expression);
 
-    /// In the specified value array.
+    /// 在指定值数组中。
     ///
-    /// @param values Value array
-    /// @return Builder instance
+    /// 示例：
+    /// ```java
+    /// .where(User::getId).in(1L, 2L, 3L)
+    /// ```
+    ///
+    /// @param values 值数组
+    /// @return 构建器实例
     @SuppressWarnings({"unchecked"})
     B in(U... values);
 
-    /// In the specified expression list.
+    /// 在指定表达式列表的值中。
     ///
-    /// @param expressions Expression list
-    /// @return Builder instance
+    /// @param expressions 表达式列表
+    /// @return 构建器实例
     B in(@NonNull List<? extends Expression<T, U>> expressions);
 
-    /// In the value list of the specified expression.
+    /// 在指定表达式的值列表中。
     ///
-    /// @param expressions Expression
-    /// @return Builder instance
+    /// @param expressions 表达式
+    /// @return 构建器实例
     B in(@NonNull Expression<T, List<U>> expressions);
 
-    /// In the specified value collection.
+    /// 在指定值集合中。
     ///
-    /// @param values Value collection
-    /// @return Builder instance
+    /// @param values 值集合
+    /// @return 构建器实例
     B in(@NonNull Collection<? extends U> values);
 
-    /// Not in the specified value array.
+    /// 不在指定值数组中。
     ///
-    /// @param values Value array
-    /// @return Builder instance
+    /// @param values 值数组
+    /// @return 构建器实例
     @SuppressWarnings({"unchecked"})
     B notIn(U... values);
 
-    /// Not in the specified expression list.
+    /// 不在指定表达式列表的值中。
     ///
-    /// @param expressions Expression list
-    /// @return Builder instance
+    /// @param expressions 表达式列表
+    /// @return 构建器实例
     B notIn(@NonNull List<? extends Expression<T, U>> expressions);
 
-    /// Not in the specified value collection.
+    /// 不在指定值集合中。
     ///
-    /// @param values Value collection
-    /// @return Builder instance
+    /// @param values 值集合
+    /// @return 构建器实例
     B notIn(@NonNull Collection<? extends U> values);
 
-    /// Is null.
+    /// 值为 null。
     ///
-    /// @return Builder instance
+    /// @return 构建器实例
     B isNull();
 
-    /// Not null.
+    /// 值不为 null。
     ///
-    /// @return Builder instance
+    /// @return 构建器实例
     B isNotNull();
 
-    /// Greater than or equal to the specified value.
+    /// 大于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B ge(U value);
 
-    /// Greater than the specified value.
+    /// 大于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B gt(U value);
 
-    /// Less than or equal to the specified value.
+    /// 小于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B le(U value);
 
-    /// Less than the specified value.
+    /// 小于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B lt(U value);
 
-    /// Greater than or equal to the specified value if the value is not null.
+    /// 如果值不为 null，则大于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B geIfNotNull(U value);
 
-    /// Greater than the specified value if the value is not null.
+    /// 如果值不为 null，则大于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B gtIfNotNull(U value);
 
-    /// Less than or equal to the specified value if the value is not null.
+    /// 如果值不为 null，则小于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B leIfNotNull(U value);
 
-    /// Less than the specified value if the value is not null.
+    /// 如果值不为 null，则小于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Builder instance
+    /// @param value 比较值
+    /// @return 构建器实例
     B ltIfNotNull(U value);
 
-    /// In the specified range.
+    /// 在指定范围内。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary value
-    /// @return Builder instance
+    /// @param l 左边界值
+    /// @param r 右边界值
+    /// @return 构建器实例
     B between(U l, U r);
 
-    /// Not in the specified range.
+    /// 不在指定范围内。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary value
-    /// @return Builder instance
+    /// @param l 左边界值
+    /// @param r 右边界值
+    /// @return 构建器实例
     B notBetween(U l, U r);
 
-    /// Greater than or equal to another expression.
+    /// 大于等于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Builder instance
+    /// @param expression 另一个表达式
+    /// @return 构建器实例
     B ge(Expression<T, U> expression);
 
-    /// Greater than another expression.
+    /// 大于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Builder instance
+    /// @param expression 另一个表达式
+    /// @return 构建器实例
     B gt(Expression<T, U> expression);
 
-    /// Less than or equal to another expression.
+    /// 小于等于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Builder instance
+    /// @param expression 另一个表达式
+    /// @return 构建器实例
     B le(Expression<T, U> expression);
 
-    /// Less than another expression.
+    /// 小于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Builder instance
+    /// @param expression 另一个表达式
+    /// @return 构建器实例
     B lt(Expression<T, U> expression);
 
-    /// Between two expressions.
+    /// 在两个表达式之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary expression
-    /// @return Builder instance
+    /// @param l 左边界表达式
+    /// @param r 右边界表达式
+    /// @return 构建器实例
     B between(Expression<T, U> l, Expression<T, U> r);
 
-    /// Between expression and value.
+    /// 在表达式和值之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary value
-    /// @return Builder instance
+    /// @param l 左边界表达式
+    /// @param r 右边界值
+    /// @return 构建器实例
     B between(Expression<T, U> l, U r);
 
-    /// Between value and expression.
+    /// 在值和表达式之间。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary expression
-    /// @return Builder instance
+    /// @param l 左边界值
+    /// @param r 右边界表达式
+    /// @return 构建器实例
     B between(U l, Expression<T, U> r);
 
-    /// Not between two expressions.
+    /// 不在两个表达式之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary expression
-    /// @return Builder instance
+    /// @param l 左边界表达式
+    /// @param r 右边界表达式
+    /// @return 构建器实例
     B notBetween(Expression<T, U> l, Expression<T, U> r);
 
-    /// Not between expression and value.
+    /// 不在表达式和值之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary value
-    /// @return Builder instance
+    /// @param l 左边界表达式
+    /// @param r 右边界值
+    /// @return 构建器实例
     B notBetween(Expression<T, U> l, U r);
 
-    /// Not between value and expression.
+    /// 不在值和表达式之间。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary expression
-    /// @return Builder instance
+    /// @param l 左边界值
+    /// @param r 右边界表达式
+    /// @return 构建器实例
     B notBetween(U l, Expression<T, U> r);
 
-    /// Number operator interface, providing number-specific operation methods.
+    /// 数值操作器接口，提供数值特有的操作方法。
     ///
-    /// @param <T> Entity type
-    /// @param <U> Number type
-    /// @param <B> Builder return type
+    /// 示例：
+    /// ```java
+    /// // 算术运算
+    /// .where(User::getAge).add(10).gt(30)  // age + 10 > 30
+    ///
+    /// // 条件运算
+    /// .where(User::getSalary).multiplyIfNotNull(bonusRate)
+    /// ```
+    ///
+    /// @param <T> 实体类型
+    /// @param <U> 数值类型
+    /// @param <B> 构建器返回类型
     interface NumberOperator<T, U extends Number, B> extends ExpressionBuilder<T, U, B> {
-        /// Addition operation, adds the specified value.
+        /// 加法操作，加上指定值。
         ///
-        /// @param value Value to add
-        /// @return Number operator instance
+        /// @param value 要加的值
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> add(U value);
 
-        /// Subtraction operation, subtracts the specified value.
+        /// 减法操作，减去指定值。
         ///
-        /// @param value Value to subtract
-        /// @return Number operator instance
+        /// @param value 要减的值
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> subtract(U value);
 
-        /// Multiplication operation, multiplies the specified value.
+        /// 乘法操作，乘以指定值。
         ///
-        /// @param value Value to multiply
-        /// @return Number operator instance
+        /// @param value 要乘的值
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> multiply(U value);
 
-        /// Division operation, divides the specified value.
+        /// 除法操作，除以指定值。
         ///
-        /// @param value Value to divide
-        /// @return Number operator instance
+        /// @param value 要除的值
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> divide(U value);
 
-        /// Modulo operation, modulo the specified value.
+        /// 取模操作，对指定值取模。
         ///
-        /// @param value Value to modulo
-        /// @return Number operator instance
+        /// @param value 取模的值
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> mod(U value);
 
-        /// Conditional addition operation, adds the specified value if not null.
+        /// 条件加法操作，如果值不为 null 则加上指定值。
         ///
-        /// @param value Value to add
-        /// @return Number operator instance
+        /// @param value 要加的值
+        /// @return 数值操作器实例
         default NumberOperator<T, U, B> addIfNotNull(U value) {
             return value == null ? this : add(value);
         }
 
-        /// Conditional subtraction operation, subtracts the specified value if not null.
+        /// 条件减法操作，如果值不为 null 则减去指定值。
         ///
-        /// @param value Value to subtract
-        /// @return Number operator instance
+        /// @param value 要减的值
+        /// @return 数值操作器实例
         default NumberOperator<T, U, B> subtractIfNotNull(U value) {
             return value == null ? this : subtract(value);
         }
 
-        /// Conditional multiplication operation, multiplies the specified value if not null.
+        /// 条件乘法操作，如果值不为 null 则乘以指定值。
         ///
-        /// @param value Value to multiply
-        /// @return Number operator instance
+        /// @param value 要乘的值
+        /// @return 数值操作器实例
         default NumberOperator<T, U, B> multiplyIfNotNull(U value) {
             return value == null ? this : multiply(value);
         }
 
-        /// Conditional division operation, divides the specified value if not null.
+        /// 条件除法操作，如果值不为 null 则除以指定值。
         ///
-        /// @param value Value to divide
-        /// @return Number operator instance
+        /// @param value 要除的值
+        /// @return 数值操作器实例
         default NumberOperator<T, U, B> divideIfNotNull(U value) {
             return value == null ? this : divide(value);
         }
 
-        /// Conditional modulo operation, modulo the specified value if not null.
+        /// 条件取模操作，如果值不为 null 则对指定值取模。
         ///
-        /// @param value Value to modulo
-        /// @return Number operator instance
+        /// @param value 取模的值
+        /// @return 数值操作器实例
         default NumberOperator<T, U, B> modIfNotNull(U value) {
             return value == null ? this : mod(value);
         }
 
-        /// Addition operation, adds another expression.
+        /// 加法操作，加上另一个表达式的值。
         ///
-        /// @param expression Another expression
-        /// @return Number operator instance
+        /// @param expression 另一个表达式
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> add(Expression<T, U> expression);
 
-        /// Subtraction operation, subtracts another expression.
+        /// 减法操作，减去另一个表达式的值。
         ///
-        /// @param expression Another expression
-        /// @return Number operator instance
+        /// @param expression 另一个表达式
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> subtract(Expression<T, U> expression);
 
-        /// Multiplication operation, multiplies another expression.
+        /// 乘法操作，乘以另一个表达式的值。
         ///
-        /// @param expression Another expression
-        /// @return Number operator instance
+        /// @param expression 另一个表达式
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> multiply(Expression<T, U> expression);
 
-        /// Division operation, divides another expression.
+        /// 除法操作，除以另一个表达式的值。
         ///
-        /// @param expression Another expression
-        /// @return Number operator instance
+        /// @param expression 另一个表达式
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> divide(Expression<T, U> expression);
 
-        /// Modulo operation, modulo another expression.
+        /// 取模操作，对另一个表达式的值取模。
         ///
-        /// @param expression Another expression
-        /// @return Number operator instance
+        /// @param expression 另一个表达式
+        /// @return 数值操作器实例
         NumberOperator<T, U, B> mod(Expression<T, U> expression);
 
     }
 
-    /// Path operator interface, providing path-related operation methods.
+    /// 路径操作器接口，提供路径相关的操作方法。
     ///
-    /// @param <T> Entity type
-    /// @param <U> Path value type
-    /// @param <B> Builder return type
+    /// 用于访问嵌套属性：
+    /// ```java
+    /// // 访问关联对象的属性
+    /// .where(User::getDepartment).get(Department::getName).eq("技术部")
+    /// ```
+    ///
+    /// @param <T> 实体类型
+    /// @param <U> 路径值类型
+    /// @param <B> 构建器返回类型
     interface PathOperator<T, U, B> extends ExpressionBuilder<T, U, B> {
 
-        /// Gets the path operator of the specified path.
+        /// 获取指定路径的路径操作器。
         ///
-        /// @param path Path
-        /// @param <V> Path value type
-        /// @return Path operator instance
+        /// @param path 路径
+        /// @param <V> 路径值类型
+        /// @return 路径操作器实例
         <V> PathOperator<T, V, B> get(PathRef<U, V> path);
 
-        /// Gets the string operator of the specified string path.
+        /// 获取指定字符串路径的字符串操作器。
         ///
-        /// @param path String path
-        /// @return String operator instance
+        /// @param path 字符串路径
+        /// @return 字符串操作器实例
         StringOperator<T, B> get(PathRef.StringRef<U> path);
 
-        /// Gets the number operator of the specified number path.
+        /// 获取指定数值路径的数值操作器。
         ///
-        /// @param path Number path
-        /// @param <V> Number type
-        /// @return Number operator instance
+        /// @param path 数值路径
+        /// @param <V> 数值类型
+        /// @return 数值操作器实例
         <V extends Number> NumberOperator<T, V, B> get(PathRef.NumberRef<U, V> path);
 
     }
 
-    /// String operator interface, providing string-specific operation methods.
+    /// 字符串操作器接口，提供字符串特有的操作方法。
     ///
-    /// @param <T> Entity type
-    /// @param <B> Builder return type
+    /// 示例：
+    /// ```java
+    /// // 模糊匹配
+    /// .where(User::getName).like("%张%")
+    /// .where(User::getName).startsWith("张")
+    /// .where(User::getName).contains("三")
+    ///
+    /// // 字符串函数
+    /// .where(User::getName).lower().eq("john")
+    /// .where(User::getName).length().gt(5)
+    /// ```
+    ///
+    /// @param <T> 实体类型
+    /// @param <B> 构建器返回类型
     interface StringOperator<T, B> extends ExpressionBuilder<T, String, B> {
 
-        /// Equals the specified value if the string is not empty.
+        /// 如果字符串不为空，则等于指定值。
         ///
-        /// @param value Comparison value
-        /// @return String operator instance
+        /// @param value 比较值
+        /// @return 字符串操作器实例
         B eqIfNotEmpty(String value);
 
-        /// Fuzzy matches the specified value.
+        /// 模糊匹配指定值。
         ///
-        /// @param value Match value
-        /// @return String operator instance
+        /// @param value 匹配值
+        /// @return 字符串操作器实例
         B like(String value);
 
-        /// Starts with the specified value.
+        /// 以指定值开头。
         ///
-        /// @param value Start value
-        /// @return String operator instance
+        /// @param value 开头值
+        /// @return 字符串操作器实例
         default B startsWith(String value) {
             return like(value + '%');
         }
 
-        /// Ends with the specified value.
+        /// 以指定值结尾。
         ///
-        /// @param value End value
-        /// @return String operator instance
+        /// @param value 结尾值
+        /// @return 字符串操作器实例
         default B endsWith(String value) {
             return like('%' + value);
         }
 
-        /// Contains the specified value.
+        /// 包含指定值。
         ///
-        /// @param value Contain value
-        /// @return String operator instance
+        /// @param value 包含值
+        /// @return 字符串操作器实例
         default B contains(String value) {
             return like('%' + value + '%');
         }
 
-        /// Not fuzzy matches the specified value.
+        /// 不模糊匹配指定值。
         ///
-        /// @param value Match value
-        /// @return String operator instance
+        /// @param value 匹配值
+        /// @return 字符串操作器实例
         B notLike(String value);
 
-        /// Does not start with the specified value.
+        /// 不以指定值开头。
         ///
-        /// @param value Start value
-        /// @return String operator instance
+        /// @param value 开头值
+        /// @return 字符串操作器实例
         default B notStartsWith(String value) {
             return notLike(value + '%');
         }
 
-        /// Does not end with the specified value.
+        /// 不以指定值结尾。
         ///
-        /// @param value End value
-        /// @return String operator instance
+        /// @param value 结尾值
+        /// @return 字符串操作器实例
         default B notEndsWith(String value) {
             return notLike('%' + value);
         }
 
-        /// Does not contain the specified value.
+        /// 不包含指定值。
         ///
-        /// @param value Contain value
-        /// @return String operator instance
+        /// @param value 包含值
+        /// @return 字符串操作器实例
         default B notContains(String value) {
             return notLike('%' + value + '%');
         }
 
-        /// Fuzzy matches the specified value if the value is not null.
+        /// 如果值不为 null，则模糊匹配指定值。
         ///
-        /// @param value Match value
-        /// @return String operator instance
+        /// @param value 匹配值
+        /// @return 字符串操作器实例
         B likeIfNotNull(String value);
 
-        /// Starts with the specified value if the value is not null.
+        /// 如果值不为 null，则以指定值开头。
         ///
-        /// @param value Start value
-        /// @return String operator instance
+        /// @param value 开头值
+        /// @return 字符串操作器实例
         default B startsWithIfNotNull(String value) {
             return likeIfNotNull(value == null ? null : value + '%');
         }
 
-        /// Ends with the specified value if the value is not null.
+        /// 如果值不为 null，则以指定值结尾。
         ///
-        /// @param value End value
-        /// @return String operator instance
+        /// @param value 结尾值
+        /// @return 字符串操作器实例
         default B endsWithIfNotNull(String value) {
             return likeIfNotNull(value == null ? null : '%' + value);
         }
 
-        /// Contains the specified value if the value is not null.
+        /// 如果值不为 null，则包含指定值。
         ///
-        /// @param value Contain value
-        /// @return String operator instance
+        /// @param value 包含值
+        /// @return 字符串操作器实例
         default B containsIfNotNull(String value) {
             return likeIfNotNull(value == null ? null : '%' + value + '%');
         }
 
-        /// Not fuzzy matches the specified value if the value is not null.
+        /// 如果值不为 null，则不模糊匹配指定值。
         ///
-        /// @param value Match value
-        /// @return String operator instance
+        /// @param value 匹配值
+        /// @return 字符串操作器实例
         B notLikeIfNotNull(String value);
 
-        /// Does not start with the specified value if the value is not null.
+        /// 如果值不为 null，则不以指定值开头。
         ///
-        /// @param value Start value
-        /// @return String operator instance
+        /// @param value 开头值
+        /// @return 字符串操作器实例
         default B notStartsWithIfNotNull(String value) {
             return notLikeIfNotNull(value == null ? null : value + '%');
         }
 
-        /// Does not end with the specified value if the value is not null.
+        /// 如果值不为 null，则不以指定值结尾。
         ///
-        /// @param value End value
-        /// @return String operator instance
+        /// @param value 结尾值
+        /// @return 字符串操作器实例
         default B notEndsWithIfNotNull(String value) {
             return notLikeIfNotNull(value == null ? null : '%' + value);
         }
 
-        /// Does not contain the specified value if the value is not null.
+        /// 如果值不为 null，则不包含指定值。
         ///
-        /// @param value Contain value
-        /// @return String operator instance
+        /// @param value 包含值
+        /// @return 字符串操作器实例
         default B notContainsIfNotNull(String value) {
             return notLikeIfNotNull(value == null || value.isEmpty() ? null : '%' + value + '%');
         }
 
-        /// Fuzzy matches the specified value if the string is not empty.
+        /// 如果字符串不为空，则模糊匹配指定值。
         ///
-        /// @param value Match value
-        /// @return String operator instance
+        /// @param value 匹配值
+        /// @return 字符串操作器实例
         default B likeIfNotEmpty(String value) {
             return value == null || value.isEmpty() ? likeIfNotNull(null) : like(value);
         }
 
-        /// Starts with the specified value if the string is not empty.
+        /// 如果字符串不为空，则以指定值开头。
         ///
-        /// @param value Start value
-        /// @return String operator instance
+        /// @param value 开头值
+        /// @return 字符串操作器实例
         default B startsWithIfNotEmpty(String value) {
             return likeIfNotEmpty(value == null || value.isEmpty() ? null : value + '%');
         }
 
-        /// Ends with the specified value if the string is not empty.
+        /// 如果字符串不为空，则以指定值结尾。
         ///
-        /// @param value End value
-        /// @return String operator instance
+        /// @param value 结尾值
+        /// @return 字符串操作器实例
         default B endsWithIfNotEmpty(String value) {
             return likeIfNotEmpty(value == null || value.isEmpty() ? null : '%' + value);
         }
 
-        /// Contains the specified value if the string is not empty.
+        /// 如果字符串不为空，则包含指定值。
         ///
-        /// @param value Contain value
-        /// @return String operator instance
+        /// @param value 包含值
+        /// @return 字符串操作器实例
         default B containsIfNotEmpty(String value) {
             return likeIfNotEmpty(value == null || value.isEmpty() ? null : '%' + value + '%');
         }
 
-        /// Not fuzzy matches the specified value if the string is not empty.
+        /// 如果字符串不为空，则不模糊匹配指定值。
         ///
-        /// @param value Match value
-        /// @return String operator instance
+        /// @param value 匹配值
+        /// @return 字符串操作器实例
         B notLikeIfNotEmpty(String value);
 
-        /// Does not start with the specified value if the string is not empty.
+        /// 如果字符串不为空，则不以指定值开头。
         ///
-        /// @param value Start value
-        /// @return String operator instance
+        /// @param value 开头值
+        /// @return 字符串操作器实例
         default B notStartsWithIfNotEmpty(String value) {
             return notLikeIfNotEmpty(value == null || value.isEmpty() ? null : value + '%');
         }
 
-        /// Does not end with the specified value if the string is not empty.
+        /// 如果字符串不为空，则不以指定值结尾。
         ///
-        /// @param value End value
-        /// @return String operator instance
+        /// @param value 结尾值
+        /// @return 字符串操作器实例
         default B notEndsWithIfNotEmpty(String value) {
             return notLikeIfNotEmpty(value == null || value.isEmpty() ? null : '%' + value);
         }
 
-        /// Does not contain the specified value if the string is not empty.
+        /// 如果字符串不为空，则不包含指定值。
         ///
-        /// @param value Contain value
-        /// @return String operator instance
+        /// @param value 包含值
+        /// @return 字符串操作器实例
         default B notContainsIfNotEmpty(String value) {
             return notLikeIfNotNull(value == null || value.isEmpty() ? null : '%' + value + '%');
         }
 
-        /// Converts to lowercase.
+        /// 转换为小写。
         ///
-        /// @return String operator instance
+        /// @return 字符串操作器实例
         StringOperator<T, B> lower();
 
-        /// Converts to uppercase.
+        /// 转换为大写。
         ///
-        /// @return String operator instance
+        /// @return 字符串操作器实例
         StringOperator<T, B> upper();
 
-        /// Substrings the string.
+        /// 截取子字符串。
         ///
-        /// @param offset Offset
-        /// @param length Length
-        /// @return String operator instance
+        /// @param offset 起始位置
+        /// @param length 长度
+        /// @return 字符串操作器实例
         StringOperator<T, B> substring(int offset, int length);
 
-        /// Substrings the string, from the specified offset to the end.
+        /// 截取子字符串，从指定位置到末尾。
         ///
-        /// @param offset Offset
-        /// @return String operator instance
+        /// @param offset 起始位置
+        /// @return 字符串操作器实例
         default StringOperator<T, B> substring(int offset) {
             return substring(offset, Integer.MAX_VALUE);
         }
 
-        /// Trims leading and trailing spaces.
+        /// 去除首尾空白字符。
         ///
-        /// @return String operator instance
+        /// @return 字符串操作器实例
         StringOperator<T, B> trim();
 
-        /// Gets the string length.
+        /// 获取字符串长度。
         ///
-        /// @return Number operator instance
+        /// @return 数值操作器实例
         NumberOperator<T, Integer, B> length();
 
     }
 
-    /// Conjunction operator interface, providing logical AND operations.
+    /// 合取操作器接口，提供逻辑 AND 操作。
     ///
-    /// @param <T> Entity type
+    /// 示例：
+    /// ```java
+    /// .where(User::getAge).gt(18)
+    ///     .and(User::getStatus).eq("ACTIVE")
+    ///     .and(User::getName).like("%张%")
+    /// ```
+    ///
+    /// @param <T> 实体类型
     interface Conjunction<T> extends Expression<T, Boolean> {
 
-        /// Joins with the path operator of the specified path.
+        /// 与指定路径的路径操作器连接。
         ///
-        /// @param path Path
-        /// @param <R> Path value type
-        /// @return Path operator instance
+        /// @param path 路径
+        /// @param <R> 路径值类型
+        /// @return 路径操作器实例
         <R> PathOperator<T, R, Conjunction<T>> and(PathRef<T, R> path);
 
-        /// Joins with the number operator of the specified number path.
+        /// 与指定数值路径的数值操作器连接。
         ///
-        /// @param path Number path
-        /// @param <R> Number type
-        /// @return Number operator instance
+        /// @param path 数值路径
+        /// @param <R> 数值类型
+        /// @return 数值操作器实例
         <R extends Number> NumberOperator<T, R, Conjunction<T>> and(PathRef.NumberRef<T, R> path);
 
-        /// Joins with the string operator of the specified string path.
+        /// 与指定字符串路径的字符串操作器连接。
         ///
-        /// @param path String path
-        /// @return String operator instance
+        /// @param path 字符串路径
+        /// @return 字符串操作器实例
         StringOperator<T, Conjunction<T>> and(PathRef.StringRef<T> path);
 
-        /// Joins with another expression.
+        /// 与另一个表达式连接。
         ///
-        /// @param expression Another expression
-        /// @return Conjunction operator instance
+        /// @param expression 另一个表达式
+        /// @return 合取操作器实例
         Conjunction<T> and(Expression<T, Boolean> expression);
 
-        /// Joins with multiple expressions.
+        /// 与多个表达式连接。
         ///
-        /// @param expressions Expression collection
-        /// @return Conjunction operator instance
+        /// @param expressions 表达式集合
+        /// @return 合取操作器实例
         Conjunction<T> and(Iterable<? extends Expression<T, Boolean>> expressions);
 
-        /// Converts to predicate.
+        /// 转换为断言。
         ///
-        /// @return Predicate instance
+        /// @return 断言实例
         Predicate<T> toPredicate();
 
     }
 
-    /// Disjunction operator interface, providing logical OR operations.
+    /// 析取操作器接口，提供逻辑 OR 操作。
     ///
-    /// @param <T> Entity type
+    /// 示例：
+    /// ```java
+    /// .where(User::getStatus).eq("ACTIVE")
+    ///     .or(User::getStatus).eq("PENDING")
+    /// ```
+    ///
+    /// @param <T> 实体类型
     interface Disjunction<T> extends Expression<T, Boolean> {
 
-        /// Disjoins with the path operator of the specified path.
+        /// 与指定路径的路径操作器析取。
         ///
-        /// @param path Path
-        /// @param <N> Path value type
-        /// @return Path operator instance
+        /// @param path 路径
+        /// @param <N> 路径值类型
+        /// @return 路径操作器实例
         <N> PathOperator<T, N, Disjunction<T>> or(PathRef<T, N> path);
 
-        /// Disjoins with the number operator of the specified number path.
+        /// 与指定数值路径的数值操作器析取。
         ///
-        /// @param path Number path
-        /// @param <N> Number type
-        /// @return Number operator instance
+        /// @param path 数值路径
+        /// @param <N> 数值类型
+        /// @return 数值操作器实例
         <N extends Number> NumberOperator<T, N, Disjunction<T>> or(PathRef.NumberRef<T, N> path);
 
-        /// Disjoins with the string operator of the specified string path.
+        /// 与指定字符串路径的字符串操作器析取。
         ///
-        /// @param path String path
-        /// @return String operator instance
+        /// @param path 字符串路径
+        /// @return 字符串操作器实例
         StringOperator<T, ? extends Disjunction<T>> or(PathRef.StringRef<T> path);
 
-        /// Disjoins with another expression.
+        /// 与另一个表达式析取。
         ///
-        /// @param predicate Another expression
-        /// @return Disjunction operator instance
+        /// @param predicate 另一个表达式
+        /// @return 析取操作器实例
         Disjunction<T> or(Expression<T, Boolean> predicate);
 
-        /// Disjoins with multiple expressions.
+        /// 与多个表达式析取。
         ///
-        /// @param expressions Expression collection
-        /// @return Disjunction operator instance
+        /// @param expressions 表达式集合
+        /// @return 析取操作器实例
         Disjunction<T> or(Iterable<? extends Expression<T, Boolean>> expressions);
 
-        /// Converts to predicate.
+        /// 转换为断言。
         ///
-        /// @return Predicate instance
+        /// @return 断言实例
         Predicate<T> toPredicate();
 
     }

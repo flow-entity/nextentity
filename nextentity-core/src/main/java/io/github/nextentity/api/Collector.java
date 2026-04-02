@@ -6,101 +6,107 @@ import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.List;
 
-/// Query result collector interface.
+/// 查询结果收集器接口。
 ///
-/// Provides terminal operations for retrieving results, including
-/// offset/limit style pagination queries.
+/// 提供用于获取结果的终止操作，包括 offset/limit 风格的分页查询。
 ///
-/// Usage examples:
-/// <pre>{@code
-/// // Basic query - get all results
+/// ## 使用示例
+///
+/// ```java
+/// // 基本查询 - 获取所有结果
 /// List<User> users = repository.query()
 ///     .where(User::getStatus).eq("ACTIVE")
 ///     .list();
 ///
-/// // Top N results - first 20 records
+/// // 前 N 条结果 - 前 20 条记录
 /// List<User> users = repository.query()
 ///     .where(User::getStatus).eq("ACTIVE")
 ///     .list(20);
 ///
-/// // Paginated results - skip 10, get next 20
+/// // 分页结果 - 跳过 10 条，获取接下来 20 条
 /// List<User> users = repository.query()
 ///     .where(User::getStatus).eq("ACTIVE")
 ///     .list(10, 20);
 ///
-/// // With lock
+/// // 带锁查询
 /// User user = repository.query()
 ///     .where(User::getId).eq(1L)
 ///     .lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
 ///     .first();
-/// }</pre>
 ///
-/// @param <T> Entity type
+/// // 分片查询（带总数）
+/// Slice<User> slice = repository.query()
+///     .where(User::getStatus).eq("ACTIVE")
+///     .slice(0, 20);
+/// System.out.println("总数: " + slice.total());
+/// ```
+///
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface Collector<T> {
 
-    /// Gets the total record count.
+    /// 获取总记录数。
     ///
-    /// @return Total record count
+    /// @return 总记录数
     long count();
 
-    /// Checks if records exist.
+    /// 检查记录是否存在。
     ///
-    /// @return Whether records exist
+    /// @return 是否存在记录
     boolean exists();
 
-    /// Checks if records exist starting from the specified offset.
+    /// 检查从指定偏移量开始是否存在记录。
     ///
-    /// @param offset Number of records to skip before checking existence
-    /// @return Whether records exist at or after the given offset
+    /// @param offset 检查存在性前跳过的记录数
+    /// @return 在给定偏移量处或之后是否存在记录
     boolean exists(int offset);
 
-    /// Gets all results as a list.
+    /// 获取所有结果列表。
     ///
-    /// @return List of all results
+    /// @return 所有结果列表
     List<T> list();
 
-    /// Gets the first {@code limit} results (offset = 0).
+    /// 获取前 {@code limit} 条结果（offset = 0）。
     ///
-    /// @param limit Maximum number of results to return
-    /// @return List of results
+    /// @param limit 返回的最大结果数
+    /// @return 结果列表
     default List<T> list(int limit) {
         return list(0, limit);
     }
 
-    /// Gets results with specified offset and limit.
+    /// 获取指定偏移量和限制数的结果。
     ///
-    /// @param offset Number of records to skip
-    /// @param limit Maximum number of results to return
-    /// @return List of results
+    /// @param offset 跳过的记录数
+    /// @param limit 返回的最大结果数
+    /// @return 结果列表
     List<T> list(int offset, int limit);
 
-    /// Gets the first result.
+    /// 获取第一条结果。
     ///
-    /// @return First result, null if not exists
+    /// @return 第一条结果，不存在则返回 null
     default T first() {
         List<T> list = list(1);
         return list.isEmpty() ? null : list.getFirst();
     }
 
-    /// Gets a single result.
+    /// 获取单个结果。
     ///
-    /// @return Single result, null if not exists
-    /// @throws IllegalStateException If multiple results found
+    /// @return 单个结果，不存在则返回 null
+    /// @throws IllegalStateException 如果找到多个结果
     default T single() {
         List<T> list = list(0, 2);
         if (list.size() > 1) {
-            throw new IllegalStateException("found more than one");
+            throw new IllegalStateException("找到多条结果");
         }
         return list.isEmpty() ? null : list.getFirst();
     }
 
-    /// Slices results with the specified offset and limit.
+    /// 获取指定偏移量和限制数的分片结果。
     ///
-    /// @param offset Offset
-    /// @param limit Maximum result count
-    /// @return Slice result
+    /// @param offset 偏移量
+    /// @param limit 最大结果数
+    /// @return 分片结果
     default Slice<T> slice(int offset, int limit) {
         long count = count();
         if (count <= offset) {
@@ -109,9 +115,9 @@ public interface Collector<T> {
         return new SliceImpl<>(list(offset, limit), count, offset, limit);
     }
 
-    /// Converts the query to a subquery builder.
+    /// 将查询转换为子查询构建器。
     ///
-    /// @param <X> Subquery type
-    /// @return Subquery builder
+    /// @param <X> 子查询类型
+    /// @return 子查询构建器
     <X> SubQueryBuilder<X, T> toSubQuery();
 }

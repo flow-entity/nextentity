@@ -6,60 +6,80 @@ import io.github.nextentity.api.ExpressionBuilder.StringOperator;
 import io.github.nextentity.api.PathRef.NumberRef;
 import io.github.nextentity.api.PathRef.StringRef;
 
-/// Rows select where step interface, providing condition construction methods for row selection.
+/// 行选择条件步骤接口，提供条件构建方法。
 ///
-/// Extends SelectGroupByStep and WhereStep, providing grouping and condition construction functions.
+/// 继承 SelectGroupByStep 和 WhereStep，提供分组和条件构建功能。
 ///
-/// @param <T> Entity type
-/// @param <U> Result type
+/// ## 使用示例
+///
+/// ```java
+/// // 简单条件
+/// List<User> users = repository.query()
+///     .where(User::getAge).gt(18)
+///     .getList();
+///
+/// // 多个条件（AND 关系）
+/// List<User> users = repository.query()
+///     .where(User::getAge).gt(18)
+///     .where(User::getStatus).eq("ACTIVE")
+///     .getList();
+///
+/// // 使用路径表达式
+/// List<User> users = repository.query()
+///     .where(Path.of(User::getName)).like("%张%")
+///     .getList();
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 结果类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> {
 
-    /// Add the specified condition predicate.
+    /// 添加指定的条件断言。
     ///
-    /// @param predicate Condition predicate
-    /// @return WhereStep instance
+    /// @param predicate 条件断言
+    /// @return WhereStep 实例
     WhereStep<T, U> where(Expression<T, Boolean> predicate);
 
-    /// Build conditions based on the specified path.
+    /// 基于指定路径构建条件。
     ///
-    /// @param path Path
-    /// @param <N> Path type
-    /// @return PathOperator instance
+    /// @param path 路径
+    /// @param <N> 路径类型
+    /// @return PathOperator 实例
     <N> PathOperator<T, N, WhereStep<T, U>> where(PathRef<T, N> path);
 
-    /// Build conditions based on the specified number path.
+    /// 基于指定数值路径构建条件。
     ///
-    /// @param path Number path
-    /// @param <N> Number type
-    /// @return NumberOperator instance
+    /// @param path 数值路径
+    /// @param <N> 数值类型
+    /// @return NumberOperator 实例
     <N extends Number> NumberOperator<T, N, WhereStep<T, U>> where(NumberRef<T, N> path);
 
-    /// Build conditions based on the specified string path.
+    /// 基于指定字符串路径构建条件。
     ///
-    /// @param path String path
-    /// @return StringOperator instance
+    /// @param path 字符串路径
+    /// @return StringOperator 实例
     StringOperator<T, WhereStep<T, U>> where(StringRef<T> path);
 
-    /// Build conditions based on the specified path expression.
+    /// 基于指定路径表达式构建条件。
     ///
-    /// @param path Path expression
-    /// @param <N> Path type
-    /// @return PathOperator instance
+    /// @param path 路径表达式
+    /// @param <N> 路径类型
+    /// @return PathOperator 实例
     <N> PathOperator<T, N, WhereStep<T, U>> where(Path<T, N> path);
 
-    /// Build conditions based on the specified number path expression.
+    /// 基于指定数值路径表达式构建条件。
     ///
-    /// @param path Number path expression
-    /// @param <N> Number type
-    /// @return NumberOperator instance
+    /// @param path 数值路径表达式
+    /// @param <N> 数值类型
+    /// @return NumberOperator 实例
     <N extends Number> NumberOperator<T, N, WhereStep<T, U>> where(NumberPath<T, N> path);
 
-    /// Build conditions based on the specified string path expression.
+    /// 基于指定字符串路径表达式构建条件。
     ///
-    /// @param path String path expression
-    /// @return StringOperator instance
+    /// @param path 字符串路径表达式
+    /// @return StringOperator 实例
     StringOperator<T, WhereStep<T, U>> where(StringPath<T> path);
 
 }

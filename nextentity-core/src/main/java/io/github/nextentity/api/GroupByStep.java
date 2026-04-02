@@ -3,89 +3,112 @@ package io.github.nextentity.api;
 import java.util.Collection;
 import java.util.List;
 
-/// Query group by step interface, providing methods for adding grouping conditions.
+/// 查询分组步骤接口，提供添加分组条件的方法。
 ///
-/// @param <T> Entity type
-/// @param <U> Query result type
+/// ## 使用示例
+///
+/// ```java
+/// // 按单个字段分组
+/// List<Tuple2<String, Long>> results = repository.query()
+///     .select(User::getDepartment, User::getId.count())
+///     .groupBy(User::getDepartment)
+///     .getList();
+///
+/// // 按多个字段分组
+/// List<Tuple3<String, String, Long>> results = repository.query()
+///     .select(User::getDepartment, User::getStatus, User::getId.count())
+///     .groupBy(User::getDepartment, User::getStatus)
+///     .getList();
+///
+/// // 使用 having 过滤分组
+/// List<Tuple2<String, Long>> results = repository.query()
+///     .select(User::getDepartment, User::getId.count())
+///     .groupBy(User::getDepartment)
+///     .having(User::getId.count().gt(5))
+///     .getList();
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 查询结果类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface GroupByStep<T, U> extends OrderByStep<T, U> {
 
-    /// Add a single expression as a grouping condition.
+    /// 添加单个表达式作为分组条件。
     ///
-    /// @param expressions Expression
-    /// @return Query having step after grouping
+    /// @param expressions 表达式
+    /// @return 分组后的查询 Having 步骤
     HavingStep<T, U> groupByExpr(Expression<T, ?> expressions);
 
-    /// Add multiple expressions as grouping conditions.
+    /// 添加多个表达式作为分组条件。
     ///
-    /// @param expressions List of expressions
-    /// @return Query having step after grouping
+    /// @param expressions 表达式列表
+    /// @return 分组后的查询 Having 步骤
     HavingStep<T, U> groupByExpr(List<? extends Expression<T, ?>> expressions);
 
-    /// Add a single path as a grouping condition.
+    /// 添加单个路径作为分组条件。
     ///
-    /// @param path Path
-    /// @return Query having step after grouping
+    /// @param path 路径
+    /// @return 分组后的查询 Having 步骤
     HavingStep<T, U> groupBy(PathRef<T, ?> path);
 
-    /// Add multiple paths as grouping conditions.
+    /// 添加多个路径作为分组条件。
     ///
-    /// @param paths Collection of paths
-    /// @return Query having step after grouping
+    /// @param paths 路径集合
+    /// @return 分组后的查询 Having 步骤
     HavingStep<T, U> groupBy(Collection<PathRef<T, ?>> paths);
 
-    /// Add two paths as grouping conditions.
+    /// 添加两个路径作为分组条件。
     ///
-    /// @param p0 First path
-    /// @param p1 Second path
-    /// @return Query having step after grouping
+    /// @param p0 第一个路径
+    /// @param p1 第二个路径
+    /// @return 分组后的查询 Having 步骤
     default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1) {
         return groupBy(List.of(p0, p1));
     }
 
-    /// Add three paths as grouping conditions.
+    /// 添加三个路径作为分组条件。
     ///
-    /// @param p0 First path
-    /// @param p1 Second path
-    /// @param p2 Third path
-    /// @return Query having step after grouping
+    /// @param p0 第一个路径
+    /// @param p1 第二个路径
+    /// @param p2 第三个路径
+    /// @return 分组后的查询 Having 步骤
     default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2) {
         return groupBy(List.of(p0, p1, p2));
     }
 
-    /// Add four paths as grouping conditions.
+    /// 添加四个路径作为分组条件。
     ///
-    /// @param p0 First path
-    /// @param p1 Second path
-    /// @param p2 Third path
-    /// @param p3 Fourth path
-    /// @return Query having step after grouping
+    /// @param p0 第一个路径
+    /// @param p1 第二个路径
+    /// @param p2 第三个路径
+    /// @param p3 第四个路径
+    /// @return 分组后的查询 Having 步骤
     default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2, PathRef<T, ?> p3) {
         return groupBy(List.of(p0, p1, p2, p3));
     }
 
-    /// Add five paths as grouping conditions.
+    /// 添加五个路径作为分组条件。
     ///
-    /// @param p0 First path
-    /// @param p1 Second path
-    /// @param p2 Third path
-    /// @param p3 Fourth path
-    /// @param p4 Fifth path
-    /// @return Query having step after grouping
+    /// @param p0 第一个路径
+    /// @param p1 第二个路径
+    /// @param p2 第三个路径
+    /// @param p3 第四个路径
+    /// @param p4 第五个路径
+    /// @return 分组后的查询 Having 步骤
     default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2, PathRef<T, ?> p3, PathRef<T, ?> p4) {
         return groupBy(List.of(p0, p1, p2, p3, p4));
     }
 
-    /// Add six paths as grouping conditions.
+    /// 添加六个路径作为分组条件。
     ///
-    /// @param p0 First path
-    /// @param p1 Second path
-    /// @param p2 Third path
-    /// @param p3 Fourth path
-    /// @param p4 Fifth path
-    /// @param p5 Sixth path
-    /// @return Query having step after grouping
+    /// @param p0 第一个路径
+    /// @param p1 第二个路径
+    /// @param p2 第三个路径
+    /// @param p3 第四个路径
+    /// @param p4 第五个路径
+    /// @param p5 第六个路径
+    /// @return 分组后的查询 Having 步骤
     default HavingStep<T, U> groupBy(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2, PathRef<T, ?> p3, PathRef<T, ?> p4, PathRef<T, ?> p5) {
         return groupBy(List.of(p0, p1, p2, p3, p4, p5));
     }

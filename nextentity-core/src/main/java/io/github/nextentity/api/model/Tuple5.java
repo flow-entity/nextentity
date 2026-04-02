@@ -1,25 +1,21 @@
 package io.github.nextentity.api.model;
 
+/// 5元组接口，表示包含 5 个元素的元组。
 ///
-/// 5-tuple interface, representing a tuple containing 5 elements.
-/// <p>
-/// Provides type-safe methods to get 5 elements.
+/// 提供类型安全的方法获取 5 个元素。
 ///
-/// @param <A> First element type
-/// @param <B> Second element type
-/// @param <C> Third element type
-/// @param <D> Fourth element type
-/// @param <E> Fifth element type
+/// @param <A> 第一个元素类型
+/// @param <B> 第二个元素类型
+/// @param <C> 第三个元素类型
+/// @param <D> 第四个元素类型
+/// @param <E> 第五个元素类型
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface Tuple5<A, B, C, D, E> extends Tuple4<A, B, C, D> {
 
+    /// 获取第五个元素。
     ///
-    /// Gets the fifth element.
-    ///
-    /// @return Fifth element
-    ///
+    /// @return 第五个元素
     default E get4() {
         return get(4);
     }

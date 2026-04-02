@@ -1,24 +1,37 @@
 package io.github.nextentity.api.model;
 
+/// 4元组接口，表示包含 4 个元素的元组。
 ///
-/// 4-tuple interface, representing a tuple containing 4 elements.
-/// <p>
-/// Provides type-safe methods to get 4 elements.
+/// 提供类型安全的方法获取 4 个元素。
 ///
-/// @param <A> First element type
-/// @param <B> Second element type
-/// @param <C> Third element type
-/// @param <D> Fourth element type
+/// ## 使用示例
+///
+/// ```java
+/// // 查询返回 4 元组
+/// List<Tuple4<String, Integer, String, BigDecimal>> results = repository.query()
+///     .select(User::getName, User::getAge, User::getDepartment, User::getSalary)
+///     .getList();
+///
+/// // 访问元素
+/// for (Tuple4<String, Integer, String, BigDecimal> tuple : results) {
+///     String name = tuple.get0();           // 姓名
+///     Integer age = tuple.get1();           // 年龄
+///     String dept = tuple.get2();           // 部门
+///     BigDecimal salary = tuple.get3();     // 薪资
+/// }
+/// ```
+///
+/// @param <A> 第一个元素类型
+/// @param <B> 第二个元素类型
+/// @param <C> 第三个元素类型
+/// @param <D> 第四个元素类型
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface Tuple4<A, B, C, D> extends Tuple3<A, B, C> {
 
+    /// 获取第四个元素。
     ///
-    /// Gets the fourth element.
-    ///
-    /// @return Fourth element
-    ///
+    /// @return 第四个元素
     default D get3() {
         return get(3);
     }

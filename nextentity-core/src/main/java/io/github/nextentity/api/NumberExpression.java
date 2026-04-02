@@ -1,140 +1,161 @@
 package io.github.nextentity.api;
 
-/// Number expression interface, providing number-type expression operation methods.
+/// 数值表达式接口，提供数值类型表达式的操作方法。
 ///
-/// Extends SimpleExpression, providing basic expression operation methods and adding number-specific operations.
+/// 继承 SimpleExpression，提供基本的表达式操作方法，并添加数值特有的操作。
 ///
-/// @param <T> Entity type
-/// @param <U> Number type
+/// ## 使用示例
+///
+/// ```java
+/// // 算术运算
+/// NumberExpression<User, Integer> salary = Path.of(User::getSalary);
+/// NumberExpression<User, Integer> annualSalary = salary.multiply(12);
+/// NumberExpression<User, Integer> withBonus = salary.add(bonus);
+///
+/// // 聚合函数
+/// NumberExpression<User, Long> count = Path.of(User::getId).count();
+/// NumberExpression<User, Double> avgSalary = Path.of(User::getSalary).avg();
+/// NumberExpression<User, BigDecimal> maxSalary = Path.of(User::getSalary).max();
+///
+/// // 比较运算
+/// Predicate<User> p1 = Path.of(User::getAge).gt(18);
+/// Predicate<User> p2 = Path.of(User::getSalary).between(5000, 10000);
+///
+/// // 条件运算
+/// Predicate<User> p3 = Path.of(User::getSalary).multiplyIfNotNull(bonusRate).gt(100000);
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 数值类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface NumberExpression<T, U extends Number> extends SimpleExpression<T, U> {
-    /// Addition operation, adds another expression.
+    /// 加法操作，加上另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Addition result expression
+    /// @param expression 另一个表达式
+    /// @return 加法结果表达式
     NumberExpression<T, U> add(Expression<T, U> expression);
 
-    /// Subtraction operation, subtracts another expression.
+    /// 减法操作，减去另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Subtraction result expression
+    /// @param expression 另一个表达式
+    /// @return 减法结果表达式
     NumberExpression<T, U> subtract(Expression<T, U> expression);
 
-    /// Multiplication operation, multiplies another expression.
+    /// 乘法操作，乘以另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Multiplication result expression
+    /// @param expression 另一个表达式
+    /// @return 乘法结果表达式
     NumberExpression<T, U> multiply(Expression<T, U> expression);
 
-    /// Division operation, divides another expression.
+    /// 除法操作，除以另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Division result expression
+    /// @param expression 另一个表达式
+    /// @return 除法结果表达式
     NumberExpression<T, U> divide(Expression<T, U> expression);
 
-    /// Modulo operation, modulo another expression.
+    /// 取模操作，对另一个表达式的值取模。
     ///
-    /// @param expression Another expression
-    /// @return Modulo result expression
+    /// @param expression 另一个表达式
+    /// @return 取模结果表达式
     NumberExpression<T, U> mod(Expression<T, U> expression);
 
-    /// Sum operation.
+    /// 求和操作。
     ///
-    /// @return Sum result expression
+    /// @return 求和结果表达式
     NumberExpression<T, U> sum();
 
-    /// Average operation.
+    /// 求平均值操作。
     ///
-    /// @return Average result expression
+    /// @return 平均值结果表达式
     NumberExpression<T, Double> avg();
 
-    /// Maximum operation.
+    /// 求最大值操作。
     ///
-    /// @return Maximum result expression
+    /// @return 最大值结果表达式
     NumberExpression<T, U> max();
 
-    /// Minimum operation.
+    /// 求最小值操作。
     ///
-    /// @return Minimum result expression
+    /// @return 最小值结果表达式
     NumberExpression<T, U> min();
 
-    /// Addition operation, adds the specified value.
+    /// 加法操作，加上指定值。
     ///
-    /// @param value Value to add
-    /// @return Addition result expression
+    /// @param value 要加的值
+    /// @return 加法结果表达式
     default NumberExpression<T, U> add(U value) {
         return add(root().literal(value));
     }
 
-    /// Subtraction operation, subtracts the specified value.
+    /// 减法操作，减去指定值。
     ///
-    /// @param value Value to subtract
-    /// @return Subtraction result expression
+    /// @param value 要减的值
+    /// @return 减法结果表达式
     default NumberExpression<T, U> subtract(U value) {
         return subtract(root().literal(value));
     }
 
-    /// Multiplication operation, multiplies the specified value.
+    /// 乘法操作，乘以指定值。
     ///
-    /// @param value Value to multiply
-    /// @return Multiplication result expression
+    /// @param value 要乘的值
+    /// @return 乘法结果表达式
     default NumberExpression<T, U> multiply(U value) {
         return multiply(root().literal(value));
     }
 
-    /// Division operation, divides the specified value.
+    /// 除法操作，除以指定值。
     ///
-    /// @param value Value to divide
-    /// @return Division result expression
+    /// @param value 要除的值
+    /// @return 除法结果表达式
     default NumberExpression<T, U> divide(U value) {
         return divide(root().literal(value));
     }
 
-    /// Modulo operation, modulo the specified value.
+    /// 取模操作，对指定值取模。
     ///
-    /// @param value Value to modulo
-    /// @return Modulo result expression
+    /// @param value 取模的值
+    /// @return 取模结果表达式
     default NumberExpression<T, U> mod(U value) {
         return mod(root().literal(value));
     }
 
-    /// Conditional addition operation, adds the specified value if not null.
+    /// 条件加法操作，如果值不为 null 则加上指定值。
     ///
-    /// @param value Value to add
-    /// @return Addition result expression or current expression (if value is null)
+    /// @param value 要加的值
+    /// @return 加法结果表达式，如果值为 null 则返回当前表达式
     default NumberExpression<T, U> addIfNotNull(U value) {
         return value == null ? this : add(value);
     }
 
-    /// Conditional subtraction operation, subtracts the specified value if not null.
+    /// 条件减法操作，如果值不为 null 则减去指定值。
     ///
-    /// @param value Value to subtract
-    /// @return Subtraction result expression or current expression (if value is null)
+    /// @param value 要减的值
+    /// @return 减法结果表达式，如果值为 null 则返回当前表达式
     default NumberExpression<T, U> subtractIfNotNull(U value) {
         return value == null ? this : subtract(value);
     }
 
-    /// Conditional multiplication operation, multiplies the specified value if not null.
+    /// 条件乘法操作，如果值不为 null 则乘以指定值。
     ///
-    /// @param value Value to multiply
-    /// @return Multiplication result expression or current expression (if value is null)
+    /// @param value 要乘的值
+    /// @return 乘法结果表达式，如果值为 null 则返回当前表达式
     default NumberExpression<T, U> multiplyIfNotNull(U value) {
         return value == null ? this : multiply(value);
     }
 
-    /// Conditional division operation, divides the specified value if not null.
+    /// 条件除法操作，如果值不为 null 则除以指定值。
     ///
-    /// @param value Value to divide
-    /// @return Division result expression or current expression (if value is null)
+    /// @param value 要除的值
+    /// @return 除法结果表达式，如果值为 null 则返回当前表达式
     default NumberExpression<T, U> divideIfNotNull(U value) {
         return value == null ? this : divide(value);
     }
 
-    /// Conditional modulo operation, modulo the specified value if not null.
+    /// 条件取模操作，如果值不为 null 则对指定值取模。
     ///
-    /// @param value Value to modulo
-    /// @return Modulo result expression or current expression (if value is null)
+    /// @param value 取模的值
+    /// @return 取模结果表达式，如果值为 null 则返回当前表达式
     default NumberExpression<T, U> modIfNotNull(U value) {
         return value == null ? this : mod(value);
     }

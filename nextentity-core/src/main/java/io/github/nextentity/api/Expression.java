@@ -1,45 +1,46 @@
 package io.github.nextentity.api;
 
-/// Typed expression interface, representing an expression with a specific value type.
+/// 类型化表达式接口，表示具有特定值类型的表达式。
 ///
-/// ## Building Expression Instances
+/// ## 构建表达式实例
 ///
-/// Expression instances can be created through the `of` static methods provided by subinterfaces:
+/// 表达式实例可以通过子接口提供的 `of` 静态方法创建：
 ///
-/// - **`Path.of(PathRef)`** - Create a path expression from a method reference (e.g., `User::getName`)
-/// - **`BooleanPath.of(PathRef.BooleanRef)`** - Create a boolean path expression
-/// - **`NumberPath.of(PathRef.NumberRef)`** - Create a numeric path expression
-/// - **`StringPath.of(PathRef.StringRef)`** - Create a string path expression
-/// - **`EntityPath.of(PathRef)`** - Create an entity path expression for nested entity access
-/// - **`Expression.of(value)`** - Create a literal expression from a value
+/// - **`Path.of(PathRef)`** - 从方法引用创建路径表达式（如 `User::getName`）
+/// - **`BooleanPath.of(PathRef.BooleanRef)`** - 创建布尔路径表达式
+/// - **`NumberPath.of(PathRef.NumberRef)`** - 创建数值路径表达式
+/// - **`StringPath.of(PathRef.StringRef)`** - 创建字符串路径表达式
+/// - **`EntityPath.of(PathRef)`** - 创建实体路径表达式用于嵌套实体访问
+/// - **`Expression.of(value)`** - 从值创建字面量表达式
 ///
-/// Example usage:
+/// ## 使用示例
+///
 /// ```java
-/// // Path expression via method reference
+/// // 通过方法引用创建路径表达式
 /// Path<User, String> path = Path.of(User::getName);
 ///
-/// // String-specific path
+/// // 字符串特定的路径
 /// StringPath<User> stringPath = StringPath.of(User::getName);
 ///
-/// // Numeric path
+/// // 数值路径
 /// NumberPath<User, Integer> agePath = NumberPath.of(User::getAge);
 ///
-/// // Literal expression
+/// // 字面量表达式
 /// Expression<User, String> literal = Expression.of("John");
 /// ```
 ///
-/// @param <T> Entity type
-/// @param <U> Expression value type
+/// @param <T> 实体类型
+/// @param <U> 表达式值类型
 /// @author HuangChengwei
 /// @since 1.0.0
 @SuppressWarnings("unused")
 public interface Expression<T, U> {
-    /// Creates a typed expression from the specified value.
+    /// 从指定值创建类型化表达式。
     ///
-    /// @param value Literal value
-    /// @param <T>   Entity type
-    /// @param <U>   Value type
-    /// @return Typed expression
+    /// @param value 字面量值
+    /// @param <T>   实体类型
+    /// @param <U>   值类型
+    /// @return 类型化表达式
     static <T, U> Expression<T, U> of(U value) {
         return EntityRoot.<T>of().literal(value);
     }

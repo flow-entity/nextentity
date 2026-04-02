@@ -6,269 +6,292 @@ import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 import java.util.List;
 
-/// Simple expression interface, providing basic expression operation methods.
+/// 简单表达式接口，提供基本的表达式操作方法。
 ///
-/// @param <T> Entity type
-/// @param <U> Expression value type
+/// ## 使用示例
+///
+/// ```java
+/// // 比较操作
+/// Predicate<User> p1 = Path.of(User::getAge).gt(18);
+/// Predicate<User> p2 = Path.of(User::getName).eq("张三");
+///
+/// // 范围查询
+/// Predicate<User> p3 = Path.of(User::getAge).between(18, 60);
+///
+/// // IN 查询
+/// Predicate<User> p4 = Path.of(User::getId).in(1L, 2L, 3L);
+///
+/// // 空值判断
+/// Predicate<User> p5 = Path.of(User::getEmail).isNotNull();
+///
+/// // 排序
+/// Order<User> order = Path.of(User::getName).asc();
+///
+/// // 聚合函数
+/// NumberExpression<User, Long> count = Path.of(User::getId).count();
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 表达式值类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface SimpleExpression<T, U> extends Expression<T, U> {
 
-    /// Counts the number of expression values.
+    /// 统计表达式值的数量。
     ///
-    /// @return Count expression
+    /// @return 计数表达式
     NumberExpression<T, Long> count();
 
-    /// Counts the number of distinct expression values.
+    /// 统计不同表达式值的数量。
     ///
-    /// @return Distinct count expression
+    /// @return 不同计数表达式
     NumberExpression<T, Long> countDistinct();
 
-    /// Equals the specified value.
+    /// 等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> eq(U value);
 
-    /// Equals the specified value if not null.
+    /// 如果值不为 null，则等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> eqIfNotNull(U value);
 
-    /// Equals the value of another expression.
+    /// 等于另一个表达式的值。
     ///
-    /// @param value Another expression
-    /// @return Predicate object
+    /// @param value 另一个表达式
+    /// @return 断言对象
     Predicate<T> eq(Expression<T, U> value);
 
-    /// Not equals the specified value.
+    /// 不等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> ne(U value);
 
-    /// Not equals the specified value if not null.
+    /// 如果值不为 null，则不等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> neIfNotNull(U value);
 
-    /// Not equals the value of another expression.
+    /// 不等于另一个表达式的值。
     ///
-    /// @param value Another expression
-    /// @return Predicate object
+    /// @param value 另一个表达式
+    /// @return 断言对象
     Predicate<T> ne(Expression<T, U> value);
 
-    /// In the values of the specified expression list.
+    /// 在指定表达式列表的值中。
     ///
-    /// @param expressions Expression list
-    /// @return Predicate object
+    /// @param expressions 表达式列表
+    /// @return 断言对象
     Predicate<T> in(@NonNull Expression<T, List<U>> expressions);
 
-    /// In the specified value array.
+    /// 在指定值数组中。
     ///
-    /// @param values Value array
-    /// @return Predicate object
+    /// @param values 值数组
+    /// @return 断言对象
     @SuppressWarnings("unchecked")
     Predicate<T> in(U... values);
 
-    /// In the values of the specified expression list.
+    /// 在指定表达式列表的值中。
     ///
-    /// @param values Expression list
-    /// @return Predicate object
+    /// @param values 表达式列表
+    /// @return 断言对象
     Predicate<T> in(@NonNull List<? extends Expression<T, U>> values);
 
-    /// In the specified collection.
+    /// 在指定集合中。
     ///
-    /// @param values Value collection
-    /// @return Predicate object
+    /// @param values 值集合
+    /// @return 断言对象
     Predicate<T> in(@NonNull Collection<? extends U> values);
 
-    /// Not in the specified value array.
+    /// 不在指定值数组中。
     ///
-    /// @param values Value array
-    /// @return Predicate object
+    /// @param values 值数组
+    /// @return 断言对象
     @SuppressWarnings("unchecked")
     Predicate<T> notIn(U... values);
 
-    /// Not in the values of the specified expression list.
+    /// 不在指定表达式列表的值中。
     ///
-    /// @param values Expression list
-    /// @return Predicate object
+    /// @param values 表达式列表
+    /// @return 断言对象
     Predicate<T> notIn(@NonNull List<? extends Expression<T, U>> values);
 
-    /// Not in the specified collection.
+    /// 不在指定集合中。
     ///
-    /// @param values Value collection
-    /// @return Predicate object
+    /// @param values 值集合
+    /// @return 断言对象
     Predicate<T> notIn(@NonNull Collection<? extends U> values);
 
-    /// Value is null.
+    /// 值为 null。
     ///
-    /// @return Predicate object
+    /// @return 断言对象
     Predicate<T> isNull();
 
-    /// Value is not null.
+    /// 值不为 null。
     ///
-    /// @return Predicate object
+    /// @return 断言对象
     Predicate<T> isNotNull();
 
-    /// Greater than or equal to the value of another expression.
+    /// 大于等于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Predicate object
+    /// @param expression 另一个表达式
+    /// @return 断言对象
     Predicate<T> ge(Expression<T, U> expression);
 
-    /// Greater than the value of another expression.
+    /// 大于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Predicate object
+    /// @param expression 另一个表达式
+    /// @return 断言对象
     Predicate<T> gt(Expression<T, U> expression);
 
-    /// Less than or equal to the value of another expression.
+    /// 小于等于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Predicate object
+    /// @param expression 另一个表达式
+    /// @return 断言对象
     Predicate<T> le(Expression<T, U> expression);
 
-    /// Less than the value of another expression.
+    /// 小于另一个表达式的值。
     ///
-    /// @param expression Another expression
-    /// @return Predicate object
+    /// @param expression 另一个表达式
+    /// @return 断言对象
     Predicate<T> lt(Expression<T, U> expression);
 
-    /// Between the values of two expressions.
+    /// 在两个表达式的值之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary expression
-    /// @return Predicate object
+    /// @param l 左边界表达式
+    /// @param r 右边界表达式
+    /// @return 断言对象
     Predicate<T> between(Expression<T, U> l, Expression<T, U> r);
 
-    /// Not between the values of two expressions.
+    /// 不在两个表达式的值之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary expression
-    /// @return Predicate object
+    /// @param l 左边界表达式
+    /// @param r 右边界表达式
+    /// @return 断言对象
     Predicate<T> notBetween(Expression<T, U> l, Expression<T, U> r);
 
-    /// Sorts in ascending order.
+    /// 升序排序。
     ///
-    /// @return Order object
+    /// @return Order 对象
     default Order<T> asc() {
         return sort(SortOrder.ASC);
     }
 
-    /// Sorts in descending order.
+    /// 降序排序。
     ///
-    /// @return Order object
+    /// @return Order 对象
     default Order<T> desc() {
         return sort(SortOrder.DESC);
     }
 
-    /// Sorts by the specified sort order.
+    /// 按指定的排序方向排序。
     ///
-    /// @param order Sort order
-    /// @return Order object
+    /// @param order 排序方向
+    /// @return Order 对象
     Order<T> sort(SortOrder order);
 
-    /// Greater than or equal to the specified value.
+    /// 大于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> ge(U value);
 
-    /// Greater than the specified value.
+    /// 大于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> gt(U value);
 
-    /// Less than or equal to the specified value.
+    /// 小于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> le(U value);
 
-    /// Less than the specified value.
+    /// 小于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> lt(U value);
 
-    /// Greater than or equal to the specified value if not null.
+    /// 如果值不为 null，则大于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> geIfNotNull(U value);
 
-    /// Greater than the specified value if not null.
+    /// 如果值不为 null，则大于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> gtIfNotNull(U value);
 
-    /// Less than or equal to the specified value if not null.
+    /// 如果值不为 null，则小于等于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> leIfNotNull(U value);
 
-    /// Less than the specified value if not null.
+    /// 如果值不为 null，则小于指定值。
     ///
-    /// @param value Comparison value
-    /// @return Predicate object
+    /// @param value 比较值
+    /// @return 断言对象
     Predicate<T> ltIfNotNull(U value);
 
-    /// Between two values.
+    /// 在两个值之间。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary value
-    /// @return Predicate object
+    /// @param l 左边界值
+    /// @param r 右边界值
+    /// @return 断言对象
     Predicate<T> between(U l, U r);
 
-    /// Not between two values.
+    /// 不在两个值之间。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary value
-    /// @return Predicate object
+    /// @param l 左边界值
+    /// @param r 右边界值
+    /// @return 断言对象
     Predicate<T> notBetween(U l, U r);
 
-    /// Between expression and value.
+    /// 在表达式和值之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary value
-    /// @return Predicate object
+    /// @param l 左边界表达式
+    /// @param r 右边界值
+    /// @return 断言对象
     Predicate<T> between(Expression<T, U> l, U r);
 
-    /// Between value and expression.
+    /// 在值和表达式之间。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary expression
-    /// @return Predicate object
+    /// @param l 左边界值
+    /// @param r 右边界表达式
+    /// @return 断言对象
     Predicate<T> between(U l, Expression<T, U> r);
 
-    /// Not between expression and value.
+    /// 不在表达式和值之间。
     ///
-    /// @param l Left boundary expression
-    /// @param r Right boundary value
-    /// @return Predicate object
+    /// @param l 左边界表达式
+    /// @param r 右边界值
+    /// @return 断言对象
     Predicate<T> notBetween(Expression<T, U> l, U r);
 
-    /// Not between value and expression.
+    /// 不在值和表达式之间。
     ///
-    /// @param l Left boundary value
-    /// @param r Right boundary expression
-    /// @return Predicate object
+    /// @param l 左边界值
+    /// @param r 右边界表达式
+    /// @return 断言对象
     Predicate<T> notBetween(U l, Expression<T, U> r);
 
-    /// Gets the maximum value of the expression.
+    /// 获取表达式的最大值。
     ///
-    /// @return Maximum expression
+    /// @return 最大值表达式
     SimpleExpression<T, U> max();
 
-    /// Gets the minimum value of the expression.
+    /// 获取表达式的最小值。
     ///
-    /// @return Minimum expression
+    /// @return 最小值表达式
     SimpleExpression<T, U> min();
 }

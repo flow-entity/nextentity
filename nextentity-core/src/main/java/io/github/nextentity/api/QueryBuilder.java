@@ -1,80 +1,79 @@
 package io.github.nextentity.api;
 
-/// Query builder interface for constructing type-safe database queries.
+/// 查询构建器接口，用于构建类型安全的数据库查询。
 ///
-/// This interface is the entry point for building queries using NextEntity's fluent API.
-/// It extends {@link SelectStep} which provides various select operations for projections
-/// and field selection.
+/// 该接口是使用 NextEntity 流式 API 构建查询的入口点。
+/// 它继承自 {@link SelectStep}，提供了各种投影和字段选择操作。
 ///
-/// ## Query Flow
+/// ## 查询流程
 ///
-/// The query follows a fluent API pattern:
+/// 查询遵循流式 API 模式：
 ///
 /// ```
 /// query() → select/fetch → where → orderBy → limit/offset → execute
 /// ```
 ///
-/// ## Basic Usage
+/// ## 基本用法
 ///
-/// ### Simple Query
+/// ### 简单查询
 ///
 /// ```java
-/// // Query all entities
+/// // 查询所有实体
 /// List<Employee> employees = repository.query().getList();
 ///
-/// // Query with conditions
+/// // 带条件查询
 /// List<Employee> activeEmployees = repository.query()
 ///     .where(Employee::getActive).eq(true)
 ///     .orderBy(Employee::getName).asc()
 ///     .getList();
 /// ```
 ///
-/// ### Projection Query
+/// ### 投影查询
 ///
 /// ```java
-/// // Select specific fields using method references
+/// // 使用方法引用选择特定字段
 /// List<Tuple2<String, BigDecimal>> namesAndSalaries = repository.query()
 ///     .select(Employee::getName, Employee::getSalary)
 ///     .where(Employee::getActive).eq(true)
 ///     .getList();
 ///
-/// // Select into DTO class
+/// // 投影到 DTO 类
 /// List<EmployeeDto> dtos = repository.query()
 ///     .select(EmployeeDto.class)
 ///     .where(Employee::getActive).eq(true)
 ///     .getList();
 /// ```
 ///
-/// ### Association Fetch
+/// ### 关联查询
 ///
 /// ```java
-/// // Eager fetch associations to avoid N+1 problem
+/// // 预加载关联数据，避免 N+1 问题
 /// List<Employee> employees = repository.query()
 ///     .fetch(Employee::getDepartment)
 ///     .where(Employee::getActive).eq(true)
 ///     .getList();
 /// ```
 ///
-/// ### Pagination
+/// ### 分页查询
 ///
 /// ```java
-/// // Offset + Limit pagination
+/// // Offset + Limit 分页
 /// List<Employee> page = repository.query()
 ///     .where(Employee::getActive).eq(true)
 ///     .orderBy(Employee::getId).asc()
 ///     .getList(0, 10);  // offset=0, limit=10
 ///
-/// // Slice with metadata
+/// // 带元数据的分片查询
 /// Slice<Employee> slice = repository.query()
 ///     .where(Employee::getActive).eq(true)
 ///     .orderBy(Employee::getId).asc()
 ///     .slice(0, 10);
 /// ```
 ///
-/// ### Conditional Operators
+/// ### 条件操作符
 ///
 /// ```java
-/// // Conditional operators for optional parameters
+/// // 用于可选参数的条件操作符
 /// public List<Employee> search(Long departmentId, EmployeeStatus status) {
 ///     return repository.query()
 ///         .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
@@ -83,19 +82,19 @@ package io.github.nextentity.api;
 /// }
 /// ```
 ///
-/// ## Type Safety
+/// ## 类型安全
 ///
-/// All queries use method references (e.g., `Employee::getName`) which provide:
-/// - Compile-time type checking
-/// - IDE auto-completion
-/// - Refactoring safety
+/// 所有查询都使用方法引用（如 `Employee::getName`），提供：
+/// - 编译时类型检查
+/// - IDE 自动补全
+/// - 重构安全性
 ///
-/// @param <T> Entity type
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 1.0.0
-/// @see SelectStep For select and projection operations
-/// @see FetchStep For association fetch operations
-/// @see WhereStep For condition building operations
+/// @see SelectStep 选择和投影操作
+/// @see FetchStep 关联预加载操作
+/// @see WhereStep 条件构建操作
 public interface QueryBuilder<T> extends SelectStep<T> {
 
 }

@@ -1,12 +1,12 @@
 package io.github.nextentity.api;
 
-/// Sort order enum, representing the sorting method of query results.
+/// 排序方向枚举，表示查询结果的排序方式。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
 public enum SortOrder {
-    /// Ascending sort, arranged from small to large.
+    /// 升序排序，从小到大排列。
     ASC,
-    /// Descending sort, arranged from large to small.
+    /// 降序排序，从大到小排列。
     DESC
 }

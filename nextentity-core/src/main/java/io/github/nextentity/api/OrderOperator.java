@@ -7,39 +7,64 @@ import jakarta.persistence.LockModeType;
 import java.util.Collection;
 import java.util.List;
 
-/// Sort operator interface, providing sorting-related operation methods.
+/// 排序操作器接口，提供排序相关的操作方法。
 ///
-/// Extends OrderByStep, providing ascending, descending and other sorting operations.
+/// 继承 OrderByStep，提供升序、降序等排序操作。
 ///
-/// @param <T> Entity type
-/// @param <U> Result type
+/// ## 使用示例
+///
+/// ```java
+/// // 升序排序
+/// List<User> users = repository.query()
+///     .orderBy(User::getName).asc()
+///     .getList();
+///
+/// // 降序排序
+/// List<User> users = repository.query()
+///     .orderBy(User::getCreateTime).desc()
+///     .getList();
+///
+/// // 指定排序方向
+/// List<User> users = repository.query()
+///     .orderBy(User::getName).sort(SortOrder.DESC)
+///     .getList();
+///
+/// // 多字段排序
+/// List<User> users = repository.query()
+///     .orderBy(User::getDepartment).asc()
+///     .orderBy(User::getName).desc()
+///     .getList();
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 结果类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface OrderOperator<T, U> extends OrderByStep<T, U> {
-    /// Sort in ascending order.
+    /// 升序排序。
     ///
-    /// @return OrderByStep instance
+    /// @return OrderByStep 实例
     default OrderByStep<T, U> asc() {
         return sort(SortOrder.ASC);
     }
 
-    /// Sort in descending order.
+    /// 降序排序。
     ///
-    /// @return OrderByStep instance
+    /// @return OrderByStep 实例
     default OrderByStep<T, U> desc() {
         return sort(SortOrder.DESC);
     }
 
-    /// Sort by the specified sort order.
+    /// 按指定的排序方向排序。
     ///
-    /// @param order Sort order
-    /// @return OrderByStep instance
+    /// @param order 排序方向
+    /// @return OrderByStep 实例
     OrderByStep<T, U> sort(SortOrder order);
 
-    /// Sort by the specified collection of paths.
+    /// 按指定的路径集合排序。
     ///
-    /// @param paths Collection of paths
-    /// @return OrderOperator instance
+    /// @param paths 路径集合
+    /// @return OrderOperator 实例
     @Override
     default OrderOperator<T, U> orderBy(Collection<PathRef<T, ? extends Comparable<?>>> paths) {
         return asc().orderBy(paths);

@@ -5,78 +5,98 @@ import io.github.nextentity.api.model.Order;
 import java.util.Collection;
 import java.util.List;
 
-/// Sorting step interface for query result sorting construction.
+/// 排序步骤接口，用于查询结果排序构建。
 ///
-/// Extends LockStep to specify the sorting method of query results.
+/// 继承 LockStep，用于指定查询结果的排序方式。
 ///
-/// @param <T> Entity type
-/// @param <U> Result type
+/// ## 使用示例
+///
+/// ```java
+/// // 单字段排序
+/// List<User> users = repository.query()
+///     .orderBy(User::getName).asc()
+///     .getList();
+///
+/// // 多字段排序
+/// List<User> users = repository.query()
+///     .orderBy(User::getDepartment).asc()
+///     .orderBy(User::getName).desc()
+///     .getList();
+///
+/// // 使用 Order 对象
+/// List<User> users = repository.query()
+///     .orderBy(Path.of(User::getName).asc())
+///     .getList();
+/// ```
+///
+/// @param <T> 实体类型
+/// @param <U> 结果类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface OrderByStep<T, U> extends LockStep<U> {
 
-    /// Sort by the specified list of sorting rules.
+    /// 按指定的排序规则列表排序。
     ///
-    /// @param orders List of sorting rules
-    /// @return Collector instance
+    /// @param orders 排序规则列表
+    /// @return Collector 实例
     LockStep<U> orderBy(List<? extends Order<T>> orders);
 
-    /// Sort by a single sorting rule.
+    /// 按单个排序规则排序。
     ///
-    /// @param order Sorting rule
-    /// @return Collector instance
+    /// @param order 排序规则
+    /// @return Collector 实例
     default LockStep<U> orderBy(Order<T> order) {
         return orderBy(List.of(order));
     }
 
-    /// Sort by two sorting rules.
+    /// 按两个排序规则排序。
     ///
-    /// @param p0 First sorting rule
-    /// @param p1 Second sorting rule
-    /// @return Collector instance
+    /// @param p0 第一个排序规则
+    /// @param p1 第二个排序规则
+    /// @return Collector 实例
     default LockStep<U> orderBy(Order<T> p0, Order<T> p1) {
         return orderBy(List.of(p0, p1));
     }
 
-    /// Sort by three sorting rules.
+    /// 按三个排序规则排序。
     ///
-    /// @param order1 First sorting rule
-    /// @param order2 Second sorting rule
-    /// @param order3 Third sorting rule
-    /// @return Collector instance
+    /// @param order1 第一个排序规则
+    /// @param order2 第二个排序规则
+    /// @param order3 第三个排序规则
+    /// @return Collector 实例
     default LockStep<U> orderBy(Order<T> order1, Order<T> order2, Order<T> order3) {
         return orderBy(List.of(order1, order2, order3));
     }
 
-    /// Sort by the specified collection of paths.
+    /// 按指定的路径集合排序。
     ///
-    /// @param paths Collection of paths
-    /// @return OrderOperator instance
+    /// @param paths 路径集合
+    /// @return OrderOperator 实例
     OrderOperator<T, U> orderBy(Collection<PathRef<T, ? extends Comparable<?>>> paths);
 
-    /// Sort by a single path.
+    /// 按单个路径排序。
     ///
-    /// @param path Path
-    /// @return OrderOperator instance
+    /// @param path 路径
+    /// @return OrderOperator 实例
     default OrderOperator<T, U> orderBy(PathRef<T, ? extends Comparable<?>> path) {
         return orderBy(List.of(path));
     }
 
-    /// Sort by two paths.
+    /// 按两个路径排序。
     ///
-    /// @param p1 First path
-    /// @param p2 Second path
-    /// @return OrderOperator instance
+    /// @param p1 第一个路径
+    /// @param p2 第二个路径
+    /// @return OrderOperator 实例
     default OrderOperator<T, U> orderBy(PathRef<T, ? extends Comparable<?>> p1, PathRef<T, ? extends Comparable<?>> p2) {
         return orderBy(List.of(p1, p2));
     }
 
-    /// Sort by three paths.
+    /// 按三个路径排序。
     ///
-    /// @param p1 First path
-    /// @param p2 Second path
-    /// @param p3 Third path
-    /// @return OrderOperator instance
+    /// @param p1 第一个路径
+    /// @param p2 第二个路径
+    /// @param p3 第三个路径
+    /// @return OrderOperator 实例
     default OrderOperator<T, U> orderBy(PathRef<T, ? extends Comparable<?>> p1, PathRef<T, ? extends Comparable<?>> p2, PathRef<T, ? extends Comparable<?>> p3) {
         return orderBy(List.of(p1, p2, p3));
     }

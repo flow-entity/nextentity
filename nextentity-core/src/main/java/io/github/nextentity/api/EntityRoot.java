@@ -2,150 +2,137 @@ package io.github.nextentity.api;
 
 import io.github.nextentity.core.util.DefaultEntityRoot;
 
-/// Entity root interface, providing entity attribute access and path building methods.
+/// 实体根接口，提供实体属性访问和路径构建方法。
 ///
-/// @param <T> Entity type
+/// ## 使用示例
+///
+/// ```java
+/// // 创建实体根
+/// EntityRoot<User> root = EntityRoot.of();
+///
+/// // 创建字面量表达式
+/// Expression<User, String> literal = root.literal("张三");
+///
+/// // 创建路径表达式
+/// Path<User, String> namePath = root.get(User::getName);
+/// NumberPath<User, Integer> agePath = root.get(User::getAge);
+/// StringPath<User> nameStrPath = root.get(User::getName);
+///
+/// // 通过字段名创建路径（类型不安全）
+/// Path<User, Object> dynamicPath = root.path("dynamicField");
+/// ```
+///
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface EntityRoot<T> {
 
-    /// Creates an entity root instance.
+    /// 创建实体根实例。
     ///
-    /// @param <T> Entity type
-    /// @return Entity root instance
+    /// @param <T> 实体类型
+    /// @return 实体根实例
     static <T> EntityRoot<T> of() {
         return DefaultEntityRoot.of();
     }
 
+    /// 创建字面量表达式。
     ///
-    /// Creates a literal expression.
-    ///
-    /// @param value Literal value
-    /// @param <U> Literal type
-    /// @return Literal expression
-    ///
+    /// @param value 字面量值
+    /// @param <U> 字面量类型
+    /// @return 字面量表达式
     <U> Expression<T, U> literal(U value);
 
+    /// 获取指定路径的实体路径表达式。
     ///
-    /// Gets the entity path expression for the specified path.
-    ///
-    /// @param path Property path
-    /// @param <U> Property type
-    /// @return Entity path expression
-    ///
+    /// @param path 属性路径
+    /// @param <U> 属性类型
+    /// @return 实体路径表达式
     <U> EntityPath<T, U> get(PathRef<T, U> path);
 
+    /// 获取指定布尔属性路径的布尔路径表达式。
     ///
-    /// Gets the boolean path expression for the specified boolean property path.
-    ///
-    /// @param path Boolean property path
-    /// @return Boolean path expression
-    ///
+    /// @param path 布尔属性路径
+    /// @return 布尔路径表达式
     BooleanPath<T> get(PathRef.BooleanRef<T> path);
 
+    /// 获取指定字符串属性路径的字符串路径表达式。
     ///
-    /// Gets the string path expression for the specified string property path.
-    ///
-    /// @param path String property path
-    /// @return String path expression
-    ///
+    /// @param path 字符串属性路径
+    /// @return 字符串路径表达式
     StringPath<T> get(PathRef.StringRef<T> path);
 
+    /// 获取指定数值属性路径的数值路径表达式。
     ///
-    /// Gets the number path expression for the specified numeric property path.
-    ///
-    /// @param path Numeric property path
-    /// @param <U> Numeric type
-    /// @return Number path expression
-    ///
+    /// @param path 数值属性路径
+    /// @param <U> 数值类型
+    /// @return 数值路径表达式
     <U extends Number> NumberPath<T, U> get(PathRef.NumberRef<T, U> path);
 
+    /// 创建指定路径的路径表达式。
     ///
-    /// Creates a path expression for the specified path.
-    ///
-    /// @param path Property path
-    /// @param <U> Property type
-    /// @return Path expression
-    ///
+    /// @param path 属性路径
+    /// @param <U> 属性类型
+    /// @return 路径表达式
     <U> Path<T, U> path(PathRef<T, U> path);
 
+    /// 创建指定路径的实体路径表达式。
     ///
-    /// Creates an entity path expression for the specified path.
-    ///
-    /// @param path Property path
-    /// @param <U> Property type
-    /// @return Entity path expression
-    ///
+    /// @param path 属性路径
+    /// @param <U> 属性类型
+    /// @return 实体路径表达式
     <U> EntityPath<T, U> entity(PathRef<T, U> path);
 
+    /// 创建指定字符串路径的字符串路径表达式。
     ///
-    /// Creates a string path expression for the specified string path.
-    ///
-    /// @param path String property path
-    /// @return String path expression
-    ///
+    /// @param path 字符串属性路径
+    /// @return 字符串路径表达式
     StringPath<T> string(PathRef<T, String> path);
 
+    /// 创建指定数值路径的数值路径表达式。
     ///
-    /// Creates a number path expression for the specified numeric path.
-    ///
-    /// @param path Numeric property path
-    /// @param <U> Numeric type
-    /// @return Number path expression
-    ///
+    /// @param path 数值属性路径
+    /// @param <U> 数值类型
+    /// @return 数值路径表达式
     <U extends Number> NumberPath<T, U> number(PathRef<T, U> path);
 
+    /// 创建指定布尔路径的布尔路径表达式。
     ///
-    /// Creates a boolean path expression for the specified boolean path.
-    ///
-    /// @param path Boolean property path
-    /// @return Boolean path expression
-    ///
+    /// @param path 布尔属性路径
+    /// @return 布尔路径表达式
     BooleanPath<T> bool(PathRef<T, Boolean> path);
 
     // type-unsafe
+    /// 通过字段名创建路径表达式（类型不安全）。
     ///
-    /// Creates a path expression by field name (type-unsafe).
-    ///
-    /// @param fieldName Field name
-    /// @param <U> Property type
-    /// @return Path expression
-    ///
+    /// @param fieldName 字段名
+    /// @param <U> 属性类型
+    /// @return 路径表达式
     <U> Path<T, U> path(String fieldName);
 
+    /// 通过字段名创建实体路径表达式（类型不安全）。
     ///
-    /// Creates an entity path expression by field name (type-unsafe).
-    ///
-    /// @param fieldName Field name
-    /// @param <U> Property type
-    /// @return Entity path expression
-    ///
+    /// @param fieldName 字段名
+    /// @param <U> 属性类型
+    /// @return 实体路径表达式
     <U> EntityPath<T, U> entityPath(String fieldName);
 
+    /// 通过字段名创建字符串路径表达式（类型不安全）。
     ///
-    /// Creates a string path expression by field name (type-unsafe).
-    ///
-    /// @param fieldName Field name
-    /// @return String path expression
-    ///
+    /// @param fieldName 字段名
+    /// @return 字符串路径表达式
     StringPath<T> stringPath(String fieldName);
 
+    /// 通过字段名创建数值路径表达式（类型不安全）。
     ///
-    /// Creates a number path expression by field name (type-unsafe).
-    ///
-    /// @param fieldName Field name
-    /// @param <U> Numeric type
-    /// @return Number path expression
-    ///
+    /// @param fieldName 字段名
+    /// @param <U> 数值类型
+    /// @return 数值路径表达式
     <U extends Number> NumberPath<T, U> numberPath(String fieldName);
 
+    /// 通过字段名创建布尔路径表达式（类型不安全）。
     ///
-    /// Creates a boolean path expression by field name (type-unsafe).
-    ///
-    /// @param fieldName Field name
-    /// @return Boolean path expression
-    ///
+    /// @param fieldName 字段名
+    /// @return 布尔路径表达式
     BooleanPath<T> booleanPath(String fieldName);
 
 }

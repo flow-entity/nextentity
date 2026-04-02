@@ -1,19 +1,31 @@
 package io.github.nextentity.api;
 
-/// String path interface, representing the path of the string type attribute of the entity.
+/// 字符串路径接口，表示实体字符串类型属性的路径。
 ///
-/// Also extends PathRef.StringRef to allow StringPath instances to be passed where StringRef
-/// parameters are expected in query building methods.
+/// 同时继承 PathRef.StringRef，允许 StringPath 实例在查询构建方法中
+/// 作为 StringRef 参数传递。
 ///
-/// @param <T> Entity type
+/// ## 使用示例
+///
+/// ```java
+/// // 创建字符串路径
+/// StringPath<User> namePath = StringPath.of(User::getName);
+///
+/// // 在查询中使用
+/// repository.query()
+///     .where(StringPath.of(User::getName)).like("%张%")
+///     .getList();
+/// ```
+///
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public interface StringPath<T> extends StringExpression<T>, Path<T, String>, PathRef.StringRef<T> {
-    /// Creates a string path from the specified string reference.
+    /// 从指定字符串引用创建字符串路径。
     ///
-    /// @param path String reference
-    /// @param <T>  Entity type
-    /// @return String path
+    /// @param path 字符串引用
+    /// @param <T>  实体类型
+    /// @return 字符串路径
     static <T> StringPath<T> of(PathRef.StringRef<T> path) {
         return EntityRoot.<T>of().get(path);
     }
