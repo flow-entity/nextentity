@@ -14,9 +14,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/// JDBC implementation of conditional update builder.
+/// JDBC 条件更新构建器实现。
 ///
-/// @param <T> Entity type
+/// 使用原生 SQL 构建 UPDATE 语句，支持带 WHERE 条件的批量更新。
+///
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements UpdateWhereStep<T> {

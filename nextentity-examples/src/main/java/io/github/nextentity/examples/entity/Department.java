@@ -1,48 +1,43 @@
 package io.github.nextentity.examples.entity;
 
-import jakarta.persistence.Entity;
+import io.github.nextentity.api.Entity;
 import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
-/**
- * Department entity for examples.
- * <p>
- * This entity represents a department in an organization.
- * Used to demonstrate CRUD operations, queries, and relationships.
- */
-@Entity
-public class Department {
+/// 部门实体类，用于示例演示。
+///
+/// 实现了 {@link Entity} 接口，支持类型安全的嵌套路径表达式。
+///
+/// ## 嵌套路径表达式示例
+///
+/// ```java
+/// // 因为 Department 实现了 Entity 接口
+/// // 可以直接在查询中访问嵌套属性
+/// List<Employee> employees = employeeRepository.query()
+///     .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+///     .list();
+/// ```
+@jakarta.persistence.Entity
+public class Department implements Entity {
 
-    /**
-     * Department ID (primary key).
-     */
+    /// 部门 ID（主键）。
     @Id
     private Long id;
 
-    /**
-     * Department name.
-     */
+    /// 部门名称。
     private String name;
 
-    /**
-     * Department location (building, floor, etc.).
-     */
+    /// 部门位置（楼层、办公室等）。
     private String location;
 
-    /**
-     * Department budget.
-     */
+    /// 部门预算。
     private Double budget;
 
-    /**
-     * Whether the department is active.
-     */
+    /// 部门是否活跃。
     private Boolean active;
 
-    /**
-     * Creation timestamp.
-     */
+    /// 创建时间戳。
     private LocalDateTime createdAt;
 
     public Department() {

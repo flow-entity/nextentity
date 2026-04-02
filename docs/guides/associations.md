@@ -6,6 +6,7 @@
 
 - [简介](#简介)
 - [定义关联关系](#定义关联关系)
+- [嵌套路径查询](#嵌套路径查询)
 - [懒加载（默认）](#懒加载默认)
 - [Fetch 急加载](#fetch-急加载)
 - [多级关联](#多级关联)
@@ -65,7 +66,70 @@ public class Employee {
 }
 ```
 
+> **重要**: 关联实体类需要实现 `io.github.nextentity.api.Entity` 接口，以便支持嵌套路径查询：
+>
+> ```java
+> @Entity
+> public class Department implements io.github.nextentity.api.Entity {
+>     private Long id;
+>     private String name;
+>     // ...
+> }
+> ```
+>
+> 这样就可以在查询中直接访问嵌套属性：
+> ```java
+> .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+> ```
+
 > **注意**: NextEntity 目前支持 ManyToOne 关联的 `fetch()` 操作。OneToMany 和 ManyToMany 关联需要通过外键字段手动查询。
+
+---
+
+## 嵌套路径查询
+
+当关联实体实现了 `Entity` 接口后，可以在 `where()` 中直接访问嵌套属性：
+
+### 按关联属性筛选
+
+```java
+// Department 实现了 Entity 接口
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+    .list();
+
+// 等价于 SQL：
+// SELECT e.* FROM employee e
+// LEFT JOIN department d ON e.department_id = d.id
+// WHERE d.name = '技术部'
+```
+
+### 多条件组合
+
+```java
+// 嵌套属性与其他条件组合
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+    .where(Employee::getDepartment).get(Department::getActive).eq(true)
+    .where(Employee::getActive).eq(true)
+    .orderBy(Employee::getName).asc()
+    .list();
+```
+
+### 与 Fetch 结合
+
+```java
+// 同时使用 fetch 加载关联数据和嵌套路径筛选
+List<Employee> employees = employeeRepository.query()
+    .fetch(Employee::getDepartment)                     // 急加载部门
+    .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+    .list();
+
+// 查询后可以直接访问部门（无需额外查询）
+for (Employee e : employees) {
+    System.out.println(e.getName() + " - " + e.getDepartment().getName());
+}
+```
 
 ---
 

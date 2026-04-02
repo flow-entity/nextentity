@@ -10,51 +10,46 @@ import jakarta.persistence.JoinColumn;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Category entity implementing Persistable interface.
- * <p>
- * This entity represents a product category and demonstrates
- * the relationship with {@link Product} entity.
- */
-@Entity
+/// 产品分类实体类，实现了 {@link Persistable} 接口。
+///
+/// 本实体演示：
+/// - {@link Persistable} 接口的使用
+/// - 与 {@link Product} 实体的关系
+/// - 分层分类结构（parentId）
+///
+/// ## Persistable 接口优势
+///
+/// 实现 {@link Persistable} 接口后，Repository 可以使用便捷方法：
+/// ```java
+/// Category category = categoryRepository.findById(1L);
+/// List<Category> categories = categoryRepository.findAllById(List.of(1L, 2L));
+/// Map<Long, Category> categoryMap = categoryRepository.findMapById(List.of(1L, 2L));
+/// ```
+@jakarta.persistence.Entity
 public class Category implements Persistable<Long> {
 
-    /**
-     * Category ID (primary key).
-     */
+    /// 分类 ID（主键）。
     @Id
     private Long id;
 
-    /**
-     * Category name.
-     */
+    /// 分类名称。
     private String name;
 
-    /**
-     * Category description.
-     */
+    /// 分类描述。
     private String description;
 
-    /**
-     * Parent category ID (for hierarchical categories).
-     */
+    /// 父分类 ID（用于分层分类结构）。
     private Long parentId;
 
-    /**
-     * Whether the category is active.
-     */
+    /// 分类是否活跃。
     private Boolean active;
 
-    /**
-     * Products in this category (lazy loaded).
-     */
+    /// 分类下的产品列表（懒加载）。
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId", insertable = false, updatable = false)
     private List<Product> products;
 
-    /**
-     * Creation timestamp.
-     */
+    /// 创建时间戳。
     private LocalDateTime createdAt;
 
     public Category() {

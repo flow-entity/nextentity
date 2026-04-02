@@ -3,6 +3,7 @@ package io.github.nextentity.api;
 import io.github.nextentity.api.ExpressionBuilder.NumberOperator;
 import io.github.nextentity.api.ExpressionBuilder.PathOperator;
 import io.github.nextentity.api.ExpressionBuilder.StringOperator;
+import io.github.nextentity.api.PathRef.EntityPathRef;
 import io.github.nextentity.api.PathRef.NumberRef;
 import io.github.nextentity.api.PathRef.StringRef;
 
@@ -80,6 +81,21 @@ public interface BaseWhereStep<T, U> extends OrderByStep<T, U> {
     /// @param path 字符串路径
     /// @return 字符串操作器
     StringOperator<T, ? extends BaseWhereStep<T, U>> where(StringPath<T> path);
+
+    /// 添加实体路径作为查询条件，用于访问嵌套实体属性。
+    ///
+    /// 示例：
+    /// ```java
+    /// // Department 实现了 Entity 接口
+    /// .where(User::getDepartment).get(Department::getName).eq("技术部")
+    /// ```
+    ///
+    /// @param path 实体路径
+    /// @param <R> 实体类型（必须实现 Entity 接口）
+    /// @return 路径操作器，可继续调用 get() 访问嵌套属性
+    default <R extends Entity> PathOperator<T, R, ? extends BaseWhereStep<T, U>> where(EntityPathRef<T, R> path) {
+        return where((PathRef<T, R>) path);
+    }
 
 
 }

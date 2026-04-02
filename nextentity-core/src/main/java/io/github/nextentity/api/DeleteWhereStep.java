@@ -2,65 +2,64 @@ package io.github.nextentity.api;
 
 import org.jspecify.annotations.NonNull;
 
-/// Conditional delete builder interface for batch delete operations with WHERE conditions.
+/// 条件删除构建器接口，用于带 WHERE 条件的批量删除操作。
 ///
-/// This interface provides a fluent API for building DELETE statements
-/// with conditional WHERE clauses, allowing batch deletes without
-/// retrieving entities first.
+/// 该接口提供流畅的 API 用于构建带有条件 WHERE 子句的 DELETE 语句，
+/// 允许在不先获取实体的情况下执行批量删除。
 ///
-/// Usage example:
+/// 使用示例：
 /// <pre>{@code
-/// // Delete all inactive users
+/// // 删除所有不活跃用户
 /// int deleted = repository.deleteWhere()
 ///     .where(User::getStatus).eq("INACTIVE")
 ///     .execute();
 ///
-/// // Delete with multiple conditions
+/// // 多条件删除
 /// int deleted = repository.deleteWhere()
 ///     .where(User::getStatus).eq("ARCHIVED")
 ///     .and(User::getCreatedAt).lt(oneYearAgo)
 ///     .execute();
 ///
-/// // Delete using a predicate expression
+/// // 使用谓词表达式删除
 /// int deleted = repository.deleteWhere()
 ///     .where(root().get(User::status).eq("INACTIVE")
 ///         .and(root().get(User::lastLoginAt).lt(threshold)))
 ///     .execute();
 /// }</pre>
 ///
-/// @param <T> Entity type
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 public interface DeleteWhereStep<T> {
 
-    /// Starts a WHERE condition for the specified path.
+    /// 为指定路径开始 WHERE 条件。
     ///
-    /// @param path Path reference to start the condition
-    /// @param <N> Path value type
-    /// @return Path operator for building the condition
+    /// @param path 路径引用，用于开始条件
+    /// @param <N>  路径值类型
+    /// @return 路径操作器，用于构建条件
     <N> ExpressionBuilder.PathOperator<T, N, ? extends DeleteWhereStep<T>> where(PathRef<T, N> path);
 
-    /// Starts a WHERE condition for the specified numeric path.
+    /// 为指定数字路径开始 WHERE 条件。
     ///
-    /// @param path Numeric path reference
-    /// @param <N> Number type
-    /// @return Number operator for building the condition
+    /// @param path 数字路径引用
+    /// @param <N>  数字类型
+    /// @return 数字操作器，用于构建条件
     <N extends Number> ExpressionBuilder.NumberOperator<T, N, ? extends DeleteWhereStep<T>> where(PathRef.NumberRef<T, N> path);
 
-    /// Starts a WHERE condition for the specified string path.
+    /// 为指定字符串路径开始 WHERE 条件。
     ///
-    /// @param path String path reference
-    /// @return String operator for building the condition
+    /// @param path 字符串路径引用
+    /// @return 字符串操作器，用于构建条件
     ExpressionBuilder.StringOperator<T, ? extends DeleteWhereStep<T>> where(PathRef.StringRef<T> path);
 
-    /// Adds a WHERE condition using a predicate expression.
+    /// 使用谓词表达式添加 WHERE 条件。
     ///
-    /// @param predicate Predicate expression
-    /// @return This builder for method chaining
+    /// @param predicate 谓词表达式
+    /// @return 当前构建器，用于方法链式调用
     DeleteWhereStep<T> where(@NonNull Expression<T, Boolean> predicate);
 
-    /// Executes the delete statement.
+    /// 执行删除语句。
     ///
-    /// @return Number of rows affected
+    /// @return 受影响的行数
     int execute();
 }

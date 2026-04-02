@@ -1,15 +1,25 @@
 package io.github.nextentity.integration.entity;
 
-import jakarta.persistence.Entity;
+import io.github.nextentity.api.Entity;
 import jakarta.persistence.Id;
 
 import java.time.LocalDateTime;
 
-/**
- * Department entity for integration testing.
- */
-@Entity
-public class Department {
+/// 部门实体类，用于集成测试。
+///
+/// 实现了 {@link Entity} 接口，支持类型安全的嵌套路径表达式。
+///
+/// ## 嵌套路径表达式示例
+///
+/// ```java
+/// // 因为 Department 实现了 Entity 接口
+/// // 可以直接在查询中访问嵌套属性
+/// List<Employee> employees = repository.query()
+///     .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+///     .list();
+/// ```
+@jakarta.persistence.Entity
+public class Department implements Entity {
 
     @Id
     private Long id;

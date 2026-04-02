@@ -16,26 +16,24 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/// Product repository extending PersistableRepository.
+/// 产品 Repository，继承 {@link PersistableRepository}。
 ///
-/// This repository demonstrates the benefits of using {@link io.github.nextentity.api.Persistable}
-/// interface. Unlike EmployeeRepository which needs manual ID-based queries,
-/// this repository inherits convenient ID-based methods automatically:
+/// 演示 {@link io.github.nextentity.api.Persistable} 接口的优势。
+/// 与 EmployeeRepository 不同，本 Repository 自动继承 ID 相关便捷方法：
 ///
-/// - {@link #findById(Long)} - Find by ID returning Optional
-/// - {@link #getById(Long)} - Get by ID returning null if not found
-/// - {@link #findAllById(Collection)} - Find all by IDs
-/// - {@link #findMapById(Collection)} - Find by IDs as Map
-/// - {@link #existsById(Long)} - Check existence by ID
-/// - {@link #deleteById(Long)} - Delete by ID
+/// - `findById(Long id)` - 按 ID 查找，返回 Optional
+/// - `getById(Long id)` - 按 ID 获取，不存在返回 null
+/// - `findAllById(Collection)` - 按多个 ID 查找
+/// - `findMapById(Collection)` - 按 ID 查找并返回 Map
+/// - `existsById(Long id)` - 检查 ID 是否存在
+/// - `deleteById(Long id)` - 按 ID 删除
 ///
-/// This repository also demonstrates association queries with {@link Category}:
-///
-/// - Lazy loading (default behavior)
-/// - Eager fetching with fetch()
-/// - Query by association ID
-/// - Nested property access
-/// - DTO projection with association data
+/// 本 Repository 还演示与 {@link Category} 的关联查询：
+/// - 懒加载（默认行为）
+/// - 使用 fetch() 急加载
+/// - 按关联 ID 查询
+/// - 嵌套属性访问
+/// - DTO 投影与关联数据
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
 
@@ -43,13 +41,12 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         super(entityManager, jdbcTemplate);
     }
 
-    // ==================== Inherited ID-based Methods ====================
+    // ==================== 继承的 ID 相关方法 ====================
     //
-    // The following methods are inherited from PersistableRepository
-    // and work automatically because Product implements Persistable<Long>:
+    // 以下方法从 PersistableRepository 继承，因为 Product 实现了 Persistable<Long>：
     //
     // - findById(Long id) -> Optional<Product>
-    // - getById(Long id) -> Product (nullable)
+    // - getById(Long id) -> Product (可空)
     // - findAllById(Collection<Long> ids) -> List<Product>
     // - getAllById(Collection<Long> ids) -> List<Product>
     // - findMapById(Collection<Long> ids) -> Map<Long, Product>
@@ -59,13 +56,11 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     // - deleteById(Long id) -> void
     // - deleteAllById(Collection<Long> ids) -> void
     //
-    // No implementation needed! Compare with EmployeeRepository where
-    // similar methods require manual query building.
+    // 无需实现！对比 EmployeeRepository 需要手动构建类似查询。
 
-    // ==================== Association Query Methods ====================
+    // ==================== 关联查询方法 ====================
 
-    /// Find products by category ID.
-    /// This is the simplest form of association query - querying by foreign key.
+    /// 根据分类 ID 查询产品（最简单的关联查询方式）。
     public List<Product> findByCategoryId(Long categoryId) {
         return query()
                 .where(Product::getCategoryId).eq(categoryId)
@@ -74,7 +69,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Find products by multiple category IDs.
+    /// 根据多个分类 ID 查询产品。
     public List<Product> findByCategoryIds(Collection<Long> categoryIds) {
         return query()
                 .where(Product::getCategoryId).in(categoryIds)
@@ -84,7 +79,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Find products without category (categoryId is null).
+    /// 查询无分类的产品。
     public List<Product> findWithoutCategory() {
         return query()
                 .where(Product::getCategoryId).isNull()
@@ -92,8 +87,8 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Lazy loading (default) - category is loaded on first access.
-    /// This may cause N+1 query problem if you iterate and access category.
+    /// 懒加载（默认）- 分类在首次访问时加载。
+    /// 如果遍历并访问分类，可能产生 N+1 查询问题。
     public List<Product> findWithLazyCategory() {
         return query()
                 .where(Product::getActive).eq(true)
@@ -101,8 +96,8 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Eager fetch - load products with categories in a single query.
-    /// Use this to avoid N+1 query problem when you need the association.
+    /// 急加载 - 一次查询加载产品和分类。
+    /// 需要关联数据时使用此方法避免 N+1 问题。
     public List<Product> findWithCategoryFetch() {
         return query()
                 .fetch(Product::getCategory)
@@ -111,7 +106,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Fetch with conditions - load products with categories filtered by category.
+    /// 带条件的急加载。
     public List<Product> findActiveInCategoryWithFetch(Long categoryId) {
         return query()
                 .fetch(Product::getCategory)
@@ -121,7 +116,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Query by category using categoryId (simpler approach).
+    /// 根据分类查询（简化方式）。
     public List<Product> findByCategoryNameSimple(Long categoryId, String categoryName) {
         return query()
                 .fetch(Product::getCategory)
@@ -130,8 +125,8 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// DTO projection with association data.
-    /// Select product name, price, and category name in one query.
+    /// DTO 投影与关联数据。
+    /// 一次查询获取产品名称、价格和分类名称。
     public List<ProductWithCategory> findProductWithCategoryInfo() {
         return query()
                 .select(ProductWithCategory.class)
@@ -140,7 +135,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Manual join using stream - for complex transformations.
+    /// 使用 Stream 手动关联 - 用于复杂转换。
     public List<ProductCategoryInfo> findProductCategoryInfo() {
         List<Product> products = query()
                 .fetch(Product::getCategory)
@@ -152,13 +147,13 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                         p.getId(),
                         p.getName(),
                         p.getPrice(),
-                        p.getCategory() != null ? p.getCategory().getName() : "Uncategorized"
+                        p.getCategory() != null ? p.getCategory().getName() : "未分类"
                 ))
                 .toList();
     }
 
-    /// Three-field projection with association using nested path select.
-    /// Select product name, price, and category name in one query.
+    /// 三字段投影与嵌套路径 select。
+    /// 一次查询获取产品名称、价格和分类名称。
     public List<Tuple3<String, BigDecimal, String>> findProductNamePriceCategoryName() {
         return query()
                 .select(
@@ -171,8 +166,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Two-field projection with association using nested path select.
-    /// Select product name and category name in one query.
+    /// 两字段投影与嵌套路径 select。
     public List<Tuple2<String, String>> findProductNameAndCategoryName() {
         return query()
                 .select(
@@ -184,8 +178,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Group products by category using stream.
-    /// First fetch all with category, then group in memory.
+    /// 使用 Stream 按分类分组产品。
     public Map<Long, List<Product>> groupProductsByCategory() {
         List<Product> products = query()
                 .fetch(Product::getCategory)
@@ -198,7 +191,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 ));
     }
 
-    /// Transfer products to another category.
+    /// 将产品转移到其他分类。
     @Transactional
     public void transferToCategory(List<Long> productIds, Long newCategoryId) {
         List<Product> products = findAllById(productIds);
@@ -206,14 +199,14 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         updateAll(products);
     }
 
-    // ==================== Basic Query Methods ====================
+    // ==================== 基本查询方法 ====================
 
-    /// Find product by SKU code
+    /// 根据 SKU 编码查找产品。
     public Product findBySku(String sku) {
         return query().where(Product::getSku).eq(sku).first();
     }
 
-    /// Find products by name containing text
+    /// 根据名称包含文本查找产品。
     public List<Product> findByNameContaining(String name) {
         return query()
                 .where(Product::getName).contains(name)
@@ -221,7 +214,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Find products in price range
+    /// 根据价格区间查找产品。
     public List<Product> findByPriceBetween(BigDecimal min, BigDecimal max) {
         return query()
                 .where(Product::getPrice).between(min, max)
@@ -230,7 +223,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Find products with low stock
+    /// 查找低库存产品。
     public List<Product> findLowStock(int threshold) {
         return query()
                 .where(Product::getStock).lt(threshold)
@@ -239,7 +232,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Find active products with pagination
+    /// 分页查询活跃产品。
     public Slice<Product> findActiveProductsPaged(int page, int size) {
         return query()
                 .where(Product::getActive).eq(true)
@@ -247,7 +240,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .slice(page * size, size);
     }
 
-    /// Get product name and price pairs
+    /// 获取产品名称和价格对。
     public List<Tuple2<String, BigDecimal>> findProductNamePrices() {
         return query()
                 .select(Product::getName, Product::getPrice)
@@ -256,7 +249,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .list();
     }
 
-    /// Calculate total stock value
+    /// 计算库存总价值。
     public BigDecimal calculateTotalStockValue() {
         List<Product> products = query()
                 .where(Product::getActive).eq(true)
@@ -267,7 +260,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    /// Update product price
+    /// 更新产品价格。
     @Transactional
     public void updatePrice(Long id, BigDecimal newPrice) {
         Product product = getById(id);
@@ -277,7 +270,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         }
     }
 
-    /// Update stock quantity
+    /// 更新库存数量。
     @Transactional
     public void updateStock(Long id, Integer newStock) {
         Product product = getById(id);
@@ -287,7 +280,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         }
     }
 
-    /// Deactivate a product by ID (uses inherited getById)
+    /// 根据 ID 下架产品（使用继承的 getById）。
     @Transactional
     public void deactivateProduct(Long id) {
         Product product = getById(id);
@@ -297,7 +290,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         }
     }
 
-    /// Activate products by IDs (uses inherited findAllById)
+    /// 根据多个 ID 上架产品（使用继承的 findAllById）。
     @Transactional
     public void activateProducts(Collection<Long> ids) {
         List<Product> products = findAllById(ids);
@@ -305,20 +298,20 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         updateAll(products);
     }
 
-    /// Find products by IDs and return as map (uses inherited findMapById)
+    /// 按多个 ID 查询并返回 Map（使用继承的 findMapById）。
     public Map<Long, Product> findProductsAsMap(Collection<Long> ids) {
         return findMapById(ids);
     }
 
-    /// Check if product exists and is active
+    /// 检查产品是否存在且活跃。
     public boolean existsAndActive(Long id) {
         Product product = getById(id);
         return product != null && Boolean.TRUE.equals(product.getActive());
     }
 
-    // ==================== DTO Classes ====================
+    // ==================== DTO 类 ====================
 
-    /// DTO for product with category name
+    /// 产品与分类名称 DTO。
     public static class ProductWithCategory {
         private String name;
         private BigDecimal price;
@@ -340,7 +333,7 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
         public void setCategoryName(String categoryName) { this.categoryName = categoryName; }
     }
 
-    /// DTO for product category info with more fields
+    /// 产品分类信息 DTO（更多字段）。
     public static class ProductCategoryInfo {
         private Long productId;
         private String productName;

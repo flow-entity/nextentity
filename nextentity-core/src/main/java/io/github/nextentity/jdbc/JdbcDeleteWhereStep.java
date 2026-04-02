@@ -11,9 +11,11 @@ import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.List;
 
-/// JDBC implementation of conditional delete builder.
+/// JDBC 条件删除构建器实现。
 ///
-/// @param <T> Entity type
+/// 使用原生 SQL 构建 DELETE 语句，支持带 WHERE 条件的批量删除。
+///
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements DeleteWhereStep<T> {

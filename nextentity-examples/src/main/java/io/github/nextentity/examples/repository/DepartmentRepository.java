@@ -9,6 +9,20 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/// 部门 Repository。
+///
+/// 用于 {@link Department} 实体的数据访问。
+///
+/// ## 嵌套路径查询支持
+///
+/// 因为 {@link Department} 实现了 {@link io.github.nextentity.api.Entity} 接口，
+/// 可以在 Employee 查询中直接访问嵌套属性：
+/// ```java
+/// // 在 EmployeeRepository 中
+/// List<Employee> employees = employeeRepository.query()
+///     .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+///     .list();
+/// ```
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
@@ -21,9 +35,9 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
         return super.query();
     }
 
-    // ==================== Basic CRUD Operations ====================
+    // ==================== 基本 CRUD 操作 ====================
 
-    /// Query all active departments
+    /// 查询所有活跃部门。
     public List<Department> findActiveDepartments() {
         return query()
                 .where(Department::getActive).eq(true)
@@ -31,16 +45,16 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
                 .list();
     }
 
-    /// Find department by ID
+    /// 根据ID查找部门。
     public Department findDepartmentById(Long id) {
         return query()
                 .where(Department::getId).eq(id)
                 .first();
     }
 
-    // ==================== Projection ====================
+    // ==================== 投影 ====================
 
-    /// Select from different entity types
+    /// 选择活跃部门的名称列表。
     public List<String> findActiveDepartmentNames() {
         return query()
                 .select(Department::getName)
@@ -48,7 +62,7 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
                 .list();
     }
 
-    /// Select department info into DTO
+    /// 查询部门信息到 DTO。
     public List<DepartmentInfo> findDepartmentInfo() {
         return query()
                 .select(DepartmentInfo.class)
@@ -56,9 +70,9 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
                 .list();
     }
 
-    // ==================== DTO Classes ====================
+    // ==================== DTO 类 ====================
 
-    /// DTO for department info
+    /// 部门信息 DTO。
     public static class DepartmentInfo {
         private Long id;
         private String name;

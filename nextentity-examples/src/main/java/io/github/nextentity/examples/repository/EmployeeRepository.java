@@ -20,20 +20,19 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * Employee Repository demonstrating NextEntity query capabilities.
- * <p>
- * This repository shows core patterns for:
- * - Basic CRUD operations
- * - Query conditions (comparison, IN, null checks)
- * - String operations (LIKE, contains)
- * - Ordering and pagination
- * - Aggregation (count, sum, avg, min, max)
- * - Projection (Tuple, DTO)
- * - Association fetch
- * - Complex queries with conditional operators
- * - Transaction management
- */
+/// Employee Repository 演示 NextEntity 查询能力。
+///
+/// 本 Repository 展示核心模式：
+/// - 基本 CRUD 操作
+/// - 查询条件（比较、IN、null 检查）
+/// - 字符串操作（LIKE、contains）
+/// - 排序和分页
+/// - 聚合（count、sum、avg、min、max）
+/// - 投影（Tuple、DTO）
+/// - 关联加载
+/// - 嵌套路径查询
+/// - 条件运算符
+/// - 事务管理
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
@@ -648,6 +647,45 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         return query()
                 .selectDistinct(Employee.class)
                 .where(Employee::getActive).eq(true)
+                .list();
+    }
+
+    // ==================== 嵌套路径查询 ====================
+
+    /// 嵌套路径查询 - 按部门名称筛选员工。
+    ///
+    /// 因为 {@link io.github.nextentity.examples.entity.Department} 实现了
+    /// {@link io.github.nextentity.api.Entity} 接口，可以直接访问嵌套属性。
+    public List<Employee> findByDepartmentName(String departmentName) {
+        return query()
+                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getName).eq(departmentName)
+                .list();
+    }
+
+    /// 嵌套路径查询 - 按部门位置筛选员工。
+    public List<Employee> findByDepartmentLocation(String locationPrefix) {
+        return query()
+                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getLocation).startsWith(locationPrefix)
+                .list();
+    }
+
+    /// 嵌套路径查询 - 活跃部门中的活跃员工。
+    public List<Employee> findActiveEmployeesInActiveDepartments() {
+        return query()
+                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getActive).eq(true)
+                .where(Employee::getActive).eq(true)
+                .orderBy(Employee::getName).asc()
+                .list();
+    }
+
+    /// 嵌套路径查询 - 结合 fetch 急加载。
+    ///
+    /// 同时使用 fetch 和嵌套路径查询，查询后可直接访问关联数据。
+    public List<Employee> findWithDepartmentByDepartmentName(String departmentName) {
+        return query()
+                .fetch(Employee::getDepartment)
+                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getName).eq(departmentName)
+                .orderBy(Employee::getName).asc()
                 .list();
     }
 

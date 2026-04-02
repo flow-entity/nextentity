@@ -16,6 +16,7 @@
 - [逻辑组合](#逻辑组合)
 - [排序](#排序)
 - [分页](#分页)
+- [嵌套路径表达式](#嵌套路径表达式)
 - [结果获取](#结果获取)
 
 ---
@@ -371,6 +372,68 @@ int limit = slice.limit();                // 限制数量
 // 判断是否有下一页
 boolean hasNext = slice.data().size() == slice.limit();
 ```
+
+---
+
+## 嵌套路径表达式
+
+当关联实体实现了 `io.github.nextentity.api.Entity` 接口时，可以直接在 `where()` 中访问嵌套属性：
+
+### 基本用法
+
+```java
+// Department 实现了 Entity 接口
+@Entity
+public class Department implements io.github.nextentity.api.Entity {
+    private Long id;
+    private String name;
+    // ...
+}
+
+// Employee 关联 Department
+@Entity
+public class Employee {
+    private Department department;
+    // ...
+}
+
+// 直接访问嵌套属性
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+    .list();
+```
+
+生成的 SQL：
+
+```sql
+SELECT e.* FROM employee e
+LEFT JOIN department d ON e.department_id = d.id
+WHERE d.name = '技术部'
+```
+
+### 多级嵌套
+
+```java
+// 先筛选部门属性，再查询
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getDepartment).get(Department::getLocation).startsWith("北京")
+    .where(Employee::getDepartment).get(Department::getActive).eq(true)
+    .list();
+```
+
+### 结合其他条件
+
+```java
+// 嵌套条件与其他条件组合
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+    .where(Employee::getActive).eq(true)
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(50000))
+    .orderBy(Employee::getName).asc()
+    .list();
+```
+
+> **重要提示**：要使用此功能，关联实体类必须实现 `io.github.nextentity.api.Entity` 接口。这会让编译器正确识别方法引用类型。
 
 ---
 

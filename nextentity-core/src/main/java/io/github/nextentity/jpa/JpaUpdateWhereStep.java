@@ -11,9 +11,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/// JPA implementation of conditional update builder using JPQL.
+/// JPA 条件更新构建器实现，使用 JPQL 构建 UPDATE 语句。
 ///
-/// @param <T> Entity type
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements UpdateWhereStep<T> {

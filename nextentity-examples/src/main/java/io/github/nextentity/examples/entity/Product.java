@@ -11,72 +11,58 @@ import jakarta.persistence.Transient;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-/**
- * Product entity implementing Persistable interface.
- * <p>
- * This entity demonstrates the use of {@link Persistable} interface
- * which provides ID-based convenience methods in the repository.
- * <p>
- * Unlike Employee and Department which don't implement Persistable,
- * Product can benefit from methods like findById, findAllById, findMapById, etc.
- * <p>
- * This entity also demonstrates the relationship with {@link Category} entity.
- */
-@Entity
+/// 产品实体类，实现了 {@link Persistable} 接口。
+///
+/// 本实体演示：
+/// - {@link Persistable} 接口的使用（提供 ID 相关便捷方法）
+/// - 与 {@link Category} 实体的关系
+/// - {@code @Transient} 字段的使用
+///
+/// ## Persistable 接口优势
+///
+/// 与 Employee 和 Department 不同，Product 实现了 {@link Persistable}，
+/// 可以使用 Repository 的便捷方法：
+/// ```java
+/// Product product = productRepository.findById(1L);
+/// List<Product> products = productRepository.findAllById(List.of(1L, 2L));
+/// Map<Long, Product> productMap = productRepository.findMapById(List.of(1L, 2L));
+/// ```
+@jakarta.persistence.Entity
 public class Product implements Persistable<Long> {
 
-    /**
-     * Product ID (primary key).
-     */
+    /// 产品 ID（主键）。
     @Id
     private Long id;
 
-    /**
-     * Product name.
-     */
+    /// 产品名称。
     private String name;
 
-    /**
-     * Product SKU code.
-     */
+    /// 产品 SKU 编码。
     private String sku;
 
-    /**
-     * Product price.
-     */
+    /// 产品价格。
     private BigDecimal price;
 
-    /**
-     * Stock quantity.
-     */
+    /// 库存数量。
     private Integer stock;
 
-    /**
-     * Category ID (foreign key).
-     */
+    /// 分类 ID（外键）。
     private Long categoryId;
 
-    /**
-     * Category association (lazy loaded).
-     */
+    /// 分类关联（懒加载）。
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "categoryId", insertable = false, updatable = false)
     private Category category;
 
-    /**
-     * Whether the product is active.
-     */
+    /// 产品是否上架。
     private Boolean active;
 
-    /**
-     * Creation timestamp.
-     */
+    /// 创建时间戳。
     private LocalDateTime createdAt;
 
-    /**
-     * Category name (transient field for projection).
-     * Used for DTO projections with association data.
-     */
+    /// 分类名称（瞬态字段，用于投影）。
+    ///
+    /// 用于包含关联数据的 DTO 投影。
     @Transient
     private String categoryName;
 

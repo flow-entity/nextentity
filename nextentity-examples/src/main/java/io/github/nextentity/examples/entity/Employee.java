@@ -13,73 +13,70 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Employee entity for examples.
- * <p>
- * This entity represents an employee in an organization.
- * Used to demonstrate CRUD operations, queries, projections, and complex queries.
- */
-@Entity
+/// 员工实体类，用于示例演示。
+///
+/// 本实体演示：
+/// - 基本 CRUD 操作
+/// - 查询条件和投影
+/// - 复杂查询和聚合
+/// - 关联查询（{@link Department}）
+///
+/// ## 关联查询示例
+///
+/// ```java
+/// // 嵌套路径查询（Department 实现了 Entity 接口）
+/// List<Employee> employees = employeeRepository.query()
+///     .where(Employee::getDepartment).get(Department::getName).eq("技术部")
+///     .list();
+///
+/// // 急加载关联
+/// List<Employee> employees = employeeRepository.query()
+///     .fetch(Employee::getDepartment)
+///     .list();
+/// ```
+@jakarta.persistence.Entity
 public class Employee {
 
-    /**
-     * Employee ID (primary key).
-     */
+    /// 员工 ID（主键）。
     @Id
     private Long id;
 
-    /**
-     * Employee name.
-     */
+    /// 员工姓名。
     private String name;
 
-    /**
-     * Employee email address.
-     */
+    /// 员工邮箱地址。
     private String email;
 
-    /**
-     * Employee salary.
-     */
+    /// 员工薪资。
     private BigDecimal salary;
 
-    /**
-     * Whether the employee is active.
-     */
+    /// 员工是否在职。
     private Boolean active;
 
-    /**
-     * Employee status.
-     */
+    /// 员工状态。
     @Enumerated(EnumType.STRING)
     private EmployeeStatus status;
 
-    /**
-     * Department ID (foreign key).
-     */
+    /// 部门 ID（外键）。
     private Long departmentId;
 
-    /**
-     * Department association (lazy loaded).
-     */
+    /// 部门关联（懒加载）。
+    ///
+    /// 关联的 {@link Department} 实体实现了 {@link io.github.nextentity.api.Entity} 接口，
+    /// 支持嵌套路径查询。
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "departmentId", insertable = false, updatable = false)
     private Department department;
 
-    /**
-     * Employee hire date.
-     */
+    /// 入职日期。
     private LocalDate hireDate;
 
-    /**
-     * Creation timestamp.
-     */
+    /// 创建时间戳。
     private LocalDateTime createdAt;
 
-    /**
-     * Optimistic lock version.
-     * Used for concurrency control to prevent lost updates.
-     */
+    /// 乐观锁版本号。
+    ///
+    /// 用于并发控制，防止更新丢失。
     @Version
     private Integer version;
 

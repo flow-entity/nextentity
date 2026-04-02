@@ -1,30 +1,20 @@
 package io.github.nextentity.examples.entity;
 
-/**
- * Employee status enum for examples.
- * <p>
- * Demonstrates enum handling in queries and entities.
- */
+/// 员工状态枚举，用于示例演示。
+///
+/// 演示查询中的枚举处理。
 public enum EmployeeStatus {
 
-    /**
-     * Active employee.
-     */
+    /// 在职员工。
     ACTIVE,
 
-    /**
-     * Inactive employee.
-     */
+    /// 离职员工。
     INACTIVE,
 
-    /**
-     * Employee on leave.
-     */
+    /// 请假员工。
     ON_LEAVE,
 
-    /**
-     * Employee terminated.
-     */
+    /// 已终止员工。
     TERMINATED
 
 }

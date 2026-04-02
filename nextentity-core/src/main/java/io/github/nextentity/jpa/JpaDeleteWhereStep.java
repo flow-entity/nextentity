@@ -11,9 +11,9 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
-/// JPA implementation of conditional delete builder using JPQL.
+/// JPA 条件删除构建器实现，使用 JPQL 构建 DELETE 语句。
 ///
-/// @param <T> Entity type
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements DeleteWhereStep<T> {

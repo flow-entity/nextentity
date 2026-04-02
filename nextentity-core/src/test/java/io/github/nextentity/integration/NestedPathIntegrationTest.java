@@ -43,9 +43,10 @@ public class NestedPathIntegrationTest {
         @DisplayName("Should filter employees by department name Engineering")
         void shouldFilterEmployees_ByDepartmentNameEngineering(IntegrationTestContext context) {
             // When - query employees in Engineering department using nested path
+            // Department implements Entity, so we can use .where(Employee::getDepartment).get(Department::getName)
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Engineering")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -69,7 +70,7 @@ public class NestedPathIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Marketing"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Marketing")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -91,7 +92,7 @@ public class NestedPathIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Sales"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Sales")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -113,7 +114,7 @@ public class NestedPathIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("HR"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("HR")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -133,7 +134,7 @@ public class NestedPathIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Finance"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Finance")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -152,7 +153,7 @@ public class NestedPathIntegrationTest {
         void shouldReturnEmpty_ForNonExistentDepartment(IntegrationTestContext context) {
             // When - query employees in non-existent department
             List<Employee> employees = context.queryEmployees()
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("IT"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("IT")
                     .list();
 
             // Then
@@ -174,7 +175,7 @@ public class NestedPathIntegrationTest {
             // When - Engineering (id=1) and HR (id=4) are in Building A
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getLocation).eq("Building A"))
+                    .where(Employee::getDepartment).get(Department::getLocation).eq("Building A")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -196,7 +197,7 @@ public class NestedPathIntegrationTest {
             // When - Marketing (id=2) is in Building B with 3 employees
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getLocation).eq("Building B"))
+                    .where(Employee::getDepartment).get(Department::getLocation).eq("Building B")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -223,7 +224,7 @@ public class NestedPathIntegrationTest {
             // When - departments with budget > 300000: Engineering(500000), Sales(400000)
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getBudget).gt(300000.0))
+                    .where(Employee::getDepartment).get(Department::getBudget).gt(300000.0)
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -246,7 +247,7 @@ public class NestedPathIntegrationTest {
             // Marketing(300000), Sales(400000), HR(200000), Finance(250000)
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getBudget).between(200000.0, 400000.0))
+                    .where(Employee::getDepartment).get(Department::getBudget).between(200000.0, 400000.0)
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -273,7 +274,7 @@ public class NestedPathIntegrationTest {
             // When - active departments: Engineering, Marketing, Sales, HR (Finance is inactive)
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getActive).eq(true))
+                    .where(Employee::getDepartment).get(Department::getActive).eq(true)
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -295,7 +296,7 @@ public class NestedPathIntegrationTest {
             // When - inactive department: Finance
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getActive).eq(false))
+                    .where(Employee::getDepartment).get(Department::getActive).eq(false)
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -321,7 +322,7 @@ public class NestedPathIntegrationTest {
             // When - active employees in Engineering department
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Engineering")
                     .where(Employee::getActive).eq(true)
                     .orderBy(Employee::getId).asc()
                     .list();
@@ -345,8 +346,8 @@ public class NestedPathIntegrationTest {
             // When - employees in active departments with specific location
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getActive).eq(true))
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getLocation).eq("Building A"))
+                    .where(Employee::getDepartment).get(Department::getActive).eq(true)
+                    .where(Employee::getDepartment).get(Department::getLocation).eq("Building A")
                     .orderBy(Employee::getId).asc()
                     .list();
 
@@ -370,7 +371,7 @@ public class NestedPathIntegrationTest {
             // When - employees in Engineering with salary > 70000
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Engineering")
                     .where(Employee::getSalary).gt(70000.0)
                     .orderBy(Employee::getSalary).desc()
                     .list();
@@ -399,7 +400,7 @@ public class NestedPathIntegrationTest {
             // When
             List<Employee> employees = context.queryEmployees()
                     .fetch(Employee::getDepartment)
-                    .where(EntityPath.of(Employee::getDepartment).get(Department::getName).eq("Engineering"))
+                    .where(Employee::getDepartment).get(Department::getName).eq("Engineering")
                     .orderBy(Employee::getSalary).desc()
                     .list();
 
