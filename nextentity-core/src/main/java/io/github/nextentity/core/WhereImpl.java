@@ -259,7 +259,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         }
 
         @Override
-        public Expression<X, List<U>> slice(int offset, int maxResult) {
+        public Expression<X, List<U>> window(int offset, int maxResult) {
             QueryStructure structure = new QueryStructure(
                     queryStructure.select(),
                     queryStructure.from(),

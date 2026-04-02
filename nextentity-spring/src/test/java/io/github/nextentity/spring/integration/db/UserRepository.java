@@ -25,12 +25,12 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     private final String name;
 
     public UserRepository(JdbcTemplate jdbcTemplate, String name) {
-        super(jdbcTemplate, jdbc(jdbcTemplate));
+        super(jdbcTemplate);
         this.name =  name;
     }
 
     public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate, String name) {
-        super(jdbcTemplate, jpa(entityManager, jdbcTemplate));
+        super(entityManager, jdbcTemplate);
         this.name = name;
     }
 

@@ -514,7 +514,7 @@ class WhereImplTest {
         @Test
         void subQuery_slice_ShouldReturnSliceExpression() {
             // when
-            var sliceExpr = whereImpl.toSubQuery().slice(0, 10);
+            var sliceExpr = whereImpl.toSubQuery().window(0, 10);
 
             // then
             assertThat(sliceExpr).isNotNull();

@@ -17,33 +17,8 @@ public interface SubQueryBuilder<T, U> extends Expression<T, List<U>> {
     /// Slices a part of the query results.
     ///
     /// @param offset Starting offset
-    /// @param maxResult Maximum number of results
+    /// @param limit Maximum number of results
     /// @return Sliced results expression
-    Expression<T, List<U>> slice(int offset, int maxResult);
+    Expression<T, List<U>> window(int offset, int limit);
 
-    /// Gets a single query result.
-    ///
-    /// @return Single result expression
-    default Expression<T, U> getSingle() {
-        return getSingle(-1);
-    }
-
-    /// Gets a single query result from the specified offset.
-    ///
-    /// @param offset Starting offset
-    /// @return Single result expression
-    Expression<T, U> getSingle(int offset);
-
-    /// Gets the first query result.
-    ///
-    /// @return First result expression
-    default Expression<T, U> getFirst() {
-        return getFirst(-1);
-    }
-
-    /// Gets the first query result from the specified offset.
-    ///
-    /// @param offset Starting offset
-    /// @return First result expression
-    Expression<T, U> getFirst(int offset);
 }

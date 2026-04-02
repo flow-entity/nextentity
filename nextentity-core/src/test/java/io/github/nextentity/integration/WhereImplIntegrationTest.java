@@ -576,7 +576,7 @@ public class WhereImplIntegrationTest {
             var sliceExpr = context.queryEmployees()
                     .where(Employee::getActive).eq(true)
                     .toSubQuery()
-                    .slice(0, 10);
+                    .window(0, 10);
 
             // Then
             assertThat(sliceExpr).isNotNull();

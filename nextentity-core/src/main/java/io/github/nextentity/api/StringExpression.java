@@ -126,7 +126,6 @@ public interface StringExpression<T> extends SimpleExpression<T, String> {
         return value == null ? notLikeIfNotNull(null) : notLikeIfNotNull('%' + value + '%');
     }
 
-
     /// If the value is not empty, matches the specified string pattern.
     ///
     /// @param value String pattern

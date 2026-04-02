@@ -77,7 +77,7 @@ public class SubqueryIntegrationTest {
         var sliceExpr = context.queryEmployees()
                 .orderBy(Employee::getId).asc()
                 .toSubQuery()
-                .slice(0, 5);
+                .window(0, 5);
 
         // When - Just verify slice can be created
         assertThat(sliceExpr).isNotNull();

@@ -19,7 +19,7 @@ public interface Order<T> extends Serializable {
     ///
     /// @return Sort expression
     ///
-    Expression expression();
+    Expression<T, ?> expression();
 
     ///
     /// Gets the sort order.
