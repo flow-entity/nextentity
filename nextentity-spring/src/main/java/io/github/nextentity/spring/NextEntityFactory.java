@@ -33,24 +33,4 @@ public interface NextEntityFactory {
     /// @return 更新执行器实例
     UpdateExecutor updateExecutor();
 
-    /// 创建指定实体类型的条件更新构建器。
-    ///
-    /// 条件更新构建器支持带有 WHERE 条件的批量更新操作。
-    ///
-    /// @param entityType 实体类型
-    /// @param <T>        实体类型参数
-    /// @return 条件更新构建器实例
-    /// @since 2.1
-    <T> UpdateWhereStep<T> updateWhereStep(Class<T> entityType);
-
-    /// 创建指定实体类型的条件删除构建器。
-    ///
-    /// 条件删除构建器支持带有 WHERE 条件的批量删除操作。
-    ///
-    /// @param entityType 实体类型
-    /// @param <T>        实体类型参数
-    /// @return 条件删除构建器实例
-    /// @since 2.1
-    <T> DeleteWhereStep<T> deleteWhereStep(Class<T> entityType);
-
 }

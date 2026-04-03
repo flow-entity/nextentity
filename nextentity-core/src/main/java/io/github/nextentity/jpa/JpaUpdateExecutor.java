@@ -1,5 +1,7 @@
 package io.github.nextentity.jpa;
 
+import io.github.nextentity.api.DeleteWhereStep;
+import io.github.nextentity.api.UpdateWhereStep;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.meta.EntityAttribute;
@@ -184,5 +186,15 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     @Override
     public <T> T doInTransaction(Supplier<T> command) {
         return transactionTemplate.executeInTransaction(entityManager, command);
+    }
+
+    @Override
+    public <T> UpdateWhereStep<T> updateWhereStep(@NonNull Class<T> entityType) {
+        return new JpaUpdateWhereStep<>(entityType, metamodel, entityManager);
+    }
+
+    @Override
+    public <T> DeleteWhereStep<T> deleteWhereStep(@NonNull Class<T> entityType) {
+        return new JpaDeleteWhereStep<>(entityType, metamodel, entityManager);
     }
 }

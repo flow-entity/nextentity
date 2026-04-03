@@ -1,5 +1,7 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.api.DeleteWhereStep;
+import io.github.nextentity.api.UpdateWhereStep;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jspecify.annotations.NonNull;
 
@@ -123,4 +125,26 @@ public interface UpdateExecutor {
     /// @throws RuntimeException if the transaction fails
     ///
     <T> T doInTransaction(Supplier<T> command);
+
+    ///
+    /// Creates a conditional update builder for the specified entity type.
+    ///
+    /// The conditional update builder supports batch UPDATE operations with WHERE conditions.
+    ///
+    /// @param <T> the entity type
+    /// @param entityType the entity class
+    /// @return a conditional update builder instance
+    /// @since 2.1
+    <T> UpdateWhereStep<T> updateWhereStep(@NonNull Class<T> entityType);
+
+    ///
+    /// Creates a conditional delete builder for the specified entity type.
+    ///
+    /// The conditional delete builder supports batch DELETE operations with WHERE conditions.
+    ///
+    /// @param <T> the entity type
+    /// @param entityType the entity class
+    /// @return a conditional delete builder instance
+    /// @since 2.1
+    <T> DeleteWhereStep<T> deleteWhereStep(@NonNull Class<T> entityType);
 }

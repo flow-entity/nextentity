@@ -1,19 +1,15 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.QueryBuilder;
-import io.github.nextentity.api.UpdateWhereStep;
 import io.github.nextentity.core.DefaultQueryBuilder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
-import io.github.nextentity.jpa.JpaDeleteWhereStep;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.jpa.JpaTransactionTemplate;
 import io.github.nextentity.jpa.JpaUpdateExecutor;
-import io.github.nextentity.jpa.JpaUpdateWhereStep;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.Nullable;
@@ -218,47 +214,5 @@ public record DefaultNextEntityFactory(
     @Override
     public UpdateExecutor updateExecutor() {
         return updateExecutor;
-    }
-
-    /// 创建指定实体类型的条件更新构建器。
-    ///
-    /// 根据配置的模式选择合适的实现：
-    /// - JPA 模式：使用 JpaUpdateWhereStep
-    /// - JDBC 模式：使用 JdbcUpdateWhereStep
-    ///
-    /// @param entityType 实体类型
-    /// @param <T>        实体类型参数
-    /// @return 条件更新构建器实例
-    /// @throws IllegalStateException 如果 JPA 和 JDBC 都未正确配置
-    /// @since 2.1
-    @Override
-    public <T> UpdateWhereStep<T> updateWhereStep(Class<T> entityType) {
-        if (entityManager != null) {
-            return new JpaUpdateWhereStep<>(entityType, metamodel, entityManager);
-        } else if (connectionProvider != null && sqlDialect != null) {
-            return new JdbcUpdateWhereStep<>(entityType, metamodel, updateExecutor, connectionProvider, sqlDialect);
-        }
-        throw new IllegalStateException("Neither JPA nor JDBC is properly configured");
-    }
-
-    /// 创建指定实体类型的条件删除构建器。
-    ///
-    /// 根据配置的模式选择合适的实现：
-    /// - JPA 模式：使用 JpaDeleteWhereStep
-    /// - JDBC 模式：使用 JdbcDeleteWhereStep
-    ///
-    /// @param entityType 实体类型
-    /// @param <T>        实体类型参数
-    /// @return 条件删除构建器实例
-    /// @throws IllegalStateException 如果 JPA 和 JDBC 都未正确配置
-    /// @since 2.1
-    @Override
-    public <T> DeleteWhereStep<T> deleteWhereStep(Class<T> entityType) {
-        if (entityManager != null) {
-            return new JpaDeleteWhereStep<>(entityType, metamodel, entityManager);
-        } else if (connectionProvider != null && sqlDialect != null) {
-            return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
-        }
-        throw new IllegalStateException("Neither JPA nor JDBC is properly configured");
     }
 }

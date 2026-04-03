@@ -1,5 +1,7 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.api.DeleteWhereStep;
+import io.github.nextentity.api.UpdateWhereStep;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
@@ -33,6 +35,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
     private final Metamodel metamodel;
+    private final SqlDialect sqlDialect;
 
     /// 构造JDBC更新执行器
     ///
@@ -40,9 +43,20 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param connectionProvider 连接提供者，用于获取数据库连接
     /// @param metamodel 元模型，用于提供实体元数据信息
     public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
+        this(sqlBuilder, connectionProvider, metamodel, SqlDialect.MYSQL);
+    }
+
+    /// 构造JDBC更新执行器
+    ///
+    /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
+    /// @param connectionProvider 连接提供者，用于获取数据库连接
+    /// @param metamodel 元模型，用于提供实体元数据信息
+    /// @param sqlDialect SQL方言，用于生成条件更新/删除的SQL
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel, SqlDialect sqlDialect) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.metamodel = metamodel;
+        this.sqlDialect = sqlDialect;
     }
 
     /// 插入所有实体
@@ -180,6 +194,26 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         } catch (SQLException e) {
             throw new SqlException(e);
         }
+    }
+
+    /// 创建条件更新构建器
+    ///
+    /// @param entityType 实体类型
+    /// @param <T>        实体类型参数
+    /// @return 条件更新构建器实例
+    @Override
+    public <T> UpdateWhereStep<T> updateWhereStep(@NonNull Class<T> entityType) {
+        return new JdbcUpdateWhereStep<>(entityType, metamodel, this, connectionProvider, sqlDialect);
+    }
+
+    /// 创建条件删除构建器
+    ///
+    /// @param entityType 实体类型
+    /// @param <T>        实体类型参数
+    /// @return 条件删除构建器实例
+    @Override
+    public <T> DeleteWhereStep<T> deleteWhereStep(@NonNull Class<T> entityType) {
+        return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
     }
 
     /// 设置新版本号

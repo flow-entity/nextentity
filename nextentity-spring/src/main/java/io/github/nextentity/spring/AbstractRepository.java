@@ -217,14 +217,10 @@ public abstract class AbstractRepository<T, ID> {
     /// }</pre>
     ///
     /// @return 条件更新构建器实例
-    /// @throws IllegalStateException 如果工厂不可用
     /// @since 2.1
     @Transactional
     public UpdateWhereStep<T> updateWhere() {
-        if (factory == null) {
-            throw new IllegalStateException("Factory not available. Use constructor with NextEntityFactory.");
-        }
-        return factory.updateWhereStep(entityType);
+        return updateExecutor.updateWhereStep(entityType);
     }
 
     /// 创建条件删除构建器，用于带 WHERE 条件的批量删除。
@@ -237,14 +233,10 @@ public abstract class AbstractRepository<T, ID> {
     /// }</pre>
     ///
     /// @return 条件删除构建器实例
-    /// @throws IllegalStateException 如果工厂不可用
     /// @since 2.1
     @Transactional
     public DeleteWhereStep<T> deleteWhere() {
-        if (factory == null) {
-            throw new IllegalStateException("Factory not available. Use constructor with NextEntityFactory.");
-        }
-        return factory.deleteWhereStep(entityType);
+        return updateExecutor.deleteWhereStep(entityType);
     }
 
     /// 创建布尔类型字段的路径表达式。
