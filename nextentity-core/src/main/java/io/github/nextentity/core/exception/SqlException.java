@@ -2,38 +2,31 @@ package io.github.nextentity.core.exception;
 
 import java.sql.SQLException;
 
-/**
- * Unchecked wrapper for {@link SQLException}.
- * Provides additional context about the SQL that caused the exception.
- *
- * @since 2.0.0
- */
+/// {@link SQLException} 的非检查型包装类。
+///
+/// 提供导致异常的 SQL 相关的额外上下文信息。
+///
+/// @since 2.0.0
 public class SqlException extends NextEntityException {
 
-    /**
-     * Constructs a new exception with the specified detail message.
-     *
-     * @param message the detail message
-     */
+    /// 使用指定的详细消息构造新异常。
+    ///
+    /// @param message 详细消息
     public SqlException(String message) {
         super(message);
     }
 
-    /**
-     * Constructs a new exception with the specified detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause   the cause of this exception
-     */
+    /// 使用指定的详细消息和原因构造新异常。
+    ///
+    /// @param message 详细消息
+    /// @param cause   此异常的原因
     public SqlException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    /**
-     * Constructs a new exception with the specified cause.
-     *
-     * @param cause the cause of this exception
-     */
+    /// 使用指定的原因构造新异常。
+    ///
+    /// @param cause 此异常的原因
     public SqlException(Throwable cause) {
         super(cause);
     }

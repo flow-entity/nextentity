@@ -15,25 +15,23 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Complex predicate integration tests.
- * <p>
- * Tests complex predicate operations including:
- * - Complex AND/OR combinations
- * - Nested conditions
- * - NOT conditions
- * - Predicate combinations
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Complex predicate integration tests.
+ /// <p>
+ /// 测试s complex predicate 操作s including:
+ /// - Complex AND/OR combinations
+ /// - Nested conditions
+ /// - NOT conditions
+ /// - Predicate combinations
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Complex Predicate Integration Tests")
 public class ComplexPredicateIntegrationTest {
 
-    /**
-     * Tests simple AND condition.
-     */
+///
+     /// 测试s simple AND condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with simple AND")
@@ -49,9 +47,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> e.getActive() && e.getDepartmentId() == 1L);
     }
 
-    /**
-     * Tests multiple AND conditions.
-     */
+///
+     /// 测试s multiple AND conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with multiple AND conditions")
@@ -71,9 +68,8 @@ public class ComplexPredicateIntegrationTest {
                 e.getDepartmentId() == 1L);
     }
 
-    /**
-     * Tests OR condition using Predicate.
-     */
+///
+     /// 测试s OR condition using Predicate.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with OR condition")
@@ -94,9 +90,8 @@ public class ComplexPredicateIntegrationTest {
                 .containsExactlyInAnyOrder("Alice Johnson", "Bob Smith");
     }
 
-    /**
-     * Tests OR with different fields.
-     */
+///
+     /// 测试s OR with different fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with OR on different fields")
@@ -115,9 +110,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 80000.0 || e.getDepartmentId() == 1L);
     }
 
-    /**
-     * Tests NOT condition.
-     */
+///
+     /// 测试s NOT condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with NOT condition")
@@ -135,9 +129,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getActive());
     }
 
-    /**
-     * Tests complex AND-OR combination.
-     */
+///
+     /// 测试s complex AND-OR combination.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with complex AND-OR combination")
@@ -158,9 +151,8 @@ public class ComplexPredicateIntegrationTest {
                 (e.getActive() && e.getDepartmentId() == 1L) || e.getSalary() > 80000.0);
     }
 
-    /**
-     * Tests nested OR conditions.
-     */
+///
+     /// 测试s nested OR conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with nested OR conditions")
@@ -182,9 +174,8 @@ public class ComplexPredicateIntegrationTest {
                 (e.getName().equals("Bob Smith") && e.getActive()));
     }
 
-    /**
-     * Tests combining Predicate with where clause.
-     */
+///
+     /// 测试s combining Predicate with where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine Predicate with where clause")
@@ -203,9 +194,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> e.getDepartmentId() == 1L && e.getActive());
     }
 
-    /**
-     * Tests multiple OR conditions.
-     */
+///
+     /// 测试s multiple OR conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with multiple OR conditions")
@@ -228,9 +218,8 @@ public class ComplexPredicateIntegrationTest {
                 e.getName().equals("Charlie Brown"));
     }
 
-    /**
-     * Tests NOT with OR.
-     */
+///
+     /// 测试s NOT with OR.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with NOT and OR")
@@ -249,9 +238,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> e.getDepartmentId() != 1L && e.getDepartmentId() != 2L);
     }
 
-    /**
-     * Tests complex nested predicates.
-     */
+///
+     /// 测试s complex nested predicates.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with complex nested predicates")
@@ -274,9 +262,8 @@ public class ComplexPredicateIntegrationTest {
                 (e.getSalary() > 75000.0 && e.getDepartmentId() == 1L));
     }
 
-    /**
-     * Tests department predicate with employee filter.
-     */
+///
+     /// 测试s department predicate with employee filter.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter departments with predicates")
@@ -295,9 +282,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(departments).allMatch(d -> d.getActive() && d.getBudget() > 400000.0);
     }
 
-    /**
-     * Tests combining predicates from different sources.
-     */
+///
+     /// 测试s combining predicates from different sources.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine predicates from different sources")
@@ -322,9 +308,8 @@ public class ComplexPredicateIntegrationTest {
                 e.getDepartmentId() == 1L);
     }
 
-    /**
-     * Tests predicate with IN clause.
-     */
+///
+     /// 测试s predicate with IN clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with predicate and IN clause")
@@ -344,9 +329,8 @@ public class ComplexPredicateIntegrationTest {
                 e.getActive() && (e.getDepartmentId() == 1L || e.getDepartmentId() == 2L || e.getDepartmentId() == 3L));
     }
 
-    /**
-     * Tests predicate with LIKE.
-     */
+///
+     /// 测试s predicate with LIKE.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with predicate and LIKE")
@@ -365,9 +349,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> e.getActive() && e.getName().startsWith("A"));
     }
 
-    /**
-     * Tests predicate with null checks.
-     */
+///
+     /// 测试s predicate with null checks.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with predicate and null check")
@@ -383,9 +366,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail() != null && e.getDepartmentId() != null);
     }
 
-    /**
-     * Tests triple AND combination.
-     */
+///
+     /// 测试s triple AND combination.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with triple AND")
@@ -409,9 +391,8 @@ public class ComplexPredicateIntegrationTest {
                 e.getDepartmentId() == 1L);
     }
 
-    /**
-     * Tests predicate negation.
-     */
+///
+     /// 测试s predicate negation.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with predicate negation")
@@ -430,9 +411,8 @@ public class ComplexPredicateIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getActive() || e.getStatus() != EmployeeStatus.ACTIVE);
     }
 
-    /**
-     * Tests equality with boolean.
-     */
+///
+     /// 测试s equality with boolean.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with boolean equality")

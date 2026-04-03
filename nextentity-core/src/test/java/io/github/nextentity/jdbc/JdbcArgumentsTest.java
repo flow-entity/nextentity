@@ -17,9 +17,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
-/**
- * Unit tests for JdbcArguments.
- */
+///
+ /// 单元测试 JdbcArguments.
 @ExtendWith(MockitoExtension.class)
 class JdbcArgumentsTest {
 
@@ -36,11 +35,10 @@ class JdbcArgumentsTest {
     @Nested
     class GetMethod {
 
-        /**
-         * Test objective: Verify get() retrieves value from result set.
-         * Test scenario: Call get() with index and converter.
-         * Expected result: Value is retrieved using 1-based index.
-         */
+///
+         /// 测试目标: 验证y get() retrieves value from result set.
+         /// 测试场景: Call get() with index and converter.
+         /// 预期结果: Value is retrieved using 1-based index.
         @Test
         void get_ShouldRetrieveValueFromResultSet() throws SQLException {
             // given
@@ -55,11 +53,10 @@ class JdbcArgumentsTest {
             verify(resultSet).getObject(1);
         }
 
-        /**
-         * Test objective: Verify get() uses 1-based indexing.
-         * Test scenario: Call get(5, converter).
-         * Expected result: ResultSet is accessed with index 6.
-         */
+///
+         /// 测试目标: 验证y get() uses 1-based indexing.
+         /// 测试场景: Call get(5, converter).
+         /// 预期结果: 结果Set is accessed with index 6.
         @Test
         void get_ShouldUseOneBasedIndex() throws SQLException {
             // given
@@ -77,11 +74,10 @@ class JdbcArgumentsTest {
     @Nested
     class Inheritance {
 
-        /**
-         * Test objective: Verify JdbcArguments extends AbstractArguments.
-         * Test scenario: Check inheritance.
-         * Expected result: Is instance of AbstractArguments.
-         */
+///
+         /// 测试目标: 验证y JdbcArguments extends AbstractArguments.
+         /// 测试场景: Check inheritance.
+         /// 预期结果: Is instance of AbstractArguments.
         @Test
         void shouldExtendAbstractArguments() {
             assertThat(arguments).isInstanceOf(AbstractArguments.class);

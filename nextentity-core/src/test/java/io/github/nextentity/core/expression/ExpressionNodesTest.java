@@ -6,23 +6,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify ExpressionNodes utility class
- * <p>
- * Test scenarios:
- * 1. isNullOrTrue detection
- * 2. getNode extraction
- */
+/// 测试目标：验证ExpressionNodes工具类
+/// <p>
+/// 测试场景：
+/// 1. isNullOrTrue检测
+/// 2. getNode提取
 class ExpressionNodesTest {
 
     @Nested
     class IsNullOrTrue {
 
-        /**
-         * Test objective: Verify null is detected as null or true
-         * Test scenario: Check null
-         * Expected result: true
-         */
+        /// 测试目标：验证空值被识别为空或真
+        /// 测试场景：检查空值
+        /// 预期结果：true
         @Test
         void isNullOrTrue_Null_ReturnsTrue() {
             // when
@@ -32,11 +28,9 @@ class ExpressionNodesTest {
             assertThat(result).isTrue();
         }
 
-        /**
-         * Test objective: Verify EmptyNode is detected as null or true
-         * Test scenario: Check EmptyNode
-         * Expected result: true
-         */
+        /// 测试目标：验证EmptyNode被识别为空或真
+        /// 测试场景：检查EmptyNode
+        /// 预期结果：true
         @Test
         void isNullOrTrue_EmptyNode_ReturnsTrue() {
             // when
@@ -46,11 +40,9 @@ class ExpressionNodesTest {
             assertThat(result).isTrue();
         }
 
-        /**
-         * Test objective: Verify TRUE literal is detected as null or true
-         * Test scenario: Check TRUE literal
-         * Expected result: true
-         */
+        /// 测试目标：验证TRUE字面量被识别为空或真
+        /// 测试场景：检查TRUE字面量
+        /// 预期结果：true
         @Test
         void isNullOrTrue_TrueLiteral_ReturnsTrue() {
             // when
@@ -60,11 +52,9 @@ class ExpressionNodesTest {
             assertThat(result).isTrue();
         }
 
-        /**
-         * Test objective: Verify FALSE literal is not null or true
-         * Test scenario: Check FALSE literal
-         * Expected result: false
-         */
+        /// 测试目标：验证FALSE字面量不是空或真
+        /// 测试场景：检查FALSE字面量
+        /// 预期结果：false
         @Test
         void isNullOrTrue_FalseLiteral_ReturnsFalse() {
             // when
@@ -74,11 +64,9 @@ class ExpressionNodesTest {
             assertThat(result).isFalse();
         }
 
-        /**
-         * Test objective: Verify non-boolean literal is not null or true
-         * Test scenario: Check string literal
-         * Expected result: false
-         */
+        /// 测试目标：验证非布尔字面量不是空或真
+        /// 测试场景：检查字符串字面量
+        /// 预期结果：false
         @Test
         void isNullOrTrue_StringLiteral_ReturnsFalse() {
             // given
@@ -95,11 +83,9 @@ class ExpressionNodesTest {
     @Nested
     class GetNode {
 
-        /**
-         * Test objective: Verify getNode extracts node from expression
-         * Test scenario: Get node from Predicate
-         * Expected result: Correct node
-         */
+        /// 测试目标：验证getNode从表达式中提取节点
+        /// 测试场景：从Predicate获取节点
+        /// 预期结果：正确的节点
         @Test
         void getNode_FromExpression_ReturnsNode() {
             // given
@@ -112,11 +98,9 @@ class ExpressionNodesTest {
             assertThat(node).isSameAs(LiteralNode.TRUE);
         }
 
-        /**
-         * Test objective: Verify getNode extracts node from literal expression
-         * Test scenario: Get node from literal expression
-         * Expected result: Correct node
-         */
+        /// 测试目标：验证getNode从字面量表达式中提取节点
+        /// 测试场景：从字面量表达式获取节点
+        /// 预期结果：正确的节点
         @Test
         void getNode_FromLiteralExpression_ReturnsNode() {
             // given

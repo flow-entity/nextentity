@@ -8,14 +8,13 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify JdbcUtil static utility methods
- * <p>
- * Test scenarios:
- * 1. Verify TypedParameter interface implementations
- * 2. Verify setParameters handles different types
- * Note: Methods using ResultSet/PreparedStatement require integration tests
- */
+///
+ /// 测试目标: 验证y JdbcUtil static utility 方法
+ /// <p>
+ /// 测试场景s:
+ /// 1. 验证y TypedParameter interface implementations
+ /// 2. 验证y setParameters 处理 different types
+ /// Note: Methods using 结果Set/PreparedStatement require integration tests
 class JdbcUtilTest {
 
     @Nested

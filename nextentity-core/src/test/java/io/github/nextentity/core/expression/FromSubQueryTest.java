@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify FromSubQuery correctly represents a subquery source
- * <p>
- * Test scenarios:
- * 1. Create with QueryStructure
- * 2. Access structure property
- */
+///
+/// 测试目标：验证FromSubQuery正确表示子查询源
+/// <p>
+/// 测试场景：
+/// 1. 使用QueryStructure创建
+/// 2. 访问结构属性
+///
 class FromSubQueryTest {
 
     @Nested

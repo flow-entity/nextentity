@@ -19,10 +19,8 @@ import java.util.stream.Collectors;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 
-/**
- * Integration tests for aggregation operations in EmployeeRepository.
- * Tests count, sum, avg, min, max, groupBy operations and verifies results correctness.
- */
+/// 员工 Repository 中聚合操作的集成测试。
+/// 测试计数、求和、平均值、最小值、最大值、分组操作并验证结果正确性。
 @DisplayName("Aggregation Integration Tests")
 class AggregationIntegrationTest extends BaseIntegrationTest {
 

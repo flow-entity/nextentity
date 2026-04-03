@@ -8,25 +8,23 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify OperatorNode correctly represents operations
- * <p>
- * Test scenarios:
- * 1. Creation with operands and operator
- * 2. NOT operation optimization (double negation)
- * 3. Multivalued operator optimization
- * 4. Operand access methods
- */
+///
+ /// 测试目标: 验证y OperatorNode 正确 represents 操作s
+ /// <p>
+ /// 测试场景s:
+ /// 1. Creation with operands and operator
+ /// 2. NOT 操作 optimization (double negation)
+ /// 3. Multivalued operator optimization
+ /// 4. Operand access 方法
 class OperatorNodeTest {
 
     @Nested
     class Creation {
 
-        /**
-         * Test objective: Verify operands and operator are stored
-         * Test scenario: Create OperatorNode with operands and operator
-         * Expected result: All values are retrievable
-         */
+///
+         /// 测试目标: 验证y operands and operator are stored
+         /// 测试场景: Create OperatorNode with operands and operator
+         /// 预期结果: All values are retrievable
         @Test
         void constructor_StoresOperandsAndOperator() {
             // given
@@ -47,11 +45,10 @@ class OperatorNodeTest {
     @Nested
     class NotOperationOptimization {
 
-        /**
-         * Test objective: Verify double NOT cancels out
-         * Test scenario: Apply NOT to NOT operator node
-         * Expected result: Returns inner operand
-         */
+///
+         /// 测试目标: 验证y double NOT cancels out
+         /// 测试场景: Apply NOT to NOT operator node
+         /// 预期结果: Returns inner operand
         @Test
         void operate_NotOnNot_ReturnsInnerOperand() {
             // given
@@ -69,11 +66,10 @@ class OperatorNodeTest {
     @Nested
     class MultivaluedOperatorOptimization {
 
-        /**
-         * Test objective: Verify AND on AND merges operands
-         * Test scenario: Apply AND to AND operator node
-         * Expected result: Combined operands
-         */
+///
+         /// 测试目标: 验证y AND on AND merges operands
+         /// 测试场景: Apply AND to AND operator node
+         /// 预期结果: Combined operands
         @Test
         void operate_AndOnAnd_MergesOperands() {
             // given
@@ -92,11 +88,10 @@ class OperatorNodeTest {
             assertThat(resultNode.operator()).isEqualTo(Operator.AND);
         }
 
-        /**
-         * Test objective: Verify OR on OR merges operands
-         * Test scenario: Apply OR to OR operator node
-         * Expected result: Combined operands
-         */
+///
+         /// 测试目标: 验证y OR on OR merges operands
+         /// 测试场景: Apply OR to OR operator node
+         /// 预期结果: Combined operands
         @Test
         void operate_OrOnOr_MergesOperands() {
             // given
@@ -115,11 +110,10 @@ class OperatorNodeTest {
             assertThat(resultNode.operator()).isEqualTo(Operator.OR);
         }
 
-        /**
-         * Test objective: Verify non-multivalued operator does not merge
-         * Test scenario: Apply EQ to EQ operator node
-         * Expected result: Nested operator node
-         */
+///
+         /// 测试目标: 验证y non-multivalued operator does not merge
+         /// 测试场景: Apply EQ to EQ operator node
+         /// 预期结果: Nested operator node
         @Test
         void operate_EqOnEq_CreatesNestedNode() {
             // given
@@ -142,11 +136,10 @@ class OperatorNodeTest {
     @Nested
     class OperandAccess {
 
-        /**
-         * Test objective: Verify firstOperand() returns first operand
-         * Test scenario: Call firstOperand() on node with multiple operands
-         * Expected result: First operand
-         */
+///
+         /// 测试目标: 验证y firstOperand() returns first operand
+         /// 测试场景: Call firstOperand() on node with multiple operands
+         /// 预期结果: First operand
         @Test
         void firstOperand_ReturnsFirstOperand() {
             // given
@@ -161,11 +154,10 @@ class OperatorNodeTest {
             assertThat(result).isEqualTo(first);
         }
 
-        /**
-         * Test objective: Verify secondOperand() returns second operand
-         * Test scenario: Call secondOperand() on node with two operands
-         * Expected result: Second operand
-         */
+///
+         /// 测试目标: 验证y secondOperand() returns second operand
+         /// 测试场景: Call secondOperand() on node with two operands
+         /// 预期结果: Second operand
         @Test
         void secondOperand_ReturnsSecondOperand() {
             // given
@@ -180,11 +172,10 @@ class OperatorNodeTest {
             assertThat(result).isEqualTo(second);
         }
 
-        /**
-         * Test objective: Verify secondOperand() returns null for single operand
-         * Test scenario: Call secondOperand() on node with one operand
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y secondOperand() returns null for single operand
+         /// 测试场景: Call secondOperand() on node with one operand
+         /// 预期结果: null
         @Test
         void secondOperand_SingleOperand_ReturnsNull() {
             // given
@@ -198,11 +189,10 @@ class OperatorNodeTest {
             assertThat(result).isNull();
         }
 
-        /**
-         * Test objective: Verify thirdOperand() returns third operand
-         * Test scenario: Call thirdOperand() on node with three operands
-         * Expected result: Third operand
-         */
+///
+         /// 测试目标: 验证y thirdOperand() returns third operand
+         /// 测试场景: Call thirdOperand() on node with three operands
+         /// 预期结果: Third operand
         @Test
         void thirdOperand_ReturnsThirdOperand() {
             // given
@@ -218,11 +208,10 @@ class OperatorNodeTest {
             assertThat(result).isEqualTo(third);
         }
 
-        /**
-         * Test objective: Verify thirdOperand() returns null for two operands
-         * Test scenario: Call thirdOperand() on node with two operands
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y thirdOperand() returns null for two operands
+         /// 测试场景: Call thirdOperand() on node with two operands
+         /// 预期结果: null
         @Test
         void thirdOperand_TwoOperands_ReturnsNull() {
             // given
@@ -241,11 +230,10 @@ class OperatorNodeTest {
     @Nested
     class ExpressionMethod {
 
-        /**
-         * Test objective: Verify expression() returns self
-         * Test scenario: Call expression() on OperatorNode
-         * Expected result: Returns same instance
-         */
+///
+         /// 测试目标: 验证y expression() returns self
+         /// 测试场景: Call expression() on OperatorNode
+         /// 预期结果: Returns same instance
         @Test
         void expression_ReturnsSelf() {
             // given

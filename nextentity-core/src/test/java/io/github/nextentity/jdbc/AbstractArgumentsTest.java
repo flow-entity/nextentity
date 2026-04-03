@@ -10,9 +10,8 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for AbstractArguments.
- */
+///
+ /// 单元测试 AbstractArguments.
 class AbstractArgumentsTest {
 
     private TestArguments arguments;
@@ -29,11 +28,10 @@ class AbstractArgumentsTest {
     @Nested
     class NextMethod {
 
-        /**
-         * Test objective: Verify next() returns values in sequence.
-         * Test scenario: Call next() multiple times.
-         * Expected result: Returns values in order.
-         */
+///
+         /// 测试目标: 验证y next() returns values in sequence.
+         /// 测试场景: Call next() multiple times.
+         /// 预期结果: Returns values in order.
         @Test
         void next_ShouldReturnValuesInSequence() {
             // when
@@ -47,11 +45,10 @@ class AbstractArgumentsTest {
             assertThat(result3).isEqualTo("value3");
         }
 
-        /**
-         * Test objective: Verify next() increments index.
-         * Test scenario: Call next() and verify index increment.
-         * Expected result: Index is incremented after each call.
-         */
+///
+         /// 测试目标: 验证y next() increments index.
+         /// 测试场景: Call next() and verify index increment.
+         /// 预期结果: Index is incremented after each call.
         @Test
         void next_ShouldIncrementIndex() {
             // when
@@ -65,9 +62,8 @@ class AbstractArgumentsTest {
         }
     }
 
-    /**
-     * Test implementation of AbstractArguments.
-     */
+///
+     /// 测试 implementation of AbstractArguments.
     static class TestArguments extends AbstractArguments {
         private final Map<Integer, Object> data;
 

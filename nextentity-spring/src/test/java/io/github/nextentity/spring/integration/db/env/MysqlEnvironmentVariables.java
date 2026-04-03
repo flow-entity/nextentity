@@ -4,11 +4,9 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.mysql.MySQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-/**
- * MySQL database environment variables using Testcontainers.
- *
- * @author HuangChengwei
- */
+/// 使用 Testcontainers 的 MySQL 数据库环境变量。
+///
+/// @author HuangChengwei
 public class MysqlEnvironmentVariables implements DatabaseEnvironmentVariables {
 
     private static final JdbcDatabaseContainer<?> CONTAINER = new MySQLContainer(

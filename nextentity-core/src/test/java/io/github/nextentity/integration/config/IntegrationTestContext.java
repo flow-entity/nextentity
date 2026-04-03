@@ -9,12 +9,11 @@ import io.github.nextentity.integration.entity.LockableEntity;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import org.jspecify.annotations.NonNull;
 
-/**
- * Database configuration for integration tests.
- * Encapsulates DataSource, QueryExecutor, UpdateExecutor, and test data.
- *
- * @author HuangChengwei
- */
+///
+ /// Database configuration for integration tests.
+ /// Encapsulates DataSource, QueryExecutor, UpdateExecutor, and test data.
+ /// 
+ /// @author HuangChengwei
 public interface IntegrationTestContext {
 
     QueryExecutor getQueryExecutor();

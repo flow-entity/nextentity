@@ -11,6 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+///
+/// JPA 表达式构建器，用于将 NextEntity 表达式节点转换为 JPA Criteria API 表达式。
+/// 该类提供了将各种表达式节点（字面量、路径、操作符等）转换为对应的 JPA 表达式的功能。
+///
+/// @author HuangChengwei
+/// @since 2.1
 @SuppressWarnings("PatternVariableCanBeUsed")
 public class JpaExpressionBuilder {
 

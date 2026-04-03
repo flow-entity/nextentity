@@ -9,17 +9,15 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify InstanceInvocationHandler provides correct proxy invocation handling
- * <p>
- * Test scenarios:
- * 1. invoke returns data from map for known methods
- * 2. equals compares handlers correctly
- * 3. hashCode is consistent
- * 4. toString returns meaningful representation
- * <p>
- * Expected result: Invocation handler works correctly with dynamic proxies
- */
+/// 测试目标：验证 InstanceInvocationHandler 提供正确的代理调用处理
+/// <p>
+/// 测试场景：
+/// 1. invoke 为已知方法从映射中返回数据
+/// 2. equals 正确比较处理器
+/// 3. hashCode 保持一致
+/// 4. toString 返回有意义的表示
+/// <p>
+/// 预期结果：调用处理器与动态代理正确配合工作
 class InstanceInvocationHandlerTest {
 
     interface TestInterface {
@@ -33,11 +31,9 @@ class InstanceInvocationHandlerTest {
     @Nested
     class Invoke {
 
-        /**
-         * Test objective: Verify invoke returns mapped value for method
-         * Test scenario: Call proxied method
-         * Expected result: Value from map returned
-         */
+        /// 测试目标：验证 invoke 为方法返回映射的值
+        /// 测试场景：调用代理的方法
+        /// 预期结果：返回映射中的值
         @Test
         void invoke_WithMappedMethod_ShouldReturnMappedValue() throws Throwable {
             // given
@@ -57,11 +53,9 @@ class InstanceInvocationHandlerTest {
             assertThat(result).isEqualTo("test-value");
         }
 
-        /**
-         * Test objective: Verify invoke returns default method result
-         * Test scenario: Call default method not in map
-         * Expected result: Default method executed
-         */
+        /// 测试目标：验证 invoke 返回默认方法结果
+        /// 测试场景：调用映射中不存在的默认方法
+        /// 预期结果：执行默认方法
         @Test
         void invoke_WithDefaultMethod_ShouldExecuteDefault() throws Throwable {
             // given
@@ -85,11 +79,9 @@ class InstanceInvocationHandlerTest {
     @Nested
     class EqualsAndHashCode {
 
-        /**
-         * Test objective: Verify equals returns true for same handler
-         * Test scenario: Compare handler to itself
-         * Expected result: true returned
-         */
+        /// 测试目标：验证 equals 对同一处理器返回 true
+        /// 测试场景：将处理器与其自身比较
+        /// 预期结果：返回 true
         @Test
         void equals_SameHandler_ShouldReturnTrue() {
             // given
@@ -100,11 +92,9 @@ class InstanceInvocationHandlerTest {
             assertThat(handler.equals(handler)).isTrue();
         }
 
-        /**
-         * Test objective: Verify equals returns false for null
-         * Test scenario: Compare handler to null
-         * Expected result: false returned
-         */
+        /// 测试目标：验证 equals 对 null 返回 false
+        /// 测试场景：将处理器与 null 比较
+        /// 预期结果：返回 false
         @Test
         void equals_Null_ShouldReturnFalse() {
             // given
@@ -115,11 +105,9 @@ class InstanceInvocationHandlerTest {
             assertThat(handler.equals(null)).isFalse();
         }
 
-        /**
-         * Test objective: Verify equals compares proxies correctly
-         * Test scenario: Compare proxy to another proxy with same handler
-         * Expected result: Proxies considered equal
-         */
+        /// 测试目标：验证 equals 正确比较代理
+        /// 测试场景：将代理与具有相同处理器的另一个代理比较
+        /// 预期结果：代理被视为相等
         @Test
         void equals_ProxyWithSameHandler_ShouldBeEqual() throws Exception {
             // given
@@ -137,11 +125,9 @@ class InstanceInvocationHandlerTest {
     @Nested
     class ToString {
 
-        /**
-         * Test objective: Verify toString contains type name
-         * Test scenario: Call toString
-         * Expected result: String contains interface name
-         */
+        /// 测试目标：验证 toString 包含类型名称
+        /// 测试场景：调用 toString
+        /// 预期结果：字符串包含接口名称
         @Test
         void toString_ShouldContainTypeName() {
             // given
@@ -159,11 +145,9 @@ class InstanceInvocationHandlerTest {
     @Nested
     class AccessorMethods {
 
-        /**
-         * Test objective: Verify resultType returns correct type
-         * Test scenario: Call resultType()
-         * Expected result: Configured type returned
-         */
+        /// 测试目标：验证 resultType 返回正确类型
+        /// 测试场景：调用 resultType()
+        /// 预期结果：返回配置的类型
         @Test
         void resultType_ShouldReturnConfiguredType() {
             // given
@@ -177,11 +161,9 @@ class InstanceInvocationHandlerTest {
             assertThat(result).isEqualTo(TestInterface.class);
         }
 
-        /**
-         * Test objective: Verify data returns correct map
-         * Test scenario: Call data()
-         * Expected result: Configured data map returned
-         */
+        /// 测试目标：验证 data 返回正确的映射
+        /// 测试场景：调用 data()
+        /// 预期结果：返回配置的数据映射
         @Test
         void data_ShouldReturnConfiguredData() throws Exception {
             // given

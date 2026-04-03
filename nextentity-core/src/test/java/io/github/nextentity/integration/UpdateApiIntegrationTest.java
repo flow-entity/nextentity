@@ -16,20 +16,19 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 
-/**
- * Update API integration tests.
- * <p>
- * Tests update operations including:
- * - patch operation (partial update)
- * - insert operations
- * - update operations
- * - delete operations
- * - transaction operations
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Update API integration tests.
+ /// <p>
+ /// 测试s update 操作s including:
+ /// - patch 操作 (partial update)
+ /// - insert 操作s
+ /// - update 操作s
+ /// - delete 操作s
+ /// - transaction 操作s
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Update API Integration Tests")
 public class UpdateApiIntegrationTest {
 

@@ -9,24 +9,22 @@ import java.util.function.Supplier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Test objective: Verify Lazy class provides thread-safe lazy initialization
- * <p>
- * Test scenarios:
- * 1. Supplier is called only once on first get()
- * 2. Same instance is returned on subsequent get() calls
- * 3. Constructor throws NPE for null supplier
- * 4. Lazy initialization is thread-safe
- * <p>
- * Expected result: Supplier is called exactly once, and the result is cached
- */
+///
+ /// 测试目标: 验证y Lazy class provides thread-safe lazy initialization
+ /// <p>
+ /// 测试场景s:
+ /// 1. Supplier is called only once on first get()
+ /// 2. Same instance is returned on subsequent get() calls
+ /// 3. Constructor throws NPE for null supplier
+ /// 4. Lazy initialization is thread-safe
+ /// <p>
+ /// 预期结果: Supplier is called exactly once, and the result is cached
 class LazyTest {
 
-    /**
-     * Test objective: Verify supplier is called only once
-     * Test scenario: Create Lazy with a supplier that increments a counter
-     * Expected result: Supplier is called exactly once regardless of how many times get() is called
-     */
+///
+     /// 测试目标: 验证y supplier is called only once
+     /// 测试场景: Create Lazy with a supplier that increments a counter
+     /// 预期结果: Supplier is called exactly once regardless of how many times get() is called
     @Test
     void get_ShouldCallSupplierOnlyOnce() {
         // given
@@ -45,11 +43,10 @@ class LazyTest {
         assertThat(callCount.get()).isEqualTo(1);
     }
 
-    /**
-     * Test objective: Verify same instance is returned on subsequent get() calls
-     * Test scenario: Create Lazy that returns new StringBuilder each time
-     * Expected result: Same StringBuilder instance returned every time
-     */
+///
+     /// 测试目标: 验证y same instance is returned on subsequent get() calls
+     /// 测试场景: Create Lazy that returns new StringBuilder each time
+     /// 预期结果: Same StringBuilder instance returned every time
     @Test
     void get_ShouldReturnSameInstance() {
         // given
@@ -64,11 +61,10 @@ class LazyTest {
         assertThat(first).isSameAs(second).isSameAs(third);
     }
 
-    /**
-     * Test objective: Verify constructor throws NPE for null supplier
-     * Test scenario: Pass null to constructor
-     * Expected result: NullPointerException is thrown
-     */
+///
+     /// 测试目标: 验证y constructor throws NPE for null supplier
+     /// 测试场景: Pass null to constructor
+     /// 预期结果: NullPointerException is thrown
     @Test
     void constructor_WithNullSupplier_ShouldThrowNPE() {
         // given
@@ -79,11 +75,10 @@ class LazyTest {
                 .isInstanceOf(NullPointerException.class);
     }
 
-    /**
-     * Test objective: Verify lazy initialization works correctly
-     * Test scenario: Create Lazy and verify supplier is not called until get()
-     * Expected result: Supplier is not called during construction, only on get()
-     */
+///
+     /// 测试目标: 验证y lazy initialization works 正确
+     /// 测试场景: Create Lazy and verify supplier is not called until get()
+     /// 预期结果: Supplier is not called during construction, only on get()
     @Test
     void lazy_ShouldNotInitializeUntilGet() {
         // given
@@ -103,11 +98,10 @@ class LazyTest {
         assertThat(initialized.get()).isTrue();
     }
 
-    /**
-     * Test objective: Verify get() returns the value from supplier
-     * Test scenario: Create Lazy with a supplier that returns a specific value
-     * Expected result: get() returns exactly what the supplier returns
-     */
+///
+     /// 测试目标: 验证y get() returns the value from supplier
+     /// 测试场景: Create Lazy with a supplier that returns a specific value
+     /// 预期结果: get() returns exactly what the supplier returns
     @Test
     void get_ShouldReturnSupplierValue() {
         // given
@@ -121,11 +115,10 @@ class LazyTest {
         assertThat(result).isEqualTo(expectedValue);
     }
 
-    /**
-     * Test objective: Verify Lazy can handle null values from supplier
-     * Test scenario: Create Lazy with a supplier that returns null
-     * Expected result: get() returns null without throwing exception
-     */
+///
+     /// 测试目标: 验证y Lazy can handle null values from supplier
+     /// 测试场景: Create Lazy with a supplier that returns null
+     /// 预期结果: get() returns null without throwing exception
     @Test
     void get_WithNullSupplierResult_ShouldReturnNull() {
         // given
@@ -141,11 +134,10 @@ class LazyTest {
         assertThat(lazy.get()).isNull();
     }
 
-    /**
-     * Test objective: Verify Lazy is thread-safe for concurrent access
-     * Test scenario: Multiple threads call get() simultaneously
-     * Expected result: Supplier is called exactly once, all threads get same value
-     */
+///
+     /// 测试目标: 验证y Lazy is thread-safe for concurrent access
+     /// 测试场景: Multiple threads call get() simultaneously
+     /// 预期结果: Supplier is called exactly once, all threads get same value
     @Test
     void get_WithConcurrentAccess_ShouldBeThreadSafe() throws InterruptedException {
         // given
@@ -183,11 +175,10 @@ class LazyTest {
         }
     }
 
-    /**
-     * Test objective: Verify supplier can throw exception and it propagates
-     * Test scenario: Create Lazy with a supplier that throws RuntimeException
-     * Expected result: Exception is propagated on get()
-     */
+///
+     /// 测试目标: 验证y supplier can throw exception and it propagates
+     /// 测试场景: Create Lazy with a supplier that throws RuntimeException
+     /// 预期结果: Exception is propagated on get()
     @Test
     void get_WhenSupplierThrowsException_ShouldPropagate() {
         // given

@@ -8,17 +8,15 @@ import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify PrimitiveTypes utility class provides correct primitive type handling
- * <p>
- * Test scenarios:
- * 1. getWrapper returns correct wrapper type for primitives
- * 2. getWrapper returns same type for non-primitives
- * 3. isBasicType returns true for primitives and wrappers
- * 4. isBasicType returns false for other types
- * <p>
- * Expected result: Primitive type mapping works correctly
- */
+/// 测试目标：验证 PrimitiveTypes 工具类提供正确的基本类型处理
+/// <p>
+/// 测试场景：
+/// 1. getWrapper 为基本类型返回正确的包装类型
+/// 2. getWrapper 为非基本类型返回相同类型
+/// 3. isBasicType 对基本类型和包装类型返回 true
+/// 4. isBasicType 对其他类型返回 false
+/// <p>
+/// 预期结果：基本类型映射正常工作
 class PrimitiveTypesTest {
 
     static Stream<Object[]> primitiveWrapperPairs() {
@@ -35,11 +33,9 @@ class PrimitiveTypesTest {
         );
     }
 
-    /**
-     * Test objective: Verify getWrapper returns correct wrapper for each primitive
-     * Test scenario: Call getWrapper with each primitive type
-     * Expected result: Corresponding wrapper type returned
-     */
+    /// 测试目标：验证 getWrapper 为每个基本类型返回正确的包装器
+    /// 测试场景：用每个基本类型调用 getWrapper
+    /// 预期结果：返回相应的包装类型
     @ParameterizedTest
     @MethodSource("primitiveWrapperPairs")
     void getWrapper_ForPrimitive_ShouldReturnWrapper(Class<?> primitive, Class<?> wrapper) {
@@ -50,11 +46,9 @@ class PrimitiveTypesTest {
         assertThat(result).isEqualTo(wrapper);
     }
 
-    /**
-     * Test objective: Verify getWrapper returns same type for wrapper types
-     * Test scenario: Call getWrapper with wrapper types
-     * Expected result: Same wrapper type returned
-     */
+    /// 测试目标：验证 getWrapper 为包装类型返回相同类型
+    /// 测试场景：用包装类型调用 getWrapper
+    /// 预期结果：返回相同的包装类型
     @ParameterizedTest
     @MethodSource("primitiveWrapperPairs")
     void getWrapper_ForWrapper_ShouldReturnSameType(Class<?> primitive, Class<?> wrapper) {
@@ -65,11 +59,9 @@ class PrimitiveTypesTest {
         assertThat(result).isEqualTo(wrapper);
     }
 
-    /**
-     * Test objective: Verify getWrapper returns same type for non-primitive, non-wrapper types
-     * Test scenario: Call getWrapper with String
-     * Expected result: String returned unchanged
-     */
+    /// 测试目标：验证 getWrapper 为非基本、非包装类型返回相同类型
+    /// 测试场景：用 String 调用 getWrapper
+    /// 预期结果：String 不变返回
     @Test
     void getWrapper_ForNonPrimitive_ShouldReturnSameType() {
         // given
@@ -82,11 +74,9 @@ class PrimitiveTypesTest {
         assertThat(result).isEqualTo(String.class);
     }
 
-    /**
-     * Test objective: Verify isBasicType returns true for primitive types
-     * Test scenario: Check primitive types
-     * Expected result: true returned
-     */
+    /// 测试目标：验证 isBasicType 对基本类型返回 true
+    /// 测试场景：检查基本类型
+    /// 预期结果：返回 true
     @ParameterizedTest
     @MethodSource("primitiveWrapperPairs")
     void isBasicType_ForPrimitive_ShouldReturnTrue(Class<?> primitive, Class<?> wrapper) {
@@ -97,11 +87,9 @@ class PrimitiveTypesTest {
         assertThat(result).isTrue();
     }
 
-    /**
-     * Test objective: Verify isBasicType returns true for wrapper types
-     * Test scenario: Check wrapper types
-     * Expected result: true returned
-     */
+    /// 测试目标：验证 isBasicType 对包装类型返回 true
+    /// 测试场景：检查包装类型
+    /// 预期结果：返回 true
     @ParameterizedTest
     @MethodSource("primitiveWrapperPairs")
     void isBasicType_ForWrapper_ShouldReturnTrue(Class<?> primitive, Class<?> wrapper) {
@@ -112,11 +100,9 @@ class PrimitiveTypesTest {
         assertThat(result).isTrue();
     }
 
-    /**
-     * Test objective: Verify isBasicType returns false for non-basic types
-     * Test scenario: Check String, Object, custom types
-     * Expected result: false returned
-     */
+    /// 测试目标：验证 isBasicType 对非基本类型返回 false
+    /// 测试场景：检查 String、Object、自定义类型
+    /// 预期结果：返回 false
     @Test
     void isBasicType_ForNonBasicType_ShouldReturnFalse() {
         assertThat(PrimitiveTypes.isBasicType(String.class)).isFalse();

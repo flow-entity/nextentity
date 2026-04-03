@@ -2,12 +2,10 @@ package io.github.nextentity.spring.integration.db.env;
 
 import java.util.List;
 
-/**
- * Database environment variables interface.
- * Provides database connection configuration for integration tests.
- *
- * @author HuangChengwei
- */
+/// 数据库环境变量接口。
+/// 为集成测试提供数据库连接配置。
+///
+/// @author HuangChengwei
 public interface DatabaseEnvironmentVariables {
 
     List<DatabaseEnvironmentVariables> DBS = List.of(
@@ -15,33 +13,21 @@ public interface DatabaseEnvironmentVariables {
             new PostgresqlEnvironmentVariables()
     );
 
-    /**
-     * Returns the database name (e.g., "mysql", "postgresql").
-     */
+    /// 返回数据库名称（例如 "mysql", "postgresql"）。
     String getName();
 
-    /**
-     * Returns the JDBC connection URL.
-     */
+    /// 返回 JDBC 连接 URL。
     String getJdbcUrl();
 
-    /**
-     * Returns the database username.
-     */
+    /// 返回数据库用户名。
     String getUsername();
 
-    /**
-     * Returns the database password.
-     */
+    /// 返回数据库密码。
     String getPassword();
 
-    /**
-     * Returns the JDBC driver class name.
-     */
+    /// 返回 JDBC 驱动类名。
     String getDriverClassName();
 
-    /**
-     * Returns the SQL statement to set parent ID to null for data reset.
-     */
+    /// 返回用于数据重置的将父 ID 设置为 NULL 的 SQL 语句。
     String getPidNullSql();
 }

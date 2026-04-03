@@ -6,9 +6,9 @@ import io.github.nextentity.spring.integration.entity.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author HuangChengwei
- */
+/// IUser 测试类
+///
+/// @author HuangChengwei
 class IUserTest {
 
     private static final Logger log = LoggerFactory.getLogger(IUserTest.class);

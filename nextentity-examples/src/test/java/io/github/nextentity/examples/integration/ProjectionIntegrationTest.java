@@ -21,10 +21,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for projection operations in EmployeeRepository and DepartmentRepository.
- * Tests select fields, DTO mapping, Tuple selections and verifies results correctness.
- */
+/// 员工 Repository 和部门 Repository 中投影操作的集成测试。
+/// 测试选择字段、DTO 映射、元组选择并验证结果正确性。
 @DisplayName("Projection Integration Tests")
 class ProjectionIntegrationTest extends BaseIntegrationTest {
 

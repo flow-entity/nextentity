@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-/**
- * @author HuangChengwei
- */
+/// 用户仓库类
+///
+/// @author HuangChengwei
 public class UserRepository extends AbstractRepository<User, Integer> {
 
     private List<User> users;

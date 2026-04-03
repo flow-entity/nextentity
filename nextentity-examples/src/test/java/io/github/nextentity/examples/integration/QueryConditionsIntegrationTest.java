@@ -13,11 +13,9 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for query conditions in EmployeeRepository.
- * Tests all comparison operators (eq, ne, gt, lt, between, in, like, etc.)
- * and verifies results correctness.
- */
+/// 员工 Repository 中查询条件的集成测试。
+/// 测试所有比较运算符（eq、ne、gt、lt、between、in、like 等）
+/// 并验证结果正确性。
 @DisplayName("Query Conditions Integration Tests")
 class QueryConditionsIntegrationTest extends BaseIntegrationTest {
 

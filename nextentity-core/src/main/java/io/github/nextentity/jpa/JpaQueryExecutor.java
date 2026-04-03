@@ -20,6 +20,12 @@ import org.jspecify.annotations.NonNull;
 import java.util.Collection;
 import java.util.List;
 
+///
+/// JPA 查询执行器，使用 JPA Criteria API 执行查询操作。
+/// 该执行器支持实体查询、投影查询以及复杂的条件查询、排序、分组等功能。
+///
+/// @author HuangChengwei
+/// @since 2.1
 public class JpaQueryExecutor implements QueryExecutor {
 
     private final EntityManager entityManager;

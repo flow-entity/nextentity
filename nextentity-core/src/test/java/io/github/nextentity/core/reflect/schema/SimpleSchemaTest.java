@@ -7,25 +7,21 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SimpleSchema provides correct schema metadata
- * <p>
- * Test scenarios:
- * 1. Type and attributes can be set and retrieved
- * 2. Builder pattern works correctly
- * <p>
- * Expected result: Schema metadata can be created and accessed correctly
- */
+/// 测试目标：验证 SimpleSchema 提供正确的模式元数据
+/// <p>
+/// 测试场景：
+/// 1. 类型和属性可以设置和检索
+/// 2. 构建器模式正常工作
+/// <p>
+/// 预期结果：可以正确创建和访问模式元数据
 class SimpleSchemaTest {
 
     @Nested
     class BasicProperties {
 
-        /**
-         * Test objective: Verify type can be set and retrieved
-         * Test scenario: Set type and get it back
-         * Expected result: Correct type returned
-         */
+        /// 测试目标：验证类型可以设置和检索
+        /// 测试场景：设置类型并获取回来
+        /// 预期结果：返回正确的类型
         @Test
         void type_ShouldBeSettable() {
             // given
@@ -38,11 +34,9 @@ class SimpleSchemaTest {
             assertThat(schema.type()).isEqualTo(String.class);
         }
 
-        /**
-         * Test objective: Verify attributes can be set and retrieved
-         * Test scenario: Set attributes and get them back
-         * Expected result: Correct attributes returned
-         */
+        /// 测试目标：验证属性可以设置和检索
+        /// 测试场景：设置属性并获取回来
+        /// 预期结果：返回正确的属性
         @Test
         void attributes_ShouldBeSettable() {
             // given
@@ -60,11 +54,9 @@ class SimpleSchemaTest {
     @Nested
     class BuilderPattern {
 
-        /**
-         * Test objective: Verify setter methods return this for chaining
-         * Test scenario: Chain setters
-         * Expected result: Same instance returned
-         */
+        /// 测试目标：验证设置器方法返回 this 以支持链式调用
+        /// 测试场景：链接设置器
+        /// 预期结果：返回相同的实例
         @Test
         void setters_ShouldReturnThis() {
             // given

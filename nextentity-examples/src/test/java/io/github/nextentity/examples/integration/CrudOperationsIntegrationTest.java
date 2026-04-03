@@ -16,10 +16,8 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Integration tests for CRUD operations in EmployeeRepository.
- * Tests insert, update, delete operations and verifies results correctness.
- */
+/// 员工 Repository 中 CRUD 操作的集成测试。
+/// 测试插入、更新、删除操作并验证结果正确性。
 @DisplayName("CRUD Operations Integration Tests")
 class CrudOperationsIntegrationTest extends BaseIntegrationTest {
 

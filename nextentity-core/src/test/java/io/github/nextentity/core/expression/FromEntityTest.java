@@ -5,13 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify FromEntity correctly represents an entity source
- * <p>
- * Test scenarios:
- * 1. Create with entity class
- * 2. Access type property
- */
+///
+/// 测试目标：验证FromEntity正确表示实体源
+/// <p>
+/// 测试场景：
+/// 1. 使用实体类创建
+/// 2. 访问类型属性
+///
 class FromEntityTest {
 
     @Nested

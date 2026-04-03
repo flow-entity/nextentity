@@ -5,19 +5,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SubQueryEntity.
- */
+///
+ /// 单元测试 SubQueryEntity.
 class SubQueryEntityTest {
 
     @Nested
     class SubSelectSql {
 
-        /**
-         * Test objective: Verify subSelectSql() returns the SQL string.
-         * Test scenario: Create SubQueryEntity with SQL and call subSelectSql().
-         * Expected result: Returns the SQL string.
-         */
+///
+         /// 测试目标: 验证y subSelectSql() returns the SQL string.
+         /// 测试场景: Create SubQueryEntity with SQL and call subSelectSql().
+         /// 预期结果: Returns the SQL string.
         @Test
         void subSelectSql_ShouldReturnConstructorValue() {
             // given
@@ -36,11 +34,10 @@ class SubQueryEntityTest {
     @Nested
     class Inheritance {
 
-        /**
-         * Test objective: Verify SubQueryEntity inherits from SimpleEntity.
-         * Test scenario: Create SubQueryEntity and check type and tableName.
-         * Expected result: Inherited methods work correctly.
-         */
+///
+         /// 测试目标: 验证y SubQueryEntity inherits from SimpleEntity.
+         /// 测试场景: Create SubQueryEntity and check type and tableName.
+         /// 预期结果: Inherited 方法 work 正确.
         @Test
         void shouldInheritFromSimpleEntity() {
             // given
@@ -52,11 +49,10 @@ class SubQueryEntityTest {
             assertThat(entity.tableName()).isEqualTo("test_table");
         }
 
-        /**
-         * Test objective: Verify SubQueryEntity implements SubQueryEntityType.
-         * Test scenario: Check if instance is SubQueryEntityType.
-         * Expected result: Is instance of SubQueryEntityType.
-         */
+///
+         /// 测试目标: 验证y SubQueryEntity implements SubQueryEntityType.
+         /// 测试场景: Check if instance is SubQueryEntityType.
+         /// 预期结果: Is instance of SubQueryEntityType.
         @Test
         void shouldImplementSubQueryEntityType() {
             // given
@@ -68,9 +64,8 @@ class SubQueryEntityTest {
         }
     }
 
-    /**
-     * Test entity class.
-     */
+///
+     /// 测试 entity class.
     static class TestEntity {
         private Long id;
         private String name;

@@ -15,10 +15,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Base class for integration tests.
- * Provides common setup and cleanup for test data.
- */
+/// 集成测试的基类。
+/// 提供测试数据的通用设置和清理。
 @SpringBootTest
 @Import(TestConfig.class)
 public abstract class BaseIntegrationTest {
@@ -32,9 +30,7 @@ public abstract class BaseIntegrationTest {
     protected List<Department> testDepartments;
     protected List<Employee> testEmployees;
 
-    /**
-     * Setup test data before each test.
-     */
+    /// 每个测试前设置测试数据。
     @BeforeEach
     void setUpBase() {
         // Ensure repositories are injected
@@ -53,17 +49,13 @@ public abstract class BaseIntegrationTest {
         employeeRepository.insertAll(testEmployees);
     }
 
-    /**
-     * Cleanup after each test.
-     */
+    /// 每个测试后清理。
     @AfterEach
     void tearDownBase() {
         clearAllData();
     }
 
-    /**
-     * Clear all test data from database.
-     */
+    /// 清除数据库中的所有测试数据。
     protected void clearAllData() {
         // Delete all employees first (foreign key constraint)
         List<Employee> employees = employeeRepository.findAllEmployees();
@@ -78,44 +70,32 @@ public abstract class BaseIntegrationTest {
         }
     }
 
-    /**
-     * Create an employee for testing.
-     */
+    /// 创建用于测试的员工。
     protected Employee createTestEmployee(Long id, String name, String email, BigDecimal salary, Long departmentId) {
         return TestDataFactory.createSimpleEmployee(id, name, email, salary, departmentId);
     }
 
-    /**
-     * Create a department for testing.
-     */
+    /// 创建用于测试的部门。
     protected Department createTestDepartment(Long id, String name, String location, Double budget) {
         return TestDataFactory.createDepartment(id, name, location, budget, true);
     }
 
-    /**
-     * Get the first department ID from test data.
-     */
+    /// 从测试数据中获取第一个部门 ID。
     protected Long getFirstDepartmentId() {
         return testDepartments.isEmpty() ? TestDataFactory.getDeptIdStart() + 1 : testDepartments.get(0).getId();
     }
 
-    /**
-     * Get the first employee ID from test data.
-     */
+    /// 从测试数据中获取第一个员工 ID。
     protected Long getFirstEmployeeId() {
         return testEmployees.isEmpty() ? TestDataFactory.getEmpIdStart() : testEmployees.get(0).getId();
     }
 
-    /**
-     * Count employees in test data.
-     */
+    /// 计算测试数据中的员工数量。
     protected int getTestEmployeeCount() {
         return testEmployees.size();
     }
 
-    /**
-     * Count departments in test data.
-     */
+    /// 计算测试数据中的部门数量。
     protected int getTestDepartmentCount() {
         return testDepartments.size();
     }

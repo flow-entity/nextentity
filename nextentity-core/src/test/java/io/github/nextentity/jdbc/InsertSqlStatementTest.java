@@ -9,14 +9,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify InsertSqlStatement correctly stores insert data
- * <p>
- * Test scenarios:
- * 1. Create insert statement with all fields
- * 2. Verify returnGeneratedKeys flag
- * 3. Verify entities getter
- */
+///
+ /// 测试目标: 验证y InsertSqlStatement 正确 stores insert data
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create insert statement with all fields
+ /// 2. 验证y returnGeneratedKeys flag
+ /// 3. 验证y entities getter
 class InsertSqlStatementTest {
 
     @Nested

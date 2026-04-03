@@ -8,17 +8,15 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for AbstractExpressionBuilder.
- */
+///
+ /// 单元测试 AbstractExpressionBuilder.
 class AbstractExpressionBuilderTest {
 
     private TestExpressionBuilder builder;
     private ExpressionNode capturedNode;
 
-    /**
-     * Concrete implementation for testing.
-     */
+///
+     /// Concrete implementation for testing.
     private class TestExpressionBuilder extends AbstractExpressionBuilder<String, Object, TestExpressionBuilder> {
 
         public TestExpressionBuilder(ExpressionNode root) {
@@ -42,11 +40,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class GetRoot {
 
-        /**
-         * Test objective: Verify getRoot() returns the root node.
-         * Test scenario: Call getRoot() after construction.
-         * Expected result: Returns the root node passed to constructor.
-         */
+///
+         /// 测试目标: 验证y getRoot() returns the root node.
+         /// 测试场景: Call getRoot() after construction.
+         /// 预期结果: Returns the root node passed to constructor.
         @Test
         void getRoot_ShouldReturnConstructorValue() {
             // when
@@ -60,11 +57,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class EqualityOperators {
 
-        /**
-         * Test objective: Verify eq() creates EQ operator node.
-         * Test scenario: Call eq() with a value.
-         * Expected result: Creates operator node with EQ operator.
-         */
+///
+         /// 测试目标: 验证y eq() creates EQ operator node.
+         /// 测试场景: Call eq() with a value.
+         /// 预期结果: 创建 operator node with EQ operator.
         @Test
         void eq_ShouldCreateEqOperator() {
             // when
@@ -76,11 +72,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.EQ);
         }
 
-        /**
-         * Test objective: Verify eqIfNotNull() with null returns EmptyNode.
-         * Test scenario: Call eqIfNotNull() with null value.
-         * Expected result: Returns EmptyNode.
-         */
+///
+         /// 测试目标: 验证y eqIfNotNull() with null returns EmptyNode.
+         /// 测试场景: Call eqIfNotNull() with null value.
+         /// 预期结果: Returns EmptyNode.
         @Test
         void eqIfNotNull_WhenNull_ShouldReturnEmptyNode() {
             // when
@@ -90,11 +85,10 @@ class AbstractExpressionBuilderTest {
             assertThat(capturedNode).isInstanceOf(EmptyNode.class);
         }
 
-        /**
-         * Test objective: Verify eqIfNotNull() with value creates EQ operator.
-         * Test scenario: Call eqIfNotNull() with non-null value.
-         * Expected result: Creates operator node with EQ operator.
-         */
+///
+         /// 测试目标: 验证y eqIfNotNull() with value creates EQ operator.
+         /// 测试场景: Call eqIfNotNull() with non-null value.
+         /// 预期结果: 创建 operator node with EQ operator.
         @Test
         void eqIfNotNull_WhenNotNull_ShouldCreateEqOperator() {
             // when
@@ -106,11 +100,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.EQ);
         }
 
-        /**
-         * Test objective: Verify ne() creates NE operator node.
-         * Test scenario: Call ne() with a value.
-         * Expected result: Creates operator node with NE operator.
-         */
+///
+         /// 测试目标: 验证y ne() creates NE operator node.
+         /// 测试场景: Call ne() with a value.
+         /// 预期结果: 创建 operator node with NE operator.
         @Test
         void ne_ShouldCreateNeOperator() {
             // when
@@ -122,11 +115,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.NE);
         }
 
-        /**
-         * Test objective: Verify neIfNotNull() with null returns EmptyNode.
-         * Test scenario: Call neIfNotNull() with null value.
-         * Expected result: Returns EmptyNode.
-         */
+///
+         /// 测试目标: 验证y neIfNotNull() with null returns EmptyNode.
+         /// 测试场景: Call neIfNotNull() with null value.
+         /// 预期结果: Returns EmptyNode.
         @Test
         void neIfNotNull_WhenNull_ShouldReturnEmptyNode() {
             // when
@@ -140,11 +132,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class ComparisonOperators {
 
-        /**
-         * Test objective: Verify gt() creates GT operator node.
-         * Test scenario: Call gt() with a value.
-         * Expected result: Creates operator node with GT operator.
-         */
+///
+         /// 测试目标: 验证y gt() creates GT operator node.
+         /// 测试场景: Call gt() with a value.
+         /// 预期结果: 创建 operator node with GT operator.
         @Test
         void gt_ShouldCreateGtOperator() {
             // when
@@ -156,11 +147,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.GT);
         }
 
-        /**
-         * Test objective: Verify ge() creates GE operator node.
-         * Test scenario: Call ge() with a value.
-         * Expected result: Creates operator node with GE operator.
-         */
+///
+         /// 测试目标: 验证y ge() creates GE operator node.
+         /// 测试场景: Call ge() with a value.
+         /// 预期结果: 创建 operator node with GE operator.
         @Test
         void ge_ShouldCreateGeOperator() {
             // when
@@ -172,11 +162,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.GE);
         }
 
-        /**
-         * Test objective: Verify lt() creates LT operator node.
-         * Test scenario: Call lt() with a value.
-         * Expected result: Creates operator node with LT operator.
-         */
+///
+         /// 测试目标: 验证y lt() creates LT operator node.
+         /// 测试场景: Call lt() with a value.
+         /// 预期结果: 创建 operator node with LT operator.
         @Test
         void lt_ShouldCreateLtOperator() {
             // when
@@ -188,11 +177,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.LT);
         }
 
-        /**
-         * Test objective: Verify le() creates LE operator node.
-         * Test scenario: Call le() with a value.
-         * Expected result: Creates operator node with LE operator.
-         */
+///
+         /// 测试目标: 验证y le() creates LE operator node.
+         /// 测试场景: Call le() with a value.
+         /// 预期结果: 创建 operator node with LE operator.
         @Test
         void le_ShouldCreateLeOperator() {
             // when
@@ -204,11 +192,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.LE);
         }
 
-        /**
-         * Test objective: Verify gtIfNotNull() with null returns EmptyNode.
-         * Test scenario: Call gtIfNotNull() with null value.
-         * Expected result: Returns EmptyNode.
-         */
+///
+         /// 测试目标: 验证y gtIfNotNull() with null returns EmptyNode.
+         /// 测试场景: Call gtIfNotNull() with null value.
+         /// 预期结果: Returns EmptyNode.
         @Test
         void gtIfNotNull_WhenNull_ShouldReturnEmptyNode() {
             // when
@@ -218,11 +205,10 @@ class AbstractExpressionBuilderTest {
             assertThat(capturedNode).isInstanceOf(EmptyNode.class);
         }
 
-        /**
-         * Test objective: Verify geIfNotNull() with value creates GE operator.
-         * Test scenario: Call geIfNotNull() with non-null value.
-         * Expected result: Creates operator node with GE operator.
-         */
+///
+         /// 测试目标: 验证y geIfNotNull() with value creates GE operator.
+         /// 测试场景: Call geIfNotNull() with non-null value.
+         /// 预期结果: 创建 operator node with GE operator.
         @Test
         void geIfNotNull_WhenNotNull_ShouldCreateGeOperator() {
             // when
@@ -238,11 +224,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class NullOperators {
 
-        /**
-         * Test objective: Verify isNull() creates IS_NULL operator node.
-         * Test scenario: Call isNull().
-         * Expected result: Creates operator node with IS_NULL operator.
-         */
+///
+         /// 测试目标: 验证y isNull() creates IS_NULL operator node.
+         /// 测试场景: Call isNull().
+         /// 预期结果: 创建 operator node with IS_NULL operator.
         @Test
         void isNull_ShouldCreateIsNullOperator() {
             // when
@@ -254,11 +239,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.IS_NULL);
         }
 
-        /**
-         * Test objective: Verify isNotNull() creates IS_NOT_NULL operator node.
-         * Test scenario: Call isNotNull().
-         * Expected result: Creates operator node with IS_NOT_NULL operator.
-         */
+///
+         /// 测试目标: 验证y isNotNull() creates IS_NOT_NULL operator node.
+         /// 测试场景: Call isNotNull().
+         /// 预期结果: 创建 operator node with IS_NOT_NULL operator.
         @Test
         void isNotNull_ShouldCreateIsNotNullOperator() {
             // when
@@ -274,11 +258,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class InOperators {
 
-        /**
-         * Test objective: Verify in() with varargs creates IN operator node.
-         * Test scenario: Call in() with multiple values.
-         * Expected result: Creates operator node with IN operator.
-         */
+///
+         /// 测试目标: 验证y in() with varargs creates IN operator node.
+         /// 测试场景: Call in() with multiple values.
+         /// 预期结果: 创建 operator node with IN operator.
         @Test
         void in_WithVarargs_ShouldCreateInOperator() {
             // when
@@ -291,11 +274,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operands()).hasSize(4); // root + 3 values
         }
 
-        /**
-         * Test objective: Verify in() with Collection creates IN operator node.
-         * Test scenario: Call in() with a collection.
-         * Expected result: Creates operator node with IN operator.
-         */
+///
+         /// 测试目标: 验证y in() with Collection creates IN operator node.
+         /// 测试场景: Call in() with a collection.
+         /// 预期结果: 创建 operator node with IN operator.
         @Test
         void in_WithCollection_ShouldCreateInOperator() {
             // when
@@ -307,11 +289,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.IN);
         }
 
-        /**
-         * Test objective: Verify notIn() creates IN operator wrapped with NOT.
-         * Test scenario: Call notIn() with values.
-         * Expected result: Creates NOT(IN) operator structure.
-         */
+///
+         /// 测试目标: 验证y notIn() creates IN operator wrapped with NOT.
+         /// 测试场景: Call notIn() with values.
+         /// 预期结果: 创建 NOT(IN) operator structure.
         @Test
         void notIn_ShouldCreateNotInOperator() {
             // when
@@ -330,11 +311,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class BetweenOperators {
 
-        /**
-         * Test objective: Verify between() creates BETWEEN operator node.
-         * Test scenario: Call between() with two values.
-         * Expected result: Creates operator node with BETWEEN operator.
-         */
+///
+         /// 测试目标: 验证y between() creates BETWEEN operator node.
+         /// 测试场景: Call between() with two values.
+         /// 预期结果: 创建 operator node with BETWEEN operator.
         @Test
         void between_ShouldCreateBetweenOperator() {
             // when
@@ -347,11 +327,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operands()).hasSize(3); // root + left + right
         }
 
-        /**
-         * Test objective: Verify notBetween() creates NOT(BETWEEN) structure.
-         * Test scenario: Call notBetween() with two values.
-         * Expected result: Creates NOT(BETWEEN) operator structure.
-         */
+///
+         /// 测试目标: 验证y notBetween() creates NOT(BETWEEN) structure.
+         /// 测试场景: Call notBetween() with two values.
+         /// 预期结果: 创建 NOT(BETWEEN) operator structure.
         @Test
         void notBetween_ShouldCreateNotBetweenOperator() {
             // when
@@ -367,11 +346,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class LikeOperators {
 
-        /**
-         * Test objective: Verify like() creates LIKE operator node.
-         * Test scenario: Call like() with a pattern.
-         * Expected result: Creates operator node with LIKE operator.
-         */
+///
+         /// 测试目标: 验证y like() creates LIKE operator node.
+         /// 测试场景: Call like() with a pattern.
+         /// 预期结果: 创建 operator node with LIKE operator.
         @Test
         void like_ShouldCreateLikeOperator() {
             // when
@@ -383,11 +361,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.LIKE);
         }
 
-        /**
-         * Test objective: Verify notLike() creates NOT(LIKE) structure.
-         * Test scenario: Call notLike() with a pattern.
-         * Expected result: Creates NOT(LIKE) operator structure.
-         */
+///
+         /// 测试目标: 验证y notLike() creates NOT(LIKE) structure.
+         /// 测试场景: Call notLike() with a pattern.
+         /// 预期结果: 创建 NOT(LIKE) operator structure.
         @Test
         void notLike_ShouldCreateNotLikeOperator() {
             // when
@@ -399,11 +376,10 @@ class AbstractExpressionBuilderTest {
             assertThat(opNode.operator()).isEqualTo(Operator.NOT);
         }
 
-        /**
-         * Test objective: Verify likeIfNotNull() with null returns EmptyNode.
-         * Test scenario: Call likeIfNotNull() with null value.
-         * Expected result: Returns EmptyNode.
-         */
+///
+         /// 测试目标: 验证y likeIfNotNull() with null returns EmptyNode.
+         /// 测试场景: Call likeIfNotNull() with null value.
+         /// 预期结果: Returns EmptyNode.
         @Test
         void likeIfNotNull_WhenNull_ShouldReturnEmptyNode() {
             // when
@@ -413,11 +389,10 @@ class AbstractExpressionBuilderTest {
             assertThat(capturedNode).isInstanceOf(EmptyNode.class);
         }
 
-        /**
-         * Test objective: Verify likeIfNotEmpty() with empty string returns EmptyNode.
-         * Test scenario: Call likeIfNotEmpty() with empty string.
-         * Expected result: Returns EmptyNode.
-         */
+///
+         /// 测试目标: 验证y likeIfNotEmpty() with empty string returns EmptyNode.
+         /// 测试场景: Call likeIfNotEmpty() with empty string.
+         /// 预期结果: Returns EmptyNode.
         @Test
         void likeIfNotEmpty_WhenEmpty_ShouldReturnEmptyNode() {
             // when
@@ -427,11 +402,10 @@ class AbstractExpressionBuilderTest {
             assertThat(capturedNode).isInstanceOf(EmptyNode.class);
         }
 
-        /**
-         * Test objective: Verify likeIfNotEmpty() with non-empty creates LIKE.
-         * Test scenario: Call likeIfNotEmpty() with non-empty string.
-         * Expected result: Creates LIKE operator.
-         */
+///
+         /// 测试目标: 验证y likeIfNotEmpty() with non-empty creates LIKE.
+         /// 测试场景: Call likeIfNotEmpty() with non-empty string.
+         /// 预期结果: 创建 LIKE operator.
         @Test
         void likeIfNotEmpty_WhenNonEmpty_ShouldCreateLikeOperator() {
             // when
@@ -447,11 +421,10 @@ class AbstractExpressionBuilderTest {
     @Nested
     class LogicalOperators {
 
-        /**
-         * Test objective: Verify not() creates NOT operator node.
-         * Test scenario: Call not().
-         * Expected result: Creates operator node with NOT operator.
-         */
+///
+         /// 测试目标: 验证y not() creates NOT operator node.
+         /// 测试场景: Call not().
+         /// 预期结果: 创建 operator node with NOT operator.
         @Test
         void not_ShouldCreateNotOperator() {
             // when

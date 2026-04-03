@@ -5,14 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify DeepLimitSchemaAttributePaths factory method
- * <p>
- * Test scenarios:
- * 1. Create paths with limit
- * 2. Verify isEmpty returns correct value
- * 3. Verify get method
- */
+///
+ /// 测试目标: 验证y DeepLimitSchemaAttributePaths factory 方法
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create paths with limit
+ /// 2. 验证y isEmpty returns correct value
+ /// 3. 验证y get 方法
 class DeepLimitSchemaAttributePathsTest {
 
     @Nested

@@ -16,27 +16,25 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Query operations integration tests.
- * <p>
- * Tests basic query operations including:
- * - Select all records
- * - Select with conditions (WHERE clause)
- * - Ordering (ORDER BY)
- * - Pagination (LIMIT/OFFSET)
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Query 操作s integration tests.
+ /// <p>
+ /// 测试s basic query 操作s including:
+ /// - Select all records
+ /// - Select with conditions (WHERE clause)
+ /// - Ordering (ORDER BY)
+ /// - Pagination (LIMIT/OFFSET)
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Query Operations Integration Tests")
 public class QueryOperationsIntegrationTest {
 
     private static final Logger log = LoggerFactory.getLogger(QueryOperationsIntegrationTest.class);
 
-    /**
-     * Tests selecting all records from a table.
-     */
+///
+     /// 测试s selecting all records from a table.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select all employees")
@@ -49,9 +47,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals(12, employees.size(), "Should have 12 employees");
     }
 
-    /**
-     * Tests selecting all records from a table with Department entity.
-     */
+///
+     /// 测试s selecting all records from a table with Department entity.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select all departments")
@@ -64,9 +61,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals(5, departments.size(), "Should have 5 departments");
     }
 
-    /**
-     * Tests selecting a single record by ID.
-     */
+///
+     /// 测试s selecting a single record by ID.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find employee by ID")
@@ -82,9 +78,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals("Alice Johnson", employee.getName());
     }
 
-    /**
-     * Tests selecting with equality condition.
-     */
+///
+     /// 测试s selecting with equality condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by name with eq")
@@ -99,9 +94,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals("Alice Johnson", employees.get(0).getName());
     }
 
-    /**
-     * Tests selecting with inequality condition.
-     */
+///
+     /// 测试s selecting with inequality condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with ne condition")
@@ -116,9 +110,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().noneMatch(e -> e.getId() == 1L));
     }
 
-    /**
-     * Tests selecting with greater than condition.
-     */
+///
+     /// 测试s selecting with greater than condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with gt condition")
@@ -133,9 +126,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(e -> e.getId() > 10L));
     }
 
-    /**
-     * Tests selecting with less than condition.
-     */
+///
+     /// 测试s selecting with less than condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with lt condition")
@@ -150,9 +142,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(e -> e.getId() < 4L));
     }
 
-    /**
-     * Tests selecting with IN condition.
-     */
+///
+     /// 测试s selecting with IN condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with in condition")
@@ -168,9 +159,8 @@ public class QueryOperationsIntegrationTest {
                 e.getId() == 1L || e.getId() == 3L || e.getId() == 5L));
     }
 
-    /**
-     * Tests selecting with NOT IN condition.
-     */
+///
+     /// 测试s selecting with NOT IN condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees with notIn condition")
@@ -186,9 +176,8 @@ public class QueryOperationsIntegrationTest {
                 e.getId() != 1L && e.getId() != 3L && e.getId() != 5L));
     }
 
-    /**
-     * Tests selecting with IS NULL condition.
-     */
+///
+     /// 测试s selecting with IS NULL condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with isNull condition")
@@ -211,9 +200,8 @@ public class QueryOperationsIntegrationTest {
         context.getUpdateExecutor().update(employee, Employee.class);
     }
 
-    /**
-     * Tests selecting with IS NOT NULL condition.
-     */
+///
+     /// 测试s selecting with IS NOT NULL condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with isNotNull condition")
@@ -228,9 +216,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(e -> e.getEmail() != null));
     }
 
-    /**
-     * Tests selecting with boolean condition.
-     */
+///
+     /// 测试s selecting with boolean condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter active employees")
@@ -245,9 +232,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(Employee::getActive));
     }
 
-    /**
-     * Tests ordering by single field ascending.
-     */
+///
+     /// 测试s ordering by single field ascending.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order employees by id ascending")
@@ -264,9 +250,8 @@ public class QueryOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests ordering by single field descending.
-     */
+///
+     /// 测试s ordering by single field descending.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order employees by id descending")
@@ -283,9 +268,8 @@ public class QueryOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests ordering by multiple fields.
-     */
+///
+     /// 测试s ordering by multiple fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order employees by department and name")
@@ -308,9 +292,8 @@ public class QueryOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests pagination with limit.
-     */
+///
+     /// 测试s pagination with limit.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit results")
@@ -326,9 +309,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals(5L, employees.get(4).getId());
     }
 
-    /**
-     * Tests pagination with offset and limit.
-     */
+///
+     /// 测试s pagination with offset and limit.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should paginate with offset and limit")
@@ -344,9 +326,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals(8L, employees.get(2).getId());
     }
 
-    /**
-     * Tests counting records.
-     */
+///
+     /// 测试s counting records.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees")
@@ -358,9 +339,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals(12, count);
     }
 
-    /**
-     * Tests checking existence.
-     */
+///
+     /// 测试s checking existence.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check if employees exist")
@@ -372,9 +352,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(exists);
     }
 
-    /**
-     * Tests checking existence with condition.
-     */
+///
+     /// 测试s checking existence with condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check existence with condition")
@@ -394,9 +373,8 @@ public class QueryOperationsIntegrationTest {
         assertFalse(notExists);
     }
 
-    /**
-     * Tests selecting first record.
-     */
+///
+     /// 测试s selecting first record.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first employee")
@@ -411,9 +389,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals(1L, first.getId());
     }
 
-    /**
-     * Tests selecting with AND condition.
-     */
+///
+     /// 测试s selecting with AND condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with AND condition")
@@ -429,9 +406,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(e -> e.getActive() && e.getDepartmentId() == 1L));
     }
 
-    /**
-     * Tests selecting with LIKE condition.
-     */
+///
+     /// 测试s selecting with LIKE condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE condition")
@@ -446,9 +422,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(e -> e.getName().startsWith("A")));
     }
 
-    /**
-     * Tests selecting projected fields.
-     */
+///
+     /// 测试s selecting projected fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select projected fields")
@@ -467,9 +442,8 @@ public class QueryOperationsIntegrationTest {
         assertEquals("alice@example.com", tuple.get1());
     }
 
-    /**
-     * Tests selecting departments by active status.
-     */
+///
+     /// 测试s selecting departments by active status.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter departments by active status")
@@ -485,9 +459,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(departments.stream().allMatch(Department::getActive));
     }
 
-    /**
-     * Tests selecting employees by department.
-     */
+///
+     /// 测试s selecting employees by department.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by department")
@@ -503,9 +476,8 @@ public class QueryOperationsIntegrationTest {
         assertTrue(employees.stream().allMatch(e -> e.getDepartmentId() == 1L));
     }
 
-    /**
-     * Tests selecting employees by salary range.
-     */
+///
+     /// 测试s selecting employees by salary range.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by salary range")

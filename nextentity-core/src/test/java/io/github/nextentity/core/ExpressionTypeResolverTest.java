@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify ExpressionTypeResolver correctly resolves expression types
- * <p>
- * Test scenarios:
- * 1. Resolve literal types
- * 2. Resolve operator types
- */
+///
+ /// 测试目标: 验证y ExpressionTypeResolver 正确 resolves expression types
+ /// <p>
+ /// 测试场景s:
+ /// 1. Resolve literal types
+ /// 2. Resolve operator types
 class ExpressionTypeResolverTest {
 
     @Nested

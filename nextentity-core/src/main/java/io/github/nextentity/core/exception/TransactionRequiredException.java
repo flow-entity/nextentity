@@ -1,45 +1,35 @@
 package io.github.nextentity.core.exception;
 
-/**
- * Exception thrown when a transaction is required but not active.
- * This typically occurs when database operations are performed outside
- * of a transactional context.
- *
- * @since 1.0.0
- */
+/// 需要事务但事务未激活时抛出的异常。
+///
+/// 通常在非事务上下文中执行数据库操作时发生。
+///
+/// @since 1.0.0
 public class TransactionRequiredException extends NextEntityException {
 
-    /**
-     * Constructs a new exception with a default message.
-     */
+    /// 使用默认消息构造新异常。
     public TransactionRequiredException() {
-        super("Transaction is required but not active. Please ensure the operation is performed within a transactional context.");
+        super("需要事务但事务未激活。请确保操作在事务上下文中执行。");
     }
 
-    /**
-     * Constructs a new exception with the specified detail message.
-     *
-     * @param message the detail message
-     */
+    /// 使用指定的详细消息构造新异常。
+    ///
+    /// @param message 详细消息
     public TransactionRequiredException(String message) {
         super(message);
     }
 
-    /**
-     * Constructs a new exception with the specified detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause   the cause of this exception
-     */
+    /// 使用指定的详细消息和原因构造新异常。
+    ///
+    /// @param message 详细消息
+    /// @param cause   此异常的原因
     public TransactionRequiredException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    /**
-     * Constructs a new exception with the specified cause.
-     *
-     * @param cause the cause of this exception
-     */
+    /// 使用指定的原因构造新异常。
+    ///
+    /// @param cause 此异常的原因
     public TransactionRequiredException(Throwable cause) {
         super(cause);
     }

@@ -6,23 +6,19 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify NumberExpressionImpl correctly implements numeric operations
- * <p>
- * Test scenarios:
- * 1. Arithmetic operations (add, subtract, multiply, divide, mod)
- * 2. Aggregate functions (sum, avg, max, min)
- */
+/// 测试目标：验证NumberExpressionImpl正确实现数值运算
+/// <p>
+/// 测试场景：
+/// 1. 算术运算（加法、减法、乘法、除法、模）
+/// 2. 聚合函数（总和、平均值、最大值、最小值）
 class NumberExpressionImplTest {
 
     @Nested
     class ArithmeticOperations {
 
-        /**
-         * Test objective: Verify add() creates ADD operator
-         * Test scenario: Call add() on expression
-         * Expected result: Expression with ADD operator
-         */
+        /// 测试目标：验证add()创建ADD操作符
+        /// 测试场景：在表达式上调用add()
+        /// 预期结果：具有ADD操作符的表达式
         @Test
         void add_CreatesAddOperator() {
             // given
@@ -42,11 +38,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.ADD);
         }
 
-        /**
-         * Test objective: Verify subtract() creates SUBTRACT operator
-         * Test scenario: Call subtract() on expression
-         * Expected result: Expression with SUBTRACT operator
-         */
+        /// 测试目标：验证subtract()创建SUBTRACT操作符
+        /// 测试场景：在表达式上调用subtract()
+        /// 预期结果：具有SUBTRACT操作符的表达式
         @Test
         void subtract_CreatesSubtractOperator() {
             // given
@@ -66,11 +60,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.SUBTRACT);
         }
 
-        /**
-         * Test objective: Verify multiply() creates MULTIPLY operator
-         * Test scenario: Call multiply() on expression
-         * Expected result: Expression with MULTIPLY operator
-         */
+        /// 测试目标：验证multiply()创建MULTIPLY操作符
+        /// 测试场景：在表达式上调用multiply()
+        /// 预期结果：具有MULTIPLY操作符的表达式
         @Test
         void multiply_CreatesMultiplyOperator() {
             // given
@@ -90,11 +82,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.MULTIPLY);
         }
 
-        /**
-         * Test objective: Verify divide() creates DIVIDE operator
-         * Test scenario: Call divide() on expression
-         * Expected result: Expression with DIVIDE operator
-         */
+        /// 测试目标：验证divide()创建DIVIDE操作符
+        /// 测试场景：在表达式上调用divide()
+        /// 预期结果：具有DIVIDE操作符的表达式
         @Test
         void divide_CreatesDivideOperator() {
             // given
@@ -114,11 +104,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.DIVIDE);
         }
 
-        /**
-         * Test objective: Verify mod() creates MOD operator
-         * Test scenario: Call mod() on expression
-         * Expected result: Expression with MOD operator
-         */
+        /// 测试目标：验证mod()创建MOD操作符
+        /// 测试场景：在表达式上调用mod()
+        /// 预期结果：具有MOD操作符的表达式
         @Test
         void mod_CreatesModOperator() {
             // given
@@ -142,11 +130,9 @@ class NumberExpressionImplTest {
     @Nested
     class AggregateFunctions {
 
-        /**
-         * Test objective: Verify sum() creates SUM operator
-         * Test scenario: Call sum() on expression
-         * Expected result: Expression with SUM operator
-         */
+        /// 测试目标：验证sum()创建SUM操作符
+        /// 测试场景：在表达式上调用sum()
+        /// 预期结果：具有SUM操作符的表达式
         @Test
         void sum_CreatesSumOperator() {
             // given
@@ -165,11 +151,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.SUM);
         }
 
-        /**
-         * Test objective: Verify avg() creates AVG operator
-         * Test scenario: Call avg() on expression
-         * Expected result: Expression with AVG operator
-         */
+        /// 测试目标：验证avg()创建AVG操作符
+        /// 测试场景：在表达式上调用avg()
+        /// 预期结果：具有AVG操作符的表达式
         @Test
         void avg_CreatesAvgOperator() {
             // given
@@ -188,11 +172,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.AVG);
         }
 
-        /**
-         * Test objective: Verify max() creates MAX operator
-         * Test scenario: Call max() on expression
-         * Expected result: Expression with MAX operator
-         */
+        /// 测试目标：验证max()创建MAX操作符
+        /// 测试场景：在表达式上调用max()
+        /// 预期结果：具有MAX操作符的表达式
         @Test
         void max_CreatesMaxOperator() {
             // given
@@ -211,11 +193,9 @@ class NumberExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.MAX);
         }
 
-        /**
-         * Test objective: Verify min() creates MIN operator
-         * Test scenario: Call min() on expression
-         * Expected result: Expression with MIN operator
-         */
+        /// 测试目标：验证min()创建MIN操作符
+        /// 测试场景：在表达式上调用min()
+        /// 预期结果：具有MIN操作符的表达式
         @Test
         void min_CreatesMinOperator() {
             // given

@@ -10,17 +10,15 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify EnumConverter correctly converts between enum and ordinal
- * <p>
- * Test scenarios:
- * 1. convertToDatabaseColumn returns correct ordinal
- * 2. convertToEntityAttribute returns correct enum
- * 3. null values are handled correctly
- * 4. getDatabaseColumnType returns Integer.class
- * <p>
- * Expected result: Enum conversion works bidirectionally
- */
+/// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
 class EnumConverterTest {
 
     enum TestStatus {
@@ -38,11 +36,15 @@ class EnumConverterTest {
     @Nested
     class ConvertToDatabaseColumn {
 
-        /**
-         * Test objective: Verify ordinal is returned for each enum value
-         * Test scenario: Convert each enum constant
-         * Expected result: Correct ordinal returned
-         */
+        /// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
         @ParameterizedTest
         @EnumSource(TestStatus.class)
         void convertToDatabaseColumn_ShouldReturnOrdinal(TestStatus status) {
@@ -53,11 +55,15 @@ class EnumConverterTest {
             assertThat(result).isEqualTo(status.ordinal());
         }
 
-        /**
-         * Test objective: Verify null returns null
-         * Test scenario: Convert null enum
-         * Expected result: null returned
-         */
+        /// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
         @Test
         void convertToDatabaseColumn_WithNull_ShouldReturnNull() {
             // when
@@ -71,11 +77,15 @@ class EnumConverterTest {
     @Nested
     class ConvertToEntityAttribute {
 
-        /**
-         * Test objective: Verify enum is returned for each ordinal
-         * Test scenario: Convert ordinal back to enum
-         * Expected result: Correct enum constant returned
-         */
+        /// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
         @Test
         void convertToEntityAttribute_ShouldReturnEnum() {
             assertThat(converter.convertToEntityAttribute(0)).isEqualTo(TestStatus.ACTIVE);
@@ -83,11 +93,15 @@ class EnumConverterTest {
             assertThat(converter.convertToEntityAttribute(2)).isEqualTo(TestStatus.PENDING);
         }
 
-        /**
-         * Test objective: Verify null returns null
-         * Test scenario: Convert null ordinal
-         * Expected result: null returned
-         */
+        /// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
         @Test
         void convertToEntityAttribute_WithNull_ShouldReturnNull() {
             // when
@@ -101,11 +115,15 @@ class EnumConverterTest {
     @Nested
     class RoundTrip {
 
-        /**
-         * Test objective: Verify round-trip conversion works
-         * Test scenario: Convert enum to ordinal and back
-         * Expected result: Same enum returned
-         */
+        /// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
         @ParameterizedTest
         @EnumSource(TestStatus.class)
         void roundTrip_ShouldReturnSameEnum(TestStatus status) {
@@ -121,11 +139,15 @@ class EnumConverterTest {
     @Nested
     class GetDatabaseColumnType {
 
-        /**
-         * Test objective: Verify getDatabaseColumnType returns Integer
-         * Test scenario: Call getDatabaseColumnType
-         * Expected result: Integer.class returned
-         */
+        /// 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// <p>
+/// 测试场景：
+/// 1. convertToDatabaseColumn返回正确的序数
+/// 2. convertToEntityAttribute返回正确的枚举
+/// 3. 正确处理空值
+/// 4. getDatabaseColumnType返回Integer.class
+/// <p>
+/// 预期结果：枚举转换双向工作正常
         @Test
         void getDatabaseColumnType_ShouldReturnInteger() {
             // when

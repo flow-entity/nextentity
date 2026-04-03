@@ -11,17 +11,15 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Test objective: Verify ReflectUtil utility class provides correct reflection operations
- * <p>
- * Test scenarios:
- * 1. getDeclaredField finds field in class hierarchy
- * 2. typeCheck validates type compatibility
- * 3. getEnum returns enum by ordinal
- * 4. isAccessible checks field accessibility
- * <p>
- * Expected result: Reflection operations work correctly
- */
+/// 测试目标：验证 ReflectUtil 工具类提供正确的反射操作
+/// <p>
+/// 测试场景：
+/// 1. getDeclaredField 在类层次结构中找到字段
+/// 2. typeCheck 验证类型兼容性
+/// 3. getEnum 按序号返回枚举
+/// 4. isAccessible 检查字段可访问性
+/// <p>
+/// 预期结果：反射操作正常工作
 class ReflectUtilTest {
 
     static class ParentClass {
@@ -35,11 +33,9 @@ class ReflectUtilTest {
     @Nested
     class GetDeclaredField {
 
-        /**
-         * Test objective: Verify getDeclaredField finds field in same class
-         * Test scenario: Search for field declared in class
-         * Expected result: Field found
-         */
+        /// 测试目标：验证 getDeclaredField 在同一类中找到字段
+        /// 测试场景：搜索类中声明的字段
+        /// 预期结果：找到字段
         @Test
         void getDeclaredField_InSameClass_ShouldFindField() throws Exception {
             // when
@@ -50,11 +46,9 @@ class ReflectUtilTest {
             assertThat(field.getName()).isEqualTo("childField");
         }
 
-        /**
-         * Test objective: Verify getDeclaredField finds field in parent class
-         * Test scenario: Search for field declared in parent
-         * Expected result: Field found in parent
-         */
+        /// 测试目标：验证 getDeclaredField 在父类中找到字段
+        /// 测试场景：搜索父类中声明的字段
+        /// 预期结果：在父类中找到字段
         @Test
         void getDeclaredField_InParentClass_ShouldFindField() {
             // when
@@ -66,11 +60,9 @@ class ReflectUtilTest {
             assertThat(field.getDeclaringClass()).isEqualTo(ParentClass.class);
         }
 
-        /**
-         * Test objective: Verify getDeclaredField returns null for non-existent field
-         * Test scenario: Search for non-existent field
-         * Expected result: null returned
-         */
+        /// 测试目标：验证 getDeclaredField 为不存在的字段返回 null
+        /// 测试场景：搜索不存在的字段
+        /// 预期结果：返回 null
         @Test
         void getDeclaredField_NotExists_ShouldReturnNull() {
             // when
@@ -84,22 +76,18 @@ class ReflectUtilTest {
     @Nested
     class TypeCheck {
 
-        /**
-         * Test objective: Verify typeCheck accepts null for non-primitive types
-         * Test scenario: Pass null for String type
-         * Expected result: No exception
-         */
+        /// 测试目标：验证 typeCheck 接受非基本类型的 null 值
+        /// 测试场景：为 String 类型传递 null
+        /// 预期结果：不抛出异常
         @Test
         void typeCheck_NullForNonPrimitive_ShouldNotThrow() {
             // when/then - no exception
             ReflectUtil.typeCheck(null, String.class);
         }
 
-        /**
-         * Test objective: Verify typeCheck throws for null with primitive type
-         * Test scenario: Pass null for int type
-         * Expected result: BeanReflectiveException thrown
-         */
+        /// 测试目标：验证 typeCheck 对基本类型 null 值抛出异常
+        /// 测试场景：为 int 类型传递 null
+        /// 预期结果：BeanReflectiveException 抛出
         @Test
         void typeCheck_NullForPrimitive_ShouldThrow() {
             // then
@@ -108,22 +96,18 @@ class ReflectUtilTest {
                     .hasMessageContaining("primitive type value can not be null");
         }
 
-        /**
-         * Test objective: Verify typeCheck accepts compatible type
-         * Test scenario: Pass String for Object type
-         * Expected result: No exception
-         */
+        /// 测试目标：验证 typeCheck 接受兼容类型
+        /// 测试场景：为 Object 类型传递 String
+        /// 预期结果：不抛出异常
         @Test
         void typeCheck_CompatibleType_ShouldNotThrow() {
             // when/then - no exception
             ReflectUtil.typeCheck("test", Object.class);
         }
 
-        /**
-         * Test objective: Verify typeCheck throws for incompatible type
-         * Test scenario: Pass String for Integer type
-         * Expected result: BeanReflectiveException thrown
-         */
+        /// 测试目标：验证 typeCheck 对不兼容类型抛出异常
+        /// 测试场景：为 Integer 类型传递 String
+        /// 预期结果：BeanReflectiveException 抛出
         @Test
         void typeCheck_IncompatibleType_ShouldThrow() {
             // then
@@ -132,11 +116,9 @@ class ReflectUtilTest {
                     .hasMessageContaining("can not cast to");
         }
 
-        /**
-         * Test objective: Verify typeCheck handles primitive wrapper conversion
-         * Test scenario: Pass Integer for int primitive
-         * Expected result: No exception after wrapper conversion
-         */
+        /// 测试目标：验证 typeCheck 处理基本类型包装器转换
+        /// 测试场景：为 int 基本类型传递 Integer
+        /// 预期结果：包装器转换后无异常
         @Test
         void typeCheck_PrimitiveWrapper_ShouldNotThrow() {
             // when/then - no exception
@@ -147,11 +129,9 @@ class ReflectUtilTest {
     @Nested
     class GetEnum {
 
-        /**
-         * Test objective: Verify getEnum returns correct enum by ordinal
-         * Test scenario: Get enum by ordinal position
-         * Expected result: Correct enum constant returned
-         */
+        /// 测试目标：验证 getEnum 按序号返回正确的枚举
+        /// 测试场景：按序号位置获取枚举
+        /// 预期结果：返回正确的枚举常量
         @Test
         void getEnum_ByOrdinal_ShouldReturnCorrectEnum() {
             // when
@@ -161,11 +141,9 @@ class ReflectUtilTest {
             assertThat(result).isEqualTo(TestEnum.SECOND);
         }
 
-        /**
-         * Test objective: Verify getEnum throws for non-enum class
-         * Test scenario: Pass non-enum class
-         * Expected result: IllegalArgumentException thrown
-         */
+        /// 测试目标：验证 getEnum 对非枚举类抛出异常
+        /// 测试场景：传递非枚举类
+        /// 预期结果：IllegalArgumentException 抛出
         @Test
         void getEnum_NonEnumClass_ShouldThrow() {
             // then
@@ -181,11 +159,9 @@ class ReflectUtilTest {
     @Nested
     class NewProxyInstance {
 
-        /**
-         * Test objective: Verify newProxyInstance creates working proxy
-         * Test scenario: Create proxy for interface with method implementations
-         * Expected result: Proxy delegates to provided implementations
-         */
+        /// 测试目标：验证 newProxyInstance 创建工作代理
+        /// 测试场景：为接口创建具有方法实现的代理
+        /// 预期结果：代理委托给提供的实现
         @Test
         void newProxyInstance_ShouldCreateWorkingProxy() throws Exception {
             // given

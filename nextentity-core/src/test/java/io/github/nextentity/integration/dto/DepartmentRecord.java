@@ -1,9 +1,8 @@
 package io.github.nextentity.integration.dto;
 
-/**
- * Record projection for Department info.
- * Tests record projection for different entity.
- */
+///
+ /// Record projection for Department info.
+ /// 测试s record projection for different entity.
 public record DepartmentRecord(
         Long id,
         String name,

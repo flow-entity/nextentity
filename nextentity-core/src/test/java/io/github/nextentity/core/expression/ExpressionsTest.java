@@ -7,24 +7,20 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify Expressions utility class
- * <p>
- * Test scenarios:
- * 1. Create literal expression
- * 2. Create true predicate
- * 3. Create false predicate
- */
+/// 测试目标：验证Expressions实用类
+/// <p>
+/// 测试场景：
+/// 1. 创建字面量表达式
+/// 2. 创建真谓词
+/// 3. 创建假谓词
 class ExpressionsTest {
 
     @Nested
     class OfValue {
 
-        /**
-         * Test objective: Verify of() creates literal expression
-         * Test scenario: Create expression with value
-         * Expected result: TypedExpression containing the value
-         */
+        /// 测试目标：验证of()创建字面量表达式
+        /// 测试场景：使用值创建表达式
+        /// 预期结果：包含该值的TypedExpression
         @Test
         void of_WithValue_ReturnsTypedExpression() {
             // given
@@ -41,11 +37,9 @@ class ExpressionsTest {
             assertThat(literalNode.value()).isEqualTo(value);
         }
 
-        /**
-         * Test objective: Verify of() with null value
-         * Test scenario: Create expression with null
-         * Expected result: TypedExpression with null value
-         */
+        /// 测试目标：验证of()使用null值
+        /// 测试场景：使用null创建表达式
+        /// 预期结果：带有null值的TypedExpression
         @Test
         void of_WithNull_ReturnsTypedExpressionWithNull() {
             // when
@@ -63,11 +57,9 @@ class ExpressionsTest {
     @Nested
     class OfTrueFalse {
 
-        /**
-         * Test objective: Verify ofTrue() creates true predicate
-         * Test scenario: Call ofTrue()
-         * Expected result: Predicate with TRUE literal
-         */
+        /// 测试目标：验证ofTrue()创建真谓词
+        /// 测试场景：调用ofTrue()
+        /// 预期结果：带有TRUE字面量的谓词
         @Test
         void ofTrue_ReturnsTruePredicate() {
             // when
@@ -79,11 +71,9 @@ class ExpressionsTest {
             assertThat(node).isSameAs(LiteralNode.TRUE);
         }
 
-        /**
-         * Test objective: Verify ofFalse() creates false predicate
-         * Test scenario: Call ofFalse()
-         * Expected result: Predicate with FALSE literal
-         */
+        /// 测试目标：验证ofFalse()创建假谓词
+        /// 测试场景：调用ofFalse()
+        /// 预期结果：带有FALSE字面量的谓词
         @Test
         void ofFalse_ReturnsFalsePredicate() {
             // when

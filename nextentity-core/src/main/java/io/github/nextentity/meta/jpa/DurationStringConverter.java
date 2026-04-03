@@ -7,9 +7,11 @@ import jakarta.persistence.Converter;
 import java.time.Duration;
 
 ///
-/// Converter for {@link Duration} to/from {@link String}.
-/// Duration values are stored as ISO-8601 formatted strings.
+/// Duration 与 String 之间的转换器。
+/// Duration 值以 ISO-8601 格式字符串存储。
 ///
+/// @author HuangChengwei
+/// @since 2.1
 @Converter
 public class DurationStringConverter implements AttributeConverter<Duration, String>, ValueConverter<Duration, String> {
 

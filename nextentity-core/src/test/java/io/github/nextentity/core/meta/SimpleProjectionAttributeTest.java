@@ -6,9 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SimpleProjectionAttribute.
- */
+///
+ /// 单元测试 SimpleProjectionAttribute.
 class SimpleProjectionAttributeTest {
 
     private SimpleProjectionAttribute attribute;
@@ -25,11 +24,10 @@ class SimpleProjectionAttributeTest {
     @Nested
     class Source {
 
-        /**
-         * Test objective: Verify source() returns the source attribute.
-         * Test scenario: Create SimpleProjectionAttribute with source and call source().
-         * Expected result: Returns the source attribute.
-         */
+///
+         /// 测试目标: 验证y source() returns the source attribute.
+         /// 测试场景: Create SimpleProjectionAttribute with source and call source().
+         /// 预期结果: Returns the source attribute.
         @Test
         void source_ShouldReturnSourceAttribute() {
             // when
@@ -43,11 +41,10 @@ class SimpleProjectionAttributeTest {
     @Nested
     class IsUpdatable {
 
-        /**
-         * Test objective: Verify isUpdatable() delegates to source.
-         * Test scenario: Check isUpdatable when source is updatable.
-         * Expected result: Returns the same value as source.
-         */
+///
+         /// 测试目标: 验证y isUpdatable() delegates to source.
+         /// 测试场景: Check isUpdatable when source is updatable.
+         /// 预期结果: Returns the same value as source.
         @Test
         void isUpdatable_ShouldDelegateToSource() {
             // when
@@ -58,11 +55,10 @@ class SimpleProjectionAttributeTest {
             assertThat(result).isEqualTo(sourceAttribute.isUpdatable());
         }
 
-        /**
-         * Test objective: Verify isUpdatable() returns false when source is not updatable.
-         * Test scenario: Set source as not updatable.
-         * Expected result: Returns false.
-         */
+///
+         /// 测试目标: 验证y isUpdatable() returns false when source is not updatable.
+         /// 测试场景: Set source as not updatable.
+         /// 预期结果: Returns false.
         @Test
         void isUpdatable_WhenSourceNotUpdatable_ShouldReturnFalse() {
             // given

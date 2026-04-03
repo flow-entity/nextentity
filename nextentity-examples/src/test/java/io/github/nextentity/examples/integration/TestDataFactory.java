@@ -9,19 +9,15 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Test data factory for integration tests.
- * Creates consistent test data for Employee and Department entities.
- */
+/// 集成测试的测试数据工厂。
+/// 为 Employee 和 Department 实体创建一致的测试数据。
 public class TestDataFactory {
 
-    // ID ranges to avoid conflicts
+    // ID 起始范围，避免冲突
     private static final long DEPT_ID_START = 100L;
     private static final long EMP_ID_START = 1000L;
 
-    /**
-     * Create test departments.
-     */
+    /// 创建测试部门。
     public static List<Department> createTestDepartments() {
         List<Department> departments = new ArrayList<>();
         departments.add(createDepartment(DEPT_ID_START + 1, "Engineering", "Building A", 500000.0, true));
@@ -32,14 +28,12 @@ public class TestDataFactory {
         return departments;
     }
 
-    /**
-     * Create test employees distributed across departments.
-     */
+    /// 创建分布在不同部门的测试员工。
     public static List<Employee> createTestEmployees() {
         List<Employee> employees = new ArrayList<>();
         long id = EMP_ID_START;
 
-        // Engineering department (5 employees)
+        // 工程部门（5名员工）
         employees.add(createEmployee(id++, "Alice Johnson", "alice@example.com",
                 new BigDecimal("75000.00"), true, EmployeeStatus.ACTIVE, DEPT_ID_START + 1,
                 LocalDate.of(2020, 1, 15)));
@@ -56,7 +50,7 @@ public class TestDataFactory {
                 new BigDecimal("65000.00"), false, EmployeeStatus.TERMINATED, DEPT_ID_START + 1,
                 LocalDate.of(2022, 2, 28)));
 
-        // Marketing department (3 employees)
+        // 市场部门（3名员工）
         employees.add(createEmployee(id++, "Frank Miller", "frank@example.com",
                 new BigDecimal("60000.00"), true, EmployeeStatus.ACTIVE, DEPT_ID_START + 2,
                 LocalDate.of(2021, 4, 1)));
@@ -67,7 +61,7 @@ public class TestDataFactory {
                 new BigDecimal("58000.00"), true, EmployeeStatus.INACTIVE, DEPT_ID_START + 2,
                 LocalDate.of(2020, 11, 20)));
 
-        // Sales department (2 employees)
+        // 销售部门（2名员工）
         employees.add(createEmployee(id++, "Iris Taylor", "iris@example.com",
                 new BigDecimal("50000.00"), true, EmployeeStatus.ACTIVE, DEPT_ID_START + 3,
                 LocalDate.of(2023, 1, 10)));
@@ -75,12 +69,12 @@ public class TestDataFactory {
                 new BigDecimal("52000.00"), true, EmployeeStatus.ACTIVE, DEPT_ID_START + 3,
                 LocalDate.of(2022, 5, 25)));
 
-        // HR department (1 employee)
+        // 人力资源部门（1名员工）
         employees.add(createEmployee(id++, "Karen White", "karen@example.com",
                 new BigDecimal("48000.00"), true, EmployeeStatus.ACTIVE, DEPT_ID_START + 4,
                 LocalDate.of(2021, 8, 8)));
 
-        // Finance department (1 employee)
+        // 财务部门（1名员工）
         employees.add(createEmployee(id++, "Larry Martin", "larry@example.com",
                 new BigDecimal("62000.00"), true, EmployeeStatus.ACTIVE, DEPT_ID_START + 5,
                 LocalDate.of(2020, 3, 12)));
@@ -88,16 +82,12 @@ public class TestDataFactory {
         return employees;
     }
 
-    /**
-     * Create a single department.
-     */
+    /// 创建单个部门。
     public static Department createDepartment(Long id, String name, String location, Double budget, Boolean active) {
         return new Department(id, name, location, budget, active);
     }
 
-    /**
-     * Create a single employee with all fields.
-     */
+    /// 创建包含所有字段的单个员工。
     public static Employee createEmployee(Long id, String name, String email, BigDecimal salary,
                                           Boolean active, EmployeeStatus status, Long departmentId, LocalDate hireDate) {
         Employee employee = new Employee();
@@ -112,22 +102,18 @@ public class TestDataFactory {
         return employee;
     }
 
-    /**
-     * Create a simple employee with default values.
-     */
+    /// 创建使用默认值的简单员工。
     public static Employee createSimpleEmployee(Long id, String name, String email, BigDecimal salary, Long departmentId) {
         return createEmployee(id, name, email, salary, true, EmployeeStatus.ACTIVE, departmentId, LocalDate.now());
     }
 
-    /**
-     * Create an employee for insertion tests.
-     */
+    /// 创建用于插入测试的员工。
     public static Employee createEmployeeForInsert(Long id, Long departmentId) {
         return createSimpleEmployee(id, "Test Employee " + id, "test" + id + "@example.com",
                 new BigDecimal("50000.00"), departmentId);
     }
 
-    // Getter methods for test constants
+    // 获取测试常量的方法
     public static long getDeptIdStart() {
         return DEPT_ID_START;
     }

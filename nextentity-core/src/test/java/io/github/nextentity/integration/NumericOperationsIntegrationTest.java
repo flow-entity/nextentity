@@ -14,26 +14,24 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Numeric operations integration tests.
- * <p>
- * Tests numeric operations including:
- * - Numeric comparisons (gt, ge, lt, le, between)
- * - Arithmetic operations (add, subtract, multiply, divide, mod)
- * - Numeric sorting
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Numeric 操作s integration tests.
+ /// <p>
+ /// 测试s numeric 操作s including:
+ /// - Numeric comparisons (gt, ge, lt, le, between)
+ /// - Arithmetic 操作s (add, subtract, multiply, divide, mod)
+ /// - Numeric sorting
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Numeric Operations Integration Tests")
 public class NumericOperationsIntegrationTest {
 
     private static final double SALARY_THRESHOLD = 60000.0;
 
-    /**
-     * Tests greater than comparison.
-     */
+///
+     /// 测试s greater than comparison.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with greater than")
@@ -48,9 +46,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests greater than or equal comparison.
-     */
+///
+     /// 测试s greater than or equal comparison.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with greater than or equal")
@@ -65,9 +62,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests less than comparison.
-     */
+///
+     /// 测试s less than comparison.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with less than")
@@ -82,9 +78,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests less than or equal comparison.
-     */
+///
+     /// 测试s less than or equal comparison.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with less than or equal")
@@ -99,9 +94,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests between comparison.
-     */
+///
+     /// 测试s between comparison.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between")
@@ -121,9 +115,8 @@ public class NumericOperationsIntegrationTest {
                 e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
     }
 
-    /**
-     * Tests between with boundary values.
-     */
+///
+     /// 测试s between with boundary values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle between with boundary values")
@@ -143,9 +136,8 @@ public class NumericOperationsIntegrationTest {
                 e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
     }
 
-    /**
-     * Tests numeric IN clause.
-     */
+///
+     /// 测试s numeric IN clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with numeric IN clause")
@@ -161,9 +153,8 @@ public class NumericOperationsIntegrationTest {
                 e.getDepartmentId() == 1L || e.getDepartmentId() == 2L || e.getDepartmentId() == 3L);
     }
 
-    /**
-     * Tests numeric NOT IN clause.
-     */
+///
+     /// 测试s numeric NOT IN clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with numeric NOT IN clause")
@@ -178,9 +169,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getDepartmentId() != 1L && e.getDepartmentId() != 2L);
     }
 
-    /**
-     * Tests ordering by numeric field ascending.
-     */
+///
+     /// 测试s ordering by numeric field ascending.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by numeric field ascending")
@@ -198,9 +188,8 @@ public class NumericOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests ordering by numeric field descending.
-     */
+///
+     /// 测试s ordering by numeric field descending.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by numeric field descending")
@@ -218,9 +207,8 @@ public class NumericOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests ordering by ID.
-     */
+///
+     /// 测试s ordering by ID.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by ID ascending")
@@ -238,9 +226,8 @@ public class NumericOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests multiple numeric conditions.
-     */
+///
+     /// 测试s multiple numeric conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with multiple numeric conditions")
@@ -258,9 +245,8 @@ public class NumericOperationsIntegrationTest {
                 e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0 && e.getDepartmentId() == 1L);
     }
 
-    /**
-     * Tests selecting numeric field.
-     */
+///
+     /// 测试s selecting numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select numeric field")
@@ -276,9 +262,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(salaries).doesNotContainNull();
     }
 
-    /**
-     * Tests selecting ID field.
-     */
+///
+     /// 测试s selecting ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select ID field")
@@ -294,9 +279,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(ids).doesNotContainNull();
     }
 
-    /**
-     * Tests SUM aggregation on numeric field.
-     */
+///
+     /// 测试s SUM aggregation on numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should sum numeric field")
@@ -311,9 +295,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(sum.doubleValue()).isPositive();
     }
 
-    /**
-     * Tests AVG aggregation on numeric field.
-     */
+///
+     /// 测试s AVG aggregation on numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should average numeric field")
@@ -328,9 +311,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(avg.doubleValue()).isPositive();
     }
 
-    /**
-     * Tests MAX aggregation on numeric field.
-     */
+///
+     /// 测试s MAX aggregation on numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find max of numeric field")
@@ -351,9 +333,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(max.doubleValue()).isEqualTo(expectedMax);
     }
 
-    /**
-     * Tests MIN aggregation on numeric field.
-     */
+///
+     /// 测试s MIN aggregation on numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find min of numeric field")
@@ -374,9 +355,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(min.doubleValue()).isEqualTo(expectedMin);
     }
 
-    /**
-     * Tests numeric comparison with ID field.
-     */
+///
+     /// 测试s numeric comparison with ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with ID comparison")
@@ -392,9 +372,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getId() > 5L);
     }
 
-    /**
-     * Tests selecting multiple numeric fields.
-     */
+///
+     /// 测试s selecting multiple numeric fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select multiple numeric fields")
@@ -410,9 +389,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results).allMatch(t -> t.get0() != null && t.get1() != null);
     }
 
-    /**
-     * Tests numeric filter with aggregation.
-     */
+///
+     /// 测试s numeric filter with aggregation.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should aggregate with numeric filter")
@@ -428,9 +406,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(avg.doubleValue()).isPositive();
     }
 
-    /**
-     * Tests distinct numeric values.
-     */
+///
+     /// 测试s distinct numeric values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct numeric values")
@@ -446,9 +423,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(deptIds).doesNotHaveDuplicates();
     }
 
-    /**
-     * Tests count of numeric filtered results.
-     */
+///
+     /// 测试s count of numeric filtered results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count numeric filtered results")
@@ -462,9 +438,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(count).isPositive();
     }
 
-    /**
-     * Tests numeric comparison with exist.
-     */
+///
+     /// 测试s numeric comparison with exist.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check existence with numeric filter")
@@ -479,9 +454,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(exists).isFalse();
     }
 
-    /**
-     * Tests ordering by multiple numeric fields.
-     */
+///
+     /// 测试s ordering by multiple numeric fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by multiple numeric fields")
@@ -506,9 +480,8 @@ public class NumericOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests numeric operations with first result.
-     */
+///
+     /// 测试s numeric 操作s with first result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with numeric filter")
@@ -526,9 +499,8 @@ public class NumericOperationsIntegrationTest {
 
     // ==================== Arithmetic Operations ====================
 
-    /**
-     * Tests addition operation in SELECT clause.
-     */
+///
+     /// 测试s addition 操作 in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should add value to numeric field in SELECT")
@@ -551,9 +523,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary + bonus);
     }
 
-    /**
-     * Tests addition operation with literal expression in SELECT clause.
-     */
+///
+     /// 测试s addition 操作 with literal expression in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should add literal expression to numeric field in SELECT")
@@ -576,9 +547,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary + 5000.0);
     }
 
-    /**
-     * Tests subtraction operation in SELECT clause.
-     */
+///
+     /// 测试s subtraction 操作 in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should subtract value from numeric field in SELECT")
@@ -601,9 +571,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary - deduction);
     }
 
-    /**
-     * Tests subtraction operation with literal expression in SELECT clause.
-     */
+///
+     /// 测试s subtraction 操作 with literal expression in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should subtract literal expression from numeric field in SELECT")
@@ -626,9 +595,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary - 1000.0);
     }
 
-    /**
-     * Tests multiplication operation in SELECT clause.
-     */
+///
+     /// 测试s multiplication 操作 in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should multiply numeric field in SELECT")
@@ -651,9 +619,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary * multiplier);
     }
 
-    /**
-     * Tests multiplication operation with literal expression in SELECT clause.
-     */
+///
+     /// 测试s multiplication 操作 with literal expression in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should multiply numeric field with literal expression in SELECT")
@@ -676,9 +643,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary * 1.1);
     }
 
-    /**
-     * Tests division operation in SELECT clause.
-     */
+///
+     /// 测试s division 操作 in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should divide numeric field in SELECT")
@@ -701,9 +667,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary / divisor);
     }
 
-    /**
-     * Tests division operation with literal expression in SELECT clause.
-     */
+///
+     /// 测试s division 操作 with literal expression in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should divide numeric field with literal expression in SELECT")
@@ -726,9 +691,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary / 12.0);
     }
 
-    /**
-     * Tests modulo operation in SELECT clause with ID field.
-     */
+///
+     /// 测试s modulo 操作 in SELECT clause with ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should modulo numeric field in SELECT")
@@ -748,9 +712,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results).allMatch(n -> n >= 0 && n < modValue);
     }
 
-    /**
-     * Tests modulo operation with literal expression in SELECT clause.
-     */
+///
+     /// 测试s modulo 操作 with literal expression in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should modulo numeric field with literal expression in SELECT")
@@ -770,9 +733,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results).allMatch(n -> n >= 0 && n < 3);
     }
 
-    /**
-     * Tests chained arithmetic operations in SELECT.
-     */
+///
+     /// 测试s chained arithmetic 操作s in SELECT.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should chain arithmetic operations in SELECT")
@@ -796,9 +758,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(expected);
     }
 
-    /**
-     * Tests arithmetic in HAVING clause with aggregation.
-     */
+///
+     /// 测试s arithmetic in HAVING clause with aggregation.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic with group by and aggregation")
@@ -818,9 +779,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results).allMatch(t -> t.get0() != null && t.get1() != null && t.get1() > 0);
     }
 
-    /**
-     * Tests arithmetic operation in SELECT clause.
-     */
+///
+     /// 测试s arithmetic 操作 in SELECT clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should perform arithmetic with expression in SELECT")
@@ -843,9 +803,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(originalSalary + bonus);
     }
 
-    /**
-     * Tests arithmetic operation in WHERE clause.
-     */
+///
+     /// 测试s arithmetic 操作 in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic in WHERE clause")
@@ -864,9 +823,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() + bonus > threshold);
     }
 
-    /**
-     * Tests arithmetic operation with literal expression in WHERE clause.
-     */
+///
+     /// 测试s arithmetic 操作 with literal expression in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic with literal expression in WHERE clause")
@@ -885,9 +843,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() + 10000.0 > threshold);
     }
 
-    /**
-     * Tests subtraction in WHERE clause.
-     */
+///
+     /// 测试s subtraction in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use subtraction in WHERE clause")
@@ -906,9 +863,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() - deduction >= threshold);
     }
 
-    /**
-     * Tests subtraction with literal expression in WHERE clause.
-     */
+///
+     /// 测试s subtraction with literal expression in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use subtraction with literal expression in WHERE clause")
@@ -927,9 +883,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() - 5000.0 >= threshold);
     }
 
-    /**
-     * Tests multiplication in WHERE clause.
-     */
+///
+     /// 测试s multiplication in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use multiplication in WHERE clause")
@@ -948,9 +903,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() * multiplier > threshold);
     }
 
-    /**
-     * Tests multiplication with literal expression in WHERE clause.
-     */
+///
+     /// 测试s multiplication with literal expression in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use multiplication with literal expression in WHERE clause")
@@ -969,9 +923,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() * 2.0 > threshold);
     }
 
-    /**
-     * Tests division in WHERE clause.
-     */
+///
+     /// 测试s division in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use division in WHERE clause")
@@ -990,9 +943,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() / months > threshold);
     }
 
-    /**
-     * Tests division with literal expression in WHERE clause.
-     */
+///
+     /// 测试s division with literal expression in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use division with literal expression in WHERE clause")
@@ -1011,9 +963,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() / 12.0 > threshold);
     }
 
-    /**
-     * Tests modulo in WHERE clause with ID field.
-     */
+///
+     /// 测试s modulo in WHERE clause with ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use modulo in WHERE clause")
@@ -1032,9 +983,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getId() % modValue == 0);
     }
 
-    /**
-     * Tests modulo in WHERE clause with literal expression.
-     */
+///
+     /// 测试s modulo in WHERE clause with literal expression.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use modulo with literal expression in WHERE clause")
@@ -1053,9 +1003,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getId() % 2 == 0);
     }
 
-    /**
-     * Tests combined arithmetic operations in WHERE clause.
-     */
+///
+     /// 测试s combined arithmetic 操作s in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use combined arithmetic in WHERE clause")
@@ -1075,9 +1024,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() + bonus > threshold);
     }
 
-    /**
-     * Tests arithmetic with aggregation functions.
-     */
+///
+     /// 测试s arithmetic with aggregation functions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use arithmetic with aggregation")
@@ -1099,9 +1047,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(result).isCloseTo(totalSalary * multiplier, org.assertj.core.data.Offset.offset(0.01));
     }
 
-    /**
-     * Tests arithmetic with count and filter.
-     */
+///
+     /// 测试s arithmetic with count and filter.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count results with arithmetic filter")
@@ -1119,9 +1066,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(count).isPositive();
     }
 
-    /**
-     * Tests conditional arithmetic operations (addIfNotNull).
-     */
+///
+     /// 测试s conditional arithmetic 操作s (addIfNotNull).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional add with null value")
@@ -1143,9 +1089,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
 
-    /**
-     * Tests conditional arithmetic operations with non-null value.
-     */
+///
+     /// 测试s conditional arithmetic 操作s with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional add with non-null value")
@@ -1167,9 +1112,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary() + bonus);
     }
 
-    /**
-     * Tests complex arithmetic expression with multiple operations.
-     */
+///
+     /// 测试s complex arithmetic expression with multiple 操作s.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle complex arithmetic expression")
@@ -1192,9 +1136,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(expected);
     }
 
-    /**
-     * Tests arithmetic with distinct select.
-     */
+///
+     /// 测试s arithmetic with distinct select.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct arithmetic results")
@@ -1213,9 +1156,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(distinctResults).allMatch(n -> n >= 0 && n < modValue);
     }
 
-    /**
-     * Tests arithmetic operations on integer ID field.
-     */
+///
+     /// 测试s arithmetic 操作s on integer ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should perform arithmetic on ID field")
@@ -1240,9 +1182,8 @@ public class NumericOperationsIntegrationTest {
         }
     }
 
-    /**
-     * Tests conditional subtract with null value.
-     */
+///
+     /// 测试s conditional subtract with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional subtract with null value")
@@ -1264,9 +1205,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
 
-    /**
-     * Tests conditional multiply with null value.
-     */
+///
+     /// 测试s conditional multiply with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional multiply with null value")
@@ -1288,9 +1228,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
 
-    /**
-     * Tests conditional divide with null value.
-     */
+///
+     /// 测试s conditional divide with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional divide with null value")
@@ -1312,9 +1251,8 @@ public class NumericOperationsIntegrationTest {
         assertThat(results.getFirst()).isEqualTo(employees.getFirst().getSalary());
     }
 
-    /**
-     * Tests conditional mod with null value.
-     */
+///
+     /// 测试s conditional mod with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle conditional mod with null value")

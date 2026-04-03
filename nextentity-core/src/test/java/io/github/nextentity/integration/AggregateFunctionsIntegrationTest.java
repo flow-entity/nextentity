@@ -15,27 +15,23 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Aggregate function integration tests.
- * <p>
- * Tests aggregate functions including:
- * - COUNT
- * - SUM
- * - AVG
- * - MAX
- * - MIN
- * - GROUP BY
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+/// 聚合函数集成测试。
+/// <p>
+/// 测试聚合函数包括：
+/// - COUNT
+/// - SUM
+/// - AVG
+/// - MAX
+/// - MIN
+/// - GROUP BY
+/// <p>
+/// 这些测试使用 Testcontainers 针对 MySQL 和 PostgreSQL 运行。
+///
+/// @author HuangChengwei
 @DisplayName("Aggregate Functions Integration Tests")
 public class AggregateFunctionsIntegrationTest {
 
-    /**
-     * Tests COUNT aggregation.
-     */
+    /// 测试 COUNT 聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees with count()")
@@ -47,9 +43,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(12, count);
     }
 
-    /**
-     * Tests COUNT with expression.
-     */
+    /// 测试带有表达式的 COUNT。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with count expression")
@@ -63,9 +57,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(12L, count);
     }
 
-    /**
-     * Tests COUNT DISTINCT.
-     */
+    /// 测试 COUNT DISTINCT。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count distinct department IDs")
@@ -79,9 +71,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(5L, count);
     }
 
-    /**
-     * Tests SUM aggregation.
-     */
+    /// 测试 SUM 聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should sum employee salaries")
@@ -99,9 +89,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedSum, sum.doubleValue(), 0.01);
     }
 
-    /**
-     * Tests AVG aggregation.
-     */
+    /// 测试 AVG 聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should calculate average salary")
@@ -120,9 +108,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedAvg, avg.doubleValue(), 0.01);
     }
 
-    /**
-     * Tests MAX aggregation.
-     */
+    /// 测试 MAX 聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find maximum salary")
@@ -141,9 +127,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedMax, max.doubleValue(), 0.01);
     }
 
-    /**
-     * Tests MIN aggregation.
-     */
+    /// 测试 MIN 聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find minimum salary")
@@ -162,9 +146,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedMin, min.doubleValue(), 0.01);
     }
 
-    /**
-     * Tests multiple aggregations in single query.
-     */
+    /// 测试单个查询中的多个聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return multiple aggregations")
@@ -190,9 +172,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedMax, max.doubleValue(), 0.01);
     }
 
-    /**
-     * Tests GROUP BY single column.
-     */
+    /// 测试单列分组。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department ID")
@@ -214,9 +194,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(5L, dept1.get1());
     }
 
-    /**
-     * Tests GROUP BY with aggregation.
-     */
+    /// 测试带有聚合的分组。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department with count")
@@ -237,9 +215,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(12, totalCount);
     }
 
-    /**
-     * Tests GROUP BY with SUM.
-     */
+    /// 测试带有 SUM 的分组。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department with sum of salaries")
@@ -267,9 +243,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedSum, dept1.get1(), 0.01);
     }
 
-    /**
-     * Tests GROUP BY with AVG.
-     */
+    /// 测试带有 AVG 的分组。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by department with average salary")
@@ -298,9 +272,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedAvg, dept1.get1(), 0.01);
     }
 
-    /**
-     * Tests GROUP BY multiple columns.
-     */
+    /// 测试多列分组。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by multiple columns")
@@ -327,9 +299,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(12, totalCount);
     }
 
-    /**
-     * Tests aggregation with WHERE condition.
-     */
+    /// 测试带有 WHERE 条件的聚合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should aggregate with WHERE condition")
@@ -348,9 +318,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedActive, activeCount);
     }
 
-    /**
-     * Tests MAX on ID field.
-     */
+    /// 测试 ID 字段上的 MAX。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find max ID")
@@ -369,9 +337,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedMax, maxId.longValue());
     }
 
-    /**
-     * Tests MIN on ID field.
-     */
+    /// 测试 ID 字段上的 MIN。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should find min ID")
@@ -390,9 +356,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedMin, minId.longValue());
     }
 
-    /**
-     * Tests COUNT with active status filter.
-     */
+    /// 测试带有活动状态过滤的 COUNT。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count active employees")
@@ -411,9 +375,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedCount, count);
     }
 
-    /**
-     * Tests SUM with department filter.
-     */
+    /// 测试带有部门过滤的 SUM。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should sum salaries for department")
@@ -434,9 +396,7 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(expectedSum, sum.doubleValue(), 0.01);
     }
 
-    /**
-     * Tests GROUP BY with employee status.
-     */
+    /// 测试按员工状态分组。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by employee status")
@@ -456,4 +416,3 @@ public class AggregateFunctionsIntegrationTest {
         assertEquals(12, totalCount);
     }
 }
-

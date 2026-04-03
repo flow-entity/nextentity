@@ -20,9 +20,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for QueryBuilder.
- */
+///
+ /// Integration tests for QueryBuilder.
 class QueryBuilderIntegrationTest {
 
     // Test data constants - Employees
@@ -67,9 +66,8 @@ class QueryBuilderIntegrationTest {
         assertThat(employees.get(0).getName()).isEqualTo(ALICE_NAME);
     }
 
-    /**
-     * Tests multiple WHERE conditions with AND logic using Predicate.
-     */
+///
+     /// 测试s multiple WHERE conditions with AND logic using Predicate.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     void where_WithMultipleConditions_ShouldFilterResults(IntegrationTestContext context) {
@@ -363,9 +361,8 @@ class QueryBuilderIntegrationTest {
     @DisplayName("Multi-field Select Tests")
     class MultiFieldSelectTests {
 
-        /**
-         * Tests select with 3 fields returning Tuple3.
-         */
+///
+         /// 测试s select with 3 fields returning Tuple3.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select 3 fields into Tuple3")
@@ -385,9 +382,8 @@ class QueryBuilderIntegrationTest {
             assertThat(first.get2()).isNotNull();
         }
 
-        /**
-         * Tests select with 4 fields returning Tuple4.
-         */
+///
+         /// 测试s select with 4 fields returning Tuple4.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select 4 fields into Tuple4")
@@ -408,9 +404,8 @@ class QueryBuilderIntegrationTest {
             assertThat(first.get3()).isNotNull();
         }
 
-        /**
-         * Tests select with 5 fields returning Tuple5.
-         */
+///
+         /// 测试s select with 5 fields returning Tuple5.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select 5 fields into Tuple5")
@@ -439,9 +434,8 @@ class QueryBuilderIntegrationTest {
     @DisplayName("SelectDistinct Multi-field Tests")
     class SelectDistinctMultiFieldTests {
 
-        /**
-         * Tests selectDistinct with 2 fields.
-         */
+///
+         /// 测试s selectDistinct with 2 fields.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should selectDistinct 2 fields")
@@ -458,9 +452,8 @@ class QueryBuilderIntegrationTest {
             assertThat(results.size()).isEqualTo(distinctCount);
         }
 
-        /**
-         * Tests selectDistinct with 3 fields.
-         */
+///
+         /// 测试s selectDistinct with 3 fields.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should selectDistinct 3 fields")
@@ -484,9 +477,8 @@ class QueryBuilderIntegrationTest {
     @DisplayName("Select with Expressions Tests")
     class SelectWithExpressionsTests {
 
-        /**
-         * Tests select with aggregate expression.
-         */
+///
+         /// 测试s select with aggregate expression.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select with count expression")
@@ -500,9 +492,8 @@ class QueryBuilderIntegrationTest {
             assertThat(count).isEqualTo(TOTAL_TEST_EMPLOYEES);
         }
 
-        /**
-         * Tests select with sum expression.
-         */
+///
+         /// 测试s select with sum expression.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select with sum expression")
@@ -516,9 +507,8 @@ class QueryBuilderIntegrationTest {
             assertThat(sum).isPositive();
         }
 
-        /**
-         * Tests select with multiple expressions.
-         */
+///
+         /// 测试s select with multiple expressions.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select with multiple expressions")
@@ -539,9 +529,8 @@ class QueryBuilderIntegrationTest {
             assertThat((Double) result.get2()).isEqualTo(MIN_SALARY); // min
         }
 
-        /**
-         * Tests select with arithmetic expression.
-         */
+///
+         /// 测试s select with arithmetic expression.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select with arithmetic expression")
@@ -571,9 +560,8 @@ class QueryBuilderIntegrationTest {
     @DisplayName("Predicate as Query Condition Tests")
     class PredicateAsQueryConditionTests {
 
-        /**
-         * Tests using eq predicate as query condition.
-         */
+///
+         /// 测试s using eq predicate as query condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use eq predicate as where condition")
@@ -591,9 +579,8 @@ class QueryBuilderIntegrationTest {
             assertThat(employees.get(0).getName()).isEqualTo(ALICE_NAME);
         }
 
-        /**
-         * Tests using gt predicate as query condition.
-         */
+///
+         /// 测试s using gt predicate as query condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use gt predicate as where condition")
@@ -612,9 +599,8 @@ class QueryBuilderIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() > 70000.0);
         }
 
-        /**
-         * Tests using between predicate as query condition.
-         */
+///
+         /// 测试s using between predicate as query condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use between predicate as where condition")
@@ -632,9 +618,8 @@ class QueryBuilderIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= MIN_SALARY_RANGE && e.getSalary() <= MAX_SALARY_RANGE);
         }
 
-        /**
-         * Tests combining multiple predicates with AND.
-         */
+///
+         /// 测试s combining multiple predicates with AND.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine predicates with AND")
@@ -654,9 +639,8 @@ class QueryBuilderIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getSalary() > 50000.0);
         }
 
-        /**
-         * Tests combining multiple predicates with OR.
-         */
+///
+         /// 测试s combining multiple predicates with OR.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine predicates with OR")
@@ -677,9 +661,8 @@ class QueryBuilderIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME);
         }
 
-        /**
-         * Tests NOT on predicate.
-         */
+///
+         /// 测试s NOT on predicate.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use NOT on predicate")
@@ -697,9 +680,8 @@ class QueryBuilderIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getActive());
         }
 
-        /**
-         * Tests complex predicate expression.
-         */
+///
+         /// 测试s complex predicate expression.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create complex predicate expression")

@@ -8,17 +8,15 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify EnumConverter correctly converts to enum values
- * <p>
- * Test scenarios:
- * 1. Convert string to enum
- * 2. Convert integer (ordinal) to enum
- * 3. Convert already correct enum value
- * 4. Return original when conversion fails
- * <p>
- * Expected result: Enum values are converted correctly
- */
+/// 测试目标：验证EnumConverter能正确转换为枚举值
+/// <p>
+/// 测试场景：
+/// 1. 将字符串转换为枚举
+/// 2. 将整数（序数）转换为枚举
+/// 3. 转换已正确的枚举值
+/// 4. 转换失败时返回原始值
+/// <p>
+/// 预期结果：枚举值被正确转换
 class EnumConverterTest {
 
     private final EnumConverter converter = EnumConverter.of();
@@ -30,13 +28,11 @@ class EnumConverterTest {
     @Nested
     class StringConversions {
 
-        /**
-         * Test objective: Verify string converts to enum
-         * Test scenario: Convert "ACTIVE" to TestStatus.ACTIVE
-         * Expected result: TestStatus.ACTIVE
-         *
-         * Bug #3: ReflectUtil.getEnum(String) method invocation error
-         */
+        /// 测试目标：验证字符串转换为枚举
+        /// 测试场景：将"ACTIVE"转换为TestStatus.ACTIVE
+        /// 预期结果：TestStatus.ACTIVE
+        ///
+        /// Bug #3: ReflectUtil.getEnum(String)方法调用错误
         @Test
         void convert_StringToEnum_ShouldReturnEnum() {
             // given
@@ -49,11 +45,9 @@ class EnumConverterTest {
             assertThat(result).isEqualTo(TestStatus.ACTIVE);
         }
 
-        /**
-         * Test objective: Verify invalid string returns original
-         * Test scenario: Convert invalid string to enum
-         * Expected result: Original string returned
-         */
+        /// 测试目标：验证无效字符串返回原始值
+        /// 测试场景：将无效字符串转换为枚举
+        /// 预期结果：返回原始字符串
         @Test
         void convert_InvalidString_ShouldReturnOriginal() {
             // given
@@ -70,11 +64,9 @@ class EnumConverterTest {
     @Nested
     class OrdinalConversions {
 
-        /**
-         * Test objective: Verify integer converts to enum
-         * Test scenario: Convert ordinal 1 to enum
-         * Expected result: Enum with ordinal 1
-         */
+        /// 测试目标：验证整数转换为枚举
+        /// 测试场景：将序数1转换为枚举
+        /// 预期结果：序数为1的枚举
         @Test
         void convert_IntegerToEnum_ShouldReturnEnum() {
             // when
@@ -84,11 +76,9 @@ class EnumConverterTest {
             assertThat(result).isEqualTo(TestStatus.INACTIVE);
         }
 
-        /**
-         * Test objective: Verify out-of-range ordinal returns original
-         * Test scenario: Convert invalid ordinal to enum
-         * Expected result: Original value returned
-         */
+        /// 测试目标：验证超出范围的序数返回原始值
+        /// 测试场景：将无效序数转换为枚举
+        /// 预期结果：返回原始值
         @Test
         void convert_InvalidOrdinal_ShouldReturnOriginal() {
             // given
@@ -105,11 +95,9 @@ class EnumConverterTest {
     @Nested
     class SameTypeConversion {
 
-        /**
-         * Test objective: Verify same enum type returns unchanged
-         * Test scenario: Convert enum to same type
-         * Expected result: Same enum returned
-         */
+        /// 测试目标：验证相同枚举类型返回不变
+        /// 测试场景：将枚举转换为相同类型
+        /// 预期结果：返回相同枚举
         @ParameterizedTest
         @EnumSource(TestStatus.class)
         void convert_SameEnumType_ShouldReturnSameValue(TestStatus status) {
@@ -124,11 +112,9 @@ class EnumConverterTest {
     @Nested
     class NullHandling {
 
-        /**
-         * Test objective: Verify null returns null
-         * Test scenario: Convert null to enum
-         * Expected result: null returned
-         */
+        /// 测试目标：验证null返回null
+        /// 测试场景：将null转换为枚举
+        /// 预期结果：返回null
         @Test
         void convert_Null_ShouldReturnNull() {
             // when
@@ -142,11 +128,9 @@ class EnumConverterTest {
     @Nested
     class NonEnumTarget {
 
-        /**
-         * Test objective: Verify non-enum target returns original
-         * Test scenario: Convert to non-enum type
-         * Expected result: Original value returned
-         */
+        /// 测试目标：验证非枚举目标返回原始值
+        /// 测试场景：转换为非枚举类型
+        /// 预期结果：返回原始值
         @Test
         void convert_NonEnumTarget_ShouldReturnOriginal() {
             // given

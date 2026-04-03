@@ -11,9 +11,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SimpleJoinAttribute.
- */
+///
+ /// 单元测试 SimpleJoinAttribute.
 class SimpleJoinAttributeTest {
 
     private SimpleJoinAttribute attribute;
@@ -26,11 +25,10 @@ class SimpleJoinAttributeTest {
     @Nested
     class JoinName {
 
-        /**
-         * Test objective: Verify joinName getter and setter.
-         * Test scenario: Set join name and retrieve it.
-         * Expected result: Returns the set join name.
-         */
+///
+         /// 测试目标: 验证y joinName getter and setter.
+         /// 测试场景: Set join name and retrieve it.
+         /// 预期结果: Returns the set join name.
         @Test
         void joinName_ShouldReturnSetValue() {
             // given
@@ -47,11 +45,10 @@ class SimpleJoinAttributeTest {
     @Nested
     class ReferencedColumnName {
 
-        /**
-         * Test objective: Verify referencedColumnName getter and setter.
-         * Test scenario: Set referenced column name and retrieve it.
-         * Expected result: Returns the set referenced column name.
-         */
+///
+         /// 测试目标: 验证y referencedColumnName getter and setter.
+         /// 测试场景: Set referenced column name and retrieve it.
+         /// 预期结果: Returns the set referenced column name.
         @Test
         void referencedColumnName_ShouldReturnSetValue() {
             // given
@@ -68,11 +65,10 @@ class SimpleJoinAttributeTest {
     @Nested
     class TableName {
 
-        /**
-         * Test objective: Verify tableName getter and setter.
-         * Test scenario: Set table name and retrieve it.
-         * Expected result: Returns the set table name.
-         */
+///
+         /// 测试目标: 验证y tableName getter and setter.
+         /// 测试场景: Set table name and retrieve it.
+         /// 预期结果: Returns the set table name.
         @Test
         void tableName_ShouldReturnSetValue() {
             // given
@@ -89,11 +85,10 @@ class SimpleJoinAttributeTest {
     @Nested
     class IdAttribute {
 
-        /**
-         * Test objective: Verify id() extracts ID from attributes.
-         * Test scenario: Build attributes with ID and retrieve id().
-         * Expected result: Returns the ID attribute.
-         */
+///
+         /// 测试目标: 验证y id() extracts ID from attributes.
+         /// 测试场景: Build attributes with ID and retrieve id().
+         /// 预期结果: Returns the ID attribute.
         @Test
         void id_ShouldReturnIdAttribute() {
             // given
@@ -118,11 +113,10 @@ class SimpleJoinAttributeTest {
     @Nested
     class VersionAttribute {
 
-        /**
-         * Test objective: Verify version() extracts version from attributes.
-         * Test scenario: Build attributes with version and retrieve version().
-         * Expected result: Returns the version attribute.
-         */
+///
+         /// 测试目标: 验证y version() extracts version from attributes.
+         /// 测试场景: Build attributes with version and retrieve version().
+         /// 预期结果: Returns the version attribute.
         @Test
         void version_ShouldReturnVersionAttribute() {
             // given
@@ -147,11 +141,10 @@ class SimpleJoinAttributeTest {
     @Nested
     class AttributesBuilding {
 
-        /**
-         * Test objective: Verify attributes are built lazily.
-         * Test scenario: Create attribute and check attributes is null initially.
-         * Expected result: attributes() triggers building.
-         */
+///
+         /// 测试目标: 验证y attributes are built lazily.
+         /// 测试场景: Create attribute and check attributes is null initially.
+         /// 预期结果: attributes() triggers building.
         @Test
         void attributes_ShouldBuildLazily() {
             // when

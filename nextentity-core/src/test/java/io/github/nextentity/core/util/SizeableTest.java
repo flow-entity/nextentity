@@ -4,24 +4,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify Sizeable interface default methods work correctly
- * <p>
- * Test scenarios:
- * 1. isEmpty returns true when size is 0
- * 2. isEmpty returns false when size is positive
- * 3. isNotEmpty returns false when size is 0
- * 4. isNotEmpty returns true when size is positive
- * <p>
- * Expected result: Default methods correctly determine empty/non-empty state based on size
- */
+///
+ /// 测试目标: 验证y Sizeable interface default 方法 work 正确
+ /// <p>
+ /// 测试场景s:
+ /// 1. isEmpty returns true when size is 0
+ /// 2. isEmpty returns false when size is positive
+ /// 3. isNotEmpty returns false when size is 0
+ /// 4. isNotEmpty returns true when size is positive
+ /// <p>
+ /// 预期结果: Default 方法 正确 determine empty/non-empty state based on size
 class SizeableTest {
 
-    /**
-     * Test objective: Verify isEmpty returns true when size is 0
-     * Test scenario: Create Sizeable with size 0
-     * Expected result: isEmpty returns true
-     */
+///
+     /// 测试目标: 验证y isEmpty returns true when size is 0
+     /// 测试场景: Create Sizeable with size 0
+     /// 预期结果: isEmpty returns true
     @Test
     void isEmpty_WhenSizeIsZero_ShouldReturnTrue() {
         // given
@@ -32,11 +30,10 @@ class SizeableTest {
         assertThat(sizeable.isNotEmpty()).isFalse();
     }
 
-    /**
-     * Test objective: Verify isEmpty returns false when size is positive
-     * Test scenario: Create Sizeable with positive size
-     * Expected result: isEmpty returns false
-     */
+///
+     /// 测试目标: 验证y isEmpty returns false when size is positive
+     /// 测试场景: Create Sizeable with positive size
+     /// 预期结果: isEmpty returns false
     @Test
     void isEmpty_WhenSizeIsPositive_ShouldReturnFalse() {
         // given
@@ -47,11 +44,10 @@ class SizeableTest {
         assertThat(sizeable.isNotEmpty()).isTrue();
     }
 
-    /**
-     * Test objective: Verify isEmpty returns false when size is 1
-     * Test scenario: Create Sizeable with size 1 (minimum positive size)
-     * Expected result: isEmpty returns false
-     */
+///
+     /// 测试目标: 验证y isEmpty returns false when size is 1
+     /// 测试场景: Create Sizeable with size 1 (minimum positive size)
+     /// 预期结果: isEmpty returns false
     @Test
     void isEmpty_WhenSizeIsOne_ShouldReturnFalse() {
         // given
@@ -62,11 +58,10 @@ class SizeableTest {
         assertThat(sizeable.isNotEmpty()).isTrue();
     }
 
-    /**
-     * Test objective: Verify isNotEmpty is the negation of isEmpty
-     * Test scenario: Test both methods with various sizes
-     * Expected result: isNotEmpty should always be the opposite of isEmpty
-     */
+///
+     /// 测试目标: 验证y isNotEmpty is the negation of isEmpty
+     /// 测试场景: 测试 both 方法 with various sizes
+     /// 预期结果: isNotEmpty should always be the opposite of isEmpty
     @Test
     void isNotEmpty_ShouldBeNegationOfIsEmpty() {
         // given
@@ -78,11 +73,10 @@ class SizeableTest {
         assertThat(nonEmptySizeable.isNotEmpty()).isEqualTo(!nonEmptySizeable.isEmpty());
     }
 
-    /**
-     * Test objective: Verify size method returns correct value
-     * Test scenario: Create Sizeable implementations with different sizes
-     * Expected result: size() returns the configured value
-     */
+///
+     /// 测试目标: 验证y size 方法 returns correct value
+     /// 测试场景: Create Sizeable implementations with different sizes
+     /// 预期结果: size() returns the configured value
     @Test
     void size_ShouldReturnConfiguredValue() {
         // given

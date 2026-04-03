@@ -1,9 +1,8 @@
 package io.github.nextentity.integration.dto;
 
-/**
- * JavaBean projection for Employee with department info.
- * Tests nested projection with association.
- */
+///
+ /// JavaBean projection for Employee with department info.
+ /// 测试s nested projection with association.
 public class EmployeeWithDepartment {
 
     private Long id;

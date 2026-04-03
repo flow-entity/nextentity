@@ -15,21 +15,20 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Having clause integration tests.
- * <p>
- * Tests HAVING clause functionality including:
- * - HAVING with aggregate functions
- * - HAVING with GROUP BY
- * - Complex HAVING conditions
- * <p>
- * Note: For GROUP BY + HAVING, the select must come BEFORE groupBy.
- * All paths in select must use get() wrapper.
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Having clause integration tests.
+ /// <p>
+ /// 测试s HAVING clause functionality including:
+ /// - HAVING with aggregate functions
+ /// - HAVING with GROUP BY
+ /// - Complex HAVING conditions
+ /// <p>
+ /// Note: For GROUP BY + HAVING, the select must come BEFORE groupBy.
+ /// All paths in select must use get() wrapper.
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Having Clause Integration Tests")
 public class HavingClauseIntegrationTest {
 

@@ -8,14 +8,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-/**
- * Test objective: Verify AttributeConverterWrapper correctly wraps JPA AttributeConverter
- * <p>
- * Test scenarios:
- * 1. Wrap non-ValueConverter AttributeConverter
- * 2. Return existing ValueConverter directly
- * 3. Delegate conversion methods
- */
+///
+ /// 测试目标: 验证y AttributeConverterWrapper 正确 wraps JPA AttributeConverter
+ /// <p>
+ /// 测试场景s:
+ /// 1. Wrap non-ValueConverter AttributeConverter
+ /// 2. Return existing ValueConverter directly
+ /// 3. Delegate conversion 方法
 class AttributeConverterWrapperTest {
 
     @Nested
@@ -84,9 +83,8 @@ class AttributeConverterWrapperTest {
         }
     }
 
-    /**
-     * Test implementation that implements both interfaces
-     */
+///
+     /// 测试 implementation that implements both interfaces
     private static class TestValueConverter implements ValueConverter<String, String>, AttributeConverter<String, String> {
         @Override
         public String convertToDatabaseColumn(String attribute) {

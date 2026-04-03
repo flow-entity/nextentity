@@ -5,9 +5,8 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-/**
- * Employee entity for integration testing.
- */
+///
+ /// Employee entity for integration testing.
 @Entity
 public class Employee {
 

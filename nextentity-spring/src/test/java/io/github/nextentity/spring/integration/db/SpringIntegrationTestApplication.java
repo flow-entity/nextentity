@@ -6,12 +6,10 @@ import org.springframework.boot.persistence.autoconfigure.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-/**
- * Spring Boot application for integration tests.
- * Provides JDBC and JPA based test contexts for each database.
- *
- * @author HuangChengwei
- */
+/// 用于集成测试的 Spring Boot 应用程序。
+/// 为每个数据库提供基于 JDBC 和 JPA 的测试上下文。
+///
+/// @author HuangChengwei
 @EntityScan("io.github.nextentity.spring.integration.entity")
 @SpringBootApplication
 public class SpringIntegrationTestApplication {

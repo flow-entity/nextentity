@@ -5,25 +5,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify IdentityValueConverter returns values unchanged
- * <p>
- * Test scenarios:
- * 1. Singleton INSTANCE
- * 2. convertToDatabaseColumn returns value unchanged
- * 3. convertToEntityAttribute returns value unchanged
- * 4. getDatabaseColumnType returns configured type
- */
+///
+ /// 测试目标: 验证y IdentityValueConverter returns values unchanged
+ /// <p>
+ /// 测试场景s:
+ /// 1. Singleton INSTANCE
+ /// 2. convertToDatabaseColumn returns value unchanged
+ /// 3. convertToEntityAttribute returns value unchanged
+ /// 4. getDatabaseColumnType returns configured type
 class IdentityValueConverterTest {
 
     @Nested
     class SingletonInstance {
 
-        /**
-         * Test objective: Verify INSTANCE is singleton
-         * Test scenario: Access INSTANCE multiple times
-         * Expected result: Same instance
-         */
+///
+         /// 测试目标: 验证y INSTANCE is singleton
+         /// 测试场景: Access INSTANCE multiple times
+         /// 预期结果: Same instance
         @Test
         void instance_IsSingleton() {
             // when
@@ -38,11 +36,10 @@ class IdentityValueConverterTest {
     @Nested
     class ConvertToDatabaseColumn {
 
-        /**
-         * Test objective: Verify convertToDatabaseColumn returns value unchanged
-         * Test scenario: Convert string value
-         * Expected result: Same string
-         */
+///
+         /// 测试目标: 验证y convertToDatabaseColumn returns value unchanged
+         /// 测试场景: Convert string value
+         /// 预期结果: Same string
         @Test
         void convertToDatabaseColumn_ReturnsValue() {
             // given
@@ -56,11 +53,10 @@ class IdentityValueConverterTest {
             assertThat(result).isSameAs(value);
         }
 
-        /**
-         * Test objective: Verify convertToDatabaseColumn handles null
-         * Test scenario: Convert null
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y convertToDatabaseColumn 处理 null
+         /// 测试场景: Convert null
+         /// 预期结果: null
         @Test
         void convertToDatabaseColumn_Null_ReturnsNull() {
             // given
@@ -73,11 +69,10 @@ class IdentityValueConverterTest {
             assertThat(result).isNull();
         }
 
-        /**
-         * Test objective: Verify convertToDatabaseColumn handles integer
-         * Test scenario: Convert integer
-         * Expected result: Same integer
-         */
+///
+         /// 测试目标: 验证y convertToDatabaseColumn 处理 integer
+         /// 测试场景: Convert integer
+         /// 预期结果: Same integer
         @Test
         void convertToDatabaseColumn_Integer_ReturnsValue() {
             // given
@@ -95,11 +90,10 @@ class IdentityValueConverterTest {
     @Nested
     class ConvertToEntityAttribute {
 
-        /**
-         * Test objective: Verify convertToEntityAttribute returns value unchanged
-         * Test scenario: Convert string value
-         * Expected result: Same string
-         */
+///
+         /// 测试目标: 验证y convertToEntityAttribute returns value unchanged
+         /// 测试场景: Convert string value
+         /// 预期结果: Same string
         @Test
         void convertToEntityAttribute_ReturnsValue() {
             // given
@@ -113,11 +107,10 @@ class IdentityValueConverterTest {
             assertThat(result).isSameAs(value);
         }
 
-        /**
-         * Test objective: Verify convertToEntityAttribute handles null
-         * Test scenario: Convert null
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y convertToEntityAttribute 处理 null
+         /// 测试场景: Convert null
+         /// 预期结果: null
         @Test
         void convertToEntityAttribute_Null_ReturnsNull() {
             // given
@@ -134,11 +127,10 @@ class IdentityValueConverterTest {
     @Nested
     class GetDatabaseColumnType {
 
-        /**
-         * Test objective: Verify getDatabaseColumnType returns Object.class for default
-         * Test scenario: Get database column type from INSTANCE
-         * Expected result: Object.class
-         */
+///
+         /// 测试目标: 验证y getDatabaseColumnType returns Object.class for default
+         /// 测试场景: Get database column type from INSTANCE
+         /// 预期结果: Object.class
         @Test
         void getDatabaseColumnType_Default_ReturnsObject() {
             // given
@@ -151,11 +143,10 @@ class IdentityValueConverterTest {
             assertThat(result).isEqualTo(Object.class);
         }
 
-        /**
-         * Test objective: Verify getDatabaseColumnType returns configured type
-         * Test scenario: Create converter with specific type
-         * Expected result: Configured type
-         */
+///
+         /// 测试目标: 验证y getDatabaseColumnType returns configured type
+         /// 测试场景: Create converter with specific type
+         /// 预期结果: Configured type
         @Test
         void getDatabaseColumnType_Custom_ReturnsConfiguredType() {
             // given

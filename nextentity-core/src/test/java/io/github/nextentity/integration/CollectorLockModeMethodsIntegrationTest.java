@@ -13,27 +13,25 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Integration tests for Collector methods with LockModeType parameters.
- * <p>
- * Tests default methods in Collector interface that accept LockModeType:
- * - first()/single() with lock
- * - window()/limit()/list() with lock
- * - slice(int, int)
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- * @see io.github.nextentity.api.Collector
- */
+///
+ /// Integration tests for Collector 方法 with LockModeType parameters.
+ /// <p>
+ /// 测试s default 方法 in Collector interface that accept LockModeType:
+ /// - first()/single() with lock
+ /// - window()/limit()/list() with lock
+ /// - slice(int, int)
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
+ /// @see io.github.nextentity.api.Collector
 @DisplayName("Collector LockMode Methods Integration Tests")
 public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== first(LockModeType) Tests ====================
 
-    /**
-     * Tests first(LockModeType) returns value.
-     */
+///
+     /// 测试s first(LockModeType) returns value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should first with LockModeType return value")
@@ -50,9 +48,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(result.getId()).isEqualTo(1L);
     }
 
-    /**
-     * Tests first(LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s first(LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should first with pessimistic write lock")
@@ -71,9 +68,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== getFirst(LockModeType) Tests ====================
 
-    /**
-     * Tests getFirst(LockModeType) returns result.
-     */
+///
+     /// 测试s getFirst(LockModeType) returns result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst with LockModeType return result")
@@ -90,9 +86,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entity.getId()).isEqualTo(1L);
     }
 
-    /**
-     * Tests getFirst(LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s getFirst(LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst with pessimistic write lock")
@@ -111,9 +106,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== requireSingle(LockModeType) Tests ====================
 
-    /**
-     * Tests requireSingle(LockModeType) returns result when single exists.
-     */
+///
+     /// 测试s requireSingle(LockModeType) returns result when single exists.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should requireSingle with LockModeType return result")
@@ -130,9 +124,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entity.getId()).isEqualTo(1L);
     }
 
-    /**
-     * Tests requireSingle(LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s requireSingle(LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should requireSingle with pessimistic write lock")
@@ -151,9 +144,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== single(LockModeType) Tests ====================
 
-    /**
-     * Tests single(LockModeType) returns value.
-     */
+///
+     /// 测试s single(LockModeType) returns value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should single with LockModeType return value")
@@ -170,9 +162,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(result.getId()).isEqualTo(1L);
     }
 
-    /**
-     * Tests single(LockModeType) returns empty when no result.
-     */
+///
+     /// 测试s single(LockModeType) returns empty when no result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should single with LockModeType return empty when no result")
@@ -188,9 +179,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(result).isNull();
     }
 
-    /**
-     * Tests single(LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s single(LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should single with pessimistic write lock")
@@ -208,9 +198,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== getSingle(LockModeType) Tests ====================
 
-    /**
-     * Tests getSingle(LockModeType) returns result.
-     */
+///
+     /// 测试s getSingle(LockModeType) returns result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getSingle with LockModeType return result")
@@ -227,9 +216,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entity.getId()).isEqualTo(1L);
     }
 
-    /**
-     * Tests getSingle(LockModeType) returns null when no result.
-     */
+///
+     /// 测试s getSingle(LockModeType) returns null when no result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getSingle with LockModeType return null when no result")
@@ -245,9 +233,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entity).isNull();
     }
 
-    /**
-     * Tests getSingle(LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s getSingle(LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getSingle with pessimistic write lock")
@@ -265,9 +252,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== offset(int, LockModeType) Tests ====================
 
-    /**
-     * Tests offset(int, LockModeType) returns results from offset.
-     */
+///
+     /// 测试s offset(int, LockModeType) returns results from offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset with LockModeType return results from offset")
@@ -284,9 +270,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entities.getFirst().getId()).isEqualTo(3L);
     }
 
-    /**
-     * Tests offset(int, LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s offset(int, LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset with pessimistic write lock")
@@ -303,9 +288,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entities.getFirst().getId()).isEqualTo(2L);
     }
 
-    /**
-     * Tests offset(int, LockModeType) with zero offset.
-     */
+///
+     /// 测试s offset(int, LockModeType) with zero offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset zero with LockModeType return all results")
@@ -323,9 +307,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== limit(int, LockModeType) Tests ====================
 
-    /**
-     * Tests limit(int, LockModeType) returns limited results.
-     */
+///
+     /// 测试s limit(int, LockModeType) returns limited results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit with LockModeType return limited results")
@@ -341,9 +324,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entities).hasSize(3);
     }
 
-    /**
-     * Tests limit(int, LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s limit(int, LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit with pessimistic write lock")
@@ -361,9 +343,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== getList(LockModeType) Tests ====================
 
-    /**
-     * Tests getList(LockModeType) returns all results.
-     */
+///
+     /// 测试s getList(LockModeType) returns all results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getList with LockModeType return all results")
@@ -379,9 +360,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(entities).hasSize(5);
     }
 
-    /**
-     * Tests getList(LockModeType) with pessimistic write lock.
-     */
+///
+     /// 测试s getList(LockModeType) with pessimistic write lock.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getList with pessimistic write lock")
@@ -399,9 +379,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== first(int, LockModeType) Tests ====================
 
-    /**
-     * Tests first(int, LockModeType) with offset.
-     */
+///
+     /// 测试s first(int, LockModeType) with offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should first with offset and LockModeType return value")
@@ -420,9 +399,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== single(int, LockModeType) Tests ====================
 
-    /**
-     * Tests single(int, LockModeType) with offset.
-     */
+///
+     /// 测试s single(int, LockModeType) with offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should single with offset and LockModeType return value")
@@ -441,9 +419,8 @@ public class CollectorLockModeMethodsIntegrationTest {
 
     // ==================== Combined Tests ====================
 
-    /**
-     * Tests first(LockModeType) with where clause.
-     */
+///
+     /// 测试s first(LockModeType) with where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should first with LockModeType and where clause")
@@ -461,9 +438,8 @@ public class CollectorLockModeMethodsIntegrationTest {
         assertThat(result.getId()).isEqualTo(3L);
     }
 
-    /**
-     * Tests getSingle(LockModeType) throws when multiple results.
-     */
+///
+     /// 测试s getSingle(LockModeType) throws when multiple results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getSingle with LockModeType throw when multiple results")
@@ -479,9 +455,8 @@ public class CollectorLockModeMethodsIntegrationTest {
           .hasMessageContaining("found more than one");
     }
 
-    /**
-     * Tests offset with lock and where clause.
-     */
+///
+     /// 测试s offset with lock and where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset with LockModeType and where clause")

@@ -15,28 +15,25 @@ import java.util.stream.Stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Test objective: Verify ImmutableList provides correct immutable list behavior
- * <p>
- * Test scenarios:
- * 1. Factory methods create correct lists
- * 2. List operations are read-only
- * 3. Modification operations throw UnsupportedOperationException
- * 4. Iterator behavior is correct
- * 5. SubList works correctly
- * <p>
- * Expected result: ImmutableList is truly immutable and behaves correctly
- */
+/// 测试目标：验证ImmutableList提供正确的不可变列表行为
+/// <p>
+/// 测试场景：
+/// 1. 工厂方法创建正确的列表
+/// 2. 列表操作是只读的
+/// 3. 修改操作抛出UnsupportedOperationException
+/// 4. 迭代器行为正确
+/// 5. 子列表工作正常
+/// <p>
+/// 预期结果：ImmutableList确实是不可变的并且行为正确
 class ImmutableListTest {
 
     @Nested
     class FactoryMethods {
 
-        /**
-         * Test objective: Verify of() creates list with given elements
-         * Test scenario: Create list with multiple elements
-         * Expected result: List contains all elements in order
-         */
+///
+         /// 测试目标: 验证y of() creates list with given elements
+         /// 测试场景: Create list with multiple elements
+         /// 预期结果: List contains all elements in order
         @Test
         void of_WithElements_ShouldContainAllElements() {
             // when
@@ -47,11 +44,10 @@ class ImmutableListTest {
             assertThat(list.size()).isEqualTo(3);
         }
 
-        /**
-         * Test objective: Verify of() with no args returns empty list
-         * Test scenario: Call of() with no arguments
-         * Expected result: Empty list is returned
-         */
+///
+         /// 测试目标: 验证y of() with no args returns empty list
+         /// 测试场景: Call of() with no arguments
+         /// 预期结果: Empty list is returned
         @Test
         void of_WithNoArgs_ShouldReturnEmptyList() {
             // when
@@ -62,11 +58,10 @@ class ImmutableListTest {
             assertThat(list).isSameAs(ImmutableList.empty());
         }
 
-        /**
-         * Test objective: Verify empty() returns same instance
-         * Test scenario: Call empty() multiple times
-         * Expected result: Same instance is returned
-         */
+///
+         /// 测试目标: 验证y empty() returns same instance
+         /// 测试场景: Call empty() multiple times
+         /// 预期结果: Same instance is returned
         @Test
         void empty_ShouldReturnSameInstance() {
             // when
@@ -77,11 +72,10 @@ class ImmutableListTest {
             assertThat(empty1).isSameAs(empty2);
         }
 
-        /**
-         * Test objective: Verify ofIterable with Collection works correctly
-         * Test scenario: Create ImmutableList from ArrayList
-         * Expected result: List contains all elements from collection
-         */
+///
+         /// 测试目标: 验证y ofIterable with Collection works 正确
+         /// 测试场景: Create ImmutableList from ArrayList
+         /// 预期结果: List contains all elements from collection
         @Test
         void ofIterable_WithCollection_ShouldContainAllElements() {
             // given
@@ -94,11 +88,10 @@ class ImmutableListTest {
             assertThat(list).containsExactly("x", "y", "z");
         }
 
-        /**
-         * Test objective: Verify ofIterable with non-Collection iterable works
-         * Test scenario: Create ImmutableList from a Set iterator
-         * Expected result: List contains all elements from iterable
-         */
+///
+         /// 测试目标: 验证y ofIterable with non-Collection iterable works
+         /// 测试场景: Create ImmutableList from a Set iterator
+         /// 预期结果: List contains all elements from iterable
         @Test
         void ofIterable_WithNonCollection_ShouldContainAllElements() {
             // given
@@ -111,11 +104,10 @@ class ImmutableListTest {
             assertThat(list).containsExactlyInAnyOrder("a", "b");
         }
 
-        /**
-         * Test objective: Verify ofCollection with ImmutableList returns same instance
-         * Test scenario: Pass ImmutableList to ofCollection
-         * Expected result: Same ImmutableList instance is returned
-         */
+///
+         /// 测试目标: 验证y ofCollection with ImmutableList returns same instance
+         /// 测试场景: Pass ImmutableList to ofCollection
+         /// 预期结果: Same ImmutableList instance is returned
         @Test
         void ofCollection_WithImmutableList_ShouldReturnSameInstance() {
             // given
@@ -128,11 +120,10 @@ class ImmutableListTest {
             assertThat(result).isSameAs(original);
         }
 
-        /**
-         * Test objective: Verify ofCollection with empty collection returns empty list
-         * Test scenario: Pass empty collection to ofCollection
-         * Expected result: Empty ImmutableList is returned
-         */
+///
+         /// 测试目标: 验证y ofCollection with empty collection returns empty list
+         /// 测试场景: Pass empty collection to ofCollection
+         /// 预期结果: Empty ImmutableList is returned
         @Test
         void ofCollection_WithEmptyCollection_ShouldReturnEmptyList() {
             // given
@@ -146,11 +137,10 @@ class ImmutableListTest {
             assertThat(result).isSameAs(ImmutableList.empty());
         }
 
-        /**
-         * Test objective: Verify concat combines two collections
-         * Test scenario: Concat two lists
-         * Expected result: Combined list contains all elements
-         */
+///
+         /// 测试目标: 验证y concat combines two collections
+         /// 测试场景: Concat two lists
+         /// 预期结果: Combined list contains all elements
         @Test
         void concat_ShouldCombineLists() {
             // given
@@ -164,11 +154,10 @@ class ImmutableListTest {
             assertThat(result).containsExactly("a", "b", "c", "d");
         }
 
-        /**
-         * Test objective: Verify copyOf() creates defensive copy
-         * Test scenario: Modify original array after creating list
-         * Expected result: ImmutableList is not affected
-         */
+///
+         /// 测试目标: 验证y copyOf() creates defensive copy
+         /// 测试场景: Modify original array after creating list
+         /// 预期结果: ImmutableList is not affected
         @Test
         void copyOf_ShouldCreateDefensiveCopy() {
             // given
@@ -182,11 +171,10 @@ class ImmutableListTest {
             assertThat(list).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify of() does NOT create defensive copy
-         * Test scenario: Modify original array after creating list
-         * Expected result: ImmutableList is affected (shares same array)
-         */
+///
+         /// 测试目标: 验证y of() does NOT create defensive copy
+         /// 测试场景: Modify original array after creating list
+         /// 预期结果: ImmutableList is affected (shares same array)
         @Test
         void of_DoesNotCreateDefensiveCopy() {
             // given
@@ -200,11 +188,10 @@ class ImmutableListTest {
             assertThat(list).containsExactly("modified", "b", "c");
         }
 
-        /**
-         * Test objective: Verify copyOf() with empty array returns empty list
-         * Test scenario: Pass empty array to copyOf()
-         * Expected result: Empty ImmutableList is returned
-         */
+///
+         /// 测试目标: 验证y copyOf() with empty array returns empty list
+         /// 测试场景: Pass empty array to copyOf()
+         /// 预期结果: Empty ImmutableList is returned
         @Test
         void copyOf_WithEmptyArray_ShouldReturnEmptyList() {
             // given
@@ -222,11 +209,10 @@ class ImmutableListTest {
     @Nested
     class ElementAccess {
 
-        /**
-         * Test objective: Verify get returns correct element
-         * Test scenario: Access element at each index
-         * Expected result: Correct element returned
-         */
+///
+         /// 测试目标: 验证y get returns correct element
+         /// 测试场景: Access element at each index
+         /// 预期结果: Correct element returned
         @Test
         void get_WithValidIndex_ShouldReturnElement() {
             // given
@@ -238,11 +224,10 @@ class ImmutableListTest {
             assertThat(list.get(4)).isEqualTo(5);
         }
 
-        /**
-         * Test objective: Verify get throws IndexOutOfBoundsException for negative index
-         * Test scenario: Pass negative index
-         * Expected result: IndexOutOfBoundsException thrown
-         */
+///
+         /// 测试目标: 验证y get throws IndexOutOfBoundsException for negative index
+         /// 测试场景: Pass negative index
+         /// 预期结果: IndexOutOfBoundsException thrown
         @Test
         void get_WithNegativeIndex_ShouldThrowException() {
             // given
@@ -253,11 +238,10 @@ class ImmutableListTest {
                     .isInstanceOf(IndexOutOfBoundsException.class);
         }
 
-        /**
-         * Test objective: Verify get throws IndexOutOfBoundsException for out of bounds index
-         * Test scenario: Pass index >= size
-         * Expected result: IndexOutOfBoundsException thrown
-         */
+///
+         /// 测试目标: 验证y get throws IndexOutOfBoundsException for out of bounds index
+         /// 测试场景: Pass index >= size
+         /// 预期结果: IndexOutOfBoundsException thrown
         @Test
         void get_WithOutOfBoundsIndex_ShouldThrowException() {
             // given
@@ -270,11 +254,10 @@ class ImmutableListTest {
                     .isInstanceOf(IndexOutOfBoundsException.class);
         }
 
-        /**
-         * Test objective: Verify indexOf finds element
-         * Test scenario: Search for existing element
-         * Expected result: Correct index returned
-         */
+///
+         /// 测试目标: 验证y indexOf finds element
+         /// 测试场景: Search for existing element
+         /// 预期结果: Correct index returned
         @Test
         void indexOf_WithExistingElement_ShouldReturnCorrectIndex() {
             // given
@@ -286,11 +269,10 @@ class ImmutableListTest {
             assertThat(list.indexOf("c")).isEqualTo(2);
         }
 
-        /**
-         * Test objective: Verify indexOf returns -1 for non-existing element
-         * Test scenario: Search for non-existing element
-         * Expected result: -1 returned
-         */
+///
+         /// 测试目标: 验证y indexOf returns -1 for non-existing element
+         /// 测试场景: Search for non-existing element
+         /// 预期结果: -1 returned
         @Test
         void indexOf_WithNonExistingElement_ShouldReturnMinusOne() {
             // given
@@ -300,11 +282,10 @@ class ImmutableListTest {
             assertThat(list.indexOf("x")).isEqualTo(-1);
         }
 
-        /**
-         * Test objective: Verify lastIndexOf finds last occurrence
-         * Test scenario: Search for element that appears multiple times
-         * Expected result: Last index returned
-         */
+///
+         /// 测试目标: 验证y lastIndexOf finds last occurrence
+         /// 测试场景: Search for element that appears multiple times
+         /// 预期结果: Last index returned
         @Test
         void lastIndexOf_ShouldReturnLastOccurrence() {
             // given
@@ -314,11 +295,10 @@ class ImmutableListTest {
             assertThat(list.lastIndexOf("b")).isEqualTo(3);
         }
 
-        /**
-         * Test objective: Verify contains works correctly
-         * Test scenario: Check for existing and non-existing elements
-         * Expected result: Correct boolean returned
-         */
+///
+         /// 测试目标: 验证y contains works 正确
+         /// 测试场景: Check for existing and non-existing elements
+         /// 预期结果: Correct boolean returned
         @Test
         void contains_ShouldWorkCorrectly() {
             // given
@@ -331,11 +311,10 @@ class ImmutableListTest {
             assertThat(list.contains(null)).isFalse();
         }
 
-        /**
-         * Test objective: Verify containsAll works correctly
-         * Test scenario: Check for multiple elements
-         * Expected result: Correct boolean returned
-         */
+///
+         /// 测试目标: 验证y containsAll works 正确
+         /// 测试场景: Check for multiple elements
+         /// 预期结果: Correct boolean returned
         @Test
         void containsAll_ShouldWorkCorrectly() {
             // given
@@ -350,11 +329,10 @@ class ImmutableListTest {
     @Nested
     class Immutability {
 
-        /**
-         * Test objective: Verify add throws UnsupportedOperationException
-         * Test scenario: Call add() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y add throws UnsupportedOperationException
+         /// 测试场景: Call add() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void add_ShouldThrowUnsupportedOperationException() {
             // given
@@ -365,11 +343,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify remove throws UnsupportedOperationException
-         * Test scenario: Call remove() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y remove throws UnsupportedOperationException
+         /// 测试场景: Call remove() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void remove_ShouldThrowUnsupportedOperationException() {
             // given
@@ -380,11 +357,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify remove by index throws UnsupportedOperationException
-         * Test scenario: Call remove(int) method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y remove by index throws UnsupportedOperationException
+         /// 测试场景: Call remove(int) 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void removeByIndex_ShouldThrowUnsupportedOperationException() {
             // given
@@ -395,11 +371,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify set throws UnsupportedOperationException
-         * Test scenario: Call set() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y set throws UnsupportedOperationException
+         /// 测试场景: Call set() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void set_ShouldThrowUnsupportedOperationException() {
             // given
@@ -410,11 +385,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify addAll throws UnsupportedOperationException
-         * Test scenario: Call addAll() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y addAll throws UnsupportedOperationException
+         /// 测试场景: Call addAll() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void addAll_ShouldThrowUnsupportedOperationException() {
             // given
@@ -425,11 +399,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify clear throws UnsupportedOperationException
-         * Test scenario: Call clear() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y clear throws UnsupportedOperationException
+         /// 测试场景: Call clear() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void clear_ShouldThrowUnsupportedOperationException() {
             // given
@@ -440,11 +413,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify removeAll throws UnsupportedOperationException
-         * Test scenario: Call removeAll() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y removeAll throws UnsupportedOperationException
+         /// 测试场景: Call removeAll() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void removeAll_ShouldThrowUnsupportedOperationException() {
             // given
@@ -455,11 +427,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify retainAll throws UnsupportedOperationException
-         * Test scenario: Call retainAll() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y retainAll throws UnsupportedOperationException
+         /// 测试场景: Call retainAll() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void retainAll_ShouldThrowUnsupportedOperationException() {
             // given
@@ -470,11 +441,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify sort throws UnsupportedOperationException
-         * Test scenario: Call sort() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y sort throws UnsupportedOperationException
+         /// 测试场景: Call sort() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void sort_ShouldThrowUnsupportedOperationException() {
             // given
@@ -485,11 +455,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify replaceAll throws UnsupportedOperationException
-         * Test scenario: Call replaceAll() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y replaceAll throws UnsupportedOperationException
+         /// 测试场景: Call replaceAll() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void replaceAll_ShouldThrowUnsupportedOperationException() {
             // given
@@ -500,11 +469,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify removeIf throws UnsupportedOperationException
-         * Test scenario: Call removeIf() method
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y removeIf throws UnsupportedOperationException
+         /// 测试场景: Call removeIf() 方法
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void removeIf_ShouldThrowUnsupportedOperationException() {
             // given
@@ -519,11 +487,10 @@ class ImmutableListTest {
     @Nested
     class Iteration {
 
-        /**
-         * Test objective: Verify iterator returns elements in order
-         * Test scenario: Use iterator to iterate all elements
-         * Expected result: Elements returned in correct order
-         */
+///
+         /// 测试目标: 验证y iterator returns elements in order
+         /// 测试场景: Use iterator to iterate all elements
+         /// 预期结果: Elements returned in correct order
         @Test
         void iterator_ShouldReturnElementsInOrder() {
             // given
@@ -539,11 +506,10 @@ class ImmutableListTest {
             assertThat(result).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify listIterator works correctly
-         * Test scenario: Use listIterator to iterate forward and backward
-         * Expected result: Correct elements returned in both directions
-         */
+///
+         /// 测试目标: 验证y listIterator works 正确
+         /// 测试场景: Use listIterator to iterate forward and backward
+         /// 预期结果: Correct elements returned in both directions
         @Test
         void listIterator_ShouldIterateForwardAndBackward() {
             // given
@@ -567,11 +533,10 @@ class ImmutableListTest {
             assertThat(it.hasPrevious()).isFalse();
         }
 
-        /**
-         * Test objective: Verify iterator remove throws UnsupportedOperationException
-         * Test scenario: Call remove() on iterator
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y iterator remove throws UnsupportedOperationException
+         /// 测试场景: Call remove() on iterator
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void iteratorRemove_ShouldThrowUnsupportedOperationException() {
             // given
@@ -584,11 +549,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify listIterator add throws UnsupportedOperationException
-         * Test scenario: Call add() on listIterator
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y listIterator add throws UnsupportedOperationException
+         /// 测试场景: Call add() on listIterator
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void listIteratorAdd_ShouldThrowUnsupportedOperationException() {
             // given
@@ -600,11 +564,10 @@ class ImmutableListTest {
                     .isInstanceOf(UnsupportedOperationException.class);
         }
 
-        /**
-         * Test objective: Verify listIterator set throws UnsupportedOperationException
-         * Test scenario: Call set() on listIterator
-         * Expected result: UnsupportedOperationException thrown
-         */
+///
+         /// 测试目标: 验证y listIterator set throws UnsupportedOperationException
+         /// 测试场景: Call set() on listIterator
+         /// 预期结果: UnsupportedOperationException thrown
         @Test
         void listIteratorSet_ShouldThrowUnsupportedOperationException() {
             // given
@@ -621,11 +584,10 @@ class ImmutableListTest {
     @Nested
     class SubList {
 
-        /**
-         * Test objective: Verify subList returns correct portion
-         * Test scenario: Create subList with valid indices
-         * Expected result: Correct sublist returned
-         */
+///
+         /// 测试目标: 验证y subList returns correct portion
+         /// 测试场景: Create subList with valid indices
+         /// 预期结果: Correct sublist returned
         @Test
         void subList_WithValidIndices_ShouldReturnCorrectPortion() {
             // given
@@ -638,11 +600,10 @@ class ImmutableListTest {
             assertThat(sub).containsExactly("b", "c", "d");
         }
 
-        /**
-         * Test objective: Verify subList with same indices returns empty list
-         * Test scenario: Create subList with fromIndex == toIndex
-         * Expected result: Empty list returned
-         */
+///
+         /// 测试目标: 验证y subList with same indices returns empty list
+         /// 测试场景: Create subList with fromIndex == toIndex
+         /// 预期结果: Empty list returned
         @Test
         void subList_WithSameIndices_ShouldReturnEmptyList() {
             // given
@@ -656,11 +617,10 @@ class ImmutableListTest {
             assertThat(sub).isSameAs(ImmutableList.empty());
         }
 
-        /**
-         * Test objective: Verify subList with full range returns same list
-         * Test scenario: Create subList(0, size)
-         * Expected result: Same list instance returned
-         */
+///
+         /// 测试目标: 验证y subList with full range returns same list
+         /// 测试场景: Create subList(0, size)
+         /// 预期结果: Same list instance returned
         @Test
         void subList_WithFullRange_ShouldReturnSameList() {
             // given
@@ -673,11 +633,10 @@ class ImmutableListTest {
             assertThat(sub).isSameAs(list);
         }
 
-        /**
-         * Test objective: Verify subList with invalid indices throws exception
-         * Test scenario: Create subList with invalid indices
-         * Expected result: Exception thrown
-         */
+///
+         /// 测试目标: 验证y subList with invalid indices throws exception
+         /// 测试场景: Create subList with invalid indices
+         /// 预期结果: Exception thrown
         @Test
         void subList_WithInvalidIndices_ShouldThrowException() {
             // given
@@ -696,11 +655,10 @@ class ImmutableListTest {
     @Nested
     class ToArray {
 
-        /**
-         * Test objective: Verify toArray() returns new Object array
-         * Test scenario: Call toArray()
-         * Expected result: New Object array with all elements
-         */
+///
+         /// 测试目标: 验证y toArray() returns new Object array
+         /// 测试场景: Call toArray()
+         /// 预期结果: New Object array with all elements
         @Test
         void toArray_ShouldReturnNewObjectArray() {
             // given
@@ -716,11 +674,10 @@ class ImmutableListTest {
             assertThat(list.get(0)).isEqualTo("a");
         }
 
-        /**
-         * Test objective: Verify toArray(T[]) with sufficient array
-         * Test scenario: Pass array with sufficient size
-         * Expected result: Same array filled with elements
-         */
+///
+         /// 测试目标: 验证y toArray(T[]) with sufficient array
+         /// 测试场景: Pass array with sufficient size
+         /// 预期结果: Same array filled with elements
         @Test
         void toArray_WithSufficientArray_ShouldFillArray() {
             // given
@@ -735,11 +692,10 @@ class ImmutableListTest {
             assertThat(result).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify toArray(T[]) with larger array
-         * Test scenario: Pass array larger than list
-         * Expected result: Same array with null after last element
-         */
+///
+         /// 测试目标: 验证y toArray(T[]) with larger array
+         /// 测试场景: Pass array larger than list
+         /// 预期结果: Same array with null after last element
         @Test
         void toArray_WithLargerArray_ShouldSetNullAfterLastElement() {
             // given
@@ -758,11 +714,10 @@ class ImmutableListTest {
             assertThat(result[3]).isNull();
         }
 
-        /**
-         * Test objective: Verify toArray(T[]) with smaller array
-         * Test scenario: Pass array smaller than list
-         * Expected result: New array with correct size returned
-         */
+///
+         /// 测试目标: 验证y toArray(T[]) with smaller array
+         /// 测试场景: Pass array smaller than list
+         /// 预期结果: New array with correct size returned
         @Test
         void toArray_WithSmallerArray_ShouldReturnNewArray() {
             // given
@@ -781,11 +736,10 @@ class ImmutableListTest {
     @Nested
     class Clone {
 
-        /**
-         * Test objective: Verify clone returns new instance
-         * Test scenario: Clone list
-         * Expected result: New instance with same elements
-         */
+///
+         /// 测试目标: 验证y clone returns new instance
+         /// 测试场景: Clone list
+         /// 预期结果: New instance with same elements
         @Test
         void clone_ShouldReturnNewInstance() {
             // given
@@ -803,11 +757,10 @@ class ImmutableListTest {
     @Nested
     class Builder {
 
-        /**
-         * Test objective: Verify builder creates list with added elements
-         * Test scenario: Add elements via builder and build
-         * Expected result: List with all added elements
-         */
+///
+         /// 测试目标: 验证y builder creates list with added elements
+         /// 测试场景: Add elements via builder and build
+         /// 预期结果: List with all added elements
         @Test
         void builder_ShouldBuildListCorrectly() {
             // given
@@ -823,11 +776,10 @@ class ImmutableListTest {
             assertThat(list).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify builder with initial capacity
-         * Test scenario: Create builder with initial capacity
-         * Expected result: List built correctly
-         */
+///
+         /// 测试目标: 验证y builder with initial capacity
+         /// 测试场景: Create builder with initial capacity
+         /// 预期结果: List built 正确
         @Test
         void builder_WithInitialCapacity_ShouldWork() {
             // given
@@ -843,11 +795,10 @@ class ImmutableListTest {
             assertThat(list).hasSize(10);
         }
 
-        /**
-         * Test objective: Verify builder addAll with collection
-         * Test scenario: Add all elements from collection
-         * Expected result: List contains all elements
-         */
+///
+         /// 测试目标: 验证y builder addAll with collection
+         /// 测试场景: Add all elements from collection
+         /// 预期结果: List contains all elements
         @Test
         void builder_addAll_WithCollection_ShouldAddAllElements() {
             // given
@@ -862,11 +813,10 @@ class ImmutableListTest {
             assertThat(list).containsExactly("x", "y", "z");
         }
 
-        /**
-         * Test objective: Verify builder isEmpty works correctly
-         * Test scenario: Check isEmpty before and after adding
-         * Expected result: Correct empty state
-         */
+///
+         /// 测试目标: 验证y builder isEmpty works 正确
+         /// 测试场景: Check isEmpty before and after adding
+         /// 预期结果: Correct empty state
         @Test
         void builder_isEmpty_ShouldWorkCorrectly() {
             // given
@@ -882,11 +832,10 @@ class ImmutableListTest {
             assertThat(builder.isEmpty()).isFalse();
         }
 
-        /**
-         * Test objective: Verify builder builds empty list when nothing added
-         * Test scenario: Build without adding elements
-         * Expected result: Empty ImmutableList
-         */
+///
+         /// 测试目标: 验证y builder builds empty list when nothing added
+         /// 测试场景: Build without adding elements
+         /// 预期结果: Empty ImmutableList
         @Test
         void builder_WithNoElements_ShouldBuildEmptyList() {
             // given
@@ -903,11 +852,10 @@ class ImmutableListTest {
     @Nested
     class CollectorSupport {
 
-        /**
-         * Test objective: Verify collector works with stream
-         * Test scenario: Collect stream into ImmutableList
-         * Expected result: ImmutableList with stream elements
-         */
+///
+         /// 测试目标: 验证y collector works with stream
+         /// 测试场景: Collect stream into ImmutableList
+         /// 预期结果: ImmutableList with stream elements
         @Test
         void collector_ShouldWorkWithStream() {
             // given
@@ -920,11 +868,10 @@ class ImmutableListTest {
             assertThat(list).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify collector with initial capacity
-         * Test scenario: Collect with specified initial capacity
-         * Expected result: ImmutableList with correct elements
-         */
+///
+         /// 测试目标: 验证y collector with initial capacity
+         /// 测试场景: Collect with specified initial capacity
+         /// 预期结果: ImmutableList with correct elements
         @Test
         void collector_WithInitialCapacity_ShouldWork() {
             // given
@@ -937,11 +884,10 @@ class ImmutableListTest {
             assertThat(list).hasSize(100);
         }
 
-        /**
-         * Test objective: Verify collector works with empty stream
-         * Test scenario: Collect empty stream
-         * Expected result: Empty ImmutableList
-         */
+///
+         /// 测试目标: 验证y collector works with empty stream
+         /// 测试场景: Collect empty stream
+         /// 预期结果: Empty ImmutableList
         @Test
         void collector_WithEmptyStream_ShouldReturnEmptyList() {
             // given

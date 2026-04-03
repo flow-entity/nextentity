@@ -4,9 +4,11 @@ import io.github.nextentity.core.meta.ValueConverter;
 import io.github.nextentity.jdbc.AbstractArguments;
 
 ///
-/// @author HuangChengwei
-/// @since 1.0.0
+/// JPA 参数封装类，用于封装传递给查询的参数值。
+/// 该类继承自 AbstractArguments，实现了 JPA 查询的参数处理逻辑。
 ///
+/// @author HuangChengwei
+/// @since 2.1
 public class JpaArguments extends AbstractArguments {
     private final Object[] objects;
 

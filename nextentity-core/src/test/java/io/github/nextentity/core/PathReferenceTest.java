@@ -7,25 +7,23 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Test objective: Verify PathReference correctly resolves field names
- * <p>
- * Test scenarios:
- * 1. getFieldName converts method names correctly
- * 2. getFieldName handles edge cases
- * 3. of() creates PathReference for valid paths
- * 4. clearCache() clears the internal cache
- */
+///
+ /// 测试目标: 验证y PathReference 正确 resolves field names
+ /// <p>
+ /// 测试场景s:
+ /// 1. getFieldName converts 方法 names 正确
+ /// 2. getFieldName 处理 edge cases
+ /// 3. of() creates PathReference for valid paths
+ /// 4. clearCache() clears the internal cache
 class PathReferenceTest {
 
     @Nested
     class GetFieldName {
 
-        /**
-         * Test objective: Verify getFieldName converts getter methods
-         * Test scenario: Convert "getName" to "name"
-         * Expected result: "name"
-         */
+///
+         /// 测试目标: 验证y getFieldName converts getter 方法
+         /// 测试场景: Convert "getName" to "name"
+         /// 预期结果: "name"
         @Test
         void getFieldName_Getter_ReturnsFieldName() {
             // when
@@ -35,11 +33,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("name");
         }
 
-        /**
-         * Test objective: Verify getFieldName converts is methods
-         * Test scenario: Convert "isActive" to "active"
-         * Expected result: "active"
-         */
+///
+         /// 测试目标: 验证y getFieldName converts is 方法
+         /// 测试场景: Convert "isActive" to "active"
+         /// 预期结果: "active"
         @Test
         void getFieldName_IsMethod_ReturnsFieldName() {
             // when
@@ -49,11 +46,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("active");
         }
 
-        /**
-         * Test objective: Verify getFieldName handles single char after get
-         * Test scenario: Convert "getX" to "x"
-         * Expected result: "x"
-         */
+///
+         /// 测试目标: 验证y getFieldName 处理 single char after get
+         /// 测试场景: Convert "getX" to "x"
+         /// 预期结果: "x"
         @Test
         void getFieldName_SingleChar_ReturnsLowercase() {
             // when
@@ -63,11 +59,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("x");
         }
 
-        /**
-         * Test objective: Verify getFieldName preserves uppercase for acronyms
-         * Test scenario: Convert "getURL" to "URL"
-         * Expected result: "URL"
-         */
+///
+         /// 测试目标: 验证y getFieldName preserves uppercase for acronyms
+         /// 测试场景: Convert "getURL" to "URL"
+         /// 预期结果: "URL"
         @Test
         void getFieldName_Acronym_PreservesUppercase() {
             // when
@@ -77,11 +72,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("URL");
         }
 
-        /**
-         * Test objective: Verify getFieldName handles mixed case
-         * Test scenario: Convert "getHTTPResponse" to "HTTPResponse"
-         * Expected result: "HTTPResponse"
-         */
+///
+         /// 测试目标: 验证y getFieldName 处理 mixed case
+         /// 测试场景: Convert "getHTTPResponse" to "HTTPResponse"
+         /// 预期结果: "HTTPResponse"
         @Test
         void getFieldName_MixedCase_PreservesUppercase() {
             // when
@@ -91,11 +85,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("HTTPResponse");
         }
 
-        /**
-         * Test objective: Verify getFieldName returns unchanged for non-getter
-         * Test scenario: Pass "name" directly
-         * Expected result: "name"
-         */
+///
+         /// 测试目标: 验证y getFieldName returns unchanged for non-getter
+         /// 测试场景: Pass "name" directly
+         /// 预期结果: "name"
         @Test
         void getFieldName_NonGetter_ReturnsUnchanged() {
             // when
@@ -105,11 +98,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("name");
         }
 
-        /**
-         * Test objective: Verify getFieldName handles short method names
-         * Test scenario: Pass "ge" (shorter than "get")
-         * Expected result: "ge"
-         */
+///
+         /// 测试目标: 验证y getFieldName 处理 short 方法 names
+         /// 测试场景: Pass "ge" (shorter than "get")
+         /// 预期结果: "ge"
         @Test
         void getFieldName_ShortName_ReturnsUnchanged() {
             // when
@@ -119,11 +111,10 @@ class PathReferenceTest {
             assertThat(result).isEqualTo("ge");
         }
 
-        /**
-         * Test objective: Verify getFieldName handles null
-         * Test scenario: Pass null
-         * Expected result: NullPointerException
-         */
+///
+         /// 测试目标: 验证y getFieldName 处理 null
+         /// 测试场景: Pass null
+         /// 预期结果: NullPointerException
         @Test
         void getFieldName_Null_ThrowsException() {
             // when & then
@@ -135,11 +126,10 @@ class PathReferenceTest {
     @Nested
     class OfMethod {
 
-        /**
-         * Test objective: Verify of() creates PathReference with correct field name
-         * Test scenario: Create PathReference for Employee::getName
-         * Expected result: Field name is "name"
-         */
+///
+         /// 测试目标: 验证y of() creates PathReference with correct field name
+         /// 测试场景: Create PathReference for Employee::getName
+         /// 预期结果: Field name is "name"
         @Test
         void of_WithValidPath_ShouldReturnCorrectFieldName() {
             // when
@@ -149,11 +139,10 @@ class PathReferenceTest {
             assertThat(ref.getFieldName()).isEqualTo("name");
         }
 
-        /**
-         * Test objective: Verify of() creates PathReference with correct return type
-         * Test scenario: Create PathReference for Employee::getSalary
-         * Expected result: Return type is Double
-         */
+///
+         /// 测试目标: 验证y of() creates PathReference with correct return type
+         /// 测试场景: Create PathReference for Employee::getSalary
+         /// 预期结果: Return type is Double
         @Test
         void of_WithValidPath_ShouldReturnCorrectReturnType() {
             // when
@@ -163,11 +152,10 @@ class PathReferenceTest {
             assertThat(ref.getReturnType()).isEqualTo(Double.class);
         }
 
-        /**
-         * Test objective: Verify of() creates PathReference with correct entity type
-         * Test scenario: Create PathReference for Employee path
-         * Expected result: Entity type is Employee
-         */
+///
+         /// 测试目标: 验证y of() creates PathReference with correct entity type
+         /// 测试场景: Create PathReference for Employee path
+         /// 预期结果: Entity type is Employee
         @Test
         void of_WithValidPath_ShouldReturnCorrectEntityType() {
             // when
@@ -177,11 +165,10 @@ class PathReferenceTest {
             assertThat(ref.getEntityType()).isEqualTo(Employee.class);
         }
 
-        /**
-         * Test objective: Verify of() throws NPE for null path
-         * Test scenario: Pass null to of()
-         * Expected result: NullPointerException thrown
-         */
+///
+         /// 测试目标: 验证y of() throws NPE for null path
+         /// 测试场景: Pass null to of()
+         /// 预期结果: NullPointerException thrown
         @Test
         void of_WithNullPath_ShouldThrowNPE() {
             // when & then
@@ -193,14 +180,13 @@ class PathReferenceTest {
     @Nested
     class ClearCache {
 
-        /**
-         * Test objective: Verify clearCache() method executes without error
-         * Test scenario: Call clearCache() after using the cache
-         * Expected result: Method completes successfully
-         * <p>
-         * Note: This test verifies the method is callable. The actual cache behavior
-         * is an implementation detail that may vary.
-         */
+///
+         /// 测试目标: 验证y clearCache() 方法 executes without error
+         /// 测试场景: Call clearCache() after using the cache
+         /// 预期结果: Method completes successfully
+         /// <p>
+         /// Note: This test verifies the 方法 is callable. The actual cache 行为
+         /// is an implementation detail that may vary.
         @Test
         void clearCache_AfterCacheUsage_ShouldNotThrow() {
             // given - use cache

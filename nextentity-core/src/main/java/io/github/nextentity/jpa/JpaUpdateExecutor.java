@@ -18,6 +18,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
 
+///
+/// JPA 更新执行器，负责执行插入、更新和删除操作。
+/// 该执行器通过 JPA EntityManager 处理批量实体操作，并支持乐观锁机制。
+///
+/// @author HuangChengwei
+/// @since 2.1
 public class JpaUpdateExecutor implements UpdateExecutor {
 
     private final EntityManager entityManager;

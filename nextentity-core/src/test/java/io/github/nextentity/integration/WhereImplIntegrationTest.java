@@ -16,19 +16,18 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for WhereImpl class.
- * <p>
- * Covers:
- * - where(PathExpression) method
- * - where(NumberPath) method
- * - where(StringPath) method
- * - groupBy(TypedExpression) method
- * - groupBy(List<TypedExpression>) method
- * - orderBy(List<Order>) method
- *
- * @author HuangChengwei
- */
+///
+ /// Integration tests for WhereImpl class.
+ /// <p>
+ /// Covers:
+ /// - where(PathExpression) 方法
+ /// - where(NumberPath) 方法
+ /// - where(StringPath) 方法
+ /// - groupBy(TypedExpression) 方法
+ /// - groupBy(List<TypedExpression>) 方法
+ /// - orderBy(List<Order>) 方法
+ /// 
+ /// @author HuangChengwei
 @DisplayName("WhereImpl Integration Tests")
 public class WhereImplIntegrationTest {
 
@@ -36,10 +35,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("where(PathExpression) Integration Tests")
     class WhereWithPathExpressionTests {
 
-        /**
-         * Test objective: Verify that where(PathExpression) returns PathOperator.
-         * Covers: WhereImpl.where(PathExpression) line 179-180
-         */
+///
+         /// 测试目标: 验证y that where(PathExpression) returns PathOperator.
+         /// Covers: WhereImpl.where(PathExpression) line 179-180
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should return PathOperator with PathExpression")
@@ -55,10 +53,9 @@ public class WhereImplIntegrationTest {
             assertThat(operator).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that where(PathExpression) can build and execute condition.
-         * Covers: WhereImpl.where(PathExpression) with actual query execution
-         */
+///
+         /// 测试目标: 验证y that where(PathExpression) can build and execute condition.
+         /// Covers: WhereImpl.where(PathExpression) with actual query execution
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should execute query with PathExpression condition")
@@ -80,9 +77,8 @@ public class WhereImplIntegrationTest {
             assertThat(result.getFirst().getId()).isEqualTo(firstId);
         }
 
-        /**
-         * Test objective: Verify that where(PathExpression) works with comparison operators.
-         */
+///
+         /// 测试目标: 验证y that where(PathExpression) works with comparison operators.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use comparison operators with PathExpression")
@@ -105,9 +101,8 @@ public class WhereImplIntegrationTest {
             assertThat(result.getFirst().getId()).isEqualTo(firstId);
         }
 
-        /**
-         * Test objective: Verify that where(PathExpression) works with in operator.
-         */
+///
+         /// 测试目标: 验证y that where(PathExpression) works with in operator.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use in operator with PathExpression")
@@ -135,10 +130,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("where(NumberPath) Integration Tests")
     class WhereWithNumberPathTests {
 
-        /**
-         * Test objective: Verify that where(NumberPath) returns NumberOperator.
-         * Covers: WhereImpl.where(NumberPath) line 184-185
-         */
+///
+         /// 测试目标: 验证y that where(NumberPath) returns NumberOperator.
+         /// Covers: WhereImpl.where(NumberPath) line 184-185
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should return NumberOperator with NumberPath")
@@ -154,9 +148,8 @@ public class WhereImplIntegrationTest {
             assertThat(operator).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that where(NumberPath) supports comparison operations.
-         */
+///
+         /// 测试目标: 验证y that where(NumberPath) supports comparison 操作s.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should support comparison operations with NumberPath")
@@ -175,9 +168,8 @@ public class WhereImplIntegrationTest {
             assertThat(result).allMatch(e -> e.getSalary() > 5000.0);
         }
 
-        /**
-         * Test objective: Verify that where(NumberPath) supports between operation.
-         */
+///
+         /// 测试目标: 验证y that where(NumberPath) supports between 操作.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should support between operation with NumberPath")
@@ -203,9 +195,8 @@ public class WhereImplIntegrationTest {
             assertThat(result).allMatch(e -> e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
         }
 
-        /**
-         * Test objective: Verify that where(NumberPath) works with where and orderBy.
-         */
+///
+         /// 测试目标: 验证y that where(NumberPath) works with where and orderBy.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine NumberPath with orderBy")
@@ -232,10 +223,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("where(StringPath) Integration Tests")
     class WhereWithStringPathTests {
 
-        /**
-         * Test objective: Verify that where(StringPath) returns StringOperator.
-         * Covers: WhereImpl.where(StringPath) line 189-190
-         */
+///
+         /// 测试目标: 验证y that where(StringPath) returns StringOperator.
+         /// Covers: WhereImpl.where(StringPath) line 189-190
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should return StringOperator with StringPath")
@@ -251,9 +241,8 @@ public class WhereImplIntegrationTest {
             assertThat(operator).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that where(StringPath) supports like operation.
-         */
+///
+         /// 测试目标: 验证y that where(StringPath) supports like 操作.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should support like operation with StringPath")
@@ -272,9 +261,8 @@ public class WhereImplIntegrationTest {
             assertThat(result).allMatch(e -> e.getName().startsWith("J"));
         }
 
-        /**
-         * Test objective: Verify that where(StringPath) supports startsWith operation.
-         */
+///
+         /// 测试目标: 验证y that where(StringPath) supports startsWith 操作.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should support startsWith operation with StringPath")
@@ -293,9 +281,8 @@ public class WhereImplIntegrationTest {
             assertThat(result).allMatch(e -> e.getName().startsWith("J"));
         }
 
-        /**
-         * Test objective: Verify that where(StringPath) supports contains operation.
-         */
+///
+         /// 测试目标: 验证y that where(StringPath) supports contains 操作.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should support contains operation with StringPath")
@@ -319,10 +306,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("groupBy(TypedExpression) Integration Tests")
     class GroupByExpressionTests {
 
-        /**
-         * Test objective: Verify that groupBy(TypedExpression) adds grouping.
-         * Covers: WhereImpl.groupBy(TypedExpression) line 193-194
-         */
+///
+         /// 测试目标: 验证y that groupBy(TypedExpression) adds grouping.
+         /// Covers: WhereImpl.groupBy(TypedExpression) line 193-194
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should group by single TypedExpression")
@@ -341,9 +327,8 @@ public class WhereImplIntegrationTest {
             assertThat(results).isNotEmpty();
         }
 
-        /**
-         * Test objective: Verify that groupBy(TypedExpression) works with aggregate functions.
-         */
+///
+         /// 测试目标: 验证y that groupBy(TypedExpression) works with aggregate functions.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should group by TypedExpression with aggregate")
@@ -366,10 +351,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("groupBy(List<TypedExpression>) Integration Tests")
     class GroupByExpressionListTests {
 
-        /**
-         * Test objective: Verify that groupBy(List<TypedExpression>) adds all groupings.
-         * Covers: WhereImpl.groupBy(List<TypedExpression>) line 198-200
-         */
+///
+         /// 测试目标: 验证y that groupBy(List<TypedExpression>) adds all groupings.
+         /// Covers: WhereImpl.groupBy(List<TypedExpression>) line 198-200
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should group by list of TypedExpressions")
@@ -386,9 +370,8 @@ public class WhereImplIntegrationTest {
             assertThat(results).isNotEmpty();
         }
 
-        /**
-         * Test objective: Verify that groupBy with list works with having clause.
-         */
+///
+         /// 测试目标: 验证y that groupBy with list works with having clause.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should group by list with having clause")
@@ -410,10 +393,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("orderBy(List<Order>) Integration Tests")
     class OrderByOrderListTests {
 
-        /**
-         * Test objective: Verify that orderBy(List<Order>) adds sorting.
-         * Covers: WhereImpl.orderBy(List<Order>) line 222-225
-         */
+///
+         /// 测试目标: 验证y that orderBy(List<Order>) adds sorting.
+         /// Covers: WhereImpl.orderBy(List<Order>) line 222-225
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should order by list of Order expressions")
@@ -438,9 +420,8 @@ public class WhereImplIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify that orderBy(List<Order>) works with single order.
-         */
+///
+         /// 测试目标: 验证y that orderBy(List<Order>) works with single order.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should order by single Order in list")
@@ -464,9 +445,8 @@ public class WhereImplIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify that orderBy(List<Order>) works with where condition.
-         */
+///
+         /// 测试目标: 验证y that orderBy(List<Order>) works with where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine orderBy list with where condition")
@@ -486,9 +466,8 @@ public class WhereImplIntegrationTest {
             assertThat(result).allMatch(Employee::getActive);
         }
 
-        /**
-         * Test objective: Verify that orderBy(List<Order>) works with multiple orders.
-         */
+///
+         /// 测试目标: 验证y that orderBy(List<Order>) works with multiple orders.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should order by multiple Order expressions")
@@ -531,10 +510,9 @@ public class WhereImplIntegrationTest {
     @DisplayName("SubQueryBuilder getRoot() Integration Tests")
     class SubQueryGetRootTests {
 
-        /**
-         * Test objective: Verify that SubQueryBuilder is created correctly.
-         * Covers: WhereImpl.SubQueryBuilderImpl usage
-         */
+///
+         /// 测试目标: 验证y that SubQueryBuilder is created 正确.
+         /// Covers: WhereImpl.SubQueryBuilderImpl usage
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create subquery from query")
@@ -548,9 +526,8 @@ public class WhereImplIntegrationTest {
             assertThat(subQuery).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that subquery count expression works.
-         */
+///
+         /// 测试目标: 验证y that subquery count expression works.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create count expression from subquery")
@@ -565,9 +542,8 @@ public class WhereImplIntegrationTest {
             assertThat(countExpr).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that subquery slice expression works.
-         */
+///
+         /// 测试目标: 验证y that subquery slice expression works.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create slice expression from subquery")

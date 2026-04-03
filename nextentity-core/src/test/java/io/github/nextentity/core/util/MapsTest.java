@@ -7,25 +7,23 @@ import java.util.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Test objective: Verify Maps utility class provides fluent Map building
- * <p>
- * Test scenarios:
- * 1. hashmap() creates builder for HashMap
- * 2. put() adds key-value pairs
- * 3. put with collections adds multiple entries
- * 4. build() returns the built map
- * 5. Collection size mismatch throws exception
- * <p>
- * Expected result: Map can be built fluently with expected entries
- */
+///
+ /// 测试目标: 验证y Maps utility class provides fluent Map building
+ /// <p>
+ /// 测试场景s:
+ /// 1. hashmap() creates builder for HashMap
+ /// 2. put() adds key-value pairs
+ /// 3. put with collections adds multiple entries
+ /// 4. build() returns the built map
+ /// 5. Collection size mismatch throws exception
+ /// <p>
+ /// 预期结果: Map can be built fluently with expected entries
 class MapsTest {
 
-    /**
-     * Test objective: Verify hashmap() returns builder instance
-     * Test scenario: Call Maps.hashmap()
-     * Expected result: Builder is returned
-     */
+///
+     /// 测试目标: 验证y hashmap() returns builder instance
+     /// 测试场景: Call Maps.hashmap()
+     /// 预期结果: Builder is returned
     @Test
     void hashmap_ShouldReturnBuilder() {
         // when
@@ -35,11 +33,10 @@ class MapsTest {
         assertThat(builder).isNotNull();
     }
 
-    /**
-     * Test objective: Verify put() adds single key-value pair
-     * Test scenario: Use put to add entries
-     * Expected result: Map contains added entries
-     */
+///
+     /// 测试目标: 验证y put() adds single key-value pair
+     /// 测试场景: Use put to add entries
+     /// 预期结果: Map contains added entries
     @Test
     void put_ShouldAddKeyValuePair() {
         // when
@@ -56,11 +53,10 @@ class MapsTest {
                 .hasSize(3);
     }
 
-    /**
-     * Test objective: Verify put() returns builder for chaining
-     * Test scenario: Chain multiple put calls
-     * Expected result: All entries added
-     */
+///
+     /// 测试目标: 验证y put() returns builder for chaining
+     /// 测试场景: Chain multiple put calls
+     /// 预期结果: All entries added
     @Test
     void put_ShouldReturnBuilderForChaining() {
         // when
@@ -74,11 +70,10 @@ class MapsTest {
                 .containsEntry("key2", "value2");
     }
 
-    /**
-     * Test objective: Verify put with collections adds multiple entries
-     * Test scenario: Use put(keys, values) with matching sizes
-     * Expected result: All key-value pairs added
-     */
+///
+     /// 测试目标: 验证y put with collections adds multiple entries
+     /// 测试场景: Use put(keys, values) with matching sizes
+     /// 预期结果: All key-value pairs added
     @Test
     void put_WithMatchingCollections_ShouldAddAllEntries() {
         // given
@@ -97,11 +92,10 @@ class MapsTest {
                 .hasSize(3);
     }
 
-    /**
-     * Test objective: Verify put with collections throws on size mismatch
-     * Test scenario: Use put(keys, values) with different sizes
-     * Expected result: IllegalArgumentException thrown
-     */
+///
+     /// 测试目标: 验证y put with collections throws on size mismatch
+     /// 测试场景: Use put(keys, values) with different sizes
+     /// 预期结果: IllegalArgumentException thrown
     @Test
     void put_WithMismatchedCollections_ShouldThrowException() {
         // given
@@ -115,11 +109,10 @@ class MapsTest {
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-    /**
-     * Test objective: Verify put with empty collections works
-     * Test scenario: Use put with empty lists
-     * Expected result: Empty map returned
-     */
+///
+     /// 测试目标: 验证y put with empty collections works
+     /// 测试场景: Use put with empty lists
+     /// 预期结果: Empty map returned
     @Test
     void put_WithEmptyCollections_ShouldReturnEmptyMap() {
         // given
@@ -135,11 +128,10 @@ class MapsTest {
         assertThat(map).isEmpty();
     }
 
-    /**
-     * Test objective: Verify build() returns the HashMap
-     * Test scenario: Call build()
-     * Expected result: HashMap instance returned
-     */
+///
+     /// 测试目标: 验证y build() returns the HashMap
+     /// 测试场景: Call build()
+     /// 预期结果: HashMap instance returned
     @Test
     void build_ShouldReturnHashMap() {
         // when
@@ -151,11 +143,10 @@ class MapsTest {
         assertThat(map).isInstanceOf(HashMap.class);
     }
 
-    /**
-     * Test objective: Verify can overwrite values for same key
-     * Test scenario: Put same key multiple times
-     * Expected result: Last value wins
-     */
+///
+     /// 测试目标: 验证y can overwrite values for same key
+     /// 测试场景: Put same key multiple times
+     /// 预期结果: Last value wins
     @Test
     void put_WithSameKey_ShouldOverwriteValue() {
         // when
@@ -170,11 +161,10 @@ class MapsTest {
         assertThat(map).containsEntry("a", 3);
     }
 
-    /**
-     * Test objective: Verify mixed put and putAll usage
-     * Test scenario: Use both single and collection put
-     * Expected result: All entries added
-     */
+///
+     /// 测试目标: 验证y mixed put and putAll usage
+     /// 测试场景: Use both single and collection put
+     /// 预期结果: All entries added
     @Test
     void put_MixedWithPutAll_ShouldWork() {
         // given
@@ -196,11 +186,10 @@ class MapsTest {
                 .containsEntry("d", 4);
     }
 
-    /**
-     * Test objective: Verify builder accepts null keys and values
-     * Test scenario: Put null key and value
-     * Expected result: Null entries added
-     */
+///
+     /// 测试目标: 验证y builder accepts null keys and values
+     /// 测试场景: Put null key and value
+     /// 预期结果: Null entries added
     @Test
     void put_ShouldAllowNullKeysAndValues() {
         // when
@@ -215,11 +204,10 @@ class MapsTest {
                 .containsEntry("key", null);
     }
 
-    /**
-     * Test objective: Verify can build empty map
-     * Test scenario: Build without any puts
-     * Expected result: Empty HashMap returned
-     */
+///
+     /// 测试目标: 验证y can build empty map
+     /// 测试场景: Build without any puts
+     /// 预期结果: Empty HashMap returned
     @Test
     void build_WithoutPuts_ShouldReturnEmptyMap() {
         // when

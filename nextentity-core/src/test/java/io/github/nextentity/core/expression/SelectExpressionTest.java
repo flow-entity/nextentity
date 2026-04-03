@@ -5,13 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SelectExpression correctly represents expression selection
- * <p>
- * Test scenarios:
- * 1. Create with expression and distinct flag
- * 2. Access properties
- */
+///
+ /// 测试目标: 验证y SelectExpression 正确 represents expression selection
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create with expression and distinct flag
+ /// 2. Access properties
 class SelectExpressionTest {
 
     @Nested

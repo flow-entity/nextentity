@@ -5,23 +5,21 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Test objective: Verify Exceptions utility class provides sneaky throw functionality
- * <p>
- * Test scenarios:
- * 1. sneakyThrow re-throws checked exceptions without declaring them
- * 2. sneakyThrow re-throws runtime exceptions
- * 3. sneakyThrow throws NPE for null throwable
- * <p>
- * Expected result: Exceptions can be thrown without being declared in method signature
- */
+///
+ /// 测试目标: 验证y Exceptions utility class provides sneaky throw functionality
+ /// <p>
+ /// 测试场景s:
+ /// 1. sneakyThrow re-throws checked exceptions without declaring them
+ /// 2. sneakyThrow re-throws runtime exceptions
+ /// 3. sneakyThrow throws NPE for null throwable
+ /// <p>
+ /// 预期结果: Exceptions can be thrown without being declared in 方法 signature
 class ExceptionsTest {
 
-    /**
-     * Test objective: Verify sneakyThrow re-throws RuntimeException without declaring it
-     * Test scenario: Use sneakyThrow to re-throw RuntimeException
-     * Expected result: RuntimeException is thrown
-     */
+///
+     /// 测试目标: 验证y sneakyThrow re-throws RuntimeException without declaring it
+     /// 测试场景: Use sneakyThrow to re-throw RuntimeException
+     /// 预期结果: RuntimeException is thrown
     @Test
     void sneakyThrow_WithRuntimeException_ShouldReThrow() {
         // given
@@ -32,11 +30,10 @@ class ExceptionsTest {
                 .isSameAs(exception);
     }
 
-    /**
-     * Test objective: Verify sneakyThrow re-throws Error without declaring it
-     * Test scenario: Use sneakyThrow to re-throw Error
-     * Expected result: Error is thrown
-     */
+///
+     /// 测试目标: 验证y sneakyThrow re-throws Error without declaring it
+     /// 测试场景: Use sneakyThrow to re-throw Error
+     /// 预期结果: Error is thrown
     @Test
     void sneakyThrow_WithError_ShouldReThrow() {
         // given
@@ -47,11 +44,10 @@ class ExceptionsTest {
                 .isSameAs(error);
     }
 
-    /**
-     * Test objective: Verify sneakyThrow throws NPE for null throwable
-     * Test scenario: Pass null to sneakyThrow
-     * Expected result: NullPointerException is thrown
-     */
+///
+     /// 测试目标: 验证y sneakyThrow throws NPE for null throwable
+     /// 测试场景: Pass null to sneakyThrow
+     /// 预期结果: NullPointerException is thrown
     @Test
     void sneakyThrow_WithNull_ShouldThrowNPE() {
         // then
@@ -60,11 +56,10 @@ class ExceptionsTest {
                 .hasMessage("throwable");
     }
 
-    /**
-     * Test objective: Verify sneakyThrow can re-throw custom RuntimeException
-     * Test scenario: Use sneakyThrow to re-throw custom RuntimeException subclass
-     * Expected result: Custom exception is thrown
-     */
+///
+     /// 测试目标: 验证y sneakyThrow can re-throw custom RuntimeException
+     /// 测试场景: Use sneakyThrow to re-throw custom RuntimeException subclass
+     /// 预期结果: Custom exception is thrown
     @Test
     void sneakyThrow_WithCustomRuntimeException_ShouldReThrow() {
         // given
@@ -81,11 +76,10 @@ class ExceptionsTest {
                 .hasMessage("custom message");
     }
 
-    /**
-     * Test objective: Verify sneakyThrow preserves exception stack trace
-     * Test scenario: Create exception and throw via sneakyThrow
-     * Expected result: Original stack trace is preserved
-     */
+///
+     /// 测试目标: 验证y sneakyThrow preserves exception stack trace
+     /// 测试场景: Create exception and throw via sneakyThrow
+     /// 预期结果: Original stack trace is preserved
     @Test
     void sneakyThrow_ShouldPreserveStackTrace() {
         // given

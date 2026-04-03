@@ -8,9 +8,8 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for StringOperatorImpl.
- */
+///
+ /// 单元测试 StringOperatorImpl.
 class StringOperatorImplTest {
 
     private StringOperatorImpl<Object, String> operator;
@@ -30,11 +29,10 @@ class StringOperatorImplTest {
     @Nested
     class LowerOperation {
 
-        /**
-         * Test objective: Verify lower() creates LOWER operator.
-         * Test scenario: Call lower() then eq() on string operator.
-         * Expected result: Creates LOWER operator node.
-         */
+///
+         /// 测试目标: 验证y lower() creates LOWER operator.
+         /// 测试场景: Call lower() then eq() on string operator.
+         /// 预期结果: 创建 LOWER operator node.
         @Test
         void lower_ShouldCreateLowerOperator() {
             // when
@@ -54,11 +52,10 @@ class StringOperatorImplTest {
     @Nested
     class UpperOperation {
 
-        /**
-         * Test objective: Verify upper() creates UPPER operator.
-         * Test scenario: Call upper() then eq() on string operator.
-         * Expected result: Creates UPPER operator node.
-         */
+///
+         /// 测试目标: 验证y upper() creates UPPER operator.
+         /// 测试场景: Call upper() then eq() on string operator.
+         /// 预期结果: 创建 UPPER operator node.
         @Test
         void upper_ShouldCreateUpperOperator() {
             // when
@@ -78,11 +75,10 @@ class StringOperatorImplTest {
     @Nested
     class SubstringOperation {
 
-        /**
-         * Test objective: Verify substring() creates SUBSTRING operator with parameters.
-         * Test scenario: Call substring(0, 5) then eq() on string operator.
-         * Expected result: Creates SUBSTRING operator node with offset and length.
-         */
+///
+         /// 测试目标: 验证y substring() creates SUBSTRING operator with parameters.
+         /// 测试场景: Call substring(0, 5) then eq() on string operator.
+         /// 预期结果: 创建 SUBSTRING operator node with offset and length.
         @Test
         void substring_ShouldCreateSubstringOperator() {
             // when
@@ -102,11 +98,10 @@ class StringOperatorImplTest {
     @Nested
     class TrimOperation {
 
-        /**
-         * Test objective: Verify trim() creates TRIM operator.
-         * Test scenario: Call trim() then eq() on string operator.
-         * Expected result: Creates TRIM operator node.
-         */
+///
+         /// 测试目标: 验证y trim() creates TRIM operator.
+         /// 测试场景: Call trim() then eq() on string operator.
+         /// 预期结果: 创建 TRIM operator node.
         @Test
         void trim_ShouldCreateTrimOperator() {
             // when
@@ -126,11 +121,10 @@ class StringOperatorImplTest {
     @Nested
     class LengthOperation {
 
-        /**
-         * Test objective: Verify length() creates LENGTH operator and returns NumberOperator.
-         * Test scenario: Call length() on string operator.
-         * Expected result: Creates LENGTH operator node and returns NumberOperator.
-         */
+///
+         /// 测试目标: 验证y length() creates LENGTH operator and returns NumberOperator.
+         /// 测试场景: Call length() on string operator.
+         /// 预期结果: 创建 LENGTH operator node and returns NumberOperator.
         @Test
         void length_ShouldCreateLengthOperator() {
             // when
@@ -141,11 +135,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(NumberOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify length() followed by eq creates correct expression.
-         * Test scenario: Call length() then eq() on string operator.
-         * Expected result: Creates LENGTH operator node with comparison.
-         */
+///
+         /// 测试目标: 验证y length() followed by eq creates correct expression.
+         /// 测试场景: Call length() then eq() on string operator.
+         /// 预期结果: 创建 LENGTH operator node with comparison.
         @Test
         void length_WithComparison_ShouldCreateLengthOperator() {
             // when
@@ -165,11 +158,10 @@ class StringOperatorImplTest {
     @Nested
     class ReturnType {
 
-        /**
-         * Test objective: Verify lower() returns StringOperator.
-         * Test scenario: Call lower() on string operator.
-         * Expected result: Returns StringOperatorImpl instance.
-         */
+///
+         /// 测试目标: 验证y lower() returns StringOperator.
+         /// 测试场景: Call lower() on string operator.
+         /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void lower_ShouldReturnStringOperator() {
             // when
@@ -179,11 +171,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify upper() returns StringOperator.
-         * Test scenario: Call upper() on string operator.
-         * Expected result: Returns StringOperatorImpl instance.
-         */
+///
+         /// 测试目标: 验证y upper() returns StringOperator.
+         /// 测试场景: Call upper() on string operator.
+         /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void upper_ShouldReturnStringOperator() {
             // when
@@ -193,11 +184,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify trim() returns StringOperator.
-         * Test scenario: Call trim() on string operator.
-         * Expected result: Returns StringOperatorImpl instance.
-         */
+///
+         /// 测试目标: 验证y trim() returns StringOperator.
+         /// 测试场景: Call trim() on string operator.
+         /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void trim_ShouldReturnStringOperator() {
             // when
@@ -207,11 +197,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify substring() returns StringOperator.
-         * Test scenario: Call substring() on string operator.
-         * Expected result: Returns StringOperatorImpl instance.
-         */
+///
+         /// 测试目标: 验证y substring() returns StringOperator.
+         /// 测试场景: Call substring() on string operator.
+         /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void substring_ShouldReturnStringOperator() {
             // when

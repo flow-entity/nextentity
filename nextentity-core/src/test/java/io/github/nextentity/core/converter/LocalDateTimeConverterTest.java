@@ -12,17 +12,15 @@ import java.time.LocalTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify LocalDateTimeConverter correctly converts date/time types
- * <p>
- * Test scenarios:
- * 1. Convert java.sql.Date to LocalDate
- * 2. Convert Timestamp to LocalDateTime
- * 3. Convert Time to LocalTime
- * 4. Convert java.util.Date to java.time types
- * <p>
- * Expected result: Date/time conversions work correctly
- */
+/// 测试目标：验证LocalDateTimeConverter能正确转换日期/时间类型
+/// <p>
+/// 测试场景：
+/// 1. 将java.sql.Date转换为LocalDate
+/// 2. 将Timestamp转换为LocalDateTime
+/// 3. 将Time转换为LocalTime
+/// 4. 将java.util.Date转换为java.time类型
+/// <p>
+/// 预期结果：日期/时间转换正常工作
 class LocalDateTimeConverterTest {
 
     private final LocalDateTimeConverter converter = LocalDateTimeConverter.of();
@@ -30,11 +28,9 @@ class LocalDateTimeConverterTest {
     @Nested
     class SqlDateConversions {
 
-        /**
-         * Test objective: Verify java.sql.Date converts to LocalDate
-         * Test scenario: Convert sql date to local date
-         * Expected result: Correct LocalDate
-         */
+        /// 测试目标：验证java.sql.Date转换为LocalDate
+        /// 测试场景：将sql日期转换为本地日期
+        /// 预期结果：正确的LocalDate
         @Test
         void convert_SqlDateToLocalDate_ShouldReturnLocalDate() {
             // given
@@ -51,11 +47,9 @@ class LocalDateTimeConverterTest {
     @Nested
     class TimestampConversions {
 
-        /**
-         * Test objective: Verify Timestamp converts to LocalDateTime
-         * Test scenario: Convert timestamp to local datetime
-         * Expected result: Correct LocalDateTime
-         */
+        /// 测试目标：验证Timestamp转换为LocalDateTime
+        /// 测试场景：将时间戳转换为本地日期时间
+        /// 预期结果：正确的LocalDateTime
         @Test
         void convert_TimestampToLocalDateTime_ShouldReturnLocalDateTime() {
             // given
@@ -72,11 +66,9 @@ class LocalDateTimeConverterTest {
     @Nested
     class TimeConversions {
 
-        /**
-         * Test objective: Verify Time converts to LocalTime
-         * Test scenario: Convert sql time to local time
-         * Expected result: Correct LocalTime
-         */
+        /// 测试目标：验证Time转换为LocalTime
+        /// 测试场景：将sql时间转换为本地时间
+        /// 预期结果：正确的LocalTime
         @Test
         void convert_TimeToLocalTime_ShouldReturnLocalTime() {
             // given
@@ -93,11 +85,9 @@ class LocalDateTimeConverterTest {
     @Nested
     class UtilDateConversions {
 
-        /**
-         * Test objective: Verify java.util.Date converts to LocalDate
-         * Test scenario: Convert util date to local date
-         * Expected result: Correct LocalDate
-         */
+        /// 测试目标：验证java.util.Date转换为LocalDate
+        /// 测试场景：将util日期转换为本地日期
+        /// 预期结果：正确的LocalDate
         @Test
         void convert_UtilDateToLocalDate_ShouldReturnLocalDate() {
             // given
@@ -110,11 +100,9 @@ class LocalDateTimeConverterTest {
             assertThat(result).isInstanceOf(LocalDate.class);
         }
 
-        /**
-         * Test objective: Verify java.util.Date converts to LocalDateTime
-         * Test scenario: Convert util date to local datetime
-         * Expected result: Correct LocalDateTime
-         */
+        /// 测试目标：验证java.util.Date转换为LocalDateTime
+        /// 测试场景：将util日期转换为本地日期时间
+        /// 预期结果：正确的LocalDateTime
         @Test
         void convert_UtilDateToLocalDateTime_ShouldReturnLocalDateTime() {
             // given
@@ -127,11 +115,9 @@ class LocalDateTimeConverterTest {
             assertThat(result).isInstanceOf(LocalDateTime.class);
         }
 
-        /**
-         * Test objective: Verify java.util.Date converts to LocalTime
-         * Test scenario: Convert util date to local time
-         * Expected result: Correct LocalTime
-         */
+        /// 测试目标：验证java.util.Date转换为LocalTime
+        /// 测试场景：将util日期转换为本地时间
+        /// 预期结果：正确的LocalTime
         @Test
         void convert_UtilDateToLocalTime_ShouldReturnLocalTime() {
             // given
@@ -148,11 +134,9 @@ class LocalDateTimeConverterTest {
     @Nested
     class NullAndSameType {
 
-        /**
-         * Test objective: Verify null returns null
-         * Test scenario: Convert null
-         * Expected result: null
-         */
+        /// 测试目标：验证null返回null
+        /// 测试场景：转换null
+        /// 预期结果：null
         @Test
         void convert_Null_ShouldReturnNull() {
             // when
@@ -162,11 +146,9 @@ class LocalDateTimeConverterTest {
             assertThat(result).isNull();
         }
 
-        /**
-         * Test objective: Verify same type returns same value
-         * Test scenario: Convert LocalDate to LocalDate
-         * Expected result: Same instance
-         */
+        /// 测试目标：验证相同类型返回相同值
+        /// 测试场景：将LocalDate转换为LocalDate
+        /// 预期结果：相同实例
         @Test
         void convert_SameType_ShouldReturnSameValue() {
             // given
@@ -183,11 +165,9 @@ class LocalDateTimeConverterTest {
     @Nested
     class UnhandledConversions {
 
-        /**
-         * Test objective: Verify unsupported conversions return original
-         * Test scenario: Convert unsupported type
-         * Expected result: Original value
-         */
+        /// 测试目标：验证不支持的转换返回原始值
+        /// 测试场景：转换不支持的类型
+        /// 预期结果：原始值
         @Test
         void convert_UnsupportedType_ShouldReturnOriginal() {
             // given

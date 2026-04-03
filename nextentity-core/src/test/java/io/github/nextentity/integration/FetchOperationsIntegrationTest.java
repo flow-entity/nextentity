@@ -14,22 +14,21 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Fetch operations integration tests.
- * <p>
- * Tests entity association loading with fetch operations including:
- * - fetch single association (JPA only)
- * - fetch with where conditions
- * - fetch with pagination
- * <p>
- * Note: Fetch operations are primarily for JPA implementations.
- * JDBC implementations do not support lazy loading of associations,
- * so department may be null in JDBC test results.
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Fetch 操作s integration tests.
+ /// <p>
+ /// 测试s entity association loading with fetch 操作s including:
+ /// - fetch single association (JPA only)
+ /// - fetch with where conditions
+ /// - fetch with pagination
+ /// <p>
+ /// Note: Fetch 操作s are primarily for JPA implementations.
+ /// JDBC implementations do not support lazy loading of associations,
+ /// so department may be null in JDBC test results.
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Fetch Operations Integration Tests")
 public class FetchOperationsIntegrationTest {
 

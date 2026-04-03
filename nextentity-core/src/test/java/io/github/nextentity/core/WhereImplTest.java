@@ -28,9 +28,8 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-/**
- * Unit tests for WhereImpl - WHERE clause implementation.
- */
+///
+ /// 单元测试 WhereImpl - WHERE clause implementation.
 @ExtendWith(MockitoExtension.class)
 class WhereImplTest {
 
@@ -51,11 +50,10 @@ class WhereImplTest {
     @Nested
     class WhereClause {
 
-        /**
-         * Test objective: Verify that where with null predicate returns same instance.
-         * Test scenario: Call where with null predicate.
-         * Expected result: Returns the same WhereImpl instance without modification.
-         */
+///
+         /// 测试目标: 验证y that where with null predicate returns same instance.
+         /// 测试场景: Call where with null predicate.
+         /// 预期结果: Returns the same WhereImpl instance without modification.
         @Test
         void where_WithNullPredicate_ShouldReturnSameInstance() {
             // when
@@ -65,11 +63,10 @@ class WhereImplTest {
             assertThat(result).isSameAs(whereImpl);
         }
 
-        /**
-         * Test objective: Verify that where with TRUE predicate returns same instance.
-         * Test scenario: Call where with a predicate that evaluates to TRUE.
-         * Expected result: Returns the same WhereImpl instance without modification.
-         */
+///
+         /// 测试目标: 验证y that where with TRUE predicate returns same instance.
+         /// 测试场景: Call where with a predicate that evaluates to TRUE.
+         /// 预期结果: Returns the same WhereImpl instance without modification.
         @Test
         void where_WithTruePredicate_ShouldReturnSameInstance() {
             // when
@@ -80,11 +77,10 @@ class WhereImplTest {
             assertThat(result).isSameAs(whereImpl);
         }
 
-        /**
-         * Test objective: Verify that where with valid predicate adds condition.
-         * Test scenario: Call where with a valid boolean predicate.
-         * Expected result: Returns a new WhereImpl with updated query structure.
-         */
+///
+         /// 测试目标: 验证y that where with valid predicate adds condition.
+         /// 测试场景: Call where with a valid boolean predicate.
+         /// 预期结果: Returns a new WhereImpl with updated query structure.
         @Test
         void where_WithValidPredicate_ShouldAddCondition() {
             // given
@@ -104,11 +100,10 @@ class WhereImplTest {
             assertThat(result).isInstanceOf(WhereImpl.class);
         }
 
-        /**
-         * Test objective: Verify that where with Path creates PathOperator.
-         * Test scenario: Call where with a Path expression.
-         * Expected result: Returns a PathOperator for building conditions.
-         */
+///
+         /// 测试目标: 验证y that where with Path creates PathOperator.
+         /// 测试场景: Call where with a Path expression.
+         /// 预期结果: Returns a PathOperator for building conditions.
         @Test
         void where_WithPath_ShouldReturnPathOperator() {
             // when
@@ -118,11 +113,10 @@ class WhereImplTest {
             assertThat(operator).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that where with NumberPath creates NumberOperator.
-         * Test scenario: Call where with a NumberPath expression.
-         * Expected result: Returns a NumberOperator for building numeric conditions.
-         */
+///
+         /// 测试目标: 验证y that where with NumberPath creates NumberOperator.
+         /// 测试场景: Call where with a NumberPath expression.
+         /// 预期结果: Returns a NumberOperator for building numeric conditions.
         @Test
         void where_WithNumberPath_ShouldReturnNumberOperator() {
             // when
@@ -132,11 +126,10 @@ class WhereImplTest {
             assertThat(operator).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that where with StringPath creates StringOperator.
-         * Test scenario: Call where with a StringPath expression.
-         * Expected result: Returns a StringOperator for building string conditions.
-         */
+///
+         /// 测试目标: 验证y that where with StringPath creates StringOperator.
+         /// 测试场景: Call where with a StringPath expression.
+         /// 预期结果: Returns a StringOperator for building string conditions.
         @Test
         void where_WithStringPath_ShouldReturnStringOperator() {
             // when
@@ -150,11 +143,10 @@ class WhereImplTest {
     @Nested
     class GroupByClause {
 
-        /**
-         * Test objective: Verify that groupBy with single expression adds grouping.
-         * Test scenario: Call groupBy with a single expression.
-         * Expected result: Query structure contains the group by expression.
-         */
+///
+         /// 测试目标: 验证y that groupBy with single expression adds grouping.
+         /// 测试场景: Call groupBy with a single expression.
+         /// 预期结果: Query structure contains the group by expression.
         @Test
         void groupBy_WithSingleExpression_ShouldAddGrouping() {
             // when
@@ -167,11 +159,10 @@ class WhereImplTest {
             assertThat(structure.groupBy().asList()).hasSize(1);
         }
 
-        /**
-         * Test objective: Verify that groupBy with list of expressions adds all groupings.
-         * Test scenario: Call groupBy with a list of expressions.
-         * Expected result: Query structure contains all group by expressions.
-         */
+///
+         /// 测试目标: 验证y that groupBy with list of expressions adds all groupings.
+         /// 测试场景: Call groupBy with a list of expressions.
+         /// 预期结果: Query structure contains all group by expressions.
         @Test
         void groupBy_WithExpressionList_ShouldAddAllGroupings() {
             // given
@@ -188,11 +179,10 @@ class WhereImplTest {
             assertThat(structure.groupBy().asList()).hasSize(2);
         }
 
-        /**
-         * Test objective: Verify that groupBy with Path adds grouping.
-         * Test scenario: Call groupBy with a Path expression.
-         * Expected result: Query structure contains the group by path.
-         */
+///
+         /// 测试目标: 验证y that groupBy with Path adds grouping.
+         /// 测试场景: Call groupBy with a Path expression.
+         /// 预期结果: Query structure contains the group by path.
         @Test
         void groupBy_WithPath_ShouldAddGrouping() {
             // when
@@ -203,11 +193,10 @@ class WhereImplTest {
             assertThat(structure.groupBy().asList()).hasSize(1);
         }
 
-        /**
-         * Test objective: Verify that groupBy with collection of paths adds all groupings.
-         * Test scenario: Call groupBy with a collection of Path expressions.
-         * Expected result: Query structure contains all group by paths.
-         */
+///
+         /// 测试目标: 验证y that groupBy with collection of paths adds all groupings.
+         /// 测试场景: Call groupBy with a collection of Path expressions.
+         /// 预期结果: Query structure contains all group by paths.
         @Test
         void groupBy_WithPathCollection_ShouldAddAllGroupings() {
             // given
@@ -228,11 +217,10 @@ class WhereImplTest {
     @Nested
     class HavingClause {
 
-        /**
-         * Test objective: Verify that having adds condition to query structure.
-         * Test scenario: Call having with a boolean predicate.
-         * Expected result: Query structure contains the having condition.
-         */
+///
+         /// 测试目标: 验证y that having adds condition to query structure.
+         /// 测试场景: Call having with a boolean predicate.
+         /// 预期结果: Query structure contains the having condition.
         @Test
         void having_WithPredicate_ShouldAddCondition() {
             // given
@@ -251,11 +239,10 @@ class WhereImplTest {
     @Nested
     class OrderByClause {
 
-        /**
-         * Test objective: Verify that orderBy with list of orders adds sorting.
-         * Test scenario: Call orderBy with a list of Order expressions.
-         * Expected result: Query structure contains the order by expressions.
-         */
+///
+         /// 测试目标: 验证y that orderBy with list of orders adds sorting.
+         /// 测试场景: Call orderBy with a list of Order expressions.
+         /// 预期结果: Query structure contains the order by expressions.
         @Test
         void orderBy_WithOrderList_ShouldAddSorting() {
             // given
@@ -274,11 +261,10 @@ class WhereImplTest {
             assertThat(result).isInstanceOf(io.github.nextentity.core.expression.OrderOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify that orderBy with collection of paths creates OrderOperator.
-         * Test scenario: Call orderBy with a collection of Path expressions.
-         * Expected result: Returns an OrderOperator for building sort expressions.
-         */
+///
+         /// 测试目标: 验证y that orderBy with collection of paths creates OrderOperator.
+         /// 测试场景: Call orderBy with a collection of Path expressions.
+         /// 预期结果: Returns an OrderOperator for building sort expressions.
         @Test
         void orderBy_WithPathCollection_ShouldReturnOrderOperator() {
             // given
@@ -298,11 +284,10 @@ class WhereImplTest {
     @Nested
     class CountOperations {
 
-        /**
-         * Test objective: Verify that count executes count query and returns result.
-         * Test scenario: Call count method.
-         * Expected result: Returns the count value from query executor.
-         */
+///
+         /// 测试目标: 验证y that count executes count query and returns result.
+         /// 测试场景: Call count 方法.
+         /// 预期结果: Returns the count value from query executor.
         @Test
         void count_ShouldExecuteCountQuery() {
             // given
@@ -316,11 +301,10 @@ class WhereImplTest {
             verify(queryExecutor).getList(any());
         }
 
-        /**
-         * Test objective: Verify that count with distinct select uses subquery.
-         * Test scenario: Call count on a query with distinct selection.
-         * Expected result: Query executor receives a subquery-based count structure.
-         */
+///
+         /// 测试目标: 验证y that count with distinct select uses subquery.
+         /// 测试场景: Call count on a query with distinct selection.
+         /// 预期结果: Query executor receives a subquery-based count structure.
         @Test
         void count_WithDistinctSelect_ShouldUseSubquery() {
             // given
@@ -336,11 +320,10 @@ class WhereImplTest {
             assertThat(result).isEqualTo(5L);
         }
 
-        /**
-         * Test objective: Verify that count with groupBy uses subquery.
-         * Test scenario: Call count on a query with group by clause.
-         * Expected result: Query executor receives a subquery-based count structure.
-         */
+///
+         /// 测试目标: 验证y that count with groupBy uses subquery.
+         /// 测试场景: Call count on a query with group by clause.
+         /// 预期结果: Query executor receives a subquery-based count structure.
         @Test
         void count_WithGroupBy_ShouldUseSubquery() {
             // given
@@ -360,11 +343,10 @@ class WhereImplTest {
     @Nested
     class ListOperations {
 
-        /**
-         * Test objective: Verify that getList executes query with offset and limit.
-         * Test scenario: Call getList with offset, maxResult, and lockMode.
-         * Expected result: Returns list from query executor with correct structure.
-         */
+///
+         /// 测试目标: 验证y that getList executes query with offset and limit.
+         /// 测试场景: Call getList with offset, max结果, and lockMode.
+         /// 预期结果: Returns list from query executor with correct structure.
         @Test
         void getList_ShouldExecuteQueryWithOffsetAndLimit() {
             // given
@@ -381,11 +363,10 @@ class WhereImplTest {
             assertThat(result).isEqualTo(expected);
         }
 
-        /**
-         * Test objective: Verify that getList with different lock modes passes correct lock type.
-         * Test scenario: Call getList with PESSIMISTIC_WRITE lock mode.
-         * Expected result: Query structure contains the specified lock mode.
-         */
+///
+         /// 测试目标: 验证y that getList with different lock modes passes correct lock type.
+         /// 测试场景: Call getList with PESSIMISTIC_WRITE lock mode.
+         /// 预期结果: Query structure contains the specified lock mode.
         @Test
         void getList_WithPessimisticLock_ShouldSetLockType() {
             // given
@@ -403,11 +384,10 @@ class WhereImplTest {
     @Nested
     class ExistOperations {
 
-        /**
-         * Test objective: Verify that exist returns true when result is not empty.
-         * Test scenario: Call exist when query executor returns non-empty list.
-         * Expected result: Returns true.
-         */
+///
+         /// 测试目标: 验证y that exist returns true when result is not empty.
+         /// 测试场景: Call exist when query executor returns non-empty list.
+         /// 预期结果: Returns true.
         @Test
         void exist_WhenResultNotEmpty_ShouldReturnTrue() {
             // given
@@ -420,11 +400,10 @@ class WhereImplTest {
             assertThat(result).isTrue();
         }
 
-        /**
-         * Test objective: Verify that exist returns false when result is empty.
-         * Test scenario: Call exist when query executor returns empty list.
-         * Expected result: Returns false.
-         */
+///
+         /// 测试目标: 验证y that exist returns false when result is empty.
+         /// 测试场景: Call exist when query executor returns empty list.
+         /// 预期结果: Returns false.
         @Test
         void exist_WhenResultEmpty_ShouldReturnFalse() {
             // given
@@ -437,11 +416,10 @@ class WhereImplTest {
             assertThat(result).isFalse();
         }
 
-        /**
-         * Test objective: Verify that exist uses limit 1 for efficiency.
-         * Test scenario: Call exist method.
-         * Expected result: Query structure contains limit of 1.
-         */
+///
+         /// 测试目标: 验证y that exist uses limit 1 for efficiency.
+         /// 测试场景: Call exist 方法.
+         /// 预期结果: Query structure contains limit of 1.
         @Test
         void exists_ShouldUseLimitOne() {
             // given
@@ -455,11 +433,10 @@ class WhereImplTest {
                     structure.limit() != null && structure.limit() == 1));
         }
 
-        /**
-         * Test objective: Verify that exists with offset passes correct offset.
-         * Test scenario: Call exists with specific offset.
-         * Expected result: Query structure contains the specified offset.
-         */
+///
+         /// 测试目标: 验证y that exists with offset passes correct offset.
+         /// 测试场景: Call exists with specific offset.
+         /// 预期结果: Query structure contains the specified offset.
         @Test
         void exists_WithOffset_ShouldSetOffset() {
             // given
@@ -477,11 +454,10 @@ class WhereImplTest {
     @Nested
     class SubQueryOperations {
 
-        /**
-         * Test objective: Verify that asSubQuery returns a SubQueryBuilder.
-         * Test scenario: Call asSubQuery method.
-         * Expected result: Returns a non-null SubQueryBuilder instance.
-         */
+///
+         /// 测试目标: 验证y that asSubQuery returns a SubQueryBuilder.
+         /// 测试场景: Call asSubQuery 方法.
+         /// 预期结果: Returns a non-null SubQueryBuilder instance.
         @Test
         void asSubQuery_ShouldReturnSubQueryBuilder() {
             // when
@@ -491,11 +467,10 @@ class WhereImplTest {
             assertThat(subQuery).isNotNull();
         }
 
-        /**
-         * Test objective: Verify that subQuery count creates count expression.
-         * Test scenario: Call count on subquery builder.
-         * Expected result: Returns a TypedExpression for count.
-         */
+///
+         /// 测试目标: 验证y that subQuery count creates count expression.
+         /// 测试场景: Call count on subquery builder.
+         /// 预期结果: Returns a TypedExpression for count.
         @Test
         void subQuery_count_ShouldReturnCountExpression() {
             // when
@@ -506,11 +481,10 @@ class WhereImplTest {
             assertThat(countExpr).isInstanceOf(NumberExpressionImpl.class);
         }
 
-        /**
-         * Test objective: Verify that subQuery slice creates slice expression.
-         * Test scenario: Call slice on subquery builder.
-         * Expected result: Returns a TypedExpression for slice.
-         */
+///
+         /// 测试目标: 验证y that subQuery slice creates slice expression.
+         /// 测试场景: Call slice on subquery builder.
+         /// 预期结果: Returns a TypedExpression for slice.
         @Test
         void subQuery_slice_ShouldReturnSliceExpression() {
             // when
@@ -524,11 +498,10 @@ class WhereImplTest {
     @Nested
     class QueryStructureAccess {
 
-        /**
-         * Test objective: Verify that getQueryStructure returns the query structure.
-         * Test scenario: Call getQueryStructure method.
-         * Expected result: Returns a non-null QueryStructure instance.
-         */
+///
+         /// 测试目标: 验证y that getQueryStructure returns the query structure.
+         /// 测试场景: Call getQueryStructure 方法.
+         /// 预期结果: Returns a non-null QueryStructure instance.
         @Test
         void getQueryStructure_ShouldReturnStructure() {
             // when
@@ -539,11 +512,10 @@ class WhereImplTest {
             assertThat(structure.from()).isInstanceOf(FromEntity.class);
         }
 
-        /**
-         * Test objective: Verify that initial query structure has default values.
-         * Test scenario: Create a new WhereImpl and check structure.
-         * Expected result: Structure has default empty/none values.
-         */
+///
+         /// 测试目标: 验证y that initial query structure has default values.
+         /// 测试场景: Create a new WhereImpl and check structure.
+         /// 预期结果: Structure has default empty/none values.
         @Test
         void initialQueryStructure_ShouldHaveDefaults() {
             // when
@@ -563,11 +535,10 @@ class WhereImplTest {
     @Nested
     class AndWhereOperations {
 
-        /**
-         * Test objective: Verify that andWhere combines conditions with AND operator.
-         * Test scenario: Call andWhere with a new condition node.
-         * Expected result: Returns new WhereImpl with combined conditions.
-         */
+///
+         /// 测试目标: 验证y that andWhere combines conditions with AND operator.
+         /// 测试场景: Call andWhere with a new condition node.
+         /// 预期结果: Returns new WhereImpl with combined conditions.
         @Test
         void andWhere_ShouldCombineConditionsWithAnd() {
             // given
@@ -589,10 +560,9 @@ class WhereImplTest {
     @Nested
     class ExceptionAndEdgeCases {
 
-        /**
-         * Tests that where with empty in collection returns FALSE expression.
-         * Note: The implementation logs a warning and returns FALSE for empty collections.
-         */
+///
+         /// 测试s that where with empty in collection returns FALSE expression.
+         /// Note: The implementation logs a warning and returns FALSE for empty collections.
         @Test
         void where_WithEmptyInCollection_ShouldReturnFalseExpression() {
             // given
@@ -606,9 +576,8 @@ class WhereImplTest {
             // The implementation returns a FALSE expression for empty collections
         }
 
-        /**
-         * Tests that where with null in collection throws NullPointerException.
-         */
+///
+         /// 测试s that where with null in collection throws NullPointerException.
         @Test
         void where_WithNullInCollection_ShouldThrowException() {
             // when/then
@@ -616,9 +585,8 @@ class WhereImplTest {
                     .isInstanceOf(NullPointerException.class);
         }
 
-        /**
-         * Tests that groupBy with null expression throws exception.
-         */
+///
+         /// 测试s that groupBy with null expression throws exception.
         @Test
         void groupBy_WithNullExpression_ShouldThrowException() {
             // when/then
@@ -626,9 +594,8 @@ class WhereImplTest {
                     .isInstanceOf(NullPointerException.class);
         }
 
-        /**
-         * Tests that groupBy with null expressions list throws exception.
-         */
+///
+         /// 测试s that groupBy with null expressions list throws exception.
         @Test
         void groupBy_WithNullExpressionsList_ShouldThrowException() {
             // when/then
@@ -636,9 +603,8 @@ class WhereImplTest {
                     .isInstanceOf(NullPointerException.class);
         }
 
-        /**
-         * Tests that having with null predicate throws exception.
-         */
+///
+         /// 测试s that having with null predicate throws exception.
         @Test
         void having_WithNullPredicate_ShouldThrowException() {
             // when/then
@@ -646,9 +612,8 @@ class WhereImplTest {
                     .isInstanceOf(NullPointerException.class);
         }
 
-        /**
-         * Tests that andWhere with null condition handles gracefully.
-         */
+///
+         /// 测试s that andWhere with null condition 处理 gracefully.
         @Test
         void andWhere_WithNullCondition_ShouldHandleGracefully() {
             // when
@@ -658,9 +623,8 @@ class WhereImplTest {
             assertThat(result).isNotNull();
         }
 
-        /**
-         * Tests that where with TRUE predicate returns same instance (edge case).
-         */
+///
+         /// 测试s that where with TRUE predicate returns same instance (edge case).
         @Test
         void where_WithTruePredicate_ShouldReturnSameInstance() {
             // when
@@ -670,9 +634,8 @@ class WhereImplTest {
             assertThat(result).isSameAs(whereImpl);
         }
 
-        /**
-         * Tests that where with FALSE predicate is handled.
-         */
+///
+         /// 测试s that where with FALSE predicate is handled.
         @Test
         void where_WithFalsePredicate_ShouldReturnNewInstance() {
             // when

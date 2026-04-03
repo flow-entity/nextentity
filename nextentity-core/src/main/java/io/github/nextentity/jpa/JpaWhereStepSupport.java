@@ -7,9 +7,10 @@ import io.github.nextentity.core.meta.Metamodel;
 
 import java.util.List;
 
-/// Base class for JPA conditional operations with common JPQL building utilities.
 ///
-/// @param <T> Entity type
+/// JPA 条件操作的基础类，提供通用的 JPQL 构建工具。
+///
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 abstract class JpaWhereStepSupport<T> {

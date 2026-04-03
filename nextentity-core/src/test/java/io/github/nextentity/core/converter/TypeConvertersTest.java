@@ -7,26 +7,22 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify TypeConverters chain multiple converters correctly
- * <p>
- * Test scenarios:
- * 1. Chain multiple converters
- * 2. Skip converters when target type is already satisfied
- * 3. Handle primitive wrapper compatibility
- * <p>
- * Expected result: Chained converters work correctly
- */
+/// 测试目标：验证TypeConverters能正确链接多个转换器
+/// <p>
+/// 测试场景：
+/// 1. 链接多个转换器
+/// 2. 当目标类型已满足时跳过转换器
+/// 3. 处理基本类型包装器兼容性
+/// <p>
+/// 预期结果：链接的转换器正常工作
 class TypeConvertersTest {
 
     @Nested
     class ChainConversion {
 
-        /**
-         * Test objective: Verify chained converters can convert complex cases
-         * Test scenario: Convert through multiple converters
-         * Expected result: Final converted value
-         */
+        /// 测试目标：验证链接的转换器可以转换复杂情况
+        /// 测试场景：通过多个转换器进行转换
+        /// 预期结果：最终转换后的值
         @Test
         void convert_WithMultipleConverters_ShouldUseAppropriateOne() {
             // given
@@ -42,11 +38,9 @@ class TypeConvertersTest {
             assertThat(result).isEqualTo(Integer.valueOf(42));
         }
 
-        /**
-         * Test objective: Verify ofDefault creates default converter chain
-         * Test scenario: Use ofDefault factory method
-         * Expected result: Default converters available
-         */
+        /// 测试目标：验证ofDefault创建默认转换器链
+        /// 测试场景：使用ofDefault工厂方法
+        /// 预期结果：可用的默认转换器
         @Test
         void ofDefault_ShouldCreateDefaultConverter() {
             // given
@@ -59,11 +53,9 @@ class TypeConvertersTest {
             assertThat(result).isEqualTo(Integer.valueOf(123));
         }
 
-        /**
-         * Test objective: Verify of(List) creates converter from list
-         * Test scenario: Pass list of converters
-         * Expected result: Chained converter
-         */
+        /// 测试目标：验证of(List)从列表创建转换器
+        /// 测试场景：传递转换器列表
+        /// 预期结果：链接的转换器
         @Test
         void of_WithList_ShouldCreateConverter() {
             // given
@@ -80,11 +72,9 @@ class TypeConvertersTest {
     @Nested
     class PrimitiveHandling {
 
-        /**
-         * Test objective: Verify primitive wrapper compatibility
-         * Test scenario: Integer value for int primitive target
-         * Expected result: Integer value (wrapper)
-         */
+        /// 测试目标：验证基本类型包装器兼容性
+        /// 测试场景：int基本类型目标的Integer值
+        /// 预期结果：Integer值（包装器）
         @Test
         void convert_IntegerForIntTarget_ShouldReturnInteger() {
             // given
@@ -102,11 +92,9 @@ class TypeConvertersTest {
     @Nested
     class NullAndSameType {
 
-        /**
-         * Test objective: Verify null returns null
-         * Test scenario: Convert null
-         * Expected result: null
-         */
+        /// 测试目标：验证null返回null
+        /// 测试场景：转换null
+        /// 预期结果：null
         @Test
         void convert_Null_ShouldReturnNull() {
             // given
@@ -119,11 +107,9 @@ class TypeConvertersTest {
             assertThat(result).isNull();
         }
 
-        /**
-         * Test objective: Verify same type returns same value
-         * Test scenario: Convert value to same type
-         * Expected result: Same value
-         */
+        /// 测试目标：验证相同类型返回相同值
+        /// 测试场景：将值转换为相同类型
+        /// 预期结果：相同值
         @Test
         void convert_SameType_ShouldReturnSameValue() {
             // given

@@ -13,11 +13,10 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for Tuples class with database queries.
- *
- * @author HuangChengwei
- */
+///
+ /// Integration tests for Tuples class with database queries.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Tuples Integration Tests")
 public class TuplesIntegrationTest {
 

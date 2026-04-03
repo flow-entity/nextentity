@@ -8,14 +8,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SliceImpl correctly represents a slice of results
- * <p>
- * Test scenarios:
- * 1. Create with data, total, offset, limit
- * 2. Access all properties
- * 3. Implements Slice interface
- */
+///
+ /// 测试目标: 验证y SliceImpl 正确 represents a slice of results
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create with data, total, offset, limit
+ /// 2. Access all properties
+ /// 3. Implements Slice interface
 class SliceImplTest {
 
     @Nested

@@ -5,25 +5,23 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SimpleExpressionImpl correctly implements expression operations
- * <p>
- * Test scenarios:
- * 1. Root method
- * 2. Count operations
- * 3. Min/Max operations
- * 4. getRoot returns correct node
- */
+///
+ /// 测试目标: 验证y SimpleExpressionImpl 正确 implements expression 操作s
+ /// <p>
+ /// 测试场景s:
+ /// 1. Root 方法
+ /// 2. Count 操作s
+ /// 3. Min/Max 操作s
+ /// 4. getRoot returns correct node
 class SimpleExpressionImplTest {
 
     @Nested
     class GetRoot {
 
-        /**
-         * Test objective: Verify getRoot returns the expression node
-         * Test scenario: Create SimpleExpressionImpl and get root
-         * Expected result: Returns the node passed in constructor
-         */
+///
+         /// 测试目标: 验证y getRoot returns the expression node
+         /// 测试场景: Create SimpleExpressionImpl and get root
+         /// 预期结果: Returns the node passed in constructor
         @Test
         void getRoot_ReturnsNode() {
             // given
@@ -41,11 +39,10 @@ class SimpleExpressionImplTest {
     @Nested
     class CountOperations {
 
-        /**
-         * Test objective: Verify count() creates COUNT operator
-         * Test scenario: Call count() on expression
-         * Expected result: Expression with COUNT operator
-         */
+///
+         /// 测试目标: 验证y count() creates COUNT operator
+         /// 测试场景: Call count() on expression
+         /// 预期结果: Expression with COUNT operator
         @Test
         void count_CreatesCountOperator() {
             // given
@@ -68,11 +65,10 @@ class SimpleExpressionImplTest {
     @Nested
     class MinMaxOperations {
 
-        /**
-         * Test objective: Verify max() creates MAX operator
-         * Test scenario: Call max() on expression
-         * Expected result: Expression with MAX operator
-         */
+///
+         /// 测试目标: 验证y max() creates MAX operator
+         /// 测试场景: Call max() on expression
+         /// 预期结果: Expression with MAX operator
         @Test
         void max_CreatesMaxOperator() {
             // given
@@ -91,11 +87,10 @@ class SimpleExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.MAX);
         }
 
-        /**
-         * Test objective: Verify min() creates MIN operator
-         * Test scenario: Call min() on expression
-         * Expected result: Expression with MIN operator
-         */
+///
+         /// 测试目标: 验证y min() creates MIN operator
+         /// 测试场景: Call min() on expression
+         /// 预期结果: Expression with MIN operator
         @Test
         void min_CreatesMinOperator() {
             // given

@@ -11,9 +11,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SimpleEntity.
- */
+///
+ /// 单元测试 SimpleEntity.
 class SimpleEntityTest {
 
     private SimpleEntity entity;
@@ -26,21 +25,19 @@ class SimpleEntityTest {
     @Nested
     class ConstructorAndGetters {
 
-        /**
-         * Test objective: Verify constructor sets type correctly.
-         * Test scenario: Create SimpleEntity and check type().
-         * Expected result: Returns the correct type.
-         */
+///
+         /// 测试目标: 验证y constructor sets type 正确.
+         /// 测试场景: Create SimpleEntity and check type().
+         /// 预期结果: Returns the correct type.
         @Test
         void type_ShouldReturnConstructorType() {
             assertThat(entity.type()).isEqualTo(TestEntity.class);
         }
 
-        /**
-         * Test objective: Verify constructor sets table name correctly.
-         * Test scenario: Create SimpleEntity and check tableName().
-         * Expected result: Returns the correct table name.
-         */
+///
+         /// 测试目标: 验证y constructor sets table name 正确.
+         /// 测试场景: Create SimpleEntity and check tableName().
+         /// 预期结果: Returns the correct table name.
         @Test
         void tableName_ShouldReturnConstructorTableName() {
             assertThat(entity.tableName()).isEqualTo("test_entity");
@@ -50,11 +47,10 @@ class SimpleEntityTest {
     @Nested
     class SetAttributes {
 
-        /**
-         * Test objective: Verify setAttributes extracts ID attribute.
-         * Test scenario: Set attributes with one marked as ID.
-         * Expected result: id() returns the ID attribute.
-         */
+///
+         /// 测试目标: 验证y setAttributes extracts ID attribute.
+         /// 测试场景: Set attributes with one marked as ID.
+         /// 预期结果: id() returns the ID attribute.
         @Test
         void setAttributes_ShouldExtractIdAttribute() {
             // given
@@ -76,11 +72,10 @@ class SimpleEntityTest {
             assertThat(id.isId()).isTrue();
         }
 
-        /**
-         * Test objective: Verify setAttributes extracts version attribute.
-         * Test scenario: Set attributes with one marked as version.
-         * Expected result: version() returns the version attribute.
-         */
+///
+         /// 测试目标: 验证y setAttributes extracts version attribute.
+         /// 测试场景: Set attributes with one marked as version.
+         /// 预期结果: version() returns the version attribute.
         @Test
         void setAttributes_ShouldExtractVersionAttribute() {
             // given
@@ -102,11 +97,10 @@ class SimpleEntityTest {
             assertThat(version.isVersion()).isTrue();
         }
 
-        /**
-         * Test objective: Verify attributes() returns set attributes.
-         * Test scenario: Set attributes and retrieve them.
-         * Expected result: attributes() returns the same attributes.
-         */
+///
+         /// 测试目标: 验证y attributes() returns set attributes.
+         /// 测试场景: Set attributes and retrieve them.
+         /// 预期结果: attributes() returns the same attributes.
         @Test
         void attributes_ShouldReturnSetAttributes() {
             // given
@@ -128,11 +122,10 @@ class SimpleEntityTest {
     @Nested
     class GetProjection {
 
-        /**
-         * Test objective: Verify getProjection caches projection types.
-         * Test scenario: Call getProjection twice with same type.
-         * Expected result: Returns same instance on subsequent calls.
-         */
+///
+         /// 测试目标: 验证y getProjection caches projection types.
+         /// 测试场景: Call getProjection twice with same type.
+         /// 预期结果: Returns same instance on subsequent calls.
         @Test
         void getProjection_ShouldCacheResults() {
             // given
@@ -150,9 +143,8 @@ class SimpleEntityTest {
         }
     }
 
-    /**
-     * Test entity class.
-     */
+///
+     /// 测试 entity class.
     static class TestEntity {
         private Long id;
         private String name;

@@ -10,6 +10,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+///
+/// JDBC工具类
+///
+/// 该类提供了与JDBC操作相关的通用方法，包括结果集读取、参数设置等功能，
+/// 以及对不同类型数据类型的转换支持。
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public abstract class JdbcUtil {
 
     private static final Map<Class<?>, ResultSetGetter<?>> GETTER_MAPS = new HashMap<>();

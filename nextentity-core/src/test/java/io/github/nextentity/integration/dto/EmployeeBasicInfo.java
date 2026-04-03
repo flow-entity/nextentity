@@ -1,9 +1,8 @@
 package io.github.nextentity.integration.dto;
 
-/**
- * JavaBean projection for Employee basic info.
- * Used for testing projection to JavaBean classes.
- */
+///
+ /// JavaBean projection for Employee basic info.
+ /// Used for testing projection to JavaBean classes.
 public class EmployeeBasicInfo {
 
     private Long id;

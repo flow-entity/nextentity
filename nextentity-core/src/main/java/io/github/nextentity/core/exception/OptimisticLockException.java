@@ -1,29 +1,23 @@
 package io.github.nextentity.core.exception;
 
-/**
- * Exception thrown when an optimistic locking conflict occurs.
- * This typically happens when an entity is modified by another transaction
- * between the time it was loaded and the time it was updated.
- *
- * @since 1.0.0
- */
+/// 乐观锁冲突时抛出的异常。
+///
+/// 通常在实体被另一个事务在加载和更新之间修改时发生。
+///
+/// @since 1.0.0
 public class OptimisticLockException extends NextEntityException {
 
-    /**
-     * Constructs a new exception with the specified detail message.
-     *
-     * @param message the detail message
-     */
+    /// 使用指定的详细消息构造新异常。
+    ///
+    /// @param message 详细消息
     public OptimisticLockException(String message) {
         super(message);
     }
 
-    /**
-     * Constructs a new exception with the specified detail message and cause.
-     *
-     * @param message the detail message
-     * @param cause   the cause of this exception
-     */
+    /// 使用指定的详细消息和原因构造新异常。
+    ///
+    /// @param message 详细消息
+    /// @param cause   此异常的原因
     public OptimisticLockException(String message, Throwable cause) {
         super(message, cause);
     }

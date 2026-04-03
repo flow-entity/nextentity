@@ -10,27 +10,25 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify Tuples utility class creates tuples correctly
- * <p>
- * Test scenarios:
- * 1. Create tuple from array
- * 2. Create tuple2
- * 3. Create tuple3
- * 4. Tuple get method
- * 5. Tuple size method
- * 6. Tuple equals and hashCode
- */
+///
+ /// 测试目标: 验证y Tuples utility class creates tuples 正确
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create tuple from array
+ /// 2. Create tuple2
+ /// 3. Create tuple3
+ /// 4. Tuple get 方法
+ /// 5. Tuple size 方法
+ /// 6. Tuple equals and hashCode
 class TuplesTest {
 
     @Nested
     class OfArray {
 
-        /**
-         * Test objective: Verify of(Object[]) creates tuple
-         * Test scenario: Create tuple from array
-         * Expected result: Tuple with array elements
-         */
+///
+         /// 测试目标: 验证y of(Object[]) creates tuple
+         /// 测试场景: Create tuple from array
+         /// 预期结果: Tuple with array elements
         @Test
         void of_Array_CreatesTuple() {
             // given
@@ -50,11 +48,10 @@ class TuplesTest {
     @Nested
     class OfTuple2 {
 
-        /**
-         * Test objective: Verify of(a, b) creates Tuple2
-         * Test scenario: Create tuple with two elements
-         * Expected result: Tuple2 with both elements
-         */
+///
+         /// 测试目标: 验证y of(a, b) creates Tuple2
+         /// 测试场景: Create tuple with two elements
+         /// 预期结果: Tuple2 with both elements
         @Test
         void of_TwoElements_CreatesTuple2() {
             // given
@@ -74,11 +71,10 @@ class TuplesTest {
     @Nested
     class OfTuple3 {
 
-        /**
-         * Test objective: Verify of(a, b, c) creates Tuple3
-         * Test scenario: Create tuple with three elements
-         * Expected result: Tuple3 with all elements
-         */
+///
+         /// 测试目标: 验证y of(a, b, c) creates Tuple3
+         /// 测试场景: Create tuple with three elements
+         /// 预期结果: Tuple3 with all elements
         @Test
         void of_ThreeElements_CreatesTuple3() {
             // given
@@ -100,11 +96,10 @@ class TuplesTest {
     @Nested
     class TupleMethods {
 
-        /**
-         * Test objective: Verify toList() returns list
-         * Test scenario: Call toList() on tuple
-         * Expected result: List with all elements
-         */
+///
+         /// 测试目标: 验证y toList() returns list
+         /// 测试场景: Call toList() on tuple
+         /// 预期结果: List with all elements
         @Test
         void toList_ReturnsElementsList() {
             // given
@@ -117,11 +112,10 @@ class TuplesTest {
             assertThat(list).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify toArray() returns copy
-         * Test scenario: Call toArray() on tuple
-         * Expected result: Array copy of elements
-         */
+///
+         /// 测试目标: 验证y toArray() returns copy
+         /// 测试场景: Call toArray() on tuple
+         /// 预期结果: Array copy of elements
         @Test
         void toArray_ReturnsArrayCopy() {
             // given
@@ -134,11 +128,10 @@ class TuplesTest {
             assertThat(array).containsExactly("a", "b", "c");
         }
 
-        /**
-         * Test objective: Verify equals compares content
-         * Test scenario: Compare two equal tuples
-         * Expected result: Are equal
-         */
+///
+         /// 测试目标: 验证y equals compares content
+         /// 测试场景: Compare two equal tuples
+         /// 预期结果: Are equal
         @Test
         void equals_SameContent_AreEqual() {
             // given
@@ -150,11 +143,10 @@ class TuplesTest {
             assertThat(tuple1.hashCode()).isEqualTo(tuple2.hashCode());
         }
 
-        /**
-         * Test objective: Verify equals with different content
-         * Test scenario: Compare two different tuples
-         * Expected result: Are not equal
-         */
+///
+         /// 测试目标: 验证y equals with different content
+         /// 测试场景: Compare two different tuples
+         /// 预期结果: Are not equal
         @Test
         void equals_DifferentContent_AreNotEqual() {
             // given
@@ -169,11 +161,10 @@ class TuplesTest {
     @Nested
     class TupleIterator {
 
-        /**
-         * Test objective: Verify iterator iterates all elements
-         * Test scenario: Iterate over tuple
-         * Expected result: All elements in order
-         */
+///
+         /// 测试目标: 验证y iterator iterates all elements
+         /// 测试场景: Iterate over tuple
+         /// 预期结果: All elements in order
         @Test
         void iterator_ReturnsAllElements() {
             // given

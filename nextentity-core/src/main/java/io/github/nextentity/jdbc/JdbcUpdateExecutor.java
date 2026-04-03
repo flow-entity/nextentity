@@ -18,6 +18,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Supplier;
 
+///
+/// JDBC更新执行器实现
+///
+/// 该类负责通过JDBC执行数据库更新操作，包括插入、更新、删除等操作。
+/// 它实现了UpdateExecutor接口，提供了基于JDBC的更新能力。
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public class JdbcUpdateExecutor implements UpdateExecutor {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(JdbcUpdateExecutor.class);
@@ -25,12 +34,22 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     private final ConnectionProvider connectionProvider;
     private final Metamodel metamodel;
 
+    /// 构造JDBC更新执行器
+    ///
+    /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
+    /// @param connectionProvider 连接提供者，用于获取数据库连接
+    /// @param metamodel 元模型，用于提供实体元数据信息
     public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.metamodel = metamodel;
     }
 
+    /// 插入所有实体
+    ///
+    /// @param <T> 实体类型
+    /// @param entities 实体集合
+    /// @param entityClass 实体类类型
     @Override
     public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
@@ -56,12 +75,24 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
+    /// 更新所有实体
+    ///
+    /// @param <T> 实体类型
+    /// @param entities 实体集合
+    /// @param entityClass 实体类类型
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
         boolean excludeNull = false;
         updateAll(entities, entityClass, excludeNull);
     }
 
+    /// 更新所有实体
+    ///
+    /// @param <T> 实体类型
+    /// @param entities 实体集合
+    /// @param entityClass 实体类类型
+    /// @param excludeNull 是否排除空值
+    /// @return 更新后的实体列表
     protected <T> @NonNull List<@NonNull T> updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass, boolean excludeNull) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
@@ -95,6 +126,11 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         });
     }
 
+    /// 删除所有实体
+    ///
+    /// @param <T> 实体类型
+    /// @param entities 实体集合
+    /// @param entityType 实体类类型
     @Override
     public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
         if (!entities.iterator().hasNext()) {
@@ -117,6 +153,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         });
     }
 
+    /// 在事务中执行命令
+    ///
+    /// @param command 要执行的命令
     @Override
     public void doInTransaction(Runnable command) {
         try {
@@ -129,6 +168,11 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
+    /// 在事务中执行带返回值的命令
+    ///
+    /// @param <T> 返回值类型
+    /// @param command 要执行的命令
+    /// @return 命令执行结果
     @Override
     public <T> T doInTransaction(Supplier<T> command) {
         try {
@@ -138,6 +182,10 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
+    /// 设置新版本号
+    ///
+    /// @param entity 实体对象
+    /// @param attribute 版本属性
     protected static void setNewVersion(Object entity, EntityAttribute attribute) {
         Object version = attribute.getDatabaseValue(entity);
         Class<?> type = attribute.type();
@@ -151,6 +199,12 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         attribute.setByDatabaseValue(entity, version);
     }
 
+    /// 执行插入操作
+    ///
+    /// @param entityType 实体类型
+    /// @param connection 数据库连接
+    /// @param insertStatement 插入SQL语句
+    /// @throws SQLException SQL异常
     protected void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
         insertStatement.debug();
         boolean generateKey = insertStatement.returnGeneratedKeys();
@@ -175,6 +229,12 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
+    /// 执行更新操作
+    ///
+    /// @param statement 预编译语句
+    /// @param parameters 参数集合
+    /// @return 更新行数数组
+    /// @throws SQLException SQL异常
     protected int[] executeUpdate(PreparedStatement statement, Iterable<? extends Iterable<?>> parameters) throws SQLException {
         Iterator<? extends Iterable<?>> iterator = parameters.iterator();
         if (iterator.hasNext()) {
@@ -193,10 +253,19 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         }
     }
 
+    /// 设置参数
+    ///
+    /// @param statement 预编译语句
+    /// @param parameters 参数集合
+    /// @throws SQLException SQL异常
     protected static void setParameters(PreparedStatement statement, Iterable<?> parameters) throws SQLException {
         JdbcUtil.setParameters(statement, parameters);
     }
 
+    /// 执行数据库操作
+    ///
+    /// @param action 数据库操作回调
+    /// @return 操作结果
     protected <T> T execute(ConnectionCallback<T> action) {
         try {
             return connectionProvider.executeInTransaction(action);

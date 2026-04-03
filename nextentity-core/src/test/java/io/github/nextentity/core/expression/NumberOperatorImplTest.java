@@ -11,9 +11,7 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for NumberOperatorImpl.
- */
+/// NumberOperatorImpl的单元测试。
 class NumberOperatorImplTest {
 
     private NumberOperatorImpl<Object, Double, String> operator;
@@ -33,10 +31,9 @@ class NumberOperatorImplTest {
     @Nested
     class ArithmeticOperationsWithValues {
 
-        /**
-         * Verifies that arithmetic operations create correct operator nodes.
-         * Tests add, subtract, multiply, divide, and mod operations with values.
-         */
+///
+         /// 验证ies that arithmetic 操作s create correct operator nodes.
+         /// 测试s add, subtract, multiply, divide, and mod 操作s with values.
         @ParameterizedTest
         @CsvSource({
             "ADD, 100.0",
@@ -78,9 +75,8 @@ class NumberOperatorImplTest {
     @Nested
     class ArithmeticOperationsWithExpressions {
 
-        /**
-         * Verifies that arithmetic operations with expressions create correct operator nodes.
-         */
+///
+         /// 验证ies that arithmetic 操作s with expressions create correct operator nodes.
         @ParameterizedTest
         @CsvSource({
             "ADD, 50.0",
@@ -122,9 +118,8 @@ class NumberOperatorImplTest {
     @Nested
     class ReturnType {
 
-        /**
-         * Verifies that all arithmetic operations return NumberOperatorImpl.
-         */
+///
+         /// 验证ies that all arithmetic 操作s return NumberOperatorImpl.
         @ParameterizedTest
         @CsvSource({
             "ADD, 100.0",

@@ -5,15 +5,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify OrdinalOfEnumType correctly converts enum to ordinal
- * <p>
- * Test scenarios:
- * 1. Constructor creates converter for enum type
- * 2. toDatabaseType converts enum to ordinal
- * 3. toAttributeType converts ordinal to enum
- * 4. databaseType returns Integer.class
- */
+///
+ /// 测试目标: 验证y OrdinalOfEnumType 正确 converts enum to ordinal
+ /// <p>
+ /// 测试场景s:
+ /// 1. Constructor creates converter for enum type
+ /// 2. toDatabaseType converts enum to ordinal
+ /// 3. toAttributeType converts ordinal to enum
+ /// 4. databaseType returns Integer.class
 class OrdinalOfEnumTypeTest {
 
     enum TestStatus {
@@ -23,11 +22,10 @@ class OrdinalOfEnumTypeTest {
     @Nested
     class Constructor {
 
-        /**
-         * Test objective: Verify constructor creates converter
-         * Test scenario: Create converter for enum type
-         * Expected result: Converter is created
-         */
+///
+         /// 测试目标: 验证y constructor creates converter
+         /// 测试场景: Create converter for enum type
+         /// 预期结果: Converter is created
         @Test
         void constructor_CreatesConverter() {
             // when
@@ -41,11 +39,10 @@ class OrdinalOfEnumTypeTest {
     @Nested
     class DatabaseType {
 
-        /**
-         * Test objective: Verify databaseType returns Integer.class
-         * Test scenario: Call databaseType()
-         * Expected result: Integer.class
-         */
+///
+         /// 测试目标: 验证y databaseType returns Integer.class
+         /// 测试场景: Call databaseType()
+         /// 预期结果: Integer.class
         @Test
         void databaseType_ReturnsInteger() {
             // given
@@ -62,11 +59,10 @@ class OrdinalOfEnumTypeTest {
     @Nested
     class ToDatabaseType {
 
-        /**
-         * Test objective: Verify toDatabaseType converts enum to ordinal
-         * Test scenario: Convert ACTIVE enum
-         * Expected result: 0 (ordinal of ACTIVE)
-         */
+///
+         /// 测试目标: 验证y toDatabaseType converts enum to ordinal
+         /// 测试场景: Convert ACTIVE enum
+         /// 预期结果: 0 (ordinal of ACTIVE)
         @Test
         void toDatabaseType_ConvertsToOrdinal() {
             // given
@@ -79,11 +75,10 @@ class OrdinalOfEnumTypeTest {
             assertThat(result).isEqualTo(0);
         }
 
-        /**
-         * Test objective: Verify toDatabaseType converts INACTIVE to ordinal 1
-         * Test scenario: Convert INACTIVE enum
-         * Expected result: 1 (ordinal of INACTIVE)
-         */
+///
+         /// 测试目标: 验证y toDatabaseType converts INACTIVE to ordinal 1
+         /// 测试场景: Convert INACTIVE enum
+         /// 预期结果: 1 (ordinal of INACTIVE)
         @Test
         void toDatabaseType_ConvertsInActiveToOrdinalOne() {
             // given
@@ -96,11 +91,10 @@ class OrdinalOfEnumTypeTest {
             assertThat(result).isEqualTo(1);
         }
 
-        /**
-         * Test objective: Verify toDatabaseType handles null
-         * Test scenario: Convert null
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y toDatabaseType 处理 null
+         /// 测试场景: Convert null
+         /// 预期结果: null
         @Test
         void toDatabaseType_Null_ReturnsNull() {
             // given
@@ -117,11 +111,10 @@ class OrdinalOfEnumTypeTest {
     @Nested
     class ToAttributeType {
 
-        /**
-         * Test objective: Verify toAttributeType converts ordinal to enum
-         * Test scenario: Convert ordinal 0
-         * Expected result: ACTIVE enum
-         */
+///
+         /// 测试目标: 验证y toAttributeType converts ordinal to enum
+         /// 测试场景: Convert ordinal 0
+         /// 预期结果: ACTIVE enum
         @Test
         void toAttributeType_ConvertsToEnum() {
             // given
@@ -134,11 +127,10 @@ class OrdinalOfEnumTypeTest {
             assertThat(result).isEqualTo(TestStatus.ACTIVE);
         }
 
-        /**
-         * Test objective: Verify toAttributeType converts ordinal 1
-         * Test scenario: Convert ordinal 1
-         * Expected result: INACTIVE enum
-         */
+///
+         /// 测试目标: 验证y toAttributeType converts ordinal 1
+         /// 测试场景: Convert ordinal 1
+         /// 预期结果: INACTIVE enum
         @Test
         void toAttributeType_ConvertsOrdinalOneToEnum() {
             // given
@@ -151,11 +143,10 @@ class OrdinalOfEnumTypeTest {
             assertThat(result).isEqualTo(TestStatus.INACTIVE);
         }
 
-        /**
-         * Test objective: Verify toAttributeType returns non-Integer unchanged
-         * Test scenario: Convert string
-         * Expected result: Same string
-         */
+///
+         /// 测试目标: 验证y toAttributeType returns non-Integer unchanged
+         /// 测试场景: Convert string
+         /// 预期结果: Same string
         @Test
         void toAttributeType_NonInteger_ReturnsValue() {
             // given

@@ -3,11 +3,9 @@ package io.github.nextentity.spring.integration.db;
 import io.github.nextentity.spring.integration.db.env.DatabaseEnvironmentVariables;
 import org.springframework.beans.factory.annotation.Value;
 
-/**
- * Environment variables aggregator for all databases.
- *
- * @author HuangChengwei
- */
+/// 所有数据库的环境变量聚合器。
+///
+/// @author HuangChengwei
 public class DatabaseEnvironment {
 
     private DatabaseEnvironmentVariables variables;

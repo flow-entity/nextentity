@@ -9,15 +9,14 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-/**
- * Test objective: Verify PostgreSqlUpdateSqlBuilder correctly provides PostgreSQL-specific SQL syntax
- * <p>
- * Test scenarios:
- * 1. Left tick character is double quote
- * 2. Right tick character is double quote
- * 3. Typed placeholder for Date types
- * 4. Typed placeholder for non-Date types
- */
+///
+ /// 测试目标: 验证y PostgreSqlUpdateSqlBuilder 正确 provides PostgreSQL-specific SQL syntax
+ /// <p>
+ /// 测试场景s:
+ /// 1. Left tick character is double quote
+ /// 2. Right tick character is double quote
+ /// 3. Typed placeholder for Date types
+ /// 4. Typed placeholder for non-Date types
 class PostgreSqlUpdateSqlBuilderTest {
 
     private final PostgreSqlUpdateSqlBuilder builder = new PostgreSqlUpdateSqlBuilder();

@@ -9,9 +9,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Test data factory for integration tests.
- */
+///
+ /// 测试 data factory for integration tests.
 public class TestDataFactory {
 
     public static List<Department> createDepartments() {

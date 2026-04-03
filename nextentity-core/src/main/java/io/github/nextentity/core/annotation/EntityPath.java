@@ -7,19 +7,16 @@ import static java.lang.annotation.ElementType.FIELD;
 import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-/// Specifies the entity attribute path for a projection class field.
+/// 为投影类字段指定实体属性路径。
 ///
-/// This annotation is used in projection classes (DTOs, view models, etc.)
-/// to define the mapping between a projection field and its corresponding
-/// entity attribute path. It enables automatic population of projection fields
-/// from entity data during query execution.
+/// 此注解用于投影类（DTO、视图模型等）中，定义投影字段与其对应实体属性路径之间的映射。
+/// 它允许在查询执行期间自动从实体数据填充投影字段。
 ///
-/// The path supports nested attribute traversal using dot notation.
-/// For example, `"department.name"` maps to the name of the department association.
+/// 路径支持使用点符号进行嵌套属性遍历。例如，"department.name" 映射到部门关联的名称。
 ///
-/// Example usage:
+/// 示例用法：
 /// ```java
-/// /// DTO combining employee and department info
+/// /// 组合员工和部门信息的DTO
 /// public class EmployeeWithDept {
 ///     @EntityPath("name")
 ///     private String employeeName;
@@ -28,7 +25,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 ///     private String departmentName;
 /// }
 ///
-/// // Query with projection
+/// // 带投影的查询
 /// List<EmployeeWithDept> results = query()
 ///     .select(EmployeeWithDept.class)
 ///     .getList();
@@ -39,13 +36,12 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Retention(RUNTIME)
 public @interface EntityPath {
 
-    /// The entity attribute path for this projection field.
+    /// 此投影字段的实体属性路径。
     ///
-    /// Supports dot notation for nested attribute access.
-    /// An empty string (default) indicates the field name matches
-    /// the entity attribute name exactly.
+    /// 支持点符号进行嵌套属性访问。
+    /// 空字符串（默认值）表示字段名与实体属性名完全匹配。
     ///
-    /// @return the attribute path, e.g., "name" or "department.name"
+    /// @return 属性路径，例如 "name" 或 "department.name"
     String value() default "";
 
 }

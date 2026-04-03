@@ -7,13 +7,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SortExpression correctly represents sort specification
- * <p>
- * Test scenarios:
- * 1. Create with expression and order
- * 2. Access properties
- */
+///
+ /// 测试目标: 验证y SortExpression 正确 represents sort specification
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create with expression and order
+ /// 2. Access properties
 class SortExpressionTest {
 
     @Nested

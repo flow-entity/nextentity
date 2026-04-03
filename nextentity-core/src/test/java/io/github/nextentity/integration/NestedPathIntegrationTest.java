@@ -14,18 +14,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for nested path expressions.
- * <p>
- * Tests association path queries including:
- * - Filtering by nested entity properties (e.g., Employee.department.name)
- * - Filtering by nested entity multiple properties
- * - Combined nested path with other conditions
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Integration tests for nested path expressions.
+ /// <p>
+ /// 测试s association path queries including:
+ /// - Filtering by nested entity properties (e.g., Employee.department.name)
+ /// - Filtering by nested entity multiple properties
+ /// - Combined nested path with other conditions
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Nested Path Integration Tests")
 public class NestedPathIntegrationTest {
 
@@ -33,11 +32,10 @@ public class NestedPathIntegrationTest {
     @DisplayName("Filter by Department Name Tests")
     class FilterByDepartmentNameTests {
 
-        /**
-         * Test objective: Verify filtering employees by department name using nested path.
-         * Test scenario: Use Path.of(Employee::getDepartment).get(Department::getName).eq("Engineering")
-         * Expected result: Returns all employees in Engineering department.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department name using nested path.
+         /// 测试场景: Use Path.of(Employee::getDepartment).get(Department::getName).eq("Engineering")
+         /// 预期结果: Returns all employees in Engineering department.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department name Engineering")
@@ -58,11 +56,10 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify filtering employees by department name Marketing.
-         * Test scenario: Use nested path to filter by Marketing department.
-         * Expected result: Returns all employees in Marketing department.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department name Marketing.
+         /// 测试场景: Use nested path to filter by Marketing department.
+         /// 预期结果: Returns all employees in Marketing department.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department name Marketing")
@@ -82,9 +79,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify filtering employees by department name Sales.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department name Sales.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department name Sales")
@@ -104,9 +100,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify filtering employees by department name HR.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department name HR.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department name HR")
@@ -124,9 +119,8 @@ public class NestedPathIntegrationTest {
             assertThat(employees.get(0).getDepartment().getName()).isEqualTo("HR");
         }
 
-        /**
-         * Test objective: Verify filtering employees by department name Finance.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department name Finance.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department name Finance")
@@ -144,9 +138,8 @@ public class NestedPathIntegrationTest {
             assertThat(employees.get(0).getDepartment().getName()).isEqualTo("Finance");
         }
 
-        /**
-         * Test objective: Verify filtering by non-existent department name returns empty.
-         */
+///
+         /// 测试目标: 验证y filtering by non-existent department name returns empty.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should return empty for non-existent department name")
@@ -165,9 +158,8 @@ public class NestedPathIntegrationTest {
     @DisplayName("Filter by Nested Department Location Tests")
     class FilterByDepartmentLocationTests {
 
-        /**
-         * Test objective: Verify filtering employees by department location.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department location.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department location Building A")
@@ -187,9 +179,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify filtering employees by department location Building B.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department location Building B.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department location Building B")
@@ -214,9 +205,8 @@ public class NestedPathIntegrationTest {
     @DisplayName("Filter by Nested Department Budget Tests")
     class FilterByDepartmentBudgetTests {
 
-        /**
-         * Test objective: Verify filtering employees by department budget using comparison operators.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department budget using comparison operators.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department budget greater than")
@@ -236,9 +226,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify filtering employees by department budget using between.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department budget using between.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by department budget between")
@@ -264,9 +253,8 @@ public class NestedPathIntegrationTest {
     @DisplayName("Filter by Nested Department Active Status Tests")
     class FilterByDepartmentActiveTests {
 
-        /**
-         * Test objective: Verify filtering employees by department active status.
-         */
+///
+         /// 测试目标: 验证y filtering employees by department active status.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by active department")
@@ -286,9 +274,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify filtering employees by inactive department.
-         */
+///
+         /// 测试目标: 验证y filtering employees by inactive department.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter employees by inactive department")
@@ -312,9 +299,8 @@ public class NestedPathIntegrationTest {
     @DisplayName("Combined Nested Path Conditions Tests")
     class CombinedNestedPathConditionsTests {
 
-        /**
-         * Test objective: Verify combining nested path condition with direct property condition.
-         */
+///
+         /// 测试目标: 验证y combining nested path condition with direct property condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine nested path with employee active status")
@@ -336,9 +322,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify combining multiple nested path conditions.
-         */
+///
+         /// 测试目标: 验证y combining multiple nested path conditions.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple nested path conditions")
@@ -361,9 +346,8 @@ public class NestedPathIntegrationTest {
             }
         }
 
-        /**
-         * Test objective: Verify combining nested path with salary condition.
-         */
+///
+         /// 测试目标: 验证y combining nested path with salary condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine nested path with salary condition")
@@ -390,9 +374,8 @@ public class NestedPathIntegrationTest {
     @DisplayName("Nested Path with Order Tests")
     class NestedPathWithOrderTests {
 
-        /**
-         * Test objective: Verify ordering by nested property after filtering.
-         */
+///
+         /// 测试目标: 验证y ordering by nested property after filtering.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should order by employee salary after nested path filter")
@@ -418,9 +401,8 @@ public class NestedPathIntegrationTest {
     @DisplayName("Nested Path Select Tests")
     class NestedPathSelectTests {
 
-        /**
-         * Test objective: Verify select with nested path expression.
-         */
+///
+         /// 测试目标: 验证y select with nested path expression.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select department name from employees")
@@ -436,9 +418,8 @@ public class NestedPathIntegrationTest {
                     "Engineering", "Marketing", "Sales", "HR", "Finance");
         }
 
-        /**
-         * Test objective: Verify select department location from employees.
-         */
+///
+         /// 测试目标: 验证y select department location from employees.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should select department location from employees")

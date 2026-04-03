@@ -12,9 +12,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SimpleAttributes.
- */
+/// 单元测试 SimpleAttributes.
 class SimpleAttributesTest {
 
     private SimpleAttributes attributes;
@@ -44,11 +42,9 @@ class SimpleAttributesTest {
     @Nested
     class GetByName {
 
-        /**
-         * Test objective: Verify get(String) returns attribute by name.
-         * Test scenario: Call get() with existing attribute name.
-         * Expected result: Returns the correct attribute.
-         */
+        /// 测试目标：验证 get(String) 按名称返回属性。
+        /// 测试场景：使用现有属性名称调用 get()。
+        /// 预期结果：返回正确的属性。
         @Test
         void get_WithExistingName_ShouldReturnAttribute() {
             // when
@@ -58,11 +54,9 @@ class SimpleAttributesTest {
             assertThat(result).isSameAs(idAttr);
         }
 
-        /**
-         * Test objective: Verify get(String) returns null for non-existent name.
-         * Test scenario: Call get() with non-existent attribute name.
-         * Expected result: Returns null.
-         */
+        /// 测试目标：验证 get(String) 对于不存在的名称返回 null。
+        /// 测试场景：使用不存在的属性名称调用 get()。
+        /// 预期结果：返回 null。
         @Test
         void get_WithNonExistentName_ShouldReturnNull() {
             // when
@@ -76,11 +70,9 @@ class SimpleAttributesTest {
     @Nested
     class GetPrimitives {
 
-        /**
-         * Test objective: Verify getPrimitives() returns only primitive attributes.
-         * Test scenario: Call getPrimitives() on attributes with mixed types.
-         * Expected result: Returns only attributes where isPrimitive() returns true.
-         */
+        /// 测试目标：验证 getPrimitives() 只返回基本属性。
+        /// 测试场景：对混合类型属性调用 getPrimitives()。
+        /// 预期结果：只返回 isPrimitive() 返回 true 的属性。
         @Test
         void getPrimitives_ShouldReturnOnlyPrimitives() {
             // when
@@ -96,34 +88,28 @@ class SimpleAttributesTest {
     @Nested
     class Inheritance {
 
-        /**
-         * Test objective: Verify SimpleAttributes extends ImmutableList.
-         * Test scenario: Check inheritance.
-         * Expected result: Is instance of ImmutableList.
-         */
+        /// 测试目标：验证 SimpleAttributes 扩展 ImmutableList。
+        /// 测试场景：检查继承。
+        /// 预期结果：是 ImmutableList 的实例。
         @Test
         void shouldExtendImmutableList() {
             assertThat(attributes).isInstanceOf(ImmutableList.class);
         }
 
-        /**
-         * Test objective: Verify SimpleAttributes implements Attributes.
-         * Test scenario: Check interface implementation.
-         * Expected result: Is instance of Attributes.
-         */
+        /// 测试目标：验证 SimpleAttributes 实现 Attributes。
+        /// 测试场景：检查接口实现。
+        /// 预期结果：是 Attributes 的实例。
         @Test
         void shouldImplementAttributes() {
             assertThat(attributes).isInstanceOf(Attributes.class);
         }
     }
 
-    /**
-     * Test implementation of Attribute.
-     */
+    /// 测试 Attribute 的实现.
     static class TestAttribute extends SimpleAttribute {
         @Override
         public boolean isPrimitive() {
-            // Return true for id and name, false for nested
+            // 对 id 和 name 返回 true，对 nested 返回 false
             return !name().equals("nested");
         }
     }

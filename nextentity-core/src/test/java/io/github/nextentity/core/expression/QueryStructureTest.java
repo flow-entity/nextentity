@@ -8,19 +8,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for QueryStructure.
- */
+///
+ /// 单元测试 QueryStructure.
 class QueryStructureTest {
 
     @Nested
     class FactoryMethods {
 
-        /**
-         * Test objective: Verify of(Selected, From) creates structure with default values.
-         * Test scenario: Call of() with select and from.
-         * Expected result: Returns QueryStructure with empty where, groupBy, orderBy, having and null offset/limit.
-         */
+///
+         /// 测试目标: 验证y of(Selected, From) creates structure with default values.
+         /// 测试场景: Call of() with select and from.
+         /// 预期结果: Returns QueryStructure with empty where, groupBy, orderBy, having and null offset/limit.
         @Test
         void of_WithSelectAndFrom_ShouldCreateWithDefaults() {
             // given
@@ -42,11 +40,10 @@ class QueryStructureTest {
             assertThat(result.lockType()).isEqualTo(LockModeType.NONE);
         }
 
-        /**
-         * Test objective: Verify of(Class) creates structure from entity type.
-         * Test scenario: Call of() with entity class.
-         * Expected result: Returns QueryStructure with SelectEntity and FromEntity.
-         */
+///
+         /// 测试目标: 验证y of(Class) creates structure from entity type.
+         /// 测试场景: Call of() with entity class.
+         /// 预期结果: Returns QueryStructure with SelectEntity and FromEntity.
         @Test
         void of_WithClass_ShouldCreateFromEntityType() {
             // when
@@ -62,11 +59,10 @@ class QueryStructureTest {
     @Nested
     class SelectMethod {
 
-        /**
-         * Test objective: Verify select() updates select clause.
-         * Test scenario: Call select() with new Selected.
-         * Expected result: Returns new QueryStructure with updated select.
-         */
+///
+         /// 测试目标: 验证y select() updates select clause.
+         /// 测试场景: Call select() with new Selected.
+         /// 预期结果: Returns new QueryStructure with updated select.
         @Test
         void select_ShouldReturnNewInstanceWithUpdatedSelect() {
             // given
@@ -86,11 +82,10 @@ class QueryStructureTest {
     @Nested
     class FromMethod {
 
-        /**
-         * Test objective: Verify from() updates from clause.
-         * Test scenario: Call from() with new From.
-         * Expected result: Returns new QueryStructure with updated from.
-         */
+///
+         /// 测试目标: 验证y from() updates from clause.
+         /// 测试场景: Call from() with new From.
+         /// 预期结果: Returns new QueryStructure with updated from.
         @Test
         void from_ShouldReturnNewInstanceWithUpdatedFrom() {
             // given
@@ -109,11 +104,10 @@ class QueryStructureTest {
     @Nested
     class WhereMethod {
 
-        /**
-         * Test objective: Verify where() updates where clause.
-         * Test scenario: Call where() with ExpressionNode.
-         * Expected result: Returns new QueryStructure with updated where.
-         */
+///
+         /// 测试目标: 验证y where() updates where clause.
+         /// 测试场景: Call where() with ExpressionNode.
+         /// 预期结果: Returns new QueryStructure with updated where.
         @Test
         void where_ShouldReturnNewInstanceWithUpdatedWhere() {
             // given
@@ -132,11 +126,10 @@ class QueryStructureTest {
     @Nested
     class GroupByMethod {
 
-        /**
-         * Test objective: Verify groupBy() updates group by clause.
-         * Test scenario: Call groupBy() with list of expressions.
-         * Expected result: Returns new QueryStructure with updated groupBy.
-         */
+///
+         /// 测试目标: 验证y groupBy() updates group by clause.
+         /// 测试场景: Call groupBy() with list of expressions.
+         /// 预期结果: Returns new QueryStructure with updated groupBy.
         @Test
         void groupBy_ShouldReturnNewInstanceWithUpdatedGroupBy() {
             // given
@@ -155,11 +148,10 @@ class QueryStructureTest {
     @Nested
     class OrderByMethod {
 
-        /**
-         * Test objective: Verify orderBy() updates order by clause.
-         * Test scenario: Call orderBy() with list of sort expressions.
-         * Expected result: Returns new QueryStructure with updated orderBy.
-         */
+///
+         /// 测试目标: 验证y orderBy() updates order by clause.
+         /// 测试场景: Call orderBy() with list of sort expressions.
+         /// 预期结果: Returns new QueryStructure with updated orderBy.
         @Test
         void orderBy_ShouldReturnNewInstanceWithUpdatedOrderBy() {
             // given
@@ -179,11 +171,10 @@ class QueryStructureTest {
     @Nested
     class HavingMethod {
 
-        /**
-         * Test objective: Verify having() updates having clause.
-         * Test scenario: Call having() with ExpressionNode.
-         * Expected result: Returns new QueryStructure with updated having.
-         */
+///
+         /// 测试目标: 验证y having() updates having clause.
+         /// 测试场景: Call having() with ExpressionNode.
+         /// 预期结果: Returns new QueryStructure with updated having.
         @Test
         void having_ShouldReturnNewInstanceWithUpdatedHaving() {
             // given
@@ -202,11 +193,10 @@ class QueryStructureTest {
     @Nested
     class OffsetMethod {
 
-        /**
-         * Test objective: Verify offset() updates offset value.
-         * Test scenario: Call offset() with integer value.
-         * Expected result: Returns new QueryStructure with updated offset.
-         */
+///
+         /// 测试目标: 验证y offset() updates offset value.
+         /// 测试场景: Call offset() with integer value.
+         /// 预期结果: Returns new QueryStructure with updated offset.
         @Test
         void offset_ShouldReturnNewInstanceWithUpdatedOffset() {
             // given
@@ -224,11 +214,10 @@ class QueryStructureTest {
     @Nested
     class LimitMethod {
 
-        /**
-         * Test objective: Verify limit() updates limit value.
-         * Test scenario: Call limit() with integer value.
-         * Expected result: Returns new QueryStructure with updated limit.
-         */
+///
+         /// 测试目标: 验证y limit() updates limit value.
+         /// 测试场景: Call limit() with integer value.
+         /// 预期结果: Returns new QueryStructure with updated limit.
         @Test
         void limit_ShouldReturnNewInstanceWithUpdatedLimit() {
             // given
@@ -246,11 +235,10 @@ class QueryStructureTest {
     @Nested
     class LockTypeMethod {
 
-        /**
-         * Test objective: Verify lockType() updates lock type.
-         * Test scenario: Call lockType() with LockModeType.
-         * Expected result: Returns new QueryStructure with updated lockType.
-         */
+///
+         /// 测试目标: 验证y lockType() updates lock type.
+         /// 测试场景: Call lockType() with LockModeType.
+         /// 预期结果: Returns new QueryStructure with updated lockType.
         @Test
         void lockType_ShouldReturnNewInstanceWithUpdatedLockType() {
             // given
@@ -268,11 +256,10 @@ class QueryStructureTest {
     @Nested
     class RemoveOffsetLimitMethod {
 
-        /**
-         * Test objective: Verify removeOffsetLimit() removes both offset and limit.
-         * Test scenario: Call removeOffsetLimit() when both offset and limit are set.
-         * Expected result: Returns new QueryStructure with null offset and limit.
-         */
+///
+         /// 测试目标: 验证y removeOffsetLimit() removes both offset and limit.
+         /// 测试场景: Call removeOffsetLimit() when both offset and limit are set.
+         /// 预期结果: Returns new QueryStructure with null offset and limit.
         @Test
         void removeOffsetLimit_WhenBothSet_ShouldRemoveBoth() {
             // given
@@ -286,11 +273,10 @@ class QueryStructureTest {
             assertThat(result.limit()).isNull();
         }
 
-        /**
-         * Test objective: Verify removeOffsetLimit() returns same instance when both are null.
-         * Test scenario: Call removeOffsetLimit() when both offset and limit are null.
-         * Expected result: Returns same instance.
-         */
+///
+         /// 测试目标: 验证y removeOffsetLimit() returns same instance when both are null.
+         /// 测试场景: Call removeOffsetLimit() when both offset and limit are null.
+         /// 预期结果: Returns same instance.
         @Test
         void removeOffsetLimit_WhenBothNull_ShouldReturnSameInstance() {
             // given

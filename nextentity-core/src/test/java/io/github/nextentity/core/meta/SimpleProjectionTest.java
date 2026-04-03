@@ -10,9 +10,8 @@ import java.util.ArrayList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SimpleProjection.
- */
+///
+ /// 单元测试 SimpleProjection.
 class SimpleProjectionTest {
 
     private SimpleProjection projection;
@@ -27,21 +26,19 @@ class SimpleProjectionTest {
     @Nested
     class ConstructorAndGetters {
 
-        /**
-         * Test objective: Verify constructor sets type correctly.
-         * Test scenario: Create SimpleProjection and check type().
-         * Expected result: Returns the correct type.
-         */
+///
+         /// 测试目标: 验证y constructor sets type 正确.
+         /// 测试场景: Create SimpleProjection and check type().
+         /// 预期结果: Returns the correct type.
         @Test
         void type_ShouldReturnConstructorType() {
             assertThat(projection.type()).isEqualTo(TestProjection.class);
         }
 
-        /**
-         * Test objective: Verify constructor sets source correctly.
-         * Test scenario: Create SimpleProjection and check source().
-         * Expected result: Returns the source entity.
-         */
+///
+         /// 测试目标: 验证y constructor sets source 正确.
+         /// 测试场景: Create SimpleProjection and check source().
+         /// 预期结果: Returns the source entity.
         @Test
         void source_ShouldReturnConstructorSource() {
             assertThat(projection.source()).isEqualTo(entity);
@@ -51,11 +48,10 @@ class SimpleProjectionTest {
     @Nested
     class SetAttributes {
 
-        /**
-         * Test objective: Verify setAttributes and attributes work correctly.
-         * Test scenario: Set attributes and retrieve them.
-         * Expected result: Returns the set attributes.
-         */
+///
+         /// 测试目标: 验证y setAttributes and attributes work 正确.
+         /// 测试场景: Set attributes and retrieve them.
+         /// 预期结果: Returns the set attributes.
         @Test
         void attributes_ShouldReturnSetAttributes() {
             // given
@@ -70,9 +66,8 @@ class SimpleProjectionTest {
         }
     }
 
-    /**
-     * Test entity class.
-     */
+///
+     /// 测试 entity class.
     static class TestEntity {
         private Long id;
         private String name;
@@ -94,9 +89,8 @@ class SimpleProjectionTest {
         }
     }
 
-    /**
-     * Test projection class.
-     */
+///
+     /// 测试 projection class.
     static class TestProjection {
         private String name;
 

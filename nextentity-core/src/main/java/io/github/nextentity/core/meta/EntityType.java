@@ -1,29 +1,22 @@
 package io.github.nextentity.core.meta;
 
+/// 实体类型接口，扩展 {@link EntitySchema} 并提供投影支持。
 ///
-/// Entity type interface extending {@link EntitySchema} with projection support.
+/// 此接口提供实体元数据以及检索与此实体关联的DTO/投影类的投影类型元数据的能力。
 ///
-/// This interface provides entity metadata along with the ability to retrieve
-/// projection type metadata for DTO/projection classes associated with this entity.
-///
-/// EntityType instances are obtained from the {@link Metamodel} and contain
-/// all metadata needed for query building and entity persistence.
+/// EntityType 实例从 {@link Metamodel} 中获取，包含查询构建和实体持久化所需的所有元数据。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface EntityType extends EntitySchema {
 
+    /// 获取指定投影类的投影类型元数据。
     ///
-    /// Gets the projection type metadata for the specified projection class.
+    /// 投影类型定义查询结果如何映射到DTO或其他非实体结果类型。
     ///
-    /// Projection types define how query results are mapped to DTOs or
-    /// other non-entity result types.
-    ///
-    /// @param type the projection class to retrieve metadata for
-    /// @return the projection type metadata
-    /// @throws IllegalArgumentException if no projection metadata exists for the given type
-    ///
+    /// @param type 要检索元数据的投影类
+    /// @return 投影类型元数据
+    /// @throws IllegalArgumentException 如果给定类型不存在投影元数据则抛出
     ProjectionType getProjection(Class<?> type);
 
 }

@@ -10,9 +10,8 @@ import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for PathOperatorImpl.
- */
+///
+ /// 单元测试 PathOperatorImpl.
 class PathOperatorImplTest {
 
     private PathOperatorImpl<Employee, Employee, String> operator;
@@ -32,11 +31,10 @@ class PathOperatorImplTest {
     @Nested
     class GetWithPath {
 
-        /**
-         * Test objective: Verify get() with generic path returns PathOperator.
-         * Test scenario: Call get() with a path to a nested property.
-         * Expected result: Returns PathOperatorImpl with appended path.
-         */
+///
+         /// 测试目标: 验证y get() with generic path returns PathOperator.
+         /// 测试场景: Call get() with a path to a nested property.
+         /// 预期结果: Returns PathOperatorImpl with appended path.
         @Test
         void get_WithGenericPath_ShouldReturnPathOperator() {
             // when
@@ -46,11 +44,10 @@ class PathOperatorImplTest {
             assertThat(result).isInstanceOf(PathOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify get() appends path correctly.
-         * Test scenario: Call get() with nested path then eq.
-         * Expected result: The path is appended and eq operator is created.
-         */
+///
+         /// 测试目标: 验证y get() appends path 正确.
+         /// 测试场景: Call get() with nested path then eq.
+         /// 预期结果: The path is appended and eq operator is created.
         @Test
         void get_ShouldAppendPath() {
             // when
@@ -67,11 +64,10 @@ class PathOperatorImplTest {
     @Nested
     class GetWithStringRef {
 
-        /**
-         * Test objective: Verify get() with StringRef returns StringOperator.
-         * Test scenario: Call get() with a string path.
-         * Expected result: Returns StringOperatorImpl.
-         */
+///
+         /// 测试目标: 验证y get() with StringRef returns StringOperator.
+         /// 测试场景: Call get() with a string path.
+         /// 预期结果: Returns StringOperatorImpl.
         @Test
         void get_WithStringRef_ShouldReturnStringOperator() {
             // when
@@ -85,11 +81,10 @@ class PathOperatorImplTest {
     @Nested
     class GetWithNumberRef {
 
-        /**
-         * Test objective: Verify get() with NumberRef returns NumberOperator.
-         * Test scenario: Call get() with a number path.
-         * Expected result: Returns NumberOperatorImpl.
-         */
+///
+         /// 测试目标: 验证y get() with NumberRef returns NumberOperator.
+         /// 测试场景: Call get() with a number path.
+         /// 预期结果: Returns NumberOperatorImpl.
         @Test
         void get_WithNumberRef_ShouldReturnNumberOperator() {
             // when
@@ -99,11 +94,10 @@ class PathOperatorImplTest {
             assertThat(result).isInstanceOf(NumberOperatorImpl.class);
         }
 
-        /**
-         * Test objective: Verify get() with Double path returns NumberOperator.
-         * Test scenario: Call get() with a double path.
-         * Expected result: Returns NumberOperatorImpl.
-         */
+///
+         /// 测试目标: 验证y get() with Double path returns NumberOperator.
+         /// 测试场景: Call get() with a double path.
+         /// 预期结果: Returns NumberOperatorImpl.
         @Test
         void get_WithDoubleRef_ShouldReturnNumberOperator() {
             // when

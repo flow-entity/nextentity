@@ -13,28 +13,26 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for FetchStep multiple parameter fetch methods.
- * <p>
- * Tests default methods in FetchStep interface including:
- * - fetch(PathExpression, PathExpression): Fetch two path expressions
- * - fetch(PathExpression, PathExpression, PathExpression): Fetch three path expressions
- * - fetch(Path, Path): Fetch two paths
- * - fetch(Path, Path, Path): Fetch three paths
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- * @see io.github.nextentity.api.FetchStep
- */
+///
+ /// Integration tests for FetchStep multiple parameter fetch 方法.
+ /// <p>
+ /// 测试s default 方法 in FetchStep interface including:
+ /// - fetch(PathExpression, PathExpression): Fetch two path expressions
+ /// - fetch(PathExpression, PathExpression, PathExpression): Fetch three path expressions
+ /// - fetch(Path, Path): Fetch two paths
+ /// - fetch(Path, Path, Path): Fetch three paths
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
+ /// @see io.github.nextentity.api.FetchStep
 @DisplayName("FetchStep Multiple Parameters Integration Tests")
 public class FetchStepMultipleParametersIntegrationTest {
 
     // ==================== fetch(PathExpression, PathExpression) Tests ====================
 
-    /**
-     * Tests fetch with two PathExpression parameters.
-     */
+///
+     /// 测试s fetch with two PathExpression parameters.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch two path expressions")
@@ -54,9 +52,8 @@ public class FetchStepMultipleParametersIntegrationTest {
 
     // ==================== fetch(PathExpression, PathExpression, PathExpression) Tests ====================
 
-    /**
-     * Tests fetch with three PathExpression parameters.
-     */
+///
+     /// 测试s fetch with three PathExpression parameters.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch three path expressions")
@@ -76,9 +73,8 @@ public class FetchStepMultipleParametersIntegrationTest {
 
     // ==================== fetch(Path, Path) Tests ====================
 
-    /**
-     * Tests fetch with two Path parameters.
-     */
+///
+     /// 测试s fetch with two Path parameters.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch two paths")
@@ -95,9 +91,8 @@ public class FetchStepMultipleParametersIntegrationTest {
 
     // ==================== fetch(Path, Path, Path) Tests ====================
 
-    /**
-     * Tests fetch with three Path parameters.
-     */
+///
+     /// 测试s fetch with three Path parameters.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch three paths")
@@ -114,9 +109,8 @@ public class FetchStepMultipleParametersIntegrationTest {
 
     // ==================== Combined with where clause Tests ====================
 
-    /**
-     * Tests fetch combined with where clause.
-     */
+///
+     /// 测试s fetch combined with where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine fetch with where clause")
@@ -133,9 +127,8 @@ public class FetchStepMultipleParametersIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 50000.0);
     }
 
-    /**
-     * Tests fetch combined with limit.
-     */
+///
+     /// 测试s fetch combined with limit.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine fetch with limit")

@@ -15,6 +15,12 @@ import org.jspecify.annotations.NonNull;
 import java.util.ArrayList;
 import java.util.List;
 
+///
+/// JPA 原生查询执行器，用于执行原生 SQL 查询并处理结果集。
+/// 该执行器将查询结构转换为原生 SQL 并通过 JPA EntityManager 执行。
+///
+/// @author HuangChengwei
+/// @since 2.1
 public class JpaNativeQueryExecutor implements QueryExecutor {
     private final QuerySqlBuilder sqlBuilder;
     private final EntityManager entityManager;

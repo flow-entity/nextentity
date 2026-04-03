@@ -19,20 +19,18 @@ import java.util.List;
 import static io.github.nextentity.core.util.Predicates.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for AND/OR predicate chaining operations.
- * <p>
- * Tests cover:
- * - Simple AND/OR chaining using Predicates utility
- * - Multiple condition combinations
- * - Nested AND/OR predicates
- * - Complex boolean logic combinations
- * - Edge cases with NOT operations
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+/// AND/OR 谓词链式操作的集成测试。
+/// <p>
+/// 测试覆盖：
+/// - 使用 Predicates 实用程序进行简单的 AND/OR 链接
+/// - 多条件组合
+/// - 嵌套的 AND/OR 谓词
+/// - 复杂布尔逻辑组合
+/// - 带有 NOT 操作的边界情况
+/// <p>
+/// 这些测试使用 Testcontainers 针对 MySQL 和 PostgreSQL 运行。
+///
+/// @author HuangChengwei
 @DisplayName("AND/OR Predicate Chaining Integration Tests")
 public class AndOrPredicateIntegrationTest {
 
@@ -48,9 +46,7 @@ public class AndOrPredicateIntegrationTest {
     @DisplayName("AND Predicate Tests")
     class AndPredicateTests {
 
-        /**
-         * Tests simple AND using Predicates.and().
-         */
+        /// 使用 Predicates.and() 测试简单 AND。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine conditions with AND using Predicates.and()")
@@ -68,9 +64,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests multiple AND conditions.
-         */
+        /// 测试多个 AND 条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple conditions with AND")
@@ -92,9 +86,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getSalary() > LOW_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests AND with number range conditions.
-         */
+        /// 测试 AND 与数字范围条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine number range conditions with AND")
@@ -113,9 +105,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() > 60000.0 && e.getSalary() < 80000.0);
         }
 
-        /**
-         * Tests AND with string conditions.
-         */
+        /// 测试 AND 与字符串条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine string conditions with AND")
@@ -133,9 +123,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().startsWith("A") && e.getActive());
         }
 
-        /**
-         * Tests AND with Department entity.
-         */
+        /// 测试 AND 与 Department 实体。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine Department conditions with AND")
@@ -153,9 +141,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(departments).allMatch(d -> d.getActive() && d.getBudget() > 300000.0);
         }
 
-        /**
-         * Tests deep AND nesting with four conditions.
-         */
+        /// 测试四个条件的深度 AND 嵌套。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle deep AND nesting")
@@ -184,9 +170,7 @@ public class AndOrPredicateIntegrationTest {
     @DisplayName("OR Predicate Tests")
     class OrPredicateTests {
 
-        /**
-         * Tests simple OR using Predicates.or().
-         */
+        /// 使用 Predicates.or() 测试简单 OR。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine conditions with OR using Predicates.or()")
@@ -206,9 +190,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME);
         }
 
-        /**
-         * Tests multiple OR conditions.
-         */
+        /// 测试多个 OR 条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple conditions with OR")
@@ -229,9 +211,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME, CHARLIE_NAME);
         }
 
-        /**
-         * Tests OR with different fields.
-         */
+        /// 测试 OR 与不同字段。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine different field conditions with OR")
@@ -249,9 +229,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() > HIGH_SALARY_THRESHOLD || e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests OR with number range conditions.
-         */
+        /// 测试 OR 与数字范围条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine number range conditions with OR")
@@ -270,9 +248,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() < 50000.0 || e.getSalary() > HIGH_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests OR with string conditions.
-         */
+        /// 测试 OR 与字符串条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine string conditions with OR")
@@ -290,9 +266,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().startsWith("A") || e.getName().startsWith("B"));
         }
 
-        /**
-         * Tests OR with Department entity.
-         */
+        /// 测试 OR 与 Department 实体。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine Department conditions with OR")
@@ -312,9 +286,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(1L, 2L);
         }
 
-        /**
-         * Tests deep OR nesting with four conditions.
-         */
+        /// 测试四个条件的深度 OR 嵌套。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle deep OR nesting")
@@ -341,9 +313,7 @@ public class AndOrPredicateIntegrationTest {
     @DisplayName("Mixed AND/OR Combination Tests")
     class MixedAndOrTests {
 
-        /**
-         * Tests OR nested inside AND (similar to testAndOr2 pattern).
-         */
+        /// 测试嵌套在 AND 内部的 OR（类似于 testAndOr2 模式）。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle OR nested inside AND")
@@ -365,9 +335,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getActive() && (e.getDepartmentId() == 1L || e.getDepartmentId() == 2L));
         }
 
-        /**
-         * Tests AND nested inside OR.
-         */
+        /// 测试嵌套在 OR 内部的 AND。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND nested inside OR")
@@ -389,9 +357,7 @@ public class AndOrPredicateIntegrationTest {
                     (e.getActive() && e.getDepartmentId() == 1L) || e.getSalary() > HIGH_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests complex mixed AND/OR pattern similar to testAndOr2.
-         */
+        /// 测试类似于 testAndOr2 的复杂混合 AND/OR 模式。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex mixed AND/OR pattern like testAndOr2")
@@ -420,9 +386,7 @@ public class AndOrPredicateIntegrationTest {
                     (e.getDepartmentId() == 1L || e.getDepartmentId() == 2L || e.getName().equals(ALICE_NAME)));
         }
 
-        /**
-         * Tests triple nested combination.
-         */
+        /// 测试三重嵌套组合。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle triple nested combination")
@@ -448,9 +412,7 @@ public class AndOrPredicateIntegrationTest {
                     (e.getSalary() > HIGH_SALARY_THRESHOLD && e.getStatus() == EmployeeStatus.ACTIVE));
         }
 
-        /**
-         * Tests complex business rule pattern.
-         */
+        /// 测试复杂的业务规则模式。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex business rule pattern")
@@ -478,9 +440,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getDepartmentId() == 2L);
         }
 
-        /**
-         * Tests combining where clause with AND/OR predicates.
-         */
+        /// 测试将 where 子句与 AND/OR 谓词组合。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine where clause with AND/OR predicates")
@@ -500,9 +460,7 @@ public class AndOrPredicateIntegrationTest {
                     (e.getDepartmentId() == 1L || e.getDepartmentId() == 2L) && e.getActive());
         }
 
-        /**
-         * Tests full complex pattern matching testAndOr2 structure.
-         */
+        /// 测试匹配 testAndOr2 结构的完整复杂模式。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle full complex pattern like testAndOr2")
@@ -540,9 +498,7 @@ public class AndOrPredicateIntegrationTest {
     @DisplayName("NOT with AND/OR Tests")
     class NotWithAndOrTests {
 
-        /**
-         * Tests NOT combined with AND.
-         */
+        /// 测试 NOT 与 AND 组合。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine NOT with AND")
@@ -560,9 +516,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getDepartmentId() != 1L);
         }
 
-        /**
-         * Tests NOT combined with OR.
-         */
+        /// 测试 NOT 与 OR 组合。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine NOT with OR")
@@ -580,9 +534,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() || e.getDepartmentId() != 1L);
         }
 
-        /**
-         * Tests NOT of AND predicate.
-         */
+        /// 测试 AND 谓词的 NOT。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle NOT of AND predicate")
@@ -600,9 +552,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getActive() || e.getDepartmentId() != 1L);
         }
 
-        /**
-         * Tests NOT of OR predicate.
-         */
+        /// 测试 OR 谓词的 NOT。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle NOT of OR predicate")
@@ -620,9 +570,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getDepartmentId() != 1L && e.getDepartmentId() != 2L);
         }
 
-        /**
-         * Tests chained NOT operations.
-         */
+        /// 测试链式 NOT 操作。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained NOT operations")
@@ -637,9 +585,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(Employee::getActive);
         }
 
-        /**
-         * Tests complex NOT with AND/OR combination.
-         */
+        /// 测试复杂的 NOT 与 AND/OR 组合。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex NOT with AND/OR combination")
@@ -666,9 +612,7 @@ public class AndOrPredicateIntegrationTest {
     @DisplayName("Edge Cases Tests")
     class EdgeCasesTests {
 
-        /**
-         * Tests AND with NULL check.
-         */
+        /// 测试 AND 与 NULL 检查。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND with NULL check")
@@ -686,9 +630,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getEmail() != null && e.getActive());
         }
 
-        /**
-         * Tests OR with NULL check.
-         */
+        /// 测试 OR 与 NULL 检查。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle OR with NULL check")
@@ -705,9 +647,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getEmail() == null || !e.getActive());
         }
 
-        /**
-         * Tests AND with BETWEEN.
-         */
+        /// 测试 AND 与 BETWEEN。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND with BETWEEN")
@@ -726,9 +666,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getSalary() >= 60000.0 && e.getSalary() <= 75000.0 && e.getActive());
         }
 
-        /**
-         * Tests OR with IN clause.
-         */
+        /// 测试 OR 与 IN 子句。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle OR with IN clause")
@@ -748,9 +686,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getSalary() > HIGH_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests AND with LIKE.
-         */
+        /// 测试 AND 与 LIKE。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle AND with LIKE")
@@ -769,9 +705,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getEmail().endsWith("@example.com") && e.getActive());
         }
 
-        /**
-         * Tests complex predicate with all operators.
-         */
+        /// 测试包含所有操作符的复杂谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex predicate with all operators")
@@ -798,9 +732,7 @@ public class AndOrPredicateIntegrationTest {
                     ((e.getDepartmentId() != 1L && e.getDepartmentId() != 2L) && e.getSalary() > 70000.0));
         }
 
-        /**
-         * Tests combining Predicate.and() method.
-         */
+        /// 测试组合 Predicate.and() 方法。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine using Predicate.and() method")
@@ -823,9 +755,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests combining Predicate.or() method.
-         */
+        /// 测试组合 Predicate.or() 方法。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine using Predicate.or() method")
@@ -847,9 +777,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME, CHARLIE_NAME);
         }
 
-        /**
-         * Tests Predicate with Iterable.
-         */
+        /// 测试带有 Iterable 的 Predicate。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine predicates with Iterable")
@@ -872,9 +800,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests Conjunction toPredicate.
-         */
+        /// 测试 Conjunction toPredicate。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should convert Conjunction to Predicate")
@@ -895,9 +821,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests Disjunction toPredicate.
-         */
+        /// 测试 Disjunction toPredicate。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should convert Disjunction to Predicate")
@@ -917,9 +841,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).hasSize(2);
         }
 
-        /**
-         * Tests Predicate.and() with Iterable for OR.
-         */
+        /// 测试用于 OR 的 Predicate.and() 与 Iterable。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine predicates with Iterable for OR")
@@ -946,9 +868,7 @@ public class AndOrPredicateIntegrationTest {
     @DisplayName("Predicate Instance Methods Tests")
     class PredicateInstanceMethodsTests {
 
-        /**
-         * Tests Predicate.and() with varargs array.
-         */
+        /// 测试带有 varargs 数组的 Predicate.and()。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine with varargs array using Predicate.and()")
@@ -975,9 +895,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getSalary() > LOW_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests Predicate.or() with varargs array.
-         */
+        /// 测试带有 varargs 数组的 Predicate.or()。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine with varargs array using Predicate.or()")
@@ -1002,9 +920,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME, CHARLIE_NAME, DIANA_NAME);
         }
 
-        /**
-         * Tests Conjunction.and(Path) returning PathOperator.
-         */
+        /// 测试返回 PathOperator 的 Conjunction.and(Path)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(Path) returning PathOperator")
@@ -1020,9 +936,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests Conjunction.and(Path) with multiple chains.
-         */
+        /// 测试多个 and(Path) 调用的链式操作。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain multiple and(Path) calls")
@@ -1042,9 +956,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getStatus() == EmployeeStatus.ACTIVE);
         }
 
-        /**
-         * Tests Disjunction.or(Path) returning PathOperator.
-         */
+        /// 测试返回 PathOperator 的 Disjunction.or(Path)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(Path) returning PathOperator")
@@ -1061,9 +973,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getName().equals(ALICE_NAME) || e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests Disjunction.or(Path) with multiple chains.
-         */
+        /// 测试多个 or(Path) 调用的链式操作。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain multiple or(Path) calls")
@@ -1082,9 +992,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME, CHARLIE_NAME);
         }
 
-        /**
-         * Tests Conjunction.and(NumberRef) returning NumberOperator.
-         */
+        /// 测试返回 NumberOperator 的 Conjunction.and(NumberRef)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(NumberRef) returning NumberOperator")
@@ -1101,9 +1009,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getSalary() > 60000.0);
         }
 
-        /**
-         * Tests Conjunction.and(NumberRef) with arithmetic operations.
-         */
+        /// 测试带有算术运算的 Conjunction.and(NumberRef)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(NumberRef) with arithmetic operations")
@@ -1120,9 +1026,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getSalary() + 10000.0 > 80000.0);
         }
 
-        /**
-         * Tests Disjunction.or(NumberRef) returning NumberOperator.
-         */
+        /// 测试返回 NumberOperator 的 Disjunction.or(NumberRef)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(NumberRef) returning NumberOperator")
@@ -1139,9 +1043,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getName().equals(ALICE_NAME) || e.getSalary() > HIGH_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests Conjunction.and(StringRef) returning StringOperator.
-         */
+        /// 测试返回 StringOperator 的 Conjunction.and(StringRef)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(StringRef) returning StringOperator")
@@ -1157,9 +1059,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getActive() && e.getName().startsWith("A"));
         }
 
-        /**
-         * Tests Conjunction.and(StringRef) with string functions.
-         */
+        /// 测试带有字符串函数的 Conjunction.and(StringRef)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(StringRef) with string functions")
@@ -1176,9 +1076,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getActive() && e.getName().toLowerCase().startsWith("a"));
         }
 
-        /**
-         * Tests Disjunction.or(StringRef) returning StringOperator.
-         */
+        /// 测试返回 StringOperator 的 Disjunction.or(StringRef)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(StringRef) returning StringOperator")
@@ -1195,9 +1093,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getDepartmentId() == 1L || e.getName().contains("Brown"));
         }
 
-        /**
-         * Tests mixed Conjunction and Disjunction using Predicate.
-         */
+        /// 测试使用 Predicate 的混合 Conjunction 和 Disjunction。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle mixed Conjunction and Disjunction using Predicate")
@@ -1219,9 +1115,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getActive());
         }
 
-        /**
-         * Tests complex fluent chain similar to testPredicateAssembler.
-         */
+        /// 测试类似于 testPredicateAssembler 的复杂流式链。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex fluent chain like testPredicateAssembler")
@@ -1240,9 +1134,7 @@ public class AndOrPredicateIntegrationTest {
                     (e.getStatus() == EmployeeStatus.ACTIVE || e.getSalary() > 70000.0));
         }
 
-        /**
-         * Tests Predicate.not() returns Predicate for chaining.
-         */
+        /// 测试 Predicate.not() 返回用于链式操作的 Predicate。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain after Predicate.not()")
@@ -1258,9 +1150,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getActive() && e.getDepartmentId() == 1L);
         }
 
-        /**
-         * Tests Predicate.not().or() chain.
-         */
+        /// 测试 Predicate.not().or() 链。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or() after Predicate.not()")
@@ -1276,9 +1166,7 @@ public class AndOrPredicateIntegrationTest {
             assertThat(employees).allMatch(e -> e.getDepartmentId() != 1L || e.getActive());
         }
 
-        /**
-         * Tests complex chain with NOT, AND, OR.
-         */
+        /// 测试带有 NOT、AND、OR 的复杂链。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle complex chain with NOT, AND, OR")
@@ -1299,9 +1187,7 @@ public class AndOrPredicateIntegrationTest {
                     (e.getStatus() == EmployeeStatus.ACTIVE || e.getSalary() > 60000.0));
         }
 
-        /**
-         * Tests Conjunction.and(Iterable) returning Conjunction for chaining.
-         */
+        /// 测试返回用于链式操作的 Conjunction 的 Conjunction.and(Iterable)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain and(Iterable) for further operations")
@@ -1328,9 +1214,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getSalary() > 50000.0);
         }
 
-        /**
-         * Tests Disjunction.or(Iterable) returning Disjunction for chaining.
-         */
+        /// 测试返回用于链式操作的 Disjunction 的 Disjunction.or(Iterable)。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should chain or(Iterable) for further operations")
@@ -1355,9 +1239,7 @@ public class AndOrPredicateIntegrationTest {
                     .containsExactlyInAnyOrder(ALICE_NAME, BOB_NAME, CHARLIE_NAME, DIANA_NAME);
         }
 
-        /**
-         * Tests chained and().or() pattern using toPredicate().
-         */
+        /// 测试使用 toPredicate() 的链式 and().or() 模式。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained and().or() pattern using toPredicate()")
@@ -1379,9 +1261,7 @@ public class AndOrPredicateIntegrationTest {
                     e.getSalary() > HIGH_SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests chained or().and() pattern using toPredicate().
-         */
+        /// 测试使用 toPredicate() 的链式 or().and() 模式。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should handle chained or().and() pattern using toPredicate()")

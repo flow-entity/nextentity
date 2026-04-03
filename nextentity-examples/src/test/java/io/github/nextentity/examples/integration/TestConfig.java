@@ -12,50 +12,46 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
-/**
- * Test configuration for integration tests.
- * Initializes test data before each test run.
- */
+/// 集成测试的测试配置。
+/// 在每次测试运行前初始化测试数据。
 @TestConfiguration
 public class TestConfig {
 
     private static final Logger log = LoggerFactory.getLogger(TestConfig.class);
 
-    /**
-     * Initialize test data.
-     * This bean is conditionally created based on test needs.
-     */
+    /// 初始化测试数据。
+    /// 此 Bean 根据测试需求条件性创建。
     @Bean
     public CommandLineRunner initDataInitializer(
             EmployeeRepository employeeRepository,
             DepartmentRepository departmentRepository) {
 
         return args -> {
-            log.info("Initializing test data...");
+            log.info("初始化测试数据...");
 
-            // Clear existing data
+            // 清除现有数据
             clearAllData(employeeRepository, departmentRepository);
 
-            // Insert departments
+            // 插入部门
             List<Department> departments = TestDataFactory.createTestDepartments();
             departmentRepository.insertAll(departments);
-            log.info("Inserted {} departments", departments.size());
+            log.info("已插入 {} 个部门", departments.size());
 
-            // Insert employees
+            // 插入员工
             List<Employee> employees = TestDataFactory.createTestEmployees();
             employeeRepository.insertAll(employees);
-            log.info("Inserted {} employees", employees.size());
+            log.info("已插入 {} 个员工", employees.size());
         };
     }
 
     private void clearAllData(EmployeeRepository employeeRepository, DepartmentRepository departmentRepository) {
-        // Delete all employees
+        // 删除所有员工
         List<Employee> employees = employeeRepository.findAllEmployees();
         if (!employees.isEmpty()) {
             employeeRepository.deleteAll(employees);
         }
 
-        // Delete all departments
+        // 删除所有部门
         List<Department> departments = departmentRepository.query().list();
         if (!departments.isEmpty()) {
             departmentRepository.deleteAll(departments);

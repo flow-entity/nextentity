@@ -9,26 +9,22 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SimpleAttribute provides correct attribute metadata
- * <p>
- * Test scenarios:
- * 1. Getter and setter methods work correctly
- * 2. Builder pattern setters return this
- * 3. Path calculation works for nested attributes
- * <p>
- * Expected result: Attribute metadata can be created and accessed correctly
- */
+/// 测试目标：验证 SimpleAttribute 提供正确的属性元数据
+/// <p>
+/// 测试场景：
+/// 1. Getter 和 setter 方法正常工作
+/// 2. 构建器模式设置器返回 this
+/// 3. 嵌套属性的路径计算正常工作
+/// <p>
+/// 预期结果：可以正确创建和访问属性元数据
 class SimpleAttributeTest {
 
     @Nested
     class BasicProperties {
 
-        /**
-         * Test objective: Verify all properties can be set and retrieved
-         * Test scenario: Create attribute with all properties
-         * Expected result: All properties accessible
-         */
+        /// 测试目标：验证所有属性都可以设置和检索
+        /// 测试场景：创建包含所有属性的属性对象
+        /// 预期结果：所有属性都可访问
         @Test
         void allProperties_ShouldBeAccessible() throws Exception {
             // given
@@ -53,11 +49,9 @@ class SimpleAttributeTest {
             assertThat(attr.ordinal()).isEqualTo(ordinal);
         }
 
-        /**
-         * Test objective: Verify default constructor creates empty attribute
-         * Test scenario: Create with default constructor
-         * Expected result: All properties null/default
-         */
+        /// 测试目标：验证默认构造函数创建空属性
+        /// 测试场景：使用默认构造函数创建
+        /// 预期结果：所有属性为 null/默认值
         @Test
         void defaultConstructor_ShouldCreateEmptyAttribute() {
             // when
@@ -77,11 +71,9 @@ class SimpleAttributeTest {
     @Nested
     class BuilderPattern {
 
-        /**
-         * Test objective: Verify setter methods return this for chaining
-         * Test scenario: Chain multiple setters
-         * Expected result: Same instance returned
-         */
+        /// 测试目标：验证设置器方法返回 this 以支持链式调用
+        /// 测试场景：链接多个设置器
+        /// 预期结果：返回相同的实例
         @Test
         void setters_ShouldReturnThis() {
             // given
@@ -104,11 +96,9 @@ class SimpleAttributeTest {
     @Nested
     class PathCalculation {
 
-        /**
-         * Test objective: Verify path returns single element for root attribute
-         * Test scenario: Get path for attribute without parent
-         * Expected result: Path contains only attribute name
-         */
+        /// 测试目标：验证没有父级时路径返回单个元素
+        /// 测试场景：获取没有父级的属性的路径
+        /// 预期结果：路径仅包含属性名称
         @Test
         void path_WithoutParent_ShouldReturnSingleElement() {
             // given
@@ -126,11 +116,9 @@ class SimpleAttributeTest {
     @Nested
     class SetAttribute {
 
-        /**
-         * Test objective: Verify setAttribute copies all properties
-         * Test scenario: Copy properties from one attribute to another
-         * Expected result: All properties copied
-         */
+        /// 测试目标：验证 setAttribute 复制所有属性
+        /// 测试场景：将一个属性的属性复制到另一个属性
+        /// 预期结果：所有属性都被复制
         @Test
         void setAttribute_ShouldCopyAllProperties() throws Exception {
             // given
@@ -156,7 +144,7 @@ class SimpleAttributeTest {
         }
     }
 
-    // Test entity class
+    // 测试实体类
     static class TestEntity {
         private String name;
 

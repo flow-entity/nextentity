@@ -8,25 +8,23 @@ import java.time.Instant;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify InstantConverter correctly converts between Instant and Timestamp
- * <p>
- * Test scenarios:
- * 1. Singleton instance
- * 2. convertToDatabaseColumn converts Instant to Timestamp
- * 3. convertToEntityAttribute converts Timestamp to Instant
- * 4. getDatabaseColumnType returns Timestamp.class
- */
+///
+ /// 测试目标: 验证y InstantConverter 正确 converts between Instant and Timestamp
+ /// <p>
+ /// 测试场景s:
+ /// 1. Singleton instance
+ /// 2. convertToDatabaseColumn converts Instant to Timestamp
+ /// 3. convertToEntityAttribute converts Timestamp to Instant
+ /// 4. getDatabaseColumnType returns Timestamp.class
 class InstantConverterTest {
 
     @Nested
     class SingletonInstance {
 
-        /**
-         * Test objective: Verify of() returns singleton
-         * Test scenario: Call of() multiple times
-         * Expected result: Same instance
-         */
+///
+         /// 测试目标: 验证y of() returns singleton
+         /// 测试场景: Call of() multiple times
+         /// 预期结果: Same instance
         @Test
         void of_ReturnsSingleton() {
             // when
@@ -41,11 +39,10 @@ class InstantConverterTest {
     @Nested
     class ConvertToDatabaseColumn {
 
-        /**
-         * Test objective: Verify Instant converts to Timestamp
-         * Test scenario: Convert specific Instant
-         * Expected result: Equivalent Timestamp
-         */
+///
+         /// 测试目标: 验证y Instant converts to Timestamp
+         /// 测试场景: Convert specific Instant
+         /// 预期结果: Equivalent Timestamp
         @Test
         void convertToDatabaseColumn_ConvertsToTimestamp() {
             // given
@@ -60,11 +57,10 @@ class InstantConverterTest {
             assertThat(result.toInstant()).isEqualTo(instant);
         }
 
-        /**
-         * Test objective: Verify null converts to null
-         * Test scenario: Convert null Instant
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y null converts to null
+         /// 测试场景: Convert null Instant
+         /// 预期结果: null
         @Test
         void convertToDatabaseColumn_Null_ReturnsNull() {
             // given
@@ -81,11 +77,10 @@ class InstantConverterTest {
     @Nested
     class ConvertToEntityAttribute {
 
-        /**
-         * Test objective: Verify Timestamp converts to Instant
-         * Test scenario: Convert specific Timestamp
-         * Expected result: Equivalent Instant
-         */
+///
+         /// 测试目标: 验证y Timestamp converts to Instant
+         /// 测试场景: Convert specific Timestamp
+         /// 预期结果: Equivalent Instant
         @Test
         void convertToEntityAttribute_ConvertsToInstant() {
             // given
@@ -101,11 +96,10 @@ class InstantConverterTest {
             assertThat(result).isEqualTo(instant);
         }
 
-        /**
-         * Test objective: Verify null Timestamp converts to null
-         * Test scenario: Convert null Timestamp
-         * Expected result: null
-         */
+///
+         /// 测试目标: 验证y null Timestamp converts to null
+         /// 测试场景: Convert null Timestamp
+         /// 预期结果: null
         @Test
         void convertToEntityAttribute_Null_ReturnsNull() {
             // given
@@ -122,11 +116,10 @@ class InstantConverterTest {
     @Nested
     class GetDatabaseColumnType {
 
-        /**
-         * Test objective: Verify getDatabaseColumnType returns Timestamp.class
-         * Test scenario: Get database column type
-         * Expected result: Timestamp.class
-         */
+///
+         /// 测试目标: 验证y getDatabaseColumnType returns Timestamp.class
+         /// 测试场景: Get database column type
+         /// 预期结果: Timestamp.class
         @Test
         void getDatabaseColumnType_ReturnsTimestamp() {
             // given
@@ -143,11 +136,10 @@ class InstantConverterTest {
     @Nested
     class RoundTrip {
 
-        /**
-         * Test objective: Verify round-trip conversion preserves value
-         * Test scenario: Convert Instant to Timestamp and back
-         * Expected result: Same Instant value
-         */
+///
+         /// 测试目标: 验证y round-trip conversion preserves value
+         /// 测试场景: Convert Instant to Timestamp and back
+         /// 预期结果: Same Instant value
         @Test
         void roundTrip_PreservesValue() {
             // given

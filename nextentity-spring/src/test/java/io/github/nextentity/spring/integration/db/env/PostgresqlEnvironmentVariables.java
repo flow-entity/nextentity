@@ -4,11 +4,9 @@ import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-/**
- * PostgreSQL database environment variables using Testcontainers.
- *
- * @author HuangChengwei
- */
+/// 使用 Testcontainers 的 PostgreSQL 数据库环境变量。
+///
+/// @author HuangChengwei
 public class PostgresqlEnvironmentVariables implements DatabaseEnvironmentVariables {
 
     private static final JdbcDatabaseContainer<?> CONTAINER = new PostgreSQLContainer(

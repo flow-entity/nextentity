@@ -16,10 +16,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for EmployeeService.
- * Tests transactional operations and verifies results correctness.
- */
+/// 员工服务的集成测试。
+/// 测试事务操作并验证结果正确性。
 @DisplayName("Employee Service Integration Tests")
 class EmployeeServiceIntegrationTest extends BaseIntegrationTest {
 

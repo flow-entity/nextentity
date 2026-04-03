@@ -9,9 +9,7 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-/**
- * Unit tests for ExpressionBuilderImpl.
- */
+/// ExpressionBuilderImpl的单元测试。
 class ExpressionBuilderImplTest {
 
     private ExpressionBuilderImpl<Object, String, String> builder;
@@ -31,11 +29,9 @@ class ExpressionBuilderImplTest {
     @Nested
     class EqIfNotNull {
 
-        /**
-         * Test objective: Verify eqIfNotNull calls eq when value is not null.
-         * Test scenario: Call eqIfNotNull with non-null value.
-         * Expected result: Creates EQ operator with the value.
-         */
+        /// 测试目标：验证eqIfNotNull在值不为null时调用eq。
+        /// 测试场景：对非空值调用eqIfNotNull。
+        /// 预期结果：使用该值创建EQ操作符。
         @Test
         void eqIfNotNull_WithNonNullValue_ShouldCallEq() {
             // given
@@ -51,11 +47,9 @@ class ExpressionBuilderImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.EQ);
         }
 
-        /**
-         * Test objective: Verify eqIfNotNull handles null value correctly.
-         * Test scenario: Call eqIfNotNull with null value.
-         * Expected result: Returns operateNull result (EmptyNode).
-         */
+        /// 测试目标：验证eqIfNotNull正确处理null值。
+        /// 测试场景：对null值调用eqIfNotNull。
+        /// 预期结果：返回operateNull结果（EmptyNode）。
         @Test
         void eqIfNotNull_WithNullValue_ShouldReturnOperateNull() {
             // given
@@ -73,11 +67,9 @@ class ExpressionBuilderImplTest {
     @Nested
     class NextMethod {
 
-        /**
-         * Test objective: Verify next method applies the callback.
-         * Test scenario: Call next with an expression node.
-         * Expected result: Callback is applied and result returned.
-         */
+        /// 测试目标：验证next方法应用回调。
+        /// 测试场景：对表达式节点调用next。
+        /// 预期结果：应用回调并返回结果。
         @Test
         void next_ShouldApplyCallback() {
             // given
@@ -95,9 +87,7 @@ class ExpressionBuilderImplTest {
     @Nested
     class ExceptionAndEdgeCases {
 
-        /**
-         * Tests that eqIfNotNull with empty string value creates EQ operator.
-         */
+        /// 测试eqIfNotNull与空字符串值创建EQ操作符。
         @Test
         void eqIfNotNull_WithEmptyString_ShouldCreateEqOperator() {
             // given
@@ -112,9 +102,7 @@ class ExpressionBuilderImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.EQ);
         }
 
-        /**
-         * Tests that next method handles null node.
-         */
+        /// 测试next方法处理null节点。
         @Test
         void next_WithNullNode_ShouldPassNullToCallback() {
             // when
@@ -124,9 +112,7 @@ class ExpressionBuilderImplTest {
             assertThat(capturedNode).isNull();
         }
 
-        /**
-         * Tests that neIfNotNull with null value returns operateNull result.
-         */
+        /// 测试neIfNotNull与null值返回operateNull结果。
         @Test
         void neIfNotNull_WithNullValue_ShouldReturnOperateNull() {
             // given

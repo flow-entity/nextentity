@@ -5,16 +5,15 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SqlDialectSelector correctly delegates to database-specific builders
- * <p>
- * Test scenarios:
- * 1. Create selector instance
- * 2. Verify interface implementation
- * 3. Verify delegation structure
- * <p>
- * Note: setByDataSource requires integration test with actual DataSource
- */
+///
+ /// 测试目标: 验证y SqlDialectSelector 正确 delegates to database-specific builders
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create selector instance
+ /// 2. 验证y interface implementation
+ /// 3. 验证y delegation structure
+ /// <p>
+ /// Note: setByDataSource requires integration test with actual DataSource
 class SqlDialectSelectorTest {
 
     @Nested

@@ -7,14 +7,13 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify MySqlQuerySqlBuilder correctly provides MySQL-specific SQL syntax
- * <p>
- * Test scenarios:
- * 1. Left quoted identifier is backtick
- * 2. Right quoted identifier is backtick
- * 3. Builder class exists and has correct structure
- */
+///
+ /// 测试目标: 验证y MySqlQuerySqlBuilder 正确 provides MySQL-specific SQL syntax
+ /// <p>
+ /// 测试场景s:
+ /// 1. Left quoted identifier is backtick
+ /// 2. Right quoted identifier is backtick
+ /// 3. Builder class exists and has correct structure
 class MySqlQuerySqlBuilderTest {
 
     private final MySqlQuerySqlBuilder builder = new MySqlQuerySqlBuilder();

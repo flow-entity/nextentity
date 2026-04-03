@@ -7,25 +7,23 @@ import org.junit.jupiter.params.provider.EnumSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify Operator enum defines all operators correctly
- * <p>
- * Test scenarios:
- * 1. Sign (symbol) values
- * 2. Priority values
- * 3. Multivalued flag
- * 4. Aggregate flag
- */
+///
+ /// 测试目标: 验证y Operator enum defines all operators 正确
+ /// <p>
+ /// 测试场景s:
+ /// 1. Sign (symbol) values
+ /// 2. Priority values
+ /// 3. Multivalued flag
+ /// 4. Aggregate flag
 class OperatorTest {
 
     @Nested
     class SignValues {
 
-        /**
-         * Test objective: Verify comparison operator signs
-         * Test scenario: Get sign of comparison operators
-         * Expected result: Correct symbol
-         */
+///
+         /// 测试目标: 验证y comparison operator signs
+         /// 测试场景: Get sign of comparison operators
+         /// 预期结果: Correct symbol
         @Test
         void sign_ComparisonOperators() {
             assertThat(Operator.EQ.sign()).isEqualTo("=");
@@ -36,11 +34,10 @@ class OperatorTest {
             assertThat(Operator.LE.sign()).isEqualTo("<=");
         }
 
-        /**
-         * Test objective: Verify logical operator signs
-         * Test scenario: Get sign of logical operators
-         * Expected result: Correct symbol
-         */
+///
+         /// 测试目标: 验证y logical operator signs
+         /// 测试场景: Get sign of logical operators
+         /// 预期结果: Correct symbol
         @Test
         void sign_LogicalOperators() {
             assertThat(Operator.NOT.sign()).isEqualTo("not");
@@ -48,11 +45,10 @@ class OperatorTest {
             assertThat(Operator.OR.sign()).isEqualTo("or");
         }
 
-        /**
-         * Test objective: Verify arithmetic operator signs
-         * Test scenario: Get sign of arithmetic operators
-         * Expected result: Correct symbol
-         */
+///
+         /// 测试目标: 验证y arithmetic operator signs
+         /// 测试场景: Get sign of arithmetic operators
+         /// 预期结果: Correct symbol
         @Test
         void sign_ArithmeticOperators() {
             assertThat(Operator.ADD.sign()).isEqualTo("+");
@@ -62,11 +58,10 @@ class OperatorTest {
             assertThat(Operator.MOD.sign()).isEqualTo("%");
         }
 
-        /**
-         * Test objective: Verify aggregate function signs
-         * Test scenario: Get sign of aggregate operators
-         * Expected result: Correct function name
-         */
+///
+         /// 测试目标: 验证y aggregate function signs
+         /// 测试场景: Get sign of aggregate operators
+         /// 预期结果: Correct function name
         @Test
         void sign_AggregateOperators() {
             assertThat(Operator.MIN.sign()).isEqualTo("min");
@@ -80,31 +75,28 @@ class OperatorTest {
     @Nested
     class PriorityValues {
 
-        /**
-         * Test objective: Verify NOT has highest logical priority
-         * Test scenario: Compare NOT priority
-         * Expected result: NOT has higher priority than AND
-         */
+///
+         /// 测试目标: 验证y NOT has highest logical priority
+         /// 测试场景: Compare NOT priority
+         /// 预期结果: NOT has higher priority than AND
         @Test
         void priority_NotHigherThanAnd() {
             assertThat(Operator.NOT.priority()).isLessThan(Operator.AND.priority());
         }
 
-        /**
-         * Test objective: Verify AND has higher priority than OR
-         * Test scenario: Compare AND and OR priorities
-         * Expected result: AND has higher priority
-         */
+///
+         /// 测试目标: 验证y AND has higher priority than OR
+         /// 测试场景: Compare AND and OR priorities
+         /// 预期结果: AND has higher priority
         @Test
         void priority_AndHigherThanOr() {
             assertThat(Operator.AND.priority()).isLessThan(Operator.OR.priority());
         }
 
-        /**
-         * Test objective: Verify arithmetic priorities
-         * Test scenario: Compare arithmetic operator priorities
-         * Expected result: Multiply/Divide/Mod have higher priority than Add/Subtract
-         */
+///
+         /// 测试目标: 验证y arithmetic priorities
+         /// 测试场景: Compare arithmetic operator priorities
+         /// 预期结果: Multiply/Divide/Mod have higher priority than Add/Subtract
         @Test
         void priority_MultiplyHigherThanAdd() {
             assertThat(Operator.MULTIPLY.priority()).isLessThan(Operator.ADD.priority());
@@ -116,31 +108,28 @@ class OperatorTest {
     @Nested
     class MultivaluedFlag {
 
-        /**
-         * Test objective: Verify AND is multivalued
-         * Test scenario: Check isMultivalued() for AND
-         * Expected result: true
-         */
+///
+         /// 测试目标: 验证y AND is multivalued
+         /// 测试场景: Check isMultivalued() for AND
+         /// 预期结果: true
         @Test
         void isMultivalued_And_ReturnsTrue() {
             assertThat(Operator.AND.isMultivalued()).isTrue();
         }
 
-        /**
-         * Test objective: Verify OR is multivalued
-         * Test scenario: Check isMultivalued() for OR
-         * Expected result: true
-         */
+///
+         /// 测试目标: 验证y OR is multivalued
+         /// 测试场景: Check isMultivalued() for OR
+         /// 预期结果: true
         @Test
         void isMultivalued_Or_ReturnsTrue() {
             assertThat(Operator.OR.isMultivalued()).isTrue();
         }
 
-        /**
-         * Test objective: Verify arithmetic operators are multivalued
-         * Test scenario: Check isMultivalued() for arithmetic operators
-         * Expected result: true
-         */
+///
+         /// 测试目标: 验证y arithmetic operators are multivalued
+         /// 测试场景: Check isMultivalued() for arithmetic operators
+         /// 预期结果: true
         @Test
         void isMultivalued_Arithmetic_ReturnsTrue() {
             assertThat(Operator.ADD.isMultivalued()).isTrue();
@@ -150,21 +139,19 @@ class OperatorTest {
             assertThat(Operator.MOD.isMultivalued()).isTrue();
         }
 
-        /**
-         * Test objective: Verify EQ is not multivalued
-         * Test scenario: Check isMultivalued() for EQ
-         * Expected result: false
-         */
+///
+         /// 测试目标: 验证y EQ is not multivalued
+         /// 测试场景: Check isMultivalued() for EQ
+         /// 预期结果: false
         @Test
         void isMultivalued_Eq_ReturnsFalse() {
             assertThat(Operator.EQ.isMultivalued()).isFalse();
         }
 
-        /**
-         * Test objective: Verify NOT is not multivalued
-         * Test scenario: Check isMultivalued() for NOT
-         * Expected result: false
-         */
+///
+         /// 测试目标: 验证y NOT is not multivalued
+         /// 测试场景: Check isMultivalued() for NOT
+         /// 预期结果: false
         @Test
         void isMultivalued_Not_ReturnsFalse() {
             assertThat(Operator.NOT.isMultivalued()).isFalse();
@@ -174,11 +161,10 @@ class OperatorTest {
     @Nested
     class AggregateFlag {
 
-        /**
-         * Test objective: Verify aggregate operators have agg flag
-         * Test scenario: Check isAgg() for aggregate operators
-         * Expected result: true
-         */
+///
+         /// 测试目标: 验证y aggregate operators have agg flag
+         /// 测试场景: Check isAgg() for aggregate operators
+         /// 预期结果: true
         @Test
         void isAgg_AggregateOperators_ReturnsTrue() {
             assertThat(Operator.MIN.isAgg()).isTrue();
@@ -188,11 +174,10 @@ class OperatorTest {
             assertThat(Operator.SUM.isAgg()).isTrue();
         }
 
-        /**
-         * Test objective: Verify non-aggregate operators have no agg flag
-         * Test scenario: Check isAgg() for non-aggregate operators
-         * Expected result: false
-         */
+///
+         /// 测试目标: 验证y non-aggregate operators have no agg flag
+         /// 测试场景: Check isAgg() for non-aggregate operators
+         /// 预期结果: false
         @Test
         void isAgg_NonAggregateOperators_ReturnsFalse() {
             assertThat(Operator.EQ.isAgg()).isFalse();
@@ -204,11 +189,10 @@ class OperatorTest {
     @Nested
     class ToStringMethod {
 
-        /**
-         * Test objective: Verify toString returns sign
-         * Test scenario: Call toString() on operators
-         * Expected result: Returns sign
-         */
+///
+         /// 测试目标: 验证y toString returns sign
+         /// 测试场景: Call toString() on operators
+         /// 预期结果: Returns sign
         @ParameterizedTest
         @EnumSource(Operator.class)
         void toString_ReturnsSign(Operator operator) {

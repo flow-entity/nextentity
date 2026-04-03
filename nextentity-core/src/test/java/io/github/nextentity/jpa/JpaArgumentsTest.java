@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify JpaArguments correctly retrieves values from array
- * <p>
- * Test scenarios:
- * 1. Create JpaArguments with array
- * 2. Get value by index
- * 3. Use next() method
- */
+///
+ /// 测试目标: 验证y JpaArguments 正确 retrieves values from array
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create JpaArguments with array
+ /// 2. Get value by index
+ /// 3. Use next() 方法
 class JpaArgumentsTest {
 
     @Nested

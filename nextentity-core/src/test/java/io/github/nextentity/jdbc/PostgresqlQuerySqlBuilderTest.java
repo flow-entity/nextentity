@@ -7,14 +7,13 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify PostgresqlQuerySqlBuilder correctly provides PostgreSQL-specific SQL syntax
- * <p>
- * Test scenarios:
- * 1. Left quoted identifier is double quote
- * 2. Right quoted identifier is double quote
- * 3. Builder class exists and has correct structure
- */
+///
+ /// 测试目标: 验证y PostgresqlQuerySqlBuilder 正确 provides PostgreSQL-specific SQL syntax
+ /// <p>
+ /// 测试场景s:
+ /// 1. Left quoted identifier is double quote
+ /// 2. Right quoted identifier is double quote
+ /// 3. Builder class exists and has correct structure
 class PostgresqlQuerySqlBuilderTest {
 
     private final PostgresqlQuerySqlBuilder builder = new PostgresqlQuerySqlBuilder();

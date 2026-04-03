@@ -10,20 +10,19 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Collector API integration tests.
- * <p>
- * Tests collector functionality including:
- * - getList() operations
- * - first() and single() operations
- * - map() transformations
- * - count() and exist() operations
- * - pagination with slice()
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- */
+///
+ /// Collector API integration tests.
+ /// <p>
+ /// 测试s collector functionality including:
+ /// - getList() 操作s
+ /// - first() and single() 操作s
+ /// - map() transformations
+ /// - count() and exist() 操作s
+ /// - pagination with slice()
+ /// <p>
+ /// These tests run against MySQL and PostgreSQL using 测试containers.
+ /// 
+ /// @author HuangChengwei
 @DisplayName("Collector API Integration Tests")
 public class StreamQueryIntegrationTest {
 

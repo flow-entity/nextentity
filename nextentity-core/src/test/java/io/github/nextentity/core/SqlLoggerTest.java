@@ -7,26 +7,24 @@ import org.slf4j.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SqlLogger is correctly configured
- * <p>
- * Test scenarios:
- * 1. Logger instance is properly initialized
- * 2. Logger name is correct
- * <p>
- * Note: We do not test debug() methods because they are simple delegations
- * to SLF4J Logger which is already tested by the SLF4J framework.
- */
+///
+ /// 测试目标: 验证y SqlLogger is 正确 configured
+ /// <p>
+ /// 测试场景s:
+ /// 1. Logger instance is properly initialized
+ /// 2. Logger name is correct
+ /// <p>
+ /// Note: We do not test debug() 方法 because they are simple delegations
+ /// to SLF4J Logger which is already tested by the SLF4J framework.
 class SqlLoggerTest {
 
     @Nested
     class LoggerConfiguration {
 
-        /**
-         * Test objective: Verify logger instance is initialized
-         * Test scenario: Access the static log field
-         * Expected result: Logger is not null
-         */
+///
+         /// 测试目标: 验证y logger instance is initialized
+         /// 测试场景: Access the static log field
+         /// 预期结果: Logger is not null
         @Test
         void log_ShouldBeInitialized() {
             // when
@@ -36,11 +34,10 @@ class SqlLoggerTest {
             assertThat(logger).isNotNull();
         }
 
-        /**
-         * Test objective: Verify logger has correct name
-         * Test scenario: Get logger name
-         * Expected result: Logger name matches expected SQL logger name
-         */
+///
+         /// 测试目标: 验证y logger has correct name
+         /// 测试场景: Get logger name
+         /// 预期结果: Logger name matches expected SQL logger name
         @Test
         void log_ShouldHaveCorrectName() {
             // when
@@ -54,14 +51,13 @@ class SqlLoggerTest {
     @Nested
     class DebugMethods {
 
-        /**
-         * Test objective: Verify debug methods are callable without exceptions
-         * Test scenario: Call debug methods with valid parameters
-         * Expected result: No exceptions thrown
-         * <p>
-         * Note: This test verifies the methods can be called safely.
-         * Actual log output depends on logging configuration and is not verified here.
-         */
+///
+         /// 测试目标: 验证y debug 方法 are callable without exceptions
+         /// 测试场景: Call debug 方法 with valid parameters
+         /// 预期结果: No exceptions thrown
+         /// <p>
+         /// Note: This test verifies the 方法 can be called safely.
+         /// Actual log output depends on logging configuration and is not verified here.
         @Test
         void debug_WithValidParameters_ShouldNotThrow() {
             // when & then - methods should complete without exceptions

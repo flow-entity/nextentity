@@ -14,17 +14,15 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
-/**
- * NextEntity Example Application.
- * <p>
- * A Spring Boot application demonstrating NextEntity usage.
- * Run this application to see various API examples in action.
- *
- * <h2>Running the Example:</h2>
- * <pre>{@code
- * mvn spring-boot:run -pl nextentity-examples
- * }</pre>
- */
+/// NextEntity 示例应用程序。
+/// <p>
+/// 一个演示 NextEntity 用法的 Spring Boot 应用程序。
+/// 运行此应用程序可以查看各种 API 示例的实际效果。
+///
+/// <h2>运行示例：</h2>
+/// <pre>{@code
+/// mvn spring-boot:run -pl nextentity-examples
+/// }</pre>
 @SpringBootApplication
 public class NextEntityExampleApplication {
 
@@ -32,9 +30,7 @@ public class NextEntityExampleApplication {
         SpringApplication.run(NextEntityExampleApplication.class, args);
     }
 
-    /**
-     * Demo runner that executes various examples.
-     */
+    /// 演示运行器，执行各种示例。
     @Bean
     public CommandLineRunner demo(EmployeeRepository employeeRepository,
                                   DepartmentRepository departmentRepository) {

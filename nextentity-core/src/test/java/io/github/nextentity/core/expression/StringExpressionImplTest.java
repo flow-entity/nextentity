@@ -5,26 +5,22 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify StringExpressionImpl correctly implements string operations
- * <p>
- * Test scenarios:
- * 1. lower() operation
- * 2. upper() operation
- * 3. substring() operation
- * 4. trim() operation
- * 5. length() operation
- */
+/// 测试目标：验证StringExpressionImpl正确实现字符串操作
+/// <p>
+/// 测试场景：
+/// 1. lower()操作
+/// 2. upper()操作
+/// 3. substring()操作
+/// 4. trim()操作
+/// 5. length()操作
 class StringExpressionImplTest {
 
     @Nested
     class StringOperations {
 
-        /**
-         * Test objective: Verify lower() creates LOWER operator
-         * Test scenario: Call lower() on expression
-         * Expected result: Expression with LOWER operator
-         */
+        /// 测试目标：验证lower()创建LOWER操作符
+        /// 测试场景：在表达式上调用lower()
+        /// 预期结果：具有LOWER操作符的表达式
         @Test
         void lower_CreatesLowerOperator() {
             // given
@@ -43,11 +39,9 @@ class StringExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.LOWER);
         }
 
-        /**
-         * Test objective: Verify upper() creates UPPER operator
-         * Test scenario: Call upper() on expression
-         * Expected result: Expression with UPPER operator
-         */
+        /// 测试目标：验证upper()创建UPPER操作符
+        /// 测试场景：在表达式上调用upper()
+        /// 预期结果：具有UPPER操作符的表达式
         @Test
         void upper_CreatesUpperOperator() {
             // given
@@ -66,11 +60,9 @@ class StringExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.UPPER);
         }
 
-        /**
-         * Test objective: Verify trim() creates TRIM operator
-         * Test scenario: Call trim() on expression
-         * Expected result: Expression with TRIM operator
-         */
+        /// 测试目标：验证trim()创建TRIM操作符
+        /// 测试场景：在表达式上调用trim()
+        /// 预期结果：具有TRIM操作符的表达式
         @Test
         void trim_CreatesTrimOperator() {
             // given
@@ -89,11 +81,9 @@ class StringExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.TRIM);
         }
 
-        /**
-         * Test objective: Verify substring() creates SUBSTRING operator
-         * Test scenario: Call substring() on expression
-         * Expected result: Expression with SUBSTRING operator
-         */
+        /// 测试目标：验证substring()创建SUBSTRING操作符
+        /// 测试场景：在表达式上调用substring()
+        /// 预期结果：具有SUBSTRING操作符的表达式
         @Test
         void substring_CreatesSubstringOperator() {
             // given
@@ -112,11 +102,9 @@ class StringExpressionImplTest {
             assertThat(opNode.operator()).isEqualTo(Operator.SUBSTRING);
         }
 
-        /**
-         * Test objective: Verify length() creates LENGTH operator
-         * Test scenario: Call length() on expression
-         * Expected result: Expression with LENGTH operator
-         */
+        /// 测试目标：验证length()创建LENGTH操作符
+        /// 测试场景：在表达式上调用length()
+        /// 预期结果：具有LENGTH操作符的表达式
         @Test
         void length_CreatesLengthOperator() {
             // given

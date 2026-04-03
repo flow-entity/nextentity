@@ -8,15 +8,14 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify QuerySqlStatement correctly stores SQL and parameters
- * <p>
- * Test scenarios:
- * 1. Create statement with SQL and parameters
- * 2. Verify SQL getter
- * 3. Verify parameters getter
- * 4. Verify toString returns SQL
- */
+///
+ /// 测试目标: 验证y QuerySqlStatement 正确 stores SQL and parameters
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create statement with SQL and parameters
+ /// 2. 验证y SQL getter
+ /// 3. 验证y parameters getter
+ /// 4. 验证y toString returns SQL
 class QuerySqlStatementTest {
 
     @Test

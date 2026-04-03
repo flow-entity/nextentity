@@ -11,10 +11,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for pagination and ordering operations in EmployeeRepository.
- * Tests ordering, pagination, slice operations and verifies results correctness.
- */
+/// 员工 Repository 中分页和排序操作的集成测试。
+/// 测试排序、分页、切片操作并验证结果正确性。
 @DisplayName("Pagination and Ordering Integration Tests")
 class PaginationOrderingIntegrationTest extends BaseIntegrationTest {
 

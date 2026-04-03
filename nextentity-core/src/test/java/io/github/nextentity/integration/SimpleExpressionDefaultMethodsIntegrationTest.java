@@ -15,19 +15,17 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Integration tests for SimpleExpression default methods.
- * <p>
- * Tests default methods in SimpleExpression interface including:
- * - Comparison operators with values (ge, gt, le, lt)
- * - Between operations with values
- * - Mixed between operations (expression and value combinations)
- * <p>
- * These tests run against MySQL and PostgreSQL using Testcontainers.
- *
- * @author HuangChengwei
- * @see io.github.nextentity.api.SimpleExpression
- */
+/// SimpleExpression 默认方法集成测试。
+/// <p>
+/// 测试 SimpleExpression 接口中的默认方法，包括：
+/// - 与值的比较操作符 (ge, gt, le, lt)
+/// - 与值的之间操作
+/// - 混合之间操作（表达式和值的组合）
+/// <p>
+/// 这些测试使用 Testcontainers 针对 MySQL 和 PostgreSQL 运行。
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.SimpleExpression
 @DisplayName("SimpleExpression Default Methods Integration Tests")
 public class SimpleExpressionDefaultMethodsIntegrationTest {
 
@@ -35,10 +33,8 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== ge(U value) Tests ====================
 
-    /**
-     * Tests ge(U value) - greater than or equal with value parameter.
-     * This is a default method that uses root().literal(value).
-     */
+    /// 测试 ge(U value) - 带值参数的大于等于。
+    /// 这是一个使用 root().literal(value) 的默认方法。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with ge(value) - greater than or equal")
@@ -53,9 +49,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests ge(U value) with boundary value.
-     */
+    /// 测试带边界值的 ge(U value)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle ge(value) with boundary value")
@@ -77,9 +71,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== gt(U value) Tests ====================
 
-    /**
-     * Tests gt(U value) - greater than with value parameter.
-     */
+    /// 测试 gt(U value) - 带值参数的大于。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with gt(value) - greater than")
@@ -94,9 +86,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests gt(U value) with ID field.
-     */
+    /// 测试带 ID 字段的 gt(U value)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with gt(value) on ID field")
@@ -117,9 +107,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== le(U value) Tests ====================
 
-    /**
-     * Tests le(U value) - less than or equal with value parameter.
-     */
+    /// 测试 le(U value) - 带值参数的小于等于。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with le(value) - less than or equal")
@@ -134,9 +122,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests le(U value) with boundary value.
-     */
+    /// 测试带边界值的 le(U value)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle le(value) with boundary value")
@@ -158,9 +144,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== lt(U value) Tests ====================
 
-    /**
-     * Tests lt(U value) - less than with value parameter.
-     */
+    /// 测试 lt(U value) - 带值参数的小于。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with lt(value) - less than")
@@ -175,9 +159,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
     }
 
-    /**
-     * Tests lt(U value) with ID field.
-     */
+    /// 测试带 ID 字段的 lt(U value)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with lt(value) on ID field")
@@ -198,9 +180,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== between(U l, U r) Tests ====================
 
-    /**
-     * Tests between(U l, U r) - between two values.
-     */
+    /// 测试 between(U l, U r) - 两个值之间的范围。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between(value, value)")
@@ -220,9 +200,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                 e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
     }
 
-    /**
-     * Tests between(U l, U r) with ID field.
-     */
+    /// 测试带 ID 字段的 between(U l, U r)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between(value, value) on ID field")
@@ -242,9 +220,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getId() >= minId && e.getId() <= maxId);
     }
 
-    /**
-     * Tests between(U l, U r) with hire date.
-     */
+    /// 测试带入职日期的 between(U l, U r)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between(value, value) on date field")
@@ -268,9 +244,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notBetween(U l, U r) Tests ====================
 
-    /**
-     * Tests notBetween(U l, U r) - not between two values.
-     */
+    /// 测试 notBetween(U l, U r) - 不在两个值之间的范围。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notBetween(value, value)")
@@ -291,9 +265,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                 e.getSalary() < minSalary || e.getSalary() > maxSalary);
     }
 
-    /**
-     * Tests notBetween(U l, U r) with ID field.
-     */
+    /// 测试带 ID 字段的 notBetween(U l, U r)。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notBetween(value, value) on ID field")
@@ -315,9 +287,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== between(TypedExpression, U) Tests ====================
 
-    /**
-     * Tests between(TypedExpression, U) - between expression and value.
-     */
+    /// 测试 between(TypedExpression, U) - 表达式和值之间的范围。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between(expression, value)")
@@ -341,9 +311,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== between(U, TypedExpression) Tests ====================
 
-    /**
-     * Tests between(U, TypedExpression) - between value and expression.
-     */
+    /// 测试 between(U, TypedExpression) - 值和表达式之间的范围。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with between(value, expression)")
@@ -367,9 +335,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notBetween(TypedExpression, U) Tests ====================
 
-    /**
-     * Tests notBetween(TypedExpression, U) - not between expression and value.
-     */
+    /// 测试 notBetween(TypedExpression, U) - 不在表达式和值之间的范围。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notBetween(expression, value)")
@@ -394,9 +360,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notBetween(U, TypedExpression) Tests ====================
 
-    /**
-     * Tests notBetween(U, TypedExpression) - not between value and expression.
-     */
+    /// 测试 notBetween(U, TypedExpression) - 不在值和表达式之间的范围。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notBetween(value, expression)")
@@ -421,9 +385,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
 
     // ==================== Combined Tests ====================
 
-    /**
-     * Tests combining multiple comparison operators.
-     */
+    /// 测试组合多个比较操作符。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple comparison operators")
@@ -442,9 +404,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                 e.getSalary() >= 50000.0 && e.getSalary() < 80000.0 && e.getId() > 1L);
     }
 
-    /**
-     * Tests combining between with other conditions.
-     */
+    /// 测试将 between 与其他条件组合。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine between with other conditions")
@@ -461,9 +421,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                 e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0 && e.getName().startsWith("A"));
     }
 
-    /**
-     * Tests that comparison operators return correct count.
-     */
+    /// 测试比较操作符返回正确的计数。
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count correctly with comparison operators")
@@ -496,9 +454,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
     @DisplayName("IfNotNull Operations Tests")
     class IfNotNullOperationsTests {
 
-        /**
-         * Tests: geIfNotNull with non-null value.
-         */
+        /// 测试：带非空值的 geIfNotNull。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter with geIfNotNull when value is not null")
@@ -514,9 +470,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: geIfNotNull with null value - should skip condition.
-         */
+        /// 测试：带空值的 geIfNotNull - 应跳过条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should skip filter when geIfNotNull is null")
@@ -533,9 +487,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-        /**
-         * Tests: gtIfNotNull with non-null value.
-         */
+        /// 测试：带非空值的 gtIfNotNull。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter with gtIfNotNull when value is not null")
@@ -551,9 +503,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: gtIfNotNull with null value - should skip condition.
-         */
+        /// 测试：带空值的 gtIfNotNull - 应跳过条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should skip filter when gtIfNotNull is null")
@@ -570,9 +520,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-        /**
-         * Tests: leIfNotNull with non-null value.
-         */
+        /// 测试：带非空值的 leIfNotNull。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter with leIfNotNull when value is not null")
@@ -588,9 +536,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: leIfNotNull with null value - should skip condition.
-         */
+        /// 测试：带空值的 leIfNotNull - 应跳过条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should skip filter when leIfNotNull is null")
@@ -607,9 +553,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-        /**
-         * Tests: ltIfNotNull with non-null value.
-         */
+        /// 测试：带非空值的 ltIfNotNull。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should filter with ltIfNotNull when value is not null")
@@ -625,9 +569,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: ltIfNotNull with null value - should skip condition.
-         */
+        /// 测试：带空值的 ltIfNotNull - 应跳过条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should skip filter when ltIfNotNull is null")
@@ -644,9 +586,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-        /**
-         * Tests: Combining multiple IfNotNull conditions.
-         */
+        /// 测试：组合多个 IfNotNull 条件。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple IfNotNull conditions")
@@ -663,9 +603,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0);
         }
 
-        /**
-         * Tests: Combining IfNotNull with null value (should skip).
-         */
+        /// 测试：组合带空值的 IfNotNull（应跳过）。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should skip null IfNotNull in combined conditions")
@@ -689,9 +627,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
     @DisplayName("Predicate as Query Condition Tests")
     class PredicateAsQueryConditionTests {
 
-        /**
-         * Tests: ge(value) creates Predicate that can be passed to where().
-         */
+        /// 测试：ge(value) 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use ge predicate as where condition")
@@ -710,9 +646,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: gt(value) creates Predicate that can be passed to where().
-         */
+        /// 测试：gt(value) 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use gt predicate as where condition")
@@ -731,9 +665,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: le(value) creates Predicate that can be passed to where().
-         */
+        /// 测试：le(value) 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use le predicate as where condition")
@@ -752,9 +684,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: lt(value) creates Predicate that can be passed to where().
-         */
+        /// 测试：lt(value) 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use lt predicate as where condition")
@@ -773,9 +703,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: between(value, value) creates Predicate that can be passed to where().
-         */
+        /// 测试：between(value, value) 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use between predicate as where condition")
@@ -796,9 +724,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= minSalary && e.getSalary() <= maxSalary);
         }
 
-        /**
-         * Tests: notBetween(value, value) creates Predicate that can be passed to where().
-         */
+        /// 测试：notBetween(value, value) 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notBetween predicate as where condition")
@@ -819,9 +745,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() < minSalary || e.getSalary() > maxSalary);
         }
 
-        /**
-         * Tests: geIfNotNull creates Predicate that can be passed to where().
-         */
+        /// 测试：geIfNotNull 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use geIfNotNull predicate as where condition")
@@ -840,9 +764,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: geIfNotNull with null creates empty Predicate.
-         */
+        /// 测试：带空值的 geIfNotNull 创建空谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use geIfNotNull null predicate as where condition")
@@ -860,9 +782,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-        /**
-         * Tests: gtIfNotNull creates Predicate that can be passed to where().
-         */
+        /// 测试：gtIfNotNull 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use gtIfNotNull predicate as where condition")
@@ -881,9 +801,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() > SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: leIfNotNull creates Predicate that can be passed to where().
-         */
+        /// 测试：leIfNotNull 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use leIfNotNull predicate as where condition")
@@ -902,9 +820,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() <= SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: ltIfNotNull creates Predicate that can be passed to where().
-         */
+        /// 测试：ltIfNotNull 创建可以传递给 where() 的谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use ltIfNotNull predicate as where condition")
@@ -923,9 +839,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() < SALARY_THRESHOLD);
         }
 
-        /**
-         * Tests: Combining multiple comparison predicates with AND.
-         */
+        /// 测试：使用 AND 组合多个比较谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple comparison predicates with AND")
@@ -946,9 +860,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0);
         }
 
-        /**
-         * Tests: Combining multiple comparison predicates with OR.
-         */
+        /// 测试：使用 OR 组合多个比较谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple comparison predicates with OR")
@@ -969,9 +881,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() < 55000.0 || e.getSalary() > 75000.0);
         }
 
-        /**
-         * Tests: Combining comparison predicate with other where conditions.
-         */
+        /// 测试：将比较谓词与其他 where 条件组合。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine comparison predicate with other where conditions")
@@ -990,9 +900,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() >= 50000.0 && e.getName().startsWith("A"));
         }
 
-        /**
-         * Tests: NOT on comparison predicate.
-         */
+        /// 测试：对比较谓词使用 NOT。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use NOT on comparison predicate")
@@ -1011,9 +919,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getSalary() <= 80000.0);
         }
 
-        /**
-         * Tests: Complex predicate with comparison expressions.
-         */
+        /// 测试：使用比较表达式创建复杂谓词。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create complex predicate with comparison expressions")
@@ -1036,9 +942,7 @@ public class SimpleExpressionDefaultMethodsIntegrationTest {
                     (e.getSalary() >= 50000.0 && e.getSalary() <= 80000.0) || e.getId() < 3L);
         }
 
-        /**
-         * Tests: between predicate with expressions.
-         */
+        /// 测试：将带表达式的 between 作为谓词使用。
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use between with expression as predicate")

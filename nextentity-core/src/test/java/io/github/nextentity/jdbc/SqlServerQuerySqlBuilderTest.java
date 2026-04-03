@@ -8,15 +8,14 @@ import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify SqlServerQuerySqlBuilder correctly provides SQL Server-specific SQL syntax
- * <p>
- * Test scenarios:
- * 1. Left quoted identifier is square bracket
- * 2. Right quoted identifier is square bracket
- * 3. Builder class exists and has correct structure
- * 4. LENGTH operator uses 'len' instead of 'length'
- */
+///
+ /// 测试目标: 验证y SqlServerQuerySqlBuilder 正确 provides SQL Server-specific SQL syntax
+ /// <p>
+ /// 测试场景s:
+ /// 1. Left quoted identifier is square bracket
+ /// 2. Right quoted identifier is square bracket
+ /// 3. Builder class exists and has correct structure
+ /// 4. LENGTH operator uses 'len' instead of 'length'
 class SqlServerQuerySqlBuilderTest {
 
     private final SqlServerQuerySqlBuilder builder = new SqlServerQuerySqlBuilder();

@@ -8,14 +8,13 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify BatchSqlStatement correctly stores SQL and batch parameters
- * <p>
- * Test scenarios:
- * 1. Create batch statement with SQL and parameters
- * 2. Verify SQL getter
- * 3. Verify parameters getter
- */
+///
+ /// 测试目标: 验证y BatchSqlStatement 正确 stores SQL and batch parameters
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create batch statement with SQL and parameters
+ /// 2. 验证y SQL getter
+ /// 3. 验证y parameters getter
 class BatchSqlStatementTest {
 
     @Test

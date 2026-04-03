@@ -8,24 +8,24 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify EmptyNode behaves correctly as empty expression
- * <p>
- * Test scenarios:
- * 1. Singleton instance
- * 2. operate with empty nodes returns itself
- * 3. operate with nodes returns OperatorNode
- */
+///
+/// 测试目标：验证EmptyNode作为空表达式的正确行为
+/// <p>
+/// 测试场景：
+/// 1. 单例实例
+/// 2. 与空节点操作返回自身
+/// 3. 与节点操作返回OperatorNode
+///
 class EmptyNodeTest {
 
     @Nested
     class SingletonInstance {
 
-        /**
-         * Test objective: Verify INSTANCE is singleton
-         * Test scenario: Get INSTANCE multiple times
-         * Expected result: Same instance
-         */
+        ///
+        /// 测试目标：验证INSTANCE是单例
+        /// 测试场景：多次获取INSTANCE
+        /// 预期结果：相同实例
+        ///
         @Test
         void instance_IsSingleton() {
             // when
@@ -40,11 +40,11 @@ class EmptyNodeTest {
     @Nested
     class OperateMethod {
 
-        /**
-         * Test objective: Verify operate with empty nodes returns EmptyNode
-         * Test scenario: Call operate with empty collection
-         * Expected result: Returns EmptyNode.INSTANCE
-         */
+        ///
+        /// 测试目标：验证与空节点操作返回EmptyNode
+        /// 测试场景：用空集合调用操作
+        /// 预期结果：返回EmptyNode.INSTANCE
+        ///
         @Test
         void operate_EmptyNodes_ReturnsEmptyNode() {
             // given
@@ -57,11 +57,11 @@ class EmptyNodeTest {
             assertThat(result).isSameAs(EmptyNode.INSTANCE);
         }
 
-        /**
-         * Test objective: Verify operate with nodes returns OperatorNode
-         * Test scenario: Call operate with non-empty collection
-         * Expected result: Returns OperatorNode
-         */
+        ///
+        /// 测试目标：验证与节点操作返回OperatorNode
+        /// 测试场景：用非空集合调用操作
+        /// 预期结果：返回OperatorNode
+        ///
         @Test
         void operate_WithNodes_ReturnsOperatorNode() {
             // given
@@ -79,11 +79,11 @@ class EmptyNodeTest {
             assertThat(operatorNode.firstOperand()).isEqualTo(literal);
         }
 
-        /**
-         * Test objective: Verify operate with multiple nodes
-         * Test scenario: Call operate with multiple nodes
-         * Expected result: Returns OperatorNode with all nodes
-         */
+        ///
+        /// 测试目标：验证与多个节点操作
+        /// 测试场景：用多个节点调用操作
+        /// 预期结果：返回包含所有节点的OperatorNode
+        ///
         @Test
         void operate_WithMultipleNodes_ReturnsOperatorNodeWithAllNodes() {
             // given

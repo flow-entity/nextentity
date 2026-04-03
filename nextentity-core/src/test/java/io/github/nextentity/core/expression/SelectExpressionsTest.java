@@ -6,16 +6,14 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Unit tests for SelectExpressions.
- */
+///
+ /// 单元测试 SelectExpressions.
 class SelectExpressionsTest {
 
-    /**
-     * Test objective: Verify constructor sets items and distinct correctly.
-     * Test scenario: Create SelectExpressions with items and distinct flag.
-     * Expected result: Items and distinct are accessible via getters.
-     */
+///
+     /// 测试目标: 验证y constructor sets items and distinct 正确.
+     /// 测试场景: Create SelectExpressions with items and distinct flag.
+     /// 预期结果: Items and distinct are accessible via getters.
     @Test
     void constructor_ShouldSetItemsAndDistinct() {
         // given
@@ -30,11 +28,10 @@ class SelectExpressionsTest {
         assertThat(result.distinct()).isTrue();
     }
 
-    /**
-     * Test objective: Verify distinct defaults to false.
-     * Test scenario: Create SelectExpressions with distinct=false.
-     * Expected result: distinct() returns false.
-     */
+///
+     /// 测试目标: 验证y distinct defaults to false.
+     /// 测试场景: Create SelectExpressions with distinct=false.
+     /// 预期结果: distinct() returns false.
     @Test
     void distinct_ShouldDefaultToFalse() {
         // given
@@ -47,11 +44,10 @@ class SelectExpressionsTest {
         assertThat(result.distinct()).isFalse();
     }
 
-    /**
-     * Test objective: Verify items can be empty.
-     * Test scenario: Create SelectExpressions with empty items list.
-     * Expected result: items() returns empty array.
-     */
+///
+     /// 测试目标: 验证y items can be empty.
+     /// 测试场景: Create SelectExpressions with empty items list.
+     /// 预期结果: items() returns empty array.
     @Test
     void items_CanBeEmpty() {
         // given

@@ -7,12 +7,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
 
-/**
- * Manages Spring Boot application contexts for integration tests.
- * Creates and holds contexts for each database (MySQL, PostgreSQL).
- *
- * @author HuangChengwei
- */
+/// 管理集成测试的 Spring Boot 应用程序上下文。
+/// 为每个数据库（MySQL、PostgreSQL）创建并保持上下文。
+///
+/// @author HuangChengwei
 public class ApplicationContexts {
 
     private static final List<ConfigurableApplicationContext> CONTEXTS = DatabaseEnvironmentVariables.DBS.stream()

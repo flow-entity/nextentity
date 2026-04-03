@@ -4,13 +4,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify AttributeParameter correctly stores value and type
- * <p>
- * Test scenarios:
- * 1. Create parameter with value and type
- * 2. Verify toString output
- */
+///
+ /// 测试目标: 验证y AttributeParameter 正确 stores value and type
+ /// <p>
+ /// 测试场景s:
+ /// 1. Create parameter with value and type
+ /// 2. 验证y toString output
 class AttributeParameterTest {
 
     @Test

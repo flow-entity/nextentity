@@ -1,9 +1,8 @@
 package io.github.nextentity.integration.dto;
 
-/**
- * Record projection with all nullable fields.
- * Tests record projection with potential null values.
- */
+///
+ /// Record projection with all nullable fields.
+ /// 测试s record projection with potential null values.
 public record EmployeeNullableRecord(
         Long id,
         String name,

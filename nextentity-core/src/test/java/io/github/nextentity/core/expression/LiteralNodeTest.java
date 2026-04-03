@@ -7,26 +7,26 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Test objective: Verify LiteralNode correctly represents literal values
- * <p>
- * Test scenarios:
- * 1. Value storage and retrieval
- * 2. Static TRUE/FALSE constants
- * 3. NOT operation on boolean literals
- * 4. AND operation optimization
- * 5. OR operation optimization
- */
+///
+/// 测试目标：验证LiteralNode正确表示字面值
+/// <p>
+/// 测试场景：
+/// 1. 值存储和检索
+/// 2. 静态TRUE/FALSE常量
+/// 3. 对布尔字面值的NOT操作
+/// 4. AND操作优化
+/// 5. OR操作优化
+///
 class LiteralNodeTest {
 
     @Nested
     class ValueStorage {
 
-        /**
-         * Test objective: Verify value is stored correctly
-         * Test scenario: Create LiteralNode with various values
-         * Expected result: Value is retrievable
-         */
+        ///
+        /// 测试目标：验证值被正确存储
+        /// 测试场景：使用各种值创建LiteralNode
+        /// 预期结果：值可以被检索
+        ///
         @Test
         void value_IsStoredCorrectly() {
             // given
@@ -39,11 +39,11 @@ class LiteralNodeTest {
             assertThat(node.value()).isEqualTo(stringValue);
         }
 
-        /**
-         * Test objective: Verify null value is allowed
-         * Test scenario: Create LiteralNode with null
-         * Expected result: Null is stored
-         */
+        ///
+        /// 测试目标：验证允许空值
+        /// 测试场景：使用null创建LiteralNode
+        /// 预期结果：Null被存储
+        ///
         @Test
         void value_CanBeNull() {
             // when
@@ -57,11 +57,11 @@ class LiteralNodeTest {
     @Nested
     class StaticConstants {
 
-        /**
-         * Test objective: Verify TRUE constant
-         * Test scenario: Access TRUE constant
-         * Expected result: Contains true value
-         */
+        ///
+        /// 测试目标：验证TRUE常量
+        /// 测试场景：访问TRUE常量
+        /// 预期结果：包含true值
+        ///
         @Test
         void trueConstant_ContainsTrue() {
             // when
@@ -71,11 +71,11 @@ class LiteralNodeTest {
             assertThat(trueNode.value()).isEqualTo(Boolean.TRUE);
         }
 
-        /**
-         * Test objective: Verify FALSE constant
-         * Test scenario: Access FALSE constant
-         * Expected result: Contains false value
-         */
+        ///
+        /// 测试目标：验证FALSE常量
+        /// 测试场景：访问FALSE常量
+        /// 预期结果：包含false值
+        ///
         @Test
         void falseConstant_ContainsFalse() {
             // when
@@ -89,11 +89,11 @@ class LiteralNodeTest {
     @Nested
     class NotOperation {
 
-        /**
-         * Test objective: Verify NOT on true returns false
-         * Test scenario: Apply NOT to TRUE
-         * Expected result: Returns FALSE
-         */
+        ///
+        /// 测试目标：验证对true的NOT操作返回false
+        /// 测试场景：对TRUE应用NOT
+        /// 预期结果：返回FALSE
+        ///
         @Test
         void operate_NotOnTrue_ReturnsFalse() {
             // when
@@ -103,11 +103,11 @@ class LiteralNodeTest {
             assertThat(result).isSameAs(LiteralNode.FALSE);
         }
 
-        /**
-         * Test objective: Verify NOT on false returns true
-         * Test scenario: Apply NOT to FALSE
-         * Expected result: Returns TRUE
-         */
+        ///
+        /// 测试目标：验证对false的NOT操作返回true
+        /// 测试场景：对FALSE应用NOT
+        /// 预期结果：返回TRUE
+        ///
         @Test
         void operate_NotOnFalse_ReturnsTrue() {
             // when
@@ -117,11 +117,11 @@ class LiteralNodeTest {
             assertThat(result).isSameAs(LiteralNode.TRUE);
         }
 
-        /**
-         * Test objective: Verify NOT on non-boolean uses default behavior
-         * Test scenario: Apply NOT to string literal
-         * Expected result: Returns OperatorNode
-         */
+        ///
+        /// 测试目标：验证对非布尔值的NOT操作使用默认行为
+        /// 测试场景：对字符串字面值应用NOT
+        /// 预期结果：返回OperatorNode
+        ///
         @Test
         void operate_NotOnNonBoolean_ReturnsOperatorNode() {
             // given
@@ -138,11 +138,11 @@ class LiteralNodeTest {
     @Nested
     class AndOperation {
 
-        /**
-         * Test objective: Verify AND with false returns false
-         * Test scenario: Apply AND to FALSE
-         * Expected result: Returns FALSE
-         */
+        ///
+        /// 测试目标：验证与false的AND操作返回false
+        /// 测试场景：对FALSE应用AND
+        /// 预期结果：返回FALSE
+        ///
         @Test
         void operate_AndOnFalse_ReturnsFalse() {
             // given
@@ -155,11 +155,11 @@ class LiteralNodeTest {
             assertThat(result).isSameAs(LiteralNode.FALSE);
         }
 
-        /**
-         * Test objective: Verify AND with true continues with other nodes
-         * Test scenario: Apply AND to TRUE with other nodes
-         * Expected result: Returns OperatorNode with other nodes
-         */
+        ///
+        /// 测试目标：验证与true的AND操作继续处理其他节点
+        /// 测试场景：对TRUE与其他节点应用AND
+        /// 预期结果：返回包含其他节点的OperatorNode
+        ///
         @Test
         void operate_AndOnTrue_ReturnsOperatorNodeWithOtherNodes() {
             // given
@@ -178,11 +178,11 @@ class LiteralNodeTest {
     @Nested
     class OrOperation {
 
-        /**
-         * Test objective: Verify OR with true returns true
-         * Test scenario: Apply OR to TRUE
-         * Expected result: Returns TRUE
-         */
+        ///
+        /// 测试目标：验证与true的OR操作返回true
+        /// 测试场景：对TRUE应用OR
+        /// 预期结果：返回TRUE
+        ///
         @Test
         void operate_OrOnTrue_ReturnsTrue() {
             // given
@@ -195,11 +195,11 @@ class LiteralNodeTest {
             assertThat(result).isSameAs(LiteralNode.TRUE);
         }
 
-        /**
-         * Test objective: Verify OR with false continues with other nodes
-         * Test scenario: Apply OR to FALSE with other nodes
-         * Expected result: Returns OperatorNode with other nodes
-         */
+        ///
+        /// 测试目标：验证与false的OR操作继续处理其他节点
+        /// 测试场景：对FALSE与其他节点应用OR
+        /// 预期结果：返回包含其他节点的OperatorNode
+        ///
         @Test
         void operate_OrOnFalse_ReturnsOperatorNodeWithOtherNodes() {
             // given
@@ -219,11 +219,11 @@ class LiteralNodeTest {
     @Nested
     class ExpressionMethod {
 
-        /**
-         * Test objective: Verify expression() returns self
-         * Test scenario: Call expression() on LiteralNode
-         * Expected result: Returns same instance
-         */
+        ///
+        /// 测试目标：验证expression()返回自身
+        /// 测试场景：在LiteralNode上调用expression()
+        /// 预期结果：返回相同的实例
+        ///
         @Test
         void expression_ReturnsSelf() {
             // given
