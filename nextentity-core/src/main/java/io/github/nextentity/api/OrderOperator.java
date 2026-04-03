@@ -129,4 +129,17 @@ public interface OrderOperator<T, U> extends OrderByStep<T, U> {
     default LockStep<U> orderBy(List<? extends Order<T>> orders) {
         return asc().orderBy(orders);
     }
+
+    /// 获取指定偏移量和最大结果数的列表，并指定锁定模式。
+    ///
+    /// @param offset       偏移量
+    /// @param maxResult    最大结果数
+    /// @param lockModeType 锁定模式
+    /// @return 结果列表
+    /// @deprecated 已废弃，请使用 {@link #asc()} 或 {@link #desc()} 后调用相应方法代替。
+    @Override
+    @Deprecated
+    default List<U> getList(int offset, int maxResult, LockModeType lockModeType) {
+        return asc().getList(offset, maxResult, lockModeType);
+    }
 }

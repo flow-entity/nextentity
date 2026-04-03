@@ -40,3 +40,4 @@ public interface ConnectionProvider {
         /// @throws SQLException SQL异常
         T doInConnection(Connection connection) throws SQLException;
     }
+}

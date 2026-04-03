@@ -1,7 +1,7 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.api.OrderOperator;
 import io.github.nextentity.api.OrderByStep;
+import io.github.nextentity.api.OrderOperator;
 import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.WhereImpl;
 import io.github.nextentity.core.util.ImmutableList;
