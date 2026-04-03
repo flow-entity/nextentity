@@ -115,7 +115,7 @@ public class EmployeeService {
 
     // 条件批量更新
     public int deactivateDepartment(Long departmentId) {
-        return employeeRepository.updateWhere()
+        return employeeRepository.update()
             .set(Employee::getActive, false)
             .set(Employee::getStatus, EmployeeStatus.INACTIVE)
             .where(Employee::getDepartmentId).eq(departmentId)

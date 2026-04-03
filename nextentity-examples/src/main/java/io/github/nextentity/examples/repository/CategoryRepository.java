@@ -2,8 +2,6 @@ package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.spring.PersistableRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,10 +23,6 @@ import java.util.List;
 /// - `deleteById(Long id)` - 按 ID 删除
 @Repository
 public class CategoryRepository extends PersistableRepository<Category, Long> {
-
-    public CategoryRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     /// 查询所有活跃分类。
     public List<Category> findActiveCategories() {

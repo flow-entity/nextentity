@@ -3,11 +3,10 @@ package io.github.nextentity.spring.integration.db;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.spring.AbstractRepository;
+import io.github.nextentity.spring.NextEntityFactory;
 import io.github.nextentity.spring.integration.entity.User;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
@@ -22,15 +21,14 @@ import java.util.stream.Collectors;
 public class UserRepository extends AbstractRepository<User, Integer> {
 
     private List<User> users;
-    private final String name;
+    private String name;
 
-    public UserRepository(JdbcTemplate jdbcTemplate, String name) {
-        super(jdbcTemplate);
-        this.name =  name;
+    @Override
+    protected void setFactory(NextEntityFactory factory) {
+        super.setFactory(factory);
     }
 
-    public UserRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate, String name) {
-        super(entityManager, jdbcTemplate);
+    public void setName(String name) {
         this.name = name;
     }
 

@@ -3,11 +3,9 @@ package io.github.nextentity.spring;
 import io.github.nextentity.api.*;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
-import io.github.nextentity.jdbc.ConnectionProvider;
-import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -23,11 +21,8 @@ import java.util.function.Supplier;
 ///
 /// 使用示例：
 /// ```java
+/// @Component
 /// public class UserRepository extends AbstractRepository<User, Long> {
-///     public UserRepository(JdbcTemplate jdbcTemplate) {
-///         super(jdbcTemplate);
-///     }
-///
 ///     public List<User> findActiveUsers() {
 ///         return query().where(path(User::getStatus)).eq("ACTIVE").list();
 ///     }
@@ -46,76 +41,30 @@ public abstract class AbstractRepository<T, ID> {
     protected final Class<T> entityType;
 
     /// 查询构建器，用于构建类型安全的查询
-    protected final QueryBuilder<T> queryBuilder;
+    private QueryBuilder<T> queryBuilder;
     /// 更新执行器，用于执行插入、更新、删除操作
-    protected final UpdateExecutor updateExecutor;
-    /// Spring JDBC 模板，用于执行原生 SQL
-    protected final JdbcTemplate jdbcTemplate;
-    /// NextEntity 工厂，用于创建条件更新/删除构建器
-    protected final NextEntityFactory factory;
+    private UpdateExecutor updateExecutor;
 
-    /// 使用 JDBC 创建 Repository 实例。
+    /// 创建 Repository 实例。
     ///
-    /// 该构造函数自动检测实体类型和主键类型，
-    /// 并配置 JDBC 方式的数据库操作。
-    ///
-    /// @param jdbcTemplate Spring JDBC 模板
-    protected AbstractRepository(JdbcTemplate jdbcTemplate) {
-        NextEntityFactory factory = jdbc(jdbcTemplate);
-        this(jdbcTemplate, factory);
-    }
-
-    /// 使用 JPA 和 JDBC 创建 Repository 实例。
-    ///
-    /// 该构造函数结合 JPA 和 JDBC 两种方式，
-    /// JPA 用于实体操作，JDBC 用于批量操作和原生查询。
-    ///
-    /// @param entityManager JPA 实体管理器
-    /// @param jdbcTemplate  Spring JDBC 模板
-    protected AbstractRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        NextEntityFactory factory = jpa(entityManager, jdbcTemplate);
-        this(jdbcTemplate, factory);
-    }
-
-    /// 使用显式类型参数创建 Repository 实例。
-    ///
-    /// 该构造函数适用于无法通过泛型推断类型的场景，
-    /// 需要手动指定实体类型和主键类型。
-    ///
-    /// @param idType       主键类型
-    /// @param entityType   实体类型
-    /// @param queryBuilder 查询构建器
-    /// @param updateExecutor 更新执行器
-    /// @param jdbcTemplate Spring JDBC 模板
-    public AbstractRepository(Class<ID> idType,
-                              Class<T> entityType,
-                              QueryBuilder<T> queryBuilder,
-                              UpdateExecutor updateExecutor,
-                              JdbcTemplate jdbcTemplate) {
-        this.idType = idType;
-        this.entityType = entityType;
-        this.queryBuilder = queryBuilder;
-        this.updateExecutor = updateExecutor;
-        this.jdbcTemplate = jdbcTemplate;
-        this.factory = null;
-    }
-
-    /// 使用工厂创建 Repository 实例。
-    ///
-    /// 该构造函数通过 NextEntityFactory 创建所需的组件，
-    /// 并自动检测实体类型和主键类型。
-    ///
-    /// @param jdbcTemplate Spring JDBC 模板
-    /// @param factory      NextEntity 工厂
-    protected AbstractRepository(JdbcTemplate jdbcTemplate,
-                                 NextEntityFactory factory) {
+    /// 自动检测实体类型和主键类型，
+    /// 并通过 NextEntityFactory 初始化查询构建器和更新执行器。
+    protected AbstractRepository() {
         GenericType<T, ID> genericType = getGenericType();
         this.idType = genericType.idType();
         this.entityType = genericType.entityType();
-        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    /// 自动注入 NextEntityFactory 并初始化组件。
+    ///
+    /// 该方法通过 Spring 的自动注入机制获取 NextEntityFactory，
+    /// 然后创建查询构建器和更新执行器。
+    ///
+    /// @param factory NextEntity 工厂
+    @Autowired
+    protected void setFactory(NextEntityFactory factory) {
         this.queryBuilder = factory.queryBuilder(entityType);
         this.updateExecutor = factory.updateExecutor();
-        this.factory = factory;
     }
 
     /// 获取查询构建器，用于构建类型安全的查询。
@@ -210,7 +159,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// 使用示例：
     /// <pre>{@code
-    /// int updated = repository.updateWhere()
+    /// int updated = repository.update()
     ///     .set(User::getStatus, "ARCHIVED")
     ///     .where(User::getLastLoginAt).lt(threshold)
     ///     .execute();
@@ -219,7 +168,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @return 条件更新构建器实例
     /// @since 2.1
     @Transactional
-    public UpdateWhereStep<T> updateWhere() {
+    public UpdateWhereStep<T> update() {
         return updateExecutor.updateWhereStep(entityType);
     }
 
@@ -227,7 +176,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// 使用示例：
     /// <pre>{@code
-    /// int deleted = repository.deleteWhere()
+    /// int deleted = repository.delete()
     ///     .where(User::getStatus).eq("INACTIVE")
     ///     .execute();
     /// }</pre>
@@ -235,7 +184,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @return 条件删除构建器实例
     /// @since 2.1
     @Transactional
-    public DeleteWhereStep<T> deleteWhere() {
+    public DeleteWhereStep<T> delete() {
         return updateExecutor.deleteWhereStep(entityType);
     }
 
@@ -380,60 +329,6 @@ public abstract class AbstractRepository<T, ID> {
     @Transactional
     protected <X> X doInTransaction(Supplier<X> command) {
         return command.get();
-    }
-
-    /// 连接提供者实现类。
-    ///
-    /// 用于在 Spring 环境中提供数据库连接，
-    /// 支持普通执行和事务执行两种模式。
-    private static class ConnectionProviderImpl implements ConnectionProvider {
-        AbstractRepository<?, ?> repository;
-        JdbcTemplate jdbcTemplate;
-
-        /// 使用连接执行操作。
-        ///
-        /// @param action 连接回调操作
-        /// @param <X>    操作返回类型
-        /// @return 操作结果
-        @Override
-        public <X> X execute(ConnectionCallback<X> action) {
-            return jdbcTemplate.execute(action::doInConnection);
-        }
-
-        /// 在事务中使用连接执行操作。
-        ///
-        /// 通过 doInTransaction 方法确保操作在事务中执行。
-        ///
-        /// @param action 连接回调操作
-        /// @param <X>    操作返回类型
-        /// @return 操作结果
-        @Override
-        public <X> X executeInTransaction(ConnectionCallback<X> action) {
-            return repository.doInTransaction(() -> execute(action));
-        }
-    }
-
-    /// 创建基于 JDBC 的 NextEntity 工厂。
-    ///
-    /// 使用纯 JDBC 方式进行数据库操作，
-    /// 不依赖 JPA/Hibernate。
-    ///
-    /// @param jdbcTemplate Spring JDBC 模板
-    /// @return JDBC 方式的 NextEntity 工厂
-    protected static NextEntityFactory jdbc(JdbcTemplate jdbcTemplate) {
-        return DefaultNextEntityFactory.jdbc(jdbcTemplate);
-    }
-
-    /// 创建基于 JPA 的 NextEntity 工厂。
-    ///
-    /// 结合 JPA 和 JDBC 两种方式进行数据库操作，
-    /// JPA 用于实体操作，JDBC 用于批量操作。
-    ///
-    /// @param entityManager JPA 实体管理器
-    /// @param jdbcTemplate  Spring JDBC 模板
-    /// @return JPA 方式的 NextEntity 工厂
-    protected static NextEntityFactory jpa(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        return DefaultNextEntityFactory.jpa(entityManager, jdbcTemplate);
     }
 
 }

@@ -10,18 +10,18 @@ import org.jspecify.annotations.NonNull;
 /// 使用示例：
 /// <pre>{@code
 /// // 删除所有不活跃用户
-/// int deleted = repository.deleteWhere()
+/// int deleted = repository.delete()
 ///     .where(User::getStatus).eq("INACTIVE")
 ///     .execute();
 ///
 /// // 多条件删除
-/// int deleted = repository.deleteWhere()
+/// int deleted = repository.delete()
 ///     .where(User::getStatus).eq("ARCHIVED")
 ///     .and(User::getCreatedAt).lt(oneYearAgo)
 ///     .execute();
 ///
 /// // 使用谓词表达式删除
-/// int deleted = repository.deleteWhere()
+/// int deleted = repository.delete()
 ///     .where(root().get(User::status).eq("INACTIVE")
 ///         .and(root().get(User::lastLoginAt).lt(threshold)))
 ///     .execute();

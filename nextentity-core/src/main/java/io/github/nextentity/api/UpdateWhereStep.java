@@ -10,13 +10,13 @@ import org.jspecify.annotations.NonNull;
 /// 使用示例：
 /// <pre>{@code
 /// // 将所有不活跃用户更新为归档状态
-/// int updated = repository.updateWhere()
+/// int updated = repository.update()
 ///     .set(User::getStatus, "ARCHIVED")
 ///     .where(User::getLastLoginAt).lt(threshold)
 ///     .execute();
 ///
 /// // 多条件更新
-/// int updated = repository.updateWhere()
+/// int updated = repository.update()
 ///     .set(User::getStatus, "INACTIVE")
 ///     .set(User::updatedAt, LocalDateTime.now())
 ///     .where(User::getStatus).eq("ACTIVE")

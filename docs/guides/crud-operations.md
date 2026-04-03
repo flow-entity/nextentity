@@ -97,10 +97,10 @@ if (emp != null) {
 
 ### 按条件批量更新
 
-对于统一字段修改，推荐直接使用 `updateWhere()`，避免先查询实体再回写：
+对于统一字段修改，推荐直接使用 `update()`，避免先查询实体再回写：
 
 ```java
-int updated = employeeRepository.updateWhere()
+int updated = employeeRepository.update()
     .set(Employee::getActive, false)
     .set(Employee::getStatus, EmployeeStatus.INACTIVE)
     .where(Employee::getDepartmentId).eq(departmentId)
@@ -146,10 +146,10 @@ employeeRepository.deleteAll(terminated);
 
 ### 直接条件批量删除
 
-如果不需要先加载实体，可以直接使用 `deleteWhere()`：
+如果不需要先加载实体，可以直接使用 `delete()`：
 
 ```java
-int deleted = employeeRepository.deleteWhere()
+int deleted = employeeRepository.delete()
     .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
     .execute();
 ```
@@ -199,7 +199,7 @@ employees.forEach(e -> {
 employeeRepository.updateAll(employees);
 ```
 
-如果更新内容对所有匹配记录都相同，优先考虑 `updateWhere()`，SQL 更直接，内存占用也更低。
+如果更新内容对所有匹配记录都相同，优先考虑 `update()`，SQL 更直接，内存占用也更低。
 
 ### 批量删除
 
@@ -212,7 +212,7 @@ List<Employee> employees = employeeRepository.query()
 employeeRepository.deleteAll(employees);
 ```
 
-若只是按条件整批删除，优先使用 `deleteWhere()`，避免多一次查询和实体构建。
+若只是按条件整批删除，优先使用 `delete()`，避免多一次查询和实体构建。
 
 ---
 
@@ -323,7 +323,7 @@ if (emp != null) {
 }
 
 // 统一字段批量修改时：直接条件更新
-employeeRepository.updateWhere()
+employeeRepository.update()
     .set(Employee::getActive, false)
     .where(Employee::getDepartmentId).eq(departmentId)
     .execute();

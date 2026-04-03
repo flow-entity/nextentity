@@ -3,8 +3,6 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.spring.AbstractRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -25,10 +23,6 @@ import java.util.List;
 /// ```
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
-
-    public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     @Override
     public QueryBuilder<Department> query() {

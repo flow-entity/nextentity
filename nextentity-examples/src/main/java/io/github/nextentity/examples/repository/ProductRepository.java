@@ -6,8 +6,6 @@ import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.examples.entity.Product;
 import io.github.nextentity.spring.PersistableRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,10 +34,6 @@ import java.util.Map;
 /// - DTO 投影与关联数据
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
-
-    public ProductRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // ==================== 继承的 ID 相关方法 ====================
     //

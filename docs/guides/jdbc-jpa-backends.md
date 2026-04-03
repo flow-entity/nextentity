@@ -234,10 +234,6 @@ public class Employee {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 }
 ```
 

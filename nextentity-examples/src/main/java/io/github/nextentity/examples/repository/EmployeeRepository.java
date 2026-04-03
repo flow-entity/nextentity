@@ -1,14 +1,11 @@
 package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.api.Path;
-import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
-import jakarta.persistence.EntityManager;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +32,6 @@ import java.util.stream.Collectors;
 /// - 事务管理
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // ==================== Basic CRUD Operations ====================
 
@@ -77,7 +70,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Batch update active flag by department without loading entities
     @Transactional
     public int deactivateEmployeesByDepartment(Long departmentId) {
-        return updateWhere()
+        return update()
                 .set(Employee::getActive, false)
                 .set(Employee::getStatus, EmployeeStatus.INACTIVE)
                 .where(Employee::getDepartmentId).eq(departmentId)
@@ -121,7 +114,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// Batch delete inactive employees without loading entities
     @Transactional
     public int deleteInactiveEmployees() {
-        return deleteWhere()
+        return delete()
                 .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
                 .execute();
     }

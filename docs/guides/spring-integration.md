@@ -77,27 +77,29 @@ spring:
 
 ### 创建 Repository
 
+继承 `AbstractRepository` 即可，依赖由 Spring 自动注入：
+
 ```java
-// 使用 JPA 后端（推荐，支持更多功能）
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
-}
-
-// 使用纯 JDBC 后端（轻量级，无 JPA 依赖）
-@Repository
-public class LogRepository extends AbstractRepository<Log, Long> {
-
-    public LogRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
-    }
 }
 ```
 
-> **注意**：示例项目中的 Repository 使用了 `EntityManager + JdbcTemplate` 构造函数，因为项目配置了 JPA。如果只需纯 JDBC 功能，可使用只含 `JdbcTemplate` 的构造函数。
+添加 Spring Boot 自动配置依赖后，`NextEntityFactory` 会根据 classpath 自动选择 JDBC 或 JPA 后端，无需手动构造。
+
+如果需要自定义查询方法：
+
+```java
+@Repository
+public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    public List<Employee> findActiveEmployees() {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .list();
+    }
+}
+```
 
 ### 使用 Repository
 

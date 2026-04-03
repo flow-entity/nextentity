@@ -27,18 +27,10 @@ Repository 模式将数据访问逻辑封装在专用类中，提供类型安全
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 }
 
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
-
-    public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 }
 ```
 
@@ -61,10 +53,6 @@ public class Product implements Persistable<Long> {
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
 
-    public ProductRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
-
     // 自动获得 findById、getById、existsById、deleteById 等方法
 }
 ```
@@ -78,10 +66,6 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // 查询全部
     public List<Employee> findAllEmployees() {
@@ -117,9 +101,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // 动态条件查询
     public List<Employee> searchEmployees(String name, Long departmentId, BigDecimal minSalary) {
@@ -158,9 +139,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // 分页查询
     public List<Employee> findPage(int pageNumber, int pageSize) {
@@ -185,9 +163,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // 单字段排序
     public List<Employee> findOrderedByNameAsc() {
@@ -212,9 +187,6 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // 计数
     public long countAllEmployees() {
@@ -238,18 +210,15 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
 ## 条件批量操作
 
-当你不需要先加载实体，只想直接执行批量更新或删除时，可以使用 `updateWhere()` 和 `deleteWhere()`：
+当你不需要先加载实体，只想直接执行批量更新或删除时，可以使用 `update()` 和 `delete()`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     public int deactivateEmployeesByDepartment(Long departmentId) {
-        return updateWhere()
+        return update()
             .set(Employee::getActive, false)
             .set(Employee::getStatus, EmployeeStatus.INACTIVE)
             .where(Employee::getDepartmentId).eq(departmentId)
@@ -257,7 +226,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     }
 
     public int deleteInactiveEmployees() {
-        return deleteWhere()
+        return delete()
             .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
             .execute();
     }

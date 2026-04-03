@@ -121,15 +121,11 @@ public enum EmployeeStatus {
 
 ### AbstractRepository
 
-继承 `AbstractRepository` 并使用构造器注入：
+继承 `AbstractRepository`，依赖由 Spring 自动注入：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 }
 ```
 
@@ -153,10 +149,6 @@ public class Product implements Persistable<Long> {
 // Repository 继承 PersistableRepository
 @Repository
 public class ProductRepository extends PersistableRepository<Product, Long> {
-
-    public ProductRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
 
     // 自动获得 findById、getById、existsById、deleteById 等方法
 }

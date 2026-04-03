@@ -81,7 +81,7 @@ public interface Collector<T> {
     /// 获取指定偏移量和限制数的结果。
     ///
     /// @param offset 跳过的记录数
-    /// @param limit 返回的最大结果数
+    /// @param limit  返回的最大结果数
     /// @return 结果列表
     List<T> list(int offset, int limit);
 
@@ -100,7 +100,7 @@ public interface Collector<T> {
     default T single() {
         List<T> list = list(0, 2);
         if (list.size() > 1) {
-            throw new IllegalStateException("找到多条结果");
+            throw new IllegalStateException("found more than one");
         }
         return list.isEmpty() ? null : list.getFirst();
     }
@@ -108,7 +108,7 @@ public interface Collector<T> {
     /// 获取指定偏移量和限制数的分片结果。
     ///
     /// @param offset 偏移量
-    /// @param limit 最大结果数
+    /// @param limit  最大结果数
     /// @return 分片结果
     default Slice<T> slice(int offset, int limit) {
         long count = count();
@@ -130,7 +130,7 @@ public interface Collector<T> {
     /// @param maxResult    最大结果数
     /// @param lockModeType 锁定模式
     /// @return 结果列表
-    /// @deprecated 已废弃，请使用 {@link #list(int, int)} 配合 {@link #lock(LockModeType)} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link #list(int, int)} 配合 {@link LockStep#lock(LockModeType)} 方法代替。
     @Deprecated
     List<T> getList(int offset, int maxResult, LockModeType lockModeType);
 
@@ -271,7 +271,7 @@ public interface Collector<T> {
     ///
     /// @param lockModeType 锁定模式
     /// @return 第一个结果的Optional
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #first()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #first()} 方法代替。
     @Deprecated
     default Optional<T> first(LockModeType lockModeType) {
         return Optional.ofNullable(getFirst(lockModeType));
@@ -282,7 +282,7 @@ public interface Collector<T> {
     /// @param offset       偏移量
     /// @param lockModeType 锁定模式
     /// @return 第一个结果的Optional
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #list(int, int)} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #list(int, int)} 方法代替。
     @Deprecated
     default Optional<T> first(int offset, LockModeType lockModeType) {
         return Optional.ofNullable(getFirst(offset, lockModeType));
@@ -292,7 +292,7 @@ public interface Collector<T> {
     ///
     /// @param lockModeType 锁定模式
     /// @return 第一个结果，不存在则返回null
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #first()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #first()} 方法代替。
     @Deprecated
     default T getFirst(LockModeType lockModeType) {
         return getFirst(-1, lockModeType);
@@ -303,7 +303,7 @@ public interface Collector<T> {
     /// @param offset       偏移量
     /// @param lockModeType 锁定模式
     /// @return 第一个结果，不存在则返回null
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #list(int, int)} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #list(int, int)} 方法代替。
     @Deprecated
     default T getFirst(int offset, LockModeType lockModeType) {
         List<T> list = getList(offset, 1, lockModeType);
@@ -315,7 +315,7 @@ public interface Collector<T> {
     /// @param lockModeType 锁定模式
     /// @return 单个结果
     /// @throws NullPointerException 如果结果不存在
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #single()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #single()} 方法代替。
     @Deprecated
     default T requireSingle(LockModeType lockModeType) {
         return Objects.requireNonNull(getSingle(-1, lockModeType));
@@ -325,7 +325,7 @@ public interface Collector<T> {
     ///
     /// @param lockModeType 锁定模式
     /// @return 单个结果的Optional
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #single()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #single()} 方法代替。
     @Deprecated
     default Optional<T> single(LockModeType lockModeType) {
         return Optional.ofNullable(getSingle(lockModeType));
@@ -336,7 +336,7 @@ public interface Collector<T> {
     /// @param offset       偏移量
     /// @param lockModeType 锁定模式
     /// @return 单个结果的Optional
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #single()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #single()} 方法代替。
     @Deprecated
     default Optional<T> single(int offset, LockModeType lockModeType) {
         return Optional.ofNullable(getSingle(offset, lockModeType));
@@ -346,7 +346,7 @@ public interface Collector<T> {
     ///
     /// @param lockModeType 锁定模式
     /// @return 单个结果，不存在则返回null
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #single()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #single()} 方法代替。
     @Deprecated
     default T getSingle(LockModeType lockModeType) {
         return getSingle(-1, lockModeType);
@@ -358,7 +358,7 @@ public interface Collector<T> {
     /// @param lockModeType 锁定模式
     /// @return 单个结果，不存在则返回null
     /// @throws IllegalStateException 如果找到多个结果
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #single()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #single()} 方法代替。
     @Deprecated
     default T getSingle(int offset, LockModeType lockModeType) {
         List<T> list = getList(offset, 2, lockModeType);
@@ -373,7 +373,7 @@ public interface Collector<T> {
     /// @param offset       偏移量
     /// @param lockModeType 锁定模式
     /// @return 结果列表
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #list(int, int)} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #list(int, int)} 方法代替。
     @Deprecated
     default List<T> offset(int offset, LockModeType lockModeType) {
         return getList(offset, -1, lockModeType);
@@ -384,7 +384,7 @@ public interface Collector<T> {
     /// @param limit        最大结果数
     /// @param lockModeType 锁定模式
     /// @return 结果列表
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #list(int)} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #list(int)} 方法代替。
     @Deprecated
     default List<T> limit(int limit, LockModeType lockModeType) {
         return getList(0, limit, lockModeType);
@@ -394,7 +394,7 @@ public interface Collector<T> {
     ///
     /// @param lockModeType 锁定模式
     /// @return 所有结果的列表
-    /// @deprecated 已废弃，请使用 {@link #lock(LockModeType)} 配合 {@link #list()} 方法代替。
+    /// @deprecated 已废弃，请使用 {@link LockStep#lock(LockModeType)} 配合 {@link #list()} 方法代替。
     @Deprecated
     default List<T> getList(LockModeType lockModeType) {
         return getList(-1, -1, lockModeType);
