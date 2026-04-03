@@ -27,8 +27,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DisplayName("JOIN Operations Integration Tests")
 public class JoinOperationsIntegrationTest {
 
-///
-     /// 测试s fetching associated department for employees.
+    /// 测试s fetching associated department for employees.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch employee with department")
@@ -45,7 +44,6 @@ public class JoinOperationsIntegrationTest {
 
         // Verify departments are loaded
         Employee emp = employees.getFirst();
-        // TODO fix bug
         assertNotNull(emp.getDepartment());
         assertNotNull(emp.getDepartment().getId());
     }

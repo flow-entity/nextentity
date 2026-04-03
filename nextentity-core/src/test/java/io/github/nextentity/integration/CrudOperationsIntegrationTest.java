@@ -6,7 +6,6 @@ import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -17,10 +16,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.assertj.core.api.Assertions.*;
 
 ///
  /// CRUD 操作s integration tests.
@@ -339,8 +335,7 @@ public class CrudOperationsIntegrationTest {
                 .isInstanceOf(RuntimeException.class);
     }
 
-///
-     /// 测试s updating non-existent employee.
+    /// 测试s updating non-existent employee.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle update of non-existent employee")
@@ -349,7 +344,6 @@ public class CrudOperationsIntegrationTest {
         Employee nonExistent = createTestEmployee(9999L, "Non Existent", "none@example.com");
 
         // When/Then - should throw exception (entity not found)
-        // TODO fix bug
         assertThatThrownBy(() -> context.getUpdateExecutor().update(nonExistent, Employee.class))
                 .isInstanceOf(RuntimeException.class);
 
