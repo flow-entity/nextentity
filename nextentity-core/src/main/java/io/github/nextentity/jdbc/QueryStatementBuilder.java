@@ -16,10 +16,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
 ///
+/// 查询 SQL 构建器实现类
+///
 /// @author HuangChengwei
 /// @since 1.0.0
 ///
-public abstract class AbstractQuerySqlBuilder {
+public class QueryStatementBuilder {
 
     protected static final String NONE_DELIMITER = "";
     protected static final String DELIMITER = ",";
@@ -48,12 +50,12 @@ public abstract class AbstractQuerySqlBuilder {
     protected final int subIndex;
     protected final AtomicInteger selectIndex;
 
-    protected AbstractQuerySqlBuilder(StringBuilder sql,
-                                      List<Object> args,
-                                      QueryContext context,
-                                      SqlDialect dialect,
-                                      AtomicInteger selectIndex,
-                                      int subIndex) {
+    protected QueryStatementBuilder(StringBuilder sql,
+                                    List<Object> args,
+                                    QueryContext context,
+                                    SqlDialect dialect,
+                                    AtomicInteger selectIndex,
+                                    int subIndex) {
         this.sql = sql;
         this.args = args;
         this.subIndex = subIndex;
@@ -70,7 +72,7 @@ public abstract class AbstractQuerySqlBuilder {
         fromAlias = subIndex == 0 ? prefix + "_" : prefix + subIndex + "_";
     }
 
-    public AbstractQuerySqlBuilder(QueryContext context, SqlDialect dialect) {
+    public QueryStatementBuilder(QueryContext context, SqlDialect dialect) {
         this(new StringBuilder(), new ArrayList<>(), context, dialect, new AtomicInteger(), 0);
     }
 
@@ -81,11 +83,6 @@ public abstract class AbstractQuerySqlBuilder {
     protected String rightQuotedIdentifier() {
         return dialect.rightQuotedIdentifier();
     }
-
-    protected String quoteIdentifier(String name) {
-        return dialect.quoteIdentifier(name);
-    }
-
 
     protected QuerySqlStatement build() {
         doBuilder();
@@ -151,7 +148,9 @@ public abstract class AbstractQuerySqlBuilder {
         sql.append(')');
     }
 
-    protected abstract void appendQueryStructure(QueryContext subContext);
+    protected void appendQueryStructure(QueryContext subContext) {
+        new QueryStatementBuilder(sql, args, subContext, dialect, selectIndex, subIndex + 1).doBuilder();
+    }
 
     protected void appendFromTable() {
         appendTable(sql, context.getEntityType());

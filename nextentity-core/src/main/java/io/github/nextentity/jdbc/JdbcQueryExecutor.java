@@ -58,7 +58,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @NonNull
     public <R> List<R> getList(@NonNull QueryStructure queryStructure) {
         QueryContext context = QueryContext.create(queryStructure, metamodel, true);
-        QuerySqlStatement sql = sqlBuilder.build(context);
+        QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {
             return connectionProvider.execute(connection -> {
@@ -77,17 +77,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
         } catch (SQLException e) {
             throw new SqlException(e);
         }
-    }
-
-    /// 查询SQL构建器接口
-    ///
-    /// 用于构建查询相关的SQL语句
-    public interface QuerySqlBuilder {
-        /// 构建查询SQL语句
-        ///
-        /// @param context 查询上下文
-        /// @return 查询SQL语句对象
-        QuerySqlStatement build(QueryContext context);
     }
 
 

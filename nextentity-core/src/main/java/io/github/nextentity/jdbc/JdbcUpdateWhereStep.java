@@ -3,14 +3,11 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /// JDBC 条件更新构建器实现。
@@ -23,12 +20,14 @@ import java.util.Map;
 public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements UpdateSetStep<T> {
 
     private final Map<String, Object> setValues = new LinkedHashMap<>();
+    private final JdbcUpdateSqlBuilder sqlBuilder;
 
     public JdbcUpdateWhereStep(Class<T> entityType,
                                Metamodel metamodel,
                                ConnectionProvider connectionProvider,
-                               SqlDialect sqlDialect) {
-        super(entityType, metamodel, connectionProvider, sqlDialect);
+                               JdbcUpdateSqlBuilder sqlBuilder) {
+        super(entityType, metamodel, connectionProvider);
+        this.sqlBuilder = sqlBuilder;
     }
 
     @Override
@@ -95,8 +94,8 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
             throw new IllegalStateException("No SET values specified for update");
         }
 
-        EntityType entity = getEntityType();
-        UpdateSqlStatement sql = buildUpdateSql(entity);
+        UpdateSqlStatement sql = sqlBuilder.buildConditionalUpdateStatement(
+                getEntityType(), metamodel, setValues, whereCondition);
 
         return executeInTransaction(connection -> {
             sql.debug();
@@ -106,33 +105,6 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
                 return statement.executeUpdate();
             }
         });
-    }
-
-    private UpdateSqlStatement buildUpdateSql(EntityType entity) {
-        StringBuilder sql = new StringBuilder();
-        List<Object> params = new ArrayList<>();
-
-        // Build UPDATE ... SET
-        sql.append("UPDATE ");
-        sql.append(leftQuotedIdentifier()).append(entity.tableName()).append(rightQuotedIdentifier());
-        sql.append(" SET ");
-
-        String delimiter = "";
-        for (Map.Entry<String, Object> entry : setValues.entrySet()) {
-            sql.append(delimiter);
-            sql.append(leftQuotedIdentifier()).append(entry.getKey()).append(rightQuotedIdentifier());
-            sql.append(" = ?");
-            params.add(entry.getValue());
-            delimiter = ", ";
-        }
-
-        // Build WHERE
-        if (whereCondition != null) {
-            sql.append(" WHERE ");
-            appendWhereCondition(sql, params, whereCondition, entity);
-        }
-
-        return new UpdateSqlStatement(sql.toString(), params);
     }
 
     private class WhereOperator<R> extends PathOperatorImpl<T, R, UpdateWhereStep<T>> {

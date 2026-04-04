@@ -1,5 +1,8 @@
 package io.github.nextentity.jdbc;
 
+import javax.sql.DataSource;
+import java.sql.DatabaseMetaData;
+import java.sql.SQLException;
 import java.util.List;
 
 /// SQL 方言接口
@@ -14,19 +17,15 @@ public interface SqlDialect {
     /// Returns the left quote character for identifiers.
     ///
     /// @return Left quote character (e.g., "`" for MySQL, "\"" for standard SQL)
-    String leftQuotedIdentifier();
+    default String leftQuotedIdentifier() {
+        return "";
+    }
 
     /// Returns the right quote character for identifiers.
     ///
     /// @return Right quote character (e.g., "`" for MySQL, "\"" for standard SQL)
-    String rightQuotedIdentifier();
-
-    /// Quotes an identifier with the dialect-specific characters.
-    ///
-    /// @param name the identifier name to quote
-    /// @return the quoted identifier
-    default String quoteIdentifier(String name) {
-        return leftQuotedIdentifier() + name + rightQuotedIdentifier();
+    default String rightQuotedIdentifier() {
+        return "";
     }
 
     /// Appends LIMIT and OFFSET clause to the SQL statement.
@@ -91,6 +90,9 @@ public interface SqlDialect {
         return "?";
     }
 
+    /// Default SQL dialect instance.
+    SqlDialect DEFAULT = new DefaultDialect();
+
     /// MySQL SQL dialect instance.
     SqlDialect MYSQL = new MySqlDialect();
 
@@ -99,4 +101,32 @@ public interface SqlDialect {
 
     /// SQL Server SQL dialect instance.
     SqlDialect SQL_SERVER = new SqlServerDialect();
+
+    /// 根据数据源自动检测 SQL 方言
+    ///
+    /// 通过读取数据库元数据中的驱动名称来判断数据库类型：
+    /// - MySQL/MariaDB → MYSQL
+    /// - PostgreSQL → POSTGRESQL
+    /// - SQL Server → SQL_SERVER
+    /// - 其他 → MYSQL（默认）
+    ///
+    /// @param dataSource 数据源
+    /// @return 对应的 SQL 方言实例
+    /// @throws SQLException 如果获取数据库连接失败
+    static SqlDialect detectFromDataSource(DataSource dataSource) throws SQLException {
+        try (var connection = dataSource.getConnection()) {
+            DatabaseMetaData metaData = connection.getMetaData();
+            String driverName = metaData.getDriverName().toLowerCase();
+
+            if (driverName.contains("mysql") || driverName.contains("maria")) {
+                return MYSQL;
+            } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
+                return SQL_SERVER;
+            } else if (driverName.contains("postgresql")) {
+                return POSTGRESQL;
+            } else {
+                return DEFAULT;
+            }
+        }
+    }
 }

@@ -3,13 +3,10 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
 import java.sql.PreparedStatement;
-import java.util.ArrayList;
-import java.util.List;
 
 /// JDBC 条件删除构建器实现。
 ///
@@ -20,11 +17,14 @@ import java.util.List;
 /// @since 2.1
 public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements DeleteWhereStep<T> {
 
+    private final JdbcUpdateSqlBuilder sqlBuilder;
+
     public JdbcDeleteWhereStep(Class<T> entityType,
                                Metamodel metamodel,
                                ConnectionProvider connectionProvider,
-                               SqlDialect sqlDialect) {
-        super(entityType, metamodel, connectionProvider, sqlDialect);
+                               JdbcUpdateSqlBuilder sqlBuilder) {
+        super(entityType, metamodel, connectionProvider);
+        this.sqlBuilder = sqlBuilder;
     }
 
     @Override
@@ -75,8 +75,8 @@ public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements D
 
     @Override
     public int execute() {
-        EntityType entity = getEntityType();
-        DeleteSqlStatement sql = buildDeleteSql(entity);
+        DeleteSqlStatement sql = sqlBuilder.buildConditionalDeleteStatement(
+                getEntityType(), metamodel, whereCondition);
 
         return executeInTransaction(connection -> {
             sql.debug();
@@ -85,23 +85,6 @@ public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements D
                 return statement.executeUpdate();
             }
         });
-    }
-
-    private DeleteSqlStatement buildDeleteSql(EntityType entity) {
-        StringBuilder sql = new StringBuilder();
-        List<Object> params = new ArrayList<>();
-
-        // Build DELETE FROM
-        sql.append("DELETE FROM ");
-        sql.append(leftQuotedIdentifier()).append(entity.tableName()).append(rightQuotedIdentifier());
-
-        // Build WHERE
-        if (whereCondition != null) {
-            sql.append(" WHERE ");
-            appendWhereCondition(sql, params, whereCondition, entity);
-        }
-
-        return new DeleteSqlStatement(sql.toString(), params);
     }
 
     private class WhereOperator<R> extends PathOperatorImpl<T, R, DeleteWhereStep<T>> {

@@ -42,17 +42,14 @@ import java.util.function.Supplier;
 /// @param queryExecutor    查询执行器，用于执行 SELECT 查询
 /// @param updateExecutor   更新执行器，用于执行 INSERT、UPDATE、DELETE 操作
 /// @param entityManager    JPA 实体管理器（JPA 模式时使用，JDBC 模式为 null）
-/// @param connectionProvider 数据库连接提供者（JDBC 模式时使用，JPA 模式为 null）
-/// @param sqlDialect       SQL 方言（JDBC 模式时使用，用于生成特定数据库的 SQL）
 /// @author HuangChengwei
 /// @since 1.0.0
 public record DefaultNextEntityFactory(
         Metamodel metamodel,
         QueryExecutor queryExecutor,
         UpdateExecutor updateExecutor,
-        @Nullable EntityManager entityManager,
-        @Nullable ConnectionProvider connectionProvider,
-        @Nullable SqlDialect sqlDialect
+        @Nullable
+        EntityManager entityManager
 ) implements NextEntityFactory {
 
     /// 创建基于 JDBC 的 NextEntity 工厂。
@@ -66,29 +63,26 @@ public record DefaultNextEntityFactory(
     /// @return JDBC 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
     public static DefaultNextEntityFactory jdbc(JdbcTemplate jdbcTemplate) {
-        SqlDialectSelector sqlDialectSelector = new SqlDialectSelector();
-        DataSource dataSource = jdbcTemplate.getDataSource();
+        DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
+        SqlDialect sqlDialect;
         try {
-            sqlDialectSelector.setByDataSource(Objects.requireNonNull(dataSource));
+            sqlDialect = SqlDialect.detectFromDataSource(dataSource);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
+
         Metamodel metamodel = JpaMetamodel.of();
         ConnectionProvider connectionProvider = new NoneTransactionProvider(jdbcTemplate);
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
 
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, connectionProvider, new JdbcResultCollector());
-        JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(sqlDialectSelector, connectionProvider, metamodel);
-
-        // Determine SQL dialect from the selector
-        SqlDialect sqlDialect = detectSqlDialect(sqlDialectSelector);
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(sqlBuilder, connectionProvider, metamodel);
 
         return new DefaultNextEntityFactory(
                 metamodel,
                 jdbcQueryExecutor,
                 jdbcUpdateExecutor,
-                null,
-                connectionProvider,
-                sqlDialect
+                null
         );
     }
 
@@ -159,18 +153,22 @@ public record DefaultNextEntityFactory(
     /// @throws SqlException 如果无法确定数据库类型
     public static DefaultNextEntityFactory jpa(EntityManager entityManager,
                                                JdbcTemplate jdbcTemplate) {
-        SqlDialectSelector sqlDialectSelector = new SqlDialectSelector();
-        DataSource dataSource = jdbcTemplate.getDataSource();
+        DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
+        SqlDialect sqlDialect;
         try {
-            sqlDialectSelector.setByDataSource(Objects.requireNonNull(dataSource));
+            sqlDialect = SqlDialect.detectFromDataSource(dataSource);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
+
         Metamodel metamodel = JpaMetamodel.of();
-
         NoneTransactionProvider noneTransactionProvider = new NoneTransactionProvider(jdbcTemplate);
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
 
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlDialectSelector, noneTransactionProvider, new JdbcResultCollector());
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel,
+                sqlBuilder,
+                noneTransactionProvider,
+                new JdbcResultCollector());
 
         JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(
                 entityManager, metamodel, jdbcQueryExecutor);
@@ -180,22 +178,8 @@ public record DefaultNextEntityFactory(
                 metamodel,
                 jpaQueryExecutor,
                 jpaUpdateExecutor,
-                entityManager,
-                null,
-                null
+                entityManager
         );
-    }
-
-    /// 检测 SQL 方言。
-    ///
-    /// 根据数据库选择器确定数据库类型，
-    /// 默认返回 MySQL 方言。
-    ///
-    /// @param selector SQL 方言选择器
-    /// @return SQL 方言
-    private static SqlDialect detectSqlDialect(SqlDialectSelector selector) {
-        // Default to MySQL dialect, actual detection would require more information
-        return SqlDialect.MYSQL;
     }
 
     /// 创建指定实体类型的查询构建器。

@@ -35,7 +35,6 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
     private final Metamodel metamodel;
-    private final SqlDialect sqlDialect;
 
     /// 构造JDBC更新执行器
     ///
@@ -43,20 +42,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param connectionProvider 连接提供者，用于获取数据库连接
     /// @param metamodel 元模型，用于提供实体元数据信息
     public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
-        this(sqlBuilder, connectionProvider, metamodel, SqlDialect.MYSQL);
-    }
-
-    /// 构造JDBC更新执行器
-    ///
-    /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
-    /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param metamodel 元模型，用于提供实体元数据信息
-    /// @param sqlDialect SQL方言，用于生成条件更新/删除的SQL
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel, SqlDialect sqlDialect) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.metamodel = metamodel;
-        this.sqlDialect = sqlDialect;
     }
 
     /// 插入所有实体
@@ -96,25 +84,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param entityClass 实体类类型
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
-        boolean excludeNull = false;
-        updateAll(entities, entityClass, excludeNull);
-    }
-
-    /// 更新所有实体
-    ///
-    /// @param <T> 实体类型
-    /// @param entities 实体集合
-    /// @param entityClass 实体类类型
-    /// @param excludeNull 是否排除空值
-    /// @return 更新后的实体列表
-    protected <T> @NonNull List<@NonNull T> updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass, boolean excludeNull) {
+        var excludeNull = false;
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
-            return list;
+            return;
         }
         EntityType entityType = metamodel.getEntity(entityClass);
-        BatchSqlStatement sql = sqlBuilder.buildUpdateStatement(entities, entityType, excludeNull);
-        return execute(connection -> {
+        BatchSqlStatement sql = sqlBuilder.buildUpdateStatement(entities, entityType);
+        execute(connection -> {
             sql.debug();
             //noinspection SqlSourceToSinkFlow
             try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
@@ -203,7 +180,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @return 条件更新构建器实例
     @Override
     public <T> UpdateSetStep<T> update(@NonNull Class<T> entityType) {
-        return new JdbcUpdateWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
+        return new JdbcUpdateWhereStep<>(entityType, metamodel, connectionProvider, sqlBuilder);
     }
 
     /// 创建条件删除构建器
@@ -213,7 +190,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @return 条件删除构建器实例
     @Override
     public <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType) {
-        return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
+        return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlBuilder);
     }
 
     /// 设置新版本号

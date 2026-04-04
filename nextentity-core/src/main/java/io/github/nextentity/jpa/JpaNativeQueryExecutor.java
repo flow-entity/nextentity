@@ -6,7 +6,7 @@ import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
-import io.github.nextentity.jdbc.JdbcQueryExecutor.QuerySqlBuilder;
+import io.github.nextentity.jdbc.QuerySqlBuilder;
 import io.github.nextentity.jdbc.QueryContext;
 import io.github.nextentity.jdbc.QuerySqlStatement;
 import jakarta.persistence.EntityManager;
@@ -41,7 +41,7 @@ public class JpaNativeQueryExecutor implements QueryExecutor {
 
     private <T> List<T> queryByNativeSql(@NonNull QueryStructure queryStructure) {
         QueryContext context = QueryContext.create(queryStructure, metamodel, true);
-        QuerySqlStatement preparedSql = sqlBuilder.build(context);
+        QuerySqlStatement preparedSql = sqlBuilder.buildQueryStatement(context);
         jakarta.persistence.Query query = entityManager.createNativeQuery(preparedSql.sql());
         int position = 0;
         for (Object arg : preparedSql.parameters()) {

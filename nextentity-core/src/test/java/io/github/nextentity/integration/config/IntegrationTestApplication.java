@@ -35,30 +35,17 @@ public class IntegrationTestApplication {
     @Bean
     public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
-        SqlDialectSelector dialectSelector = new SqlDialectSelector();
         SqlDialect sqlDialect;
         try {
-            dialectSelector.setByDataSource(dataSource);
-            sqlDialect = detectSqlDialect(dataSource);
+            sqlDialect = SqlDialect.detectFromDataSource(dataSource);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
-        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
-        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(dialectSelector, connectionProvider, metamodel, sqlDialect);
+        SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
+        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(sqlBuilder, connectionProvider, metamodel);
         return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jdbc");
-    }
-
-    private SqlDialect detectSqlDialect(DataSource dataSource) throws SQLException {
-        String driverName = dataSource.getConnection().getMetaData().getDriverName().toLowerCase();
-        if (driverName.contains("mysql") || driverName.contains("maria")) {
-            return SqlDialect.MYSQL;
-        } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
-            return SqlDialect.SQL_SERVER;
-        } else if (driverName.contains("postgresql")) {
-            return SqlDialect.POSTGRESQL;
-        }
-        return SqlDialect.MYSQL; // default
     }
 
     @Bean
@@ -68,14 +55,15 @@ public class IntegrationTestApplication {
                                                             TransactionTemplate transactionTemplate) {
 
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
-        SqlDialectSelector dialectSelector = new SqlDialectSelector();
+        SqlDialect sqlDialect;
         try {
-            dialectSelector.setByDataSource(dataSource);
+            sqlDialect = SqlDialect.detectFromDataSource(dataSource);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
         JpaUpdateExecutor updateExecutor = new JpaUpdateExecutor(entityManager, metamodel, new JpaTransactionTemplate() {
             @Override
