@@ -19,7 +19,7 @@ class SubQueryEntityTest {
         @Test
         void subSelectSql_ShouldReturnConstructorValue() {
             // given
-            String sql = "SELECT * FROM view_entity";
+            String sql = "select * from view_entity";
             SubQueryEntity entity = new SubQueryEntity(TestEntity.class, "view_entity",
                     (e, t) -> null, sql);
 
@@ -42,7 +42,7 @@ class SubQueryEntityTest {
         void shouldInheritFromSimpleEntity() {
             // given
             SubQueryEntity entity = new SubQueryEntity(TestEntity.class, "test_table",
-                    (e, t) -> null, "SELECT * FROM test");
+                    (e, t) -> null, "select * from test");
 
             // when & then
             assertThat(entity.type()).isEqualTo(TestEntity.class);
@@ -57,7 +57,7 @@ class SubQueryEntityTest {
         void shouldImplementSubQueryEntityType() {
             // given
             SubQueryEntity entity = new SubQueryEntity(TestEntity.class, "test_table",
-                    (e, t) -> null, "SELECT * FROM test");
+                    (e, t) -> null, "select * from test");
 
             // when & then
             assertThat(entity).isInstanceOf(SubQueryEntityType.class);

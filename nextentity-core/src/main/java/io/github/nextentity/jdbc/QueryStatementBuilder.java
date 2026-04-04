@@ -481,7 +481,7 @@ public class QueryStatementBuilder {
 
     protected void appendOperator(Operator jdbcOperator) {
         String sign = jdbcOperator.sign();
-        // If it starts with a letter, it might be a function name - use dialect mapping
+        // 如果以字母开头，可能是函数名 - 使用方言映射
         if (Character.isLetter(sign.charAt(0))) {
             sign = dialect.functionName(sign);
         }

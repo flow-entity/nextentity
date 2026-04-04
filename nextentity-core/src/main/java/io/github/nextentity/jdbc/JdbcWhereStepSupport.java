@@ -7,11 +7,11 @@ import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
 import java.sql.SQLException;
 import java.util.List;
 
-/// Base class for JDBC conditional operations.
+/// JDBC 条件操作基类。
 ///
-/// Provides common infrastructure for WHERE step implementations.
+/// 提供 WHERE 步骤实现的公共基础设施。
 ///
-/// @param <T> Entity type
+/// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
 abstract class JdbcWhereStepSupport<T> {

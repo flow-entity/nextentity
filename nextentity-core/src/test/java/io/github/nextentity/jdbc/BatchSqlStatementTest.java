@@ -20,7 +20,7 @@ class BatchSqlStatementTest {
     @Test
     void batchSqlStatement_CreatesWithSqlAndParameters() {
         // given
-        String sql = "INSERT INTO users (name) VALUES (?)";
+        String sql = "insert into users (name) values (?)";
         List<List<Object>> params = Arrays.asList(
                 Arrays.asList("user1"),
                 Arrays.asList("user2")
@@ -36,7 +36,7 @@ class BatchSqlStatementTest {
     @Test
     void batchSqlStatement_Sql_ReturnsExactSql() {
         // given
-        String sql = "UPDATE users SET name = ? WHERE id = ?";
+        String sql = "update users set name = ? where id = ?";
 
         // when
         BatchSqlStatement statement = new BatchSqlStatement(sql, Collections.emptyList());
@@ -54,7 +54,7 @@ class BatchSqlStatementTest {
         );
 
         // when
-        BatchSqlStatement statement = new BatchSqlStatement("UPDATE ?", params);
+        BatchSqlStatement statement = new BatchSqlStatement("update ?", params);
 
         // then
         assertThat(statement.parameters()).hasSize(2);
@@ -63,7 +63,7 @@ class BatchSqlStatementTest {
     @Test
     void batchSqlStatement_EmptyParameters() {
         // given
-        String sql = "DELETE FROM users";
+        String sql = "delete from users";
 
         // when
         BatchSqlStatement statement = new BatchSqlStatement(sql, Collections.emptyList());

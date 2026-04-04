@@ -25,7 +25,7 @@ class InsertSqlStatementTest {
         void insertSqlStatement_CreatesWithAllFields() {
             // given
             List<Object> entities = Arrays.asList("entity1", "entity2");
-            String sql = "INSERT INTO users (name) VALUES (?)";
+            String sql = "insert into users (name) values (?)";
             List<List<Object>> params = Arrays.asList(
                     Collections.singletonList("name1"),
                     Collections.singletonList("name2")

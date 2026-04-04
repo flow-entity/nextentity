@@ -30,13 +30,6 @@ public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements Del
         this.transactionTemplate = transactionTemplate;
     }
 
-    // Backward compatible constructor
-    public JpaDeleteWhereStep(Class<T> entityClass,
-                              Metamodel metamodel,
-                              EntityManager entityManager) {
-        this(entityClass, metamodel, entityManager, DefaultTransactionTemplate.of());
-    }
-
     @Override
     public <N> ExpressionBuilder.PathOperator<T, N, ? extends DeleteWhereStep<T>> where(PathRef<T, N> path) {
         return new WhereOperator<>(PathNode.of(path));

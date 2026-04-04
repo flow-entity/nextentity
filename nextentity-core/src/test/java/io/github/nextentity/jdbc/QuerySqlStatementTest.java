@@ -21,7 +21,7 @@ class QuerySqlStatementTest {
     @Test
     void querySqlStatement_CreatesWithSqlAndParameters() {
         // given
-        String sql = "SELECT * FROM users WHERE id = ?";
+        String sql = "select * from users where id = ?";
         List<Object> params = Arrays.asList(1, "test");
 
         // when
@@ -35,7 +35,7 @@ class QuerySqlStatementTest {
     @Test
     void querySqlStatement_Sql_ReturnsExactSql() {
         // given
-        String sql = "INSERT INTO users (name) VALUES (?)";
+        String sql = "insert into users (name) values (?)";
 
         // when
         QuerySqlStatement statement = new QuerySqlStatement(sql, Collections.emptyList());
@@ -50,7 +50,7 @@ class QuerySqlStatementTest {
         List<String> params = Arrays.asList("a", "b", "c");
 
         // when
-        QuerySqlStatement statement = new QuerySqlStatement("SELECT ?", params);
+        QuerySqlStatement statement = new QuerySqlStatement("select ?", params);
 
         // then
         assertThat(statement.parameters()).hasSize(3);
@@ -59,7 +59,7 @@ class QuerySqlStatementTest {
     @Test
     void querySqlStatement_ToString_ReturnsSql() {
         // given
-        String sql = "SELECT * FROM users";
+        String sql = "select * from users";
 
         // when
         QuerySqlStatement statement = new QuerySqlStatement(sql, Collections.emptyList());
@@ -71,7 +71,7 @@ class QuerySqlStatementTest {
     @Test
     void querySqlStatement_EmptyParameters() {
         // given
-        String sql = "SELECT 1";
+        String sql = "select 1";
 
         // when
         QuerySqlStatement statement = new QuerySqlStatement(sql, Collections.emptyList());

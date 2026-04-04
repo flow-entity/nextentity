@@ -17,7 +17,7 @@ import java.util.List;
 public final class TypeCastUtil {
 
     private TypeCastUtil() {
-        // Utility class, prevent instantiation
+        // 工具类，防止实例化
     }
 
     ///
@@ -54,18 +54,6 @@ public final class TypeCastUtil {
     ///
     public static <T> Class<T> cast(Class<?> resolve) {
         return unsafeCast(resolve);
-    }
-
-    ///
-    /// 将 Expression 转换为 TypedExpression。
-    ///
-    /// @param expression 要转换的表达式
-    /// @param <T> 实体类型
-    /// @param <U> 结果类型
-    /// @return 转换后的类型表达式
-    ///
-    public static <T, U> Expression<T, U> cast(Expression expression) {
-        return unsafeCast(expression);
     }
 
     ///

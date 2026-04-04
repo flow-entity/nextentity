@@ -31,13 +31,6 @@ public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements Upd
         this.transactionTemplate = transactionTemplate;
     }
 
-    // Backward compatible constructor
-    public JpaUpdateWhereStep(Class<T> entityClass,
-                              Metamodel metamodel,
-                              EntityManager entityManager) {
-        this(entityClass, metamodel, entityManager, DefaultTransactionTemplate.of());
-    }
-
     @Override
     public <U> UpdateSetStep<T> set(PathRef<T, U> path, U value) {
         setValues.add(new SetValue(getAttributeName(PathNode.of(path)), value));
