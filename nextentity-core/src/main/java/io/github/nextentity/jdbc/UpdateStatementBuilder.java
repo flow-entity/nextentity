@@ -3,7 +3,6 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.util.ImmutableArray;
-import io.github.nextentity.core.util.Iterators;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,26 +17,16 @@ import java.util.Objects;
 /// @author HuangChengwei
 /// @since 2.0
 ///
-public class UpdateStatementBuilder {
+public class UpdateStatementBuilder extends AbstractBatchStatementBuilder {
 
-    protected final StringBuilder sql = new StringBuilder();
     protected final List<EntityAttribute> paramAttr = new ArrayList<>();
-    protected final SqlDialect dialect;
     protected final Iterable<?> entities;
     protected final EntitySchema entityType;
 
     public UpdateStatementBuilder(Iterable<?> entities, EntitySchema entityType, SqlDialect dialect) {
+        super(dialect);
         this.entities = entities;
         this.entityType = entityType;
-        this.dialect = dialect;
-    }
-
-    protected String leftQuotedIdentifier() {
-        return dialect.leftQuotedIdentifier();
-    }
-
-    protected String rightQuotedIdentifier() {
-        return dialect.rightQuotedIdentifier();
     }
 
     /// 构建更新语句
@@ -109,17 +98,5 @@ public class UpdateStatementBuilder {
     protected BatchSqlStatement createStatement() {
         Iterable<? extends Iterable<?>> parameters = getParameters(entities, paramAttr);
         return new BatchSqlStatement(sql.toString(), parameters);
-    }
-
-    /// 获取参数列表
-    protected Iterable<? extends Iterable<?>> getParameters(Iterable<?> entities,
-                                                            Iterable<? extends EntityAttribute> attributes) {
-        return Iterators.map(entities, entity -> Iterators.map(attributes, attr -> {
-            Object value = attr.getDatabaseValue(entity);
-            if (attr.isVersion() && value == null) {
-                value = 0;
-            }
-            return value == null ? new NullParameter(attr.type()) : value;
-        }));
     }
 }

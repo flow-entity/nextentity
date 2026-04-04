@@ -3,10 +3,8 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableArray;
-import io.github.nextentity.core.util.Iterators;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 ///
@@ -18,29 +16,18 @@ import java.util.List;
 /// @author HuangChengwei
 /// @since 2.0
 ///
-public class InsertStatementBuilder {
+public class InsertStatementBuilder extends AbstractBatchStatementBuilder {
 
-    protected final StringBuilder sql = new StringBuilder();
-    protected final SqlDialect dialect;
     protected final Iterable<?> entities;
     protected final EntityType entityType;
     protected final List<EntityAttribute> columns = new ArrayList<>();
-
     protected boolean generateKey;
 
     public InsertStatementBuilder(Iterable<?> entities, EntityType entityType, SqlDialect dialect) {
+        super(dialect);
         this.entities = entities;
         this.entityType = entityType;
-        this.dialect = dialect;
         this.generateKey = hasNullId();
-    }
-
-    protected String leftQuotedIdentifier() {
-        return dialect.leftQuotedIdentifier();
-    }
-
-    protected String rightQuotedIdentifier() {
-        return dialect.rightQuotedIdentifier();
     }
 
     /// 检查是否存在空 ID
@@ -106,17 +93,5 @@ public class InsertStatementBuilder {
     protected InsertSqlStatement createStatement() {
         Iterable<? extends Iterable<?>> parameters = getParameters(entities, columns);
         return new InsertSqlStatement(entities, sql.toString(), parameters, generateKey);
-    }
-
-    /// 获取参数列表
-    protected Iterable<? extends Iterable<?>> getParameters(Iterable<?> entities,
-                                                            Iterable<? extends EntityAttribute> attributes) {
-        return Iterators.map(entities, entity -> Iterators.map(attributes, attr -> {
-            Object value = attr.getDatabaseValue(entity);
-            if (attr.isVersion() && value == null) {
-                value = 0;
-            }
-            return value == null ? new NullParameter(attr.type()) : value;
-        }));
     }
 }

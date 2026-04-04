@@ -17,16 +17,12 @@ public interface SqlDialect {
     /// Returns the left quote character for identifiers.
     ///
     /// @return Left quote character (e.g., "`" for MySQL, "\"" for standard SQL)
-    default String leftQuotedIdentifier() {
-        return "";
-    }
+    String leftQuotedIdentifier();
 
     /// Returns the right quote character for identifiers.
     ///
     /// @return Right quote character (e.g., "`" for MySQL, "\"" for standard SQL)
-    default String rightQuotedIdentifier() {
-        return "";
-    }
+    String rightQuotedIdentifier();
 
     /// Appends LIMIT and OFFSET clause to the SQL statement.
     ///

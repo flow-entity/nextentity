@@ -19,5 +19,5 @@ public class MySqlDialect implements SqlDialect {
     public String rightQuotedIdentifier() {
         return "`";
     }
-    // 其他方法使用默认实现
+
 }

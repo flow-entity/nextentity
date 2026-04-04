@@ -15,7 +15,6 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 
-///
 /// 查询 SQL 构建器实现类
 ///
 /// @author HuangChengwei
@@ -436,14 +435,14 @@ public class QueryStatementBuilder {
         appendExpression(leftOperand);
         appendOperator(operator);
         appendBlank();
-        ExpressionNode seconded = operation.secondOperand();
-        seconded = convertLiteralNode(convertor, seconded);
-        appendExpression(seconded);
+        ExpressionNode second = Objects.requireNonNull(operation.secondOperand());
+        second = convertLiteralNode(convertor, second);
+        appendExpression(second);
         appendOperator(Operator.AND);
         appendBlank();
-        ExpressionNode thirded = operation.thirdOperand();
-        thirded = convertLiteralNode(convertor, thirded);
-        appendExpression(thirded);
+        ExpressionNode third = Objects.requireNonNull(operation.thirdOperand());
+        third = convertLiteralNode(convertor, third);
+        appendExpression(third);
     }
 
     protected void appendLogicalOperation(OperatorNode operation) {

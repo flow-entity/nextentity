@@ -3,6 +3,7 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
