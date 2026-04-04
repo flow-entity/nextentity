@@ -5,16 +5,14 @@ import io.github.nextentity.core.util.ImmutableList;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/// {@link Attribute} 的简单实现。
 ///
-/// Simple implementation of {@link Attribute}.
-/// <p>
-/// This class provides a concrete implementation for attribute metadata
-/// including name, type, getter/setter methods, field reference, and
-/// path computation for nested attributes.
+/// 该类为属性元数据提供了具体实现
+/// 包括名称、类型、getter/setter 方法、字段引用和
+/// 嵌套属性的路径计算。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class SimpleAttribute implements Attribute {
 
     private Class<?> type;
@@ -33,23 +31,19 @@ public class SimpleAttribute implements Attribute {
 
     private volatile ImmutableList<String> path;
 
-    ///
-    /// Creates an empty SimpleAttribute instance.
-    ///
+    /// 创建一个空的SimpleAttribute实例。
     public SimpleAttribute() {
     }
 
+    /// 使用所有属性创建一个新的SimpleAttribute实例。
     ///
-    /// Creates a new SimpleAttribute instance with all properties.
-    ///
-    /// @param type the attribute type
-    /// @param name the attribute name
-    /// @param getter the getter method
-    /// @param setter the setter method
-    /// @param field the field
-    /// @param declareBy the declaring schema
-    /// @param ordinal the ordinal position
-    ///
+    /// @param type 属性类型
+    /// @param name 属性名称
+    /// @param getter getter方法
+    /// @param setter setter方法
+    /// @param field 字段
+    /// @param declareBy 声明模式
+    /// @param ordinal 序号位置
     public SimpleAttribute(Class<?> type, String name, Method getter, Method setter, Field field, Schema declareBy, int ordinal) {
         this.type = type;
         this.name = name;
@@ -60,11 +54,9 @@ public class SimpleAttribute implements Attribute {
         this.ordinal = ordinal;
     }
 
+    /// 从另一个属性复制属性。
     ///
-    /// Copies properties from another attribute.
-    ///
-    /// @param attribute the source attribute
-    ///
+    /// @param attribute 源属性
     public void setAttribute(Attribute attribute) {
         this.type = attribute.type();
         this.name = attribute.name();
@@ -99,14 +91,12 @@ public class SimpleAttribute implements Attribute {
         return this.declareBy;
     }
 
+    /// 计算此属性的路径。
     ///
-    /// Computes the path for this attribute.
-    /// <p>
-    /// For nested attributes, the path includes parent attribute names.
-    /// Uses double-checked locking for thread-safe lazy initialization.
+    /// 对于嵌套属性，路径包含父属性名称。
+    /// 使用双重检查锁定进行线程安全的延迟初始化。
     ///
-    /// @return the attribute path as an immutable list of names
-    ///
+    /// @return 属性路径作为不可变名称列表
     @Override
     public ImmutableList<String> path() {
         if(path == null) {
@@ -134,78 +124,64 @@ public class SimpleAttribute implements Attribute {
         return this.ordinal;
     }
 
+    /// 设置属性类型。
     ///
-    /// Sets the attribute type.
-    ///
-    /// @param type the type
-    /// @return this instance for chaining
-    ///
+    /// @param type 类型
+    /// @return 此实例用于链式调用
     public SimpleAttribute type(Class<?> type) {
         this.type = type;
         return this;
     }
 
+    /// 设置属性名称。
     ///
-    /// Sets the attribute name.
-    ///
-    /// @param name the name
-    /// @return this instance for chaining
-    ///
+    /// @param name 名称
+    /// @return 此实例用于链式调用
     public SimpleAttribute name(String name) {
         this.name = name;
         return this;
     }
 
+    /// 设置getter方法。
     ///
-    /// Sets the getter method.
-    ///
-    /// @param getter the getter method
-    /// @return this instance for chaining
-    ///
+    /// @param getter getter方法
+    /// @return 此实例用于链式调用
     public SimpleAttribute getter(Method getter) {
         this.getter = getter;
         return this;
     }
 
+    /// 设置setter方法。
     ///
-    /// Sets the setter method.
-    ///
-    /// @param setter the setter method
-    /// @return this instance for chaining
-    ///
+    /// @param setter setter方法
+    /// @return 此实例用于链式调用
     public SimpleAttribute setter(Method setter) {
         this.setter = setter;
         return this;
     }
 
+    /// 设置字段。
     ///
-    /// Sets the field.
-    ///
-    /// @param field the field
-    /// @return this instance for chaining
-    ///
+    /// @param field 字段
+    /// @return 此实例用于链式调用
     public SimpleAttribute field(Field field) {
         this.field = field;
         return this;
     }
 
+    /// 设置声明模式。
     ///
-    /// Sets the declaring schema.
-    ///
-    /// @param declareBy the declaring schema
-    /// @return this instance for chaining
-    ///
+    /// @param declareBy 声明模式
+    /// @return 此实例用于链式调用
     public SimpleAttribute declareBy(Schema declareBy) {
         this.declareBy = declareBy;
         return this;
     }
 
+    /// 设置序号位置。
     ///
-    /// Sets the ordinal position.
-    ///
-    /// @param ordinal the ordinal
-    /// @return this instance for chaining
-    ///
+    /// @param ordinal 序号
+    /// @return 此实例用于链式调用
     public SimpleAttribute ordinal(int ordinal) {
         this.ordinal = ordinal;
         return this;

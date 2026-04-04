@@ -9,94 +9,72 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/// 表示模式字段/属性的属性接口。
 ///
-/// Attribute interface representing a field/property of a schema.
-/// <p>
-/// This interface provides metadata about a single attribute including:
-/// <ul>
-///   <li>Name and type</li>
-///   <li>Getter and setter methods</li>
-///   <li>Field reference</li>
-///   <li>Declaring schema</li>
-///   <li>Path for nested attributes</li>
-/// </ul>
-/// <p>
-/// Also provides methods to get and set attribute values on entity instances.
+/// 该接口提供关于单个属性的元数据，包括：
+/// - 名称和类型
+/// - getter 和 setter 方法
+/// - 字段引用
+/// - 声明模式
+/// - 嵌套属性的路径
+///
+/// 还提供获取和设置实体实例上属性值的方法。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public non-sealed interface Attribute extends ReflectType {
 
+    /// 获取属性名称。
     ///
-    /// Gets the attribute name.
-    ///
-    /// @return the name
-    ///
+    /// @return 名称
     String name();
 
+    /// 获取此属性的 getter 方法。
     ///
-    /// Gets the getter method for this attribute.
-    ///
-    /// @return the getter method, or null if not available
-    ///
+    /// @return getter 方法，如果不可用则返回 null
     Method getter();
 
+    /// 获取此属性的 setter 方法。
     ///
-    /// Gets the setter method for this attribute.
-    ///
-    /// @return the setter method, or null if not available
-    ///
+    /// @return setter 方法，如果不可用则返回 null
     Method setter();
 
+    /// 获取此属性的字段。
     ///
-    /// Gets the field for this attribute.
-    ///
-    /// @return the field, or null if not available
-    ///
+    /// @return 字段，如果不可用则返回 null
     Field field();
 
+    /// 获取声明此属性的模式。
     ///
-    /// Gets the schema that declares this attribute.
-    ///
-    /// @return the declaring schema
-    ///
+    /// @return 声明模式
     Schema declareBy();
 
+    /// 获取此属性的路径。
     ///
-    /// Gets the path of this attribute.
-    /// <p>
-    /// For nested attributes, the path includes all parent attribute names.
+    /// 对于嵌套属性，路径包括所有父属性名称。
     ///
-    /// @return the attribute path as an immutable list of names
-    ///
+    /// @return 属性路径，作为名称的不可变列表
     ImmutableList<String> path();
 
+    /// 获取此属性的序号位置。
     ///
-    /// Gets the ordinal position of this attribute.
-    ///
-    /// @return the ordinal
-    ///
+    /// @return 序号
     int ordinal();
 
+    /// 获取此属性在路径层次结构中的深度。
     ///
-    /// Gets the depth of this attribute in the path hierarchy.
-    ///
-    /// @return the path depth
-    ///
+    /// @return 路径深度
     default int deep() {
         return path().size();
     }
 
+    /// 从实体实例获取属性值。
     ///
-    /// Gets the attribute value from an entity instance.
-    /// <p>
-    /// Uses the getter method if accessible, otherwise accesses the field directly.
+    /// 如果 getter 方法可访问则使用它，否则直接访问字段。
     ///
-    /// @param entity the entity instance
-    /// @return the attribute value
-    /// @throws ReflectiveException if access fails
-    ///
+    /// @param entity 实体实例
+    /// @return 属性值
+    /// @throws ReflectiveException 如果访问失败
     default Object get(Object entity) {
         try {
             Method getter = getter();
@@ -110,15 +88,13 @@ public non-sealed interface Attribute extends ReflectType {
         }
     }
 
+    /// 在实体实例上设置属性值。
     ///
-    /// Sets the attribute value on an entity instance.
-    /// <p>
-    /// Uses the setter method if accessible, otherwise sets the field directly.
+    /// 如果 setter 方法可访问则使用它，否则直接设置字段。
     ///
-    /// @param entity the entity instance
-    /// @param value the value to set
-    /// @throws ReflectiveException if access fails
-    ///
+    /// @param entity 实体实例
+    /// @param value 要设置的值
+    /// @throws ReflectiveException 如果访问失败
     default void set(Object entity, Object value) {
         try {
             Method setter = setter();

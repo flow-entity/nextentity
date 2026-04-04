@@ -2,37 +2,31 @@ package io.github.nextentity.core.reflect.schema;
 
 import io.github.nextentity.core.util.Lazy;
 
+/// 具有延迟属性构建的模式属性的抽象基类。
 ///
-/// Abstract base class for schema attributes with lazy attribute building.
-/// <p>
-/// This class extends {@link SimpleAttribute} and implements {@link SchemaAttribute}
-/// to provide lazy initialization of nested attributes via the template method
-/// {@link #buildAttributes()}.
-/// <p>
-/// Subclasses implement {@link #buildAttributes()} to define how nested
-/// attributes are constructed.
+/// 该类扩展 {@link SimpleAttribute} 并实现 {@link SchemaAttribute}
+/// 以通过模板方法提供嵌套属性的延迟初始化
+/// {@link #buildAttributes()}。
+///
+/// 子类实现 {@link #buildAttributes()} 来定义如何构建
+/// 嵌套属性。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public abstract class AbstractSchemaAttribute extends SimpleAttribute implements SchemaAttribute {
 
     private final Lazy<Attributes> attributes = new Lazy<>(this::buildAttributes);
 
+    /// 构建此模式属性的嵌套属性。
     ///
-    /// Builds the nested attributes for this schema attribute.
-    /// <p>
-    /// Called lazily when attributes are first accessed.
+    /// 在首次访问属性时延迟调用。
     ///
-    /// @return the built attributes
-    ///
+    /// @return 构建的属性
     protected abstract Attributes buildAttributes();
 
+    /// 获取嵌套属性，如果需要则延迟构建它们。
     ///
-    /// Gets the nested attributes, building them lazily if needed.
-    ///
-    /// @return the nested attributes
-    ///
+    /// @return 嵌套属性
     public Attributes attributes() {
         return attributes.get();
     }
