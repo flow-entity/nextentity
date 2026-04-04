@@ -98,6 +98,9 @@ public interface ExpressionBuilder<T, U, B> {
     /// .where(User::getId).in(1L, 2L, 3L)
     /// ```
     ///
+    /// 注意：空数组（length=0）时，条件恒为 false（相当于 `WHERE 1=0`），
+    /// 查询将不返回任何结果。
+    ///
     /// @param values 值数组
     /// @return 构建器实例
     @SuppressWarnings({"unchecked"})
@@ -117,11 +120,17 @@ public interface ExpressionBuilder<T, U, B> {
 
     /// 在指定值集合中。
     ///
+    /// 注意：空集合（size=0）时，条件恒为 false（相当于 `WHERE 1=0`），
+    /// 查询将不返回任何结果。
+    ///
     /// @param values 值集合
     /// @return 构建器实例
     B in(@NonNull Collection<? extends U> values);
 
     /// 不在指定值数组中。
+    ///
+    /// 注意：空数组（length=0）时，条件恒为 true（相当于 `WHERE 1=1`），
+    /// 该过滤条件对所有行都成立，等同于未添加此条件。
     ///
     /// @param values 值数组
     /// @return 构建器实例
@@ -135,6 +144,9 @@ public interface ExpressionBuilder<T, U, B> {
     B notIn(@NonNull List<? extends Expression<T, U>> expressions);
 
     /// 不在指定值集合中。
+    ///
+    /// 注意：空集合（size=0）时，条件恒为 true（相当于 `WHERE 1=1`），
+    /// 该过滤条件对所有行都成立，等同于未添加此条件。
     ///
     /// @param values 值集合
     /// @return 构建器实例

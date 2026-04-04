@@ -91,6 +91,9 @@ public interface SimpleExpression<T, U> extends Expression<T, U> {
 
     /// 在指定值数组中。
     ///
+    /// 注意：空数组（length=0）时，条件恒为 false（相当于 `WHERE 1=0`），
+    /// 查询将不返回任何结果。
+    ///
     /// @param values 值数组
     /// @return 断言对象
     @SuppressWarnings("unchecked")
@@ -104,11 +107,17 @@ public interface SimpleExpression<T, U> extends Expression<T, U> {
 
     /// 在指定集合中。
     ///
+    /// 注意：空集合（size=0）时，条件恒为 false（相当于 `WHERE 1=0`），
+    /// 查询将不返回任何结果。
+    ///
     /// @param values 值集合
     /// @return 断言对象
     Predicate<T> in(@NonNull Collection<? extends U> values);
 
     /// 不在指定值数组中。
+    ///
+    /// 注意：空数组（length=0）时，条件恒为 true（相当于 `WHERE 1=1`），
+    /// 该过滤条件对所有行都成立，等同于未添加此条件。
     ///
     /// @param values 值数组
     /// @return 断言对象
@@ -122,6 +131,9 @@ public interface SimpleExpression<T, U> extends Expression<T, U> {
     Predicate<T> notIn(@NonNull List<? extends Expression<T, U>> values);
 
     /// 不在指定集合中。
+    ///
+    /// 注意：空集合（size=0）时，条件恒为 true（相当于 `WHERE 1=1`），
+    /// 该过滤条件对所有行都成立，等同于未添加此条件。
     ///
     /// @param values 值集合
     /// @return 断言对象
