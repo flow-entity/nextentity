@@ -16,11 +16,6 @@ import java.util.List;
 /// 请始终确保源类型和目标类型是兼容的。
 public final class TypeCastUtil {
 
-    private TypeCastUtil() {
-        // 工具类，防止实例化
-    }
-
-    ///
     /// 将未知类型的 List 转换为目标类型的 List。
     ///
     /// 当已知列表元素为类型 T 时，此方法是安全的
@@ -29,45 +24,37 @@ public final class TypeCastUtil {
     /// @param expression 要转换的列表
     /// @param <T> 目标元素类型
     /// @return 转换后的列表
-    ///
     public static <T> List<T> cast(List<?> expression) {
         return unsafeCast(expression);
     }
 
-    ///
     /// 将未知类型的 ImmutableArray 转换为目标类型的 ImmutableArray。
     ///
     /// @param expression 要转换的数组
     /// @param <T> 目标元素类型
     /// @return 转换后的数组
-    ///
     public static <T> ImmutableArray<T> cast(ImmutableArray<?> expression) {
         return unsafeCast(expression);
     }
 
-    ///
     /// 将未知类型的 Class 转换为目标类型的 Class。
     ///
     /// @param resolve 要转换的类
     /// @param <T> 目标类型
     /// @return 转换后的类
-    ///
     public static <T> Class<T> cast(Class<?> resolve) {
         return unsafeCast(resolve);
     }
 
-    ///
     /// 将未知类型的 EntityRoot 转换为目标类型的 EntityRoot。
     ///
     /// @param builder 要转换的实体根
     /// @param <T> 目标实体类型
     /// @return 转换后的实体根
-    ///
     public static <T> EntityRoot<T> cast(EntityRoot<?> builder) {
         return unsafeCast(builder);
     }
 
-    ///
     /// 对对象执行未检查的强制转换到目标类型。
     ///
     /// **警告：** 此方法绕过了编译时类型检查。
@@ -89,7 +76,6 @@ public final class TypeCastUtil {
     /// @param object 要转换的对象
     /// @param <T> 目标类型
     /// @return 转换后的对象
-    ///
     @SuppressWarnings("unchecked")
     public static <T> T unsafeCast(@Nullable Object object) {
         return (T) object;
