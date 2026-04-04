@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  /// Provides DbConfig instances for MySQL and PostgreSQL.
  /// <p>
  /// Note: 测试 data reset is no longer automatic. 测试s that modify data
- /// should call {@link Integration测试Context#reset()} in {@code @AfterEach}
+ /// should call {@link IntegrationTestContext#reset()} in {@code @AfterEach}
  /// or at the end of each test 方法.
  /// 
  /// @author HuangChengwei

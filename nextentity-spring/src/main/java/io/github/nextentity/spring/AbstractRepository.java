@@ -165,11 +165,14 @@ public abstract class AbstractRepository<T, ID> {
     ///     .execute();
     /// }</pre>
     ///
+    /// 注意：此方法不支持乐观锁机制。
+    /// 如需乐观锁保护，请使用 {@link #updateAll(Iterable)} 方法。
+    ///
     /// @return 条件更新构建器实例
     /// @since 2.1
     @Transactional
-    public UpdateWhereStep<T> update() {
-        return updateExecutor.updateWhereStep(entityType);
+    public UpdateSetStep<T> update() {
+        return updateExecutor.update(entityType);
     }
 
     /// 创建条件删除构建器，用于带 WHERE 条件的批量删除。
@@ -181,11 +184,14 @@ public abstract class AbstractRepository<T, ID> {
     ///     .execute();
     /// }</pre>
     ///
+    /// 注意：此方法不支持乐观锁机制。
+    /// 如需乐观锁保护，请使用 {@link #deleteAll(Iterable)} 方法。
+    ///
     /// @return 条件删除构建器实例
     /// @since 2.1
     @Transactional
     public DeleteWhereStep<T> delete() {
-        return updateExecutor.deleteWhereStep(entityType);
+        return updateExecutor.delete(entityType);
     }
 
     /// 创建布尔类型字段的路径表达式。

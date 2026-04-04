@@ -32,56 +32,56 @@ import io.github.nextentity.api.PathRef.StringRef;
 /// ```
 ///
 /// @param <T> 实体类型
-/// @param <U> 结果类型
 /// @author HuangChengwei
 /// @since 1.0.0
-public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> {
+public interface Whereable<T, SELF extends Whereable<T, SELF>> {
 
     /// 添加指定的条件断言。
     ///
     /// @param predicate 条件断言
     /// @return WhereStep 实例
-    WhereStep<T, U> where(Expression<T, Boolean> predicate);
+    SELF where(Expression<T, Boolean> predicate);
 
     /// 基于指定路径构建条件。
     ///
     /// @param path 路径
-    /// @param <N> 路径类型
+    /// @param <N>  路径类型
     /// @return PathOperator 实例
-    <N> PathOperator<T, N, ? extends WhereStep<T, U>> where(PathRef<T, N> path);
+    <N> PathOperator<T, N, ? extends SELF> where(PathRef<T, N> path);
 
     /// 基于指定数值路径构建条件。
     ///
     /// @param path 数值路径
-    /// @param <N> 数值类型
+    /// @param <N>  数值类型
     /// @return NumberOperator 实例
-    <N extends Number> NumberOperator<T, N, ? extends WhereStep<T, U>> where(NumberRef<T, N> path);
+    <N extends Number> NumberOperator<T, N, ? extends SELF> where(NumberRef<T, N> path);
 
     /// 基于指定字符串路径构建条件。
     ///
     /// @param path 字符串路径
     /// @return StringOperator 实例
-    StringOperator<T, ? extends WhereStep<T, U>> where(StringRef<T> path);
+    StringOperator<T, ? extends SELF> where(StringRef<T> path);
 
     /// 基于指定路径表达式构建条件。
     ///
     /// @param path 路径表达式
-    /// @param <N> 路径类型
+    /// @param <N>  路径类型
     /// @return PathOperator 实例
-    <N> PathOperator<T, N, ? extends WhereStep<T, U>> where(Path<T, N> path);
+    <N> PathOperator<T, N, ? extends SELF> where(Path<T, N> path);
 
     /// 基于指定数值路径表达式构建条件。
     ///
     /// @param path 数值路径表达式
-    /// @param <N> 数值类型
+    /// @param <N>  数值类型
     /// @return NumberOperator 实例
-    <N extends Number> NumberOperator<T, N, ? extends WhereStep<T, U>> where(NumberPath<T, N> path);
+    <N extends Number> NumberOperator<T, N, ? extends SELF> where(NumberPath<T, N> path);
 
     /// 基于指定字符串路径表达式构建条件。
     ///
     /// @param path 字符串路径表达式
     /// @return StringOperator 实例
-    StringOperator<T, ? extends WhereStep<T, U>> where(StringPath<T> path);
+    StringOperator<T, ? extends SELF> where(StringPath<T> path);
+
 
     /// 基于指定实体路径构建条件，用于访问嵌套实体属性。
     ///
@@ -92,10 +92,8 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     /// ```
     ///
     /// @param path 实体路径
-    /// @param <R> 实体类型（必须实现 Entity 接口）
+    /// @param <R>  实体类型（必须实现 Entity 接口）
     /// @return PathOperator 实例，可继续调用 get() 访问嵌套属性
-    default <R extends Entity> PathOperator<T, R, ? extends WhereStep<T, U>> where(EntityPathRef<T, R> path) {
-        return where((PathRef<T, R>) path);
-    }
+    <R extends Entity> PathOperator<T, R, ? extends SELF> where(EntityPathRef<T, R> path);
 
 }

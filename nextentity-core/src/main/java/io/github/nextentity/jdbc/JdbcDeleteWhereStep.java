@@ -43,6 +43,26 @@ public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements D
     }
 
     @Override
+    public <N> ExpressionBuilder.PathOperator<T, N, ? extends DeleteWhereStep<T>> where(Path<T, N> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, ? extends DeleteWhereStep<T>> where(NumberPath<T, N> path) {
+        return new NumberOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public ExpressionBuilder.StringOperator<T, ? extends DeleteWhereStep<T>> where(StringPath<T> path) {
+        return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public <R extends Entity> ExpressionBuilder.PathOperator<T, R, ? extends DeleteWhereStep<T>> where(PathRef.EntityPathRef<T, R> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
     public DeleteWhereStep<T> where(@NonNull Expression<T, Boolean> predicate) {
         this.whereCondition = ExpressionNodes.getNode(predicate);
         return this;
@@ -60,7 +80,6 @@ public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements D
 
         return executeInTransaction(connection -> {
             sql.debug();
-            //noinspection SqlSourceToSinkFlow
             try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
                 JdbcUtil.setParameters(statement, sql.parameters());
                 return statement.executeUpdate();

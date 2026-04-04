@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.DeleteWhereStep;
-import io.github.nextentity.api.UpdateWhereStep;
+import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
@@ -202,7 +202,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param <T>        实体类型参数
     /// @return 条件更新构建器实例
     @Override
-    public <T> UpdateWhereStep<T> updateWhereStep(@NonNull Class<T> entityType) {
+    public <T> UpdateSetStep<T> update(@NonNull Class<T> entityType) {
         return new JdbcUpdateWhereStep<>(entityType, metamodel, this, connectionProvider, sqlDialect);
     }
 
@@ -212,7 +212,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param <T>        实体类型参数
     /// @return 条件删除构建器实例
     @Override
-    public <T> DeleteWhereStep<T> deleteWhereStep(@NonNull Class<T> entityType) {
+    public <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType) {
         return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
     }
 

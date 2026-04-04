@@ -16,25 +16,34 @@ import java.util.List;
 /// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
-public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements UpdateWhereStep<T> {
+public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements UpdateSetStep<T> {
 
     private final EntityManager entityManager;
+    private final JpaTransactionTemplate transactionTemplate;
     private final List<SetValue> setValues = new ArrayList<>();
 
     public JpaUpdateWhereStep(Class<T> entityClass,
                               Metamodel metamodel,
-                              EntityManager entityManager) {
+                              EntityManager entityManager,
+                              JpaTransactionTemplate transactionTemplate) {
         super(entityClass, metamodel);
         this.entityManager = entityManager;
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    // Backward compatible constructor
+    public JpaUpdateWhereStep(Class<T> entityClass,
+                              Metamodel metamodel,
+                              EntityManager entityManager) {
+        this(entityClass, metamodel, entityManager, DefaultTransactionTemplate.of());
     }
 
     @Override
-    public <U> UpdateWhereStep<T> set(PathRef<T, U> path, U value) {
+    public <U> UpdateSetStep<T> set(PathRef<T, U> path, U value) {
         setValues.add(new SetValue(getAttributeName(PathNode.of(path)), value));
         return this;
     }
 
-    @Override
     public UpdateWhereStep<T> set(String fieldName, Object value) {
         throw new UnsupportedOperationException("Field name based set is not supported in JPA. Use PathRef instead.");
     }
@@ -55,6 +64,26 @@ public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements Upd
     }
 
     @Override
+    public <N> ExpressionBuilder.PathOperator<T, N, ? extends UpdateWhereStep<T>> where(Path<T, N> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, ? extends UpdateWhereStep<T>> where(NumberPath<T, N> path) {
+        return new NumberOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public ExpressionBuilder.StringOperator<T, ? extends UpdateWhereStep<T>> where(StringPath<T> path) {
+        return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public <R extends Entity> ExpressionBuilder.PathOperator<T, R, ? extends UpdateWhereStep<T>> where(PathRef.EntityPathRef<T, R> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
     public UpdateWhereStep<T> where(@NonNull Expression<T, Boolean> predicate) {
         this.whereCondition = ExpressionNodes.getNode(predicate);
         return this;
@@ -71,34 +100,36 @@ public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements Upd
             throw new IllegalStateException("No SET values specified for update");
         }
 
-        String entityName = getJpaEntityName();
-        StringBuilder jpql = new StringBuilder("UPDATE ")
-                .append(entityName).append(" e SET ");
+        return transactionTemplate.executeInTransaction(entityManager, () -> {
+            String entityName = getJpaEntityName();
+            StringBuilder jpql = new StringBuilder("UPDATE ")
+                    .append(entityName).append(" e SET ");
 
-        List<Object> params = new ArrayList<>();
-        int paramIndex = 1;
+            List<Object> params = new ArrayList<>();
+            int paramIndex = 1;
 
-        // Build SET clause
-        String delimiter = "";
-        for (SetValue setValue : setValues) {
-            jpql.append(delimiter).append("e.").append(setValue.attributeName).append(" = ?").append(paramIndex);
-            params.add(setValue.value);
-            paramIndex++;
-            delimiter = ", ";
-        }
+            // Build SET clause
+            String delimiter = "";
+            for (SetValue setValue : setValues) {
+                jpql.append(delimiter).append("e.").append(setValue.attributeName).append(" = ?").append(paramIndex);
+                params.add(setValue.value);
+                paramIndex++;
+                delimiter = ", ";
+            }
 
-        // Build WHERE clause
-        if (whereCondition != null) {
-            jpql.append(" WHERE ");
-            appendWhereCondition(jpql, params, whereCondition, paramIndex);
-        }
+            // Build WHERE clause
+            if (whereCondition != null) {
+                jpql.append(" WHERE ");
+                appendWhereCondition(jpql, params, whereCondition, paramIndex);
+            }
 
-        Query query = entityManager.createQuery(jpql.toString());
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
-        }
+            Query query = entityManager.createQuery(jpql.toString());
+            for (int i = 0; i < params.size(); i++) {
+                query.setParameter(i + 1, params.get(i));
+            }
 
-        return query.executeUpdate();
+            return query.executeUpdate();
+        });
     }
 
     private String getJpaEntityName() {

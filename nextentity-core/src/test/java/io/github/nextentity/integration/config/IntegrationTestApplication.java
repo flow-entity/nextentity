@@ -36,15 +36,29 @@ public class IntegrationTestApplication {
     public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialectSelector dialectSelector = new SqlDialectSelector();
+        SqlDialect sqlDialect;
         try {
             dialectSelector.setByDataSource(dataSource);
+            sqlDialect = detectSqlDialect(dataSource);
         } catch (SQLException e) {
             throw new SqlException(e);
         }
         Metamodel metamodel = JpaMetamodel.of();
         JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, dialectSelector, connectionProvider, new JdbcResultCollector());
-        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(dialectSelector, connectionProvider, metamodel);
+        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(dialectSelector, connectionProvider, metamodel, sqlDialect);
         return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jdbc");
+    }
+
+    private SqlDialect detectSqlDialect(DataSource dataSource) throws SQLException {
+        String driverName = dataSource.getConnection().getMetaData().getDriverName().toLowerCase();
+        if (driverName.contains("mysql") || driverName.contains("maria")) {
+            return SqlDialect.MYSQL;
+        } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
+            return SqlDialect.SQL_SERVER;
+        } else if (driverName.contains("postgresql")) {
+            return SqlDialect.POSTGRESQL;
+        }
+        return SqlDialect.MYSQL; // default
     }
 
     @Bean

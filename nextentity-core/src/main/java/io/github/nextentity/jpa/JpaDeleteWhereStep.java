@@ -19,12 +19,22 @@ import java.util.List;
 public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements DeleteWhereStep<T> {
 
     private final EntityManager entityManager;
+    private final JpaTransactionTemplate transactionTemplate;
 
     public JpaDeleteWhereStep(Class<T> entityClass,
                               Metamodel metamodel,
-                              EntityManager entityManager) {
+                              EntityManager entityManager,
+                              JpaTransactionTemplate transactionTemplate) {
         super(entityClass, metamodel);
         this.entityManager = entityManager;
+        this.transactionTemplate = transactionTemplate;
+    }
+
+    // Backward compatible constructor
+    public JpaDeleteWhereStep(Class<T> entityClass,
+                              Metamodel metamodel,
+                              EntityManager entityManager) {
+        this(entityClass, metamodel, entityManager, DefaultTransactionTemplate.of());
     }
 
     @Override
@@ -43,6 +53,26 @@ public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements Del
     }
 
     @Override
+    public <N> ExpressionBuilder.PathOperator<T, N, ? extends DeleteWhereStep<T>> where(Path<T, N> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, ? extends DeleteWhereStep<T>> where(NumberPath<T, N> path) {
+        return new NumberOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public ExpressionBuilder.StringOperator<T, ? extends DeleteWhereStep<T>> where(StringPath<T> path) {
+        return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public <R extends Entity> ExpressionBuilder.PathOperator<T, R, ? extends DeleteWhereStep<T>> where(PathRef.EntityPathRef<T, R> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
     public DeleteWhereStep<T> where(@NonNull Expression<T, Boolean> predicate) {
         this.whereCondition = ExpressionNodes.getNode(predicate);
         return this;
@@ -55,24 +85,26 @@ public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements Del
 
     @Override
     public int execute() {
-        String entityName = getJpaEntityName();
-        StringBuilder jpql = new StringBuilder("DELETE FROM ")
-                .append(entityName).append(" e");
+        return transactionTemplate.executeInTransaction(entityManager, () -> {
+            String entityName = getJpaEntityName();
+            StringBuilder jpql = new StringBuilder("DELETE FROM ")
+                    .append(entityName).append(" e");
 
-        List<Object> params = new ArrayList<>();
+            List<Object> params = new ArrayList<>();
 
-        // Build WHERE clause
-        if (whereCondition != null) {
-            jpql.append(" WHERE ");
-            appendWhereCondition(jpql, params, whereCondition, 1);
-        }
+            // Build WHERE clause
+            if (whereCondition != null) {
+                jpql.append(" WHERE ");
+                appendWhereCondition(jpql, params, whereCondition, 1);
+            }
 
-        Query query = entityManager.createQuery(jpql.toString());
-        for (int i = 0; i < params.size(); i++) {
-            query.setParameter(i + 1, params.get(i));
-        }
+            Query query = entityManager.createQuery(jpql.toString());
+            for (int i = 0; i < params.size(); i++) {
+                query.setParameter(i + 1, params.get(i));
+            }
 
-        return query.executeUpdate();
+            return query.executeUpdate();
+        });
     }
 
     private String getJpaEntityName() {

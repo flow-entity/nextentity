@@ -21,7 +21,7 @@ import java.util.Map;
 /// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
-public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements UpdateWhereStep<T> {
+public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements UpdateSetStep<T> {
 
     private final UpdateExecutor updateExecutor;
     private final Map<String, Object> setValues = new LinkedHashMap<>();
@@ -36,13 +36,12 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
     }
 
     @Override
-    public <U> UpdateWhereStep<T> set(PathRef<T, U> path, U value) {
+    public <U> UpdateSetStep<T> set(PathRef<T, U> path, U value) {
         String columnName = getColumnName(PathNode.of(path));
         setValues.put(columnName, value);
         return this;
     }
 
-    @Override
     public UpdateWhereStep<T> set(String fieldName, Object value) {
         setValues.put(fieldName, value);
         return this;
@@ -61,6 +60,26 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
     @Override
     public ExpressionBuilder.StringOperator<T, ? extends UpdateWhereStep<T>> where(PathRef.StringRef<T> path) {
         return new StringOperatorImpl<>(PathNode.of(path), this::applyWhere);
+    }
+
+    @Override
+    public <N> ExpressionBuilder.PathOperator<T, N, ? extends UpdateWhereStep<T>> where(Path<T, N> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
+    }
+
+    @Override
+    public <N extends Number> ExpressionBuilder.NumberOperator<T, N, ? extends UpdateWhereStep<T>> where(NumberPath<T, N> path) {
+        return new NumberOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public ExpressionBuilder.StringOperator<T, ? extends UpdateWhereStep<T>> where(StringPath<T> path) {
+        return new StringOperatorImpl<>(ExpressionNodes.getNode(path), this::applyWhere);
+    }
+
+    @Override
+    public <R extends Entity> ExpressionBuilder.PathOperator<T, R, ? extends UpdateWhereStep<T>> where(PathRef.EntityPathRef<T, R> path) {
+        return new WhereOperator<>(ExpressionNodes.getNode(path));
     }
 
     @Override

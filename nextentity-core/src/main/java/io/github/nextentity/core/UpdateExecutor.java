@@ -1,7 +1,7 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.DeleteWhereStep;
-import io.github.nextentity.api.UpdateWhereStep;
+import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jspecify.annotations.NonNull;
 
@@ -129,20 +129,26 @@ public interface UpdateExecutor {
     ///
     /// 条件更新构建器支持带 WHERE 条件的批量 UPDATE 操作。
     ///
+    /// 注意：此方法不支持乐观锁机制。
+    /// 如需乐观锁保护，请使用 {@link #updateAll(Iterable, Class)} 方法。
+    ///
     /// @param <T> 实体类型
     /// @param entityType 实体类
     /// @return 条件更新构建器实例
     /// @since 2.1
-    <T> UpdateWhereStep<T> updateWhereStep(@NonNull Class<T> entityType);
+    <T> UpdateSetStep<T> update(@NonNull Class<T> entityType);
 
     ///
     /// 为指定实体类型创建条件删除构建器。
     ///
     /// 条件删除构建器支持带 WHERE 条件的批量 DELETE 操作。
     ///
+    /// 注意：此方法不支持乐观锁机制。
+    /// 如需乐观锁保护，请使用 {@link #deleteAll(Iterable, Class)} 方法。
+    ///
     /// @param <T> 实体类型
     /// @param entityType 实体类
     /// @return 条件删除构建器实例
     /// @since 2.1
-    <T> DeleteWhereStep<T> deleteWhereStep(@NonNull Class<T> entityType);
+    <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType);
 }

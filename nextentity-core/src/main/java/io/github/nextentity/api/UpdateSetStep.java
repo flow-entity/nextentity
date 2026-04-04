@@ -25,6 +25,14 @@ package io.github.nextentity.api;
 /// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.1
-public interface UpdateWhereStep<T> extends Whereable<T, UpdateWhereStep<T>>, Executable {
+public interface UpdateSetStep<T> extends UpdateWhereStep<T> {
+
+    /// 设置指定字段的值。
+    ///
+    /// @param path  字段路径引用
+    /// @param value 要设置的值
+    /// @param <U>   字段值类型
+    /// @return 当前构建器，用于方法链式调用
+    <U> UpdateSetStep<T> set(PathRef<T, U> path, U value);
 
 }

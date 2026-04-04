@@ -6,9 +6,8 @@ import jakarta.persistence.Version;
 
 import java.time.LocalDateTime;
 
-///
- /// Lockable entity for lock mode integration testing.
- /// This entity has a @Version field to support optimistic locking.
+/// Lockable entity for lock mode integration testing.
+/// This entity has a @Version field to support optimistic locking.
 @Entity
 public class LockableEntity {
 
@@ -78,10 +77,10 @@ public class LockableEntity {
     @Override
     public String toString() {
         return "LockableEntity{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", version=" + version +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", description='" + description + '\'' +
+               ", version=" + version +
+               '}';
     }
 }
