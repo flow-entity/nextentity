@@ -24,7 +24,7 @@ package io.github.nextentity.api;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public interface UpdateWhereStep<T> extends Whereable<T, UpdateWhereStep<T>>, Executable {
 
 }

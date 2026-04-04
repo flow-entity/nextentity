@@ -10,7 +10,7 @@ import java.util.function.Supplier;
 /// 该实现确保在给定的实体管理器中正确地开始、提交或回滚事务。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class DefaultTransactionTemplate implements JpaTransactionTemplate {
 
     private static final JpaTransactionTemplate JPA_TRANSACTION_TEMPLATE = new DefaultTransactionTemplate();

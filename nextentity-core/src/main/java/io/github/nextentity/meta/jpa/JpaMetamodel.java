@@ -20,7 +20,7 @@ import java.util.List;
 /// 该类提供了从 JPA 实体类中获取表名、字段名、关系映射等信息的功能。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JpaMetamodel extends AbstractMetamodel {
     private static final JpaMetamodel JPA_METAMODEL = new JpaMetamodel();
     private static final Logger log = LoggerFactory.getLogger(JpaMetamodel.class);

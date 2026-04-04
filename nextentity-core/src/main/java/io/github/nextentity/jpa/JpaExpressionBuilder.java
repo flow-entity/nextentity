@@ -16,7 +16,7 @@ import java.util.Map;
 /// 该类提供了将各种表达式节点（字面量、路径、操作符等）转换为对应的 JPA 表达式的功能。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 @SuppressWarnings("PatternVariableCanBeUsed")
 public class JpaExpressionBuilder {
 

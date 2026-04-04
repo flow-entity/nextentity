@@ -20,7 +20,7 @@ import java.util.List;
 /// 该执行器将查询结构转换为原生 SQL 并通过 JPA EntityManager 执行。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JpaNativeQueryExecutor implements QueryExecutor {
     private final QuerySqlBuilder sqlBuilder;
     private final EntityManager entityManager;

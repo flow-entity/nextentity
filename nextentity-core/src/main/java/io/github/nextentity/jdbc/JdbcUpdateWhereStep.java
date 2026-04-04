@@ -16,7 +16,7 @@ import java.util.Map;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements UpdateSetStep<T> {
 
     private final Map<String, Object> setValues = new LinkedHashMap<>();

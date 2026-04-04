@@ -35,9 +35,6 @@ import java.util.function.Function;
 ///
 /// // 转换为自定义分页模型
 /// MyPage<User> myPage = slice.to(s -> new MyPage<>(s.data(), s.total(), s.offset(), s.limit()));
-///
-/// // 转换为废弃的 Page 接口（兼容旧代码）
-/// Page<User> page = slice.to(s -> new PageImpl(s.data(), s.total()));
 /// ```
 ///
 /// @param <T> 数据类型

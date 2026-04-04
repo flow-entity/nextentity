@@ -14,7 +14,7 @@ import java.sql.PreparedStatement;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements DeleteWhereStep<T> {
 
     private final JdbcUpdateSqlBuilder sqlBuilder;

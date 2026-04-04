@@ -13,7 +13,7 @@ import java.util.List;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 abstract class JdbcWhereStepSupport<T> {
 
     protected final Class<T> entityType;

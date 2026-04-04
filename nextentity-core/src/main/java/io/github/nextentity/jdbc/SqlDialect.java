@@ -11,7 +11,7 @@ import java.util.List;
 /// 新增方言只需实现此接口，无需修改 Builder 类。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public interface SqlDialect {
 
     /// 返回标识符的左引号字符

@@ -5,7 +5,7 @@ import java.util.List;
 /// SQL statement for conditional update operations.
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class UpdateSqlStatement implements SqlStatement {
 
     private final String sql;

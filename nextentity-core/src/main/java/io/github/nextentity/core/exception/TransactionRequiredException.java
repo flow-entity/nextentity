@@ -9,7 +9,7 @@ public class TransactionRequiredException extends NextEntityException {
 
     /// 使用默认消息构造新异常。
     public TransactionRequiredException() {
-        super("需要事务但事务未激活。请确保操作在事务上下文中执行。");
+        super("Transaction required but not active. Please ensure the operation is executed within a transaction context.");
     }
 
     /// 使用指定的详细消息构造新异常。

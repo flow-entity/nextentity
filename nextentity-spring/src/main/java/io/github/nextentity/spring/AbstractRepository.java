@@ -243,7 +243,7 @@ public abstract class AbstractRepository<T, ID> {
     /// 如需乐观锁保护，请使用 {@link #updateAll(Iterable)} 方法。
     ///
     /// @return 条件更新构建器实例
-    /// @since 2.1
+    /// @since 2.0.0
     @Transactional
     public UpdateSetStep<T> update() {
         return updateExecutor.update(entityType);
@@ -262,7 +262,7 @@ public abstract class AbstractRepository<T, ID> {
     /// 如需乐观锁保护，请使用 {@link #deleteAll(Iterable)} 方法。
     ///
     /// @return 条件删除构建器实例
-    /// @since 2.1
+    /// @since 2.0.0
     @Transactional
     public DeleteWhereStep<T> delete() {
         return updateExecutor.delete(entityType);

@@ -11,7 +11,7 @@ import java.time.Duration;
 /// Duration 值以 ISO-8601 格式字符串存储。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 @Converter
 public class DurationStringConverter implements AttributeConverter<Duration, String>, ValueConverter<Duration, String> {
 

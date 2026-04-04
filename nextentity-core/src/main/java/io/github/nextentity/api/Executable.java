@@ -20,7 +20,7 @@ package io.github.nextentity.api;
 /// }</pre>
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public interface Executable {
 
     /// 执行批量操作。

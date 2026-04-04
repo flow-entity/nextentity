@@ -8,7 +8,7 @@ import io.github.nextentity.jdbc.AbstractArguments;
 /// 该类继承自 AbstractArguments，实现了 JPA 查询的参数处理逻辑。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JpaArguments extends AbstractArguments {
     private final Object[] objects;
 

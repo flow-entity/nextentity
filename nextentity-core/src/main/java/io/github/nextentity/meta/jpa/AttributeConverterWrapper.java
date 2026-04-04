@@ -10,7 +10,7 @@ import jakarta.persistence.AttributeConverter;
 /// @param <X> 实体属性类型
 /// @param <Y> 数据库列类型
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class AttributeConverterWrapper<X, Y> implements ValueConverter<X, Y> {
 
     private final AttributeConverter<X, Y> convertor;

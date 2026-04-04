@@ -9,7 +9,7 @@ import java.util.function.Supplier;
 /// 该接口提供了一个统一的方式来在事务中执行数据库操作。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public interface JpaTransactionTemplate {
 
     <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action);

@@ -27,7 +27,7 @@ public class TestConfig {
             DepartmentRepository departmentRepository) {
 
         return args -> {
-            log.info("初始化测试数据...");
+            log.info("Initializing test data...");
 
             // 清除现有数据
             clearAllData(employeeRepository, departmentRepository);
@@ -35,12 +35,12 @@ public class TestConfig {
             // 插入部门
             List<Department> departments = TestDataFactory.createTestDepartments();
             departmentRepository.insertAll(departments);
-            log.info("已插入 {} 个部门", departments.size());
+            log.info("Inserted {} departments", departments.size());
 
             // 插入员工
             List<Employee> employees = TestDataFactory.createTestEmployees();
             employeeRepository.insertAll(employees);
-            log.info("已插入 {} 个员工", employees.size());
+            log.info("Inserted {} employees", employees.size());
         };
     }
 

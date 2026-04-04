@@ -25,7 +25,7 @@ import java.util.List;
 /// 该执行器支持实体查询、投影查询以及复杂的条件查询、排序、分组等功能。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JpaQueryExecutor implements QueryExecutor {
 
     private final EntityManager entityManager;

@@ -135,7 +135,7 @@ public interface UpdateExecutor {
     /// @param <T> 实体类型
     /// @param entityType 实体类
     /// @return 条件更新构建器实例
-    /// @since 2.1
+    /// @since 2.0.0
     <T> UpdateSetStep<T> update(@NonNull Class<T> entityType);
 
     ///
@@ -149,6 +149,6 @@ public interface UpdateExecutor {
     /// @param <T> 实体类型
     /// @param entityType 实体类
     /// @return 条件删除构建器实例
-    /// @since 2.1
+    /// @since 2.0.0
     <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType);
 }

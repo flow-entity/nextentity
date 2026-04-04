@@ -61,10 +61,10 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     ///
     /// @param p0 第一个路径表达式
     /// @param p1 第二个路径表达式
-    /// @param p3 第三个路径表达式
+    /// @param p2 第三个路径表达式
     /// @return WhereStep 实例
-    default BaseWhereStep<T, T> fetch(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p3) {
-        return fetch(List.<Path<T, ?>>of(p0, p1, p3));
+    default BaseWhereStep<T, T> fetch(Path<T, ?> p0, Path<T, ?> p1, Path<T, ?> p2) {
+        return fetch(List.<Path<T, ?>>of(p0, p1, p2));
     }
 
     /// 预加载指定路径对应的关联数据。
@@ -88,10 +88,10 @@ public interface FetchStep<T> extends BaseWhereStep<T, T> {
     ///
     /// @param p0 第一个路径
     /// @param p1 第二个路径
-    /// @param p3 第三个路径
+    /// @param p2 第三个路径
     /// @return WhereStep 实例
-    default BaseWhereStep<T, T> fetch(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p3) {
-        return fetch(Path.of(p0), Path.of(p1), Path.of(p3));
+    default BaseWhereStep<T, T> fetch(PathRef<T, ?> p0, PathRef<T, ?> p1, PathRef<T, ?> p2) {
+        return fetch(Path.of(p0), Path.of(p1), Path.of(p2));
     }
 
 }

@@ -25,7 +25,7 @@ import java.util.function.Supplier;
 /// 该执行器通过 JPA EntityManager 处理批量实体操作，并支持乐观锁机制。
 ///
 /// @author HuangChengwei
-/// @since 2.1
+/// @since 2.0.0
 public class JpaUpdateExecutor implements UpdateExecutor {
 
     private final EntityManager entityManager;
