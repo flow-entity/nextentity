@@ -2,7 +2,7 @@ package io.github.nextentity.spring.integration.projection;
 
 public interface IUser {
 
-    int getId();
+    Integer getId();
 
     int getRandomNumber();
 
@@ -10,7 +10,7 @@ public interface IUser {
 
     U getParentUser();
 
-    record U(int id, int randomNumber, Object test, String username, U parentUser) {
+    record U(Integer id, int randomNumber, Object test, String username, U parentUser) {
     }
 
 }

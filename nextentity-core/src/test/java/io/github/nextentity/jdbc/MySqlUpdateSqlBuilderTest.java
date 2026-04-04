@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y MySqlUpdateSqlBuilder 正确 provides MySQL-specific SQL syntax
- /// <p>
- /// 测试场景s:
- /// 1. Left tick character is backtick
- /// 2. Right tick character is backtick
+/// 测试目标: 验证 MySQL 方言通过 AbstractUpdateSqlBuilder 正确提供 SQL 语法
+/// <p>
+/// 测试场景:
+/// 1. MySQL 方言使用反引号作为引用字符
 class MySqlUpdateSqlBuilderTest {
 
-    private final MySqlUpdateSqlBuilder builder = new MySqlUpdateSqlBuilder();
+    private final DefaultUpdateSqlBuilder builder = new DefaultUpdateSqlBuilder(SqlDialect.MYSQL) {};
 
     @Nested
     class TickCharacters {

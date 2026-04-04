@@ -8,15 +8,14 @@ import java.lang.reflect.Method;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y PostgresqlQuerySqlBuilder 正确 provides PostgreSQL-specific SQL syntax
- /// <p>
- /// 测试场景s:
- /// 1. Left quoted identifier is double quote
- /// 2. Right quoted identifier is double quote
- /// 3. Builder class exists and has correct structure
+/// 测试目标: 验证 PostgreSQL 方言通过 QuerySqlBuilderImpl 正确提供 SQL 语法
+/// <p>
+/// 测试场景:
+/// 1. PostgreSQL 方言使用双引号作为引用字符
+/// 2. QuerySqlBuilderImpl.Builder 类存在且结构正确
 class PostgresqlQuerySqlBuilderTest {
 
-    private final PostgresqlQuerySqlBuilder builder = new PostgresqlQuerySqlBuilder();
+    private final QuerySqlBuilderImpl builder = new QuerySqlBuilderImpl(SqlDialect.POSTGRESQL);
 
     @Nested
     class BuilderCreation {
@@ -30,7 +29,7 @@ class PostgresqlQuerySqlBuilderTest {
         @Test
         void builder_HasBuildMethod() throws NoSuchMethodException {
             // when
-            Method buildMethod = PostgresqlQuerySqlBuilder.class.getMethod("build", QueryContext.class);
+            Method buildMethod = QuerySqlBuilderImpl.class.getMethod("build", QueryContext.class);
 
             // then
             assertThat(buildMethod).isNotNull();
@@ -42,9 +41,27 @@ class PostgresqlQuerySqlBuilderTest {
     class QuoteIdentifierCharacters {
 
         @Test
-        void builderClass_Exists() {
+        void leftQuotedIdentifier_ReturnsDoubleQuote() {
+            // when - Verify PostgreSQL uses double quotes for quoted identifiers
+            String leftQuote = SqlDialect.POSTGRESQL.leftQuotedIdentifier();
+
+            // then
+            assertThat(leftQuote).isEqualTo("\"");
+        }
+
+        @Test
+        void rightQuotedIdentifier_ReturnsDoubleQuote() {
+            // when - Verify PostgreSQL uses double quotes for quoted identifiers
+            String rightQuote = SqlDialect.POSTGRESQL.rightQuotedIdentifier();
+
+            // then
+            assertThat(rightQuote).isEqualTo("\"");
+        }
+
+        @Test
+        void queryBuilderImpl_BuilderClassExists() {
             // PostgreSQL uses " (double quote) for quoted identifiers
-            assertThat(PostgresqlQuerySqlBuilder.Builder.class).isNotNull();
+            assertThat(QuerySqlBuilderImpl.Builder.class).isNotNull();
         }
     }
 
@@ -54,7 +71,7 @@ class PostgresqlQuerySqlBuilderTest {
         @Test
         void appendOffsetAndLimit_MethodExists() throws NoSuchMethodException {
             // when
-            Method method = PostgresqlQuerySqlBuilder.Builder.class.getDeclaredMethod("appendOffsetAndLimit");
+            Method method = AbstractQuerySqlBuilder.class.getDeclaredMethod("appendOffsetAndLimit");
 
             // then
             assertThat(method).isNotNull();

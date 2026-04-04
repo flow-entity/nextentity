@@ -9,16 +9,15 @@ import java.lang.reflect.Method;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y SqlServerQuerySqlBuilder 正确 provides SQL Server-specific SQL syntax
- /// <p>
- /// 测试场景s:
- /// 1. Left quoted identifier is square bracket
- /// 2. Right quoted identifier is square bracket
- /// 3. Builder class exists and has correct structure
- /// 4. LENGTH operator uses 'len' instead of 'length'
+/// 测试目标: 验证 SQL Server 方言通过 QuerySqlBuilderImpl 正确提供 SQL 语法
+/// <p>
+/// 测试场景:
+/// 1. SQL Server 方言使用方括号作为引用字符
+/// 2. QuerySqlBuilderImpl.Builder 类存在且结构正确
+/// 3. LENGTH 函数映射为 'len'
 class SqlServerQuerySqlBuilderTest {
 
-    private final SqlServerQuerySqlBuilder builder = new SqlServerQuerySqlBuilder();
+    private final QuerySqlBuilderImpl builder = new QuerySqlBuilderImpl(SqlDialect.SQL_SERVER);
 
     @Nested
     class BuilderCreation {
@@ -32,7 +31,7 @@ class SqlServerQuerySqlBuilderTest {
         @Test
         void builder_HasBuildMethod() throws NoSuchMethodException {
             // when
-            Method buildMethod = SqlServerQuerySqlBuilder.class.getMethod("build", QueryContext.class);
+            Method buildMethod = QuerySqlBuilderImpl.class.getMethod("build", QueryContext.class);
 
             // then
             assertThat(buildMethod).isNotNull();
@@ -44,9 +43,27 @@ class SqlServerQuerySqlBuilderTest {
     class QuoteIdentifierCharacters {
 
         @Test
-        void builderClass_Exists() {
+        void leftQuotedIdentifier_ReturnsSquareBracket() {
+            // when - Verify SQL Server uses square brackets for quoted identifiers
+            String leftQuote = SqlDialect.SQL_SERVER.leftQuotedIdentifier();
+
+            // then
+            assertThat(leftQuote).isEqualTo("[");
+        }
+
+        @Test
+        void rightQuotedIdentifier_ReturnsSquareBracket() {
+            // when - Verify SQL Server uses square brackets for quoted identifiers
+            String rightQuote = SqlDialect.SQL_SERVER.rightQuotedIdentifier();
+
+            // then
+            assertThat(rightQuote).isEqualTo("]");
+        }
+
+        @Test
+        void queryBuilderImpl_BuilderClassExists() {
             // SQL Server uses [ ] (square brackets) for quoted identifiers
-            assertThat(SqlServerQuerySqlBuilder.Builder.class).isNotNull();
+            assertThat(QuerySqlBuilderImpl.Builder.class).isNotNull();
         }
     }
 
@@ -56,10 +73,16 @@ class SqlServerQuerySqlBuilderTest {
         @Test
         void appendOffsetAndLimit_MethodExists() throws NoSuchMethodException {
             // when
-            Method method = SqlServerQuerySqlBuilder.Builder.class.getDeclaredMethod("appendOffsetAndLimit");
+            Method method = AbstractQuerySqlBuilder.class.getDeclaredMethod("appendOffsetAndLimit");
 
             // then
             assertThat(method).isNotNull();
+        }
+
+        @Test
+        void requiresOrderByForPagination_ReturnsTrue() {
+            // SQL Server requires ORDER BY for pagination
+            assertThat(SqlDialect.SQL_SERVER.requiresOrderByForPagination()).isTrue();
         }
     }
 
@@ -69,11 +92,32 @@ class SqlServerQuerySqlBuilderTest {
         @Test
         void appendOperator_MethodExists() throws NoSuchMethodException {
             // SQL Server has special handling for LENGTH operator (uses 'len' instead)
-            Method method = SqlServerQuerySqlBuilder.Builder.class.getDeclaredMethod(
-                    "appendOperator", Operator.class);
+            Method method = AbstractQuerySqlBuilder.class.getDeclaredMethod("appendOperator", Operator.class);
 
             // then
             assertThat(method).isNotNull();
+        }
+
+        @Test
+        void functionName_Length_ReturnsLen() {
+            // SQL Server uses 'len' instead of 'length'
+            assertThat(SqlDialect.SQL_SERVER.functionName("length")).isEqualTo("len");
+        }
+
+        @Test
+        void functionName_OtherNames_ReturnsSame() {
+            // Other function names pass through unchanged
+            assertThat(SqlDialect.SQL_SERVER.functionName("count")).isEqualTo("count");
+        }
+    }
+
+    @Nested
+    class NotOperationHandling {
+
+        @Test
+        void shouldConvertNotToEqFalse_ReturnsTrue() {
+            // SQL Server converts NOT path to path = false
+            assertThat(SqlDialect.SQL_SERVER.shouldConvertNotToEqFalse()).isTrue();
         }
     }
 }

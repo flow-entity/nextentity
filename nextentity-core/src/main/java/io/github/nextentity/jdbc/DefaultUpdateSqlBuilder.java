@@ -22,7 +22,25 @@ import java.util.Objects;
 /// @author HuangChengwei
 /// @since 1.0.0
 ///
-public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
+public class DefaultUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
+
+    protected final SqlDialect dialect;
+
+    protected DefaultUpdateSqlBuilder(SqlDialect dialect) {
+        this.dialect = dialect;
+    }
+
+    protected String leftTicks() {
+        return dialect.leftQuotedIdentifier();
+    }
+
+    protected String rightTicks() {
+        return dialect.rightQuotedIdentifier();
+    }
+
+    protected String quoteIdentifier(String name) {
+        return dialect.quoteIdentifier(name);
+    }
 
     /// 构建插入SQL语句
     ///
@@ -95,18 +113,6 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
         }));
     }
 
-    /// 获取右侧标识符引用字符
-    ///
-    /// @return 右侧标识符引用字符
-    @NonNull
-    protected abstract String rightTicks();
-
-    /// 获取左侧标识符引用字符
-    ///
-    /// @return 左侧标识符引用字符
-    @NonNull
-    protected abstract String leftTicks();
-
     /// 构建更新SQL语句
     ///
     /// @param entities 实体集合
@@ -168,7 +174,7 @@ public abstract class AbstractUpdateSqlBuilder implements JdbcUpdateSqlBuilder {
     /// @param attribute 属性
     /// @return 占位符字符串
     protected @NonNull String typedPlaceholder(EntityAttribute attribute) {
-        return "?";
+        return dialect.typedPlaceholder(attribute.type());
     }
 
     /// 构建删除SQL语句

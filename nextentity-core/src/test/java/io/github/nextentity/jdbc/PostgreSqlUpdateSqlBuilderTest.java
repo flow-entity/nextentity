@@ -10,16 +10,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 ///
- /// 测试目标: 验证y PostgreSqlUpdateSqlBuilder 正确 provides PostgreSQL-specific SQL syntax
- /// <p>
- /// 测试场景s:
- /// 1. Left tick character is double quote
- /// 2. Right tick character is double quote
- /// 3. Typed placeholder for Date types
- /// 4. Typed placeholder for non-Date types
+/// 测试目标: 验证 PostgreSQL 方言通过 AbstractUpdateSqlBuilder 正确提供 SQL 语法
+/// <p>
+/// 测试场景:
+/// 1. PostgreSQL 方言使用双引号作为引用字符
+/// 2. 类型化占位符对日期类型返回 "::timestamp"
 class PostgreSqlUpdateSqlBuilderTest {
 
-    private final PostgreSqlUpdateSqlBuilder builder = new PostgreSqlUpdateSqlBuilder();
+    private final DefaultUpdateSqlBuilder builder = new DefaultUpdateSqlBuilder(SqlDialect.POSTGRESQL) {};
 
     @Nested
     class TickCharacters {

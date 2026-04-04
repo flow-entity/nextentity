@@ -6,14 +6,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y SqlServerUpdateSqlBuilder 正确 provides SQL Server-specific SQL syntax
- /// <p>
- /// 测试场景s:
- /// 1. Left tick character is square bracket
- /// 2. Right tick character is square bracket
+/// 测试目标: 验证 SQL Server 方言通过 AbstractUpdateSqlBuilder 正确提供 SQL 语法
+/// <p>
+/// 测试场景:
+/// 1. SQL Server 方言使用方括号作为引用字符
 class SqlServerUpdateSqlBuilderTest {
 
-    private final SqlServerUpdateSqlBuilder builder = new SqlServerUpdateSqlBuilder();
+    private final DefaultUpdateSqlBuilder builder = new DefaultUpdateSqlBuilder(SqlDialect.SQL_SERVER) {};
 
     @Nested
     class TickCharacters {

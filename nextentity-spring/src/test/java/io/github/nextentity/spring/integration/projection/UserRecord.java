@@ -1,6 +1,6 @@
 package io.github.nextentity.spring.integration.projection;
 
-public record UserRecord(int id,
+public record UserRecord(Integer id,
                          int randomNumber,
                          String username,
                          Integer pid,

@@ -8,15 +8,14 @@ import java.lang.reflect.Method;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y MySqlQuerySqlBuilder 正确 provides MySQL-specific SQL syntax
- /// <p>
- /// 测试场景s:
- /// 1. Left quoted identifier is backtick
- /// 2. Right quoted identifier is backtick
- /// 3. Builder class exists and has correct structure
+/// 测试目标: 验证 MySQL 方言通过 QuerySqlBuilderImpl 正确提供 SQL 语法
+/// <p>
+/// 测试场景:
+/// 1. MySQL 方言使用反引号作为引用字符
+/// 2. QuerySqlBuilderImpl.Builder 类存在且结构正确
 class MySqlQuerySqlBuilderTest {
 
-    private final MySqlQuerySqlBuilder builder = new MySqlQuerySqlBuilder();
+    private final QuerySqlBuilderImpl builder = new QuerySqlBuilderImpl(SqlDialect.MYSQL);
 
     @Nested
     class BuilderCreation {
@@ -30,7 +29,7 @@ class MySqlQuerySqlBuilderTest {
         @Test
         void builder_HasBuildMethod() throws NoSuchMethodException {
             // when
-            Method buildMethod = MySqlQuerySqlBuilder.class.getMethod("build", QueryContext.class);
+            Method buildMethod = QuerySqlBuilderImpl.class.getMethod("build", QueryContext.class);
 
             // then
             assertThat(buildMethod).isNotNull();
@@ -42,22 +41,27 @@ class MySqlQuerySqlBuilderTest {
     class QuoteIdentifierCharacters {
 
         @Test
-        void leftQuotedIdentifier_ReturnsBacktick() throws Exception {
-            // given - Access inner Builder class via reflection
-            // The Builder class has protected methods we need to test
-
+        void leftQuotedIdentifier_ReturnsBacktick() {
             // when - Verify MySQL uses backticks for quoted identifiers
-            // MySQL uses ` (backtick) for quoted identifiers
+            String leftQuote = SqlDialect.MYSQL.leftQuotedIdentifier();
 
             // then
-            assertThat(MySqlQuerySqlBuilder.Builder.class).isNotNull();
+            assertThat(leftQuote).isEqualTo("`");
         }
 
         @Test
         void rightQuotedIdentifier_ReturnsBacktick() {
-            // MySQL uses ` (backtick) for quoted identifiers
-            // Verified by the structure of the inner Builder class
-            assertThat(MySqlQuerySqlBuilder.Builder.class).isNotNull();
+            // when - Verify MySQL uses backticks for quoted identifiers
+            String rightQuote = SqlDialect.MYSQL.rightQuotedIdentifier();
+
+            // then
+            assertThat(rightQuote).isEqualTo("`");
+        }
+
+        @Test
+        void queryBuilderImpl_BuilderClassExists() {
+            // then
+            assertThat(QuerySqlBuilderImpl.Builder.class).isNotNull();
         }
     }
 
@@ -67,7 +71,7 @@ class MySqlQuerySqlBuilderTest {
         @Test
         void appendOffsetAndLimit_MethodExists() throws NoSuchMethodException {
             // when
-            Method method = MySqlQuerySqlBuilder.Builder.class.getDeclaredMethod("appendOffsetAndLimit");
+            Method method = AbstractQuerySqlBuilder.class.getDeclaredMethod("appendOffsetAndLimit");
 
             // then
             assertThat(method).isNotNull();

@@ -42,6 +42,7 @@ public abstract class AbstractQuerySqlBuilder {
     protected final Map<JoinAttribute, Integer> joins = new LinkedHashMap<>();
 
     protected final QueryContext context;
+    protected final SqlDialect dialect;
 
     protected final String fromAlias;
     protected final int subIndex;
@@ -50,6 +51,7 @@ public abstract class AbstractQuerySqlBuilder {
     protected AbstractQuerySqlBuilder(StringBuilder sql,
                                       List<Object> args,
                                       QueryContext context,
+                                      SqlDialect dialect,
                                       AtomicInteger selectIndex,
                                       int subIndex) {
         this.sql = sql;
@@ -57,6 +59,7 @@ public abstract class AbstractQuerySqlBuilder {
         this.subIndex = subIndex;
         this.selectIndex = selectIndex;
         this.context = context;
+        this.dialect = dialect;
         String prefix;
         From from = context.getStructure().from();
         if (from instanceof FromEntity(Class<?> type)) {
@@ -67,13 +70,21 @@ public abstract class AbstractQuerySqlBuilder {
         fromAlias = subIndex == 0 ? prefix + "_" : prefix + subIndex + "_";
     }
 
-    public AbstractQuerySqlBuilder(QueryContext context) {
-        this(new StringBuilder(), new ArrayList<>(), context, new AtomicInteger(), 0);
+    public AbstractQuerySqlBuilder(QueryContext context, SqlDialect dialect) {
+        this(new StringBuilder(), new ArrayList<>(), context, dialect, new AtomicInteger(), 0);
     }
 
-    protected abstract String leftQuotedIdentifier();
+    protected String leftQuotedIdentifier() {
+        return dialect.leftQuotedIdentifier();
+    }
 
-    protected abstract String rightQuotedIdentifier();
+    protected String rightQuotedIdentifier() {
+        return dialect.rightQuotedIdentifier();
+    }
+
+    protected String quoteIdentifier(String name) {
+        return dialect.quoteIdentifier(name);
+    }
 
 
     protected QuerySqlStatement build() {
@@ -376,11 +387,18 @@ public abstract class AbstractQuerySqlBuilder {
     }
 
     protected void appendNotOperation(OperatorNode operation) {
-        ExpressionNode leftOperand = operation.firstOperand();
-        Operator not = operation.operator();
-        appendBlank();
-        appendOperator(not);
-        appendPredicatePriority(leftOperand, not);
+        ExpressionNode operand = operation.firstOperand();
+        // SQL Server: NOT path → path = false
+        if (dialect.shouldConvertNotToEqFalse()
+            && (operand instanceof PathNode || operand instanceof LiteralNode)) {
+            appendBinaryOperation(operand, Operator.EQ, LiteralNode.FALSE);
+        } else {
+            ExpressionNode leftOperand = operation.firstOperand();
+            Operator not = operation.operator();
+            appendBlank();
+            appendOperator(not);
+            appendPredicatePriority(leftOperand, not);
+        }
     }
 
     protected void appendBinaryOperation(OperatorNode operation) {
@@ -466,6 +484,10 @@ public abstract class AbstractQuerySqlBuilder {
 
     protected void appendOperator(Operator jdbcOperator) {
         String sign = jdbcOperator.sign();
+        // If it starts with a letter, it might be a function name - use dialect mapping
+        if (Character.isLetter(sign.charAt(0))) {
+            sign = dialect.functionName(sign);
+        }
         appendOperator(sign);
     }
 
@@ -607,7 +629,28 @@ public abstract class AbstractQuerySqlBuilder {
         return append.append(index).append("_");
     }
 
-    protected abstract void appendOffsetAndLimit();
+    protected void appendOffsetAndLimit() {
+        QueryStructure queryStructure = context.getStructure();
+        int offset = unwrap(queryStructure.offset());
+        int limit = unwrap(queryStructure.limit());
+
+        // SQL Server requires ORDER BY before OFFSET clause
+        if (dialect.requiresOrderByForPagination() && (offset > 0 || limit >= 0)) {
+            if (queryStructure.orderBy() == null || queryStructure.orderBy().isEmpty()) {
+                if (queryStructure.select().distinct()) {
+                    sql.append(" order by 1");
+                } else {
+                    sql.append(" order by (select 0)");
+                }
+            }
+        }
+
+        dialect.appendLimitOffset(sql, args, offset, limit);
+    }
+
+    private static int unwrap(Integer integer) {
+        return integer == null ? -1 : integer;
+    }
 
     protected void appendGroupBy() {
         List<? extends ExpressionNode> groupBy = context.getStructure().groupBy();

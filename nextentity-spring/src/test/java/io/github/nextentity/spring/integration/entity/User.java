@@ -17,7 +17,7 @@ import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 public class User extends EnableOptimisticLock implements Cloneable, Persistable<Integer> {
 
     @Id
-    private int id;
+    private Integer id;
 
     private int randomNumber;
 
@@ -104,7 +104,7 @@ public class User extends EnableOptimisticLock implements Cloneable, Persistable
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

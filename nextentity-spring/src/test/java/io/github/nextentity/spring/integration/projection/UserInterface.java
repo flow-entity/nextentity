@@ -8,7 +8,7 @@ import java.util.Map;
 
 public interface UserInterface {
 
-    int getId();
+    Integer getId();
 
     int getRandomNumber();
 

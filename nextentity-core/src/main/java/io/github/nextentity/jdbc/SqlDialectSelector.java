@@ -12,8 +12,8 @@ import java.util.List;
 ///
 /// SQL方言选择器
 ///
-/// 该类根据数据源自动选择合适的SQL方言构建器，支持MySQL、SQL Server、PostgreSQL等数据库。
-/// 它同时实现了查询和更新SQL构建器接口，可以根据不同数据库类型生成相应的SQL语句。
+/// 该类根据数据源自动选择合适的SQL方言，支持MySQL、SQL Server、PostgreSQL等数据库。
+/// 使用统一的 QuerySqlBuilderImpl 和 AbstractUpdateSqlBuilder，通过 SqlDialect 处理方言差异。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
@@ -31,16 +31,21 @@ public class SqlDialectSelector implements QuerySqlBuilder, JdbcUpdateSqlBuilder
     public SqlDialectSelector setByDataSource(DataSource dataSource) throws SQLException {
         DatabaseMetaData metaData = dataSource.getConnection().getMetaData();
         String driverName = metaData.getDriverName().toLowerCase();
+        SqlDialect dialect;
+
         if (driverName.contains("mysql") || driverName.contains("maria")) {
-            querySqlBuilder = new MySqlQuerySqlBuilder();
-            updateSqlBuilder = new MySqlUpdateSqlBuilder();
+            dialect = SqlDialect.MYSQL;
         } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
-            querySqlBuilder = new SqlServerQuerySqlBuilder();
-            updateSqlBuilder = new SqlServerUpdateSqlBuilder();
+            dialect = SqlDialect.SQL_SERVER;
         } else if (driverName.contains("postgresql")) {
-            querySqlBuilder = new PostgresqlQuerySqlBuilder();
-            updateSqlBuilder = new PostgreSqlUpdateSqlBuilder();
+            dialect = SqlDialect.POSTGRESQL;
+        } else {
+            // 默认使用 MySQL 方言
+            dialect = SqlDialect.MYSQL;
         }
+
+        querySqlBuilder = new QuerySqlBuilderImpl(dialect);
+        updateSqlBuilder = new DefaultUpdateSqlBuilder(dialect);
         return this;
     }
 
