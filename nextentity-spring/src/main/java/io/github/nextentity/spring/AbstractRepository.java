@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 /// @Component
 /// public class UserRepository extends AbstractRepository<User, Long> {
 ///     public List<User> findActiveUsers() {
-///         return query().where(path(User::getStatus)).eq("ACTIVE").list();
+///         return query().where(User::getStatus).eq("ACTIVE").list();
 ///     }
 /// }
 /// ```
@@ -57,10 +57,24 @@ public abstract class AbstractRepository<T, ID> {
     private UpdateExecutor updateExecutor;
 
     /// ID 路径表达式，用于构建基于主键的查询条件
-    protected final Path<T, ID> idPath = getTidPath();
+    private Path<T, ID> idPath;
 
     /// ID 提取函数缓存，用于 findMapById 和 findMapAll 方法
-    protected final Function<? super T, ? extends ID> idExtractor = getIdFunction();
+    private Function<? super T, ? extends ID> idExtractor;
+
+    protected Path<T, ID> idPath() {
+        if (idPath == null) {
+            idPath = newTidPath();
+        }
+        return idPath;
+    }
+
+    protected Function<? super T, ? extends ID> idExtractor() {
+        if (idExtractor == null) {
+            idExtractor = newIdExtractor();
+        }
+        return idExtractor;
+    }
 
     /// 获取主键路径表达式。
     ///
@@ -68,7 +82,7 @@ public abstract class AbstractRepository<T, ID> {
     /// 默认实现通过 Metamodel 从实体元数据中获取 ID 属性名称。
     ///
     /// @return 主键路径表达式
-    protected Path<T, ID> getTidPath() {
+    protected Path<T, ID> newTidPath() {
         EntityAttribute id = metamodel.getEntity(entityType).id();
         return Path.of(id.name());
     }
@@ -80,7 +94,7 @@ public abstract class AbstractRepository<T, ID> {
     /// PersistableRepository 重写此方法使用 Persistable::getId 方法引用。
     ///
     /// @return 从实体中提取 ID 的函数
-    protected Function<? super T, ? extends ID> getIdFunction() {
+    protected Function<? super T, ? extends ID> newIdExtractor() {
         EntityAttribute id = metamodel.getEntity(entityType).id();
         return entity -> TypeCastUtil.unsafeCast(id.get(entity));
     }
@@ -256,7 +270,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param id 主键值
     /// @return 包含实体的 Optional，如果未找到则返回空 Optional
     public Optional<T> findById(ID id) {
-        return Optional.ofNullable(query().where(idPath).eq(id).first());
+        return Optional.ofNullable(query().where(idPath()).eq(id).first());
     }
 
     /// 根据主键获取实体。
@@ -267,7 +281,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param id 主键值
     /// @return 实体对象，如果未找到则返回 null
     public T getById(ID id) {
-        return query().where(idPath).eq(id).first();
+        return query().where(idPath()).eq(id).first();
     }
 
     /// 根据主键集合查找所有匹配的实体。
@@ -278,7 +292,7 @@ public abstract class AbstractRepository<T, ID> {
         if (ids.isEmpty()) {
             return List.of();
         }
-        return query().where(idPath).in(ids).list();
+        return query().where(idPath()).in(ids).list();
     }
 
     /// 根据主键集合获取所有匹配的实体。
@@ -301,7 +315,7 @@ public abstract class AbstractRepository<T, ID> {
     public Map<ID, T> findMapById(@NonNull Collection<ID> ids) {
         List<T> entities = findAllById(ids);
         return entities.stream()
-                .collect(Collectors.toMap(idExtractor, Function.identity()));
+                .collect(Collectors.toMap(idExtractor(), Function.identity()));
     }
 
     /// 查找所有实体并返回以 ID 为键的映射。
@@ -313,7 +327,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @return 以 ID 为键、实体为值的映射
     public Map<ID, T> findMapAll() {
         return query().list().stream()
-                .collect(Collectors.toMap(idExtractor, Function.identity()));
+                .collect(Collectors.toMap(idExtractor(), Function.identity()));
     }
 
     /// 检查指定主键的实体是否存在。
@@ -321,7 +335,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param id 主键值
     /// @return 如果实体存在返回 true，否则返回 false
     public boolean existsById(ID id) {
-        return query().where(idPath).eq(id).exists();
+        return query().where(idPath()).eq(id).exists();
     }
 
     /// 统计指定主键集合中存在的实体数量。
@@ -332,7 +346,7 @@ public abstract class AbstractRepository<T, ID> {
         if (ids.isEmpty()) {
             return 0;
         }
-        return query().where(idPath).in(ids).count();
+        return query().where(idPath()).in(ids).count();
     }
 
     /// 根据主键删除实体。
@@ -346,7 +360,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param id 主键值
     @Transactional
     public void deleteById(ID id) {
-        delete().where(idPath).eq(id).execute();
+        delete().where(idPath()).eq(id).execute();
     }
 
     /// 根据主键集合批量删除实体。
@@ -361,7 +375,7 @@ public abstract class AbstractRepository<T, ID> {
     @Transactional
     public void deleteAllById(@NonNull Collection<ID> ids) {
         if (!ids.isEmpty()) {
-            delete().where(idPath).in(ids).execute();
+            delete().where(idPath()).in(ids).execute();
         }
     }
 

@@ -35,7 +35,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
     ///
     /// @return 主键路径表达式
     @Override
-    protected Path<T, ID> getTidPath() {
+    protected Path<T, ID> newTidPath() {
         PathRef<T, ID> getId = Persistable::getId;
         return Path.of(getId);
     }
@@ -47,7 +47,7 @@ public abstract class PersistableRepository<T extends Persistable<ID>, ID> exten
     ///
     /// @return 从实体中提取 ID 的函数
     @Override
-    protected Function<? super T, ? extends ID> getIdFunction() {
+    protected Function<? super T, ? extends ID> newIdExtractor() {
         return Persistable::getId;
     }
 
