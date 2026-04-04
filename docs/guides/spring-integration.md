@@ -7,6 +7,8 @@
 - [依赖配置](#依赖配置)
 - [数据库配置](#数据库配置)
 - [Repository 定义](#repository-定义)
+- [路径表达式](#路径表达式)
+- [条件更新与删除](#条件更新与删除)
 - [事务管理](#事务管理)
 
 ---
@@ -75,48 +77,168 @@ spring:
 
 ## Repository 定义
 
-### 创建 Repository
+### AbstractRepository 基类
 
-继承 `AbstractRepository` 即可，依赖由 Spring 自动注入：
-
-```java
-@Repository
-public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-}
-```
-
-添加 Spring Boot 自动配置依赖后，`NextEntityFactory` 会根据 classpath 自动选择 JDBC 或 JPA 后端，无需手动构造。
-
-如果需要自定义查询方法：
+继承 `AbstractRepository` 即可，Spring 会自动注入 `NextEntityFactory`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    // 基本查询
     public List<Employee> findActiveEmployees() {
         return query()
-            .where(Employee::getActive).eq(true)
+            .where(path(Employee::getActive)).eq(true)
             .list();
     }
 }
 ```
 
-### 使用 Repository
+### PersistableRepository 基类
+
+如果实体实现了 `Persistable<ID>` 接口（暴露 `getId()` 方法），可以使用 `PersistableRepository` 获得 ID-based 查询方法：
+
+```java
+// 实体类
+public class User implements Persistable<Long> {
+    private Long id;
+    
+    @Override
+    public Long getId() { return id; }
+}
+
+// Repository
+@Repository
+public class UserRepository extends PersistableRepository<User, Long> {
+    // 自动获得以下方法：
+    // - findById(id) → Optional<User>
+    // - getById(id) → User (可能为 null)
+    // - findAllById(ids) → List<User>
+    // - findMapById(ids) → Map<Long, User>
+    // - existsById(id) → boolean
+    // - countById(ids) → long
+    // - deleteById(id)
+    // - deleteAllById(ids)
+}
+```
+
+### 使用示例
+
+在 Service 层注入 Repository：
 
 ```java
 @Service
-public class EmployeeService {
+public class UserService {
 
-    private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
-        this.employeeRepository = employeeRepository;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public List<Employee> findActive() {
-        return employeeRepository.query()
-            .where(Employee::getActive).eq(true)
+    // 使用 PersistableRepository 的 ID 方法
+    public User getById(Long id) {
+        return userRepository.getById(id);
+    }
+
+    public Map<Long, User> getUsersByIds(List<Long> ids) {
+        return userRepository.findMapById(ids);
+    }
+
+    public boolean exists(Long id) {
+        return userRepository.existsById(id);
+    }
+}
+```
+
+---
+
+## 路径表达式
+
+`AbstractRepository` 提供类型安全的 `path()` 方法族，用于构建查询条件：
+
+```java
+@Repository
+public class OrderRepository extends AbstractRepository<Order, Long> {
+
+    public List<Order> findByStatus(String status) {
+        return query()
+            .where(path(Order::getStatus)).eq(status)  // 字符串路径
             .list();
+    }
+
+    public List<Order> findHighValueOrders(BigDecimal threshold) {
+        return query()
+            .where(path(Order::getTotalAmount)).gt(threshold)  // BigDecimal 路径
+            .list();
+    }
+
+    public List<Order> findRecentOrders(LocalDate since) {
+        return query()
+            .where(path(Order::getCreatedAt)).ge(since)  // 通用路径
+            .orderBy(path(Order::getCreatedAt)).desc()
+            .list();
+    }
+}
+```
+
+### 类型特化方法
+
+| 方法 | 适用类型 | 特殊操作 |
+|------|---------|---------|
+| `path(StringRef)` | String | `like`, `startsWith`, `endsWith`, `contains` |
+| `path(NumberRef)` | Number | `gt`, `lt`, `ge`, `le`, `add`, `subtract` |
+| `path(BooleanRef)` | Boolean | `isTrue`, `isFalse` |
+| `path(EntityPathRef)` | 关联实体 | 嵌套属性访问 |
+
+---
+
+## 条件更新与删除
+
+`AbstractRepository` 提供条件批量更新和删除功能：
+
+### 条件更新
+
+```java
+@Repository
+public class UserRepository extends AbstractRepository<User, Long> {
+
+    @Transactional
+    public int archiveInactiveUsers(LocalDate threshold) {
+        return update()
+            .set(User::getStatus, "ARCHIVED")
+            .where(path(User::getLastLoginAt)).lt(threshold)
+            .execute();
+    }
+
+    @Transactional
+    public int bulkUpdateDepartment(Long oldDeptId, Long newDeptId) {
+        return update()
+            .set(User::getDepartmentId, newDeptId)
+            .where(path(User::getDepartmentId)).eq(oldDeptId)
+            .execute();
+    }
+}
+```
+
+### 条件删除
+
+```java
+@Repository
+public class LogRepository extends AbstractRepository<Log, Long> {
+
+    @Transactional
+    public int deleteOldLogs(LocalDate before) {
+        return delete()
+            .where(path(Log::getCreatedAt)).lt(before)
+            .execute();
+    }
+
+    @Transactional
+    public int deleteByStatus(String... statuses) {
+        return delete()
+            .where(path(Log::getStatus)).in(statuses)
+            .execute();
     }
 }
 ```
