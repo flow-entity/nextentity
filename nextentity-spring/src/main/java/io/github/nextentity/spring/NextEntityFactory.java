@@ -1,8 +1,6 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.QueryBuilder;
-import io.github.nextentity.api.UpdateWhereStep;
 import io.github.nextentity.core.UpdateExecutor;
 
 /// NextEntity 工厂接口。

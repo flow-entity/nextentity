@@ -62,23 +62,10 @@ public class Employee {
 ### 创建 Repository
 
 ```java
-// JDBC 后端
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-
-    public EmployeeRepository(JdbcTemplate jdbcTemplate) {
-        super(jdbcTemplate);
-    }
 }
 
-// JPA 后端
-@Repository
-public class DepartmentRepository extends AbstractRepository<Department, Long> {
-
-    public DepartmentRepository(EntityManager entityManager, JdbcTemplate jdbcTemplate) {
-        super(entityManager, jdbcTemplate);
-    }
-}
 ```
 
 ### 使用示例

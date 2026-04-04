@@ -3,13 +3,22 @@ package io.github.nextentity.spring;
 import io.github.nextentity.api.*;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.meta.jpa.JpaMetamodel;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /// 抽象 Repository 基类，提供基本的数据库 CRUD 操作和查询构建功能。
 ///
@@ -35,6 +44,8 @@ import java.util.function.Supplier;
 /// @since 1.0.0
 public abstract class AbstractRepository<T, ID> {
 
+    private volatile Metamodel metamodel = JpaMetamodel.of();
+
     /// 主键类型
     protected final Class<ID> idType;
     /// 实体类型
@@ -44,6 +55,35 @@ public abstract class AbstractRepository<T, ID> {
     private QueryBuilder<T> queryBuilder;
     /// 更新执行器，用于执行插入、更新、删除操作
     private UpdateExecutor updateExecutor;
+
+    /// ID 路径表达式，用于构建基于主键的查询条件
+    protected final Path<T, ID> idPath = getTidPath();
+
+    /// ID 提取函数缓存，用于 findMapById 和 findMapAll 方法
+    protected final Function<? super T, ? extends ID> idExtractor = getIdFunction();
+
+    /// 获取主键路径表达式。
+    ///
+    /// 子类可重写此方法以自定义主键路径的获取方式。
+    /// 默认实现通过 Metamodel 从实体元数据中获取 ID 属性名称。
+    ///
+    /// @return 主键路径表达式
+    protected Path<T, ID> getTidPath() {
+        EntityAttribute id = metamodel.getEntity(entityType).id();
+        return Path.of(id.name());
+    }
+
+    /// 获取 ID 提取函数。
+    ///
+    /// 子类可重写此方法以自定义 ID 的提取方式。
+    /// 默认实现通过 Metamodel 从实体中反射获取 ID 值。
+    /// PersistableRepository 重写此方法使用 Persistable::getId 方法引用。
+    ///
+    /// @return 从实体中提取 ID 的函数
+    protected Function<? super T, ? extends ID> getIdFunction() {
+        EntityAttribute id = metamodel.getEntity(entityType).id();
+        return entity -> TypeCastUtil.unsafeCast(id.get(entity));
+    }
 
     /// 创建 Repository 实例。
     ///
@@ -65,6 +105,19 @@ public abstract class AbstractRepository<T, ID> {
     protected void setFactory(NextEntityFactory factory) {
         this.queryBuilder = factory.queryBuilder(entityType);
         this.updateExecutor = factory.updateExecutor();
+    }
+
+    /// 自动注入 Metamodel 实例。
+    ///
+    /// 如果容器中存在 Metamodel Bean，则使用注入的实例；
+    /// 否则使用默认的 JpaMetamodel 实例。
+    ///
+    /// @param metamodel 元模型实例
+    @Autowired(required = false)
+    protected void setMetamodel(Metamodel metamodel) {
+        if (metamodel != null) {
+            this.metamodel = metamodel;
+        }
     }
 
     /// 获取查询构建器，用于构建类型安全的查询。
@@ -192,6 +245,124 @@ public abstract class AbstractRepository<T, ID> {
     @Transactional
     public DeleteWhereStep<T> delete() {
         return updateExecutor.delete(entityType);
+    }
+
+
+    /// 根据主键查找实体。
+    ///
+    /// 注意：此方法依赖 Metamodel 获取主键信息。
+    /// 对于非 Persistable 实体，需要确保实体类标注了 JPA 注解（@Entity、@Id）。
+    ///
+    /// @param id 主键值
+    /// @return 包含实体的 Optional，如果未找到则返回空 Optional
+    public Optional<T> findById(ID id) {
+        return Optional.ofNullable(query().where(idPath).eq(id).first());
+    }
+
+    /// 根据主键获取实体。
+    ///
+    /// 注意：此方法依赖 Metamodel 获取主键信息。
+    /// 对于非 Persistable 实体，需要确保实体类标注了 JPA 注解（@Entity、@Id）。
+    ///
+    /// @param id 主键值
+    /// @return 实体对象，如果未找到则返回 null
+    public T getById(ID id) {
+        return query().where(idPath).eq(id).first();
+    }
+
+    /// 根据主键集合查找所有匹配的实体。
+    ///
+    /// @param ids 主键值集合
+    /// @return 匹配主键的实体列表
+    public List<T> findAllById(@NonNull Collection<ID> ids) {
+        if (ids.isEmpty()) {
+            return List.of();
+        }
+        return query().where(idPath).in(ids).list();
+    }
+
+    /// 根据主键集合获取所有匹配的实体。
+    ///
+    /// 此方法是 {@link #findAllById(Collection)} 的别名。
+    ///
+    /// @param ids 主键值集合
+    /// @return 匹配主键的实体列表
+    public List<T> getAllById(@NonNull Collection<ID> ids) {
+        return findAllById(ids);
+    }
+
+    /// 根据主键集合查找实体并返回以 ID 为键的映射。
+    ///
+    /// 注意：如果结果中存在重复 ID 的实体，将抛出 IllegalStateException。
+    /// 正常情况下主键不应重复，但需留意此行为。
+    ///
+    /// @param ids 主键值集合
+    /// @return 以 ID 为键、实体为值的映射
+    public Map<ID, T> findMapById(@NonNull Collection<ID> ids) {
+        List<T> entities = findAllById(ids);
+        return entities.stream()
+                .collect(Collectors.toMap(idExtractor, Function.identity()));
+    }
+
+    /// 查找所有实体并返回以 ID 为键的映射。
+    ///
+    /// 注意：
+    /// - 此方法会将所有实体加载到内存中，对于大表请谨慎使用。
+    /// - 如果结果中存在重复 ID 的实体，将抛出 IllegalStateException。
+    ///
+    /// @return 以 ID 为键、实体为值的映射
+    public Map<ID, T> findMapAll() {
+        return query().list().stream()
+                .collect(Collectors.toMap(idExtractor, Function.identity()));
+    }
+
+    /// 检查指定主键的实体是否存在。
+    ///
+    /// @param id 主键值
+    /// @return 如果实体存在返回 true，否则返回 false
+    public boolean existsById(ID id) {
+        return query().where(idPath).eq(id).exists();
+    }
+
+    /// 统计指定主键集合中存在的实体数量。
+    ///
+    /// @param ids 主键值集合
+    /// @return 存在的实体数量
+    public long countById(@NonNull Collection<ID> ids) {
+        if (ids.isEmpty()) {
+            return 0;
+        }
+        return query().where(idPath).in(ids).count();
+    }
+
+    /// 根据主键删除实体。
+    ///
+    /// 此方法使用直接条件删除以获得更好的性能
+    /// （单次 DELETE 操作，而非 SELECT + DELETE）。
+    ///
+    /// 注意：此方式会绕过 JPA 生命周期回调（如 @PreRemove）。
+    /// 如果需要触发回调，请使用 {@link #delete(Object)} 方法。
+    ///
+    /// @param id 主键值
+    @Transactional
+    public void deleteById(ID id) {
+        delete().where(idPath).eq(id).execute();
+    }
+
+    /// 根据主键集合批量删除实体。
+    ///
+    /// 此方法使用直接条件删除以获得更好的性能
+    /// （单次 DELETE 操作，而非 SELECT + 批量 DELETE）。
+    ///
+    /// 注意：此方式会绕过 JPA 生命周期回调（如 @PreRemove）。
+    /// 如果需要触发回调，请使用 {@link #deleteAll(Iterable)} 方法。
+    ///
+    /// @param ids 主键值集合
+    @Transactional
+    public void deleteAllById(@NonNull Collection<ID> ids) {
+        if (!ids.isEmpty()) {
+            delete().where(idPath).in(ids).execute();
+        }
     }
 
     /// 创建布尔类型字段的路径表达式。

@@ -77,7 +77,7 @@ public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNo
     /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (operator == Operator.IN && nodes.isEmpty()) {
-            log.warn("Operator 'IN' with empty operands detected, returning FALSE expression");
+            log.debug("Operator 'IN' with empty operands detected, returning FALSE expression");
             return LiteralNode.FALSE;
         }
         ImmutableList.Builder<ExpressionNode> builder;

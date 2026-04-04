@@ -1,137 +1,54 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.Persistable;
+import io.github.nextentity.api.Path;
 import io.github.nextentity.api.PathRef;
-import org.jspecify.annotations.NonNull;
-import org.springframework.transaction.annotation.Transactional;
+import io.github.nextentity.api.Persistable;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.function.Function;
 
-/// Abstract repository for persistable entities with ID-based query methods.
+/// 支持 Persistable 实体的抽象 Repository，提供基于主键的查询方法。
 ///
-/// Extends AbstractRepository with additional methods for querying by ID,
-/// since entities implementing {@link Persistable} expose their primary key.
+/// 继承 {@link AbstractRepository}，针对实现了 {@link Persistable} 接口的实体
+/// 提供更高效的 ID 查询实现。Persistable 实体通过 {@code getId()} 方法
+/// 暴露其主键，因此可以直接使用方法引用获取 ID，无需反射。
 ///
-/// Example usage:
+/// 使用示例：
 /// ```java
 /// @Component
 /// public class UserRepository extends PersistableRepository<User, Long> {
-///     // ID-based methods are automatically available
+///     // ID 相关方法自动可用
 ///     public User findById(Long id) { return getById(id); }
 ///     public List<User> findByIds(Collection<Long> ids) { return getAllById(ids); }
 /// }
 /// ```
 ///
-/// @param <T>  Entity type (must implement Persistable)
-/// @param <ID> Primary key type
+/// @param <T>  实体类型（必须实现 Persistable 接口）
+/// @param <ID> 主键类型
 /// @author HuangChengwei
 /// @since 1.0.0
 public abstract class PersistableRepository<T extends Persistable<ID>, ID> extends AbstractRepository<T, ID> {
 
-    /// Returns the path reference for the ID attribute.
+    /// 获取主键路径表达式。
     ///
-    /// Default implementation uses Persistable::getId.
-    /// Subclasses can override if needed.
+    /// 重写父类方法，使用 Persistable::getId 方法引用构建路径，
+    /// 比反射方式更高效。
     ///
-    /// @return Path reference for the ID attribute
-    protected PathRef<T, ID> idPath() {
+    /// @return 主键路径表达式
+    @Override
+    protected Path<T, ID> getTidPath() {
+        PathRef<T, ID> getId = Persistable::getId;
+        return Path.of(getId);
+    }
+
+    /// 获取 ID 提取函数。
+    ///
+    /// 重写父类方法，直接使用 Persistable::getId 方法引用，
+    /// 无需通过反射获取 ID 值。
+    ///
+    /// @return 从实体中提取 ID 的函数
+    @Override
+    protected Function<? super T, ? extends ID> getIdFunction() {
         return Persistable::getId;
-    }
-
-    /// Finds an entity by its primary key.
-    ///
-    /// @param id Primary key value
-    /// @return Optional containing the entity, or empty if not found
-    public Optional<T> findById(ID id) {
-        return Optional.ofNullable(query().where(idPath()).eq(id).first());
-    }
-
-    /// Gets an entity by its primary key.
-    ///
-    /// @param id Primary key value
-    /// @return The entity, or null if not found
-    public T getById(ID id) {
-        return query().where(idPath()).eq(id).first();
-    }
-
-    /// Finds all entities by their primary keys.
-    ///
-    /// @param ids Collection of primary key values
-    /// @return List of entities with matching IDs
-    public List<T> findAllById(@NonNull Collection<ID> ids) {
-        if (ids.isEmpty()) {
-            return List.of();
-        }
-        return query().where(idPath()).in(ids).list();
-    }
-
-    /// Gets all entities by their primary keys.
-    ///
-    /// @param ids Collection of primary key values
-    /// @return List of entities with matching IDs
-    public List<T> getAllById(@NonNull Collection<ID> ids) {
-        return findAllById(ids);
-    }
-
-    /// Finds all entities by their primary keys and returns a map keyed by ID.
-    ///
-    /// @param ids Collection of primary key values
-    /// @return Map of ID to entity
-    public Map<ID, T> findMapById(@NonNull Collection<ID> ids) {
-        List<T> entities = findAllById(ids);
-        return entities.stream()
-                .collect(Collectors.toMap(Persistable::getId, java.util.function.Function.identity()));
-    }
-
-    /// Finds all entities and returns a map keyed by ID.
-    ///
-    /// @return Map of ID to entity
-    public Map<ID, T> findMapAll() {
-        return query().list()
-                .stream()
-                .collect(Collectors.toMap(Persistable::getId, java.util.function.Function.identity()));
-    }
-
-    /// Checks if an entity exists by its primary key.
-    ///
-    /// @param id Primary key value
-    /// @return true if entity exists, false otherwise
-    public boolean existsById(ID id) {
-        return query().where(idPath()).eq(id).exists();
-    }
-
-    /// Counts the number of entities with the given IDs.
-    ///
-    /// @param ids Collection of primary key values
-    /// @return Number of existing entities
-    public long countById(@NonNull Collection<ID> ids) {
-        if (ids.isEmpty()) {
-            return 0;
-        }
-        return query().where(idPath()).in(ids).count();
-    }
-
-    /// Deletes an entity by its primary key.
-    ///
-    /// @param id Primary key value
-    @Transactional
-    public void deleteById(ID id) {
-        T entity = getById(id);
-        if (entity != null) {
-            delete(entity);
-        }
-    }
-
-    /// Deletes all entities by their primary keys.
-    ///
-    /// @param ids Collection of primary key values
-    @Transactional
-    public void deleteAllById(@NonNull Collection<ID> ids) {
-        List<T> entities = findAllById(ids);
-        if (!entities.isEmpty()) {
-            deleteAll(entities);
-        }
     }
 
 }
