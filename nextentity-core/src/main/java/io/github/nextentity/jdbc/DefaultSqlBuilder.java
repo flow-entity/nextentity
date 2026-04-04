@@ -41,7 +41,7 @@ public class DefaultSqlBuilder implements SqlBuilder {
     /// @return 插入 SQL 语句列表
     @Override
     public List<InsertSqlStatement> buildInsertStatement(Iterable<?> entities, @NonNull EntityType entityType) {
-        InsertSqlStatement statement = new InsertStatementBuilder(entities, entityType, dialect).build();
+        InsertSqlStatement statement = new InsertStatementBuilder(dialect, entities, entityType).build();
         return Collections.singletonList(statement);
     }
 
@@ -52,7 +52,7 @@ public class DefaultSqlBuilder implements SqlBuilder {
     /// @return 批量 SQL 语句对象
     @Override
     public BatchSqlStatement buildUpdateStatement(Iterable<?> entities, EntitySchema entityType) {
-        return new UpdateStatementBuilder(entities, entityType, dialect).build();
+        return new UpdateStatementBuilder(dialect, entities, entityType).build();
     }
 
     /// 构建删除 SQL 语句

@@ -1,9 +1,9 @@
 package io.github.nextentity.jdbc;
 
-/// 统一的 SQL 构建器
+/// SQL 构建器接口
 ///
-/// 该类合并了查询和更新 SQL 构建功能，同时实现 QuerySqlBuilder 和 JdbcUpdateSqlBuilder 接口。
-/// 通过 SqlDialect 支持所有数据库方言（MySQL、PostgreSQL、SQL Server），方言差异由 SqlDialect 处理。
+/// 定义查询和更新 SQL 语句的构建方法，支持批量操作和条件操作。
+/// 实现类通过 SqlDialect 处理数据库特定的语法差异。
 ///
 /// @author HuangChengwei
 /// @since 2.0

@@ -23,7 +23,7 @@ public class UpdateStatementBuilder extends AbstractBatchStatementBuilder {
     protected final Iterable<?> entities;
     protected final EntitySchema entityType;
 
-    public UpdateStatementBuilder(Iterable<?> entities, EntitySchema entityType, SqlDialect dialect) {
+    public UpdateStatementBuilder(SqlDialect dialect, Iterable<?> entities, EntitySchema entityType) {
         super(dialect);
         this.entities = entities;
         this.entityType = entityType;

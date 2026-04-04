@@ -32,7 +32,7 @@ public class ConditionalDeleteStatementBuilder extends AbstractConditionalStatem
     /// 添加 DELETE FROM 子句
     protected void appendDeleteClause() {
         sql.append("delete from ");
-        appendTableName();
+        appendTable();
     }
 
     /// 创建语句对象

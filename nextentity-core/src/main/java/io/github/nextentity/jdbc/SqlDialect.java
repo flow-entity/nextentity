@@ -14,29 +14,29 @@ import java.util.List;
 /// @since 2.1
 public interface SqlDialect {
 
-    /// Returns the left quote character for identifiers.
+    /// 返回标识符的左引号字符
     ///
-    /// @return Left quote character (e.g., "`" for MySQL, "\"" for standard SQL)
+    /// @return 左引号字符（例如 MySQL 使用 "`"，标准 SQL 使用 "\""）
     String leftQuotedIdentifier();
 
-    /// Returns the right quote character for identifiers.
+    /// 返回标识符的右引号字符
     ///
-    /// @return Right quote character (e.g., "`" for MySQL, "\"" for standard SQL)
+    /// @return 右引号字符（例如 MySQL 使用 "`"，标准 SQL 使用 "\""）
     String rightQuotedIdentifier();
 
-    /// Appends LIMIT and OFFSET clause to the SQL statement.
+    /// 添加 LIMIT 和 OFFSET 子句到 SQL 语句
     ///
-    /// Different databases have different pagination syntax:
-    /// - MySQL: LIMIT offset,limit or LIMIT limit
+    /// 不同数据库有不同的分页语法：
+    /// - MySQL: LIMIT offset,limit 或 LIMIT limit
     /// - PostgreSQL: LIMIT limit OFFSET offset
     /// - SQL Server: OFFSET offset ROWS FETCH FIRST limit ROWS ONLY
     ///
-    /// @param sql    the SQL builder to append to
-    /// @param args   the parameter list to add values to
-    /// @param offset the offset value (0 if no offset)
-    /// @param limit  the limit value (-1 if no limit)
+    /// @param sql    要追加的 SQL 构建器
+    /// @param args   要添加值的参数列表
+    /// @param offset 偏移量（无偏移时为 0）
+    /// @param limit  限制数（无限制时为 -1）
     default void appendLimitOffset(StringBuilder sql, List<Object> args, int offset, int limit) {
-        // MySQL style: LIMIT offset,limit
+        // MySQL 风格: LIMIT offset,limit
         if (offset > 0) {
             sql.append(" limit ?,?");
             args.add(offset);
@@ -47,55 +47,55 @@ public interface SqlDialect {
         }
     }
 
-    /// Maps a function name to the database-specific name.
+    /// 将函数名映射到数据库特定的名称
     ///
-    /// Some databases use different function names:
-    /// - SQL Server uses "len" instead of "length"
+    /// 有些数据库使用不同的函数名：
+    /// - SQL Server 使用 "len" 而不是 "length"
     ///
-    /// @param name the standard function name
-    /// @return the database-specific function name
+    /// @param name 标准函数名
+    /// @return 数据库特定的函数名
     default String functionName(String name) {
         return name;
     }
 
-    /// Returns whether the database requires ORDER BY clause for pagination.
+    /// 返回数据库是否需要 ORDER BY 子句才能进行分页
     ///
-    /// SQL Server requires ORDER BY before OFFSET/FETCH clauses.
+    /// SQL Server 在 OFFSET/FETCH 子句之前需要 ORDER BY。
     ///
-    /// @return true if ORDER BY is required for pagination
+    /// @return 如果分页需要 ORDER BY 则返回 true
     default boolean requiresOrderByForPagination() {
         return false;
     }
 
-    /// Returns whether NOT path should be converted to path = false.
+    /// 返回是否应该将 NOT path 转换为 path = false
     ///
-    /// SQL Server has special handling for NOT operations on boolean expressions.
+    /// SQL Server 对布尔表达式的 NOT 操作有特殊处理。
     ///
-    /// @return true if NOT path should be converted to path = false
+    /// @return 如果应将 NOT path 转换为 path = false 则返回 true
     default boolean shouldConvertNotToEqFalse() {
         return false;
     }
 
-    /// Returns a typed placeholder for the given attribute type.
+    /// 返回给定属性类型的类型化占位符
     ///
-    /// PostgreSQL uses "::timestamp" cast for date types.
+    /// PostgreSQL 对日期类型使用 "::timestamp" 类型转换。
     ///
-    /// @param type the attribute type
-    /// @return the typed placeholder string
+    /// @param type 属性类型
+    /// @return 类型化占位符字符串
     default String typedPlaceholder(Class<?> type) {
         return "?";
     }
 
-    /// Default SQL dialect instance.
+    /// 默认 SQL 方言实例
     SqlDialect DEFAULT = new DefaultDialect();
 
-    /// MySQL SQL dialect instance.
+    /// MySQL SQL 方言实例
     SqlDialect MYSQL = new MySqlDialect();
 
-    /// PostgreSQL SQL dialect instance.
+    /// PostgreSQL SQL 方言实例
     SqlDialect POSTGRESQL = new PostgresqlDialect();
 
-    /// SQL Server SQL dialect instance.
+    /// SQL Server SQL 方言实例
     SqlDialect SQL_SERVER = new SqlServerDialect();
 
     /// 根据数据源自动检测 SQL 方言

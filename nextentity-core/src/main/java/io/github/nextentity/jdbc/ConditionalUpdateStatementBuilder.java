@@ -39,7 +39,7 @@ public class ConditionalUpdateStatementBuilder extends AbstractConditionalStatem
     /// 添加 UPDATE 子句
     protected void appendUpdateClause() {
         sql.append("update ");
-        appendTableName();
+        appendTable();
         sql.append(" set ");
     }
 

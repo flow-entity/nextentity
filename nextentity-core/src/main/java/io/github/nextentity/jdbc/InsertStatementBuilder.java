@@ -23,7 +23,7 @@ public class InsertStatementBuilder extends AbstractBatchStatementBuilder {
     protected final List<EntityAttribute> columns = new ArrayList<>();
     protected boolean generateKey;
 
-    public InsertStatementBuilder(Iterable<?> entities, EntityType entityType, SqlDialect dialect) {
+    public InsertStatementBuilder(SqlDialect dialect, Iterable<?> entities, EntityType entityType) {
         super(dialect);
         this.entities = entities;
         this.entityType = entityType;

@@ -11,7 +11,6 @@ import io.github.nextentity.core.reflect.schema.Schema;
 import java.util.ArrayList;
 import java.util.List;
 
-///
 /// 条件 SQL 语句构建器的抽象基类
 ///
 /// 该类封装了 WHERE 条件表达式的处理逻辑，使用实例字段保存构建上下文。
@@ -49,7 +48,7 @@ public abstract class AbstractConditionalStatementBuilder {
     }
 
     /// 添加表名
-    protected void appendTableName() {
+    protected void appendTable() {
         sql.append(leftQuotedIdentifier())
                 .append(entityType.tableName())
                 .append(rightQuotedIdentifier());
@@ -59,17 +58,17 @@ public abstract class AbstractConditionalStatementBuilder {
     protected void appendWhereCondition() {
         if (whereCondition != null) {
             sql.append(" where ");
-            appendExpression(whereCondition);
+            renderExpression(whereCondition);
         }
     }
 
     /// 处理表达式节点
-    protected void appendExpression(ExpressionNode node) {
+    protected void renderExpression(ExpressionNode node) {
         if (node instanceof PathNode pathNode) {
-            appendPath(pathNode);
-        } else if (node instanceof LiteralNode literalNode) {
+            renderPath(pathNode);
+        } else if (node instanceof LiteralNode(Object value)) {
             sql.append("?");
-            params.add(literalNode.value());
+            params.add(value);
         } else if (node instanceof OperatorNode operatorNode) {
             appendOperatorNode(operatorNode);
         }
@@ -87,13 +86,13 @@ public abstract class AbstractConditionalStatementBuilder {
                     if (i > 0) {
                         sql.append(" ").append(operator.sign()).append(" ");
                     }
-                    appendExpression(operands.get(i));
+                    renderExpression(operands.get(i));
                 }
                 sql.append(")");
             }
             case NOT -> {
                 sql.append("not ");
-                appendExpression(operands.getFirst());
+                renderExpression(operands.getFirst());
             }
             case EQ, NE, GT, GE, LT, LE, LIKE -> {
                 ExpressionNode leftOperand = operands.get(0);
@@ -102,9 +101,9 @@ public abstract class AbstractConditionalStatementBuilder {
                 if (leftOperand instanceof PathNode pathNode && pathNode.deep() > 1) {
                     appendNestedPathComparison(pathNode, operator, rightOperand);
                 } else {
-                    appendExpression(leftOperand);
+                    renderExpression(leftOperand);
                     sql.append(" ").append(operator.sign()).append(" ");
-                    appendExpression(rightOperand);
+                    renderExpression(rightOperand);
                 }
             }
             case IN -> {
@@ -113,24 +112,24 @@ public abstract class AbstractConditionalStatementBuilder {
                 if (leftOperand instanceof PathNode pathNode && pathNode.deep() > 1) {
                     appendNestedPathIn(pathNode, operands);
                 } else {
-                    appendExpression(leftOperand);
+                    renderExpression(leftOperand);
                     appendIn(operands);
                 }
             }
             case IS_NULL -> {
-                appendExpression(operands.getFirst());
+                renderExpression(operands.getFirst());
                 sql.append(" is null");
             }
             case IS_NOT_NULL -> {
-                appendExpression(operands.getFirst());
+                renderExpression(operands.getFirst());
                 sql.append(" is not null");
             }
             case BETWEEN -> {
-                appendExpression(operands.get(0));
+                renderExpression(operands.get(0));
                 sql.append(" between ");
-                appendExpression(operands.get(1));
+                renderExpression(operands.get(1));
                 sql.append(" and ");
-                appendExpression(operands.get(2));
+                renderExpression(operands.get(2));
             }
             default -> throw new UnsupportedOperationException("Unsupported operator: " + operator);
         }
@@ -141,13 +140,13 @@ public abstract class AbstractConditionalStatementBuilder {
         sql.append(" IN (");
         for (int i = 1; i < operands.size(); i++) {
             if (i > 1) sql.append(", ");
-            appendExpression(operands.get(i));
+            renderExpression(operands.get(i));
         }
         sql.append(")");
     }
 
     /// 处理路径节点
-    protected void appendPath(PathNode path) {
+    protected void renderPath(PathNode path) {
         EntityAttribute attribute = (EntityAttribute) entityType.getAttribute(path);
         sql.append(leftQuotedIdentifier())
                 .append(attribute.columnName())
@@ -213,7 +212,7 @@ public abstract class AbstractConditionalStatementBuilder {
         if (joinInfo != null) {
             appendNestedPathSubQueryPrefix(joinInfo);
             sql.append(" ").append(operator.sign()).append(" ");
-            appendExpression(rightOperand);
+            renderExpression(rightOperand);
             sql.append(")");
         } else {
             Attribute attr = entityType.getAttribute(nestedPath);
@@ -222,7 +221,7 @@ public abstract class AbstractConditionalStatementBuilder {
                     .append(entityAttribute.columnName())
                     .append(rightQuotedIdentifier());
             sql.append(" ").append(operator.sign()).append(" ");
-            appendExpression(rightOperand);
+            renderExpression(rightOperand);
         }
     }
 
@@ -235,7 +234,7 @@ public abstract class AbstractConditionalStatementBuilder {
             sql.append(" IN (");
             for (int i = 1; i < operands.size(); i++) {
                 if (i > 1) sql.append(", ");
-                appendExpression(operands.get(i));
+                renderExpression(operands.get(i));
             }
             sql.append("))");
         } else {
