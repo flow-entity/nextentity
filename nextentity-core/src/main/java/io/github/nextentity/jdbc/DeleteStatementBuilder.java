@@ -21,7 +21,7 @@ public class DeleteStatementBuilder extends AbstractBatchStatementBuilder {
     protected final Iterable<?> entities;
     protected final EntityType entityType;
 
-    public DeleteStatementBuilder(Iterable<?> entities, EntityType entityType, SqlDialect dialect) {
+    public DeleteStatementBuilder(SqlDialect dialect, Iterable<?> entities, EntityType entityType) {
         super(dialect);
         this.entities = entities;
         this.entityType = entityType;

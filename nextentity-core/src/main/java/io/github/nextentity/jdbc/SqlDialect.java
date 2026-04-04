@@ -35,17 +35,7 @@ public interface SqlDialect {
     /// @param args   要添加值的参数列表
     /// @param offset 偏移量（无偏移时为 0）
     /// @param limit  限制数（无限制时为 -1）
-    default void appendLimitOffset(StringBuilder sql, List<Object> args, int offset, int limit) {
-        // MySQL 风格: LIMIT offset,limit
-        if (offset > 0) {
-            sql.append(" limit ?,?");
-            args.add(offset);
-            args.add(limit < 0 ? Long.MAX_VALUE : limit);
-        } else if (limit >= 0) {
-            sql.append(" limit ?");
-            args.add(limit);
-        }
-    }
+    void appendLimitOffset(StringBuilder sql, List<Object> args, int offset, int limit);
 
     /// 将函数名映射到数据库特定的名称
     ///

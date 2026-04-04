@@ -62,7 +62,7 @@ public class DefaultSqlBuilder implements SqlBuilder {
     /// @return 批量 SQL 语句对象
     @Override
     public BatchSqlStatement buildDeleteStatement(Iterable<?> entities, EntityType entity) {
-        return new DeleteStatementBuilder(entities, entity, dialect).build();
+        return new DeleteStatementBuilder(dialect, entities, entity).build();
     }
 
     /// 构建条件更新 SQL 语句

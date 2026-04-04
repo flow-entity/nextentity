@@ -116,7 +116,6 @@ public class QueryStatementBuilder {
     }
 
     protected void appendSelectAlias(SelectItem expression) {
-        //
     }
 
     protected void appendLockModeType(LockModeType lockModeType) {
