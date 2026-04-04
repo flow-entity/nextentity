@@ -94,33 +94,15 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 }
 ```
 
-### PersistableRepository 基类
-
-如果实体实现了 `Persistable<ID>` 接口（暴露 `getId()` 方法），可以使用 `PersistableRepository` 获得 ID-based 查询方法：
-
-```java
-// 实体类
-public class User implements Persistable<Long> {
-    private Long id;
-    
-    @Override
-    public Long getId() { return id; }
-}
-
-// Repository
-@Repository
-public class UserRepository extends PersistableRepository<User, Long> {
-    // 自动获得以下方法：
-    // - findById(id) → Optional<User>
-    // - getById(id) → User (可能为 null)
-    // - findAllById(ids) → List<User>
-    // - findMapById(ids) → Map<Long, User>
-    // - existsById(id) → boolean
-    // - countById(ids) → long
-    // - deleteById(id)
-    // - deleteAllById(ids)
-}
-```
+AbstractRepository 提供以下基于 ID 的方法：
+- `findById(id)` → `Optional<T>`
+- `getById(id)` → `T`（可能为 null）
+- `findAllById(ids)` / `getAllById(ids)` → `List<T>`
+- `findMapById(ids)` → `Map<ID, T>`
+- `findMapAll()` → `Map<ID, T>`
+- `existsById(id)` → `boolean`
+- `countById(ids)` → `long`
+- `deleteById(id)` / `deleteAllById(ids)`
 
 ### 使用示例
 
@@ -136,7 +118,6 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    // 使用 PersistableRepository 的 ID 方法
     public User getById(Long id) {
         return userRepository.getById(id);
     }

@@ -3,7 +3,7 @@ package io.github.nextentity.jdbc;
 import java.util.HashMap;
 
 class DefaultSchemaAttributePaths extends HashMap<String, DefaultSchemaAttributePaths> implements SchemaAttributePaths {
-    static SchemaAttributePaths EMPTY = new EmptySchemaAttributePaths();
+    static final SchemaAttributePaths EMPTY = new EmptySchemaAttributePaths();
 
     @Override
     public SchemaAttributePaths get(String path) {

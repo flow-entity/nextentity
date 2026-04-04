@@ -1843,34 +1843,6 @@ public class GenericApiTest {
         return userQuery.users().stream().mapToInt(User::getRandomNumber);
     }
 
-    // @Test
-    // void test() {
-    //     test(UserQueryProvider.jpaQuery());
-    //     test(UserQueryProvider.jdbcQuery());
-    // }
-
-    // private static void test(Query query) {
-    //     Select<UserSummary> from = query.from(UserSummary.class);
-    //     List<UserSummary> list = from.where(UserSummary::getMaxRandomNumber).le(33).list();
-    //     Map<String, List<User>> map = userQuery.users().stream().collect(Collectors.groupingBy(User::getUsername));
-    //     Map<String, UserSummary> summaryMap = new HashMap<>();
-    //     map.forEach((k, v) -> {
-    //         UserSummary summary = new UserSummary();
-    //         summary.setCount((long) v.size());
-    //         summary.setUsername(k);
-    //         int maxRandomNumber = Integer.MIN_VALUE;
-    //         for (User user : v) {
-    //             maxRandomNumber = Math.max(maxRandomNumber, user.getRandomNumber());
-    //         }
-    //         summary.setMaxRandomNumber(maxRandomNumber);
-    //         summaryMap.put(k, summary);
-    //     });
-    //     for (UserSummary summary : list) {
-    //         UserSummary s = summaryMap.get(summary.getUsername());
-    //         assertEquals(s, summary);
-    //         assertTrue(summary.getMaxRandomNumber() <= 33);
-    //     }
-    // }
 }
 
 

@@ -7,7 +7,7 @@ public class JsonSerializablePredicateValueTest {
     public static final ObjectMapper mapper = new ObjectMapper();
 
     static {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
     }
 
 }

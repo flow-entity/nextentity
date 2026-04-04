@@ -1,5 +1,6 @@
 package io.github.nextentity.spring.integration.entity;
 
+import io.github.nextentity.api.Persistable;
 import io.github.nextentity.core.util.Exceptions;
 import jakarta.persistence.*;
 import org.hibernate.Hibernate;
@@ -13,7 +14,7 @@ import static jakarta.persistence.ConstraintMode.NO_CONSTRAINT;
 
 @Entity
 @Table(name = "users")
-public class User extends EnableOptimisticLock implements Cloneable {
+public class User extends EnableOptimisticLock implements Cloneable, Persistable<Integer> {
 
     @Id
     private int id;
@@ -68,7 +69,7 @@ public class User extends EnableOptimisticLock implements Cloneable {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
         User user = (User) o;
-        return getId() == user.getId()
+        return Objects.equals(getId(), user.getId())
                && getRandomNumber() == user.getRandomNumber()
                && isValid() == user.isValid()
                && Objects.equals(getUsername(), user.getUsername())
@@ -99,7 +100,7 @@ public class User extends EnableOptimisticLock implements Cloneable {
         }
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

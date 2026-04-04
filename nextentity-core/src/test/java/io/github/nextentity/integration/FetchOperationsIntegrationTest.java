@@ -268,14 +268,13 @@ public class FetchOperationsIntegrationTest {
     @DisplayName("Should get first with fetch")
     void shouldGetFirstWithFetch(IntegrationTestContext context) {
         // When
-        var employeeOpt = context.queryEmployees()
+        var employee = context.queryEmployees()
                 .fetch(Employee::getDepartment)
                 .orderBy(Employee::getId).asc()
                 .first();
 
         // Then
-        assertThat(employeeOpt).isNotNull();
-        Employee employee = employeeOpt;
+        assertThat(employee).isNotNull();
         assertThat(employee.getId()).isEqualTo(1L);
         assertThat(employee.getName()).isNotNull();
     }

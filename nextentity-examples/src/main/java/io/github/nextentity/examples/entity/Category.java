@@ -13,18 +13,14 @@ import java.util.List;
 /// 产品分类实体类，实现了 {@link Persistable} 接口。
 ///
 /// 本实体演示：
-/// - {@link Persistable} 接口的使用
+/// - {@link Persistable} 接口的使用（提供标准 ID 访问方法）
 /// - 与 {@link Product} 实体的关系
 /// - 分层分类结构（parentId）
 ///
-/// ## Persistable 接口优势
+/// ## Persistable 接口
 ///
-/// 实现 {@link Persistable} 接口后，Repository 可以使用便捷方法：
-/// ```java
-/// Category category = categoryRepository.findById(1L);
-/// List<Category> categories = categoryRepository.findAllById(List.of(1L, 2L));
-/// Map<Long, Category> categoryMap = categoryRepository.findMapById(List.of(1L, 2L));
-/// ```
+/// 实现 {@link Persistable} 接口提供标准的 `getId()` 方法，
+/// 这是良好的设计实践，同时支持类型安全的嵌套路径访问。
 @jakarta.persistence.Entity
 public class Category implements Persistable<Long> {
 

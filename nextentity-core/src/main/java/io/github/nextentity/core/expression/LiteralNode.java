@@ -19,10 +19,10 @@ import java.util.Collection;
 public record LiteralNode(Object value) implements ExpressionNode, SelectItem {
 
     /// 布尔值 true 的预定义实例。
-    public static LiteralNode TRUE = new LiteralNode(true);
+    public static final LiteralNode TRUE = new LiteralNode(true);
 
     /// 布尔值 false 的预定义实例。
-    public static LiteralNode FALSE = new LiteralNode(false);
+    public static final LiteralNode FALSE = new LiteralNode(false);
 
     /// 将运算符应用于此字面量和额外操作数。
     ///

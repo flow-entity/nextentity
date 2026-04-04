@@ -21,7 +21,7 @@ import java.util.stream.StreamSupport;
 /// @since 1.0.0
 public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTree {
 
-    private volatile ExpressionNode root;
+    private final ExpressionNode root;
 
     /// 使用指定的根节点创建新的表达式构建器。
     ///

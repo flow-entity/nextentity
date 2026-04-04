@@ -212,7 +212,7 @@ public class QueryOperationsIntegrationTest {
                 .list();
 
         // Then
-        assertTrue(employees.size() > 0);
+        assertFalse(employees.isEmpty());
         assertTrue(employees.stream().allMatch(e -> e.getEmail() != null));
     }
 
@@ -228,7 +228,7 @@ public class QueryOperationsIntegrationTest {
                 .list();
 
         // Then
-        assertTrue(employees.size() > 0);
+        assertFalse(employees.isEmpty());
         assertTrue(employees.stream().allMatch(Employee::getActive));
     }
 
@@ -402,7 +402,7 @@ public class QueryOperationsIntegrationTest {
                 .list();
 
         // Then
-        assertTrue(employees.size() > 0);
+        assertFalse(employees.isEmpty());
         assertTrue(employees.stream().allMatch(e -> e.getActive() && e.getDepartmentId() == 1L));
     }
 
@@ -418,7 +418,7 @@ public class QueryOperationsIntegrationTest {
                 .list();
 
         // Then
-        assertTrue(employees.size() > 0);
+        assertFalse(employees.isEmpty());
         assertTrue(employees.stream().allMatch(e -> e.getName().startsWith("A")));
     }
 
@@ -490,7 +490,7 @@ public class QueryOperationsIntegrationTest {
                 .list();
 
         // Then
-        assertTrue(employees.size() > 0);
+        assertFalse(employees.isEmpty());
         for (Employee emp : employees) {
             assertTrue(emp.getSalary() >= 60000.0);
             assertTrue(emp.getSalary() <= 80000.0);

@@ -1629,9 +1629,9 @@ class QueryBuilderTest {
 
     static class Checker<T, U extends Collector<T>> {
         private final RuntimeException ex;
-        List<T> expected;
+        private final List<T> expected;
 
-        U collector;
+        private final U collector;
 
         Checker(Stream<T> expected, U collector) {
             this(expected.collect(Collectors.toList()), collector);

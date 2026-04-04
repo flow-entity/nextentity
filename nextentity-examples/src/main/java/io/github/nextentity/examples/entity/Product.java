@@ -14,19 +14,14 @@ import java.time.LocalDateTime;
 /// 产品实体类，实现了 {@link Persistable} 接口。
 ///
 /// 本实体演示：
-/// - {@link Persistable} 接口的使用（提供 ID 相关便捷方法）
+/// - {@link Persistable} 接口的使用（提供标准 ID 访问方法）
 /// - 与 {@link Category} 实体的关系
 /// - {@code @Transient} 字段的使用
 ///
-/// ## Persistable 接口优势
+/// ## Persistable 接口
 ///
-/// 与 Employee 和 Department 不同，Product 实现了 {@link Persistable}，
-/// 可以使用 Repository 的便捷方法：
-/// ```java
-/// Product product = productRepository.findById(1L);
-/// List<Product> products = productRepository.findAllById(List.of(1L, 2L));
-/// Map<Long, Product> productMap = productRepository.findMapById(List.of(1L, 2L));
-/// ```
+/// 实现 {@link Persistable} 接口提供标准的 `getId()` 方法，
+/// 这是良好的设计实践，同时支持类型安全的嵌套路径访问。
 @jakarta.persistence.Entity
 public class Product implements Persistable<Long> {
 

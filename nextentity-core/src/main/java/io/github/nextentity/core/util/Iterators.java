@@ -92,8 +92,8 @@ public class Iterators {
     }
 
     public static class MappedIterator<T, R> implements Iterator<R> {
-        Iterator<T> iterator;
-        Function<? super T, ? extends R> mapper;
+        private final Iterator<T> iterator;
+        private final Function<? super T, ? extends R> mapper;
 
         public MappedIterator(Iterator<T> iterator, Function<? super T, ? extends R> mapper) {
             this.iterator = iterator;

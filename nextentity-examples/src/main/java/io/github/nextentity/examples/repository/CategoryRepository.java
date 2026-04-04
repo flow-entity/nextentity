@@ -1,20 +1,18 @@
 package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.examples.entity.Category;
-import io.github.nextentity.spring.PersistableRepository;
+import io.github.nextentity.spring.AbstractRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-/// 分类 Repository，继承 {@link PersistableRepository}。
+/// 分类 Repository，继承 {@link AbstractRepository}。
 ///
-/// 演示 {@link io.github.nextentity.api.Persistable} 接口带来的 ID 相关便捷方法，
-/// 用于 {@link Category} 实体。
+/// 用于 {@link Category} 实体的数据访问。
 ///
-/// ## 继承的便捷方法
+/// ## 继承的 ID 相关方法
 ///
-/// 因为 Category 实现了 {@link io.github.nextentity.api.Persistable}，
-/// 以下方法自动可用：
+/// 从 AbstractRepository 继承以下方法：
 /// - `findById(Long id)` - 按 ID 查找，返回 Optional
 /// - `getById(Long id)` - 按 ID 获取，不存在返回 null
 /// - `findAllById(Collection)` - 按多个 ID 查找
@@ -22,7 +20,7 @@ import java.util.List;
 /// - `existsById(Long id)` - 检查 ID 是否存在
 /// - `deleteById(Long id)` - 按 ID 删除
 @Repository
-public class CategoryRepository extends PersistableRepository<Category, Long> {
+public class CategoryRepository extends AbstractRepository<Category, Long> {
 
     /// 查询所有活跃分类。
     public List<Category> findActiveCategories() {

@@ -119,8 +119,6 @@ public enum EmployeeStatus {
 
 ## 创建 Repository
 
-### AbstractRepository
-
 继承 `AbstractRepository`，依赖由 Spring 自动注入：
 
 ```java
@@ -129,32 +127,13 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 }
 ```
 
+AbstractRepository 提供以下基于 ID 的方法：
+- `findById(id)` / `getById(id)` - 按 ID 查询
+- `findAllById(ids)` / `getAllById(ids)` - 按多个 ID 查询
+- `existsById(id)` - 检查 ID 是否存在
+- `deleteById(id)` / `deleteAllById(ids)` - 按 ID 删除
+
 > 📍 **示例位置**: `repository/EmployeeRepository.java`
-
-### PersistableRepository
-
-对于实现 `Persistable<ID>` 接口的实体，可以使用 `PersistableRepository`：
-
-```java
-// 实体实现 Persistable 接口
-@Entity
-public class Product implements Persistable<Long> {
-    @Id
-    private Long id;
-
-    @Override
-    public Long getId() { return id; }
-}
-
-// Repository 继承 PersistableRepository
-@Repository
-public class ProductRepository extends PersistableRepository<Product, Long> {
-
-    // 自动获得 findById、getById、existsById、deleteById 等方法
-}
-```
-
-> 📍 **示例位置**: `repository/ProductRepository.java`
 
 ---
 

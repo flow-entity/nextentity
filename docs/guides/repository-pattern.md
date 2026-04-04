@@ -34,28 +34,17 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
 }
 ```
 
-### PersistableRepository
-
-对于实现 `Persistable<ID>` 接口的实体，可以使用 `PersistableRepository`：
-
-```java
-// 实体实现 Persistable 接口
-@Entity
-public class Product implements Persistable<Long> {
-    @Id
-    private Long id;
-
-    @Override
-    public Long getId() { return id; }
-}
-
-// Repository 继承 PersistableRepository
-@Repository
-public class ProductRepository extends PersistableRepository<Product, Long> {
-
-    // 自动获得 findById、getById、existsById、deleteById 等方法
-}
-```
+AbstractRepository 提供以下基于 ID 的方法：
+- `findById(id)` → `Optional<T>`
+- `getById(id)` → `T`
+- `findAllById(ids)` → `List<T>`
+- `getAllById(ids)` → `List<T>`
+- `findMapById(ids)` → `Map<ID, T>`
+- `findMapAll()` → `Map<ID, T>`
+- `existsById(id)` → `boolean`
+- `countById(ids)` → `long`
+- `deleteById(id)`
+- `deleteAllById(ids)`
 
 ---
 

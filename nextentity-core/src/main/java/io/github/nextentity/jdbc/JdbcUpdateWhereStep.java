@@ -2,7 +2,6 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
@@ -23,16 +22,13 @@ import java.util.Map;
 /// @since 2.1
 public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements UpdateSetStep<T> {
 
-    private final UpdateExecutor updateExecutor;
     private final Map<String, Object> setValues = new LinkedHashMap<>();
 
     public JdbcUpdateWhereStep(Class<T> entityType,
                                Metamodel metamodel,
-                               UpdateExecutor updateExecutor,
                                ConnectionProvider connectionProvider,
                                SqlDialect sqlDialect) {
         super(entityType, metamodel, connectionProvider, sqlDialect);
-        this.updateExecutor = updateExecutor;
     }
 
     @Override

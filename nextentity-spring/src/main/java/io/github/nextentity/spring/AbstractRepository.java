@@ -64,7 +64,7 @@ public abstract class AbstractRepository<T, ID> {
 
     protected Path<T, ID> idPath() {
         if (idPath == null) {
-            idPath = newTidPath();
+            idPath = newIdPath();
         }
         return idPath;
     }
@@ -82,7 +82,10 @@ public abstract class AbstractRepository<T, ID> {
     /// 默认实现通过 Metamodel 从实体元数据中获取 ID 属性名称。
     ///
     /// @return 主键路径表达式
-    protected Path<T, ID> newTidPath() {
+    protected Path<T, ID> newIdPath() {
+        if (Persistable.class.isAssignableFrom(entityType)) {
+            return Path.of("id");
+        }
         EntityAttribute id = metamodel.getEntity(entityType).id();
         return Path.of(id.name());
     }
@@ -90,11 +93,15 @@ public abstract class AbstractRepository<T, ID> {
     /// 获取 ID 提取函数。
     ///
     /// 子类可重写此方法以自定义 ID 的提取方式。
-    /// 默认实现通过 Metamodel 从实体中反射获取 ID 值。
-    /// PersistableRepository 重写此方法使用 Persistable::getId 方法引用。
+    /// 默认实现自动检测：如果实体实现了 Persistable 接口，
+    /// 使用 Persistable::getId 方法引用；否则通过反射获取。
     ///
     /// @return 从实体中提取 ID 的函数
     protected Function<? super T, ? extends ID> newIdExtractor() {
+        if (Persistable.class.isAssignableFrom(entityType)) {
+            Function<Persistable<ID>, ID> result = Persistable::getId;
+            return TypeCastUtil.unsafeCast(result);
+        }
         EntityAttribute id = metamodel.getEntity(entityType).id();
         return entity -> TypeCastUtil.unsafeCast(id.get(entity));
     }

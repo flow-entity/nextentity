@@ -5,7 +5,7 @@ import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.examples.entity.Product;
-import io.github.nextentity.spring.PersistableRepository;
+import io.github.nextentity.spring.AbstractRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,30 +14,20 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-/// 产品 Repository，继承 {@link PersistableRepository}。
+/// 产品 Repository，继承 {@link AbstractRepository}。
 ///
-/// 演示 {@link io.github.nextentity.api.Persistable} 接口的优势。
-/// 与 EmployeeRepository 不同，本 Repository 自动继承 ID 相关便捷方法：
+/// 演示以下功能：
 ///
-/// - `findById(Long id)` - 按 ID 查找，返回 Optional
-/// - `getById(Long id)` - 按 ID 获取，不存在返回 null
-/// - `findAllById(Collection)` - 按多个 ID 查找
-/// - `findMapById(Collection)` - 按 ID 查找并返回 Map
-/// - `existsById(Long id)` - 检查 ID 是否存在
-/// - `deleteById(Long id)` - 按 ID 删除
-///
-/// 本 Repository 还演示与 {@link Category} 的关联查询：
-/// - 懒加载（默认行为）
-/// - 使用 fetch() 急加载
-/// - 按关联 ID 查询
-/// - 嵌套属性访问
-/// - DTO 投影与关联数据
+/// - ID 相关便捷方法（继承自 AbstractRepository）
+/// - 与 {@link Category} 的关联查询
+/// - 懒加载与急加载
+/// - DTO 投影与嵌套属性
 @Repository
-public class ProductRepository extends PersistableRepository<Product, Long> {
+public class ProductRepository extends AbstractRepository<Product, Long> {
 
     // ==================== 继承的 ID 相关方法 ====================
     //
-    // 以下方法从 PersistableRepository 继承，因为 Product 实现了 Persistable<Long>：
+    // 以下方法从 AbstractRepository 继承：
     //
     // - findById(Long id) -> Optional<Product>
     // - getById(Long id) -> Product (可空)
@@ -49,8 +39,6 @@ public class ProductRepository extends PersistableRepository<Product, Long> {
     // - countById(Collection<Long> ids) -> long
     // - deleteById(Long id) -> void
     // - deleteAllById(Collection<Long> ids) -> void
-    //
-    // 无需实现！对比 EmployeeRepository 需要手动构建类似查询。
 
     // ==================== 关联查询方法 ====================
 

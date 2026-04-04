@@ -203,7 +203,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @return 条件更新构建器实例
     @Override
     public <T> UpdateSetStep<T> update(@NonNull Class<T> entityType) {
-        return new JdbcUpdateWhereStep<>(entityType, metamodel, this, connectionProvider, sqlDialect);
+        return new JdbcUpdateWhereStep<>(entityType, metamodel, connectionProvider, sqlDialect);
     }
 
     /// 创建条件删除构建器
