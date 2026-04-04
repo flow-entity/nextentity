@@ -4,38 +4,32 @@ import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
 
+/// 表示空/无操作表达式的表达式节点。
 ///
-/// Expression node representing an empty/no-op expression.
-/// <p>
-/// Used as a placeholder for null or missing expressions in the query structure.
-/// When combined with other expressions, EmptyNode is typically ignored or
-/// replaced by the combined expression.
-/// <p>
-/// This is a singleton with a single instance available via {@link #INSTANCE}.
+/// 用作查询结构中空值或缺失表达式的占位符。
+/// 当与其他表达式组合时，EmptyNode 通常被忽略或
+/// 被组合表达式替换。
+///
+/// 这是一个单例，通过 {@link #INSTANCE} 提供单个实例。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public final class EmptyNode implements ExpressionNode {
 
-    ///
-    /// The singleton instance of EmptyNode.
-    ///
+    /// EmptyNode 的单例实例。
     public static final EmptyNode INSTANCE = new EmptyNode();
 
     private EmptyNode() {
     }
 
+    /// 将运算符应用于此空节点和额外操作数。
     ///
-    /// Applies an operator to this empty node with additional operands.
-    /// <p>
-    /// If no additional operands are provided, returns this empty node.
-    /// Otherwise, creates a new OperatorNode with the provided operands.
+    /// 如果没有提供额外操作数，返回此空节点。
+    /// 否则，使用提供的操作数创建新的 OperatorNode。
     ///
-    /// @param operator the operator to apply
-    /// @param nodes additional operand nodes
-    /// @return this empty node if no operands, or a new OperatorNode
-    ///
+    /// @param operator 要应用的运算符
+    /// @param nodes 额外操作数节点
+    /// @return 如果没有操作数则返回此空节点，否则返回新的 OperatorNode
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (nodes.isEmpty()) {

@@ -1,32 +1,25 @@
 package io.github.nextentity.core.meta;
 
+/// 用于将投影字段映射到实体属性的投影属性接口。
 ///
-/// Projection attribute interface for mapping projection fields to entity attributes.
+/// 此接口扩展 {@link DatabaseColumnAttribute}，提供投影字段与其对应实体属性之间的链接。
 ///
-/// This interface extends {@link DatabaseColumnAttribute} and provides a link
-/// between projection fields and their corresponding entity attributes.
-///
-/// Projection attributes inherit value conversion from their source entity attributes.
+/// 投影属性从其源实体属性继承值转换。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface ProjectionAttribute extends DatabaseColumnAttribute {
 
+    /// 获取此投影属性映射的源实体属性。
     ///
-    /// Gets the source entity attribute that this projection attribute maps from.
-    ///
-    /// @return the source entity attribute
-    ///
+    /// @return 源实体属性
     EntityAttribute source();
 
+    /// 获取此属性的值转换器。
     ///
-    /// Gets the value converter for this attribute.
+    /// 委托给源实体属性的值转换器。
     ///
-    /// Delegates to the source entity attribute's value converter.
-    ///
-    /// @return the value converter from the source entity attribute
-    ///
+    /// @return 来自源实体属性的值转换器
     default ValueConverter<?, ?> valueConvertor() {
         return source().valueConvertor();
     }

@@ -3,43 +3,33 @@ package io.github.nextentity.core.meta;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 
+/// 表示实体之间关联的连接属性接口。
 ///
-/// Join attribute interface representing an association between entities.
+/// 此接口同时扩展 {@link SchemaAttribute} 和 {@link EntitySchema}，
+/// 提供关于实体关系的元数据，包括连接表详情和外键引用。
 ///
-/// This interface extends both {@link SchemaAttribute} and {@link EntitySchema}
-/// to provide metadata about entity relationships, including join table details
-/// and foreign key references.
-///
-/// Join attributes are used to build JOIN queries and understand entity
-/// relationships in the metamodel.
+/// 连接属性用于构建 JOIN 查询和理解元模型中的实体关系。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface JoinAttribute extends SchemaAttribute, Attribute, EntitySchema {
 
+    /// 获取此关联的连接表名。
     ///
-    /// Gets the join table name for this association.
+    /// 对于多对多关系，返回中间连接表。
+    /// 对于其他关系，返回目标实体的表名。
     ///
-    /// For many-to-many relationships, this returns the intermediate join table.
-    /// For other relationships, this returns the target entity's table name.
-    ///
-    /// @return the join table name
-    ///
+    /// @return 连接表名
     String tableName();
 
+    /// 获取声明实体中此连接属性的名称。
     ///
-    /// Gets the name of this join attribute in the declaring entity.
-    ///
-    /// @return the join attribute name
-    ///
+    /// @return 连接属性名
     String joinName();
 
+    /// 获取引用目标实体外键列名。
     ///
-    /// Gets the foreign key column name that references the target entity.
-    ///
-    /// @return the referenced column name
-    ///
+    /// @return 引用列名
     String referencedColumnName();
 
 }

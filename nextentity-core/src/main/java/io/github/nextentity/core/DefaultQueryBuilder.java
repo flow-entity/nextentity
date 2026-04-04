@@ -12,6 +12,14 @@ import org.slf4j.Logger;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+/// 默认查询构建器实现。
+///
+/// 提供完整的查询构建功能，包括 SELECT、FETCH、WHERE、ORDER BY 等操作。
+/// 支持实体查询、投影查询和元组查询。
+///
+/// @param <T> 实体类型
+/// @author HuangChengwei
+/// @since 1.0.0
 public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuilder<T>, FetchStep<T> {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);

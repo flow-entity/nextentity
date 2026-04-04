@@ -1,15 +1,13 @@
 package io.github.nextentity.core.expression;
 
+/// 表示将结果映射到投影/DTO类的SELECT子句的记录。
 ///
-/// Record representing a SELECT clause that maps results to a projection/DTO class.
-/// <p>
-/// Used when query results should be mapped to a non-entity class such as
-/// a DTO, record, or interface projection.
+/// 当查询结果应映射到非实体类（如
+/// DTO、记录或接口投影）时使用。
 ///
-/// @param type the projection class
-/// @param distinct whether to apply DISTINCT
+/// @param type 投影类
+/// @param distinct 是否应用DISTINCT
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public record SelectProjection(Class<?> type, boolean distinct) implements Selected {
 }

@@ -7,104 +7,102 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.function.Supplier;
 
+/// 更新执行器接口，用于执行 INSERT、UPDATE 和 DELETE 操作。
 ///
-/// Update executor interface for executing INSERT, UPDATE, and DELETE operations.
+/// 该接口提供批量和单实体持久化操作的方法，
+/// 以及事务管理功能。
 ///
-/// This interface provides methods for bulk and single entity persistence operations,
-/// as well as transaction management capabilities.
-///
-/// Implementations typically use JDBC batch operations or JPA entity manager
-/// to interact with the database.
+/// 实现通常使用 JDBC 批处理操作或 JPA 实体管理器
+/// 来与数据库交互。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface UpdateExecutor {
 
     ///
-    /// Inserts a single entity into the database.
+    /// 插入单个实体到数据库中。
     ///
-    /// This is a convenience method that wraps `insertAll(Iterable, Class)`.
+    /// 这是一个便利方法，封装了 `insertAll(Iterable, Class)`。
     ///
-    /// @param <T> the entity type
-    /// @param entity the entity to insert
-    /// @param entityType the entity class
-    /// @throws NullPointerException if entity or entityType is null
+    /// @param <T> 实体类型
+    /// @param entity 要插入的实体
+    /// @param entityType 实体类
+    /// @throws NullPointerException 如果 entity 或 entityType 为 null
     ///
     default <T> void insert(@NonNull T entity, @NonNull Class<T> entityType) {
         insertAll(ImmutableList.of(entity), entityType);
     }
 
     ///
-    /// Inserts multiple entities into the database in a batch operation.
+    /// 在数据库中批量插入多个实体。
     ///
-    /// This method is optimized for bulk insertions and typically uses
-    /// JDBC batch updates or JPA batch processing.
+    /// 该方法针对批量插入进行了优化，通常使用
+    /// JDBC 批量更新或 JPA 批量处理。
     ///
-    /// @param <T> the entity type
-    /// @param entities the entities to insert
-    /// @param entityType the entity class
-    /// @throws NullPointerException if entities or entityType is null
+    /// @param <T> 实体类型
+    /// @param entities 要插入的实体
+    /// @param entityType 实体类
+    /// @throws NullPointerException 如果 entities 或 entityType 为 null
     ///
     <T> void insertAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
 
     ///
-    /// Updates multiple entities in the database and returns the updated instances.
+    /// 更新数据库中的多个实体并返回更新后的实例。
     ///
-    /// The returned entities may contain updated values such as generated IDs
-    /// or version numbers after the update operation.
+    /// 返回的实体可能包含更新后的值，例如生成的 ID
+    /// 或更新操作后的版本号。
     ///
-    /// @param <T> the entity type
-    /// @param entities the entities to update
-    /// @param entityType the entity class
-    /// @throws NullPointerException if entities or entityType is null
+    /// @param <T> 实体类型
+    /// @param entities 要更新的实体
+    /// @param entityType 实体类
+    /// @throws NullPointerException 如果 entities 或 entityType 为 null
     ///
     <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
 
     ///
-    /// Updates a single entity in the database.
+    /// 更新数据库中的单个实体。
     ///
-    /// This is a convenience method that wraps `updateAll(Iterable, Class)`.
+    /// 这是一个便利方法，封装了 `updateAll(Iterable, Class)`。
     ///
-    /// @param <T> the entity type
-    /// @param entity the entity to update
-    /// @param entityType the entity class
-    /// @throws NullPointerException if entity or entityType is null
+    /// @param <T> 实体类型
+    /// @param entity 要更新的实体
+    /// @param entityType 实体类
+    /// @throws NullPointerException 如果 entity 或 entityType 为 null
     ///
     default <T> void update(@NonNull T entity, Class<T> entityType) {
         updateAll(ImmutableList.of(entity), entityType);
     }
 
     ///
-    /// Deletes multiple entities from the database.
+    /// 从数据库中删除多个实体。
     ///
-    /// @param <T> the entity type
-    /// @param entities the entities to delete
-    /// @param entityType the entity class
-    /// @throws NullPointerException if entities or entityType is null
+    /// @param <T> 实体类型
+    /// @param entities 要删除的实体
+    /// @param entityType 实体类
+    /// @throws NullPointerException 如果 entities 或 entityType 为 null
     ///
     <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
 
     ///
-    /// Deletes a single entity from the database.
+    /// 从数据库中删除单个实体。
     ///
-    /// This is a convenience method that wraps `deleteAll(Iterable, Class)`.
+    /// 这是一个便利方法，封装了 `deleteAll(Iterable, Class)`。
     ///
-    /// @param <T> the entity type
-    /// @param entity the entity to delete
-    /// @param entityType the entity class
-    /// @throws NullPointerException if entity or entityType is null
+    /// @param <T> 实体类型
+    /// @param entity 要删除的实体
+    /// @param entityType 实体类
+    /// @throws NullPointerException 如果 entity 或 entityType 为 null
     ///
     default <T> void delete(@NonNull T entity, @NonNull Class<T> entityType) {
         deleteAll(ImmutableList.of(entity), entityType);
     }
 
     ///
-    /// Executes a command within a transaction.
+    /// 在事务中执行命令。
     ///
-    /// This is a convenience method for operations that don't return a value.
+    /// 这是一个用于不返回值的操作的便利方法。
     ///
-    /// @param command the command to execute
+    /// @param command 要执行的命令
     ///
     default void doInTransaction(Runnable command) {
         doInTransaction(() -> {
@@ -114,37 +112,37 @@ public interface UpdateExecutor {
     }
 
     ///
-    /// Executes a command within a transaction and returns its result.
+    /// 在事务中执行命令并返回其结果。
     ///
-    /// The transaction is automatically committed if the command succeeds,
-    /// or rolled back if an exception is thrown.
+    /// 如果命令成功，事务会自动提交，
+    /// 如果抛出异常，则回滚事务。
     ///
-    /// @param <T> the return type of the command
-    /// @param command the command to execute
-    /// @return the result of the command
-    /// @throws RuntimeException if the transaction fails
+    /// @param <T> 命令的返回类型
+    /// @param command 要执行的命令
+    /// @return 命令的结果
+    /// @throws RuntimeException 如果事务失败
     ///
     <T> T doInTransaction(Supplier<T> command);
 
     ///
-    /// Creates a conditional update builder for the specified entity type.
+    /// 为指定实体类型创建条件更新构建器。
     ///
-    /// The conditional update builder supports batch UPDATE operations with WHERE conditions.
+    /// 条件更新构建器支持带 WHERE 条件的批量 UPDATE 操作。
     ///
-    /// @param <T> the entity type
-    /// @param entityType the entity class
-    /// @return a conditional update builder instance
+    /// @param <T> 实体类型
+    /// @param entityType 实体类
+    /// @return 条件更新构建器实例
     /// @since 2.1
     <T> UpdateWhereStep<T> updateWhereStep(@NonNull Class<T> entityType);
 
     ///
-    /// Creates a conditional delete builder for the specified entity type.
+    /// 为指定实体类型创建条件删除构建器。
     ///
-    /// The conditional delete builder supports batch DELETE operations with WHERE conditions.
+    /// 条件删除构建器支持带 WHERE 条件的批量 DELETE 操作。
     ///
-    /// @param <T> the entity type
-    /// @param entityType the entity class
-    /// @return a conditional delete builder instance
+    /// @param <T> 实体类型
+    /// @param entityType 实体类
+    /// @return 条件删除构建器实例
     /// @since 2.1
     <T> DeleteWhereStep<T> deleteWhereStep(@NonNull Class<T> entityType);
 }

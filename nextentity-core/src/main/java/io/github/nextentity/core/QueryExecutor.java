@@ -5,29 +5,27 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.List;
 
+/// 查询执行器接口，用于执行 SELECT 查询。
 ///
-/// Query executor interface for executing SELECT queries.
+/// 该接口负责执行查询构建器构建的查询结构
+/// 并返回实体结果列表。
 ///
-/// This interface is responsible for executing query structures built by the
-/// query builder and returning the results as a list of entities.
-///
-/// Implementations typically use JDBC or JPA to interact with the database.
+/// 实现通常使用 JDBC 或 JPA 与数据库交互。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface QueryExecutor {
 
     ///
-    /// Executes a query and returns the result as a list of entities.
+    /// 执行查询并返回实体列表结果。
     ///
-    /// The query structure contains all information needed to build and execute
-    /// the SQL query, including selection, filtering, ordering, and pagination.
+    /// 查询结构包含构建和执行 SQL 查询所需的所有信息，
+    /// 包括选择、过滤、排序和分页。
     ///
-    /// @param <T> the entity type of the result
-    /// @param queryStructure the query structure to execute
-    /// @return a list of entities matching the query criteria
-    /// @throws NullPointerException if queryStructure is null
+    /// @param <T> 结果实体类型
+    /// @param queryStructure 要执行的查询结构
+    /// @return 符合查询条件的实体列表
+    /// @throws NullPointerException 如果 queryStructure 为 null
     ///
     <T> List<T> getList(@NonNull QueryStructure queryStructure);
 }

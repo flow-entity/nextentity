@@ -1,14 +1,12 @@
 package io.github.nextentity.core.expression;
 
+/// 表示选择单个表达式的SELECT子句的记录。
 ///
-/// Record representing a SELECT clause that selects a single expression.
-/// <p>
-/// Used for queries that select a single column or computed value.
+/// 用于选择单个列或计算值的查询。
 ///
-/// @param expression the expression to select
-/// @param distinct whether to apply DISTINCT
+/// @param expression 要选择的表达式
+/// @param distinct 是否应用DISTINCT
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public record SelectExpression(ExpressionNode expression, boolean distinct) implements Selected {
 }

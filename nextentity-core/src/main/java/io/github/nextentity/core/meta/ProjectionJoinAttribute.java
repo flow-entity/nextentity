@@ -1,22 +1,17 @@
 package io.github.nextentity.core.meta;
 
+/// 用于映射投影关联字段的投影连接属性接口。
 ///
-/// Projection join attribute interface for mapping projection association fields.
+/// 此接口扩展 {@link ProjectionType}，表示映射到实体关联（连接属性）的投影字段。
 ///
-/// This interface extends {@link ProjectionType} and represents a projection field
-/// that maps to an entity association (join attribute).
-///
-/// Allows building nested projections for complex query result structures.
+/// 允许为复杂查询结果结构构建嵌套投影。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public interface ProjectionJoinAttribute extends ProjectionType {
 
+    /// 获取此投影字段映射的源连接属性。
     ///
-    /// Gets the source join attribute that this projection field maps from.
-    ///
-    /// @return the source join attribute
-    ///
+    /// @return 源连接属性
     JoinAttribute source();
 }

@@ -6,18 +6,16 @@ import io.github.nextentity.core.reflect.schema.Attributes;
 
 import java.util.function.Function;
 
+/// {@link JoinAttribute} 的简单实现。
 ///
-/// Simple implementation of {@link JoinAttribute}.
+/// 此类为关联属性提供了具体实现，
+/// 通过提供的函数延迟构建属性。
 ///
-/// This class provides a concrete implementation for join/association attributes
-/// with lazy attribute building via a supplied function.
-///
-/// Join attributes represent entity associations (Many-to-One, One-to-One) and
-/// contain metadata about join columns and referenced tables.
+/// 关联属性表示实体关系（多对一、一对一），
+/// 包含连接列和引用表的元数据。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class SimpleJoinAttribute extends AbstractSchemaAttribute implements JoinAttribute {
 
     private final Function<JoinAttribute, Attributes> attributesFunction;
@@ -27,11 +25,9 @@ public class SimpleJoinAttribute extends AbstractSchemaAttribute implements Join
     private EntityAttribute version;
     private String tableName;
 
+    /// 创建新的 SimpleJoinAttribute 实例。
     ///
-    /// Creates a new SimpleJoinAttribute instance.
-    ///
-    /// @param attributesFunction function to build target entity attributes
-    ///
+    /// @param attributesFunction 构建目标实体属性的函数
     public SimpleJoinAttribute(Function<JoinAttribute, Attributes> attributesFunction) {
         this.attributesFunction = attributesFunction;
     }
@@ -61,11 +57,9 @@ public class SimpleJoinAttribute extends AbstractSchemaAttribute implements Join
         return referencedColumnName;
     }
 
+    /// 构建目标实体属性并提取 ID 和版本属性。
     ///
-    /// Builds the target entity attributes and extracts ID and version.
-    ///
-    /// @return the target entity attributes
-    ///
+    /// @return 目标实体属性
     @Override
     protected Attributes buildAttributes() {
         Attributes attributes = attributesFunction.apply(this);
@@ -85,29 +79,23 @@ public class SimpleJoinAttribute extends AbstractSchemaAttribute implements Join
         return attributes;
     }
 
+    /// 设置连接列名。
     ///
-    /// Sets the join column name.
-    ///
-    /// @param joinName the join column name
-    ///
+    /// @param joinName 连接列名
     public void setJoinName(String joinName) {
         this.joinName = joinName;
     }
 
+    /// 设置引用（外键）列名。
     ///
-    /// Sets the referenced (foreign key) column name.
-    ///
-    /// @param referencedColumnName the referenced column name
-    ///
+    /// @param referencedColumnName 引用列名
     public void setReferencedColumnName(String referencedColumnName) {
         this.referencedColumnName = referencedColumnName;
     }
 
+    /// 设置目标实体表名。
     ///
-    /// Sets the target entity table name.
-    ///
-    /// @param tableName the table name
-    ///
+    /// @param tableName 表名
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }

@@ -4,12 +4,10 @@ import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.reflect.schema.SimpleAttribute;
 
+/// {@link EntityAttribute} 的简单实现。
 ///
-/// Simple implementation of {@link EntityAttribute}.
-///
-/// This class provides a concrete implementation for entity attributes with
-/// support for column mapping, value conversion, versioning, and identity.
-///
+/// 此类为实体属性提供了具体实现，
+/// 支持列映射、值转换、版本控制和标识。
 public class SimpleEntityAttribute extends SimpleAttribute implements EntityAttribute {
     private String columnName;
     private ValueConverter<?, ?> valueConvertor;
@@ -73,14 +71,12 @@ public class SimpleEntityAttribute extends SimpleAttribute implements EntityAttr
         return String.join(".", path());
     }
 
+    /// 获取此属性的表达式路径节点。
     ///
-    /// Gets the expression path node for this attribute.
+    /// 使用双重检查锁定进行延迟初始化，以确保线程安全，
+    /// 同时避免不必要的同步开销。
     ///
-    /// Uses double-checked locking for lazy initialization to ensure thread safety
-    /// while avoiding unnecessary synchronization overhead.
-    ///
-    /// @return the path node expression
-    ///
+    /// @return 路径节点表达式
     @Override
     public PathNode expression() {
         if (pathNode == null) {

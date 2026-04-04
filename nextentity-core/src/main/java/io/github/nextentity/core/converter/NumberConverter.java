@@ -9,10 +9,10 @@ import java.math.BigInteger;
 import java.util.Map;
 import java.util.function.Function;
 
+/// 数字类型转换器实现。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class NumberConverter implements TypeConverter {
 
     private static final Map<Class<? extends Number>, Function<Number, Number>> CONVERTERS =

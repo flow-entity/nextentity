@@ -2,15 +2,13 @@ package io.github.nextentity.core.expression;
 
 import io.github.nextentity.core.util.ImmutableArray;
 
+/// 表示选择多个表达式的SELECT子句的记录。
 ///
-/// Record representing a SELECT clause that selects multiple expressions.
-/// <p>
-/// Used for queries that select multiple columns or computed values.
+/// 用于选择多个列或计算值的查询。
 ///
-/// @param items the expressions to select
-/// @param distinct whether to apply DISTINCT
+/// @param items 要选择的表达式
+/// @param distinct 是否应用DISTINCT
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public record SelectExpressions(ImmutableArray<ExpressionNode> items, boolean distinct) implements Selected {
 }

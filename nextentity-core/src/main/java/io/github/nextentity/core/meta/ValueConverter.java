@@ -1,34 +1,26 @@
 package io.github.nextentity.core.meta;
 
+/// 在实体属性类型和数据库列类型之间转换的转换器接口。
 ///
-/// Converter interface for converting between entity attribute types and database column types.
-///
-/// @param <X> the entity attribute type
-/// @param <Y> the database column type
-///
+/// @param <X> 实体属性类型
+/// @param <Y> 数据库列类型
 public interface ValueConverter<X, Y> {
 
+    /// 将实体属性值转换为数据库列值。
     ///
-    /// Converts the entity attribute value to a database column value.
-    ///
-    /// @param attributeValue the entity attribute value
-    /// @return the database column value
-    ///
+    /// @param attributeValue 实体属性值
+    /// @return 数据库列值
     Y convertToDatabaseColumn(X attributeValue);
 
+    /// 将数据库列值转换为实体属性值。
     ///
-    /// Converts the database column value to an entity attribute value.
-    ///
-    /// @param databaseValue the database column value
-    /// @return the entity attribute value
-    ///
+    /// @param databaseValue 数据库列值
+    /// @return 实体属性值
     X convertToEntityAttribute(Y databaseValue);
 
+    /// 获取数据库列类型。
     ///
-    /// Gets the database column type.
-    ///
-    /// @return the database column type, or null if not specified
-    ///
+    /// @return 数据库列类型，如果未指定则返回 null
     default Class<? extends Y> getDatabaseColumnType() {
         return null;
     }

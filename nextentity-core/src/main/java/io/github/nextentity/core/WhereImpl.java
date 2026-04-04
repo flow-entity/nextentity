@@ -12,6 +12,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/// WHERE 子句构建器的抽象基类实现。
+///
+/// 提供 WHERE、GROUP BY、HAVING、ORDER BY 等查询操作的实现，
+/// 支持分页、锁定模式和子查询构建。
+///
+/// @param <T> 实体类型
+/// @param <U> 结果类型
+/// @author HuangChengwei
+/// @since 1.0.0
 public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Collector<U> {
 
     public static final SelectExpression SELECT_COUNT_ANY = new SelectExpression(new OperatorNode(ImmutableList.of(LiteralNode.TRUE), Operator.COUNT), false);

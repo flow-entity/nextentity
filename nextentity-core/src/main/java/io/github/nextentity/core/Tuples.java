@@ -9,6 +9,13 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+/// 元组工厂类，用于创建不可变元组实例。
+///
+/// 提供创建 2 到 10 个元素元组的静态工厂方法。
+/// 元组用于查询结果的多列映射。
+///
+/// @author HuangChengwei
+/// @since 1.0.0
 public class Tuples {
     public static Tuple of(Object[] data) {
         return new ImmutableTuple<>(data);

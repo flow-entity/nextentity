@@ -9,49 +9,38 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/// 表示表达式树中节点的密封接口。
 ///
-/// Sealed interface representing a node in the expression tree.
-/// <p>
-/// ExpressionNode is the foundation of the expression system, representing
-/// all types of expressions in query building: paths, literals, operators,
-/// and complete query structures.
-/// <p>
-/// Permitted subtypes:
-/// <ul>
-///   <li>{@link LiteralNode} - literal values</li>
-///   <li>{@link PathNode} - entity attribute paths</li>
-///   <li>{@link OperatorNode} - operator expressions</li>
-///   <li>{@link EmptyNode} - empty/no-op expressions</li>
-///   <li>{@link QueryStructure} - complete query structures</li>
-/// </ul>
+/// ExpressionNode 是表达式系统的基础，表示查询构建中的所有类型表达式：
+/// 路径、字面量、运算符和完整的查询结构。
+///
+/// 允许的子类型：
+/// - {@link LiteralNode}：字面量值
+/// - {@link PathNode}：实体属性路径
+/// - {@link OperatorNode}：运算符表达式
+/// - {@link EmptyNode}：空/无操作表达式
+/// - {@link QueryStructure}：完整的查询结构
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNode, EmptyNode, QueryStructure {
 
-    ///
-    /// Logger for expression node operations.
-    ///
+    /// 表达式节点操作的日志记录器。
     Logger log = LoggerFactory.getLogger(ExpressionNode.class);
 
+    /// 对此表达式应用一元运算符。
     ///
-    /// Applies a unary operator to this expression.
-    ///
-    /// @param operator the operator to apply
-    /// @return a new expression node with the operator applied
-    ///
+    /// @param operator 要应用的运算符
+    /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator) {
         return operate(operator, Collections.emptyList());
     }
 
+    /// 对此表达式和另一个节点应用二元运算符。
     ///
-    /// Applies a binary operator to this expression and another node.
-    ///
-    /// @param operator the operator to apply
-    /// @param node the right operand
-    /// @return a new expression node with the operator applied
-    ///
+    /// @param operator 要应用的运算符
+    /// @param node 右操作数
+    /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, ExpressionNode node) {
         if(node instanceof EmptyNode) {
             return this;
@@ -59,39 +48,33 @@ public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNo
         return operate(operator, Collections.singleton(node));
     }
 
+    /// 对此表达式和另外两个节点应用三元运算符。
     ///
-    /// Applies a ternary operator to this expression and two other nodes.
-    ///
-    /// @param operator the operator to apply
-    /// @param node0 the first right operand
-    /// @param node1 the second right operand
-    /// @return a new expression node with the operator applied
-    ///
+    /// @param operator 要应用的运算符
+    /// @param node0 第一个右操作数
+    /// @param node1 第二个右操作数
+    /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, ExpressionNode node0, ExpressionNode node1) {
         return operate(operator, List.of(node0, node1));
     }
 
+    /// 对此表达式和节点数组应用运算符。
     ///
-    /// Applies an operator to this expression and an array of nodes.
-    ///
-    /// @param operator the operator to apply
-    /// @param nodes the operand array
-    /// @return a new expression node with the operator applied
-    ///
+    /// @param operator 要应用的运算符
+    /// @param nodes 操作数数组
+    /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, ExpressionNode[] nodes) {
         return nodes.length == 0 ? operate(operator, Collections.emptyList()) : operate(operator, Arrays.asList(nodes));
     }
 
+    /// 对此表达式和节点集合应用运算符。
     ///
-    /// Applies an operator to this expression and a collection of nodes.
-    /// <p>
-    /// Creates a new OperatorNode containing this expression and all operands.
-    /// Special handling for IN operator with empty operands returns FALSE.
+    /// 创建包含此表达式和所有操作数的新 OperatorNode。
+    /// 对 IN 运算符的空操作数进行特殊处理，返回 FALSE 表达式。
     ///
-    /// @param operator the operator to apply
-    /// @param nodes the operand collection
-    /// @return a new expression node with the operator applied
-    ///
+    /// @param operator 要应用的运算符
+    /// @param nodes 操作数集合
+    /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (operator == Operator.IN && nodes.isEmpty()) {
             log.warn("Operator 'IN' with empty operands detected, returning FALSE expression");

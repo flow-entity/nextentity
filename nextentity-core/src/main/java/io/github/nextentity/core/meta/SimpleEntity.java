@@ -7,18 +7,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiFunction;
 
+/// {@link EntityType} 的简单实现。
 ///
-/// Simple implementation of {@link EntityType}.
+/// 该类为实体类型元数据提供了具体实现
+/// 支持延迟投影类型生成和缓存。
 ///
-/// This class provides a concrete implementation for entity type metadata
-/// with support for lazy projection type generation and caching.
-///
-/// Entity attributes including ID and version are set after construction
-/// via {@link #setAttributes(Attributes)}.
+/// 实体属性包括 ID 和版本在构造后通过
+/// {@link #setAttributes(Attributes)} 设置。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class SimpleEntity implements EntityType {
 
     private final Map<Class<?>, ProjectionType> projections = new ConcurrentHashMap<>();
@@ -29,13 +27,11 @@ public class SimpleEntity implements EntityType {
     private EntityAttribute id;
     private EntityAttribute version;
 
+    /// 创建新的 SimpleEntity 实例。
     ///
-    /// Creates a new SimpleEntity instance.
-    ///
-    /// @param type the entity class
-    /// @param tableName the database table name
-    /// @param projectionTypeGenerator function to generate projection types
-    ///
+    /// @param type 实体类
+    /// @param tableName 数据库表名
+    /// @param projectionTypeGenerator 生成投影类型的函数
     public SimpleEntity(Class<?> type,
                         String tableName,
                         BiFunction<EntityType, Class<?>, ProjectionType> projectionTypeGenerator) {
@@ -44,11 +40,9 @@ public class SimpleEntity implements EntityType {
         this.projectionTypeGenerator = projectionTypeGenerator;
     }
 
+    /// 设置实体属性并提取 ID 和版本属性。
     ///
-    /// Sets the entity attributes and extracts ID and version attributes.
-    ///
-    /// @param attributes the entity attributes
-    ///
+    /// @param attributes 实体属性
     public void setAttributes(Attributes attributes) {
         this.attributes = attributes;
         EntityAttribute version = null;
@@ -66,12 +60,10 @@ public class SimpleEntity implements EntityType {
         this.version = version;
     }
 
+    /// 获取指定类的投影类型，并缓存结果。
     ///
-    /// Gets the projection type for the specified class, caching the result.
-    ///
-    /// @param type the projection class
-    /// @return the cached or newly generated projection type
-    ///
+    /// @param type 投影类
+    /// @return 缓存的或新生成的投影类型
     @Override
     public ProjectionType getProjection(Class<?> type) {
         return projections.computeIfAbsent(type, this::generateProjectionType);

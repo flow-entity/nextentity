@@ -12,6 +12,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+/// 路径引用解析工具类，用于从方法引用中提取属性信息。
+///
+/// 该类通过解析序列化的 lambda 表达式来获取方法引用对应的字段名和类型信息，
+/// 支持缓存以提高性能。
+///
+/// @author HuangChengwei
+/// @since 1.0.0
 public class PathReference {
 
     private static final Map<PathRef<?, ?>, PathReference> PATH_CACHE = new ConcurrentHashMap<>();
@@ -29,11 +36,10 @@ public class PathReference {
         entityType = methodType.parameterType(0);
     }
 
+    /// 获取或创建给定路径的 PathReference。
     ///
-    /// Get or create a PathReference for the given path.
-    ///
-    /// @param path the path to get reference for
-    /// @return PathReference instance
+    /// @param path 要获取引用的路径
+    /// @return PathReference 实例
     ///
     public static <T, R> PathReference of(PathRef<T, R> path) {
         Objects.requireNonNull(path, "path must not be null");
@@ -99,8 +105,7 @@ public class PathReference {
         return this.entityType;
     }
 
-    ///
-    /// Clear the path cache. Should be called when entity metadata changes.
+    /// 清除路径缓存。在实体元数据更改时应调用此方法。
     ///
     public static void clearCache() {
         PATH_CACHE.clear();

@@ -2,44 +2,35 @@ package io.github.nextentity.core.meta;
 
 import io.github.nextentity.core.reflect.schema.SimpleAttribute;
 
+/// {@link ProjectionAttribute} 的简单实现。
 ///
-/// Simple implementation of {@link ProjectionAttribute}.
-///
-/// This class provides a concrete implementation for projection attributes
-/// that delegate to a source entity attribute for value conversion and
-/// database mapping.
+/// 此类为投影属性提供了具体实现，
+/// 委托给源实体属性进行值转换和数据库映射。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class SimpleProjectionAttribute extends SimpleAttribute implements ProjectionAttribute {
 
     private final EntityAttribute sourceAttribute;
 
+    /// 创建新的 SimpleProjectionAttribute 实例。
     ///
-    /// Creates a new SimpleProjectionAttribute instance.
-    ///
-    /// @param sourceAttribute the source entity attribute to delegate to
-    ///
+    /// @param sourceAttribute 要委托的源实体属性
     public SimpleProjectionAttribute(EntityAttribute sourceAttribute) {
         this.sourceAttribute = sourceAttribute;
     }
 
+    /// 获取源实体属性。
     ///
-    /// Gets the source entity attribute.
-    ///
-    /// @return the source entity attribute
-    ///
+    /// @return 源实体属性
     @Override
     public EntityAttribute source() {
         return sourceAttribute;
     }
 
+    /// 从源实体属性继承可更新状态。
     ///
-    /// Inherits updatable status from the source entity attribute.
-    ///
-    /// @return the updatable status of the source attribute
-    ///
+    /// @return 源属性的可更新状态
     @Override
     public boolean isUpdatable() {
         return sourceAttribute.isUpdatable();

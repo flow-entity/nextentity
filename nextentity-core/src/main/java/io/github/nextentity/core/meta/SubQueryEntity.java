@@ -2,29 +2,24 @@ package io.github.nextentity.core.meta;
 
 import java.util.function.BiFunction;
 
+/// 通过 @SubSelect 注解定义的基于子查询的实体类型。
 ///
-/// Entity type for subquery-based entities defined via @SubSelect annotation.
+/// 此类扩展 {@link SimpleEntity} 以支持数据来自 SQL 子查询而非直接表映射的实体。
 ///
-/// This class extends {@link SimpleEntity} to support entities whose data
-/// comes from a SQL subquery rather than a direct table mapping.
-///
-/// Subquery entities allow defining virtual entities backed by custom SQL.
+/// 子查询实体允许定义由自定义 SQL 支持的虚拟实体。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class SubQueryEntity extends SimpleEntity implements SubQueryEntityType {
 
     private final String subSelectSql;
 
+    /// 创建新的 SubQueryEntity 实例。
     ///
-    /// Creates a new SubQueryEntity instance.
-    ///
-    /// @param type the entity class
-    /// @param tableName the table name (used as alias in the subquery)
-    /// @param projectionTypeGenerator function to generate projection types
-    /// @param subSelectSql the SQL subquery that provides the entity data
-    ///
+    /// @param type 实体类
+    /// @param tableName 表名（在子查询中用作别名）
+    /// @param projectionTypeGenerator 生成投影类型的函数
+    /// @param subSelectSql 提供实体数据的 SQL 子查询
     public SubQueryEntity(Class<?> type,
                           String tableName,
                           BiFunction<EntityType, Class<?>, ProjectionType> projectionTypeGenerator,
@@ -33,11 +28,9 @@ public class SubQueryEntity extends SimpleEntity implements SubQueryEntityType {
         this.subSelectSql = subSelectSql;
     }
 
+    /// 获取提供实体数据的 SQL 子查询。
     ///
-    /// Gets the SQL subquery that provides the entity data.
-    ///
-    /// @return the subquery SQL
-    ///
+    /// @return 子查询 SQL
     @Override
     public String subSelectSql() {
         return subSelectSql;

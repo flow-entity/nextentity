@@ -25,30 +25,25 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+/// 元模型实现的抽象基类。
 ///
-/// Abstract base class for metamodel implementations.
+/// 此类提供从 Java 类构建实体类型元数据的核心功能，
+/// 包括属性发现、类型转换和投影支持。
 ///
-/// This class provides the core functionality for building entity type metadata
-/// from Java classes, including attribute discovery, type conversion, and
-/// projection support.
-///
-/// Subclasses implement abstract methods to provide annotation-specific
-/// metadata extraction for different persistence frameworks (JPA, JDBC, etc.).
+/// 子类实现抽象方法以提供不同持久化框架（JPA、JDBC 等）
+/// 的注解特定元数据提取。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public abstract class AbstractMetamodel implements Metamodel {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(AbstractMetamodel.class);
     private final Map<Class<?>, EntityType> entityTypes = new ConcurrentHashMap<>();
 
+    /// 获取指定类的实体类型元数据，并缓存结果。
     ///
-    /// Gets the entity type metadata for the specified class, caching the result.
-    ///
-    /// @param entityType the entity class
-    /// @return the cached or newly created entity type metadata
-    ///
+    /// @param entityType 实体类
+    /// @return 缓存的或新创建的实体类型元数据
     @Override
     public EntityType getEntity(Class<?> entityType) {
         return entityTypes.computeIfAbsent(entityType, this::createEntityType);

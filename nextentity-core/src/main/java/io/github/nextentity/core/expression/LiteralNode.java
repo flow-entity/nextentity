@@ -5,45 +5,35 @@ import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
 
+/// 表示文字值的表达式节点。
 ///
-/// Expression node representing a literal value.
-/// <p>
-/// LiteralNode wraps a constant value for use in expressions,
-/// such as numbers, strings, or booleans.
-/// <p>
-/// Includes optimization for boolean literals with pre-defined
-/// TRUE and FALSE instances.
+/// LiteralNode 包装一个常量值用于表达式中，
+/// 如数字、字符串或布尔值。
 ///
-/// @param value the literal value
+/// 包含对布尔文字的预定义优化
+/// TRUE 和 FALSE 实例。
+///
+/// @param value 文字值
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public record LiteralNode(Object value) implements ExpressionNode, SelectItem {
 
-    ///
-    /// Pre-defined instance for boolean true.
-    ///
+    /// 布尔值 true 的预定义实例。
     public static LiteralNode TRUE = new LiteralNode(true);
 
-    ///
-    /// Pre-defined instance for boolean false.
-    ///
+    /// 布尔值 false 的预定义实例。
     public static LiteralNode FALSE = new LiteralNode(false);
 
+    /// 将运算符应用于此字面量和额外操作数。
     ///
-    /// Applies an operator to this literal with additional operands.
-    /// <p>
-    /// Includes special optimizations for boolean literals:
-    /// <ul>
-    ///   <li>NOT true returns false, NOT false returns true</li>
-    ///   <li>false AND anything returns false</li>
-    ///   <li>true OR anything returns true</li>
-    /// </ul>
+    /// 包含布尔字面量的特殊优化：
+    /// - NOT true 返回 false，NOT false 返回 true
+    /// - false AND 任何值返回 false
+    /// - true OR 任何值返回 true
     ///
-    /// @param operator the operator to apply
-    /// @param nodes additional operand nodes
-    /// @return the resulting expression node
-    ///
+    /// @param operator 要应用的运算符
+    /// @param nodes 额外操作数节点
+    /// @return 结果表达式节点
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (operator == Operator.NOT) {
@@ -71,11 +61,9 @@ public record LiteralNode(Object value) implements ExpressionNode, SelectItem {
         return ExpressionNode.super.operate(operator, nodes);
     }
 
+    /// 返回此字面量节点作为其自身的表达式。
     ///
-    /// Returns this literal node as its own expression.
-    ///
-    /// @return this node
-    ///
+    /// @return 此节点
     @Override
     public ExpressionNode expression() {
         return this;

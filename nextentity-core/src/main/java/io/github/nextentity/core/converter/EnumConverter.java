@@ -2,10 +2,10 @@ package io.github.nextentity.core.converter;
 
 import io.github.nextentity.core.reflect.ReflectUtil;
 
+/// 枚举类型转换器实现。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public class EnumConverter implements TypeConverter {
 
     private static final EnumConverter INSTANCE = new EnumConverter();

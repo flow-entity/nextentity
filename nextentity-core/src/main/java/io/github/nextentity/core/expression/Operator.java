@@ -1,177 +1,111 @@
 package io.github.nextentity.core.expression;
 
+/// 定义所有支持的 SQL 运算符和函数的枚举。
 ///
-/// Enum defining all supported SQL operators and functions.
-/// <p>
-/// Operators are used to build expression trees and have associated
-/// priority values for proper SQL generation. Some operators support
-/// multiple operands or are aggregate functions.
+/// 运算符用于构建表达式树，并具有关联的
+/// 优先级值以进行正确的 SQL 生成。一些运算符支持
+/// 多个操作数或聚合函数。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public enum Operator {
 
-    ///
-    /// Logical NOT operator.
-    ///
+    /// 逻辑 NOT 运算符。
     NOT("not", 10),
 
-    ///
-    /// Logical AND operator (supports multiple operands).
-    ///
+    /// 逻辑 AND 运算符（支持多个操作数）。
     AND("and", 11, true),
 
-    ///
-    /// Logical OR operator (supports multiple operands).
-    ///
+    /// 逻辑 OR 运算符（支持多个操作数）。
     OR("or", 13, true),
 
-    ///
-    /// Greater than comparison operator.
-    ///
+    /// 大于比较运算符。
     GT(">", 8),
 
-    ///
-    /// Equality comparison operator.
-    ///
+    /// 等于比较运算符。
     EQ("=", 8),
 
-    ///
-    /// Not equal comparison operator.
-    ///
+    /// 不等于比较运算符。
     NE("!=", 8),
 
-    ///
-    /// Greater than or equal comparison operator.
-    ///
+    /// 大于等于比较运算符。
     GE(">=", 8),
 
-    ///
-    /// Less than comparison operator.
-    ///
+    /// 小于比较运算符。
     LT("<", 8),
 
-    ///
-    /// Less than or equal comparison operator.
-    ///
+    /// 小于等于比较运算符。
     LE("<=", 8),
 
-    ///
-    /// LIKE pattern matching operator.
-    ///
+    /// LIKE 模式匹配运算符。
     LIKE("like", 8),
 
-    ///
-    /// IS NULL null check operator.
-    ///
+    /// IS NULL 空值检查运算符。
     IS_NULL("is null", 13),
 
-    ///
-    /// IS NOT NULL null check operator.
-    ///
+    /// IS NOT NULL 非空检查运算符。
     IS_NOT_NULL("is not null", 13),
 
-    ///
-    /// IN list membership operator.
-    ///
+    /// IN 列表成员运算符。
     IN("in", 0),
 
-    ///
-    /// BETWEEN range operator.
-    ///
+    /// BETWEEN 范围运算符。
     BETWEEN("between", 8),
 
-    ///
-    /// LOWER string function.
-    ///
+    /// LOWER 字符串函数。
     LOWER("lower", 0),
 
-    ///
-    /// UPPER string function.
-    ///
+    /// UPPER 字符串函数。
     UPPER("upper", 0),
 
-    ///
-    /// SUBSTRING string function.
-    ///
+    /// SUBSTRING 字符串函数。
     SUBSTRING("substring", 0),
 
-    ///
-    /// TRIM string function.
-    ///
+    /// TRIM 字符串函数。
     TRIM("trim", 0),
 
-    ///
-    /// LENGTH string function.
-    ///
+    /// LENGTH 字符串函数。
     LENGTH("length", 0),
 
-    ///
-    /// Addition arithmetic operator (supports multiple operands).
-    ///
+    /// 加法算术运算符（支持多个操作数）。
     ADD("+", 4, true),
 
-    ///
-    /// Subtraction arithmetic operator (supports multiple operands).
-    ///
+    /// 减法算术运算符（支持多个操作数）。
     SUBTRACT("-", 4, true),
 
-    ///
-    /// Multiplication arithmetic operator (supports multiple operands).
-    ///
+    /// 乘法算术运算符（支持多个操作数）。
     MULTIPLY("*", 3, true),
 
-    ///
-    /// Division arithmetic operator (supports multiple operands).
-    ///
+    /// 除法算术运算符（支持多个操作数）。
     DIVIDE("/", 3, true),
 
-    ///
-    /// Modulo arithmetic operator (supports multiple operands).
-    ///
+    /// 模运算算术运算符（支持多个操作数）。
     MOD("%", 3, true),
 
-    ///
-    /// NULLIF conditional function.
-    ///
+    /// NULLIF 条件函数。
     NULLIF("nullif", 0),
 
-    ///
-    /// IFNULL/COALESCE conditional function.
-    ///
+    /// IFNULL/COALESCE 条件函数。
     IF_NULL("ifnull", 0),
 
-    // aggregate functions
+    // 聚合函数
 
-    ///
-    /// MIN aggregate function.
-    ///
+    /// MIN 聚合函数。
     MIN("min", 0, false, true),
 
-    ///
-    /// MAX aggregate function.
-    ///
+    /// MAX 聚合函数。
     MAX("max", 0, false, true),
 
-    ///
-    /// COUNT aggregate function.
-    ///
+    /// COUNT 聚合函数。
     COUNT("count", 0, false, true),
 
-    ///
-    /// AVG aggregate function.
-    ///
+    /// AVG 聚合函数。
     AVG("avg", 0, false, true),
 
-    ///
-    /// SUM aggregate function.
-    ///
+    /// SUM 聚合函数。
     SUM("sum", 0, false, true),
 
-    ///
-    /// DISTINCT keyword.
-    ///
+    /// DISTINCT 关键字。
     DISTINCT("distinct", 0, false, false);
 
     private final String sign;
@@ -195,50 +129,40 @@ public enum Operator {
 
     }
 
+    /// 获取此运算符的 SQL 符号。
     ///
-    /// Gets the SQL sign/symbol for this operator.
-    ///
-    /// @return the SQL sign
-    ///
+    /// @return SQL 符号
     public String sign() {
         return sign;
     }
 
+    /// 返回此运算符的字符串表示形式（SQL 符号）。
     ///
-    /// Returns the string representation (SQL sign) of this operator.
-    ///
-    /// @return the SQL sign
-    ///
+    /// @return SQL 符号
     @Override
     public String toString() {
         return sign;
     }
 
+    /// 获取此运算符用于表达式求值的优先级。
     ///
-    /// Gets the priority of this operator for expression evaluation.
-    /// <p>
-    /// Lower values have higher precedence.
+    /// 较低的值具有更高的优先级。
     ///
-    /// @return the priority value
-    ///
+    /// @return 优先级值
     public int priority() {
         return priority;
     }
 
+    /// 指示此运算符是否支持多个操作数。
     ///
-    /// Indicates if this operator supports multiple operands.
-    ///
-    /// @return true if multivalued
-    ///
+    /// @return 如果支持多个操作数则返回 true
     public boolean isMultivalued() {
         return this.multivalued;
     }
 
+    /// 指示此运算符是否是聚合函数。
     ///
-    /// Indicates if this operator is an aggregate function.
-    ///
-    /// @return true if aggregate function
-    ///
+    /// @return 如果是聚合函数则返回 true
     public boolean isAgg() {
         return this.agg;
     }

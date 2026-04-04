@@ -6,11 +6,11 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/// 将枚举值转换为其序号位置的枚举转换器。
 ///
-/// Enum converter that converts enum values to their ordinal positions.
-///
-/// @param <E> the enum type
-///
+/// @param <E> 枚举类型
+/// @author HuangChengwei
+/// @since 1.0.0
 public class EnumConverter<E extends Enum<E>> implements ValueConverter<E, Integer> {
 
     private final E[] values;

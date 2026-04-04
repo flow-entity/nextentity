@@ -5,36 +5,30 @@ import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
 
+/// 表示应用于操作数的运算符的表达式节点。
 ///
-/// Expression node representing an operator applied to operands.
-/// <p>
-/// OperatorNode is a composite expression that applies an {@link Operator}
-/// to a list of operand expressions. Supports optimization for certain
-/// operators like NOT and multivalued operators (AND, OR).
+/// OperatorNode 是一个复合表达式，它将 {@link Operator}
+/// 应用于操作数表达式列表。支持某些
+/// 运算符的优化，如 NOT 和多值运算符（AND，OR）。
 ///
-/// @param operands the list of operand expressions
-/// @param operator the operator to apply
+/// @param operands 操作数表达式列表
+/// @param operator 要应用的运算符
 /// @author HuangChengwei
 /// @since 1.0.0
-///
 public record OperatorNode(
         ImmutableList<ExpressionNode> operands,
         Operator operator
 ) implements ExpressionNode, SelectItem {
 
+    /// 将运算符应用于此节点和额外操作数。
     ///
-    /// Applies an operator to this node with additional operands.
-    /// <p>
-    /// Includes optimizations:
-    /// <ul>
-    ///   <li>NOT NOT returns the first operand</li>
-    ///   <li>Multivalued operators (AND, OR) merge operands when same operator</li>
-    /// </ul>
+    /// 包含优化：
+    /// - NOT NOT 返回第一个操作数
+    /// - 多值运算符（AND, OR）在相同运算符时合并操作数
     ///
-    /// @param operator the operator to apply
-    /// @param nodes additional operand nodes
-    /// @return the resulting expression node
-    ///
+    /// @param operator 要应用的运算符
+    /// @param nodes 额外操作数节点
+    /// @return 结果表达式节点
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (operator == Operator.NOT && this.operator == Operator.NOT) {
@@ -50,38 +44,30 @@ public record OperatorNode(
         return ExpressionNode.super.operate(operator, nodes);
     }
 
+    /// 获取第一个操作数。
     ///
-    /// Gets the first operand.
-    ///
-    /// @return the first operand expression
-    ///
+    /// @return 第一个操作数表达式
     public ExpressionNode firstOperand() {
         return operands.getFirst();
     }
 
+    /// 获取第二个操作数（如果存在）。
     ///
-    /// Gets the second operand if present.
-    ///
-    /// @return the second operand, or null if only one operand
-    ///
+    /// @return 第二个操作数，如果只有一个操作数则返回 null
     public ExpressionNode secondOperand() {
         return operands.size() > 1 ? operands.get(1) : null;
     }
 
+    /// 获取第三个操作数（如果存在）。
     ///
-    /// Gets the third operand if present.
-    ///
-    /// @return the third operand, or null if fewer than three operands
-    ///
+    /// @return 第三个操作数，如果少于三个操作数则返回 null
     public ExpressionNode thirdOperand() {
         return operands.size() > 2 ? operands.get(2) : null;
     }
 
+    /// 返回此运算符节点作为其自身的表达式。
     ///
-    /// Returns this operator node as its own expression.
-    ///
-    /// @return this node
-    ///
+    /// @return 此节点
     @Override
     public ExpressionNode expression() {
         return this;
