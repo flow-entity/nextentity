@@ -259,11 +259,11 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     @NonNull
     QueryStructure buildCountData() {
         if (queryStructure.select().distinct()) {
-            return QueryStructure.of(queryStructure.select(), new FromSubQuery(queryStructure));
+            return QueryStructure.of(queryStructure.select(), newCountSubQuery(queryStructure));
         } else if (requiredCountSubQuery(queryStructure.select())) {
-            return QueryStructure.of(SELECT_COUNT_ANY, new FromSubQuery(queryStructure));
+            return QueryStructure.of(SELECT_COUNT_ANY, newCountSubQuery(queryStructure));
         } else if (queryStructure.groupBy() != null && !queryStructure.groupBy().isEmpty()) {
-            return QueryStructure.of(SELECT_COUNT_ANY, new FromSubQuery(queryStructure));
+            return QueryStructure.of(SELECT_COUNT_ANY, newCountSubQuery(queryStructure));
         } else {
             return new QueryStructure(
                     SELECT_COUNT_ANY,
@@ -278,12 +278,37 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         }
     }
 
-    boolean requiredCountSubQuery(Selected select) {
-        if (select instanceof SelectExpression) {
-            return requiredCountSubQuery(((SelectExpression) select).expression());
+    /// 返回移除了 ORDER BY、偏移量和限制的新 QueryStructure。
+    ///
+    /// 用于构建 COUNT 查询的子查询，因为：
+    /// - COUNT 不需要排序
+    /// - SQL Server 等数据库不允许子查询中有 ORDER BY（除非配合 TOP/OFFSET）
+    ///
+    /// @return 没有 orderBy/offset/limit 的新 QueryStructure 实例
+    public FromSubQuery newCountSubQuery(QueryStructure structure) {
+        if (structure.orderBy().isEmpty() && structure.offset() == null && structure.limit() == null) {
+            return new FromSubQuery(structure);
         }
-        if (select instanceof SelectExpressions) {
-            for (ExpressionNode expression : ((SelectExpressions) select).items()) {
+        QueryStructure queryStructure1 = new QueryStructure(
+                structure.select(),
+                structure.from(),
+                structure.where(),
+                structure.groupBy(),
+                ImmutableList.of(),
+                structure.having(),
+                null,
+                null,
+                LockModeType.NONE
+        );
+        return new FromSubQuery(queryStructure1);
+    }
+
+    boolean requiredCountSubQuery(Selected select) {
+        if (select instanceof SelectExpression selectExpression) {
+            return requiredCountSubQuery(selectExpression.expression());
+        }
+        if (select instanceof SelectExpressions selectExpressions) {
+            for (ExpressionNode expression : selectExpressions.items()) {
                 if (requiredCountSubQuery(expression)) {
                     return true;
                 }
