@@ -1,0 +1,121 @@
+package io.github.nextentity.core;
+
+import io.github.nextentity.api.model.*;
+import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.Iterators;
+import org.jspecify.annotations.NonNull;
+
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
+/// 元组工厂类，用于创建不可变元组实例。
+///
+/// 提供创建 2 到 10 个元素元组的静态工厂方法。
+/// 元组用于查询结果的多列映射。
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+public class Tuples {
+    public static Tuple of(Object[] data) {
+        return new ImmutableTuple<>(data);
+    }
+
+    public static <A, B, C, D, E, F, G, H, I, J>
+    Tuple10<A, B, C, D, E, F, G, H, I, J> of(A a, B b, C c, D d, E e, F f, G g, H h, I i, J j) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d, e, f, g, h, i, j});
+    }
+
+    public static <A, B, C, D, E, F, G, H, I>
+    Tuple9<A, B, C, D, E, F, G, H, I> of(A a, B b, C c, D d, E e, F f, G g, H h, I i) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d, e, f, g, h, i});
+    }
+
+    public static <A, B, C, D, E, F, G, H>
+    Tuple8<A, B, C, D, E, F, G, H> of(A a, B b, C c, D d, E e, F f, G g, H h) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d, e, f, g, h});
+    }
+
+    public static <A, B, C, D, E, F, G>
+    Tuple7<A, B, C, D, E, F, G> of(A a, B b, C c, D d, E e, F f, G g) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d, e, f, g});
+    }
+
+    public static <A, B, C, D, E, F>
+    Tuple6<A, B, C, D, E, F> of(A a, B b, C c, D d, E e, F f) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d, e, f});
+    }
+
+    public static <A, B, C, D, E>
+    Tuple5<A, B, C, D, E> of(A a, B b, C c, D d, E e) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d, e});
+    }
+
+    public static <A, B, C, D>
+    Tuple4<A, B, C, D> of(A a, B b, C c, D d) {
+        return new ImmutableTuple<>(new Object[]{a, b, c, d});
+    }
+
+    public static <A, B, C>
+    Tuple3<A, B, C> of(A a, B b, C c) {
+        return new ImmutableTuple<>(new Object[]{a, b, c});
+    }
+
+    public static <A, B>
+    Tuple2<A, B> of(A a, B b) {
+        return new ImmutableTuple<>(new Object[]{a, b});
+    }
+
+    public static final class ImmutableTuple<A, B, C, D, E, F, G, H, I, J>
+            implements Tuple10<A, B, C, D, E, F, G, H, I, J> {
+        private final Object[] data;
+
+        ImmutableTuple(Object[] data) {
+            this.data = data;
+        }
+
+        @Override
+        public <T> T get(int index) {
+            return TypeCastUtil.unsafeCast(data[index]);
+        }
+
+        @Override
+        public int size() {
+            return data.length;
+        }
+
+        @Override
+        public List<Object> toList() {
+            return ImmutableList.of(data);
+        }
+
+        @Override
+        public Object[] toArray() {
+            return Arrays.copyOf(data, data.length);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            ImmutableTuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?> tuple = (ImmutableTuple<?, ?, ?, ?, ?, ?, ?, ?, ?, ?>) o;
+            return Arrays.equals(data, tuple.data);
+        }
+
+        @Override
+        public int hashCode() {
+            return Arrays.hashCode(data);
+        }
+
+        @NonNull
+        @Override
+        public Iterator<Object> iterator() {
+            return Iterators.iterate(data);
+        }
+
+        @Override
+        public String toString() {
+            return toList().toString();
+        }
+    }
+}

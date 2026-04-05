@@ -1,0 +1,366 @@
+# 聚合操作指南
+
+本指南介绍 NextEntity 的聚合和统计功能。
+
+## 目录
+
+- [简介](#简介)
+- [Count 计数](#count-计数)
+- [Sum 求和](#sum-求和)
+- [Avg 平均值](#avg-平均值)
+- [Max/Min 最大最小](#maxmin-最大最小)
+- [Distinct 统计](#distinct-统计)
+- [分组统计](#分组统计)
+- [最佳实践](#最佳实践)
+
+---
+
+## 简介
+
+NextEntity 提供数据库级别的聚合操作，在 SQL 层面完成统计计算。
+
+> **重要**: `query()` 方法在 `AbstractRepository` 中是 `protected` 的，以下示例均为 Repository 内部方法实现。
+
+### 可用聚合函数
+
+| 函数 | 描述 | SQL 对应 |
+|------|------|----------|
+| `count()` | 统计数量 | `COUNT(*)` |
+| `sum()` | 求和 | `SUM(field)` |
+| `avg()` | 平均值 | `AVG(field)` |
+| `max()` | 最大值 | `MAX(field)` |
+| `min()` | 最小值 | `MIN(field)` |
+
+### 路径表达式 API
+
+聚合操作需要使用路径表达式创建：
+
+| 场景 | API | 示例 |
+|------|-----|------|
+| **Repository 外部**（Service 等） | `Path.of()` | `Path.of(Employee::getSalary).sum()` |
+| **Repository 内部** | `path()` | `path(Employee::getSalary).sum()` |
+
+> ⚠️ 注意：
+> - `path()` 是 `AbstractRepository` 的 protected 方法，只能在 Repository 子类内部使用
+
+---
+
+## Count 计数
+
+### 统计全部
+
+```java
+// 统计所有员工
+long total = employeeRepository.query().count();
+
+// 生成的 SQL: SELECT COUNT(*) FROM employee
+```
+
+### 条件统计
+
+```java
+// 统计活跃员工
+long activeCount = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
+    .count();
+
+// 统计高薪员工
+long highSalaryCount = employeeRepository.query()
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
+    .count();
+
+// 多条件统计
+long count = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
+    .where(Employee::getDepartmentId).eq(1L)
+    .where(Employee::getStatus).in(ACTIVE, ON_LEAVE)
+    .count();
+```
+
+---
+
+## Sum 求和
+
+### 基本用法
+
+```java
+// 所有员工薪资总和
+BigDecimal totalSalary = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).sum())
+    .single();
+
+// 生成的 SQL: SELECT SUM(salary) FROM employee
+```
+
+### 条件求和
+
+```java
+// 活跃员工薪资总和
+BigDecimal activeTotal = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).sum())
+    .where(Employee::getActive).eq(true)
+    .single();
+
+// 某部门薪资总和
+BigDecimal deptTotal = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).sum())
+    .where(Employee::getDepartmentId).eq(1L)
+    .single();
+
+// 多条件求和
+BigDecimal total = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).sum())
+    .where(Employee::getActive).eq(true)
+    .where(Employee::getDepartmentId).eq(1L)
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(50000.0))
+    .single();
+```
+
+---
+
+## Avg 平均值
+
+### 基本用法
+
+```java
+// 平均薪资
+Double avgSalary = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).avg())
+    .single();
+
+// 生成的 SQL: SELECT AVG(salary) FROM employee
+```
+
+### 条件平均值
+
+```java
+// 活跃员工平均薪资
+Double activeAvg = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).avg())
+    .where(Employee::getActive).eq(true)
+    .single();
+
+// 某部门平均薪资
+Double deptAvg = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).avg())
+    .where(Employee::getDepartmentId).eq(1L)
+    .single();
+```
+
+---
+
+## Max/Min 最大最小
+
+### 最大值
+
+```java
+// 最高薪资
+BigDecimal maxSalary = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).max())
+    .single();
+
+// 活跃员工最高薪资
+BigDecimal activeMax = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).max())
+    .where(Employee::getActive).eq(true)
+    .single();
+
+// 最早入职日期
+LocalDate earliestHire = employeeRepository.query()
+    .select(Path.of(Employee::getHireDate).min())
+    .single();
+```
+
+### 最小值
+
+```java
+// 最低薪资
+BigDecimal minSalary = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).min())
+    .single();
+
+// 活跃员工最低薪资
+BigDecimal activeMin = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).min())
+    .where(Employee::getActive).eq(true)
+    .single();
+
+// 最近入职日期
+LocalDate latestHire = employeeRepository.query()
+    .select(Path.of(Employee::getHireDate).max())
+    .single();
+```
+
+---
+
+## Distinct 统计
+
+### Distinct Count
+
+```java
+// 不同部门数量
+long distinctDeptCount = employeeRepository.query()
+    .select(Path.of(Employee::getDepartmentId).countDistinct())
+    .single();
+```
+
+---
+
+## 分组统计
+
+NextEntity 支持数据库层面的 GROUP BY 聚合，性能更优：
+
+### 按部门分组（数据库聚合）
+
+```java
+// 使用 select + groupBy 在数据库层面完成聚合
+// 返回 Tuple6: departmentId, count, sum, avg, max, min
+List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> statsByDept = 
+    employeeRepository.query()
+        .select(
+            Path.of(Employee::getDepartmentId),
+            Path.of(Employee::getId).count(),
+            Path.of(Employee::getSalary).sum(),
+            Path.of(Employee::getSalary).avg(),
+            Path.of(Employee::getSalary).max(),
+            Path.of(Employee::getSalary).min()
+        )
+        .where(Employee::getActive).eq(true)
+        .where(Employee::getSalary).isNotNull()
+        .groupBy(Employee::getDepartmentId)
+        .list();
+
+// 结果分析
+for (Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal> tuple : statsByDept) {
+    Long deptId = tuple.get0();           // 部门 ID
+    Long count = tuple.get1();            // 人数
+    BigDecimal sum = tuple.get2();        // 总薪资
+    Double avg = tuple.get3();            // 平均薪资
+    BigDecimal max = tuple.get4();        // 最高薪资
+    BigDecimal min = tuple.get5();        // 最低薪资
+    
+    System.out.println("部门 " + deptId + ": " +
+        "人数=" + count +
+        ", 总薪资=" + sum +
+        ", 平均=" + avg +
+        ", 最高=" + max +
+        ", 最低=" + min);
+}
+```
+
+### 多字段分组
+
+```java
+// 按部门和状态分组统计
+List<Tuple4<Long, EmployeeStatus, Long, Double>> stats = employeeRepository.query()
+    .select(
+        Path.of(Employee::getDepartmentId),
+        Path.of(Employee::getStatus),
+        Path.of(Employee::getId).count(),
+        Path.of(Employee::getSalary).avg()
+    )
+    .where(Employee::getSalary).isNotNull()
+    .groupBy(Employee::getDepartmentId, Employee::getStatus)
+    .list();
+```
+
+### Java Stream 分组（备选方案）
+
+当需要灵活处理或数据量较小时，可使用 Java Stream：
+
+```java
+// 先查询数据，再在 Java 中分组
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getActive).eq(true)
+    .list();
+
+Map<Long, List<Employee>> byDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDepartmentId));
+```
+
+---
+
+## 最佳实践
+
+### 1. 使用数据库聚合
+
+```java
+// 推荐：数据库聚合
+BigDecimal total = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).sum())
+    .single();
+
+// 避免：Java 流聚合（数据量大时性能差）
+BigDecimal total = employeeRepository.query()
+    .list();
+    .stream()
+    .map(Employee::getSalary)
+    .reduce(BigDecimal.ZERO, BigDecimal::add);
+```
+
+### 2. 使用条件过滤
+
+```java
+// 在聚合前过滤
+Double activeAvg = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).avg())
+    .where(Employee::getActive).eq(true)  // 数据库过滤
+    .single();
+```
+
+### 3. 使用 exists() 检查存在性
+
+```java
+// 检查是否存在符合条件的记录
+boolean hasHighEarners = employeeRepository.query()
+    .where(Employee::getSalary).gt(BigDecimal.valueOf(100000.0))
+    .exists();
+```
+
+### 4. 优先使用数据库 GROUP BY
+
+```java
+// 推荐：数据库 GROUP BY（一条 SQL 完成聚合）
+List<Tuple6<Long, Long, BigDecimal, Double, BigDecimal, BigDecimal>> stats = 
+    employeeRepository.query()
+        .select(
+            Path.of(Employee::getDepartmentId),
+            Path.of(Employee::getId).count(),
+            Path.of(Employee::getSalary).sum(),
+            Path.of(Employee::getSalary).avg(),
+            Path.of(Employee::getSalary).max(),
+            Path.of(Employee::getSalary).min()
+        )
+        .groupBy(Employee::getDepartmentId)
+        .list();
+
+// 避免：Java Stream 分组（需要加载所有数据到内存）
+Map<Long, DoubleSummaryStatistics> statsByDept = employees.stream()
+    .collect(Collectors.groupingBy(
+        Employee::getDepartmentId,
+        Collectors.summarizingDouble(e -> e.getSalary().doubleValue())
+    ));
+```
+
+### 5. 处理 NULL 值
+
+```java
+// 过滤 NULL 值
+Double avg = employeeRepository.query()
+    .select(Path.of(Employee::getSalary).avg())
+    .where(Employee::getSalary).isNotNull()  // 排除 NULL
+    .single();
+
+// 在 Java 中处理 NULL 值
+List<Employee> employees = employeeRepository.query()
+    .where(Employee::getSalary).isNotNull()
+    .list();
+```
+
+---
+
+## 下一步
+
+核心功能学习完成，学习最佳实践：
+
+1. **[Repository 模式指南](repository-pattern.md)** - 封装数据访问、自定义方法、最佳实践

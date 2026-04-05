@@ -1,0 +1,27 @@
+# Spring Boot Test Configuration
+# This file is used for integration tests with Spring Boot
+# Datasource configuration is set programmatically by SpringTestContextHolder
+
+spring:
+  main:
+    banner-mode: off
+    allow-bean-definition-overriding: true
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
+        query.startup_check: false
+        generate_statistics: false
+        cache.use_second_level_cache: false
+        cache.use_query_cache: false
+        jdbc.batch_size: 2000
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    io.github.nextentity: DEBUG
