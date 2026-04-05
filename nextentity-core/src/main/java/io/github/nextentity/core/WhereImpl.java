@@ -3,10 +3,13 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
+import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -22,6 +25,8 @@ import java.util.List;
 /// @author HuangChengwei
 /// @since 1.0.0
 public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Collector<U> {
+
+    private static final Logger log = LoggerFactory.getLogger(WhereImpl.class);
 
     public static final SelectExpression SELECT_COUNT_ANY = new SelectExpression(new OperatorNode(ImmutableList.of(LiteralNode.TRUE), Operator.COUNT), false);
     public static final SelectExpression SELECT_ANY = new SelectExpression(LiteralNode.TRUE, false);
@@ -167,12 +172,12 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public List<U> list() {
-        return queryExecutor.getList(buildQueryStructure(null, null));
+        return queryExecutor.getList(queryStructure);
     }
 
     @Override
     public List<U> list(int offset, int limit) {
-        return queryExecutor.getList(buildQueryStructure(offset, limit));
+        return queryExecutor.getList(buildPaginatedQueryStructure(offset, limit));
     }
 
     @Override
@@ -198,18 +203,57 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         return new WhereImpl<>(structure, metamodel, queryExecutor, lockModeType);
     }
 
-    private QueryStructure buildQueryStructure(Integer offset, Integer limit) {
+    /// 构建分页查询结构，如果未指定排序则自动添加主键排序。
+    ///
+    /// @param offset 偏移量
+    /// @param limit  限制数
+    /// @return 查询结构
+    private QueryStructure buildPaginatedQueryStructure(int offset, int limit) {
+        ImmutableList<SortExpression> orderBy = queryStructure.orderBy();
+
+        // 只有在非聚合查询且未指定排序时才自动添加主键排序
+        if (orderBy.isEmpty() && !isAggregateQuery()) {
+            Class<?> entityType = getEntityType();
+            if (entityType != null) {
+                EntityType entity = metamodel.getEntity(entityType);
+                if (entity != null) {
+                    var idAttr = entity.id();
+
+                    log.warn("Pagination without ORDER BY detected. " +
+                             "Automatically adding primary key ordering for entity {}. " +
+                             "Consider adding explicit orderBy() for deterministic results.",
+                            entityType.getSimpleName());
+
+                    PathNode idPath = new PathNode(idAttr.name());
+                    SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
+                    orderBy = ImmutableList.of(sortExpr);
+                }
+            }
+        }
+
         return new QueryStructure(
                 queryStructure.select(),
                 queryStructure.from(),
                 queryStructure.where(),
                 queryStructure.groupBy(),
-                queryStructure.orderBy(),
+                orderBy,
                 queryStructure.having(),
                 offset,
                 limit,
                 lockModeType
         );
+    }
+
+    /// 检查是否是聚合查询。
+    ///
+    /// @return 如果是聚合查询返回 true
+    private boolean isAggregateQuery() {
+        // 有 GROUP BY 子句
+        if (queryStructure.groupBy() != null && !queryStructure.groupBy().isEmpty()) {
+            return true;
+        }
+        // SELECT 子句包含聚合函数
+        return requiredCountSubQuery(queryStructure.select());
     }
 
     @NonNull
@@ -262,6 +306,17 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
             }
         }
         return false;
+    }
+
+    /// 获取查询的实体类型。
+    ///
+    /// @return 实体类型，如果不是实体查询则返回 null
+    private Class<?> getEntityType() {
+        From from = queryStructure.from();
+        if (from instanceof FromEntity(Class<?> type)) {
+            return type;
+        }
+        return null;
     }
 
     public class SubQueryBuilderImpl<X> implements SubQueryBuilder<X, U>, ExpressionTree {

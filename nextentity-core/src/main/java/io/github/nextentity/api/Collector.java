@@ -13,6 +13,26 @@ import java.util.Optional;
 ///
 /// 提供用于获取结果的终止操作，包括 offset/limit 风格的分页查询。
 ///
+/// ## 分页注意事项
+///
+/// 当使用带 offset 参数的分页方法（如 `list(offset, limit)`、`slice(offset, limit)`）时，
+/// 如果查询未指定排序字段（ORDER BY），系统将自动添加主键排序。
+///
+/// 建议显式调用 `orderBy()` 方法以确保结果的一致性和可预测性。
+///
+/// ```java
+/// // 推荐：显式指定排序
+/// repository.query()
+///     .where(User::getStatus).eq("ACTIVE")
+///     .orderBy(User::getId).asc()
+///     .list(0, 10);
+///
+/// // 不推荐：依赖自动排序
+/// repository.query()
+///     .where(User::getStatus).eq("ACTIVE")
+///     .list(0, 10);  // 自动添加主键排序
+/// ```
+///
 /// ## 使用示例
 ///
 /// ```java
@@ -72,6 +92,8 @@ public interface Collector<T> {
 
     /// 获取前 {@code limit} 条结果（offset = 0）。
     ///
+    /// 注意：如果查询未指定排序字段，将自动添加主键排序。
+    ///
     /// @param limit 返回的最大结果数
     /// @return 结果列表
     default List<T> list(int limit) {
@@ -80,12 +102,18 @@ public interface Collector<T> {
 
     /// 获取指定偏移量和限制数的结果。
     ///
+    /// 注意：如果查询未指定排序字段，将自动添加主键排序。
+    /// 建议显式调用 `orderBy()` 方法以确保结果的一致性和可预测性。
+    ///
     /// @param offset 跳过的记录数
     /// @param limit  返回的最大结果数
     /// @return 结果列表
     List<T> list(int offset, int limit);
 
     /// 获取第一条结果。
+    ///
+    /// 注意：如果查询未指定排序字段，将自动添加主键排序。
+    /// 建议显式调用 `orderBy()` 方法以确保结果的一致性和可预测性。
     ///
     /// @return 第一条结果，不存在则返回 null
     default T first() {
@@ -106,6 +134,9 @@ public interface Collector<T> {
     }
 
     /// 获取指定偏移量和限制数的分片结果。
+    ///
+    /// 注意：如果查询未指定排序字段，将自动添加主键排序。
+    /// 建议显式调用 `orderBy()` 方法以确保结果的一致性和可预测性。
     ///
     /// @param offset 偏移量
     /// @param limit  最大结果数
