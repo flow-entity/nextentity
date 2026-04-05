@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import jakarta.persistence.LockModeType;
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -74,6 +75,42 @@ public interface SqlDialect {
     /// @return 类型化占位符字符串
     default String typedPlaceholder(Class<?> type) {
         return "?";
+    }
+
+    /// 返回数据库是否支持 FOR SHARE/FOR UPDATE 锁模式语法
+    ///
+    /// SQL Server 不支持此语法，需要使用 WITH (UPDLOCK) 提示。
+    ///
+    /// @return 如果支持 FOR SHARE/FOR UPDATE 语法则返回 true
+    default boolean supportsForUpdateSyntax() {
+        return true;
+    }
+
+    /// 返回是否需要为子查询中的聚合列添加别名
+    ///
+    /// SQL Server 要求子查询中的所有列必须有名称，聚合函数列如 count(id) 需要别名。
+    ///
+    /// @return 如果需要为聚合列添加别名则返回 true
+    default boolean requiresAliasForAggregateColumns() {
+        return false;
+    }
+
+    /// 添加锁模式子句到 SQL 语句
+    ///
+    /// 不同数据库有不同的锁模式语法：
+    /// - PostgreSQL/MySQL: FOR SHARE, FOR UPDATE, FOR UPDATE NOWAIT
+    /// - SQL Server: WITH (ROWLOCK), WITH (UPDLOCK, ROWLOCK), WITH (UPDLOCK, ROWLOCK, NOWAIT)
+    ///
+    /// @param sql         要追加的 SQL 构建器
+    /// @param lockModeType JPA 锁模式类型
+    default void appendLockMode(StringBuilder sql, LockModeType lockModeType) {
+        if (lockModeType == LockModeType.PESSIMISTIC_READ) {
+            sql.append(" for share");
+        } else if (lockModeType == LockModeType.PESSIMISTIC_WRITE) {
+            sql.append(" for update");
+        } else if (lockModeType == LockModeType.PESSIMISTIC_FORCE_INCREMENT) {
+            sql.append(" for update nowait");
+        }
     }
 
     /// 默认 SQL 方言实例

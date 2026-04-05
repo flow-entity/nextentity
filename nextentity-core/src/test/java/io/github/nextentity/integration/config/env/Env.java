@@ -6,7 +6,8 @@ public class Env {
 
     private static final List<DatabaseEnvironmentVariables> DBS = List.of(
             new MysqlEnvironmentVariables(),
-            new PostgresqlEnvironmentVariables()
+            new PostgresqlEnvironmentVariables(),
+            new SqlServerEnvironmentVariables()
     );
 
     public static List<DatabaseEnvironmentVariables> dbs() {

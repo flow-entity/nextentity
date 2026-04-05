@@ -107,24 +107,31 @@ public class QueryStatementBuilder {
             sql.append(DISTINCT);
         }
         String join = NONE_DELIMITER;
+        int columnIndex = 0;
         for (SelectItem expression : context.getSelectedExpression()) {
             sql.append(join);
             appendExpression(expression);
-            appendSelectAlias(expression);
+            appendSelectAlias(expression, columnIndex++);
             join = DELIMITER;
         }
     }
 
-    protected void appendSelectAlias(SelectItem expression) {
+    protected void appendSelectAlias(SelectItem expression, int columnIndex) {
+        // SQL Server requires aliases for aggregate columns in subqueries
+        if (dialect.requiresAliasForAggregateColumns()
+            && expression instanceof OperatorNode) {
+            sql.append(" as col_").append(columnIndex);
+        }
     }
 
     protected void appendLockModeType(LockModeType lockModeType) {
-        if (lockModeType == LockModeType.PESSIMISTIC_READ) {
-            sql.append(FOR_SHARE);
-        } else if (lockModeType == LockModeType.PESSIMISTIC_WRITE) {
-            sql.append(FOR_UPDATE);
-        } else if (lockModeType == LockModeType.PESSIMISTIC_FORCE_INCREMENT) {
-            sql.append(FOR_UPDATE_NOWAIT);
+        if (lockModeType == null) {
+            return;
+        }
+        // For databases that support FOR UPDATE syntax, append at end
+        // For SQL Server, lock hints are appended after FROM clause
+        if (dialect.supportsForUpdateSyntax()) {
+            dialect.appendLockMode(sql, lockModeType);
         }
     }
 
@@ -137,6 +144,11 @@ public class QueryStatementBuilder {
             appendExpression(((FromSubQuery) from).structure());
         }
         appendFromAlias();
+        // For SQL Server, lock hints go after the table alias in FROM clause
+        LockModeType lockModeType = context.getStructure().lockType();
+        if (lockModeType != null && !dialect.supportsForUpdateSyntax()) {
+            dialect.appendLockMode(sql, lockModeType);
+        }
     }
 
     protected void appendSubQuery(QueryStructure queryStructure) {

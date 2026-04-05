@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import jakarta.persistence.LockModeType;
 import java.util.List;
 
 /// SQL Server SQL 方言实现
@@ -10,6 +11,7 @@ import java.util.List;
 /// - 分页需要 ORDER BY 子句
 /// - LENGTH 函数使用 'len' 而非 'length'
 /// - NOT path 转换为 path = false
+/// - 锁模式使用 WITH (UPDLOCK) 提示，不支持 FOR SHARE/FOR UPDATE
 ///
 /// @author HuangChengwei
 /// @since 2.0
@@ -28,10 +30,11 @@ public class SqlServerDialect implements SqlDialect {
     @Override
     public void appendLimitOffset(StringBuilder sql, List<Object> args, int offset, int limit) {
         // SQL Server style: OFFSET offset ROWS FETCH FIRST limit ROWS ONLY
-        if (offset > 0 || limit >= 0) {
+        // Note: SQL Server requires limit > 0 for FETCH clause
+        if (offset > 0 || limit > 0) {
             sql.append(" offset ? rows");
             args.add(Math.max(offset, 0));
-            if (limit >= 0) {
+            if (limit > 0) {
                 sql.append(" fetch first ? rows only");
                 args.add(limit);
             }
@@ -52,5 +55,32 @@ public class SqlServerDialect implements SqlDialect {
     @Override
     public boolean shouldConvertNotToEqFalse() {
         return true;
+    }
+
+    @Override
+    public boolean supportsForUpdateSyntax() {
+        return false;
+    }
+
+    @Override
+    public boolean requiresAliasForAggregateColumns() {
+        return true;
+    }
+
+    @Override
+    public void appendLockMode(StringBuilder sql, LockModeType lockModeType) {
+        // SQL Server uses table hints instead of FOR SHARE/FOR UPDATE
+        // Note: These hints are placed after the table name in FROM clause,
+        // but for simplicity we append at the end (works for simple queries)
+        if (lockModeType == LockModeType.PESSIMISTIC_READ) {
+            // PESSIMISTIC_READ: Use ROWLOCK hint (shared lock)
+            sql.append(" with (rowlock)");
+        } else if (lockModeType == LockModeType.PESSIMISTIC_WRITE) {
+            // PESSIMISTIC_WRITE: Use UPDLOCK + ROWLOCK (update lock)
+            sql.append(" with (updlock, rowlock)");
+        } else if (lockModeType == LockModeType.PESSIMISTIC_FORCE_INCREMENT) {
+            // PESSIMISTIC_FORCE_INCREMENT: Use UPDLOCK + ROWLOCK + NOWAIT
+            sql.append(" with (updlock, rowlock, nowait)");
+        }
     }
 }

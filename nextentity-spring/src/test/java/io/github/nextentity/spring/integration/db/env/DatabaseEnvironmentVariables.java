@@ -10,7 +10,8 @@ public interface DatabaseEnvironmentVariables {
 
     List<DatabaseEnvironmentVariables> DBS = List.of(
             new MysqlEnvironmentVariables(),
-            new PostgresqlEnvironmentVariables()
+            new PostgresqlEnvironmentVariables(),
+            new SqlServerEnvironmentVariables()
     );
 
     /// 返回数据库名称（例如 "mysql", "postgresql"）。
