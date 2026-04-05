@@ -227,7 +227,7 @@ public class JpaQueryExecutor implements QueryExecutor {
                         Fetch<?, ?> cur = fetch;
                         String stringPath = path.get(i);
                         PathNode sub = path.subLength(i + 1);
-                        fetch = (Fetch<?, ?>) fetched.computeIfAbsent(sub, k -> {
+                        fetch = (Fetch<?, ?>) fetched.computeIfAbsent(sub, _ -> {
                             if (cur == null) {
                                 return root.fetch(stringPath, JoinType.LEFT);
                             } else {
@@ -251,7 +251,16 @@ public class JpaQueryExecutor implements QueryExecutor {
             setGroupBy(structure.groupBy());
             setHaving(structure.having());
             setOrderBy(structure.orderBy());
+            TypedQuery<?> objectsQuery = createTypedQuery();
+            return objectsQuery.getResultList();
+        }
+
+        private TypedQuery<?> createTypedQuery() {
             TypedQuery<?> objectsQuery = getTypedQuery();
+            // Set string literal parameter values
+            for (int i = 0; i < stringParameters.size(); i++) {
+                objectsQuery.setParameter("p" + i, stringParameters.get(i));
+            }
             Integer offset = structure.offset();
             if (offset != null && offset > 0) {
                 objectsQuery = objectsQuery.setFirstResult(offset);
@@ -264,7 +273,7 @@ public class JpaQueryExecutor implements QueryExecutor {
             if (lockModeType != null) {
                 objectsQuery.setLockMode(lockModeType);
             }
-            return objectsQuery.getResultList();
+            return objectsQuery;
         }
 
         private void setDistinct(Selected select) {

@@ -5,7 +5,6 @@ import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.meta.jpa.JpaMetamodel;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
@@ -99,18 +98,18 @@ public abstract class AbstractRepository<T, ID> {
 
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 NextEntityFactory 和 Metamodel，
-    /// 自动检测实体类型和主键类型，并初始化查询构建器和更新执行器。
+    /// 通过构造器注入 NextEntityContext，自动检测实体类型和主键类型，
+    /// 并初始化查询构建器和更新执行器。
     ///
-    /// @param factory   NextEntity 工厂
+    /// @param context   NextEntity 上下文
     @Autowired
-    protected AbstractRepository(NextEntityFactory factory) {
+    protected AbstractRepository(NextEntityContext context) {
         GenericType<T, ID> genericType = getGenericType();
         this.idType = genericType.idType();
         this.entityType = genericType.entityType();
-        this.metamodel = factory.metamodel();
-        this.queryBuilder = factory.queryBuilder(entityType);
-        this.updateExecutor = factory.updateExecutor();
+        this.metamodel = context.getMetamodel();
+        this.queryBuilder = context.createQueryBuilder(entityType);
+        this.updateExecutor = context.getUpdateExecutor();
     }
 
     /// 获取查询构建器，用于构建类型安全的查询。

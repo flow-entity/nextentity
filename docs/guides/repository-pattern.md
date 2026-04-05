@@ -28,16 +28,16 @@ Repository 模式将数据访问逻辑封装在专用类中，提供类型安全
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 }
 
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
-    protected DepartmentRepository(NextEntityFactory factory) {
-        super(factory);
+    protected DepartmentRepository(NextEntityContext context) {
+        super(context);
     }
 }
 ```
@@ -64,8 +64,8 @@ AbstractRepository 提供以下基于 ID 的方法：
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 查询全部
@@ -102,8 +102,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 动态条件查询
@@ -143,8 +143,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 分页查询
@@ -170,8 +170,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 单字段排序
@@ -197,8 +197,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 计数
@@ -229,8 +229,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     public int deactivateEmployeesByDepartment(Long departmentId) {
@@ -293,8 +293,8 @@ public class EmployeeService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 在 Repository 内部使用 query()，对外提供公共接口

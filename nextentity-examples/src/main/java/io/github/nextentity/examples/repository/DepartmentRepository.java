@@ -3,7 +3,7 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.spring.AbstractRepository;
-import io.github.nextentity.spring.NextEntityFactory;
+import io.github.nextentity.spring.NextEntityContext;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -27,12 +27,12 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 NextEntityFactory 和 Metamodel，
-    /// 自动检测实体类型和主键类型，并初始化查询构建器和更新执行器。
+    /// 通过构造器注入 NextEntityContext，自动检测实体类型和主键类型，
+    /// 并初始化查询构建器和更新执行器。
     ///
-    /// @param factory NextEntity 工厂
-    protected DepartmentRepository(NextEntityFactory factory) {
-        super(factory);
+    /// @param context NextEntity 上下文
+    protected DepartmentRepository(NextEntityContext context) {
+        super(context);
     }
 
     @Override

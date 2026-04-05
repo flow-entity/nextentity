@@ -35,8 +35,8 @@ query() → where() → orderBy() → list()/list(offset, limit)/slice(offset, l
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // Repository 内部使用 query() 的示例
@@ -243,8 +243,8 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 当值为 null 时跳过该条件
@@ -470,8 +470,8 @@ List<Employee> employees = employeeRepository.query()
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 获取全部

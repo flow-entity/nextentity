@@ -6,7 +6,7 @@ import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
-import io.github.nextentity.spring.NextEntityFactory;
+import io.github.nextentity.spring.NextEntityContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,12 +35,12 @@ import java.util.stream.Collectors;
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 NextEntityFactory 和 Metamodel，
-    /// 自动检测实体类型和主键类型，并初始化查询构建器和更新执行器。
+    /// 通过构造器注入 NextEntityContext，自动检测实体类型和主键类型，
+    /// 并初始化查询构建器和更新执行器。
     ///
-    /// @param factory NextEntity 工厂
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    /// @param context NextEntity 上下文
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // ==================== Basic CRUD Operations ====================

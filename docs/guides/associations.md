@@ -29,8 +29,8 @@ NextEntity 支持 JPA 标准关联关系，提供懒加载和急加载两种策�
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityFactory factory) {
-        super(factory);
+    protected EmployeeRepository(NextEntityContext context) {
+        super(context);
     }
 
     // 查询员工（1 次查询）

@@ -7,6 +7,7 @@ import jakarta.persistence.criteria.*;
 import jakarta.persistence.criteria.From;
 import org.jspecify.annotations.NonNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,9 @@ import java.util.Map;
 ///
 /// JPA 表达式构建器，用于将 NextEntity 表达式节点转换为 JPA Criteria API 表达式。
 /// 该类提供了将各种表达式节点（字面量、路径、操作符等）转换为对应的 JPA 表达式的功能。
+///
+/// 注意：该类不可复用，每次查询应创建新的实例。
+/// 实例在构建过程中会累积字符串参数等状态，复用会导致参数索引混乱。
 ///
 /// @author HuangChengwei
 /// @since 2.0.0
@@ -25,6 +29,9 @@ public class JpaExpressionBuilder {
     protected final CriteriaBuilder cb;
 
     protected final Map<PathNode, FetchParent<?, ?>> fetched = new HashMap<>();
+
+    /// 收集字符串字面量参数值，用于在查询执行时设置参数
+    protected final List<String> stringParameters = new ArrayList<>();
 
     public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb) {
         this.root = root;
@@ -38,7 +45,15 @@ public class JpaExpressionBuilder {
     public Expression<?> toExpression(ExpressionNode expression) {
         if (expression instanceof LiteralNode) {
             LiteralNode literal = (LiteralNode) expression;
-            return cb.literal(literal.value());
+            Object value = literal.value();
+            // Use parameter binding for strings to ensure proper Unicode handling
+            // especially for SQL Server which requires N prefix for Unicode strings
+            if (value instanceof String s) {
+                int paramIndex = stringParameters.size();
+                stringParameters.add(s);
+                return cb.parameter(String.class, "p" + paramIndex);
+            }
+            return cb.literal(value);
         }
         if (expression instanceof PathNode) {
             PathNode path = (PathNode) expression;

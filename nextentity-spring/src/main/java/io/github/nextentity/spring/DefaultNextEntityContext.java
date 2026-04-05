@@ -20,10 +20,10 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-/// 默认的 NextEntity 工厂实现。
+/// 默认的 NextEntity 上下文实现。
 ///
-/// 该类实现了 NextEntityFactory 接口，提供创建 QueryBuilder、
-/// UpdateExecutor、UpdateWhereStep 和 DeleteWhereStep 的能力。
+/// 该类实现了 NextEntityContext 接口，提供创建 QueryBuilder
+/// 和获取 UpdateExecutor、Metamodel 的能力。
 ///
 /// 支持两种数据库访问模式：
 /// - JDBC 模式：纯 JDBC 操作，适合轻量级场景
@@ -32,10 +32,10 @@ import java.util.function.Supplier;
 /// 使用示例：
 /// ```java
 /// // JDBC 模式
-/// NextEntityFactory factory = DefaultNextEntityFactory.jdbc(jdbcTemplate);
+/// NextEntityContext context = DefaultNextEntityContext.jdbc(jdbcTemplate);
 ///
 /// // JPA 模式
-/// NextEntityFactory factory = DefaultNextEntityFactory.jpa(entityManager, jdbcTemplate);
+/// NextEntityContext context = DefaultNextEntityContext.jpa(entityManager, jdbcTemplate);
 /// ```
 ///
 /// @param metamodel        实体元模型，提供实体结构信息
@@ -44,13 +44,13 @@ import java.util.function.Supplier;
 /// @param entityManager    JPA 实体管理器（JPA 模式时使用，JDBC 模式为 null）
 /// @author HuangChengwei
 /// @since 1.0.0
-public record DefaultNextEntityFactory(
+public record DefaultNextEntityContext(
         Metamodel metamodel,
         QueryExecutor queryExecutor,
         UpdateExecutor updateExecutor,
         @Nullable
         EntityManager entityManager
-) implements NextEntityFactory {
+) implements NextEntityContext {
 
     /// 创建基于 JDBC 的 NextEntity 工厂。
     ///
@@ -62,7 +62,7 @@ public record DefaultNextEntityFactory(
     /// @param jdbcTemplate Spring JDBC 模板
     /// @return JDBC 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
-    public static DefaultNextEntityFactory jdbc(JdbcTemplate jdbcTemplate) {
+    public static DefaultNextEntityContext jdbc(JdbcTemplate jdbcTemplate) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
         try {
@@ -78,7 +78,7 @@ public record DefaultNextEntityFactory(
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(sqlBuilder, connectionProvider, metamodel);
 
-        return new DefaultNextEntityFactory(
+        return new DefaultNextEntityContext(
                 metamodel,
                 jdbcQueryExecutor,
                 jdbcUpdateExecutor,
@@ -151,7 +151,7 @@ public record DefaultNextEntityFactory(
     /// @param jdbcTemplate  Spring JDBC 模板
     /// @return JPA 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
-    public static DefaultNextEntityFactory jpa(EntityManager entityManager,
+    public static DefaultNextEntityContext jpa(EntityManager entityManager,
                                                JdbcTemplate jdbcTemplate) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
@@ -174,7 +174,7 @@ public record DefaultNextEntityFactory(
                 entityManager, metamodel, jdbcQueryExecutor);
         JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(entityManager, metamodel, noneTransactionProvider);
 
-        return new DefaultNextEntityFactory(
+        return new DefaultNextEntityContext(
                 metamodel,
                 jpaQueryExecutor,
                 jpaUpdateExecutor,
@@ -188,7 +188,7 @@ public record DefaultNextEntityFactory(
     /// @param <T>        实体类型参数
     /// @return 查询构建器实例
     @Override
-    public <T> QueryBuilder<T> queryBuilder(Class<T> entityType) {
+    public <T> QueryBuilder<T> createQueryBuilder(Class<T> entityType) {
         return new DefaultQueryBuilder<>(metamodel, queryExecutor, entityType);
     }
 
@@ -196,7 +196,12 @@ public record DefaultNextEntityFactory(
     ///
     /// @return 更新执行器实例
     @Override
-    public UpdateExecutor updateExecutor() {
+    public UpdateExecutor getUpdateExecutor() {
         return updateExecutor;
+    }
+
+    @Override
+    public Metamodel getMetamodel() {
+        return metamodel;
     }
 }

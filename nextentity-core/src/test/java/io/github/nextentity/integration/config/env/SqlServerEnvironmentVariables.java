@@ -34,8 +34,8 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                 """
                         CREATE TABLE department (
                             id BIGINT PRIMARY KEY,
-                            name VARCHAR(100) NOT NULL,
-                            location VARCHAR(100),
+                            name NVARCHAR(100) NOT NULL,
+                            location NVARCHAR(100),
                             budget FLOAT,
                             active BIT,
                             created_at DATETIME2
@@ -44,8 +44,8 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                 """
                         CREATE TABLE employee (
                             id BIGINT PRIMARY KEY,
-                            name VARCHAR(100) NOT NULL,
-                            email VARCHAR(100),
+                            name NVARCHAR(100) NOT NULL,
+                            email NVARCHAR(100),
                             salary FLOAT,
                             active BIT,
                             status INT,
@@ -57,8 +57,8 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                 """
                         CREATE TABLE lockable_entity (
                             id BIGINT PRIMARY KEY,
-                            name VARCHAR(100) NOT NULL,
-                            description VARCHAR(255),
+                            name NVARCHAR(100) NOT NULL,
+                            description NVARCHAR(255),
                             version BIGINT,
                             created_at DATETIME2
                         )
