@@ -125,13 +125,7 @@ public interface Collector<T> {
     ///
     /// @return 单个结果，不存在则返回 null
     /// @throws IllegalStateException 如果找到多个结果
-    default T single() {
-        List<T> list = list(0, 2);
-        if (list.size() > 1) {
-            throw new IllegalStateException("found more than one");
-        }
-        return list.isEmpty() ? null : list.getFirst();
-    }
+    T single();
 
     /// 获取指定偏移量和限制数的分片结果。
     ///

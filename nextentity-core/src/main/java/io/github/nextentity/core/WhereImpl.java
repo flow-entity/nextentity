@@ -177,7 +177,16 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public List<U> list(int offset, int limit) {
-        return queryExecutor.getList(buildPaginatedQueryStructure(offset, limit));
+        return queryExecutor.getList(buildPaginatedQueryStructure(offset, limit, true));
+    }
+
+    @Override
+    public U single() {
+        List<U> list = queryExecutor.getList(buildPaginatedQueryStructure(0, 2, false));
+        if (list.size() > 1) {
+            throw new IllegalStateException("found more than one");
+        }
+        return list.isEmpty() ? null : list.getFirst();
     }
 
     @Override
@@ -208,7 +217,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     /// @param offset 偏移量
     /// @param limit  限制数
     /// @return 查询结构
-    private QueryStructure buildPaginatedQueryStructure(int offset, int limit) {
+    private QueryStructure buildPaginatedQueryStructure(int offset, int limit, boolean logAutoSortWarning) {
         ImmutableList<SortExpression> orderBy = queryStructure.orderBy();
 
         // 只有在非聚合查询且未指定排序时才自动添加主键排序
@@ -218,11 +227,12 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 EntityType entity = metamodel.getEntity(entityType);
                 if (entity != null) {
                     var idAttr = entity.id();
-
-                    log.warn("Pagination without ORDER BY detected. " +
+                    if (logAutoSortWarning) {
+                        log.debug("Pagination without ORDER BY detected. " +
                              "Automatically adding primary key ordering for entity {}. " +
                              "Consider adding explicit orderBy() for deterministic results.",
                             entityType.getSimpleName());
+                    }
 
                     PathNode idPath = new PathNode(idAttr.name());
                     SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
