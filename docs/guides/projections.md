@@ -24,6 +24,10 @@
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+
     // 查询全部字段（完整实体）
     public List<Employee> findAll() {
         return query().list();;

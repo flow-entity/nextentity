@@ -61,11 +61,16 @@ public class Employee {
 
 ### 创建 Repository
 
+继承 `AbstractRepository` 并定义构造方法：
+
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
-}
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+}
 ```
 
 ### 使用示例

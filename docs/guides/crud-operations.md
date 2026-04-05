@@ -243,6 +243,10 @@ public class EmployeeService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+
     @Transactional
     public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
         List<Employee> employees = query()
@@ -349,6 +353,10 @@ for (Employee e : newEmployees) {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+
     @Transactional
     public void giveDepartmentRaise(Long departmentId, BigDecimal percentage) {
         List<Employee> employees = query()
@@ -372,6 +380,10 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     public boolean canDeleteDepartment(Long deptId) {
         long empCount = query()
@@ -404,6 +416,10 @@ public class DepartmentService {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     public Optional<Employee> findByIdOptional(Long id) {
         Employee emp = query()

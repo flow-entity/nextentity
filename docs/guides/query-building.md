@@ -35,6 +35,10 @@ query() → where() → orderBy() → list()/list(offset, limit)/slice(offset, l
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+
     // Repository 内部使用 query() 的示例
     public List<Employee> findActiveEmployees() {
         return query()
@@ -238,6 +242,10 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 当值为 null 时跳过该条件
     public List<Employee> search(Long departmentId, EmployeeStatus status) {
@@ -461,6 +469,10 @@ List<Employee> employees = employeeRepository.query()
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 获取全部
     public List<Employee> findAllActive() {

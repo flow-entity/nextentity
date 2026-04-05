@@ -6,6 +6,7 @@ import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.examples.entity.Product;
 import io.github.nextentity.spring.AbstractRepository;
+import io.github.nextentity.spring.NextEntityFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +25,15 @@ import java.util.Map;
 /// - DTO 投影与嵌套属性
 @Repository
 public class ProductRepository extends AbstractRepository<Product, Long> {
+    /// 创建 Repository 实例。
+    ///
+    /// 通过构造器注入 NextEntityFactory 和 Metamodel，
+    /// 自动检测实体类型和主键类型，并初始化查询构建器和更新执行器。
+    ///
+    /// @param factory NextEntity 工厂
+    protected ProductRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // ==================== 继承的 ID 相关方法 ====================
     //

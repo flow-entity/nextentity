@@ -79,17 +79,14 @@ spring:
 
 ### AbstractRepository 基类
 
-继承 `AbstractRepository` 即可，Spring 会自动注入 `NextEntityFactory`：
+继承 `AbstractRepository` 并定义构造方法，注入 `NextEntityFactory`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    // 基本查询
-    public List<Employee> findActiveEmployees() {
-        return query()
-            .where(path(Employee::getActive)).eq(true)
-            .list();
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
     }
 }
 ```
@@ -142,6 +139,10 @@ public class UserService {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
+    protected OrderRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+
     public List<Order> findByStatus(String status) {
         return query()
             .where(path(Order::getStatus)).eq(status)  // 字符串路径
@@ -184,6 +185,10 @@ public class OrderRepository extends AbstractRepository<Order, Long> {
 @Repository
 public class UserRepository extends AbstractRepository<User, Long> {
 
+    protected UserRepository(NextEntityFactory factory) {
+        super(factory);
+    }
+
     @Transactional
     public int archiveInactiveUsers(LocalDate threshold) {
         return update()
@@ -207,6 +212,10 @@ public class UserRepository extends AbstractRepository<User, Long> {
 ```java
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
+
+    protected LogRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     @Transactional
     public int deleteOldLogs(LocalDate before) {

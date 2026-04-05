@@ -22,15 +22,23 @@ Repository 模式将数据访问逻辑封装在专用类中，提供类型安全
 
 ### AbstractRepository
 
-继承 `AbstractRepository` 创建类型安全的 Repository：
+继承 `AbstractRepository` 并定义构造方法：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 }
 
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
+
+    protected DepartmentRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 }
 ```
 
@@ -55,6 +63,10 @@ AbstractRepository 提供以下基于 ID 的方法：
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 查询全部
     public List<Employee> findAllEmployees() {
@@ -90,6 +102,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 动态条件查询
     public List<Employee> searchEmployees(String name, Long departmentId, BigDecimal minSalary) {
@@ -128,6 +143,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 分页查询
     public List<Employee> findPage(int pageNumber, int pageSize) {
@@ -152,6 +170,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 单字段排序
     public List<Employee> findOrderedByNameAsc() {
@@ -176,6 +197,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 计数
     public long countAllEmployees() {
@@ -205,6 +229,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     public int deactivateEmployeesByDepartment(Long departmentId) {
         return update()
@@ -265,6 +292,10 @@ public class EmployeeService {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 
     // 在 Repository 内部使用 query()，对外提供公共接口
     public List<Employee> findActiveEmployees() {

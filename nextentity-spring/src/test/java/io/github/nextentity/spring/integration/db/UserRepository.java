@@ -23,9 +23,14 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     private List<User> users;
     private String name;
 
-    @Override
-    protected void setFactory(NextEntityFactory factory) {
-        super.setFactory(factory);
+    /// 创建 Repository 实例。
+    ///
+    /// 通过构造器注入 NextEntityFactory 和 Metamodel，
+    /// 自动检测实体类型和主键类型，并初始化查询构建器和更新执行器。
+    ///
+    /// @param factory NextEntity 工厂
+    protected UserRepository(NextEntityFactory factory) {
+        super(factory);
     }
 
     public void setName(String name) {

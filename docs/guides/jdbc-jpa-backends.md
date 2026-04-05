@@ -234,6 +234,10 @@ public class Employee {
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
+
+    protected EmployeeRepository(NextEntityFactory factory) {
+        super(factory);
+    }
 }
 ```
 
@@ -695,12 +699,20 @@ for (Employee emp : dept.getEmployees()) {
 // 简单 CRUD：JDBC
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
+
+    protected LogRepository(NextEntityFactory factory) {
+        super(factory);
+    }
     // JDBC 足够
 }
 
 // 复杂关联：JPA
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
+
+    protected OrderRepository(NextEntityFactory factory) {
+        super(factory);
+    }
     // 需要懒加载订单项、客户等
 }
 ```

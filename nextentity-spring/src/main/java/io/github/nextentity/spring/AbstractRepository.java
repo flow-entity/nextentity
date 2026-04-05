@@ -44,22 +44,13 @@ import java.util.stream.Collectors;
 /// @since 1.0.0
 public abstract class AbstractRepository<T, ID> {
 
-    private volatile Metamodel metamodel = JpaMetamodel.of();
+    private final Metamodel metamodel;
+    private final Class<ID> idType;
+    private final Class<T> entityType;
+    private final QueryBuilder<T> queryBuilder;
+    private final UpdateExecutor updateExecutor;
 
-    /// 主键类型
-    protected final Class<ID> idType;
-    /// 实体类型
-    protected final Class<T> entityType;
-
-    /// 查询构建器，用于构建类型安全的查询
-    private QueryBuilder<T> queryBuilder;
-    /// 更新执行器，用于执行插入、更新、删除操作
-    private UpdateExecutor updateExecutor;
-
-    /// ID 路径表达式，用于构建基于主键的查询条件
     private Path<T, ID> idPath;
-
-    /// ID 提取函数缓存，用于 findMapById 和 findMapAll 方法
     private Function<? super T, ? extends ID> idExtractor;
 
     protected Path<T, ID> idPath() {
@@ -108,37 +99,18 @@ public abstract class AbstractRepository<T, ID> {
 
     /// 创建 Repository 实例。
     ///
-    /// 自动检测实体类型和主键类型，
-    /// 并通过 NextEntityFactory 初始化查询构建器和更新执行器。
-    protected AbstractRepository() {
+    /// 通过构造器注入 NextEntityFactory 和 Metamodel，
+    /// 自动检测实体类型和主键类型，并初始化查询构建器和更新执行器。
+    ///
+    /// @param factory   NextEntity 工厂
+    @Autowired
+    protected AbstractRepository(NextEntityFactory factory) {
         GenericType<T, ID> genericType = getGenericType();
         this.idType = genericType.idType();
         this.entityType = genericType.entityType();
-    }
-
-    /// 自动注入 NextEntityFactory 并初始化组件。
-    ///
-    /// 该方法通过 Spring 的自动注入机制获取 NextEntityFactory，
-    /// 然后创建查询构建器和更新执行器。
-    ///
-    /// @param factory NextEntity 工厂
-    @Autowired
-    protected void setFactory(NextEntityFactory factory) {
+        this.metamodel = factory.metamodel();
         this.queryBuilder = factory.queryBuilder(entityType);
         this.updateExecutor = factory.updateExecutor();
-    }
-
-    /// 自动注入 Metamodel 实例。
-    ///
-    /// 如果容器中存在 Metamodel Bean，则使用注入的实例；
-    /// 否则使用默认的 JpaMetamodel 实例。
-    ///
-    /// @param metamodel 元模型实例
-    @Autowired(required = false)
-    protected void setMetamodel(Metamodel metamodel) {
-        if (metamodel != null) {
-            this.metamodel = metamodel;
-        }
     }
 
     /// 获取查询构建器，用于构建类型安全的查询。

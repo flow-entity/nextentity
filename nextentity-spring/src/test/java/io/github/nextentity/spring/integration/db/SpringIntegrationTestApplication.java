@@ -17,19 +17,15 @@ public class SpringIntegrationTestApplication {
 
     @Bean(name = "jdbcUserRepository")
     public UserRepository jdbcUserRepository(JdbcTemplate jdbcTemplate, DatabaseEnvironment env) {
-        UserRepository repository = new UserRepository();
-        String name = env.get().getName() + "-jdbc";
-        repository.setName(name);
-        repository.setFactory(DefaultNextEntityFactory.jdbc(jdbcTemplate));
+        UserRepository repository = new UserRepository(DefaultNextEntityFactory.jdbc(jdbcTemplate));
+        repository.setName(env.get().getName() + "-jdbc");
         return repository;
     }
 
     @Bean("jpaUserRepository")
     public UserRepository jpaUserRepository(JdbcTemplate jdbcTemplate, EntityManager entityManager, DatabaseEnvironment env) {
-        UserRepository repository = new UserRepository();
-        String name = env.get().getName() + "-jpa";
-        repository.setName(name);
-        repository.setFactory(DefaultNextEntityFactory.jpa(entityManager, jdbcTemplate));
+        UserRepository repository = new UserRepository(DefaultNextEntityFactory.jpa(entityManager, jdbcTemplate));
+        repository.setName(env.get().getName() + "-jpa");
         return repository;
     }
 

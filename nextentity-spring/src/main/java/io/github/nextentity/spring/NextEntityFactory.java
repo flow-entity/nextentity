@@ -2,6 +2,7 @@ package io.github.nextentity.spring;
 
 import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.core.meta.Metamodel;
 
 /// NextEntity 工厂接口。
 ///
@@ -30,5 +31,7 @@ public interface NextEntityFactory {
     ///
     /// @return 更新执行器实例
     UpdateExecutor updateExecutor();
+
+    Metamodel metamodel();
 
 }
