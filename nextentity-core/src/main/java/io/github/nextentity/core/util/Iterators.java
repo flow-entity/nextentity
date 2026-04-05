@@ -13,9 +13,9 @@ import java.util.stream.StreamSupport;
 ///
 public class Iterators {
 
-    public static <T> List<T> toList(Iterable<T> iterable) {
-        if (iterable instanceof List<T>) {
-            return (List<T>) iterable;
+    public static <T> List<? extends T> toList(Iterable<? extends T> iterable) {
+        if (iterable instanceof List<? extends T> list) {
+            return list;
         } else {
             return ImmutableList.ofIterable(iterable);
         }

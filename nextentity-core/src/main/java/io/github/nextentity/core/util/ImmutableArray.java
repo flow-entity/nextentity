@@ -7,7 +7,7 @@ public interface ImmutableArray<E> extends Sizeable, Iterable<E> {
 
     Stream<E> stream();
 
-    default List<E> asList() {
+    default List<? extends E> asList() {
         return Iterators.toList(this);
     }
 

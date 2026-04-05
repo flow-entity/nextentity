@@ -104,10 +104,10 @@ class ImmutableArrayTest {
         ImmutableArray<String> array = ImmutableList.of("a", "b", "c");
 
         // when
-        List<String> list = array.asList();
+        List<? extends String> list = array.asList();
 
         // then
-        assertThat(list).containsExactly("a", "b", "c");
+        assertThat(list).isEqualTo(array);
     }
 
 ///

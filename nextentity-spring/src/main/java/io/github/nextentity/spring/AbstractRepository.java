@@ -112,6 +112,18 @@ public abstract class AbstractRepository<T, ID> {
         this.updateExecutor = context.getUpdateExecutor();
     }
 
+    public AbstractRepository(Class<T> entityType, Class<ID> idType, NextEntityContext context) {
+        this(entityType, idType, context.getMetamodel(), context.createQueryBuilder(entityType), context.getUpdateExecutor());
+    }
+
+    public AbstractRepository(Class<T> entityType, Class<ID> idType, Metamodel metamodel, QueryBuilder<T> queryBuilder, UpdateExecutor updateExecutor) {
+        this.metamodel = metamodel;
+        this.idType = idType;
+        this.entityType = entityType;
+        this.queryBuilder = queryBuilder;
+        this.updateExecutor = updateExecutor;
+    }
+
     /// 获取查询构建器，用于构建类型安全的查询。
     ///
     /// @return 查询构建器实例
@@ -266,7 +278,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 匹配主键的实体列表
-    public List<T> findAllById(@NonNull Collection<ID> ids) {
+    public List<T> findAllById(@NonNull Collection<? extends ID> ids) {
         if (ids.isEmpty()) {
             return List.of();
         }
@@ -279,7 +291,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 匹配主键的实体列表
-    public List<T> getAllById(@NonNull Collection<ID> ids) {
+    public List<T> getAllById(@NonNull Collection<? extends ID> ids) {
         return findAllById(ids);
     }
 
@@ -290,7 +302,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 以 ID 为键、实体为值的映射
-    public Map<ID, T> findMapById(@NonNull Collection<ID> ids) {
+    public Map<ID, T> findMapById(@NonNull Collection<? extends ID> ids) {
         List<T> entities = findAllById(ids);
         return entities.stream()
                 .collect(Collectors.toMap(idExtractor(), Function.identity()));
@@ -320,7 +332,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 存在的实体数量
-    public long countById(@NonNull Collection<ID> ids) {
+    public long countById(@NonNull Collection<? extends ID> ids) {
         if (ids.isEmpty()) {
             return 0;
         }
@@ -351,7 +363,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     @Transactional
-    public void deleteAllById(@NonNull Collection<ID> ids) {
+    public void deleteAllById(@NonNull Collection<? extends ID> ids) {
         if (!ids.isEmpty()) {
             delete().where(idPath()).in(ids).execute();
         }

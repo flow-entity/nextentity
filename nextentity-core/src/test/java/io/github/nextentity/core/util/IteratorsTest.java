@@ -4,7 +4,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
-import java.util.stream.StreamSupport;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -36,7 +35,7 @@ class IteratorsTest {
             List<String> list = new ArrayList<>(List.of("a", "b", "c"));
 
             // when
-            List<String> result = Iterators.toList(list);
+            List<? extends String> result = Iterators.toList(list);
 
             // then
             assertThat(result).isSameAs(list);
@@ -52,10 +51,10 @@ class IteratorsTest {
             Set<String> set = new LinkedHashSet<>(List.of("a", "b", "c"));
 
             // when
-            List<String> result = Iterators.toList(set);
+            List<? extends String> result = Iterators.toList(set);
 
             // then
-            assertThat(result).containsExactly("a", "b", "c");
+            assertThat(result).isEqualTo(ImmutableList.of("a", "b", "c"));
             assertThat(result).isInstanceOf(ImmutableList.class);
         }
 
@@ -69,7 +68,7 @@ class IteratorsTest {
             Iterable<String> empty = Collections.emptyList();
 
             // when
-            List<String> result = Iterators.toList(empty);
+            List<? extends String> result = Iterators.toList(empty);
 
             // then
             assertThat(result).isEmpty();
