@@ -233,8 +233,13 @@ public class QueryStatementBuilder {
     }
 
     protected void appendLiteral(LiteralNode literal) {
-        appendBlank().append('?');
-        this.args.add(literal.value());
+        Object value = literal.value();
+        if (value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Byte) {
+            appendBlank().append(value);
+        } else {
+            appendBlank().append('?');
+            this.args.add(value);
+        }
     }
 
     protected void appendOperation(OperatorNode operation) {

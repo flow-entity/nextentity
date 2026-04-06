@@ -432,10 +432,8 @@ class AbstractRepositoryIdMethodsTest {
     void shouldFindMapByIdConsistentWithFindMapAll(UserRepository repository) {
         // Arrange
         List<User> allUsers = repository.users();
-        int maxSize = 2000;
         List<Integer> allIds = allUsers.stream()
                 .map(User::getId)
-                .limit(maxSize)
                 .collect(Collectors.toList());
 
         // Act
@@ -443,8 +441,8 @@ class AbstractRepositoryIdMethodsTest {
         Map<Integer, User> mapAll = repository.findMapAll();
 
         // Assert - 两个方法应该返回相同的 Map（对于全部 ID）
-        assertEquals(Math.min(mapAll.size(), maxSize), mapById.size());
-        mapById.forEach((id, user) -> assertEquals(mapAll.get(id), user));
+        assertEquals(mapAll.size(), mapById.size());
+        assertEquals(mapAll, mapById);
     }
 
     /// 测试边界值：单个 ID 的集合
@@ -490,10 +488,8 @@ class AbstractRepositoryIdMethodsTest {
     @ArgumentsSource(UserQueryProvider.class)
     void shouldFindAllByIdHandleLargeIdCollection(UserRepository repository) {
         // Arrange - 使用所有用户的 ID
-        int limit = 2000;
         List<Integer> allIds = repository.users().stream()
                 .map(User::getId)
-                .limit(limit)
                 .collect(Collectors.toList());
 
         // Act
