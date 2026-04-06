@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -15,7 +16,12 @@ import java.sql.SQLException;
 /// NextEntity 自动配置类。
 ///
 /// 当 Spring Boot 应用引入 nextentity-spring 依赖时，
-/// 自动注册 NextEntityContext Bean，无需手动配置。
+/// 需要显式启用才会注册 NextEntityContext Bean：
+///
+/// ```yaml
+/// nextentity:
+///   enabled: true
+/// ```
 ///
 /// 该配置会根据运行环境自动选择模式：
 /// - 如果存在 EntityManager Bean，使用 JPA 模式
@@ -24,6 +30,7 @@ import java.sql.SQLException;
 /// 配置示例：
 /// ```yaml
 /// nextentity:
+///   enabled: true
 ///   jdbc:
 ///     dialect: auto
 ///     query:
@@ -43,6 +50,7 @@ import java.sql.SQLException;
 /// @author HuangChengwei
 /// @since 2.0.0
 @AutoConfiguration
+@ConditionalOnProperty(prefix = "nextentity", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(NextEntityProperties.class)
 public class NextEntityAutoConfiguration {
 

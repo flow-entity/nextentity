@@ -8,9 +8,16 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 /// 通过 Spring Boot 配置（application.yml 或 application.properties）
 /// 为 NextEntity 行为提供外部配置。
 ///
-/// 使用示例：
+/// NextEntity 默认不启用自动配置，需要显式设置：
 /// ```yaml
 /// nextentity:
+///   enabled: true
+/// ```
+///
+/// 完整配置示例：
+/// ```yaml
+/// nextentity:
+///   enabled: true
 ///   jdbc:
 ///     dialect: auto
 ///     query:
@@ -21,6 +28,15 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 /// @since 2.1.0
 @ConfigurationProperties(prefix = "nextentity")
 public class NextEntityProperties {
+
+    /// 是否启用 NextEntity 自动配置。
+    ///
+    /// 默认为 false，需要用户显式启用：
+    /// ```yaml
+    /// nextentity:
+    ///   enabled: true
+    /// ```
+    private boolean enabled = false;
 
     /// JDBC 配置
     @NestedConfigurationProperty
@@ -44,5 +60,13 @@ public class NextEntityProperties {
 
     public LoggingProperties getLogging() {
         return logging;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }
