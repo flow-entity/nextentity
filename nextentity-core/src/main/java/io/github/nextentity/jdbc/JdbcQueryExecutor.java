@@ -32,8 +32,10 @@ public class JdbcQueryExecutor implements QueryExecutor {
     private final ConnectionProvider connectionProvider;
     @NonNull
     private final ResultCollector collector;
+    @NonNull
+    private final JdbcConfig config;
 
-    /// 构造JDBC查询执行器
+    /// 构造JDBC查询执行器（使用默认配置）
     ///
     /// @param metamodel 元模型，用于提供实体元数据信息
     /// @param sqlBuilder SQL构建器，用于生成SQL语句
@@ -43,10 +45,26 @@ public class JdbcQueryExecutor implements QueryExecutor {
                              @NonNull QuerySqlBuilder sqlBuilder,
                              @NonNull ConnectionProvider connectionProvider,
                              @NonNull ResultCollector collector) {
+        this(metamodel, sqlBuilder, connectionProvider, collector, JdbcConfig.DEFAULT);
+    }
+
+    /// 构造JDBC查询执行器
+    ///
+    /// @param metamodel 元模型，用于提供实体元数据信息
+    /// @param sqlBuilder SQL构建器，用于生成SQL语句
+    /// @param connectionProvider 连接提供者，用于获取数据库连接
+    /// @param collector 结果收集器，用于处理查询结果
+    /// @param config JDBC配置
+    public JdbcQueryExecutor(@NonNull Metamodel metamodel,
+                             @NonNull QuerySqlBuilder sqlBuilder,
+                             @NonNull ConnectionProvider connectionProvider,
+                             @NonNull ResultCollector collector,
+                             @NonNull JdbcConfig config) {
         this.metamodel = metamodel;
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.collector = collector;
+        this.config = config;
     }
 
     /// 执行查询并返回结果列表
@@ -68,6 +86,14 @@ public class JdbcQueryExecutor implements QueryExecutor {
                 }
                 // noinspection SqlSourceToSinkFlow
                 try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
+                    // 应用查询超时配置
+                    if (config.queryTimeout() != null) {
+                        statement.setQueryTimeout(config.queryTimeout());
+                    }
+                    // 应用获取大小配置
+                    if (config.fetchSize() > 0) {
+                        statement.setFetchSize(config.fetchSize());
+                    }
                     JdbcUtil.setParameters(statement, sql.parameters());
                     try (ResultSet resultSet = statement.executeQuery()) {
                         return collector.resolve(resultSet, context);

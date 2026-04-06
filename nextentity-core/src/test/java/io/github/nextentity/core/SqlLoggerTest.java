@@ -7,41 +7,38 @@ import org.slf4j.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/// 测试目标: 验证 SqlLogger 正确配置
 ///
- /// 测试目标: 验证y SqlLogger is 正确 configured
- /// <p>
- /// 测试场景s:
- /// 1. Logger instance is properly initialized
- /// 2. Logger name is correct
- /// <p>
- /// Note: We do not test debug() 方法 because they are simple delegations
- /// to SLF4J Logger which is already tested by the SLF4J framework.
+/// 测试场景:
+/// 1. Logger 实例正确初始化
+/// 2. Logger 名称正确
+/// 3. 配置可以动态更新
+///
+/// Note: 我们不测试 debug() 方法，因为它们是 SLF4J Logger 的简单代理，该框架已测试过。
 class SqlLoggerTest {
 
     @Nested
     class LoggerConfiguration {
 
-///
-         /// 测试目标: 验证y logger instance is initialized
-         /// 测试场景: Access the static log field
-         /// 预期结果: Logger is not null
+        /// 测试目标: 验证 logger 实例已初始化
+        /// 测试场景: 访问 logger
+        /// 预期结果: Logger 不为 null
         @Test
         void log_ShouldBeInitialized() {
             // when
-            Logger logger = SqlLogger.log;
+            Logger logger = SqlLogger.getLogger();
 
             // then
             assertThat(logger).isNotNull();
         }
 
-///
-         /// 测试目标: 验证y logger has correct name
-         /// 测试场景: Get logger name
-         /// 预期结果: Logger name matches expected SQL logger name
+        /// 测试目标: 验证 logger 名称正确
+        /// 测试场景: 获取 logger 名称
+        /// 预期结果: Logger 名称匹配预期的 SQL logger 名称
         @Test
         void log_ShouldHaveCorrectName() {
             // when
-            String loggerName = SqlLogger.log.getName();
+            String loggerName = SqlLogger.getLogger().getName();
 
             // then
             assertThat(loggerName).isEqualTo("io.github.nextentity.sql");
@@ -49,23 +46,106 @@ class SqlLoggerTest {
     }
 
     @Nested
+    class ConfigTests {
+
+        /// 测试目标: 验证默认配置
+        /// 测试场景: 获取当前配置
+        /// 预期结果: 配置值正确
+        @Test
+        void defaultConfig_ShouldBeCorrect() {
+            // when
+            LoggingConfig config = SqlLogger.getConfig();
+
+            // then
+            assertThat(config.enabled()).isTrue();
+            assertThat(config.parameters()).isTrue();
+            assertThat(config.loggerName()).isEqualTo("io.github.nextentity.sql");
+        }
+
+        /// 测试目标: 验证配置可以更新
+        /// 测试场景: 设置新配置
+        /// 预期结果: 配置更新成功
+        @Test
+        void setConfig_ShouldUpdateConfig() {
+            // given
+            LoggingConfig newConfig = LoggingConfig.builder()
+                    .enabled(false)
+                    .parameters(false)
+                    .loggerName("custom.logger")
+                    .build();
+
+            // when
+            SqlLogger.setConfig(newConfig);
+
+            // then
+            LoggingConfig config = SqlLogger.getConfig();
+            assertThat(config.enabled()).isFalse();
+            assertThat(config.parameters()).isFalse();
+            assertThat(config.loggerName()).isEqualTo("custom.logger");
+
+            // cleanup - 恢复默认配置
+            SqlLogger.setConfig(LoggingConfig.DEFAULT);
+        }
+
+        /// 测试目标: 验证配置更新后 logger 名称也更新
+        /// 测试场景: 设置新配置并获取 logger
+        /// 预期结果: Logger 名称与新配置匹配
+        @Test
+        void setConfig_ShouldUpdateLoggerName() {
+            // given
+            LoggingConfig newConfig = LoggingConfig.builder()
+                    .loggerName("test.logger")
+                    .build();
+
+            // when
+            SqlLogger.setConfig(newConfig);
+
+            // then
+            assertThat(SqlLogger.getLogger().getName()).isEqualTo("test.logger");
+
+            // cleanup
+            SqlLogger.setConfig(LoggingConfig.DEFAULT);
+        }
+    }
+
+    @Nested
     class DebugMethods {
 
-///
-         /// 测试目标: 验证y debug 方法 are callable without exceptions
-         /// 测试场景: Call debug 方法 with valid parameters
-         /// 预期结果: No exceptions thrown
-         /// <p>
-         /// Note: This test verifies the 方法 can be called safely.
-         /// Actual log output depends on logging configuration and is not verified here.
+        /// 测试目标: 验证 debug 方法可正常调用
+        /// 测试场景: 使用有效参数调用 debug 方法
+        /// 预期结果: 无异常抛出
         @Test
         void debug_WithValidParameters_ShouldNotThrow() {
-            // when & then - methods should complete without exceptions
+            // when & then - 方法应无异常完成
             Assertions.assertDoesNotThrow(() -> {
                 SqlLogger.debug("test message");
                 SqlLogger.debug("test message with param: {}", "value");
                 SqlLogger.debug("null param: {}", null);
             });
+        }
+
+        /// 测试目标: 验证禁用日志时不输出
+        /// 测试场景: 设置 enabled=false 后调用 debug
+        /// 预期结果: 无异常（内部检查 enabled 标志）
+        @Test
+        void debug_WhenDisabled_ShouldNotLog() {
+            // given
+            LoggingConfig disabledConfig = LoggingConfig.builder()
+                    .enabled(false)
+                    .build();
+
+            // when
+            SqlLogger.setConfig(disabledConfig);
+
+            // then - 无异常，方法内部检查 enabled
+            Assertions.assertDoesNotThrow(() -> {
+                SqlLogger.debug("should not log");
+                SqlLogger.logSql("SELECT 1");
+                SqlLogger.logParameters("SELECT ?", java.util.List.of(1));
+            });
+
+            // cleanup
+            SqlLogger.setConfig(LoggingConfig.DEFAULT);
         }
     }
 }

@@ -24,14 +24,10 @@ public class MySqlDialect implements SqlDialect {
 
     @Override
     public void appendLimitOffset(StringBuilder sql, List<Object> args, int offset, int limit) {
-        // MySQL style: LIMIT offset,limit
         if (offset > 0) {
-            sql.append(" limit ?,?");
-            args.add(offset);
-            args.add(limit < 0 ? Long.MAX_VALUE : limit);
+            sql.append(" limit ").append(offset).append(",").append(limit < 0 ? Long.MAX_VALUE : limit);
         } else if (limit >= 0) {
-            sql.append(" limit ?");
-            args.add(limit);
+            sql.append(" limit ").append(limit);
         }
     }
 

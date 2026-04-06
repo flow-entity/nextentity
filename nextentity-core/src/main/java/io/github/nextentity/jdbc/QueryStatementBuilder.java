@@ -24,9 +24,6 @@ public class QueryStatementBuilder {
 
     protected static final String NONE_DELIMITER = "";
     protected static final String DELIMITER = ",";
-    protected static final String FOR_SHARE = " for share";
-    protected static final String FOR_UPDATE = " for update";
-    protected static final String FOR_UPDATE_NOWAIT = " for update nowait";
     protected static final String SELECT = "select ";
     protected static final String DISTINCT = "distinct ";
     protected static final String FROM = "from ";
@@ -44,6 +41,7 @@ public class QueryStatementBuilder {
 
     protected final QueryContext context;
     protected final SqlDialect dialect;
+    protected final JdbcConfig config;
 
     protected final String fromAlias;
     protected final int subIndex;
@@ -53,6 +51,7 @@ public class QueryStatementBuilder {
                                     List<Object> args,
                                     QueryContext context,
                                     SqlDialect dialect,
+                                    JdbcConfig config,
                                     AtomicInteger selectIndex,
                                     int subIndex) {
         this.sql = sql;
@@ -61,6 +60,7 @@ public class QueryStatementBuilder {
         this.selectIndex = selectIndex;
         this.context = context;
         this.dialect = dialect;
+        this.config = config;
         String prefix;
         From from = context.getStructure().from();
         if (from instanceof FromEntity(Class<?> type)) {
@@ -71,8 +71,8 @@ public class QueryStatementBuilder {
         fromAlias = subIndex == 0 ? prefix + "_" : prefix + subIndex + "_";
     }
 
-    public QueryStatementBuilder(QueryContext context, SqlDialect dialect) {
-        this(new StringBuilder(), new ArrayList<>(), context, dialect, new AtomicInteger(), 0);
+    public QueryStatementBuilder(QueryContext context, SqlDialect dialect, JdbcConfig config) {
+        this(new StringBuilder(), new ArrayList<>(), context, dialect, config, new AtomicInteger(), 0);
     }
 
     protected String leftQuotedIdentifier() {
@@ -159,7 +159,7 @@ public class QueryStatementBuilder {
     }
 
     protected void appendQueryStructure(QueryContext subContext) {
-        new QueryStatementBuilder(sql, args, subContext, dialect, selectIndex, subIndex + 1).doBuilder();
+        new QueryStatementBuilder(sql, args, subContext, dialect, config, selectIndex, subIndex + 1).doBuilder();
     }
 
     protected void appendFromTable() {
@@ -234,7 +234,9 @@ public class QueryStatementBuilder {
 
     protected void appendLiteral(LiteralNode literal) {
         Object value = literal.value();
-        if (value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Byte) {
+        // 应用 inlineNumericLiterals 配置
+        if (config.inlineNumericLiterals() &&
+            (value instanceof Integer || value instanceof Long || value instanceof Short || value instanceof Byte)) {
             appendBlank().append(value);
         } else {
             appendBlank().append('?');

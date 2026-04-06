@@ -10,6 +10,7 @@ import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.Iterators;
 import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -35,16 +36,28 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
     private final Metamodel metamodel;
+    private final JdbcConfig config;
+
+    /// 构造JDBC更新执行器（使用默认配置）
+    ///
+    /// @param sqlBuilder         更新SQL构建器，用于生成更新相关的SQL语句
+    /// @param connectionProvider 连接提供者，用于获取数据库连接
+    /// @param metamodel          元模型，用于提供实体元数据信息
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
+        this(sqlBuilder, connectionProvider, metamodel, JdbcConfig.DEFAULT);
+    }
 
     /// 构造JDBC更新执行器
     ///
     /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
     /// @param metamodel 元模型，用于提供实体元数据信息
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
+    /// @param config JDBC配置
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel, JdbcConfig config) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.metamodel = metamodel;
+        this.config = config;
     }
 
     /// 插入所有实体
@@ -84,7 +97,6 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param entityClass 实体类类型
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
-        var excludeNull = false;
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
@@ -218,7 +230,8 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @throws SQLException SQL异常
     protected void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
         insertStatement.debug();
-        boolean generateKey = insertStatement.returnGeneratedKeys();
+        // 应用返回生成键配置
+        boolean generateKey = config.returnGeneratedKeys() && insertStatement.returnGeneratedKeys();
         //noinspection SqlSourceToSinkFlow
         try (PreparedStatement statement = generateKey
                 ? connection.prepareStatement(insertStatement.sql(), Statement.RETURN_GENERATED_KEYS)
@@ -248,20 +261,54 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @throws SQLException SQL异常
     protected int[] executeUpdate(PreparedStatement statement, Iterable<? extends Iterable<?>> parameters) throws SQLException {
         Iterator<? extends Iterable<?>> iterator = parameters.iterator();
-        if (iterator.hasNext()) {
-            setParameters(statement, iterator.next());
+
+        // 检查是否有参数
+        if (!iterator.hasNext()) {
+            return new int[0];
         }
-        boolean batch = iterator.hasNext();
+
+        // 应用批处理配置
+        boolean useBatch = config.batchEnabled();
+        int batchSize = config.batchSize();
+
+        int size = Iterators.size(parameters);
+        if (!useBatch) {
+            // 不使用批处理，逐条执行
+            int[] results = new int[size];
+            int i = 0;
+            while (iterator.hasNext()) {
+                setParameters(statement, iterator.next());
+                results[i++] = statement.executeUpdate();
+            }
+            return results;
+        }
+
+        // 使用批处理
+        int batchCount = 0;
+        int[] results = new int[0];
+
         while (iterator.hasNext()) {
-            statement.addBatch();
             setParameters(statement, iterator.next());
-        }
-        if (batch) {
             statement.addBatch();
-            return statement.executeBatch();
-        } else {
-            return new int[]{statement.executeUpdate()};
+            batchCount++;
+
+            // 达到批处理大小时执行
+            if (batchCount >= batchSize || !iterator.hasNext()) {
+                int[] batchResults = statement.executeBatch();
+                results = mergeResults(results, batchResults);
+                batchCount = 0;
+            }
         }
+
+        return results;
+    }
+
+    /// 合并批处理结果
+    private int[] mergeResults(int[] a, int[] b) {
+        int[] result = new int[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
     }
 
     /// 设置参数

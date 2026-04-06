@@ -17,12 +17,15 @@ import java.util.*;
 public class DefaultSqlBuilder implements SqlBuilder {
 
     private final SqlDialect dialect;
+    private final JdbcConfig config;
 
     /// 构造 SQL 构建器
     ///
     /// @param dialect SQL 方言
-    public DefaultSqlBuilder(SqlDialect dialect) {
+    /// @param config  JDBC 配置
+    public DefaultSqlBuilder(SqlDialect dialect, JdbcConfig config) {
         this.dialect = dialect;
+        this.config = config;
     }
 
     /// 构建查询 SQL 语句
@@ -31,7 +34,7 @@ public class DefaultSqlBuilder implements SqlBuilder {
     /// @return 查询 SQL 语句对象
     @Override
     public QuerySqlStatement buildQueryStatement(QueryContext context) {
-        return new QueryStatementBuilder(context, dialect).build();
+        return new QueryStatementBuilder(context, dialect, config).build();
     }
 
     /// 构建插入 SQL 语句

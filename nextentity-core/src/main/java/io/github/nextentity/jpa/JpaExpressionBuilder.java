@@ -33,9 +33,16 @@ public class JpaExpressionBuilder {
     /// 收集字符串字面量参数值，用于在查询执行时设置参数
     protected final List<String> stringParameters = new ArrayList<>();
 
+    protected final JpaConfig config;
+
     public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb) {
+        this(root, cb, JpaConfig.DEFAULT);
+    }
+
+    public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb, JpaConfig config) {
         this.root = root;
         this.cb = cb;
+        this.config = config;
     }
 
     public Expression<?> toExpression(SelectItem selectItem) {
@@ -46,9 +53,10 @@ public class JpaExpressionBuilder {
         if (expression instanceof LiteralNode) {
             LiteralNode literal = (LiteralNode) expression;
             Object value = literal.value();
+            // 应用 stringParameterBinding 配置
             // Use parameter binding for strings to ensure proper Unicode handling
             // especially for SQL Server which requires N prefix for Unicode strings
-            if (value instanceof String s) {
+            if (config.stringParameterBinding() && value instanceof String s) {
                 int paramIndex = stringParameters.size();
                 stringParameters.add(s);
                 return cb.parameter(String.class, "p" + paramIndex);
