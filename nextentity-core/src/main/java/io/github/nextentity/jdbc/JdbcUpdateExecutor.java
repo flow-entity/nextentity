@@ -236,19 +236,79 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         try (PreparedStatement statement = generateKey
                 ? connection.prepareStatement(insertStatement.sql(), Statement.RETURN_GENERATED_KEYS)
                 : connection.prepareStatement(insertStatement.sql())) {
-            executeUpdate(statement, insertStatement.parameters());
+
             if (generateKey) {
-                try (ResultSet keys = statement.getGeneratedKeys()) {
-                    Iterator<?> iterator = insertStatement.entities().iterator();
-                    while (keys.next()) {
-                        Object entity = iterator.next();
-                        EntityAttribute idField = entityType.id();
-                        Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
-                        idField.set(entity, key);
-                    }
-                } catch (Exception e) {
-                    log.warn("", e);
+                if (insertStatement.batchInsert()) {
+                    // 批量执行插入并获取生成键
+                    executeBatchInsertWithGeneratedKeys(statement, insertStatement, entityType);
+                } else {
+                    // 逐条执行插入并获取生成键
+                    executeInsertWithGeneratedKeys(statement, insertStatement, entityType);
                 }
+            } else {
+                // 不需要生成键时，使用批量执行提高效率
+                executeUpdate(statement, insertStatement.parameters());
+            }
+        }
+    }
+
+    /// 执行批量插入并获取生成键（适用于支持批量 getGeneratedKeys 的数据库）
+    ///
+    /// @param statement       预编译语句
+    /// @param insertStatement 插入SQL语句
+    /// @param entityType      实体类型
+    /// @throws SQLException SQL异常
+    protected void executeBatchInsertWithGeneratedKeys(PreparedStatement statement,
+                                                       InsertSqlStatement insertStatement,
+                                                       EntitySchema entityType) throws SQLException {
+        // 添加到批处理
+        for (Iterable<?> params : insertStatement.parameters()) {
+            setParameters(statement, params);
+            statement.addBatch();
+        }
+
+        // 执行批处理
+        statement.executeBatch();
+
+        // 获取生成的键
+        Iterator<?> entityIterator = insertStatement.entities().iterator();
+        EntityAttribute idField = entityType.id();
+
+        try (ResultSet keys = statement.getGeneratedKeys()) {
+            while (keys.next() && entityIterator.hasNext()) {
+                Object entity = entityIterator.next();
+                Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
+                idField.set(entity, key);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get generated keys from batch insert", e);
+        }
+    }
+
+    /// 执行插入并获取生成键（逐条执行，适用于不支持批量 getGeneratedKeys 的数据库）
+    ///
+    /// @param statement       预编译语句
+    /// @param insertStatement 插入SQL语句
+    /// @param entityType      实体类型
+    /// @throws SQLException SQL异常
+    protected void executeInsertWithGeneratedKeys(PreparedStatement statement,
+                                                  InsertSqlStatement insertStatement,
+                                                  EntitySchema entityType) throws SQLException {
+        Iterator<?> entityIterator = insertStatement.entities().iterator();
+        EntityAttribute idField = entityType.id();
+
+        for (Iterable<?> params : insertStatement.parameters()) {
+            setParameters(statement, params);
+            statement.executeUpdate();
+
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (keys.next() && entityIterator.hasNext()) {
+                    Object entity = entityIterator.next();
+                    Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
+                    idField.set(entity, key);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to get generated key", e);
             }
         }
     }

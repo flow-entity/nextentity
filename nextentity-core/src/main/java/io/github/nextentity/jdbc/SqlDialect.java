@@ -86,6 +86,18 @@ public interface SqlDialect {
         return true;
     }
 
+    /// 返回数据库是否支持批量获取生成键
+    ///
+    /// 某些数据库的 JDBC 驱动在批量插入时可以正确返回所有生成的主键：
+    /// - MySQL: 支持（JDBC 驱动正确实现 getGeneratedKeys）
+    /// - PostgreSQL: 支持（使用 INSERT ... RETURNING）
+    /// - SQL Server: 不完全支持（需要逐条执行）
+    ///
+    /// @return 如果支持批量获取生成键则返回 true
+    default boolean supportsBatchGeneratedKeys() {
+        return true;
+    }
+
     /// 返回是否需要为子查询中的聚合列添加别名
     ///
     /// SQL Server 要求子查询中的所有列必须有名称，聚合函数列如 count(id) 需要别名。

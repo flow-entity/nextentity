@@ -28,6 +28,7 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
     @Override
     public List<String> ddl() {
         return List.of(
+                "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
                 "DROP TABLE IF EXISTS lockable_entity",
@@ -60,6 +61,16 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                             name NVARCHAR(100) NOT NULL,
                             description NVARCHAR(255),
                             version BIGINT,
+                            created_at DATETIME2
+                        )
+                        """,
+                """
+                        CREATE TABLE auto_increment_entity (
+                            id BIGINT PRIMARY KEY IDENTITY(1,1),
+                            name NVARCHAR(100) NOT NULL,
+                            description NVARCHAR(255),
+                            priority INT,
+                            active BIT,
                             created_at DATETIME2
                         )
                         """

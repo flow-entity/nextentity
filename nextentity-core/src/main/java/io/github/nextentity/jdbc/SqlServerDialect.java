@@ -68,6 +68,13 @@ public class SqlServerDialect implements SqlDialect {
     }
 
     @Override
+    public boolean supportsBatchGeneratedKeys() {
+        // SQL Server JDBC driver has issues with batch getGeneratedKeys
+        // Need to execute inserts one by one to reliably get generated keys
+        return false;
+    }
+
+    @Override
     public void appendLockMode(StringBuilder sql, LockModeType lockModeType) {
         // SQL Server uses table hints instead of FOR SHARE/FOR UPDATE
         // Note: These hints are placed after the table name in FROM clause,
