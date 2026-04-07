@@ -34,20 +34,16 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     protected final QueryStructure queryStructure;
     protected final Metamodel metamodel;
     protected final QueryExecutor queryExecutor;
-    protected final LockModeType lockModeType;
     protected final PaginationConfig paginationConfig;
 
-    public WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor, PaginationConfig paginationConfig) {
-        this(queryStructure, metamodel, queryExecutor, paginationConfig, null);
-    }
-
-    private WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor,
-                      PaginationConfig paginationConfig, LockModeType lockModeType) {
+    protected WhereImpl(QueryStructure queryStructure,
+                      Metamodel metamodel,
+                      QueryExecutor queryExecutor,
+                      PaginationConfig paginationConfig) {
         this.queryStructure = queryStructure;
         this.metamodel = metamodel;
         this.queryExecutor = queryExecutor;
         this.paginationConfig = paginationConfig;
-        this.lockModeType = lockModeType;
     }
 
     @Override
@@ -146,7 +142,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.having(),
                 queryStructure.offset(),
                 1,
-                lockModeType
+                queryStructure.lockType()
         );
         return !queryExecutor.getList(structure).isEmpty();
     }
@@ -162,14 +158,14 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.having(),
                 offset,
                 1,
-                lockModeType
+                queryStructure.lockType()
         );
         return !queryExecutor.getList(structure).isEmpty();
     }
 
     @Override
     public Collector<U> lock(LockModeType lockModeType) {
-        return new WhereImpl<>(queryStructure, metamodel, queryExecutor, paginationConfig, lockModeType);
+        return update(queryStructure.lockType(lockModeType));
     }
 
     @Override
@@ -211,7 +207,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     }
 
     public <X, Y> WhereImpl<X, Y> update(QueryStructure structure) {
-        return new WhereImpl<>(structure, metamodel, queryExecutor, paginationConfig, lockModeType);
+        return new WhereImpl<>(structure, metamodel, queryExecutor, paginationConfig);
     }
 
     /// 构建分页查询结构，根据配置决定是否自动添加主键排序。
@@ -253,7 +249,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.having(),
                 offset,
                 limit,
-                lockModeType
+                queryStructure.lockType()
         );
     }
 
