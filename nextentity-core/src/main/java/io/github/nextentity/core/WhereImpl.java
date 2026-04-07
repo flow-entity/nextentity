@@ -4,7 +4,6 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
@@ -32,9 +31,9 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     public static final SelectExpression SELECT_ANY = new SelectExpression(LiteralNode.TRUE, false);
 
     protected final QueryStructure queryStructure;
-    protected final QueryContext context;
+    protected final QueryContext<T> context;
 
-    protected WhereImpl(QueryStructure queryStructure, QueryContext context) {
+    protected WhereImpl(QueryStructure queryStructure, QueryContext<T> context) {
         this.queryStructure = queryStructure;
         this.context = context;
     }
@@ -199,7 +198,12 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         return update(structure);
     }
 
-    public <X, Y> WhereImpl<X, Y> update(QueryStructure structure) {
+    /// 创建新的 WhereImpl 实例，保持实体类型不变。
+    ///
+    /// @param structure 新的查询结构
+    /// @param <Y>       新的结果类型
+    /// @return 新的 WhereImpl 实例
+    public <Y> WhereImpl<T, Y> update(QueryStructure structure) {
         return new WhereImpl<>(structure, context);
     }
 
@@ -217,19 +221,15 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
         // 只有在配置启用、非聚合查询且未指定排序时才自动添加主键排序
         if (context.paginationConfig().autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
-            Class<?> entityType = getEntityType();
-            if (entityType != null) {
-                EntityType entity = context.metamodel().getEntity(entityType);
-                if (entity != null) {
-                    var idAttr = entity.id();
-                    if (logAutoSortWarning) {
-                        logAutoSort(entityType);
-                    }
-
-                    PathNode idPath = new PathNode(idAttr.name());
-                    SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
-                    orderBy = ImmutableList.of(sortExpr);
+            EntityType entity = context.entityType();
+            if (entity != null) {
+                var idAttr = entity.id();
+                if (logAutoSortWarning) {
+                    logAutoSort(context.entityClass());
                 }
+                PathNode idPath = new PathNode(idAttr.name());
+                SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
+                orderBy = ImmutableList.of(sortExpr);
             }
         }
 
@@ -347,17 +347,6 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
             }
         }
         return false;
-    }
-
-    /// 获取查询的实体类型。
-    ///
-    /// @return 实体类型，如果不是实体查询则返回 null
-    private Class<?> getEntityType() {
-        From from = queryStructure.from();
-        if (from instanceof FromEntity(Class<?> type)) {
-            return type;
-        }
-        return null;
     }
 
     public class SubQueryBuilderImpl<X> implements SubQueryBuilder<X, U>, ExpressionTree {

@@ -24,19 +24,23 @@ public interface IntegrationTestContext {
     UpdateExecutor getUpdateExecutor();
 
     default DefaultQueryBuilder<Employee> queryEmployees() {
-        return new DefaultQueryBuilder<>(new SimpleQueryContext(JpaMetamodel.of(), getQueryExecutor(), PaginationConfig.DEFAULT), Employee.class);
+        var metamodel = JpaMetamodel.of();
+        return new DefaultQueryBuilder<>(new SimpleQueryContext<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(Employee.class), Employee.class));
     }
 
     default DefaultQueryBuilder<Department> queryDepartments() {
-        return new DefaultQueryBuilder<>(new SimpleQueryContext(JpaMetamodel.of(), getQueryExecutor(), PaginationConfig.DEFAULT), Department.class);
+        var metamodel = JpaMetamodel.of();
+        return new DefaultQueryBuilder<>(new SimpleQueryContext<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(Department.class), Department.class));
     }
 
     default DefaultQueryBuilder<LockableEntity> queryLockableEntities() {
-        return new DefaultQueryBuilder<>(new SimpleQueryContext(JpaMetamodel.of(), getQueryExecutor(), PaginationConfig.DEFAULT), LockableEntity.class);
+        var metamodel = JpaMetamodel.of();
+        return new DefaultQueryBuilder<>(new SimpleQueryContext<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(LockableEntity.class), LockableEntity.class));
     }
 
     default DefaultQueryBuilder<AutoIncrementEntity> queryAutoIncrementEntities() {
-        return new DefaultQueryBuilder<>(new SimpleQueryContext(JpaMetamodel.of(), getQueryExecutor(), PaginationConfig.DEFAULT), AutoIncrementEntity.class);
+        var metamodel = JpaMetamodel.of();
+        return new DefaultQueryBuilder<>(new SimpleQueryContext<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(AutoIncrementEntity.class), AutoIncrementEntity.class));
     }
 
     @NonNull IntegrationTestContext reset();

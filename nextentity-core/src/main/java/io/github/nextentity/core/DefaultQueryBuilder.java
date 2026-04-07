@@ -24,13 +24,12 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);
 
-    public DefaultQueryBuilder(QueryContext context,
-                               Class<T> entityType) {
-        this(QueryStructure.of(entityType), context);
+    public DefaultQueryBuilder(QueryContext<T> context) {
+        this(QueryStructure.of(context.entityClass()), context);
     }
 
     protected DefaultQueryBuilder(QueryStructure queryStructure,
-                                  QueryContext context) {
+                                  QueryContext<T> context) {
         super(queryStructure, context);
     }
 
@@ -318,7 +317,7 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
         return updateSelected(select);
     }
 
-    private <X, Y> WhereImpl<X, Y> updateSelected(Selected select) {
+    private <Y> WhereImpl<T, Y> updateSelected(Selected select) {
         QueryStructure structure = new QueryStructure(
                 select,
                 queryStructure.from(),
@@ -334,14 +333,7 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
     }
 
     private Class<?> fromType() {
-        From from = queryStructure.from();
-        if (from instanceof FromEntity(Class<?> type)) {
-            return type;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Unsupported From type: " + from.getClass().getName() +
-                    ". Only FromEntity is supported for this operation.");
-        }
+        return context.entityClass();
     }
 
 }

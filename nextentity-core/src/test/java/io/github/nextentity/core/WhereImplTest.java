@@ -5,6 +5,8 @@ import io.github.nextentity.api.PathRef;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.SubQueryBuilder;
 import io.github.nextentity.core.expression.*;
+import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.integration.entity.Employee;
@@ -25,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,13 +42,21 @@ class WhereImplTest {
     @Mock
     protected QueryExecutor queryExecutor;
 
+    @Mock
+    protected EntityType entityType;
+
+    @Mock
+    protected EntityAttribute idAttribute;
+
     private WhereImpl<Employee, Employee> whereImpl;
-    private QueryContext context;
+    private QueryContext<Employee> context;
 
     @BeforeEach
     void setUp() {
+        lenient().when(entityType.id()).thenReturn(idAttribute);
+        lenient().when(idAttribute.name()).thenReturn("id");
         QueryStructure queryStructure = QueryStructure.of(Employee.class);
-        context = new SimpleQueryContext(metamodel, queryExecutor, PaginationConfig.DEFAULT);
+        context = new SimpleQueryContext<>(metamodel, queryExecutor, PaginationConfig.DEFAULT, entityType, Employee.class);
         whereImpl = new WhereImpl<>(queryStructure, context);
     }
 
