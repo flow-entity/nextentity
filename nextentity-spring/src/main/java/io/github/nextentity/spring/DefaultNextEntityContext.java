@@ -3,6 +3,7 @@ package io.github.nextentity.spring;
 import io.github.nextentity.api.QueryBuilder;
 import io.github.nextentity.core.DefaultQueryBuilder;
 import io.github.nextentity.core.LoggingConfig;
+import io.github.nextentity.core.PaginationConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SqlLogger;
 import io.github.nextentity.core.UpdateExecutor;
@@ -45,6 +46,7 @@ import java.util.function.Supplier;
 /// @param queryExecutor    查询执行器，用于执行 SELECT 查询
 /// @param updateExecutor   更新执行器，用于执行 INSERT、UPDATE、DELETE 操作
 /// @param entityManager    JPA 实体管理器（JPA 模式时使用，JDBC 模式为 null）
+/// @param paginationConfig 分页配置
 /// @author HuangChengwei
 /// @since 1.0.0
 public record DefaultNextEntityContext(
@@ -52,7 +54,8 @@ public record DefaultNextEntityContext(
         QueryExecutor queryExecutor,
         UpdateExecutor updateExecutor,
         @Nullable
-        EntityManager entityManager
+        EntityManager entityManager,
+        PaginationConfig paginationConfig
 ) implements NextEntityContext {
 
     /// 创建基于 JDBC 的 NextEntity 工厂。
@@ -83,6 +86,10 @@ public record DefaultNextEntityContext(
         // 应用日志配置
         applyLoggingConfig(properties);
 
+        // 创建分页配置并打印信息
+        PaginationConfig paginationConfig = properties.getPagination().toConfig();
+        paginationConfig.apply();
+
         Metamodel metamodel = JpaMetamodel.of();
         ConnectionProvider connectionProvider = new NoneTransactionProvider(jdbcTemplate);
 
@@ -99,7 +106,8 @@ public record DefaultNextEntityContext(
                 metamodel,
                 jdbcQueryExecutor,
                 jdbcUpdateExecutor,
-                null
+                null,
+                paginationConfig
         );
     }
 
@@ -135,6 +143,10 @@ public record DefaultNextEntityContext(
         // 应用日志配置
         applyLoggingConfig(properties);
 
+        // 创建分页配置并打印信息
+        PaginationConfig paginationConfig = properties.getPagination().toConfig();
+        paginationConfig.apply();
+
         Metamodel metamodel = JpaMetamodel.of();
         NoneTransactionProvider noneTransactionProvider = new NoneTransactionProvider(jdbcTemplate);
 
@@ -155,7 +167,8 @@ public record DefaultNextEntityContext(
                 metamodel,
                 jpaQueryExecutor,
                 jpaUpdateExecutor,
-                entityManager
+                entityManager,
+                paginationConfig
         );
     }
 
@@ -253,7 +266,7 @@ public record DefaultNextEntityContext(
     /// @return 查询构建器实例
     @Override
     public <T> QueryBuilder<T> createQueryBuilder(Class<T> entityType) {
-        return new DefaultQueryBuilder<>(metamodel, queryExecutor, entityType);
+        return new DefaultQueryBuilder<>(metamodel, queryExecutor, entityType, paginationConfig);
     }
 
     /// 获取更新执行器。

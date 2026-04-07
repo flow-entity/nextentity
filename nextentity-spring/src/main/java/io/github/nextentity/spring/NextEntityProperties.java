@@ -50,6 +50,10 @@ public class NextEntityProperties {
     @NestedConfigurationProperty
     private final LoggingProperties logging = new LoggingProperties();
 
+    /// 分页配置
+    @NestedConfigurationProperty
+    private final PaginationProperties pagination = new PaginationProperties();
+
     public JdbcProperties getJdbc() {
         return jdbc;
     }
@@ -60,6 +64,10 @@ public class NextEntityProperties {
 
     public LoggingProperties getLogging() {
         return logging;
+    }
+
+    public PaginationProperties getPagination() {
+        return pagination;
     }
 
     public boolean isEnabled() {

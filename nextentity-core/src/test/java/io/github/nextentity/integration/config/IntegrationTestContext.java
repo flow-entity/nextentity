@@ -1,6 +1,7 @@
 package io.github.nextentity.integration.config;
 
 import io.github.nextentity.core.DefaultQueryBuilder;
+import io.github.nextentity.core.PaginationConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.integration.entity.AutoIncrementEntity;
@@ -22,19 +23,19 @@ public interface IntegrationTestContext {
     UpdateExecutor getUpdateExecutor();
 
     default DefaultQueryBuilder<Employee> queryEmployees() {
-        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Employee.class);
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Employee.class, PaginationConfig.DEFAULT);
     }
 
     default DefaultQueryBuilder<Department> queryDepartments() {
-        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Department.class);
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), Department.class, PaginationConfig.DEFAULT);
     }
 
     default DefaultQueryBuilder<LockableEntity> queryLockableEntities() {
-        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), LockableEntity.class);
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), LockableEntity.class, PaginationConfig.DEFAULT);
     }
 
     default DefaultQueryBuilder<AutoIncrementEntity> queryAutoIncrementEntities() {
-        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), AutoIncrementEntity.class);
+        return new DefaultQueryBuilder<>(JpaMetamodel.of(), getQueryExecutor(), AutoIncrementEntity.class, PaginationConfig.DEFAULT);
     }
 
     @NonNull IntegrationTestContext reset();

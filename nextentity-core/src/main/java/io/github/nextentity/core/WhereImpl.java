@@ -35,16 +35,18 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     protected final Metamodel metamodel;
     protected final QueryExecutor queryExecutor;
     protected final LockModeType lockModeType;
+    protected final PaginationConfig paginationConfig;
 
-    public WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor) {
-        this(queryStructure, metamodel, queryExecutor, null);
+    public WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor, PaginationConfig paginationConfig) {
+        this(queryStructure, metamodel, queryExecutor, paginationConfig, null);
     }
 
     private WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor,
-                      LockModeType lockModeType) {
+                      PaginationConfig paginationConfig, LockModeType lockModeType) {
         this.queryStructure = queryStructure;
         this.metamodel = metamodel;
         this.queryExecutor = queryExecutor;
+        this.paginationConfig = paginationConfig;
         this.lockModeType = lockModeType;
     }
 
@@ -167,7 +169,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public Collector<U> lock(LockModeType lockModeType) {
-        return new WhereImpl<>(queryStructure, metamodel, queryExecutor, lockModeType);
+        return new WhereImpl<>(queryStructure, metamodel, queryExecutor, paginationConfig, lockModeType);
     }
 
     @Override
@@ -209,10 +211,14 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     }
 
     public <X, Y> WhereImpl<X, Y> update(QueryStructure structure) {
-        return new WhereImpl<>(structure, metamodel, queryExecutor, lockModeType);
+        return new WhereImpl<>(structure, metamodel, queryExecutor, paginationConfig, lockModeType);
     }
 
-    /// 构建分页查询结构，如果未指定排序则自动添加主键排序。
+    /// 构建分页查询结构，根据配置决定是否自动添加主键排序。
+    ///
+    /// 当分页查询（包含 offset/limit）未指定 ORDER BY 时，
+    /// 如果 paginationConfig.autoAddIdOrder() 为 true，
+    /// 框架会自动添加主键排序以保证结果一致性。
     ///
     /// @param offset 偏移量
     /// @param limit  限制数
@@ -220,18 +226,15 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     private QueryStructure buildPaginatedQueryStructure(int offset, int limit, boolean logAutoSortWarning) {
         ImmutableList<SortExpression> orderBy = queryStructure.orderBy();
 
-        // 只有在非聚合查询且未指定排序时才自动添加主键排序
-        if (orderBy.isEmpty() && !isAggregateQuery()) {
+        // 只有在配置启用、非聚合查询且未指定排序时才自动添加主键排序
+        if (paginationConfig.autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
             Class<?> entityType = getEntityType();
             if (entityType != null) {
                 EntityType entity = metamodel.getEntity(entityType);
                 if (entity != null) {
                     var idAttr = entity.id();
                     if (logAutoSortWarning) {
-                        log.debug("Pagination without ORDER BY detected. " +
-                             "Automatically adding primary key ordering for entity {}. " +
-                             "Consider adding explicit orderBy() for deterministic results.",
-                            entityType.getSimpleName());
+                        logAutoSort(entityType);
                     }
 
                     PathNode idPath = new PathNode(idAttr.name());
@@ -252,6 +255,20 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 limit,
                 lockModeType
         );
+    }
+
+    /// 根据配置的日志级别记录自动排序日志。
+    ///
+    /// @param entityType 实体类型
+    private void logAutoSort(Class<?> entityType) {
+        String message = "Pagination without ORDER BY detected. " +
+                "Automatically adding primary key ordering for entity {}. " +
+                "Consider adding explicit orderBy() for deterministic results.";
+        switch (paginationConfig.logLevel()) {
+            case INFO -> log.info(message, entityType.getSimpleName());
+            case WARN -> log.warn(message, entityType.getSimpleName());
+            default -> log.debug(message, entityType.getSimpleName());
+        }
     }
 
     /// 检查是否是聚合查询。

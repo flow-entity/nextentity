@@ -24,12 +24,12 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);
 
-    public DefaultQueryBuilder(Metamodel metamodel, QueryExecutor executor, Class<T> entityType) {
-        this(QueryStructure.of(entityType), metamodel, executor);
+    public DefaultQueryBuilder(Metamodel metamodel, QueryExecutor executor, Class<T> entityType, PaginationConfig paginationConfig) {
+        this(QueryStructure.of(entityType), metamodel, executor, paginationConfig);
     }
 
-    protected DefaultQueryBuilder(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor executor) {
-        super(queryStructure, metamodel, executor);
+    protected DefaultQueryBuilder(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor executor, PaginationConfig paginationConfig) {
+        super(queryStructure, metamodel, executor, paginationConfig);
     }
 
     public WhereStep<T, T> fetch(Collection<? extends PathRef<T, ?>> expressions) {
