@@ -40,11 +40,13 @@ class WhereImplTest {
     protected QueryExecutor queryExecutor;
 
     private WhereImpl<Employee, Employee> whereImpl;
+    private QueryContext context;
 
     @BeforeEach
     void setUp() {
         QueryStructure queryStructure = QueryStructure.of(Employee.class);
-        whereImpl = new WhereImpl<>(queryStructure, metamodel, queryExecutor, PaginationConfig.DEFAULT);
+        context = new SimpleQueryContext(metamodel, queryExecutor, PaginationConfig.DEFAULT);
+        whereImpl = new WhereImpl<>(queryStructure, context);
     }
 
     @Nested
@@ -310,7 +312,7 @@ class WhereImplTest {
             // given
             SelectEntity select = new SelectEntity(ImmutableList.of(), true);
             QueryStructure distinctStructure = whereImpl.getQueryStructure().select(select);
-            WhereImpl<Employee, Employee> distinctWhere = new WhereImpl<>(distinctStructure, metamodel, queryExecutor, PaginationConfig.DEFAULT);
+            WhereImpl<Employee, Employee> distinctWhere = new WhereImpl<>(distinctStructure, context);
             when(queryExecutor.<Number>getList(any())).thenReturn(Collections.singletonList(5L));
 
             // when
@@ -329,7 +331,7 @@ class WhereImplTest {
             // given
             QueryStructure groupByStructure = whereImpl.getQueryStructure()
                     .groupBy(ImmutableList.of(new PathNode("id")));
-            WhereImpl<Employee, Employee> groupByWhere = new WhereImpl<>(groupByStructure, metamodel, queryExecutor, PaginationConfig.DEFAULT);
+            WhereImpl<Employee, Employee> groupByWhere = new WhereImpl<>(groupByStructure, context);
             when(queryExecutor.<Number>getList(any())).thenReturn(Collections.singletonList(3L));
 
             // when

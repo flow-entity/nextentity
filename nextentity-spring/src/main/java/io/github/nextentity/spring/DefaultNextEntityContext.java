@@ -266,7 +266,7 @@ public record DefaultNextEntityContext(
     /// @return 查询构建器实例
     @Override
     public <T> QueryBuilder<T> createQueryBuilder(Class<T> entityType) {
-        return new DefaultQueryBuilder<>(metamodel, queryExecutor, entityType, paginationConfig);
+        return new DefaultQueryBuilder<>(new io.github.nextentity.core.SimpleQueryContext(metamodel, queryExecutor, paginationConfig), entityType);
     }
 
     /// 获取更新执行器。

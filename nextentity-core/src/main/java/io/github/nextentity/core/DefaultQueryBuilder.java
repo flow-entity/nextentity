@@ -24,18 +24,14 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);
 
-    public DefaultQueryBuilder(Metamodel metamodel,
-                               QueryExecutor executor,
-                               Class<T> entityType,
-                               PaginationConfig paginationConfig) {
-        this(QueryStructure.of(entityType), metamodel, executor, paginationConfig);
+    public DefaultQueryBuilder(QueryContext context,
+                               Class<T> entityType) {
+        this(QueryStructure.of(entityType), context);
     }
 
     protected DefaultQueryBuilder(QueryStructure queryStructure,
-                                  Metamodel metamodel,
-                                  QueryExecutor executor,
-                                  PaginationConfig paginationConfig) {
-        super(queryStructure, metamodel, executor, paginationConfig);
+                                  QueryContext context) {
+        super(queryStructure, context);
     }
 
     public WhereStep<T, T> fetch(Collection<? extends PathRef<T, ?>> expressions) {
@@ -45,7 +41,7 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
         SelectEntity select = (SelectEntity) queryStructure.select();
         ImmutableList.Builder<PathNode> builder = new ImmutableList.Builder<>(select.fetch().size() + expressions.size());
         builder.addAll(select.fetch().asList());
-        EntityType entityType = metamodel.getEntity(fromType());
+        EntityType entityType = context.metamodel().getEntity(fromType());
         for (PathRef<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
             Attribute attribute = entityPath.getAttribute(entityType);
