@@ -1,6 +1,6 @@
 package io.github.nextentity.examples.repository;
 
-import io.github.nextentity.api.QueryBuilder;
+import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.spring.AbstractRepository;
 import io.github.nextentity.spring.NextEntityContext;
@@ -36,7 +36,7 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
     }
 
     @Override
-    public QueryBuilder<Department> query() {
+    public EntityQuery<Department> query() {
         return super.query();
     }
 

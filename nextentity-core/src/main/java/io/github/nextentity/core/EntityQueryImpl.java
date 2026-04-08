@@ -4,7 +4,6 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableList;
 import org.slf4j.Logger;
@@ -20,16 +19,16 @@ import java.util.stream.Collectors;
 /// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 1.0.0
-public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuilder<T>, FetchStep<T> {
+public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T>, FetchStep<T> {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(EntityQueryImpl.class);
 
-    public DefaultQueryBuilder(QueryContext<T> context) {
+    public EntityQueryImpl(QueryContext<T> context) {
         this(QueryStructure.of(context.entityClass()), context);
     }
 
-    protected DefaultQueryBuilder(QueryStructure queryStructure,
-                                  QueryContext<T> context) {
+    protected EntityQueryImpl(QueryStructure queryStructure,
+                              QueryContext<T> context) {
         super(queryStructure, context);
     }
 

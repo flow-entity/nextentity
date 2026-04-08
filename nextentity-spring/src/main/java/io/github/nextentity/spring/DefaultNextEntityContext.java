@@ -1,7 +1,7 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.QueryBuilder;
-import io.github.nextentity.core.DefaultQueryBuilder;
+import io.github.nextentity.api.EntityQuery;
+import io.github.nextentity.core.EntityQueryImpl;
 import io.github.nextentity.core.LoggingConfig;
 import io.github.nextentity.core.PaginationConfig;
 import io.github.nextentity.core.QueryExecutor;
@@ -100,7 +100,7 @@ public record DefaultNextEntityContext(
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(
                 metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), jdbcConfig);
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(
-                sqlBuilder, connectionProvider, metamodel, jdbcConfig);
+                sqlBuilder, connectionProvider, jdbcConfig);
 
         return new DefaultNextEntityContext(
                 metamodel,
@@ -265,8 +265,8 @@ public record DefaultNextEntityContext(
     /// @param <T>        实体类型参数
     /// @return 查询构建器实例
     @Override
-    public <T> QueryBuilder<T> createQueryBuilder(Class<T> entityType) {
-        return new DefaultQueryBuilder<>(new io.github.nextentity.core.SimpleQueryContext<>(
+    public <T> EntityQuery<T> createQueryBuilder(Class<T> entityType) {
+        return new EntityQueryImpl<>(new io.github.nextentity.core.SimpleQueryContext<>(
                 metamodel, queryExecutor, paginationConfig, metamodel.getEntity(entityType), entityType));
     }
 

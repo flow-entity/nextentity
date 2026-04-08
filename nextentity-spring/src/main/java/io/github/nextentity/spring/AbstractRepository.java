@@ -48,7 +48,7 @@ public abstract class AbstractRepository<T, ID> {
     private final Class<ID> idType;
     private final Class<T> entityType;
     private final EntityType entityMetadata;
-    private final QueryBuilder<T> queryBuilder;
+    private final EntityQuery<T> entityQuery;
     private final UpdateExecutor updateExecutor;
 
     private Path<T, ID> idPath;
@@ -112,7 +112,7 @@ public abstract class AbstractRepository<T, ID> {
         this.metamodel = context.getMetamodel();
         this.paginationConfig = context.getPaginationConfig();
         this.entityMetadata = metamodel.getEntity(entityType);
-        this.queryBuilder = context.createQueryBuilder(entityType);
+        this.entityQuery = context.createQueryBuilder(entityType);
         this.updateExecutor = context.getUpdateExecutor();
     }
 
@@ -122,14 +122,14 @@ public abstract class AbstractRepository<T, ID> {
     }
 
     public AbstractRepository(Class<T> entityType, Class<ID> idType, Metamodel metamodel,
-                              PaginationConfig paginationConfig, QueryBuilder<T> queryBuilder,
+                              PaginationConfig paginationConfig, EntityQuery<T> entityQuery,
                               UpdateExecutor updateExecutor) {
         this.metamodel = metamodel;
         this.paginationConfig = paginationConfig;
         this.idType = idType;
         this.entityType = entityType;
         this.entityMetadata = metamodel.getEntity(entityType);
-        this.queryBuilder = queryBuilder;
+        this.entityQuery = entityQuery;
         this.updateExecutor = updateExecutor;
     }
 
@@ -143,8 +143,8 @@ public abstract class AbstractRepository<T, ID> {
     /// 获取查询构建器，用于构建类型安全的查询。
     ///
     /// @return 查询构建器实例
-    protected QueryBuilder<T> query() {
-        return queryBuilder;
+    protected EntityQuery<T> query() {
+        return entityQuery;
     }
 
     /// 获取实体根对象，用于构建路径表达式。

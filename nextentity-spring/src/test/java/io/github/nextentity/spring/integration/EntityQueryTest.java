@@ -28,9 +28,9 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class QueryBuilderTest {
+class EntityQueryTest {
 
-    private static final Logger log = LoggerFactory.getLogger(QueryBuilderTest.class);
+    private static final Logger log = LoggerFactory.getLogger(EntityQueryTest.class);
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)

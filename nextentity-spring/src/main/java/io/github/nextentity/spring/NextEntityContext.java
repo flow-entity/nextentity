@@ -1,6 +1,6 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.QueryBuilder;
+import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.core.PaginationConfig;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.meta.Metamodel;
@@ -29,7 +29,7 @@ public interface NextEntityContext {
     /// @param entityType 实体类型
     /// @param <T>        实体类型参数
     /// @return 新的查询构建器实例
-    <T> QueryBuilder<T> createQueryBuilder(Class<T> entityType);
+    <T> EntityQuery<T> createQueryBuilder(Class<T> entityType);
 
     /// 获取共享的更新执行器实例。
     ///

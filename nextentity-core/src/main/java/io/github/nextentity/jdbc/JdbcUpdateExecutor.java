@@ -9,7 +9,6 @@ import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.Iterators;
 import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
@@ -36,33 +35,27 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(JdbcUpdateExecutor.class);
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
-    private final Metamodel metamodel;
     private final JdbcConfig config;
 
     /// 构造JDBC更新执行器（使用默认配置）
     ///
     /// @param sqlBuilder         更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param metamodel          元模型，用于提供实体元数据信息
     public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
-                              ConnectionProvider connectionProvider,
-                              Metamodel metamodel) {
-        this(sqlBuilder, connectionProvider, metamodel, JdbcConfig.DEFAULT);
+                              ConnectionProvider connectionProvider) {
+        this(sqlBuilder, connectionProvider, JdbcConfig.DEFAULT);
     }
 
     /// 构造JDBC更新执行器
     ///
     /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param metamodel 元模型，用于提供实体元数据信息
     /// @param config JDBC配置
     public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
                               ConnectionProvider connectionProvider,
-                              Metamodel metamodel,
                               JdbcConfig config) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
-        this.metamodel = metamodel;
         this.config = config;
     }
 

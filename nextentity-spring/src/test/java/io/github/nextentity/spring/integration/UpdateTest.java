@@ -1,6 +1,6 @@
 package io.github.nextentity.spring.integration;
 
-import io.github.nextentity.api.QueryBuilder;
+import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.entity.User;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateTest {
 
-    QueryBuilder<User> query(UserRepository updater) {
+    EntityQuery<User> query(UserRepository updater) {
         return updater.query();
     }
 

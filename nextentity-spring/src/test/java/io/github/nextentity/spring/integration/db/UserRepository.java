@@ -49,11 +49,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
         super.updateAll(entities);
     }
 
-    public QueryBuilder<User> query() {
+    public EntityQuery<User> query() {
         return super.query();
     }
 
-    public QueryBuilder<User> getQuery() {
+    public EntityQuery<User> getQuery() {
         return super.query();
     }
 

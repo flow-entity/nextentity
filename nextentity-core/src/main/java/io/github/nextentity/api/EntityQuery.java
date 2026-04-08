@@ -95,6 +95,6 @@ package io.github.nextentity.api;
 /// @see SelectStep 选择和投影操作
 /// @see FetchStep 关联预加载操作
 /// @see WhereStep 条件构建操作
-public interface QueryBuilder<T> extends SelectStep<T> {
+public interface EntityQuery<T> extends SelectStep<T> {
 
 }
