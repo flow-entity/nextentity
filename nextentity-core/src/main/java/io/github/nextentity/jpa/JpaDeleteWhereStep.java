@@ -2,8 +2,8 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.Metamodel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.jspecify.annotations.NonNull;
@@ -21,11 +21,10 @@ public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements Del
     private final EntityManager entityManager;
     private final JpaTransactionTemplate transactionTemplate;
 
-    public JpaDeleteWhereStep(Class<T> entityClass,
-                              Metamodel metamodel,
+    public JpaDeleteWhereStep(EntityContext<T> context,
                               EntityManager entityManager,
                               JpaTransactionTemplate transactionTemplate) {
-        super(entityClass, metamodel);
+        super(context);
         this.entityManager = entityManager;
         this.transactionTemplate = transactionTemplate;
     }
@@ -101,7 +100,7 @@ public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements Del
     }
 
     private String getJpaEntityName() {
-        return entityManager.getMetamodel().entity(entityClass).getName();
+        return entityManager.getMetamodel().entity(getEntityClass()).getName();
     }
 
     private class WhereOperator<R> extends PathOperatorImpl<T, R, DeleteWhereStep<T>> {

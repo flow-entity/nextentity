@@ -50,7 +50,7 @@ public class ErrorHandlingIntegrationTest {
 
         // When/Then
         assertThatThrownBy(() ->
-                context.getUpdateExecutor().insert(duplicate, Employee.class))
+                context.getUpdateExecutor().insert(duplicate, context.getEntityContext(Employee.class)))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -69,7 +69,7 @@ public class ErrorHandlingIntegrationTest {
         // - JDBC might just return 0 affected rows
         // This test documents the actual behavior
         try {
-            context.getUpdateExecutor().update(nonExistent, Employee.class);
+            context.getUpdateExecutor().update(nonExistent, context.getEntityContext(Employee.class));
             // If no exception, verify the entity wasn't accidentally created
             Employee found = context.queryEmployees()
                     .where(Employee::getId).eq(99999L)
@@ -122,10 +122,10 @@ public class ErrorHandlingIntegrationTest {
 
         // When - Insert might succeed or fail depending on FK constraints
         try {
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
             // If insert succeeded, clean up
-            context.getUpdateExecutor().delete(employee, Employee.class);
+            context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
         } catch (Exception e) {
             // If FK constraint exists, insert should fail
             assertThat(e).isInstanceOf(RuntimeException.class);
@@ -151,7 +151,7 @@ public class ErrorHandlingIntegrationTest {
 
         // When/Then - Should fail or auto-generate ID depending on schema
         try {
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
             // If succeeded, verify
             assertThat(employee.getId()).isNotNull();
         } catch (Exception e) {
@@ -189,9 +189,9 @@ public class ErrorHandlingIntegrationTest {
 
         // When/Then - May or may not fail depending on unique constraint
         try {
-            context.getUpdateExecutor().insert(duplicateEmail, Employee.class);
+            context.getUpdateExecutor().insert(duplicateEmail, context.getEntityContext(Employee.class));
             // If no unique constraint, insert succeeds
-            context.getUpdateExecutor().delete(duplicateEmail, Employee.class);
+            context.getUpdateExecutor().delete(duplicateEmail, context.getEntityContext(Employee.class));
         } catch (Exception e) {
             // If unique constraint exists, insert fails
             assertThat(e).isInstanceOf(RuntimeException.class);
@@ -206,10 +206,10 @@ public class ErrorHandlingIntegrationTest {
     void shouldDeleteExistingEntity(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(6666L, "To Delete");
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee found = context.queryEmployees()
@@ -330,7 +330,7 @@ public class ErrorHandlingIntegrationTest {
         dept.setActive(true);
 
         // When - Insert
-        context.getUpdateExecutor().insert(dept, Department.class);
+        context.getUpdateExecutor().insert(dept, context.getEntityContext(Department.class));
 
         // Then - Verify
         Department found = context.queryDepartments()
@@ -341,7 +341,7 @@ public class ErrorHandlingIntegrationTest {
 
         // When - Update
         dept.setName("Updated Department");
-        context.getUpdateExecutor().update(dept, Department.class);
+        context.getUpdateExecutor().update(dept, context.getEntityContext(Department.class));
 
         // Then - Verify
         found = context.queryDepartments()
@@ -350,7 +350,7 @@ public class ErrorHandlingIntegrationTest {
         assertThat(found.getName()).isEqualTo("Updated Department");
 
         // When - Delete
-        context.getUpdateExecutor().delete(dept, Department.class);
+        context.getUpdateExecutor().delete(dept, context.getEntityContext(Department.class));
 
         // Then - Verify
         found = context.queryDepartments()

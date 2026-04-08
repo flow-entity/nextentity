@@ -1,9 +1,9 @@
 package io.github.nextentity.jpa;
 
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 
 import java.util.List;
 
@@ -15,13 +15,19 @@ import java.util.List;
 /// @since 2.0.0
 abstract class JpaWhereStepSupport<T> {
 
-    protected final Class<T> entityClass;
-    protected final Metamodel metamodel;
+    protected final EntityContext<T> context;
     protected ExpressionNode whereCondition;
 
-    protected JpaWhereStepSupport(Class<T> entityClass, Metamodel metamodel) {
-        this.entityClass = entityClass;
-        this.metamodel = metamodel;
+    protected JpaWhereStepSupport(EntityContext<T> context) {
+        this.context = context;
+    }
+
+    protected Class<T> getEntityClass() {
+        return context.entityClass();
+    }
+
+    protected EntityType getEntityType() {
+        return context.entityType();
     }
 
     protected void setWhereCondition(ExpressionNode condition) {

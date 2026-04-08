@@ -278,8 +278,19 @@ public record DefaultNextEntityContext(
         return updateExecutor;
     }
 
+    /// 获取元模型。
+    ///
+    /// @return 元模型实例
     @Override
     public Metamodel getMetamodel() {
         return metamodel;
+    }
+
+    /// 获取分页配置。
+    ///
+    /// @return 分页配置实例
+    @Override
+    public PaginationConfig getPaginationConfig() {
+        return paginationConfig;
     }
 }

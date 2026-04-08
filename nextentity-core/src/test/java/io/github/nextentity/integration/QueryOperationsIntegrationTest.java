@@ -186,7 +186,7 @@ public class QueryOperationsIntegrationTest {
         Employee employee = context.queryEmployees().where(Employee::getId).eq(1L).list().get(0);
         String email = employee.getEmail();
         employee.setEmail(null);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> employees = context.queryEmployees()
@@ -197,7 +197,7 @@ public class QueryOperationsIntegrationTest {
         assertFalse(employees.isEmpty());
         assertTrue(employees.stream().anyMatch(e -> e.getId() == 1L));
         employee.setEmail(email);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
     }
 
 ///

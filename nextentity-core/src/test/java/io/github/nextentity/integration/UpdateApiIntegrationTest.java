@@ -52,7 +52,7 @@ public class UpdateApiIntegrationTest {
         Employee employee = createTestEmployee(9001L, "Test Insert");
 
         // When
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee inserted = context.queryEmployees()
@@ -73,7 +73,7 @@ public class UpdateApiIntegrationTest {
         employees.add(createTestEmployee(9012L, "Test 3"));
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         long count = context.queryEmployees()
@@ -97,7 +97,7 @@ public class UpdateApiIntegrationTest {
         employee.setDepartmentId(1L);
 
         // When
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee inserted = context.queryEmployees()
@@ -124,7 +124,7 @@ public class UpdateApiIntegrationTest {
         employee.setName("Updated Name");
 
         // When
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
         Employee updated = context.queryEmployees()
                 .where(Employee::getId).eq(1L)
                 .single();
@@ -152,7 +152,7 @@ public class UpdateApiIntegrationTest {
         }
 
         // When
-        context.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, context.getEntityContext(Employee.class));
         List<Employee> updated = context.queryEmployees()
                 .where(Employee::getDepartmentId).eq(1L)
                 .list();
@@ -176,7 +176,7 @@ public class UpdateApiIntegrationTest {
         employee.setStatus(EmployeeStatus.INACTIVE);
 
         // When
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee updated = context.queryEmployees()
@@ -195,13 +195,13 @@ public class UpdateApiIntegrationTest {
     void shouldDeleteSingleEmployee(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(9030L, "To Delete");
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Verify inserted
         assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exists()).isTrue();
 
         // When
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
 
         // Then
         assertThat(context.queryEmployees().where(Employee::getId).eq(9030L).exists()).isFalse();
@@ -215,10 +215,10 @@ public class UpdateApiIntegrationTest {
         List<Employee> employees = new ArrayList<>();
         employees.add(createTestEmployee(9040L, "Delete 1"));
         employees.add(createTestEmployee(9041L, "Delete 2"));
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // When
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         long count = context.queryEmployees()
@@ -240,7 +240,7 @@ public class UpdateApiIntegrationTest {
 
         // When
         Employee result = context.getUpdateExecutor().doInTransaction(() -> {
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
             return context.queryEmployees()
                     .where(Employee::getId).eq(9050L)
                     .single();
@@ -260,7 +260,7 @@ public class UpdateApiIntegrationTest {
 
         // When
         context.getUpdateExecutor().doInTransaction(() -> {
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
         });
 
         // Then
@@ -277,7 +277,7 @@ public class UpdateApiIntegrationTest {
         // When
         assertThatThrownBy(() ->
                 context.getUpdateExecutor().doInTransaction(() -> {
-                    context.getUpdateExecutor().insert(employee, Employee.class);
+                    context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
                     throw new RuntimeException("Force rollback");
                 })
         ).isInstanceOf(RuntimeException.class);
@@ -296,7 +296,7 @@ public class UpdateApiIntegrationTest {
     void shouldHandleEmptyInsertBatch(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().insertAll(new ArrayList<>(), Employee.class)
+                context.getUpdateExecutor().insertAll(new ArrayList<>(), context.getEntityContext(Employee.class))
         );
     }
 
@@ -306,7 +306,7 @@ public class UpdateApiIntegrationTest {
     void shouldHandleEmptyUpdateBatch(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().updateAll(new ArrayList<>(), Employee.class)
+                context.getUpdateExecutor().updateAll(new ArrayList<>(), context.getEntityContext(Employee.class))
         );
     }
 
@@ -316,7 +316,7 @@ public class UpdateApiIntegrationTest {
     void shouldHandleEmptyDeleteBatch(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().deleteAll(new ArrayList<>(), Employee.class)
+                context.getUpdateExecutor().deleteAll(new ArrayList<>(), context.getEntityContext(Employee.class))
         );
     }
 
@@ -332,7 +332,7 @@ public class UpdateApiIntegrationTest {
         Department department = new Department(9060L, "Test Dept", "Location", 100000.0, true);
 
         // When
-        context.getUpdateExecutor().insert(department, Department.class);
+        context.getUpdateExecutor().insert(department, context.getEntityContext(Department.class));
 
         // Then
         Department inserted = context.queryDepartments()
@@ -353,7 +353,7 @@ public class UpdateApiIntegrationTest {
         department.setBudget(department.getBudget() + 50000);
 
         // When
-        context.getUpdateExecutor().update(department, Department.class);
+        context.getUpdateExecutor().update(department, context.getEntityContext(Department.class));
 
         // Then
         Department updated = context.queryDepartments()
@@ -375,7 +375,7 @@ public class UpdateApiIntegrationTest {
 
         // When/Then
         assertThatThrownBy(() ->
-                context.getUpdateExecutor().insert(duplicate, Employee.class)
+                context.getUpdateExecutor().insert(duplicate, context.getEntityContext(Employee.class))
         ).isInstanceOf(RuntimeException.class);
     }
 
@@ -391,12 +391,12 @@ public class UpdateApiIntegrationTest {
         Long count = context.getUpdateExecutor().doInTransaction(() -> {
             // Insert
             Employee e1 = createTestEmployee(9070L, "Complex 1");
-            context.getUpdateExecutor().insert(e1, Employee.class);
+            context.getUpdateExecutor().insert(e1, context.getEntityContext(Employee.class));
 
             // Update
             Employee e2 = context.queryEmployees().where(Employee::getId).eq(1L).single();
             e2.setSalary(e2.getSalary() + 1000);
-            context.getUpdateExecutor().update(e2, Employee.class);
+            context.getUpdateExecutor().update(e2, context.getEntityContext(Employee.class));
 
             // Query
             return context.queryEmployees().count();
@@ -422,8 +422,8 @@ public class UpdateApiIntegrationTest {
         inactive.setStatus(EmployeeStatus.INACTIVE);
 
         // When
-        context.getUpdateExecutor().insert(active, Employee.class);
-        context.getUpdateExecutor().insert(inactive, Employee.class);
+        context.getUpdateExecutor().insert(active, context.getEntityContext(Employee.class));
+        context.getUpdateExecutor().insert(inactive, context.getEntityContext(Employee.class));
 
         // Then
         Employee activeFromDb = context.queryEmployees().where(Employee::getId).eq(9080L).single();

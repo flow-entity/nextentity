@@ -2,8 +2,8 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.Metamodel;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.jspecify.annotations.NonNull;
@@ -22,11 +22,10 @@ public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements Upd
     private final JpaTransactionTemplate transactionTemplate;
     private final List<SetValue> setValues = new ArrayList<>();
 
-    public JpaUpdateWhereStep(Class<T> entityClass,
-                              Metamodel metamodel,
+    public JpaUpdateWhereStep(EntityContext<T> context,
                               EntityManager entityManager,
                               JpaTransactionTemplate transactionTemplate) {
-        super(entityClass, metamodel);
+        super(context);
         this.entityManager = entityManager;
         this.transactionTemplate = transactionTemplate;
     }
@@ -126,7 +125,7 @@ public class JpaUpdateWhereStep<T> extends JpaWhereStepSupport<T> implements Upd
     }
 
     private String getJpaEntityName() {
-        return entityManager.getMetamodel().entity(entityClass).getName();
+        return entityManager.getMetamodel().entity(getEntityClass()).getName();
     }
 
     private record SetValue(String attributeName, Object value) {}

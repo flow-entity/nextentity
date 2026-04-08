@@ -58,7 +58,7 @@ public class AutoIncrementInsertIntegrationTest {
         assertThat(entity.getId()).isNull();
 
         // When
-        context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then - ID should be auto-generated
         assertThat(entity.getId()).isNotNull();
@@ -93,7 +93,7 @@ public class AutoIncrementInsertIntegrationTest {
         assertThat(entities).allMatch(e -> e.getId() == null);
 
         // When
-        context.getUpdateExecutor().insertAll(entities, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insertAll(entities, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then - all IDs should be generated
         assertThat(entities).allMatch(e -> e.getId() != null && e.getId() > 0);
@@ -128,7 +128,7 @@ public class AutoIncrementInsertIntegrationTest {
         entity.setActive(true);
 
         // When
-        context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then
         assertThat(entity.getId()).isNotNull().isPositive();
@@ -161,7 +161,7 @@ public class AutoIncrementInsertIntegrationTest {
         );
 
         // When
-        context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then
         assertThat(entity.getId()).isNotNull().isPositive();
@@ -194,7 +194,7 @@ public class AutoIncrementInsertIntegrationTest {
 
         // When
         long startTime = System.currentTimeMillis();
-        context.getUpdateExecutor().insertAll(entities, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insertAll(entities, context.getEntityContext(AutoIncrementEntity.class));
         long duration = System.currentTimeMillis() - startTime;
 
         // Then
@@ -221,14 +221,14 @@ public class AutoIncrementInsertIntegrationTest {
     void shouldPreserveIdAfterUpdate(IntegrationTestContext context) {
         // Given - insert entity
         AutoIncrementEntity entity = createEntity("Original Name", "Original Desc", 1, true);
-        context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
         Long originalId = entity.getId();
         assertThat(originalId).isNotNull();
 
         // When - update entity
         entity.setName("Updated Name");
         entity.setPriority(999);
-        context.getUpdateExecutor().update(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().update(entity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then - ID should be preserved
         assertThat(entity.getId()).isEqualTo(originalId);
@@ -254,7 +254,7 @@ public class AutoIncrementInsertIntegrationTest {
         AutoIncrementEntity entity = createEntity("Transaction Entity", "In Transaction", 5, true);
         Long generatedId = context.getUpdateExecutor().doInTransaction(() -> {
             // When - insert in transaction
-            context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+            context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
             return entity.getId();
         });
 
@@ -285,9 +285,9 @@ public class AutoIncrementInsertIntegrationTest {
         AutoIncrementEntity third = createEntity("Third", "Third entity", 3, true);
 
         // When - sequential inserts
-        context.getUpdateExecutor().insert(first, AutoIncrementEntity.class);
-        context.getUpdateExecutor().insert(second, AutoIncrementEntity.class);
-        context.getUpdateExecutor().insert(third, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(first, context.getEntityContext(AutoIncrementEntity.class));
+        context.getUpdateExecutor().insert(second, context.getEntityContext(AutoIncrementEntity.class));
+        context.getUpdateExecutor().insert(third, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then - IDs should be sequential (or at least increasing)
         assertThat(first.getId()).isNotNull();
@@ -317,7 +317,7 @@ public class AutoIncrementInsertIntegrationTest {
         );
 
         // When
-        context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then
         assertThat(entity.getId()).isNotNull().isPositive();
@@ -345,9 +345,9 @@ public class AutoIncrementInsertIntegrationTest {
         AutoIncrementEntity zeroPriority = createEntity("Zero Priority", "Zero", 0, true);
 
         // When
-        context.getUpdateExecutor().insert(minPriority, AutoIncrementEntity.class);
-        context.getUpdateExecutor().insert(maxPriority, AutoIncrementEntity.class);
-        context.getUpdateExecutor().insert(zeroPriority, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(minPriority, context.getEntityContext(AutoIncrementEntity.class));
+        context.getUpdateExecutor().insert(maxPriority, context.getEntityContext(AutoIncrementEntity.class));
+        context.getUpdateExecutor().insert(zeroPriority, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then
         assertThat(minPriority.getId()).isNotNull();
@@ -381,7 +381,7 @@ public class AutoIncrementInsertIntegrationTest {
         entity.setActive(true);
 
         // When/Then - should throw exception due to NOT NULL constraint
-        assertThatThrownBy(() -> context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class)))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -397,13 +397,13 @@ public class AutoIncrementInsertIntegrationTest {
     void shouldNotAffectExistingEntitiesOnNewInsert(IntegrationTestContext context) {
         // Given - insert initial entity
         AutoIncrementEntity initial = createEntity("Initial", "Initial entity", 1, true);
-        context.getUpdateExecutor().insert(initial, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(initial, context.getEntityContext(AutoIncrementEntity.class));
         Long initialId = initial.getId();
         long initialCount = context.queryAutoIncrementEntities().count();
 
         // When - insert new entity
         AutoIncrementEntity newEntity = createEntity("New Entity", "New", 2, true);
-        context.getUpdateExecutor().insert(newEntity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(newEntity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then - initial entity unchanged
         AutoIncrementEntity unchanged = context.queryAutoIncrementEntities()
@@ -430,7 +430,7 @@ public class AutoIncrementInsertIntegrationTest {
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().insertAll(emptyList, AutoIncrementEntity.class));
+                context.getUpdateExecutor().insertAll(emptyList, context.getEntityContext(AutoIncrementEntity.class)));
     }
 
     /**
@@ -446,7 +446,7 @@ public class AutoIncrementInsertIntegrationTest {
         singleList.add(createEntity("Single Batch", "Single", 1, true));
 
         // When
-        context.getUpdateExecutor().insertAll(singleList, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insertAll(singleList, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then
         assertThat(singleList.get(0).getId()).isNotNull().isPositive();
@@ -469,7 +469,7 @@ public class AutoIncrementInsertIntegrationTest {
     void shouldDeleteEntityUsingAutoGeneratedId(IntegrationTestContext context) {
         // Given - insert entity
         AutoIncrementEntity entity = createEntity("To Delete", "Will be deleted", 1, true);
-        context.getUpdateExecutor().insert(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
         Long id = entity.getId();
         assertThat(id).isNotNull();
 
@@ -479,7 +479,7 @@ public class AutoIncrementInsertIntegrationTest {
                 .single()).isNotNull();
 
         // When - delete
-        context.getUpdateExecutor().delete(entity, AutoIncrementEntity.class);
+        context.getUpdateExecutor().delete(entity, context.getEntityContext(AutoIncrementEntity.class));
 
         // Then - should not exist
         assertThat(context.queryAutoIncrementEntities()

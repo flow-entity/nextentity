@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
@@ -43,7 +44,9 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param sqlBuilder         更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
     /// @param metamodel          元模型，用于提供实体元数据信息
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
+                              ConnectionProvider connectionProvider,
+                              Metamodel metamodel) {
         this(sqlBuilder, connectionProvider, metamodel, JdbcConfig.DEFAULT);
     }
 
@@ -53,7 +56,10 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @param connectionProvider 连接提供者，用于获取数据库连接
     /// @param metamodel 元模型，用于提供实体元数据信息
     /// @param config JDBC配置
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel, JdbcConfig config) {
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
+                              ConnectionProvider connectionProvider,
+                              Metamodel metamodel,
+                              JdbcConfig config) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.metamodel = metamodel;
@@ -64,14 +70,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param entityClass 实体类类型
+    /// @param context 实体上下文
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        EntityType entity = metamodel.getEntity(entityClass);
+        EntityType entity = context.entityType();
         EntityAttribute version = entity.version();
         List<InsertSqlStatement> statements = sqlBuilder.buildInsertStatement(entities, entity);
         execute(connection -> {
@@ -94,14 +100,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param entityClass 实体类类型
+    /// @param context 实体上下文
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        EntityType entityType = metamodel.getEntity(entityClass);
+        EntityType entityType = context.entityType();
         BatchSqlStatement sql = sqlBuilder.buildUpdateStatement(entities, entityType);
         execute(connection -> {
             sql.debug();
@@ -133,13 +139,13 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param entityType 实体类类型
+    /// @param context 实体上下文
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
         if (!entities.iterator().hasNext()) {
             return;
         }
-        BatchSqlStatement sql = sqlBuilder.buildDeleteStatement(entities, metamodel.getEntity(entityType));
+        BatchSqlStatement sql = sqlBuilder.buildDeleteStatement(entities, context.entityType());
         execute(connection -> {
             sql.debug();
             //noinspection SqlSourceToSinkFlow
@@ -187,22 +193,22 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 创建条件更新构建器
     ///
-    /// @param entityType 实体类型
+    /// @param context 实体上下文
     /// @param <T>        实体类型参数
     /// @return 条件更新构建器实例
     @Override
-    public <T> UpdateSetStep<T> update(@NonNull Class<T> entityType) {
-        return new JdbcUpdateWhereStep<>(entityType, metamodel, connectionProvider, sqlBuilder);
+    public <T> UpdateSetStep<T> update(@NonNull EntityContext<T> context) {
+        return new JdbcUpdateWhereStep<>(context, connectionProvider, sqlBuilder);
     }
 
     /// 创建条件删除构建器
     ///
-    /// @param entityType 实体类型
+    /// @param context 实体上下文
     /// @param <T>        实体类型参数
     /// @return 条件删除构建器实例
     @Override
-    public <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType) {
-        return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlBuilder);
+    public <T> DeleteWhereStep<T> delete(@NonNull EntityContext<T> context) {
+        return new JdbcDeleteWhereStep<>(context, connectionProvider, sqlBuilder);
     }
 
     /// 设置新版本号

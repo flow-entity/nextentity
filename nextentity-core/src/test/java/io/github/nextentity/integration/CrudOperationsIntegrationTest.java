@@ -53,7 +53,7 @@ public class CrudOperationsIntegrationTest {
         Employee newEmployee = createTestEmployee(100L, "Test User", "test@example.com");
 
         // When
-        context.getUpdateExecutor().insert(newEmployee, Employee.class);
+        context.getUpdateExecutor().insert(newEmployee, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> employees = context.queryEmployees()
@@ -77,7 +77,7 @@ public class CrudOperationsIntegrationTest {
         newEmployees.add(createTestEmployee(202L, "User 202", "user202@example.com"));
 
         // When
-        context.getUpdateExecutor().insertAll(newEmployees, Employee.class);
+        context.getUpdateExecutor().insertAll(newEmployees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> employees = context.queryEmployees()
@@ -99,7 +99,7 @@ public class CrudOperationsIntegrationTest {
         Department newDept = new Department(100L, "IT", "Building E", 500000.0, true);
 
         // When
-        context.getUpdateExecutor().insert(newDept, Department.class);
+        context.getUpdateExecutor().insert(newDept, context.getEntityContext(Department.class));
 
         // Then
         List<Department> departments = context.queryDepartments()
@@ -125,7 +125,7 @@ public class CrudOperationsIntegrationTest {
         employee.setSalary(99999.0);
 
         // When
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee updated = context.queryEmployees()
@@ -152,7 +152,7 @@ public class CrudOperationsIntegrationTest {
         }
 
         // When
-        context.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> updated = context.queryEmployees()
@@ -172,7 +172,7 @@ public class CrudOperationsIntegrationTest {
     void shouldDeleteSingleEmployee(IntegrationTestContext context) {
         // Given - create an employee to delete
         Employee newEmployee = createTestEmployee(300L, "To Delete", "delete@example.com");
-        context.getUpdateExecutor().insert(newEmployee, Employee.class);
+        context.getUpdateExecutor().insert(newEmployee, context.getEntityContext(Employee.class));
 
         // Verify it exists
         List<Employee> before = context.queryEmployees()
@@ -181,7 +181,7 @@ public class CrudOperationsIntegrationTest {
         assertThat(before).hasSize(1);
 
         // When
-        context.getUpdateExecutor().delete(newEmployee, Employee.class);
+        context.getUpdateExecutor().delete(newEmployee, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> after = context.queryEmployees()
@@ -200,7 +200,7 @@ public class CrudOperationsIntegrationTest {
         List<Employee> newEmployees = new ArrayList<>();
         newEmployees.add(createTestEmployee(400L, "Delete 1", "delete1@example.com"));
         newEmployees.add(createTestEmployee(401L, "Delete 2", "delete2@example.com"));
-        context.getUpdateExecutor().insertAll(newEmployees, Employee.class);
+        context.getUpdateExecutor().insertAll(newEmployees, context.getEntityContext(Employee.class));
 
         // Verify they exist
         List<Employee> before = context.queryEmployees()
@@ -209,7 +209,7 @@ public class CrudOperationsIntegrationTest {
         assertThat(before).hasSize(2);
 
         // When
-        context.getUpdateExecutor().deleteAll(newEmployees, Employee.class);
+        context.getUpdateExecutor().deleteAll(newEmployees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> after = context.queryEmployees()
@@ -226,13 +226,13 @@ public class CrudOperationsIntegrationTest {
     void shouldDeleteWithWhereCondition(IntegrationTestContext context) {
         // Given - create an employee to delete
         Employee newEmployee = createTestEmployee(500L, "Condition Delete", "cond@example.com");
-        context.getUpdateExecutor().insert(newEmployee, Employee.class);
+        context.getUpdateExecutor().insert(newEmployee, context.getEntityContext(Employee.class));
 
         // When - delete using where clause
         Employee toDelete = context.queryEmployees()
                 .where(Employee::getId).eq(500L)
                 .list().get(0);
-        context.getUpdateExecutor().delete(toDelete, Employee.class);
+        context.getUpdateExecutor().delete(toDelete, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> after = context.queryEmployees()
@@ -255,7 +255,7 @@ public class CrudOperationsIntegrationTest {
         employee.setStatus(EmployeeStatus.INACTIVE);
 
         // When
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee updated = context.queryEmployees()
@@ -273,7 +273,7 @@ public class CrudOperationsIntegrationTest {
     void shouldInsertAndUpdateDepartment(IntegrationTestContext context) {
         // Given - insert new department
         Department newDept = new Department(200L, "Research", "Building F", 300000.0, true);
-        context.getUpdateExecutor().insert(newDept, Department.class);
+        context.getUpdateExecutor().insert(newDept, context.getEntityContext(Department.class));
 
         // When - update the department
         Department dept = context.queryDepartments()
@@ -281,7 +281,7 @@ public class CrudOperationsIntegrationTest {
                 .list().get(0);
         dept.setBudget(400000.0);
         dept.setLocation("Building G");
-        context.getUpdateExecutor().update(dept, Department.class);
+        context.getUpdateExecutor().update(dept, context.getEntityContext(Department.class));
 
         // Then
         Department updated = context.queryDepartments()
@@ -309,7 +309,7 @@ public class CrudOperationsIntegrationTest {
         employee.setHireDate(LocalDate.of(2024, 1, 15));
 
         // When
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee inserted = context.queryEmployees()
@@ -331,7 +331,7 @@ public class CrudOperationsIntegrationTest {
         Employee duplicateEmployee = createTestEmployee(1L, "Duplicate", "dup@example.com");
 
         // When/Then - should throw exception
-        assertThatThrownBy(() -> context.getUpdateExecutor().insert(duplicateEmployee, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().insert(duplicateEmployee, context.getEntityContext(Employee.class)))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -344,7 +344,7 @@ public class CrudOperationsIntegrationTest {
         Employee nonExistent = createTestEmployee(9999L, "Non Existent", "none@example.com");
 
         // When/Then - should throw exception (entity not found)
-        assertThatThrownBy(() -> context.getUpdateExecutor().update(nonExistent, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().update(nonExistent, context.getEntityContext(Employee.class)))
                 .isInstanceOf(RuntimeException.class);
 
     }
@@ -365,7 +365,7 @@ public class CrudOperationsIntegrationTest {
         // When - delete non-existent entity should not throw exception
         // JPA: entityManager.remove() on non-existent entity is a no-op
         // JDBC: delete operation affects 0 rows, but doesn't throw exception
-        assertThatThrownBy(() -> context.getUpdateExecutor().delete(nonExistent, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().delete(nonExistent, context.getEntityContext(Employee.class)))
                 .isInstanceOf(RuntimeException.class);
         // Then - operation completes without error (implementation-specific behavior)
         // This test documents that delete of non-existent entities is allowed
@@ -381,7 +381,7 @@ public class CrudOperationsIntegrationTest {
         Employee employee = createTestEmployee(700L, "No Email", null);
 
         // When
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee inserted = context.queryEmployees()
@@ -401,7 +401,7 @@ public class CrudOperationsIntegrationTest {
         List<Employee> emptyList = new ArrayList<>();
 
         // When/Then - should not throw exception
-        assertThatNoException().isThrownBy(() -> context.getUpdateExecutor().insertAll(emptyList, Employee.class));
+        assertThatNoException().isThrownBy(() -> context.getUpdateExecutor().insertAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
     private Employee createTestEmployee(Long id, String name, String email) {

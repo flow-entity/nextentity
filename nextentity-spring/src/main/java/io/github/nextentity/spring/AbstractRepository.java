@@ -1,9 +1,9 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.core.*;
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,10 @@ import java.util.stream.Collectors;
 public abstract class AbstractRepository<T, ID> {
 
     private final Metamodel metamodel;
+    private final PaginationConfig paginationConfig;
     private final Class<ID> idType;
     private final Class<T> entityType;
+    private final EntityType entityMetadata;
     private final QueryBuilder<T> queryBuilder;
     private final UpdateExecutor updateExecutor;
 
@@ -76,7 +78,7 @@ public abstract class AbstractRepository<T, ID> {
         if (Persistable.class.isAssignableFrom(entityType)) {
             return Path.of("id");
         }
-        EntityAttribute id = metamodel.getEntity(entityType).id();
+        EntityAttribute id = entityMetadata.id();
         return Path.of(id.name());
     }
 
@@ -92,7 +94,7 @@ public abstract class AbstractRepository<T, ID> {
             Function<Persistable<ID>, ID> result = Persistable::getId;
             return TypeCastUtil.unsafeCast(result);
         }
-        EntityAttribute id = metamodel.getEntity(entityType).id();
+        EntityAttribute id = entityMetadata.id();
         return entity -> TypeCastUtil.unsafeCast(id.get(entity));
     }
 
@@ -108,20 +110,34 @@ public abstract class AbstractRepository<T, ID> {
         this.idType = genericType.idType();
         this.entityType = genericType.entityType();
         this.metamodel = context.getMetamodel();
+        this.paginationConfig = context.getPaginationConfig();
+        this.entityMetadata = metamodel.getEntity(entityType);
         this.queryBuilder = context.createQueryBuilder(entityType);
         this.updateExecutor = context.getUpdateExecutor();
     }
 
     public AbstractRepository(Class<T> entityType, Class<ID> idType, NextEntityContext context) {
-        this(entityType, idType, context.getMetamodel(), context.createQueryBuilder(entityType), context.getUpdateExecutor());
+        this(entityType, idType, context.getMetamodel(), context.getPaginationConfig(),
+                context.createQueryBuilder(entityType), context.getUpdateExecutor());
     }
 
-    public AbstractRepository(Class<T> entityType, Class<ID> idType, Metamodel metamodel, QueryBuilder<T> queryBuilder, UpdateExecutor updateExecutor) {
+    public AbstractRepository(Class<T> entityType, Class<ID> idType, Metamodel metamodel,
+                              PaginationConfig paginationConfig, QueryBuilder<T> queryBuilder,
+                              UpdateExecutor updateExecutor) {
         this.metamodel = metamodel;
+        this.paginationConfig = paginationConfig;
         this.idType = idType;
         this.entityType = entityType;
+        this.entityMetadata = metamodel.getEntity(entityType);
         this.queryBuilder = queryBuilder;
         this.updateExecutor = updateExecutor;
+    }
+
+    /// 创建实体上下文，用于更新操作。
+    ///
+    /// @return 实体上下文实例
+    protected EntityContext<T> entityContext() {
+        return new SimpleEntityContext<>(metamodel, entityMetadata, entityType);
     }
 
     /// 获取查询构建器，用于构建类型安全的查询。
@@ -159,7 +175,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entity 要插入的实体，不能为 null
     @Transactional
     public void insert(@NonNull T entity) {
-        updateExecutor.insert(entity, entityType);
+        updateExecutor.insert(entity, entityContext());
     }
 
     /// 批量插入多个实体到数据库。
@@ -169,7 +185,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entities 要插入的实体集合，不能为 null
     @Transactional
     public void insertAll(@NonNull Iterable<T> entities) {
-        updateExecutor.insertAll(entities, entityType);
+        updateExecutor.insertAll(entities, entityContext());
     }
 
     /// 批量更新多个实体。
@@ -179,7 +195,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entities 要更新的实体集合，不能为 null
     @Transactional
     public void updateAll(@NonNull Iterable<T> entities) {
-        updateExecutor.updateAll(entities, entityType);
+        updateExecutor.updateAll(entities, entityContext());
     }
 
     /// 更新单个实体。
@@ -189,7 +205,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entity 要更新的实体，不能为 null
     @Transactional
     public void update(@NonNull T entity) {
-        updateExecutor.update(entity, entityType);
+        updateExecutor.update(entity, entityContext());
     }
 
     /// 批量删除多个实体。
@@ -199,7 +215,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entities 要删除的实体集合，不能为 null
     @Transactional
     public void deleteAll(@NonNull Iterable<T> entities) {
-        updateExecutor.deleteAll(entities, entityType);
+        updateExecutor.deleteAll(entities, entityContext());
     }
 
     /// 删除单个实体。
@@ -209,7 +225,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entity 要删除的实体，不能为 null
     @Transactional
     public void delete(@NonNull T entity) {
-        updateExecutor.delete(entity, entityType);
+        updateExecutor.delete(entity, entityContext());
     }
 
     /// 创建条件更新构建器，用于带 WHERE 条件的批量更新。
@@ -229,7 +245,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @since 2.0.0
     @Transactional
     public UpdateSetStep<T> update() {
-        return updateExecutor.update(entityType);
+        return updateExecutor.update(entityContext());
     }
 
     /// 创建条件删除构建器，用于带 WHERE 条件的批量删除。
@@ -248,7 +264,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @since 2.0.0
     @Transactional
     public DeleteWhereStep<T> delete() {
-        return updateExecutor.delete(entityType);
+        return updateExecutor.delete(entityContext());
     }
 
 

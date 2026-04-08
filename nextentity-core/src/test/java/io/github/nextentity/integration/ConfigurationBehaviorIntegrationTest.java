@@ -140,7 +140,7 @@ public class ConfigurationBehaviorIntegrationTest {
             Employee emp2 = createTestEmployee(9002L, "Batch 2");
             Employee emp3 = createTestEmployee(9003L, "Batch 3");
 
-            context.getUpdateExecutor().insertAll(List.of(emp1, emp2, emp3), Employee.class);
+            context.getUpdateExecutor().insertAll(List.of(emp1, emp2, emp3), context.getEntityContext(Employee.class));
 
             // Then: 数据应正确插入
             List<Employee> inserted = context.queryEmployees()
@@ -169,7 +169,7 @@ public class ConfigurationBehaviorIntegrationTest {
             Employee emp2 = createTestEmployee(9102L, "Batch 50-2");
 
             assertThatNoException().isThrownBy(() ->
-                    context.getUpdateExecutor().insertAll(List.of(emp1, emp2), Employee.class));
+                    context.getUpdateExecutor().insertAll(List.of(emp1, emp2), context.getEntityContext(Employee.class)));
 
             // Then: 数据应正确插入
             long count = context.queryEmployees()
@@ -249,7 +249,7 @@ public class ConfigurationBehaviorIntegrationTest {
             Employee employee = createTestEmployee(9201L, "Insert Test");
 
             // When
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
             // Then
             Employee inserted = context.queryEmployees()
@@ -272,7 +272,7 @@ public class ConfigurationBehaviorIntegrationTest {
             employee.setName("Updated Name");
 
             // When
-            context.getUpdateExecutor().update(employee, Employee.class);
+            context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
             // Then
             Employee updated = context.queryEmployees()
@@ -289,7 +289,7 @@ public class ConfigurationBehaviorIntegrationTest {
         void testDelete(IntegrationTestContext context) {
             // Given
             Employee employee = createTestEmployee(9301L, "Delete Test");
-            context.getUpdateExecutor().insert(employee, Employee.class);
+            context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
             // 验证插入成功
             Employee inserted = context.queryEmployees()
@@ -298,7 +298,7 @@ public class ConfigurationBehaviorIntegrationTest {
             assertThat(inserted).isNotNull();
 
             // When
-            context.getUpdateExecutor().delete(inserted, Employee.class);
+            context.getUpdateExecutor().delete(inserted, context.getEntityContext(Employee.class));
 
             // Then
             List<Employee> deleted = context.queryEmployees()

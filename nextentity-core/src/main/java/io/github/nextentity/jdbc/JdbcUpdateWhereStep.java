@@ -2,8 +2,8 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
 import java.sql.PreparedStatement;
@@ -22,11 +22,10 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
     private final Map<String, Object> setValues = new LinkedHashMap<>();
     private final JdbcUpdateSqlBuilder sqlBuilder;
 
-    public JdbcUpdateWhereStep(Class<T> entityType,
-                               Metamodel metamodel,
+    public JdbcUpdateWhereStep(EntityContext<T> context,
                                ConnectionProvider connectionProvider,
                                JdbcUpdateSqlBuilder sqlBuilder) {
-        super(entityType, metamodel, connectionProvider);
+        super(context, connectionProvider);
         this.sqlBuilder = sqlBuilder;
     }
 
@@ -95,7 +94,7 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
         }
 
         UpdateSqlStatement sql = sqlBuilder.buildConditionalUpdateStatement(
-                getEntityType(), metamodel, setValues, whereCondition);
+                getEntityType(), getMetamodel(), setValues, whereCondition);
 
         return executeInTransaction(connection -> {
             sql.debug();

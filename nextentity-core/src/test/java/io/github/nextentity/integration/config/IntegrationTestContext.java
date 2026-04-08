@@ -1,8 +1,10 @@
 package io.github.nextentity.integration.config;
 
 import io.github.nextentity.core.DefaultQueryBuilder;
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.PaginationConfig;
 import io.github.nextentity.core.QueryExecutor;
+import io.github.nextentity.core.SimpleEntityContext;
 import io.github.nextentity.core.SimpleQueryContext;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.integration.entity.AutoIncrementEntity;
@@ -22,6 +24,16 @@ public interface IntegrationTestContext {
     QueryExecutor getQueryExecutor();
 
     UpdateExecutor getUpdateExecutor();
+
+    /// 创建实体上下文，用于更新操作。
+    ///
+    /// @param entityClass 实体类
+    /// @param <T>         实体类型
+    /// @return 实体上下文实例
+    default <T> EntityContext<T> getEntityContext(Class<T> entityClass) {
+        var metamodel = JpaMetamodel.of();
+        return new SimpleEntityContext<>(metamodel, metamodel.getEntity(entityClass), entityClass);
+    }
 
     default DefaultQueryBuilder<Employee> queryEmployees() {
         var metamodel = JpaMetamodel.of();

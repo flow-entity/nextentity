@@ -2,6 +2,7 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
+import io.github.nextentity.core.EntityContext;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.meta.EntityAttribute;
@@ -45,7 +46,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
         doInTransaction(() -> {
             for (T entity : entities) {
                 entityManager.persist(entity);
@@ -54,13 +55,14 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
+        Class<T> entityType = context.entityClass();
         doInTransaction(() -> {
-            EntityType entity = metamodel.getEntity(entityType);
+            EntityType entity = context.entityType();
             String entityName = getJpaEntityName(entityType);
             EntityAttribute idAttribute = entity.id();
             EntityAttribute versionAttribute = entity.version();
@@ -152,14 +154,15 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
+        Class<T> entityClass = context.entityClass();
         doInTransaction(() -> {
-            EntityType entity = metamodel.getEntity(entityType);
-            String entityName = getJpaEntityName(entityType);
+            EntityType entity = context.entityType();
+            String entityName = getJpaEntityName(entityClass);
             EntityAttribute idAttribute = entity.id();
 
             Set<Object> ids = new HashSet<>();
@@ -189,12 +192,12 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> UpdateSetStep<T> update(@NonNull Class<T> entityType) {
-        return new JpaUpdateWhereStep<>(entityType, metamodel, entityManager, transactionTemplate);
+    public <T> UpdateSetStep<T> update(@NonNull EntityContext<T> context) {
+        return new JpaUpdateWhereStep<>(context, entityManager, transactionTemplate);
     }
 
     @Override
-    public <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType) {
-        return new JpaDeleteWhereStep<>(entityType, metamodel, entityManager, transactionTemplate);
+    public <T> DeleteWhereStep<T> delete(@NonNull EntityContext<T> context) {
+        return new JpaDeleteWhereStep<>(context, entityManager, transactionTemplate);
     }
 }
