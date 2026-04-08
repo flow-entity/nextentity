@@ -467,6 +467,10 @@ public class UserRepository extends AbstractRepository<User, Integer> {
         return users;
     }
 
+    public void clear() {
+        users = null;
+    }
+
     @Transactional
     public void doInTransaction(Runnable runnable) {
         runnable.run();
