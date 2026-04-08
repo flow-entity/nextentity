@@ -13,11 +13,11 @@ import io.github.nextentity.core.meta.Metamodel;
 /// @param entityClass     实体类
 /// @author HuangChengwei
 /// @since 2.1.2
-public record SimpleQueryContext<E>(
+public record SimpleQueryDescriptor<E>(
         Metamodel metamodel,
         QueryExecutor queryExecutor,
         PaginationConfig paginationConfig,
         EntityType entityType,
         Class<E> entityClass
-) implements QueryContext<E> {
+) implements QueryDescriptor<E> {
 }

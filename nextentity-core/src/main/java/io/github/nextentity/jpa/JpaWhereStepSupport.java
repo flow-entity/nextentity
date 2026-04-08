@@ -1,8 +1,7 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.core.EntityContext;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 
 import java.util.List;
@@ -15,19 +14,19 @@ import java.util.List;
 /// @since 2.0.0
 abstract class JpaWhereStepSupport<T> {
 
-    protected final EntityContext<T> context;
+    protected final EntityDescriptor<T> descriptor;
     protected ExpressionNode whereCondition;
 
-    protected JpaWhereStepSupport(EntityContext<T> context) {
-        this.context = context;
+    protected JpaWhereStepSupport(EntityDescriptor<T> descriptor) {
+        this.descriptor = descriptor;
     }
 
     protected Class<T> getEntityClass() {
-        return context.entityClass();
+        return descriptor.entityClass();
     }
 
     protected EntityType getEntityType() {
-        return context.entityType();
+        return descriptor.entityType();
     }
 
     protected void setWhereCondition(ExpressionNode condition) {

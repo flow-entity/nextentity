@@ -1,12 +1,10 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.EntityQuery;
-import io.github.nextentity.core.EntityQueryImpl;
+import io.github.nextentity.api.EntityContext;
+import io.github.nextentity.core.EntityContextImpl;
 import io.github.nextentity.core.LoggingConfig;
 import io.github.nextentity.core.PaginationConfig;
-import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SqlLogger;
-import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.jdbc.*;
@@ -16,7 +14,6 @@ import io.github.nextentity.jpa.JpaTransactionTemplate;
 import io.github.nextentity.jpa.JpaUpdateExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
-import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
@@ -24,10 +21,10 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-/// 默认的 NextEntity 上下文实现。
+/// 默认的 EntityContext 实现。
 ///
-/// 该类实现了 NextEntityContext 接口，提供创建 QueryBuilder
-/// 和获取 UpdateExecutor、Metamodel 的能力。
+/// 该类实现了 {@link EntityContext} 接口，提供创建 EntityOperations
+/// 的能力，支持查询构建和实体持久化操作。
 ///
 /// 支持两种数据库访问模式：
 /// - JDBC 模式：纯 JDBC 操作，适合轻量级场景
@@ -36,34 +33,27 @@ import java.util.function.Supplier;
 /// 使用示例：
 /// ```java
 /// // JDBC 模式
-/// NextEntityContext context = DefaultNextEntityContext.jdbc(jdbcTemplate, dialect, properties);
+/// EntityContext context = DefaultNextEntityContext.jdbc(jdbcTemplate, dialect, properties);
 ///
 /// // JPA 模式
-/// NextEntityContext context = DefaultNextEntityContext.jpa(entityManager, jdbcTemplate, dialect, properties);
+/// EntityContext context = DefaultNextEntityContext.jpa(entityManager, jdbcTemplate, dialect, properties);
+///
+/// // 使用
+/// EntityOperations<User> ops = context.operations(User.class);
+/// ops.where(User::getStatus).eq("ACTIVE").list();  // 查询
+/// ops.insert(newUser);                              // 持久化
 /// ```
 ///
-/// @param metamodel        实体元模型，提供实体结构信息
-/// @param queryExecutor    查询执行器，用于执行 SELECT 查询
-/// @param updateExecutor   更新执行器，用于执行 INSERT、UPDATE、DELETE 操作
-/// @param entityManager    JPA 实体管理器（JPA 模式时使用，JDBC 模式为 null）
-/// @param paginationConfig 分页配置
 /// @author HuangChengwei
 /// @since 1.0.0
-public record DefaultNextEntityContext(
-        Metamodel metamodel,
-        QueryExecutor queryExecutor,
-        UpdateExecutor updateExecutor,
-        @Nullable
-        EntityManager entityManager,
-        PaginationConfig paginationConfig
-) implements NextEntityContext {
+public final class EntityContextBuilder {
 
     /// 创建基于 JDBC 的 NextEntity 工厂。
     ///
     /// @param jdbcTemplate Spring JDBC 模板
     /// @return JDBC 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
-    public static DefaultNextEntityContext jdbc(JdbcTemplate jdbcTemplate) {
+    public static EntityContext jdbc(JdbcTemplate jdbcTemplate) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
         try {
@@ -80,9 +70,9 @@ public record DefaultNextEntityContext(
     /// @param sqlDialect   SQL 方言
     /// @param properties   配置属性
     /// @return JDBC 方式的 NextEntity 工厂实例
-    public static DefaultNextEntityContext jdbc(JdbcTemplate jdbcTemplate,
-                                                SqlDialect sqlDialect,
-                                                NextEntityProperties properties) {
+    public static EntityContext jdbc(JdbcTemplate jdbcTemplate,
+                                     SqlDialect sqlDialect,
+                                     NextEntityProperties properties) {
         // 应用日志配置
         applyLoggingConfig(properties);
 
@@ -102,13 +92,8 @@ public record DefaultNextEntityContext(
         JdbcUpdateExecutor jdbcUpdateExecutor = new JdbcUpdateExecutor(
                 sqlBuilder, connectionProvider, jdbcConfig);
 
-        return new DefaultNextEntityContext(
-                metamodel,
-                jdbcQueryExecutor,
-                jdbcUpdateExecutor,
-                null,
-                paginationConfig
-        );
+        return new EntityContextImpl(
+                metamodel, jdbcQueryExecutor, jdbcUpdateExecutor, paginationConfig);
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂。
@@ -117,8 +102,8 @@ public record DefaultNextEntityContext(
     /// @param jdbcTemplate  Spring JDBC 模板
     /// @return JPA 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
-    public static DefaultNextEntityContext jpa(EntityManager entityManager,
-                                               JdbcTemplate jdbcTemplate) {
+    public static EntityContext jpa(EntityManager entityManager,
+                                    JdbcTemplate jdbcTemplate) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
         try {
@@ -136,10 +121,10 @@ public record DefaultNextEntityContext(
     /// @param sqlDialect    SQL 方言
     /// @param properties    配置属性
     /// @return JPA 方式的 NextEntity 工厂实例
-    public static DefaultNextEntityContext jpa(EntityManager entityManager,
-                                               JdbcTemplate jdbcTemplate,
-                                               SqlDialect sqlDialect,
-                                               NextEntityProperties properties) {
+    public static EntityContext jpa(EntityManager entityManager,
+                                    JdbcTemplate jdbcTemplate,
+                                    SqlDialect sqlDialect,
+                                    NextEntityProperties properties) {
         // 应用日志配置
         applyLoggingConfig(properties);
 
@@ -163,13 +148,8 @@ public record DefaultNextEntityContext(
         JpaUpdateExecutor jpaUpdateExecutor = new JpaUpdateExecutor(
                 entityManager, metamodel, noneTransactionProvider);
 
-        return new DefaultNextEntityContext(
-                metamodel,
-                jpaQueryExecutor,
-                jpaUpdateExecutor,
-                entityManager,
-                paginationConfig
-        );
+        return new EntityContextImpl(
+                metamodel, jpaQueryExecutor, jpaUpdateExecutor, paginationConfig);
     }
 
     /// 应用日志配置
@@ -257,40 +237,5 @@ public record DefaultNextEntityContext(
         public <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action) {
             return action.get();
         }
-    }
-
-    /// 创建指定实体类型的查询构建器。
-    ///
-    /// @param entityType 实体类型
-    /// @param <T>        实体类型参数
-    /// @return 查询构建器实例
-    @Override
-    public <T> EntityQuery<T> createQueryBuilder(Class<T> entityType) {
-        return new EntityQueryImpl<>(new io.github.nextentity.core.SimpleQueryContext<>(
-                metamodel, queryExecutor, paginationConfig, metamodel.getEntity(entityType), entityType));
-    }
-
-    /// 获取更新执行器。
-    ///
-    /// @return 更新执行器实例
-    @Override
-    public UpdateExecutor getUpdateExecutor() {
-        return updateExecutor;
-    }
-
-    /// 获取元模型。
-    ///
-    /// @return 元模型实例
-    @Override
-    public Metamodel getMetamodel() {
-        return metamodel;
-    }
-
-    /// 获取分页配置。
-    ///
-    /// @return 分页配置实例
-    @Override
-    public PaginationConfig getPaginationConfig() {
-        return paginationConfig;
     }
 }

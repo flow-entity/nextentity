@@ -2,7 +2,7 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
-import io.github.nextentity.core.EntityContext;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.meta.EntityAttribute;
@@ -46,7 +46,7 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         doInTransaction(() -> {
             for (T entity : entities) {
                 entityManager.persist(entity);
@@ -55,14 +55,14 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        Class<T> entityType = context.entityClass();
+        Class<T> entityType = descriptor.entityClass();
         doInTransaction(() -> {
-            EntityType entity = context.entityType();
+            EntityType entity = descriptor.entityType();
             String entityName = getJpaEntityName(entityType);
             EntityAttribute idAttribute = entity.id();
             EntityAttribute versionAttribute = entity.version();
@@ -154,14 +154,14 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        Class<T> entityClass = context.entityClass();
+        Class<T> entityClass = descriptor.entityClass();
         doInTransaction(() -> {
-            EntityType entity = context.entityType();
+            EntityType entity = descriptor.entityType();
             String entityName = getJpaEntityName(entityClass);
             EntityAttribute idAttribute = entity.id();
 
@@ -192,12 +192,12 @@ public class JpaUpdateExecutor implements UpdateExecutor {
     }
 
     @Override
-    public <T> UpdateSetStep<T> update(@NonNull EntityContext<T> context) {
-        return new JpaUpdateWhereStep<>(context, entityManager, transactionTemplate);
+    public <T> UpdateSetStep<T> update(@NonNull EntityDescriptor<T> descriptor) {
+        return new JpaUpdateWhereStep<>(descriptor, entityManager, transactionTemplate);
     }
 
     @Override
-    public <T> DeleteWhereStep<T> delete(@NonNull EntityContext<T> context) {
-        return new JpaDeleteWhereStep<>(context, entityManager, transactionTemplate);
+    public <T> DeleteWhereStep<T> delete(@NonNull EntityDescriptor<T> descriptor) {
+        return new JpaDeleteWhereStep<>(descriptor, entityManager, transactionTemplate);
     }
 }

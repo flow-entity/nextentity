@@ -1,5 +1,7 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.api.EntityDescriptor;
+
 /// 查询操作共享依赖的上下文接口。
 ///
 /// 封装 metamodel、queryExecutor、paginationConfig、entityType 和 entityClass，
@@ -8,7 +10,7 @@ package io.github.nextentity.core;
 /// @param <E> 实体类型
 /// @author HuangChengwei
 /// @since 2.1.2
-public interface QueryContext<E> extends EntityContext<E> {
+public interface QueryDescriptor<E> extends EntityDescriptor<E> {
 
     /// 返回查询执行引擎。
     ///

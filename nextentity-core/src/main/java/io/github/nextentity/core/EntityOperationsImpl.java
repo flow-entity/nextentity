@@ -1,7 +1,8 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.DeleteWhereStep;
-import io.github.nextentity.api.EntityUpdater;
+import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.api.UpdateSetStep;
 import org.jspecify.annotations.NonNull;
 
@@ -15,58 +16,58 @@ import java.util.function.Supplier;
 /// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 2.0.0
-public class EntityOperations<T> extends EntityQueryImpl<T> implements EntityUpdater<T> {
+public class EntityOperationsImpl<T> extends EntityQueryImpl<T> implements EntityOperations<T> {
 
     private final @NonNull UpdateExecutor updateExecutor;
 
     /// 创建 EntityOperationsImpl 实例。
     ///
-    /// @param context        查询上下文，提供查询所需依赖
+    /// @param descriptor        查询上下文，提供查询所需依赖
     /// @param updateExecutor 更新执行器，用于执行实体更新操作
-    public EntityOperations(@NonNull QueryContext<T> context,
-                            @NonNull UpdateExecutor updateExecutor) {
-        super(context);
+    public EntityOperationsImpl(@NonNull QueryDescriptor<T> descriptor,
+                                @NonNull UpdateExecutor updateExecutor) {
+        super(descriptor);
         this.updateExecutor = updateExecutor;
     }
 
     @Override
     public void insert(T entity) {
-        updateExecutor.insert(entity, entityContext());
+        updateExecutor.insert(entity, descriptor);
     }
 
     @Override
     public void insertAll(Iterable<T> entities) {
-        updateExecutor.insertAll(entities, entityContext());
+        updateExecutor.insertAll(entities, descriptor);
     }
 
     @Override
     public void update(T entity) {
-        updateExecutor.update(entity, entityContext());
+        updateExecutor.update(entity, descriptor);
     }
 
     @Override
     public void updateAll(Iterable<T> entities) {
-        updateExecutor.updateAll(entities, entityContext());
+        updateExecutor.updateAll(entities, descriptor);
     }
 
     @Override
     public void delete(T entity) {
-        updateExecutor.delete(entity, entityContext());
+        updateExecutor.delete(entity, descriptor);
     }
 
     @Override
     public void deleteAll(Iterable<T> entities) {
-        updateExecutor.deleteAll(entities, entityContext());
+        updateExecutor.deleteAll(entities, descriptor);
     }
 
     @Override
     public UpdateSetStep<T> update() {
-        return updateExecutor.update(entityContext());
+        return updateExecutor.update(descriptor);
     }
 
     @Override
     public DeleteWhereStep<T> delete() {
-        return updateExecutor.delete(entityContext());
+        return updateExecutor.delete(descriptor);
     }
 
     @Override
@@ -79,12 +80,8 @@ public class EntityOperations<T> extends EntityQueryImpl<T> implements EntityUpd
         return updateExecutor.doInTransaction(command);
     }
 
-    /// 获取实体上下文。
-    ///
-    /// 从 QueryContext（继承自 EntityContext）获取。
-    ///
-    /// @return 实体上下文实例
-    private EntityContext<T> entityContext() {
-        return context;
+    @Override
+    public EntityDescriptor<T> descriptor() {
+        return descriptor;
     }
 }

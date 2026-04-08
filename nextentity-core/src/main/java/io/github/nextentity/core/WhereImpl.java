@@ -31,11 +31,11 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     public static final SelectExpression SELECT_ANY = new SelectExpression(LiteralNode.TRUE, false);
 
     protected final QueryStructure queryStructure;
-    protected final QueryContext<T> context;
+    protected final QueryDescriptor<T> descriptor;
 
-    protected WhereImpl(QueryStructure queryStructure, QueryContext<T> context) {
+    protected WhereImpl(QueryStructure queryStructure, QueryDescriptor<T> descriptor) {
         this.queryStructure = queryStructure;
-        this.context = context;
+        this.descriptor = descriptor;
     }
 
     @Override
@@ -120,7 +120,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public long count() {
-        return context.queryExecutor().<Number>getList(buildCountData()).getFirst().longValue();
+        return descriptor.queryExecutor().<Number>getList(buildCountData()).getFirst().longValue();
     }
 
     @Override
@@ -136,7 +136,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 1,
                 queryStructure.lockType()
         );
-        return !context.queryExecutor().getList(structure).isEmpty();
+        return !descriptor.queryExecutor().getList(structure).isEmpty();
     }
 
     @Override
@@ -152,7 +152,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 1,
                 queryStructure.lockType()
         );
-        return !context.queryExecutor().getList(structure).isEmpty();
+        return !descriptor.queryExecutor().getList(structure).isEmpty();
     }
 
     @Override
@@ -162,17 +162,17 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public List<U> list() {
-        return context.queryExecutor().getList(queryStructure);
+        return descriptor.queryExecutor().getList(queryStructure);
     }
 
     @Override
     public List<U> list(int offset, int limit) {
-        return context.queryExecutor().getList(buildPaginatedQueryStructure(offset, limit, true));
+        return descriptor.queryExecutor().getList(buildPaginatedQueryStructure(offset, limit, true));
     }
 
     @Override
     public U single() {
-        List<U> list = context.queryExecutor().getList(buildPaginatedQueryStructure(0, 2, false));
+        List<U> list = descriptor.queryExecutor().getList(buildPaginatedQueryStructure(0, 2, false));
         if (list.size() > 1) {
             throw new IllegalStateException("found more than one");
         }
@@ -204,7 +204,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     /// @param <Y>       新的结果类型
     /// @return 新的 WhereImpl 实例
     public <Y> WhereImpl<T, Y> update(QueryStructure structure) {
-        return new WhereImpl<>(structure, context);
+        return new WhereImpl<>(structure, descriptor);
     }
 
     /// 构建分页查询结构，根据配置决定是否自动添加主键排序。
@@ -220,12 +220,12 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         ImmutableList<SortExpression> orderBy = queryStructure.orderBy();
 
         // 只有在配置启用、非聚合查询且未指定排序时才自动添加主键排序
-        if (context.paginationConfig().autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
-            EntityType entity = context.entityType();
+        if (descriptor.paginationConfig().autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
+            EntityType entity = descriptor.entityType();
             if (entity != null) {
                 var idAttr = entity.id();
                 if (logAutoSortWarning) {
-                    logAutoSort(context.entityClass());
+                    logAutoSort(descriptor.entityClass());
                 }
                 PathNode idPath = new PathNode(idAttr.name());
                 SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
@@ -253,7 +253,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         String message = "Pagination without ORDER BY detected. " +
                 "Automatically adding primary key ordering for entity {}. " +
                 "Consider adding explicit orderBy() for deterministic results.";
-        switch (context.paginationConfig().logLevel()) {
+        switch (descriptor.paginationConfig().logLevel()) {
             case INFO -> log.info(message, entityType.getSimpleName());
             case WARN -> log.warn(message, entityType.getSimpleName());
             default -> log.debug(message, entityType.getSimpleName());

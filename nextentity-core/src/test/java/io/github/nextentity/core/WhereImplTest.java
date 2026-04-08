@@ -49,14 +49,14 @@ class WhereImplTest {
     protected EntityAttribute idAttribute;
 
     private WhereImpl<Employee, Employee> whereImpl;
-    private QueryContext<Employee> context;
+    private QueryDescriptor<Employee> context;
 
     @BeforeEach
     void setUp() {
         lenient().when(entityType.id()).thenReturn(idAttribute);
         lenient().when(idAttribute.name()).thenReturn("id");
         QueryStructure queryStructure = QueryStructure.of(Employee.class);
-        context = new SimpleQueryContext<>(metamodel, queryExecutor, PaginationConfig.DEFAULT, entityType, Employee.class);
+        context = new SimpleQueryDescriptor<>(metamodel, queryExecutor, PaginationConfig.DEFAULT, entityType, Employee.class);
         whereImpl = new WhereImpl<>(queryStructure, context);
     }
 

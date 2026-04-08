@@ -62,7 +62,7 @@ import java.util.function.Supplier;
 /// @see UpdateSetStep 条件更新构建器
 /// @see DeleteWhereStep 条件删除构建器
 /// @since 2.0.0
-public interface EntityUpdater<T> {
+public interface EntityPersistor<T> {
 
     /// 插入单个实体到数据库。
     ///

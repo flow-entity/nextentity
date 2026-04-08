@@ -1,5 +1,6 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 
@@ -13,9 +14,9 @@ import io.github.nextentity.core.meta.Metamodel;
 /// @param entityClass 实体类
 /// @author HuangChengwei
 /// @since 2.1.2
-public record SimpleEntityContext<E>(
+public record SimpleEntityDescriptor<E>(
         Metamodel metamodel,
         EntityType entityType,
         Class<E> entityClass
-) implements EntityContext<E> {
+) implements EntityDescriptor<E> {
 }

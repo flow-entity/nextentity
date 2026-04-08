@@ -1,12 +1,11 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.EntityContext;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
 
 import java.sql.SQLException;
-import java.util.List;
 
 /// JDBC 条件操作基类。
 ///
@@ -17,13 +16,13 @@ import java.util.List;
 /// @since 2.0.0
 abstract class JdbcWhereStepSupport<T> {
 
-    protected final EntityContext<T> context;
+    protected final EntityDescriptor<T> descriptor;
     protected final ConnectionProvider connectionProvider;
     protected ExpressionNode whereCondition;
 
-    protected JdbcWhereStepSupport(EntityContext<T> context,
+    protected JdbcWhereStepSupport(EntityDescriptor<T> descriptor,
                                    ConnectionProvider connectionProvider) {
-        this.context = context;
+        this.descriptor = descriptor;
         this.connectionProvider = connectionProvider;
     }
 
@@ -44,11 +43,11 @@ abstract class JdbcWhereStepSupport<T> {
     }
 
     protected EntityType getEntityType() {
-        return context.entityType();
+        return descriptor.entityType();
     }
 
     protected Metamodel getMetamodel() {
-        return context.metamodel();
+        return descriptor.metamodel();
     }
 
     protected String getColumnName(PathNode path) {

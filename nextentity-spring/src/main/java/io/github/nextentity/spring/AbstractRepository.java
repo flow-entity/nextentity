@@ -1,12 +1,10 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.core.*;
+import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.meta.EntityAttribute;
-import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ResolvableType;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -43,16 +41,31 @@ import java.util.stream.Collectors;
 /// @since 1.0.0
 public abstract class AbstractRepository<T, ID> {
 
-    private final Metamodel metamodel;
-    private final PaginationConfig paginationConfig;
-    private final Class<ID> idType;
-    private final Class<T> entityType;
-    private final EntityType entityMetadata;
-    private final EntityQuery<T> entityQuery;
-    private final UpdateExecutor updateExecutor;
+    private final EntityOperations<T> operations;
 
+    private final Class<ID> idType;
     private Path<T, ID> idPath;
     private Function<? super T, ? extends ID> idExtractor;
+
+    /// 创建 Repository 实例。
+    ///
+    /// 通过构造器注入 EntityContext，自动检测实体类型和主键类型，
+    /// 并初始化操作入口。
+    ///
+    /// @param context EntityContext 实体上下文
+    protected AbstractRepository(EntityContext context) {
+        GenericType<T, ID> genericType = getGenericType();
+        this.idType = genericType.idType();
+        Class<T> entityType = genericType.entityType();
+        this.operations = context.operations(entityType);
+    }
+
+    public AbstractRepository(EntityOperations<T> operations) {
+        this.operations = operations;
+        EntityDescriptor<T> descriptor = operations.descriptor();
+        Class<?> idClass = descriptor.entityType().id().type();
+        this.idType = TypeCastUtil.cast(idClass);
+    }
 
     protected Path<T, ID> idPath() {
         if (idPath == null) {
@@ -68,6 +81,7 @@ public abstract class AbstractRepository<T, ID> {
         return idExtractor;
     }
 
+
     /// 获取主键路径表达式。
     ///
     /// 子类可重写此方法以自定义主键路径的获取方式。
@@ -75,10 +89,11 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @return 主键路径表达式
     protected Path<T, ID> newIdPath() {
-        if (Persistable.class.isAssignableFrom(entityType)) {
+        EntityDescriptor<T> descriptor = operations.descriptor();
+        if (Persistable.class.isAssignableFrom(descriptor.entityClass())) {
             return Path.of("id");
         }
-        EntityAttribute id = entityMetadata.id();
+        EntityAttribute id = descriptor.entityType().id();
         return Path.of(id.name());
     }
 
@@ -90,61 +105,20 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @return 从实体中提取 ID 的函数
     protected Function<? super T, ? extends ID> newIdExtractor() {
-        if (Persistable.class.isAssignableFrom(entityType)) {
+        EntityDescriptor<T> descriptor = operations.descriptor();
+        if (Persistable.class.isAssignableFrom(descriptor.entityClass())) {
             Function<Persistable<ID>, ID> result = Persistable::getId;
             return TypeCastUtil.unsafeCast(result);
         }
-        EntityAttribute id = entityMetadata.id();
+        EntityAttribute id = descriptor.entityType().id();
         return entity -> TypeCastUtil.unsafeCast(id.get(entity));
-    }
-
-    /// 创建 Repository 实例。
-    ///
-    /// 通过构造器注入 NextEntityContext，自动检测实体类型和主键类型，
-    /// 并初始化查询构建器和更新执行器。
-    ///
-    /// @param context   NextEntity 上下文
-    @Autowired
-    protected AbstractRepository(NextEntityContext context) {
-        GenericType<T, ID> genericType = getGenericType();
-        this.idType = genericType.idType();
-        this.entityType = genericType.entityType();
-        this.metamodel = context.getMetamodel();
-        this.paginationConfig = context.getPaginationConfig();
-        this.entityMetadata = metamodel.getEntity(entityType);
-        this.entityQuery = context.createQueryBuilder(entityType);
-        this.updateExecutor = context.getUpdateExecutor();
-    }
-
-    public AbstractRepository(Class<T> entityType, Class<ID> idType, NextEntityContext context) {
-        this(entityType, idType, context.getMetamodel(), context.getPaginationConfig(),
-                context.createQueryBuilder(entityType), context.getUpdateExecutor());
-    }
-
-    public AbstractRepository(Class<T> entityType, Class<ID> idType, Metamodel metamodel,
-                              PaginationConfig paginationConfig, EntityQuery<T> entityQuery,
-                              UpdateExecutor updateExecutor) {
-        this.metamodel = metamodel;
-        this.paginationConfig = paginationConfig;
-        this.idType = idType;
-        this.entityType = entityType;
-        this.entityMetadata = metamodel.getEntity(entityType);
-        this.entityQuery = entityQuery;
-        this.updateExecutor = updateExecutor;
-    }
-
-    /// 创建实体上下文，用于更新操作。
-    ///
-    /// @return 实体上下文实例
-    protected EntityContext<T> entityContext() {
-        return new SimpleEntityContext<>(metamodel, entityMetadata, entityType);
     }
 
     /// 获取查询构建器，用于构建类型安全的查询。
     ///
     /// @return 查询构建器实例
     protected EntityQuery<T> query() {
-        return entityQuery;
+        return operations;
     }
 
     /// 获取实体根对象，用于构建路径表达式。
@@ -165,7 +139,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @return 实体类型的 Class 对象
     public Class<T> entityType() {
-        return entityType;
+        return operations.descriptor().entityClass();
     }
 
     /// 插入单个实体到数据库。
@@ -175,7 +149,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entity 要插入的实体，不能为 null
     @Transactional
     public void insert(@NonNull T entity) {
-        updateExecutor.insert(entity, entityContext());
+        operations.insert(entity);
     }
 
     /// 批量插入多个实体到数据库。
@@ -185,7 +159,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entities 要插入的实体集合，不能为 null
     @Transactional
     public void insertAll(@NonNull Iterable<T> entities) {
-        updateExecutor.insertAll(entities, entityContext());
+        operations.insertAll(entities);
     }
 
     /// 批量更新多个实体。
@@ -195,7 +169,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entities 要更新的实体集合，不能为 null
     @Transactional
     public void updateAll(@NonNull Iterable<T> entities) {
-        updateExecutor.updateAll(entities, entityContext());
+        operations.updateAll(entities);
     }
 
     /// 更新单个实体。
@@ -205,7 +179,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entity 要更新的实体，不能为 null
     @Transactional
     public void update(@NonNull T entity) {
-        updateExecutor.update(entity, entityContext());
+        operations.update(entity);
     }
 
     /// 批量删除多个实体。
@@ -215,7 +189,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entities 要删除的实体集合，不能为 null
     @Transactional
     public void deleteAll(@NonNull Iterable<T> entities) {
-        updateExecutor.deleteAll(entities, entityContext());
+        operations.deleteAll(entities);
     }
 
     /// 删除单个实体。
@@ -225,7 +199,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @param entity 要删除的实体，不能为 null
     @Transactional
     public void delete(@NonNull T entity) {
-        updateExecutor.delete(entity, entityContext());
+        operations.delete(entity);
     }
 
     /// 创建条件更新构建器，用于带 WHERE 条件的批量更新。
@@ -245,7 +219,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @since 2.0.0
     @Transactional
     public UpdateSetStep<T> update() {
-        return updateExecutor.update(entityContext());
+        return operations.update();
     }
 
     /// 创建条件删除构建器，用于带 WHERE 条件的批量删除。
@@ -264,7 +238,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @since 2.0.0
     @Transactional
     public DeleteWhereStep<T> delete() {
-        return updateExecutor.delete(entityContext());
+        return operations.delete();
     }
 
 

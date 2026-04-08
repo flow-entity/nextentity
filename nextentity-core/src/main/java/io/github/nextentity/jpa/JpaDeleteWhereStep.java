@@ -2,7 +2,7 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.EntityContext;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -21,10 +21,10 @@ public class JpaDeleteWhereStep<T> extends JpaWhereStepSupport<T> implements Del
     private final EntityManager entityManager;
     private final JpaTransactionTemplate transactionTemplate;
 
-    public JpaDeleteWhereStep(EntityContext<T> context,
+    public JpaDeleteWhereStep(EntityDescriptor<T> descriptor,
                               EntityManager entityManager,
                               JpaTransactionTemplate transactionTemplate) {
-        super(context);
+        super(descriptor);
         this.entityManager = entityManager;
         this.transactionTemplate = transactionTemplate;
     }

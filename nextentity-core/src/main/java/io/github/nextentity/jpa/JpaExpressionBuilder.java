@@ -21,7 +21,6 @@ import java.util.Map;
 ///
 /// @author HuangChengwei
 /// @since 2.0.0
-@SuppressWarnings("PatternVariableCanBeUsed")
 public class JpaExpressionBuilder {
 
     protected final Root<?> root;
@@ -50,9 +49,7 @@ public class JpaExpressionBuilder {
     }
 
     public Expression<?> toExpression(ExpressionNode expression) {
-        if (expression instanceof LiteralNode) {
-            LiteralNode literal = (LiteralNode) expression;
-            Object value = literal.value();
+        if (expression instanceof LiteralNode(Object value)) {
             // 应用 stringParameterBinding 配置
             // Use parameter binding for strings to ensure proper Unicode handling
             // especially for SQL Server which requires N prefix for Unicode strings
@@ -63,12 +60,10 @@ public class JpaExpressionBuilder {
             }
             return cb.literal(value);
         }
-        if (expression instanceof PathNode) {
-            PathNode path = (PathNode) expression;
+        if (expression instanceof PathNode path) {
             return getPath(path);
         }
-        if (expression instanceof OperatorNode) {
-            OperatorNode operation = (OperatorNode) expression;
+        if (expression instanceof OperatorNode operation) {
             Operator operator = operation.operator();
             ExpressionNode e1 = operation.secondOperand();
             ExpressionNode e2 = operation.thirdOperand();
@@ -235,7 +230,7 @@ public class JpaExpressionBuilder {
     }
 
     private Join<?, ?> join(PathNode column) {
-        return (Join<?, ?>) fetched.compute(column, (k, v) -> {
+        return (Join<?, ?>) fetched.compute(column, (_, v) -> {
             if (v instanceof Join<?, ?>) {
                 return v;
             } else {

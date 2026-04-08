@@ -2,7 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
-import io.github.nextentity.core.EntityContext;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.*;
 import org.jspecify.annotations.NonNull;
 
@@ -22,10 +22,10 @@ public class JdbcUpdateWhereStep<T> extends JdbcWhereStepSupport<T> implements U
     private final Map<String, Object> setValues = new LinkedHashMap<>();
     private final JdbcUpdateSqlBuilder sqlBuilder;
 
-    public JdbcUpdateWhereStep(EntityContext<T> context,
+    public JdbcUpdateWhereStep(EntityDescriptor<T> descriptor,
                                ConnectionProvider connectionProvider,
                                JdbcUpdateSqlBuilder sqlBuilder) {
-        super(context, connectionProvider);
+        super(descriptor, connectionProvider);
         this.sqlBuilder = sqlBuilder;
     }
 

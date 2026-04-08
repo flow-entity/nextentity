@@ -23,12 +23,12 @@ public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(EntityQueryImpl.class);
 
-    public EntityQueryImpl(QueryContext<T> context) {
+    public EntityQueryImpl(QueryDescriptor<T> context) {
         this(QueryStructure.of(context.entityClass()), context);
     }
 
     protected EntityQueryImpl(QueryStructure queryStructure,
-                              QueryContext<T> context) {
+                              QueryDescriptor<T> context) {
         super(queryStructure, context);
     }
 
@@ -39,7 +39,7 @@ public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T
         SelectEntity select = (SelectEntity) queryStructure.select();
         ImmutableList.Builder<PathNode> builder = new ImmutableList.Builder<>(select.fetch().size() + expressions.size());
         builder.addAll(select.fetch().asList());
-        EntityType entityType = context.metamodel().getEntity(fromType());
+        EntityType entityType = descriptor.metamodel().getEntity(fromType());
         for (PathRef<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
             Attribute attribute = entityPath.getAttribute(entityType);
@@ -332,7 +332,7 @@ public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T
     }
 
     private Class<?> fromType() {
-        return context.entityClass();
+        return descriptor.entityClass();
     }
 
 }

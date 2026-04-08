@@ -1,5 +1,6 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.jdbc.SqlDialect;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.ObjectProvider;
@@ -16,7 +17,7 @@ import java.sql.SQLException;
 /// NextEntity 自动配置类。
 ///
 /// 当 Spring Boot 应用引入 nextentity-spring 依赖时，
-/// 需要显式启用才会注册 NextEntityContext Bean：
+/// 需要显式启用才会注册 EntityContext Bean：
 ///
 /// ```yaml
 /// nextentity:
@@ -39,10 +40,10 @@ import java.sql.SQLException;
 ///     string-parameter-binding: true
 /// ```
 ///
-/// 用户可以通过定义自己的 NextEntityContext Bean 来覆盖默认配置：
+/// 用户可以通过定义自己的 EntityContext Bean 来覆盖默认配置：
 /// ```java
 /// @Bean
-/// public NextEntityContext customNextEntityContext(JdbcTemplate jdbcTemplate) {
+/// public EntityContext customEntityContext(JdbcTemplate jdbcTemplate) {
 ///     return DefaultNextEntityContext.jdbc(jdbcTemplate);
 /// }
 /// ```
@@ -54,27 +55,27 @@ import java.sql.SQLException;
 @EnableConfigurationProperties(NextEntityProperties.class)
 public class NextEntityAutoConfiguration {
 
-    /// 创建 NextEntityContext Bean。
+    /// 创建 EntityContext Bean。
     ///
     /// 自动检测是否存在 EntityManager 来决定使用 JPA 还是 JDBC 模式。
-    /// 如果用户已定义 NextEntityContext Bean，则跳过此配置。
+    /// 如果用户已定义 EntityContext Bean，则跳过此配置。
     ///
     /// @param jdbcTemplate           Spring JDBC 模板（必需）
     /// @param entityManagerProvider  JPA 实体管理器提供者（可选）
     /// @param properties             NextEntity 配置属性
-    /// @return NextEntityContext 实例
+    /// @return EntityContext 实例
     @Bean
     @ConditionalOnMissingBean
-    public NextEntityContext nextEntityContext(JdbcTemplate jdbcTemplate,
-                                               ObjectProvider<EntityManager> entityManagerProvider,
-                                               NextEntityProperties properties) {
+    public EntityContext entityContext(JdbcTemplate jdbcTemplate,
+                                       ObjectProvider<EntityManager> entityManagerProvider,
+                                       NextEntityProperties properties) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
 
         if (entityManager != null) {
-            return DefaultNextEntityContext.jpa(entityManager, jdbcTemplate, dialect, properties);
+            return EntityContextBuilder.jpa(entityManager, jdbcTemplate, dialect, properties);
         }
-        return DefaultNextEntityContext.jdbc(jdbcTemplate, dialect, properties);
+        return EntityContextBuilder.jdbc(jdbcTemplate, dialect, properties);
     }
 
     /// 解析 SQL 方言。

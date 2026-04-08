@@ -2,7 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
-import io.github.nextentity.core.EntityContext;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
@@ -63,14 +63,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param context 实体上下文
+    /// @param descriptor 实体上下文
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        EntityType entity = context.entityType();
+        EntityType entity = descriptor.entityType();
         EntityAttribute version = entity.version();
         List<InsertSqlStatement> statements = sqlBuilder.buildInsertStatement(entities, entity);
         execute(connection -> {
@@ -93,14 +93,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param context 实体上下文
+    /// @param descriptor 实体上下文
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        EntityType entityType = context.entityType();
+        EntityType entityType = descriptor.entityType();
         BatchSqlStatement sql = sqlBuilder.buildUpdateStatement(entities, entityType);
         execute(connection -> {
             sql.debug();
@@ -132,13 +132,13 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param context 实体上下文
+    /// @param descriptor 实体上下文
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityContext<T> context) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         if (!entities.iterator().hasNext()) {
             return;
         }
-        BatchSqlStatement sql = sqlBuilder.buildDeleteStatement(entities, context.entityType());
+        BatchSqlStatement sql = sqlBuilder.buildDeleteStatement(entities, descriptor.entityType());
         execute(connection -> {
             sql.debug();
             //noinspection SqlSourceToSinkFlow
@@ -186,22 +186,22 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 创建条件更新构建器
     ///
-    /// @param context 实体上下文
+    /// @param descriptor 实体上下文
     /// @param <T>        实体类型参数
     /// @return 条件更新构建器实例
     @Override
-    public <T> UpdateSetStep<T> update(@NonNull EntityContext<T> context) {
-        return new JdbcUpdateWhereStep<>(context, connectionProvider, sqlBuilder);
+    public <T> UpdateSetStep<T> update(@NonNull EntityDescriptor<T> descriptor) {
+        return new JdbcUpdateWhereStep<>(descriptor, connectionProvider, sqlBuilder);
     }
 
     /// 创建条件删除构建器
     ///
-    /// @param context 实体上下文
+    /// @param descriptor 实体上下文
     /// @param <T>        实体类型参数
     /// @return 条件删除构建器实例
     @Override
-    public <T> DeleteWhereStep<T> delete(@NonNull EntityContext<T> context) {
-        return new JdbcDeleteWhereStep<>(context, connectionProvider, sqlBuilder);
+    public <T> DeleteWhereStep<T> delete(@NonNull EntityDescriptor<T> descriptor) {
+        return new JdbcDeleteWhereStep<>(descriptor, connectionProvider, sqlBuilder);
     }
 
     /// 设置新版本号
