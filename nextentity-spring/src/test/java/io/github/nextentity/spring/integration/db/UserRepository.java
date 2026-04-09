@@ -3,7 +3,6 @@ package io.github.nextentity.spring.integration.db;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.spring.AbstractRepository;
-import io.github.nextentity.spring.NextEntityContext;
 import io.github.nextentity.spring.integration.entity.User;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
@@ -25,11 +24,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
 
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 NextEntityContext，自动检测实体类型和主键类型，
+    /// 通过构造器注入 EntityContext，自动检测实体类型和主键类型，
     /// 并初始化查询构建器和更新执行器。
     ///
-    /// @param context NextEntity 上下文
-    protected UserRepository(NextEntityContext context) {
+    /// @param context EntityContext 实体上下文
+    protected UserRepository(io.github.nextentity.api.EntityContext context) {
         super(context);
     }
 
@@ -49,11 +48,11 @@ public class UserRepository extends AbstractRepository<User, Integer> {
         super.updateAll(entities);
     }
 
-    public QueryBuilder<User> query() {
+    public EntityQuery<User> query() {
         return super.query();
     }
 
-    public QueryBuilder<User> getQuery() {
+    public EntityQuery<User> getQuery() {
         return super.query();
     }
 
@@ -465,6 +464,10 @@ public class UserRepository extends AbstractRepository<User, Integer> {
             users = list;
         }
         return users;
+    }
+
+    public void clear() {
+        users = null;
     }
 
     @Transactional

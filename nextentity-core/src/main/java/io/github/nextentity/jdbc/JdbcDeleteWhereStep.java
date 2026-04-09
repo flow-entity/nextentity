@@ -2,8 +2,8 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.Expression;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
 import java.sql.PreparedStatement;
@@ -19,11 +19,10 @@ public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements D
 
     private final JdbcUpdateSqlBuilder sqlBuilder;
 
-    public JdbcDeleteWhereStep(Class<T> entityType,
-                               Metamodel metamodel,
+    public JdbcDeleteWhereStep(EntityDescriptor<T> descriptor,
                                ConnectionProvider connectionProvider,
                                JdbcUpdateSqlBuilder sqlBuilder) {
-        super(entityType, metamodel, connectionProvider);
+        super(descriptor, connectionProvider);
         this.sqlBuilder = sqlBuilder;
     }
 
@@ -76,7 +75,7 @@ public class JdbcDeleteWhereStep<T> extends JdbcWhereStepSupport<T> implements D
     @Override
     public int execute() {
         DeleteSqlStatement sql = sqlBuilder.buildConditionalDeleteStatement(
-                getEntityType(), metamodel, whereCondition);
+                getEntityType(), getMetamodel(), whereCondition);
 
         return executeInTransaction(connection -> {
             sql.debug();

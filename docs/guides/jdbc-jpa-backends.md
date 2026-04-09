@@ -235,7 +235,7 @@ public class Employee {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 }
@@ -700,7 +700,7 @@ for (Employee emp : dept.getEmployees()) {
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
 
-    protected LogRepository(NextEntityContext context) {
+    protected LogRepository(EntityContext context) {
         super(context);
     }
     // JDBC 足够
@@ -710,7 +710,7 @@ public class LogRepository extends AbstractRepository<Log, Long> {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
-    protected OrderRepository(NextEntityContext context) {
+    protected OrderRepository(EntityContext context) {
         super(context);
     }
     // 需要懒加载订单项、客户等

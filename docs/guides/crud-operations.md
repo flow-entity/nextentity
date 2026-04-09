@@ -243,7 +243,7 @@ public class EmployeeService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 
@@ -353,7 +353,7 @@ for (Employee e : newEmployees) {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 
@@ -362,7 +362,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         List<Employee> employees = query()
             .where(Employee::getDepartmentId).eq(departmentId)
             .where(Employee::getActive).eq(true)
-            .list();;
+            .list();
 
         employees.forEach(e -> {
             BigDecimal salary = e.getSalary();
@@ -381,7 +381,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 
@@ -417,14 +417,14 @@ public class DepartmentService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 
     public Optional<Employee> findByIdOptional(Long id) {
         Employee emp = query()
             .where(Employee::getId).eq(id)
-            .first();;
+            .first();
         return Optional.ofNullable(emp);
     }
 }

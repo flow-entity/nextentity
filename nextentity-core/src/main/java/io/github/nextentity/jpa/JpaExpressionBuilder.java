@@ -21,7 +21,6 @@ import java.util.Map;
 ///
 /// @author HuangChengwei
 /// @since 2.0.0
-@SuppressWarnings("PatternVariableCanBeUsed")
 public class JpaExpressionBuilder {
 
     protected final Root<?> root;
@@ -33,9 +32,16 @@ public class JpaExpressionBuilder {
     /// 收集字符串字面量参数值，用于在查询执行时设置参数
     protected final List<String> stringParameters = new ArrayList<>();
 
+    protected final JpaConfig config;
+
     public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb) {
+        this(root, cb, JpaConfig.DEFAULT);
+    }
+
+    public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb, JpaConfig config) {
         this.root = root;
         this.cb = cb;
+        this.config = config;
     }
 
     public Expression<?> toExpression(SelectItem selectItem) {
@@ -43,24 +49,21 @@ public class JpaExpressionBuilder {
     }
 
     public Expression<?> toExpression(ExpressionNode expression) {
-        if (expression instanceof LiteralNode) {
-            LiteralNode literal = (LiteralNode) expression;
-            Object value = literal.value();
+        if (expression instanceof LiteralNode(Object value)) {
+            // 应用 stringParameterBinding 配置
             // Use parameter binding for strings to ensure proper Unicode handling
             // especially for SQL Server which requires N prefix for Unicode strings
-            if (value instanceof String s) {
+            if (config.stringParameterBinding() && value instanceof String s) {
                 int paramIndex = stringParameters.size();
                 stringParameters.add(s);
                 return cb.parameter(String.class, "p" + paramIndex);
             }
             return cb.literal(value);
         }
-        if (expression instanceof PathNode) {
-            PathNode path = (PathNode) expression;
+        if (expression instanceof PathNode path) {
             return getPath(path);
         }
-        if (expression instanceof OperatorNode) {
-            OperatorNode operation = (OperatorNode) expression;
+        if (expression instanceof OperatorNode operation) {
             Operator operator = operation.operator();
             ExpressionNode e1 = operation.secondOperand();
             ExpressionNode e2 = operation.thirdOperand();
@@ -227,7 +230,7 @@ public class JpaExpressionBuilder {
     }
 
     private Join<?, ?> join(PathNode column) {
-        return (Join<?, ?>) fetched.compute(column, (k, v) -> {
+        return (Join<?, ?>) fetched.compute(column, (_, v) -> {
             if (v instanceof Join<?, ?>) {
                 return v;
             } else {

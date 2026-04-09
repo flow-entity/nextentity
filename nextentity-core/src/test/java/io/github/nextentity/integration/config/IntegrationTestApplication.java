@@ -44,7 +44,7 @@ public class IntegrationTestApplication {
         Metamodel metamodel = JpaMetamodel.of();
         SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
         JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
-        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(sqlBuilder, connectionProvider, metamodel);
+        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(sqlBuilder, connectionProvider);
         return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jdbc");
     }
 

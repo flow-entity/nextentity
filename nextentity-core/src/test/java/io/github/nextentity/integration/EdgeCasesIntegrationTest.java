@@ -123,7 +123,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> found = context.queryEmployees()
@@ -135,7 +135,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getFirst().getEmail()).isNull();
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -155,7 +155,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> found = context.queryEmployees()
@@ -167,7 +167,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).anyMatch(e -> e.getId() == 9002L);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -295,7 +295,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> found = context.queryEmployees()
@@ -307,7 +307,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getFirst().getName()).isEqualTo("O'Brien-Smith");
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -327,7 +327,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> found = context.queryEmployees()
@@ -339,7 +339,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getFirst().getName()).isEqualTo("张三");
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -360,7 +360,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         Employee found = context.queryEmployees()
@@ -371,7 +371,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getName()).isEqualTo(longName);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -393,10 +393,10 @@ public class EdgeCasesIntegrationTest {
 
         // When/Then - should handle without overflow
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().insert(maxEmployee, Employee.class));
+                context.getUpdateExecutor().insert(maxEmployee, context.getEntityContext(Employee.class)));
 
         // Cleanup
-        context.getUpdateExecutor().delete(maxEmployee, Employee.class);
+        context.getUpdateExecutor().delete(maxEmployee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -416,7 +416,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> found = context.queryEmployees()
@@ -427,7 +427,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).anyMatch(e -> e.getId() == 9007L);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -447,7 +447,7 @@ public class EdgeCasesIntegrationTest {
         employee.setDepartmentId(1L);
         employee.setHireDate(LocalDate.now());
 
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         List<Employee> found = context.queryEmployees()
@@ -458,7 +458,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).anyMatch(e -> e.getId() == 9008L);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -511,7 +511,7 @@ public class EdgeCasesIntegrationTest {
     void shouldHandleBatchInsertEmptyList(IntegrationTestContext context) {
         // When/Then
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().insertAll(new ArrayList<>(), Employee.class));
+                context.getUpdateExecutor().insertAll(new ArrayList<>(), context.getEntityContext(Employee.class)));
     }
 
 ///
@@ -533,7 +533,7 @@ public class EdgeCasesIntegrationTest {
 
         // When/Then
         assertThatThrownBy(() ->
-                context.getUpdateExecutor().insert(duplicate, Employee.class))
+                context.getUpdateExecutor().insert(duplicate, context.getEntityContext(Employee.class)))
                 .isInstanceOf(RuntimeException.class);
     }
 
@@ -551,7 +551,7 @@ public class EdgeCasesIntegrationTest {
         dept.setBudget(null); // Null budget
         dept.setActive(true);
 
-        context.getUpdateExecutor().insert(dept, Department.class);
+        context.getUpdateExecutor().insert(dept, context.getEntityContext(Department.class));
 
         // When
         Department found = context.queryDepartments()
@@ -563,7 +563,7 @@ public class EdgeCasesIntegrationTest {
         assertThat(found.getBudget()).isNull();
 
         // Cleanup
-        context.getUpdateExecutor().delete(dept, Department.class);
+        context.getUpdateExecutor().delete(dept, context.getEntityContext(Department.class));
     }
 }
 

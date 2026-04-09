@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 ///
  /// Integration tests for QueryBuilder.
-class QueryBuilderIntegrationTest {
+class EntityQueryIntegrationTest {
 
     // Test data constants - Employees
     private static final int TOTAL_TEST_EMPLOYEES = 12;

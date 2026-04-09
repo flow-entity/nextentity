@@ -6,6 +6,7 @@ open module nextentity.spring {
     requires spring.tx;
     requires spring.context;
     requires spring.boot.autoconfigure;
+    requires spring.boot;
     requires nextentity.core;
     requires jakarta.persistence;
     requires java.naming;

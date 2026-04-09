@@ -50,7 +50,7 @@ public class BatchOperationsIntegrationTest {
         List<Employee> employees = createTestEmployees(1000, BATCH_SIZE);
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> inserted = context.queryEmployees()
@@ -70,7 +70,7 @@ public class BatchOperationsIntegrationTest {
         List<Employee> employees = createTestEmployees(2000, 200);
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         long count = context.queryEmployees()
@@ -87,7 +87,7 @@ public class BatchOperationsIntegrationTest {
     void shouldUpdateBatch(IntegrationTestContext context) {
         // Given - Insert test employees
         List<Employee> employees = createTestEmployees(3000, 20);
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Modify all employees
         for (Employee emp : employees) {
@@ -95,7 +95,7 @@ public class BatchOperationsIntegrationTest {
         }
 
         // When
-        context.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> updated = context.queryEmployees()
@@ -112,7 +112,7 @@ public class BatchOperationsIntegrationTest {
     void shouldDeleteBatch(IntegrationTestContext context) {
         // Given - Insert test employees
         List<Employee> employees = createTestEmployees(4000, 15);
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Verify inserted
         long countBefore = context.queryEmployees()
@@ -121,7 +121,7 @@ public class BatchOperationsIntegrationTest {
         assertThat(countBefore).isEqualTo(15);
 
         // When
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         long countAfter = context.queryEmployees()
@@ -141,7 +141,7 @@ public class BatchOperationsIntegrationTest {
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().insertAll(emptyList, Employee.class));
+                context.getUpdateExecutor().insertAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
 ///
@@ -155,7 +155,7 @@ public class BatchOperationsIntegrationTest {
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().updateAll(emptyList, Employee.class));
+                context.getUpdateExecutor().updateAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
 ///
@@ -169,7 +169,7 @@ public class BatchOperationsIntegrationTest {
 
         // When/Then - should not throw exception
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().deleteAll(emptyList, Employee.class));
+                context.getUpdateExecutor().deleteAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
 ///
@@ -183,7 +183,7 @@ public class BatchOperationsIntegrationTest {
         singleList.add(createTestEmployee(5000L, "Single Employee"));
 
         // When
-        context.getUpdateExecutor().insertAll(singleList, Employee.class);
+        context.getUpdateExecutor().insertAll(singleList, context.getEntityContext(Employee.class));
 
         // Then
         Employee inserted = context.queryEmployees()
@@ -206,7 +206,7 @@ public class BatchOperationsIntegrationTest {
         employees.add(createTestEmployee(6002L, "Employee C"));
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> inserted = context.queryEmployees()
@@ -224,7 +224,7 @@ public class BatchOperationsIntegrationTest {
     void shouldUpdateBatchPartialFields(IntegrationTestContext context) {
         // Given - Insert test employees
         List<Employee> employees = createTestEmployees(7000, 10);
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Modify only status
         for (Employee emp : employees) {
@@ -232,7 +232,7 @@ public class BatchOperationsIntegrationTest {
         }
 
         // When
-        context.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         List<Employee> updated = context.queryEmployees()
@@ -253,7 +253,7 @@ public class BatchOperationsIntegrationTest {
 
         // When
         long startInsert = System.currentTimeMillis();
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
         long insertTime = System.currentTimeMillis() - startInsert;
 
         // Then
@@ -276,7 +276,7 @@ public class BatchOperationsIntegrationTest {
         List<Employee> employees = createTestEmployees(9000, 25);
 
         // When - Insert
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then - Verify insert
         long countAfterInsert = context.queryEmployees()
@@ -285,7 +285,7 @@ public class BatchOperationsIntegrationTest {
         assertThat(countAfterInsert).isEqualTo(25);
 
         // When - Delete
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
 
         // Then - Verify delete
         long countAfterDelete = context.queryEmployees()
@@ -305,7 +305,7 @@ public class BatchOperationsIntegrationTest {
         List<Employee> employees = createTestEmployees(10000, 10);
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then
         long newCount = context.queryEmployees().count();

@@ -1,6 +1,6 @@
 package io.github.nextentity.spring.integration.db;
 
-import io.github.nextentity.spring.DefaultNextEntityContext;
+import io.github.nextentity.spring.EntityContextBuilder;
 import jakarta.persistence.EntityManager;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.persistence.autoconfigure.EntityScan;
@@ -17,14 +17,14 @@ public class SpringIntegrationTestApplication {
 
     @Bean(name = "jdbcUserRepository")
     public UserRepository jdbcUserRepository(JdbcTemplate jdbcTemplate, DatabaseEnvironment env) {
-        UserRepository repository = new UserRepository(DefaultNextEntityContext.jdbc(jdbcTemplate));
+        UserRepository repository = new UserRepository(EntityContextBuilder.jdbc(jdbcTemplate));
         repository.setName(env.get().getName() + "-jdbc");
         return repository;
     }
 
     @Bean("jpaUserRepository")
     public UserRepository jpaUserRepository(JdbcTemplate jdbcTemplate, EntityManager entityManager, DatabaseEnvironment env) {
-        UserRepository repository = new UserRepository(DefaultNextEntityContext.jpa(entityManager, jdbcTemplate));
+        UserRepository repository = new UserRepository(EntityContextBuilder.jpa(entityManager, jdbcTemplate));
         repository.setName(env.get().getName() + "-jpa");
         return repository;
     }

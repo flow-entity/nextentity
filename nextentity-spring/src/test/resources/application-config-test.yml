@@ -1,0 +1,32 @@
+# 配置测试专用配置文件
+# 不依赖数据库，仅测试配置属性加载
+
+spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
+      - org.springframework.boot.autoconfigure.jdbc.JdbcTemplateAutoConfiguration
+
+# NextEntity 配置测试
+nextentity:
+  enabled: true
+  jdbc:
+    dialect: io.github.nextentity.jdbc.MySqlDialect
+    query:
+      timeout: 30
+      fetch-size: 100
+      inline-numeric-literals: true
+    batch:
+      enabled: true
+      size: 100
+    insert:
+      return-generated-keys: true
+  jpa:
+    string-parameter-binding: true
+    native-subqueries: true
+  logging:
+    sql:
+      enabled: true
+      parameters: true
+      logger-name: io.github.nextentity.sql

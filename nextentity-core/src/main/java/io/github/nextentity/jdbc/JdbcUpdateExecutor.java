@@ -2,14 +2,15 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.UpdateExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.Iterators;
 import io.github.nextentity.jdbc.ConnectionProvider.ConnectionCallback;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -34,31 +35,42 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(JdbcUpdateExecutor.class);
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
-    private final Metamodel metamodel;
+    private final JdbcConfig config;
+
+    /// 构造JDBC更新执行器（使用默认配置）
+    ///
+    /// @param sqlBuilder         更新SQL构建器，用于生成更新相关的SQL语句
+    /// @param connectionProvider 连接提供者，用于获取数据库连接
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
+                              ConnectionProvider connectionProvider) {
+        this(sqlBuilder, connectionProvider, JdbcConfig.DEFAULT);
+    }
 
     /// 构造JDBC更新执行器
     ///
     /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param metamodel 元模型，用于提供实体元数据信息
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder, ConnectionProvider connectionProvider, Metamodel metamodel) {
+    /// @param config JDBC配置
+    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
+                              ConnectionProvider connectionProvider,
+                              JdbcConfig config) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
-        this.metamodel = metamodel;
+        this.config = config;
     }
 
     /// 插入所有实体
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param entityClass 实体类类型
+    /// @param descriptor 实体上下文
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        EntityType entity = metamodel.getEntity(entityClass);
+        EntityType entity = descriptor.entityType();
         EntityAttribute version = entity.version();
         List<InsertSqlStatement> statements = sqlBuilder.buildInsertStatement(entities, entity);
         execute(connection -> {
@@ -81,15 +93,14 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param entityClass 实体类类型
+    /// @param descriptor 实体上下文
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityClass) {
-        var excludeNull = false;
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
         }
-        EntityType entityType = metamodel.getEntity(entityClass);
+        EntityType entityType = descriptor.entityType();
         BatchSqlStatement sql = sqlBuilder.buildUpdateStatement(entities, entityType);
         execute(connection -> {
             sql.debug();
@@ -121,13 +132,13 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 实体集合
-    /// @param entityType 实体类类型
+    /// @param descriptor 实体上下文
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
         if (!entities.iterator().hasNext()) {
             return;
         }
-        BatchSqlStatement sql = sqlBuilder.buildDeleteStatement(entities, metamodel.getEntity(entityType));
+        BatchSqlStatement sql = sqlBuilder.buildDeleteStatement(entities, descriptor.entityType());
         execute(connection -> {
             sql.debug();
             //noinspection SqlSourceToSinkFlow
@@ -175,22 +186,22 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 创建条件更新构建器
     ///
-    /// @param entityType 实体类型
+    /// @param descriptor 实体上下文
     /// @param <T>        实体类型参数
     /// @return 条件更新构建器实例
     @Override
-    public <T> UpdateSetStep<T> update(@NonNull Class<T> entityType) {
-        return new JdbcUpdateWhereStep<>(entityType, metamodel, connectionProvider, sqlBuilder);
+    public <T> UpdateSetStep<T> update(@NonNull EntityDescriptor<T> descriptor) {
+        return new JdbcUpdateWhereStep<>(descriptor, connectionProvider, sqlBuilder);
     }
 
     /// 创建条件删除构建器
     ///
-    /// @param entityType 实体类型
+    /// @param descriptor 实体上下文
     /// @param <T>        实体类型参数
     /// @return 条件删除构建器实例
     @Override
-    public <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType) {
-        return new JdbcDeleteWhereStep<>(entityType, metamodel, connectionProvider, sqlBuilder);
+    public <T> DeleteWhereStep<T> delete(@NonNull EntityDescriptor<T> descriptor) {
+        return new JdbcDeleteWhereStep<>(descriptor, connectionProvider, sqlBuilder);
     }
 
     /// 设置新版本号
@@ -218,24 +229,85 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @throws SQLException SQL异常
     protected void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
         insertStatement.debug();
-        boolean generateKey = insertStatement.returnGeneratedKeys();
+        // 应用返回生成键配置
+        boolean generateKey = config.returnGeneratedKeys() && insertStatement.returnGeneratedKeys();
         //noinspection SqlSourceToSinkFlow
         try (PreparedStatement statement = generateKey
                 ? connection.prepareStatement(insertStatement.sql(), Statement.RETURN_GENERATED_KEYS)
                 : connection.prepareStatement(insertStatement.sql())) {
-            executeUpdate(statement, insertStatement.parameters());
+
             if (generateKey) {
-                try (ResultSet keys = statement.getGeneratedKeys()) {
-                    Iterator<?> iterator = insertStatement.entities().iterator();
-                    while (keys.next()) {
-                        Object entity = iterator.next();
-                        EntityAttribute idField = entityType.id();
-                        Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
-                        idField.set(entity, key);
-                    }
-                } catch (Exception e) {
-                    log.warn("", e);
+                if (insertStatement.batchInsert()) {
+                    // 批量执行插入并获取生成键
+                    executeBatchInsertWithGeneratedKeys(statement, insertStatement, entityType);
+                } else {
+                    // 逐条执行插入并获取生成键
+                    executeInsertWithGeneratedKeys(statement, insertStatement, entityType);
                 }
+            } else {
+                // 不需要生成键时，使用批量执行提高效率
+                executeUpdate(statement, insertStatement.parameters());
+            }
+        }
+    }
+
+    /// 执行批量插入并获取生成键（适用于支持批量 getGeneratedKeys 的数据库）
+    ///
+    /// @param statement       预编译语句
+    /// @param insertStatement 插入SQL语句
+    /// @param entityType      实体类型
+    /// @throws SQLException SQL异常
+    protected void executeBatchInsertWithGeneratedKeys(PreparedStatement statement,
+                                                       InsertSqlStatement insertStatement,
+                                                       EntitySchema entityType) throws SQLException {
+        // 添加到批处理
+        for (Iterable<?> params : insertStatement.parameters()) {
+            setParameters(statement, params);
+            statement.addBatch();
+        }
+
+        // 执行批处理
+        statement.executeBatch();
+
+        // 获取生成的键
+        Iterator<?> entityIterator = insertStatement.entities().iterator();
+        EntityAttribute idField = entityType.id();
+
+        try (ResultSet keys = statement.getGeneratedKeys()) {
+            while (keys.next() && entityIterator.hasNext()) {
+                Object entity = entityIterator.next();
+                Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
+                idField.set(entity, key);
+            }
+        } catch (Exception e) {
+            log.warn("Failed to get generated keys from batch insert", e);
+        }
+    }
+
+    /// 执行插入并获取生成键（逐条执行，适用于不支持批量 getGeneratedKeys 的数据库）
+    ///
+    /// @param statement       预编译语句
+    /// @param insertStatement 插入SQL语句
+    /// @param entityType      实体类型
+    /// @throws SQLException SQL异常
+    protected void executeInsertWithGeneratedKeys(PreparedStatement statement,
+                                                  InsertSqlStatement insertStatement,
+                                                  EntitySchema entityType) throws SQLException {
+        Iterator<?> entityIterator = insertStatement.entities().iterator();
+        EntityAttribute idField = entityType.id();
+
+        for (Iterable<?> params : insertStatement.parameters()) {
+            setParameters(statement, params);
+            statement.executeUpdate();
+
+            try (ResultSet keys = statement.getGeneratedKeys()) {
+                if (keys.next() && entityIterator.hasNext()) {
+                    Object entity = entityIterator.next();
+                    Object key = JdbcUtil.getValue(keys, 1, idField.valueConvertor());
+                    idField.set(entity, key);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to get generated key", e);
             }
         }
     }
@@ -248,20 +320,54 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @throws SQLException SQL异常
     protected int[] executeUpdate(PreparedStatement statement, Iterable<? extends Iterable<?>> parameters) throws SQLException {
         Iterator<? extends Iterable<?>> iterator = parameters.iterator();
-        if (iterator.hasNext()) {
-            setParameters(statement, iterator.next());
+
+        // 检查是否有参数
+        if (!iterator.hasNext()) {
+            return new int[0];
         }
-        boolean batch = iterator.hasNext();
+
+        // 应用批处理配置
+        boolean useBatch = config.batchEnabled();
+        int batchSize = config.batchSize();
+
+        int size = Iterators.size(parameters);
+        if (!useBatch) {
+            // 不使用批处理，逐条执行
+            int[] results = new int[size];
+            int i = 0;
+            while (iterator.hasNext()) {
+                setParameters(statement, iterator.next());
+                results[i++] = statement.executeUpdate();
+            }
+            return results;
+        }
+
+        // 使用批处理
+        int batchCount = 0;
+        int[] results = new int[0];
+
         while (iterator.hasNext()) {
-            statement.addBatch();
             setParameters(statement, iterator.next());
-        }
-        if (batch) {
             statement.addBatch();
-            return statement.executeBatch();
-        } else {
-            return new int[]{statement.executeUpdate()};
+            batchCount++;
+
+            // 达到批处理大小时执行
+            if (batchCount >= batchSize || !iterator.hasNext()) {
+                int[] batchResults = statement.executeBatch();
+                results = mergeResults(results, batchResults);
+                batchCount = 0;
+            }
         }
+
+        return results;
+    }
+
+    /// 合并批处理结果
+    private int[] mergeResults(int[] a, int[] b) {
+        int[] result = new int[a.length + b.length];
+        System.arraycopy(a, 0, result, 0, a.length);
+        System.arraycopy(b, 0, result, a.length, b.length);
+        return result;
     }
 
     /// 设置参数

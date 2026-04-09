@@ -174,7 +174,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         context.getUpdateExecutor().doInTransaction(() -> {
             // Given
             LockableEntity testEntity = new LockableEntity(5001L, "Lock Update Test", "Test Description");
-            context.getUpdateExecutor().insert(testEntity, LockableEntity.class);
+            context.getUpdateExecutor().insert(testEntity, context.getEntityContext(LockableEntity.class));
 
             // When - Lock and update
             LockableEntity locked = context.queryLockableEntities()
@@ -183,7 +183,7 @@ public class JpaSpecificFeaturesIntegrationTest {
                     .get(0);
 
             locked.setName("Updated After Lock");
-            context.getUpdateExecutor().update(locked, LockableEntity.class);
+            context.getUpdateExecutor().update(locked, context.getEntityContext(LockableEntity.class));
 
             // Then
             LockableEntity updated = context.queryLockableEntities()
@@ -192,7 +192,7 @@ public class JpaSpecificFeaturesIntegrationTest {
             assertThat(updated.getName()).isEqualTo("Updated After Lock");
 
             // Cleanup
-            context.getUpdateExecutor().delete(testEntity, LockableEntity.class);
+            context.getUpdateExecutor().delete(testEntity, context.getEntityContext(LockableEntity.class));
         });
     }
 
@@ -266,14 +266,14 @@ public class JpaSpecificFeaturesIntegrationTest {
     void shouldManageJpaEntityState(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(5002L, "State Test");
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When - Query and modify
         Employee found = context.queryEmployees()
                 .where(Employee::getId).eq(5002L)
                 .single();
         found.setName("Modified State");
-        context.getUpdateExecutor().update(found, Employee.class);
+        context.getUpdateExecutor().update(found, context.getEntityContext(Employee.class));
 
         // Then
         Employee verified = context.queryEmployees()
@@ -282,7 +282,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(verified.getName()).isEqualTo("Modified State");
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -295,7 +295,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         Employee employee = createTestEmployee(5003L, "Transaction Scope Test");
 
         // When - Insert in one transaction
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Then - Should be visible in new transaction
         Employee found = context.queryEmployees()
@@ -304,7 +304,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found).isNotNull();
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -336,7 +336,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // Given
         Employee employee = createTestEmployee(5004L, "Null Test");
         employee.setEmail(null);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         Employee found = context.queryEmployees()
@@ -347,7 +347,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found.getEmail()).isNull();
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -359,7 +359,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         // Given
         Employee employee = createTestEmployee(5005L, "Enum Test");
         employee.setStatus(EmployeeStatus.INACTIVE);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         Employee found = context.queryEmployees()
@@ -372,7 +372,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -385,7 +385,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         LocalDate hireDate = LocalDate.of(2024, 6, 15);
         Employee employee = createTestEmployee(5006L, "Date Test");
         employee.setHireDate(hireDate);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         Employee found = context.queryEmployees()
@@ -396,7 +396,7 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(found.getHireDate()).isEqualTo(hireDate);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
     @AfterEach

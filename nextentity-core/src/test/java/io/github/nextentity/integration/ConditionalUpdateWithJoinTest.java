@@ -50,7 +50,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When - Update employees in Engineering department
         int updated = context.getUpdateExecutor()
-                .update(Employee.class)
+                .update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, newSalary)
                 .where(Employee::getDepartment).get(Department::getName).eq(departmentName)
                 .execute();
@@ -82,7 +82,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When - Update employees in Building A location
         int updated = context.getUpdateExecutor()
-                .update(Employee.class)
+                .update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, newSalary)
                 .where(Employee::getDepartment).get(Department::getLocation).eq(location)
                 .execute();
@@ -116,7 +116,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When - Update active employees in Engineering department
         int updated = context.getUpdateExecutor()
-                .update(Employee.class)
+                .update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, newSalary)
                 .where(Employee::getDepartment).get(Department::getName).eq(departmentName)
                 .where(Employee::getActive).eq(activeStatus)
@@ -150,7 +150,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When
         int updated = context.getUpdateExecutor()
-                .update(Employee.class)
+                .update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, newSalary)
                 .where(Employee::getDepartment).get(Department::getName).in(departmentNames)
                 .execute();
@@ -185,7 +185,7 @@ public class ConditionalUpdateWithJoinTest {
             emp.setSalary(50000.0);
             emp.setActive(true);
             emp.setDepartmentId(engineeringDept.getId());
-            context.getUpdateExecutor().insert(emp, Employee.class);
+            context.getUpdateExecutor().insert(emp, context.getEntityContext(Employee.class));
         }
 
         // Count after insert
@@ -197,7 +197,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When - Delete temporary employees by department name
         int deleted = context.getUpdateExecutor()
-                .delete(Employee.class)
+                .delete(context.getEntityContext(Employee.class))
                 .where(Employee::getDepartment).get(Department::getName).eq("Engineering")
                 .where(Employee::getName).like("Temp Employee%")
                 .execute();
@@ -222,7 +222,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When - Update with non-existent department
         int updated = context.getUpdateExecutor()
-                .update(Employee.class)
+                .update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 200000.0)
                 .where(Employee::getDepartment).get(Department::getName).eq(nonExistentDept)
                 .execute();
@@ -240,7 +240,7 @@ public class ConditionalUpdateWithJoinTest {
 
         // When - Delete with non-existent department
         int deleted = context.getUpdateExecutor()
-                .delete(Employee.class)
+                .delete(context.getEntityContext(Employee.class))
                 .where(Employee::getDepartment).get(Department::getName).eq(nonExistentDept)
                 .execute();
 

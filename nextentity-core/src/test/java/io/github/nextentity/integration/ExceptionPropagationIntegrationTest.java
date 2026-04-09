@@ -45,7 +45,7 @@ public class ExceptionPropagationIntegrationTest {
         duplicate.setHireDate(LocalDate.now());
 
         // When/Then - should throw exception
-        assertThatThrownBy(() -> context.getUpdateExecutor().insert(duplicate, Employee.class))
+        assertThatThrownBy(() -> context.getUpdateExecutor().insert(duplicate, context.getEntityContext(Employee.class)))
                 .isInstanceOf(RuntimeException.class);
     }
 

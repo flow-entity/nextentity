@@ -31,16 +31,23 @@ public class JpaQueryExecutor implements QueryExecutor {
     private final EntityManager entityManager;
     private final Metamodel metamodel;
     private final QueryExecutor nativeQueryExecutor;
+    private final JpaConfig config;
 
     public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor) {
+        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT);
+    }
+
+    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor, JpaConfig config) {
         this.entityManager = entityManager;
         this.metamodel = metamodel;
         this.nativeQueryExecutor = nativeQueryExecutor;
+        this.config = config;
     }
 
     @Override
     public <T> List<T> getList(@NonNull QueryStructure queryStructure) {
-        if (requiredNativeQuery(queryStructure)) {
+        // 应用 nativeSubqueries 配置
+        if (config.nativeSubqueries() && requiredNativeQuery(queryStructure)) {
             return nativeQueryExecutor.getList(queryStructure);
         }
         Selected selected = queryStructure.select();
@@ -114,7 +121,7 @@ public class JpaQueryExecutor implements QueryExecutor {
     private <T> List<?> getResultList(@NonNull QueryStructure structure, CriteriaBuilder cb, Class<T> type) {
         CriteriaQuery<T> query = cb.createQuery(type);
         Root<T> root = query.from(type);
-        return new EntityBuilder<>(root, cb, query, structure).getResultList();
+        return new EntityBuilder<>(root, cb, query, structure, config).getResultList();
     }
 
     private List<Object[]> getObjectsList(@NonNull QueryStructure structure, ImmutableArray<SelectItem> columns) {
@@ -122,7 +129,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         FromEntity from = (FromEntity) structure.from();
         Root<?> root = query.from(from.type());
-        return new ObjectArrayBuilder(root, cb, query, structure, columns).getResultList();
+        return new ObjectArrayBuilder(root, cb, query, structure, columns, config).getResultList();
     }
 
     class ObjectArrayBuilder extends Builder<Object[]> {
@@ -133,8 +140,9 @@ public class JpaQueryExecutor implements QueryExecutor {
                                   CriteriaBuilder cb,
                                   CriteriaQuery<Object[]> query,
                                   QueryStructure structure,
-                                  ImmutableArray<SelectItem> selects) {
-            super(root, cb, query, structure);
+                                  ImmutableArray<SelectItem> selects,
+                                  JpaConfig config) {
+            super(root, cb, query, structure, config);
             this.selects = selects;
         }
 
@@ -166,8 +174,8 @@ public class JpaQueryExecutor implements QueryExecutor {
     }
 
     class EntityBuilder<T> extends Builder<T> {
-        public EntityBuilder(Root<T> root, CriteriaBuilder cb, CriteriaQuery<T> query, QueryStructure structure) {
-            super(root, cb, query, structure);
+        public EntityBuilder(Root<T> root, CriteriaBuilder cb, CriteriaQuery<T> query, QueryStructure structure, JpaConfig config) {
+            super(root, cb, query, structure, config);
         }
 
         @Override
@@ -181,8 +189,8 @@ public class JpaQueryExecutor implements QueryExecutor {
         protected final QueryStructure structure;
         protected final CriteriaQuery<T> query;
 
-        public Builder(Root<?> root, CriteriaBuilder cb, CriteriaQuery<T> query, QueryStructure structure) {
-            super(root, cb);
+        public Builder(Root<?> root, CriteriaBuilder cb, CriteriaQuery<T> query, QueryStructure structure, JpaConfig config) {
+            super(root, cb, config);
             this.structure = structure;
             this.query = query;
         }

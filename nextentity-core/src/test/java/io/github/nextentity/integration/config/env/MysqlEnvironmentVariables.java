@@ -30,6 +30,7 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
     @Override
     public List<String> ddl() {
         return List.of(
+                "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
                 "DROP TABLE IF EXISTS lockable_entity",
@@ -62,6 +63,16 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
                             name VARCHAR(100) NOT NULL,
                             description VARCHAR(255),
                             version BIGINT,
+                            created_at TIMESTAMP
+                        )
+                        """,
+                """
+                        CREATE TABLE auto_increment_entity (
+                            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                            name VARCHAR(100) NOT NULL,
+                            description VARCHAR(255),
+                            priority INT,
+                            active BOOLEAN,
                             created_at TIMESTAMP
                         )
                         """

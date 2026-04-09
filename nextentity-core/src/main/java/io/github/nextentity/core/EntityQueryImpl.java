@@ -4,7 +4,6 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableList;
 import org.slf4j.Logger;
@@ -20,16 +19,17 @@ import java.util.stream.Collectors;
 /// @param <T> 实体类型
 /// @author HuangChengwei
 /// @since 1.0.0
-public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuilder<T>, FetchStep<T> {
+public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T>, FetchStep<T> {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(DefaultQueryBuilder.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(EntityQueryImpl.class);
 
-    public DefaultQueryBuilder(Metamodel metamodel, QueryExecutor executor, Class<T> entityType) {
-        this(QueryStructure.of(entityType), metamodel, executor);
+    public EntityQueryImpl(QueryDescriptor<T> context) {
+        this(QueryStructure.of(context.entityClass()), context);
     }
 
-    protected DefaultQueryBuilder(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor executor) {
-        super(queryStructure, metamodel, executor);
+    protected EntityQueryImpl(QueryStructure queryStructure,
+                              QueryDescriptor<T> context) {
+        super(queryStructure, context);
     }
 
     public WhereStep<T, T> fetch(Collection<? extends PathRef<T, ?>> expressions) {
@@ -39,7 +39,7 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
         SelectEntity select = (SelectEntity) queryStructure.select();
         ImmutableList.Builder<PathNode> builder = new ImmutableList.Builder<>(select.fetch().size() + expressions.size());
         builder.addAll(select.fetch().asList());
-        EntityType entityType = metamodel.getEntity(fromType());
+        EntityType entityType = descriptor.metamodel().getEntity(fromType());
         for (PathRef<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
             Attribute attribute = entityPath.getAttribute(entityType);
@@ -316,7 +316,7 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
         return updateSelected(select);
     }
 
-    private <X, Y> WhereImpl<X, Y> updateSelected(Selected select) {
+    private <Y> WhereImpl<T, Y> updateSelected(Selected select) {
         QueryStructure structure = new QueryStructure(
                 select,
                 queryStructure.from(),
@@ -332,14 +332,7 @@ public class DefaultQueryBuilder<T> extends WhereImpl<T, T> implements QueryBuil
     }
 
     private Class<?> fromType() {
-        From from = queryStructure.from();
-        if (from instanceof FromEntity(Class<?> type)) {
-            return type;
-        } else {
-            throw new UnsupportedOperationException(
-                    "Unsupported From type: " + from.getClass().getName() +
-                    ". Only FromEntity is supported for this operation.");
-        }
+        return descriptor.entityClass();
     }
 
 }

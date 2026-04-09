@@ -1,6 +1,7 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.DeleteWhereStep;
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jspecify.annotations.NonNull;
@@ -22,15 +23,15 @@ public interface UpdateExecutor {
     ///
     /// 插入单个实体到数据库中。
     ///
-    /// 这是一个便利方法，封装了 `insertAll(Iterable, Class)`。
+    /// 这是一个便利方法，封装了 `insertAll(Iterable, EntityContext)`。
     ///
     /// @param <T> 实体类型
     /// @param entity 要插入的实体
-    /// @param entityType 实体类
-    /// @throws NullPointerException 如果 entity 或 entityType 为 null
+    /// @param descriptor 实体上下文
+    /// @throws NullPointerException 如果 entity 或 descriptor 为 null
     ///
-    default <T> void insert(@NonNull T entity, @NonNull Class<T> entityType) {
-        insertAll(ImmutableList.of(entity), entityType);
+    default <T> void insert(@NonNull T entity, @NonNull EntityDescriptor<T> descriptor) {
+        insertAll(ImmutableList.of(entity), descriptor);
     }
 
     ///
@@ -41,10 +42,10 @@ public interface UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 要插入的实体
-    /// @param entityType 实体类
-    /// @throws NullPointerException 如果 entities 或 entityType 为 null
+    /// @param descriptor 实体上下文
+    /// @throws NullPointerException 如果 entities 或 descriptor 为 null
     ///
-    <T> void insertAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
+    <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor);
 
     ///
     /// 更新数据库中的多个实体并返回更新后的实例。
@@ -54,23 +55,23 @@ public interface UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 要更新的实体
-    /// @param entityType 实体类
-    /// @throws NullPointerException 如果 entities 或 entityType 为 null
+    /// @param descriptor 实体上下文
+    /// @throws NullPointerException 如果 entities 或 descriptor 为 null
     ///
-    <T> void updateAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
+    <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor);
 
     ///
     /// 更新数据库中的单个实体。
     ///
-    /// 这是一个便利方法，封装了 `updateAll(Iterable, Class)`。
+    /// 这是一个便利方法，封装了 `updateAll(Iterable, EntityContext)`。
     ///
     /// @param <T> 实体类型
     /// @param entity 要更新的实体
-    /// @param entityType 实体类
-    /// @throws NullPointerException 如果 entity 或 entityType 为 null
+    /// @param descriptor 实体上下文
+    /// @throws NullPointerException 如果 entity 或 descriptor 为 null
     ///
-    default <T> void update(@NonNull T entity, Class<T> entityType) {
-        updateAll(ImmutableList.of(entity), entityType);
+    default <T> void update(@NonNull T entity, @NonNull EntityDescriptor<T> descriptor) {
+        updateAll(ImmutableList.of(entity), descriptor);
     }
 
     ///
@@ -78,23 +79,23 @@ public interface UpdateExecutor {
     ///
     /// @param <T> 实体类型
     /// @param entities 要删除的实体
-    /// @param entityType 实体类
-    /// @throws NullPointerException 如果 entities 或 entityType 为 null
+    /// @param descriptor 实体上下文
+    /// @throws NullPointerException 如果 entities 或 descriptor 为 null
     ///
-    <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull Class<T> entityType);
+    <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor);
 
     ///
     /// 从数据库中删除单个实体。
     ///
-    /// 这是一个便利方法，封装了 `deleteAll(Iterable, Class)`。
+    /// 这是一个便利方法，封装了 `deleteAll(Iterable, EntityContext)`。
     ///
     /// @param <T> 实体类型
     /// @param entity 要删除的实体
-    /// @param entityType 实体类
-    /// @throws NullPointerException 如果 entity 或 entityType 为 null
+    /// @param descriptor 实体上下文
+    /// @throws NullPointerException 如果 entity 或 descriptor 为 null
     ///
-    default <T> void delete(@NonNull T entity, @NonNull Class<T> entityType) {
-        deleteAll(ImmutableList.of(entity), entityType);
+    default <T> void delete(@NonNull T entity, @NonNull EntityDescriptor<T> descriptor) {
+        deleteAll(ImmutableList.of(entity), descriptor);
     }
 
     ///
@@ -130,13 +131,13 @@ public interface UpdateExecutor {
     /// 条件更新构建器支持带 WHERE 条件的批量 UPDATE 操作。
     ///
     /// 注意：此方法不支持乐观锁机制。
-    /// 如需乐观锁保护，请使用 {@link #updateAll(Iterable, Class)} 方法。
+    /// 如需乐观锁保护，请使用 {@link #updateAll(Iterable, EntityDescriptor)} 方法。
     ///
     /// @param <T> 实体类型
-    /// @param entityType 实体类
+    /// @param descriptor 实体上下文
     /// @return 条件更新构建器实例
     /// @since 2.0.0
-    <T> UpdateSetStep<T> update(@NonNull Class<T> entityType);
+    <T> UpdateSetStep<T> update(@NonNull EntityDescriptor<T> descriptor);
 
     ///
     /// 为指定实体类型创建条件删除构建器。
@@ -144,11 +145,11 @@ public interface UpdateExecutor {
     /// 条件删除构建器支持带 WHERE 条件的批量 DELETE 操作。
     ///
     /// 注意：此方法不支持乐观锁机制。
-    /// 如需乐观锁保护，请使用 {@link #deleteAll(Iterable, Class)} 方法。
+    /// 如需乐观锁保护，请使用 {@link #deleteAll(Iterable, EntityDescriptor)} 方法。
     ///
     /// @param <T> 实体类型
-    /// @param entityType 实体类
+    /// @param descriptor 实体上下文
     /// @return 条件删除构建器实例
     /// @since 2.0.0
-    <T> DeleteWhereStep<T> delete(@NonNull Class<T> entityType);
+    <T> DeleteWhereStep<T> delete(@NonNull EntityDescriptor<T> descriptor);
 }

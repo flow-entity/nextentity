@@ -31,6 +31,7 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
     @Override
     public List<String> ddl() {
         return List.of(
+                "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
                 "DROP TABLE IF EXISTS lockable_entity",
@@ -63,6 +64,16 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
                             name VARCHAR(100) NOT NULL,
                             description VARCHAR(255),
                             version BIGINT,
+                            created_at TIMESTAMP
+                        )
+                        """,
+                """
+                        CREATE TABLE "auto_increment_entity" (
+                            id BIGSERIAL PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL,
+                            description VARCHAR(255),
+                            priority INTEGER,
+                            active BOOLEAN,
                             created_at TIMESTAMP
                         )
                         """

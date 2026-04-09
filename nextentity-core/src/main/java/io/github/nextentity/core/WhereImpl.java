@@ -4,7 +4,6 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
@@ -32,20 +31,11 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     public static final SelectExpression SELECT_ANY = new SelectExpression(LiteralNode.TRUE, false);
 
     protected final QueryStructure queryStructure;
-    protected final Metamodel metamodel;
-    protected final QueryExecutor queryExecutor;
-    protected final LockModeType lockModeType;
+    protected final QueryDescriptor<T> descriptor;
 
-    public WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor) {
-        this(queryStructure, metamodel, queryExecutor, null);
-    }
-
-    private WhereImpl(QueryStructure queryStructure, Metamodel metamodel, QueryExecutor queryExecutor,
-                      LockModeType lockModeType) {
+    protected WhereImpl(QueryStructure queryStructure, QueryDescriptor<T> descriptor) {
         this.queryStructure = queryStructure;
-        this.metamodel = metamodel;
-        this.queryExecutor = queryExecutor;
-        this.lockModeType = lockModeType;
+        this.descriptor = descriptor;
     }
 
     @Override
@@ -130,7 +120,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public long count() {
-        return queryExecutor.<Number>getList(buildCountData()).getFirst().longValue();
+        return descriptor.queryExecutor().<Number>getList(buildCountData()).getFirst().longValue();
     }
 
     @Override
@@ -144,9 +134,9 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.having(),
                 queryStructure.offset(),
                 1,
-                lockModeType
+                queryStructure.lockType()
         );
-        return !queryExecutor.getList(structure).isEmpty();
+        return !descriptor.queryExecutor().getList(structure).isEmpty();
     }
 
     @Override
@@ -160,29 +150,29 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.having(),
                 offset,
                 1,
-                lockModeType
+                queryStructure.lockType()
         );
-        return !queryExecutor.getList(structure).isEmpty();
+        return !descriptor.queryExecutor().getList(structure).isEmpty();
     }
 
     @Override
     public Collector<U> lock(LockModeType lockModeType) {
-        return new WhereImpl<>(queryStructure, metamodel, queryExecutor, lockModeType);
+        return update(queryStructure.lockType(lockModeType));
     }
 
     @Override
     public List<U> list() {
-        return queryExecutor.getList(queryStructure);
+        return descriptor.queryExecutor().getList(queryStructure);
     }
 
     @Override
     public List<U> list(int offset, int limit) {
-        return queryExecutor.getList(buildPaginatedQueryStructure(offset, limit, true));
+        return descriptor.queryExecutor().getList(buildPaginatedQueryStructure(offset, limit, true));
     }
 
     @Override
     public U single() {
-        List<U> list = queryExecutor.getList(buildPaginatedQueryStructure(0, 2, false));
+        List<U> list = descriptor.queryExecutor().getList(buildPaginatedQueryStructure(0, 2, false));
         if (list.size() > 1) {
             throw new IllegalStateException("found more than one");
         }
@@ -208,11 +198,20 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         return update(structure);
     }
 
-    public <X, Y> WhereImpl<X, Y> update(QueryStructure structure) {
-        return new WhereImpl<>(structure, metamodel, queryExecutor, lockModeType);
+    /// 创建新的 WhereImpl 实例，保持实体类型不变。
+    ///
+    /// @param structure 新的查询结构
+    /// @param <Y>       新的结果类型
+    /// @return 新的 WhereImpl 实例
+    public <Y> WhereImpl<T, Y> update(QueryStructure structure) {
+        return new WhereImpl<>(structure, descriptor);
     }
 
-    /// 构建分页查询结构，如果未指定排序则自动添加主键排序。
+    /// 构建分页查询结构，根据配置决定是否自动添加主键排序。
+    ///
+    /// 当分页查询（包含 offset/limit）未指定 ORDER BY 时，
+    /// 如果 paginationConfig.autoAddIdOrder() 为 true，
+    /// 框架会自动添加主键排序以保证结果一致性。
     ///
     /// @param offset 偏移量
     /// @param limit  限制数
@@ -220,24 +219,17 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     private QueryStructure buildPaginatedQueryStructure(int offset, int limit, boolean logAutoSortWarning) {
         ImmutableList<SortExpression> orderBy = queryStructure.orderBy();
 
-        // 只有在非聚合查询且未指定排序时才自动添加主键排序
-        if (orderBy.isEmpty() && !isAggregateQuery()) {
-            Class<?> entityType = getEntityType();
-            if (entityType != null) {
-                EntityType entity = metamodel.getEntity(entityType);
-                if (entity != null) {
-                    var idAttr = entity.id();
-                    if (logAutoSortWarning) {
-                        log.debug("Pagination without ORDER BY detected. " +
-                             "Automatically adding primary key ordering for entity {}. " +
-                             "Consider adding explicit orderBy() for deterministic results.",
-                            entityType.getSimpleName());
-                    }
-
-                    PathNode idPath = new PathNode(idAttr.name());
-                    SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
-                    orderBy = ImmutableList.of(sortExpr);
+        // 只有在配置启用、非聚合查询且未指定排序时才自动添加主键排序
+        if (descriptor.paginationConfig().autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
+            EntityType entity = descriptor.entityType();
+            if (entity != null) {
+                var idAttr = entity.id();
+                if (logAutoSortWarning) {
+                    logAutoSort(descriptor.entityClass());
                 }
+                PathNode idPath = new PathNode(idAttr.name());
+                SortExpression sortExpr = new SortExpression(idPath, SortOrder.ASC);
+                orderBy = ImmutableList.of(sortExpr);
             }
         }
 
@@ -250,8 +242,22 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 queryStructure.having(),
                 offset,
                 limit,
-                lockModeType
+                queryStructure.lockType()
         );
+    }
+
+    /// 根据配置的日志级别记录自动排序日志。
+    ///
+    /// @param entityType 实体类型
+    private void logAutoSort(Class<?> entityType) {
+        String message = "Pagination without ORDER BY detected. " +
+                "Automatically adding primary key ordering for entity {}. " +
+                "Consider adding explicit orderBy() for deterministic results.";
+        switch (descriptor.paginationConfig().logLevel()) {
+            case INFO -> log.info(message, entityType.getSimpleName());
+            case WARN -> log.warn(message, entityType.getSimpleName());
+            default -> log.debug(message, entityType.getSimpleName());
+        }
     }
 
     /// 检查是否是聚合查询。
@@ -341,17 +347,6 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
             }
         }
         return false;
-    }
-
-    /// 获取查询的实体类型。
-    ///
-    /// @return 实体类型，如果不是实体查询则返回 null
-    private Class<?> getEntityType() {
-        From from = queryStructure.from();
-        if (from instanceof FromEntity(Class<?> type)) {
-            return type;
-        }
-        return null;
     }
 
     public class SubQueryBuilderImpl<X> implements SubQueryBuilder<X, U>, ExpressionTree {

@@ -47,7 +47,7 @@ public class TransactionalOperationsIntegrationTest {
         Employee employee = createTestEmployee(7001L, "Transaction Test");
 
         // When
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // Then - Verify the insert was committed
         Employee found = context.queryEmployees()
@@ -57,7 +57,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.getName()).isEqualTo("Transaction Test");
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -68,11 +68,11 @@ public class TransactionalOperationsIntegrationTest {
     void shouldCommitUpdateOperation(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7002L, "Before Update");
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         employee.setName("After Update");
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then - Verify the update was committed
         Employee found = context.queryEmployees()
@@ -81,7 +81,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.getName()).isEqualTo("After Update");
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -92,10 +92,10 @@ public class TransactionalOperationsIntegrationTest {
     void shouldCommitDeleteOperation(IntegrationTestContext context) {
         // Given
         Employee employee = createTestEmployee(7003L, "To Delete");
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
 
         // Then - Verify the delete was committed
         Employee found = context.queryEmployees()
@@ -117,7 +117,7 @@ public class TransactionalOperationsIntegrationTest {
         }
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // Then - All should be inserted
         for (int i = 0; i < 5; i++) {
@@ -128,7 +128,7 @@ public class TransactionalOperationsIntegrationTest {
         }
 
         // Cleanup
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -142,13 +142,13 @@ public class TransactionalOperationsIntegrationTest {
         for (int i = 0; i < 3; i++) {
             employees.add(createTestEmployee(7200L + i, "Before " + i));
         }
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // When - Update all names
         for (int i = 0; i < employees.size(); i++) {
             employees.get(i).setName("After " + i);
         }
-        context.getUpdateExecutor().updateAll(employees, Employee.class);
+        context.getUpdateExecutor().updateAll(employees, context.getEntityContext(Employee.class));
 
         // Then - All should be updated
         for (int i = 0; i < 3; i++) {
@@ -159,7 +159,7 @@ public class TransactionalOperationsIntegrationTest {
         }
 
         // Cleanup
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -173,10 +173,10 @@ public class TransactionalOperationsIntegrationTest {
         for (int i = 0; i < 3; i++) {
             employees.add(createTestEmployee(7300L + i, "To Delete " + i));
         }
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
 
         // When
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
 
         // Then - All should be deleted
         for (int i = 0; i < 3; i++) {
@@ -197,7 +197,7 @@ public class TransactionalOperationsIntegrationTest {
         Employee employee = createTestEmployee(7400L, "Sequential Test");
 
         // When - Insert
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
         Employee afterInsert = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
                 .single();
@@ -205,14 +205,14 @@ public class TransactionalOperationsIntegrationTest {
 
         // When - Update
         employee.setName("Updated Sequential");
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
         Employee afterUpdate = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
                 .single();
         assertThat(afterUpdate.getName()).isEqualTo("Updated Sequential");
 
         // When - Delete
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
         Employee afterDelete = context.queryEmployees()
                 .where(Employee::getId).eq(7400L)
                 .single();
@@ -231,9 +231,9 @@ public class TransactionalOperationsIntegrationTest {
         Employee emp3 = createTestEmployee(7503L, "Emp 3");
 
         // When - Insert multiple
-        context.getUpdateExecutor().insert(emp1, Employee.class);
-        context.getUpdateExecutor().insert(emp2, Employee.class);
-        context.getUpdateExecutor().insert(emp3, Employee.class);
+        context.getUpdateExecutor().insert(emp1, context.getEntityContext(Employee.class));
+        context.getUpdateExecutor().insert(emp2, context.getEntityContext(Employee.class));
+        context.getUpdateExecutor().insert(emp3, context.getEntityContext(Employee.class));
 
         // Then - All should exist
         long count = context.queryEmployees()
@@ -242,7 +242,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(count).isEqualTo(3);
 
         // When - Delete one
-        context.getUpdateExecutor().delete(emp2, Employee.class);
+        context.getUpdateExecutor().delete(emp2, context.getEntityContext(Employee.class));
 
         // Then - Two should remain
         count = context.queryEmployees()
@@ -251,8 +251,8 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(count).isEqualTo(2);
 
         // Cleanup
-        context.getUpdateExecutor().delete(emp1, Employee.class);
-        context.getUpdateExecutor().delete(emp3, Employee.class);
+        context.getUpdateExecutor().delete(emp1, context.getEntityContext(Employee.class));
+        context.getUpdateExecutor().delete(emp3, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -264,11 +264,11 @@ public class TransactionalOperationsIntegrationTest {
         // Given
         Employee employee = createTestEmployee(7600L, "Status Test");
         employee.setStatus(EmployeeStatus.ACTIVE);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         employee.setStatus(EmployeeStatus.INACTIVE);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee found = context.queryEmployees()
@@ -277,7 +277,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.getStatus()).isEqualTo(EmployeeStatus.INACTIVE);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -289,11 +289,11 @@ public class TransactionalOperationsIntegrationTest {
         // Given
         Employee employee = createTestEmployee(7700L, "Salary Test");
         employee.setSalary(50000.0);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         employee.setSalary(60000.0);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee found = context.queryEmployees()
@@ -302,7 +302,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.getSalary()).isEqualTo(60000.0);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -314,11 +314,11 @@ public class TransactionalOperationsIntegrationTest {
         // Given
         Employee employee = createTestEmployee(7800L, "Dept Test");
         employee.setDepartmentId(1L);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
         employee.setDepartmentId(2L);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee found = context.queryEmployees()
@@ -327,7 +327,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.getDepartmentId()).isEqualTo(2L);
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -339,11 +339,11 @@ public class TransactionalOperationsIntegrationTest {
         // Given
         Employee employee = createTestEmployee(7900L, "Active Test");
         employee.setActive(true);
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When - Toggle to false
         employee.setActive(false);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         Employee found = context.queryEmployees()
@@ -353,7 +353,7 @@ public class TransactionalOperationsIntegrationTest {
 
         // When - Toggle back to true
         employee.setActive(true);
-        context.getUpdateExecutor().update(employee, Employee.class);
+        context.getUpdateExecutor().update(employee, context.getEntityContext(Employee.class));
 
         // Then
         found = context.queryEmployees()
@@ -362,7 +362,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.getActive()).isTrue();
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -375,7 +375,7 @@ public class TransactionalOperationsIntegrationTest {
         Employee employee = createTestEmployee(8000L, "Query Test");
 
         // When
-        context.getUpdateExecutor().insert(employee, Employee.class);
+        context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
         List<Employee> found = context.queryEmployees()
                 .where(Employee::getId).eq(8000L)
                 .list();
@@ -385,7 +385,7 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found.get(0).getName()).isEqualTo("Query Test");
 
         // Cleanup
-        context.getUpdateExecutor().delete(employee, Employee.class);
+        context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
 ///
@@ -403,14 +403,14 @@ public class TransactionalOperationsIntegrationTest {
         }
 
         // When
-        context.getUpdateExecutor().insertAll(employees, Employee.class);
+        context.getUpdateExecutor().insertAll(employees, context.getEntityContext(Employee.class));
         long newCount = context.queryEmployees().count();
 
         // Then
         assertThat(newCount).isEqualTo(initialCount + 5);
 
         // Cleanup
-        context.getUpdateExecutor().deleteAll(employees, Employee.class);
+        context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
     }
 
 ///

@@ -1,8 +1,8 @@
 package io.github.nextentity.spring.integration;
 
-import io.github.nextentity.api.QueryBuilder;
-import io.github.nextentity.spring.integration.db.UserRepository;
+import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
+import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.entity.User;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class UpdateTest {
 
-    QueryBuilder<User> query(UserRepository updater) {
+    EntityQuery<User> query(UserRepository updater) {
         return updater.query();
     }
 
@@ -26,6 +26,7 @@ public class UpdateTest {
     @ArgumentsSource(UserQueryProvider.class)
     void insert(UserRepository userUpdater) {
         userUpdater.doInTransaction(() -> doInsert(userUpdater));
+        userUpdater.clear();
     }
 
     private void doInsert(UserRepository userUpdater) {
@@ -60,6 +61,7 @@ public class UpdateTest {
     @ArgumentsSource(UserQueryProvider.class)
     void update(UserRepository userUpdater) {
         userUpdater.doInTransaction(() -> testUpdate(userUpdater));
+        userUpdater.clear();
     }
 
     private void testUpdate(UserRepository userUpdater) {

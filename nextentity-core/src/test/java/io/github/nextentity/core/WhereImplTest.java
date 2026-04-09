@@ -5,6 +5,8 @@ import io.github.nextentity.api.PathRef;
 import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.SubQueryBuilder;
 import io.github.nextentity.core.expression.*;
+import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.integration.entity.Employee;
@@ -25,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,12 +42,22 @@ class WhereImplTest {
     @Mock
     protected QueryExecutor queryExecutor;
 
+    @Mock
+    protected EntityType entityType;
+
+    @Mock
+    protected EntityAttribute idAttribute;
+
     private WhereImpl<Employee, Employee> whereImpl;
+    private QueryDescriptor<Employee> context;
 
     @BeforeEach
     void setUp() {
+        lenient().when(entityType.id()).thenReturn(idAttribute);
+        lenient().when(idAttribute.name()).thenReturn("id");
         QueryStructure queryStructure = QueryStructure.of(Employee.class);
-        whereImpl = new WhereImpl<>(queryStructure, metamodel, queryExecutor);
+        context = new SimpleQueryDescriptor<>(metamodel, queryExecutor, PaginationConfig.DEFAULT, entityType, Employee.class);
+        whereImpl = new WhereImpl<>(queryStructure, context);
     }
 
     @Nested
@@ -310,7 +323,7 @@ class WhereImplTest {
             // given
             SelectEntity select = new SelectEntity(ImmutableList.of(), true);
             QueryStructure distinctStructure = whereImpl.getQueryStructure().select(select);
-            WhereImpl<Employee, Employee> distinctWhere = new WhereImpl<>(distinctStructure, metamodel, queryExecutor);
+            WhereImpl<Employee, Employee> distinctWhere = new WhereImpl<>(distinctStructure, context);
             when(queryExecutor.<Number>getList(any())).thenReturn(Collections.singletonList(5L));
 
             // when
@@ -329,7 +342,7 @@ class WhereImplTest {
             // given
             QueryStructure groupByStructure = whereImpl.getQueryStructure()
                     .groupBy(ImmutableList.of(new PathNode("id")));
-            WhereImpl<Employee, Employee> groupByWhere = new WhereImpl<>(groupByStructure, metamodel, queryExecutor);
+            WhereImpl<Employee, Employee> groupByWhere = new WhereImpl<>(groupByStructure, context);
             when(queryExecutor.<Number>getList(any())).thenReturn(Collections.singletonList(3L));
 
             // when
