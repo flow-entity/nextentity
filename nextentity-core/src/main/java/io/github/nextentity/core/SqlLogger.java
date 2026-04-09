@@ -7,6 +7,11 @@ import org.slf4j.LoggerFactory;
 ///
 /// 提供统一的 SQL 日志记录功能，支持配置日志名称和开关。
 ///
+/// **多容器部署限制**：本类使用静态可变状态存储配置（`static volatile`）。
+/// 在多应用场景下（如多个 Spring 容器在同一 JVM 中运行），
+/// 配置变更会影响所有容器。如需独立配置，请考虑使用不同的日志名称
+/// 或在容器启动后立即设置配置。
+///
 /// @author HuangChengwei
 /// @since 1.0.0
 public class SqlLogger {

@@ -39,6 +39,9 @@ public record JdbcConfig(
         if (batchSize <= 0) {
             throw new IllegalArgumentException("batchSize must be positive, but was: " + batchSize);
         }
+        if (fetchSize < 0) {
+            throw new IllegalArgumentException("fetchSize must be non-negative, but was: " + fetchSize);
+        }
     }
 
     /// 创建构建器。

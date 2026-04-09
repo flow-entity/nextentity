@@ -2,6 +2,20 @@
 
 _从 v2.0.0 到 v2.1.2 的所有变更。_
 
+## 迁移指南
+
+从 v2.0.0 升级到 v2.1.x 需注意：
+
+1. **启用自动配置**：NextEntity 自动配置默认不再启用。
+   需在 `application.yml` 中添加：
+   ```yaml
+   nextentity:
+     enabled: true
+   ```
+
+2. **SqlLogger 多容器限制**：如在同一 JVM 运行多个 Spring 容器，
+   SqlLogger 的静态配置会影响所有容器。建议在容器启动后立即设置配置。
+
 ## Features
 
 - feat: 引入 EntityOperations 接口，合并查询与持久化操作 `ebcb920`
