@@ -3,7 +3,6 @@ package io.github.nextentity.spring.config;
 import io.github.nextentity.core.LoggingConfig;
 import io.github.nextentity.core.SqlLogger;
 import io.github.nextentity.jdbc.JdbcConfig;
-import io.github.nextentity.jdbc.MySqlDialect;
 import io.github.nextentity.jdbc.SqlDialect;
 import io.github.nextentity.jpa.JpaConfig;
 import io.github.nextentity.spring.JdbcProperties;
@@ -158,7 +157,7 @@ class ConfigIntegrationTest {
             assertEquals(0, defaultConfig.fetchSize());
             assertTrue(defaultConfig.inlineNumericLiterals());
             assertTrue(defaultConfig.batchEnabled());
-            assertEquals(100, defaultConfig.batchSize());
+            assertEquals(500, defaultConfig.batchSize());
             assertTrue(defaultConfig.returnGeneratedKeys());
 
             // JPA 默认值

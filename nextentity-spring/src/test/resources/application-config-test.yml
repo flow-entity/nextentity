@@ -10,6 +10,7 @@ spring:
 
 # NextEntity 配置测试
 nextentity:
+  enabled: true
   jdbc:
     dialect: io.github.nextentity.jdbc.MySqlDialect
     query:
