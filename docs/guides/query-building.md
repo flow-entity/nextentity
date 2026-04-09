@@ -35,7 +35,7 @@ query() → where() → orderBy() → list()/list(offset, limit)/slice(offset, l
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 
@@ -243,7 +243,7 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 
@@ -470,7 +470,7 @@ List<Employee> employees = employeeRepository.query()
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 

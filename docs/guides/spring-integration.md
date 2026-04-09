@@ -79,13 +79,13 @@ spring:
 
 ### AbstractRepository 基类
 
-继承 `AbstractRepository` 并定义构造方法，注入 `NextEntityContext`：
+继承 `AbstractRepository` 并定义构造方法，注入 `EntityContext`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 }
@@ -139,7 +139,7 @@ public class UserService {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
-    protected OrderRepository(NextEntityContext context) {
+    protected OrderRepository(EntityContext context) {
         super(context);
     }
 
@@ -185,7 +185,7 @@ public class OrderRepository extends AbstractRepository<Order, Long> {
 @Repository
 public class UserRepository extends AbstractRepository<User, Long> {
 
-    protected UserRepository(NextEntityContext context) {
+    protected UserRepository(EntityContext context) {
         super(context);
     }
 
@@ -213,7 +213,7 @@ public class UserRepository extends AbstractRepository<User, Long> {
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
 
-    protected LogRepository(NextEntityContext context) {
+    protected LogRepository(EntityContext context) {
         super(context);
     }
 

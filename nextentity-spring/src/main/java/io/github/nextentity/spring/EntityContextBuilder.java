@@ -33,10 +33,10 @@ import java.util.function.Supplier;
 /// 使用示例：
 /// ```java
 /// // JDBC 模式
-/// EntityContext context = DefaultNextEntityContext.jdbc(jdbcTemplate, dialect, properties);
+/// EntityContext context = DefaultEntityContext.jdbc(jdbcTemplate, dialect, properties);
 ///
 /// // JPA 模式
-/// EntityContext context = DefaultNextEntityContext.jpa(entityManager, jdbcTemplate, dialect, properties);
+/// EntityContext context = DefaultEntityContext.jpa(entityManager, jdbcTemplate, dialect, properties);
 ///
 /// // 使用
 /// EntityOperations<User> ops = context.operations(User.class);

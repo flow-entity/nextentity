@@ -24,7 +24,7 @@
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 

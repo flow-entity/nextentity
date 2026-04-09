@@ -1,12 +1,12 @@
 package io.github.nextentity.examples.repository;
 
+import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
-import io.github.nextentity.spring.NextEntityContext;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,11 +35,11 @@ import java.util.stream.Collectors;
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 NextEntityContext，自动检测实体类型和主键类型，
+    /// 通过构造器注入 EntityContext，自动检测实体类型和主键类型，
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected EmployeeRepository(NextEntityContext context) {
+    protected EmployeeRepository(EntityContext context) {
         super(context);
     }
 

@@ -44,7 +44,7 @@ import java.sql.SQLException;
 /// ```java
 /// @Bean
 /// public EntityContext customEntityContext(JdbcTemplate jdbcTemplate) {
-///     return DefaultNextEntityContext.jdbc(jdbcTemplate);
+///     return DefaultEntityContext.jdbc(jdbcTemplate);
 /// }
 /// ```
 ///
