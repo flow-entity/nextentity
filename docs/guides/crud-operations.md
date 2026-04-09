@@ -362,7 +362,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         List<Employee> employees = query()
             .where(Employee::getDepartmentId).eq(departmentId)
             .where(Employee::getActive).eq(true)
-            .list();;
+            .list();
 
         employees.forEach(e -> {
             BigDecimal salary = e.getSalary();
@@ -424,7 +424,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     public Optional<Employee> findByIdOptional(Long id) {
         Employee emp = query()
             .where(Employee::getId).eq(id)
-            .first();;
+            .first();
         return Optional.ofNullable(emp);
     }
 }

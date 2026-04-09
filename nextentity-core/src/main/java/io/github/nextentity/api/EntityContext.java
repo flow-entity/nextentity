@@ -43,7 +43,7 @@ package io.github.nextentity.api;
 /// @see EntityQuery 查询构建接口
 /// @see EntityPersistor 持久化操作接口
 /// @see EntityOperations 合并查询与持久化的接口
-/// @since 2.2.0
+/// @since 2.1.2
 public interface EntityContext {
 
     /// 创建指定实体类型的查询构建器。

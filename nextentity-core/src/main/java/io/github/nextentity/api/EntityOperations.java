@@ -57,7 +57,7 @@ package io.github.nextentity.api;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 2.2.0
+/// @since 2.1.2
 /// @see EntityQuery 查询构建接口
 /// @see EntityPersistor 持久化操作接口
 /// @see UpdateSetStep 条件更新构建器

@@ -30,14 +30,14 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     // 查询全部字段（完整实体）
     public List<Employee> findAll() {
-        return query().list();;
+        return query().list();
     }
 
     // 投影查询（只查询需要的字段）
     public List<String> findAllNames() {
         return query()
             .select(Employee::getName)
-            .list();;
+            .list();
     }
 }
 ```
