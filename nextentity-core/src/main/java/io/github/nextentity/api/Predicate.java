@@ -4,28 +4,12 @@ import io.github.nextentity.core.expression.PredicateImpl;
 
 /// 断言接口，表示查询条件。
 ///
-/// 提供逻辑操作方法，如 NOT、AND、OR 等。
-///
-/// ## 使用示例
-///
-/// ```java
-/// // 创建断言
-/// Predicate<User> active = repository.query()
-///     .where(User::getStatus).eq("ACTIVE")
-///     .toPredicate();
-///
-/// // 逻辑组合
-/// Predicate<User> complex = active
-///     .and(Path.of(User::getAge).gt(18))
-///     .or(Path.of(User::getVip).eq(true));
-///
-/// // 使用预定义断言
-/// Predicate<User> alwaysTrue = Predicate.ofTrue();
-/// Predicate<User> alwaysFalse = Predicate.ofFalse();
-/// ```
+/// 继承 SimpleExpression，提供逻辑操作方法（NOT、AND、OR）。
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
+/// @see SimpleExpression 断言创建方法示例
+/// @see #ofTrue() 预定义常量断言
 /// @since 1.0.0
 public interface Predicate<T> extends SimpleExpression<T, Boolean>, ExpressionBuilder.Conjunction<T>, ExpressionBuilder.Disjunction<T> {
 

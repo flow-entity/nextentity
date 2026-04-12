@@ -23,9 +23,10 @@ import java.util.List;
 ///     .orderBy(User::getName).desc()
 ///     .getList();
 ///
-/// // 使用 Order 对象
+/// // 使用 Order 对象（用于复用或动态构建）
+/// Order<User> order = Path.of(User::getName).asc();
 /// List<User> users = repository.query()
-///     .orderBy(Path.of(User::getName).asc())
+///     .orderBy(order)
 ///     .getList();
 /// ```
 ///

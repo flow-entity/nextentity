@@ -25,9 +25,9 @@ import io.github.nextentity.api.PathRef.StringRef;
 ///     .where(User::getStatus).eq("ACTIVE")
 ///     .getList();
 ///
-/// // 使用路径表达式
+/// // 使用方法引用直接构建条件
 /// List<User> users = repository.query()
-///     .where(Path.of(User::getName)).like("%张%")
+///     .where(User::getName).like("%张%")
 ///     .getList();
 /// ```
 ///

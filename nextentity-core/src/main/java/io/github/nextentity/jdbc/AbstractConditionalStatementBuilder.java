@@ -6,7 +6,6 @@ import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.reflect.schema.Schema;
 
 import java.util.Map;
 
@@ -57,7 +56,8 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         appendFromAlias();
     }
 
-    /// PostgreSQL 需要在 USING 子句中只列出关联表名
+    /// PostgreSQL USING 子句只列出关联表名
+    /// @see #appendJoinCondition(JoinAttribute, Integer) ON/WHERE 共用的连接条件逻辑
     protected void appendJoinTablesOnly() {
         String delimiter = "";
         for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
@@ -70,36 +70,19 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         }
     }
 
-    /// PostgreSQL 需要在 WHERE 子句中显式添加连接条件
+    /// PostgreSQL WHERE 子句显式添加连接条件
+    /// @see #appendJoinCondition(JoinAttribute, Integer) ON/WHERE 共用的连接条件逻辑
     protected void appendJoinConditions() {
         String delimiter = "";
         for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
-            JoinAttribute k = entry.getKey();
-            Integer v = entry.getValue();
             sql.append(delimiter);
-            Schema declared = k.declareBy();
-            if (declared instanceof JoinAttribute schemaAttribute) {
-                Integer parentIndex = joins.get(schemaAttribute);
-                appendTableAlias(parentIndex);
-            } else {
-                appendFromAlias(sql);
-            }
-            if (k.isObject()) {
-                sql.append(".").append(k.joinName()).append("=");
-                appendTableAlias(v);
-                String referenced = k.referencedColumnName();
-                if (referenced.isEmpty()) {
-                    referenced = k.id().columnName();
-                }
-                sql.append(".").append(referenced);
-            } else {
-                throw new IllegalStateException();
-            }
+            appendJoinCondition(entry.getKey(), entry.getValue());
             delimiter = " and ";
         }
     }
 
-    /// PostgreSQL 需要将连接条件合并到 WHERE 子句中
+    /// PostgreSQL 将连接条件合并到 WHERE 子句
+    /// @see #appendJoinConditions() 连接条件拼接
     protected void appendWhereWithJoinConditions() {
         ExpressionNode where = where();
         SqlDialect.UpdateJoinStyle style = dialect.getUpdateJoinStyle();

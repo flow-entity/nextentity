@@ -2,24 +2,11 @@ package io.github.nextentity.api;
 
 /// 可执行操作接口，用于批量数据库操作。
 ///
-/// 该接口定义了执行批量操作并返回受影响行数的方法，
-/// 适用于 DELETE、UPDATE 等不需要返回实体数据的批量操作。
-///
-/// 使用示例：
-/// <pre>{@code
-/// // 执行批量更新
-/// int updated = repository.update()
-///     .set(User::getStatus, "INACTIVE")
-///     .where(User::getLastLoginAt).lt(threshold)
-///     .execute();
-///
-/// // 执行批量删除
-/// int deleted = repository.delete()
-///     .where(User::getStatus).eq("ARCHIVED")
-///     .execute();
-/// }</pre>
+/// 定义执行批量 DELETE/UPDATE 操作并返回受影响行数的方法。
 ///
 /// @author HuangChengwei
+/// @see UpdateSetStep 条件更新示例
+/// @see DeleteWhereStep 条件删除示例
 /// @since 2.0.0
 public interface Executable {
 

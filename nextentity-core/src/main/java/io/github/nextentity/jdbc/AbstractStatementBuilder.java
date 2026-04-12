@@ -464,31 +464,40 @@ public abstract class AbstractStatementBuilder {
         for (Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
             JoinAttribute k = entry.getKey();
             Integer v = entry.getValue();
-            StringBuilder append = sql.append(LEFT_JOIN);
-            appendTable(append, k);
-
+            sql.append(LEFT_JOIN);
+            appendTable(sql, k);
             appendTableAlias(v);
             sql.append(ON);
-            Schema declared = k.declareBy();
-            if (declared instanceof JoinAttribute schemaAttribute) {
-                Integer parentIndex = joins.get(schemaAttribute);
-                appendTableAlias(parentIndex);
-            } else {
-                appendFromAlias(sql);
-            }
-            if (k.isObject()) {
-                sql.append(".").append(k.joinName()).append("=");
-                appendTableAlias(v);
-                String referenced = k.referencedColumnName();
-                if (referenced.isEmpty()) {
-                    referenced = k.id().columnName();
-                }
-                sql.append(".").append(referenced);
-            } else {
-                throw new IllegalStateException();
-            }
+            appendJoinCondition(k, v);
         }
+    }
 
+    /// 追加单个 join 的连接条件
+    ///
+    /// 该方法用于构建 JOIN 的 ON 条件或 WHERE 中的连接条件，
+    /// 被子类 {@code AbstractConditionalStatementBuilder} 复用于 PostgreSQL 方言处理。
+    ///
+    /// @param k join 属性元数据
+    /// @param v join 表别名索引
+    protected void appendJoinCondition(JoinAttribute k, Integer v) {
+        Schema declared = k.declareBy();
+        if (declared instanceof JoinAttribute schemaAttribute) {
+            Integer parentIndex = joins.get(schemaAttribute);
+            appendTableAlias(parentIndex);
+        } else {
+            appendFromAlias(sql);
+        }
+        if (k.isObject()) {
+            sql.append(".").append(k.joinName()).append("=");
+            appendTableAlias(v);
+            String referenced = k.referencedColumnName();
+            if (referenced.isEmpty()) {
+                referenced = k.id().columnName();
+            }
+            sql.append(".").append(referenced);
+        } else {
+            throw new IllegalStateException();
+        }
     }
 
     protected void addJoin(SelectItem select) {

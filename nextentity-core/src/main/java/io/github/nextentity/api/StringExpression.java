@@ -2,25 +2,12 @@ package io.github.nextentity.api;
 
 /// 字符串表达式接口，提供字符串相关的查询操作方法。
 ///
-/// ## 使用示例
-///
-/// ```java
-/// // 模糊匹配
-/// Predicate<User> p1 = Path.of(User::getName).like("%张%");
-/// Predicate<User> p2 = Path.of(User::getName).startsWith("张");
-/// Predicate<User> p3 = Path.of(User::getName).contains("三");
-///
-/// // 字符串函数
-/// StringExpression<User> lowerName = Path.of(User::getName).lower();
-/// NumberExpression<User, Integer> nameLength = Path.of(User::getName).length();
-///
-/// // 条件模糊匹配
-/// Predicate<User> p4 = Path.of(User::getName).likeIfNotNull(searchName);
-/// Predicate<User> p5 = Path.of(User::getName).containsIfNotEmpty(keyword);
-/// ```
+/// 提供模糊匹配（like、startsWith、contains）、字符串函数（lower、upper、trim）
+/// 以及条件匹配方法。
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
+/// @see SimpleExpression 基本比较操作
 /// @since 1.0.0
 public interface StringExpression<T> extends SimpleExpression<T, String> {
     /// 匹配指定的字符串模式。
