@@ -1,6 +1,6 @@
 # v2.1.x 变更记录
 
-_从 v2.0.0 到 v2.1.2 的所有变更。_
+_从 v2.0.0 到 v2.1.3 的所有变更。_
 
 ## 迁移指南
 
@@ -26,6 +26,7 @@ _从 v2.0.0 到 v2.1.2 的所有变更。_
 - feat: 引入可配置的 JDBC/JPA 执行参数和 SQL 日志系统 `d9aac44`
 - feat: 添加 SQL Server 方言锁模式支持和测试容器集成 `569691e`
 - feat: 分页查询自动添加主键排序（可配置）`aa52562`
+- feat: 实现 EntityTemplate 和条件更新删除流式 API `8cc04cd`
 
 ## Performance
 
@@ -54,6 +55,9 @@ _从 v2.0.0 到 v2.1.2 的所有变更。_
 - refactor: 提取 ConditionalUpdate/DeleteStatementBuilder 条件语句构建器 `3ba15db`
 - refactor: 将 appendLimitOffset 从接口默认方法改为抽象方法 `914c5aa`
 - refactor: 统一方法命名和构造器参数顺序 `f68e9e9`
+- refactor: 简化条件 SQL 构建器注释和实现 `f817b6b`
+- refactor: 简化 API 包注释，消除重复示例 `3a4c251`
+- refactor: 移除废弃 API 和实现类 `a60d399`
 
 ## Tests
 
@@ -73,6 +77,15 @@ _从 v2.0.0 到 v2.1.2 的所有变更。_
 ---
 
 ## 版本明细
+
+### v2.1.3
+
+- 实现 EntityTemplate 统一查询与持久化操作入口
+- 条件更新删除流式 API 完善（UpdateSetStep/DeleteWhereStep）
+- 简化 API 包注释，消除重复示例
+- 移除 Collector.java 中废弃方法（getList/getFirst/limit/offset 等）
+- 重构 JDBC/JPA 层：整合 PersistExecutor，移除冗余实现类
+- 代码净减少 1364 行，结构更清晰
 
 ### v2.1.2
 
