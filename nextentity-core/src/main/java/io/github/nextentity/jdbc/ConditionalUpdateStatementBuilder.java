@@ -1,64 +1,98 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 
 import java.util.Map;
 
-///
 /// 条件更新 SQL 语句构建器
 ///
-/// 该类封装了条件更新语句的构建逻辑，继承自 AbstractConditionalStatementBuilder，
-/// 使用实例字段保存构建上下文，提供清晰的构建流程和参数管理。
+/// UPDATE JOIN 方言差异：
+/// - MySQL: UPDATE table alias JOIN ... SET ...
+/// - PostgreSQL: UPDATE table AS alias SET ... FROM ...
+/// - SQL Server: UPDATE alias SET ... FROM table alias ...
 ///
 /// @author HuangChengwei
 /// @since 2.0
 ///
 public class ConditionalUpdateStatementBuilder extends AbstractConditionalStatementBuilder {
 
-    protected final Map<String, Object> setValues;
+    private final Map<String, Object> setValues;
 
     public ConditionalUpdateStatementBuilder(EntityType entityType,
                                               Metamodel metamodel,
                                               Map<String, Object> setValues,
                                               ExpressionNode whereCondition,
-                                              SqlDialect dialect) {
-        super(entityType, metamodel, whereCondition, dialect);
+                                              SqlDialect dialect,
+                                              JdbcConfig jdbcConfig) {
+        super(entityType, metamodel, whereCondition, dialect, jdbcConfig);
         this.setValues = setValues;
     }
 
-    /// 构建更新语句
     public UpdateSqlStatement build() {
         appendUpdateClause();
         appendSetClause();
-        appendWhereCondition();
+        appendFromClauseIfNecessary();
+        appendWhereWithJoinConditions();
         return createStatement();
     }
 
-    /// 添加 UPDATE 子句
     protected void appendUpdateClause() {
         sql.append("update ");
-        appendTable();
+        SqlDialect.UpdateJoinStyle style = dialect.getUpdateJoinStyle();
+
+        switch (style) {
+            case JOIN_BEFORE_SET -> {
+                appendFromTable();
+                appendFromAlias();
+                appendJoin();
+            }
+            case UPDATE_ALIAS_ONLY -> appendFromAlias();
+            default -> {
+                appendFromTable();
+                sql.append(" as ");
+                appendFromAlias();
+            }
+        }
         sql.append(" set ");
     }
 
-    /// 添加 SET 子句
+    protected void appendFromClauseIfNecessary() {
+        SqlDialect.UpdateJoinStyle style = dialect.getUpdateJoinStyle();
+
+        switch (style) {
+            case JOIN_BEFORE_SET -> { }
+            case UPDATE_ALIAS_ONLY -> {
+                sql.append(" from ");
+                appendFromTable();
+                appendFromAlias();
+                appendJoin();
+            }
+            default -> {
+                if (!joins.isEmpty()) {
+                    sql.append(" from ");
+                    appendJoinTablesOnly();
+                }
+            }
+        }
+    }
+
+    /// SET 子句中只写列名，不需要别名前缀
     protected void appendSetClause() {
         String delimiter = "";
         for (Map.Entry<String, Object> entry : setValues.entrySet()) {
             sql.append(delimiter);
-            sql.append(leftQuotedIdentifier())
-                    .append(entry.getKey())
-                    .append(rightQuotedIdentifier());
-            sql.append(" = ?");
-            params.add(entry.getValue());
+            EntityAttribute attribute = (EntityAttribute) entityType.getAttribute(entry.getKey());
+            sql.append(leftQuotedIdentifier()).append(attribute.columnName()).append(rightQuotedIdentifier());
+            sql.append("=");
+            appendLiteralValue(entry.getValue());
             delimiter = ", ";
         }
     }
 
-    /// 创建语句对象
     protected UpdateSqlStatement createStatement() {
-        return new UpdateSqlStatement(sql.toString(), params);
+        return new UpdateSqlStatement(sql.toString(), args);
     }
 }

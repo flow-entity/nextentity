@@ -1,9 +1,11 @@
 package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.api.EntityContext;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.spring.AbstractRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ import java.util.List;
 /// - `findById(Long id)` - 按 ID 查找，返回 Optional
 /// - `getById(Long id)` - 按 ID 获取，不存在返回 null
 /// - `findAllById(Collection)` - 按多个 ID 查找
-/// - `findMapById(Collection)` - 按 ID 查找并返回 Map
+/// - `findAllAsMapById(Collection)` - 按 ID 查找并返回 Map
 /// - `existsById(Long id)` - 检查 ID 是否存在
 /// - `deleteById(Long id)` - 按 ID 删除
 @Repository
@@ -29,7 +31,7 @@ public class CategoryRepository extends AbstractRepository<Category, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected CategoryRepository(EntityContext context) {
+    protected CategoryRepository(EntityTemplateFactory context) {
         super(context);
     }
 

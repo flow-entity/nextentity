@@ -28,7 +28,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /// // 带投影的查询
 /// List<EmployeeWithDept> results = query()
 ///     .select(EmployeeWithDept.class)
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @see io.github.nextentity.core.meta.ProjectionAttribute

@@ -11,10 +11,10 @@ package io.github.nextentity.api;
 /// // 使用方法引用创建路径
 /// Path<User, String> namePath = Path.of(User::getName);
 ///
-/// // 在查询中使用
+/// // 在查询中使用方法引用
 /// repository.query()
-///     .where(Path.of(User::getName)).eq("张三")
-///     .getList();
+///     .where(User::getName).eq("张三")
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

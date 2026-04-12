@@ -4,6 +4,7 @@ import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.examples.entity.Product;
 import io.github.nextentity.spring.AbstractRepository;
@@ -31,7 +32,7 @@ public class ProductRepository extends AbstractRepository<Product, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected ProductRepository(EntityContext context) {
+    protected ProductRepository(EntityTemplateFactory context) {
         super(context);
     }
 
@@ -43,8 +44,8 @@ public class ProductRepository extends AbstractRepository<Product, Long> {
     // - getById(Long id) -> Product (可空)
     // - findAllById(Collection<Long> ids) -> List<Product>
     // - getAllById(Collection<Long> ids) -> List<Product>
-    // - findMapById(Collection<Long> ids) -> Map<Long, Product>
-    // - findMapAll() -> Map<Long, Product>
+    // - findAllAsMapById(Collection<Long> ids) -> Map<Long, Product>
+    // - findAllAsMap() -> Map<Long, Product>
     // - existsById(Long id) -> boolean
     // - countById(Collection<Long> ids) -> long
     // - deleteById(Long id) -> void
@@ -290,9 +291,9 @@ public class ProductRepository extends AbstractRepository<Product, Long> {
         updateAll(products);
     }
 
-    /// 按多个 ID 查询并返回 Map（使用继承的 findMapById）。
+    /// 按多个 ID 查询并返回 Map（使用继承的 findAllAsMapById）。
     public Map<Long, Product> findProductsAsMap(Collection<Long> ids) {
-        return findMapById(ids);
+        return findAllAsMapById(ids);
     }
 
     /// 检查产品是否存在且活跃。

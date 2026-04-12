@@ -16,11 +16,18 @@
 
 Repository 模式将数据访问逻辑封装在专用类中，提供类型安全的数据访问。
 
+NextEntity 提供两种 Repository 使用方式：
+
+| 方式                        | 适用场景       | 特点           |
+|---------------------------|------------|--------------|
+| 继承 `AbstractRepository`   | 需要自定义查询方法  | 可添加业务特定的查询逻辑 |
+| 注入 `Repository<T, ID>` 接口 | 简单 CRUD 操作 | 无需创建子类，自动注入  |
+
 ---
 
 ## 创建 Repository
 
-### AbstractRepository
+### 方式一：继承 AbstractRepository
 
 继承 `AbstractRepository` 并定义构造方法：
 
@@ -28,16 +35,16 @@ Repository 模式将数据访问逻辑封装在专用类中，提供类型安全
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 }
 
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
-    protected DepartmentRepository(EntityContext context) {
-        super(context);
+    protected DepartmentRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 }
 ```
@@ -45,14 +52,41 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
 AbstractRepository 提供以下基于 ID 的方法：
 - `findById(id)` → `Optional<T>`
 - `getById(id)` → `T`
+- `findAll()` → `List<T>`
 - `findAllById(ids)` → `List<T>`
 - `getAllById(ids)` → `List<T>`
-- `findMapById(ids)` → `Map<ID, T>`
-- `findMapAll()` → `Map<ID, T>`
+- `findAllAsMapById(ids)` → `Map<ID, T>`
+- `findAllAsMap()` → `Map<ID, T>`
+- `count()` → `long`
 - `existsById(id)` → `boolean`
 - `countById(ids)` → `long`
 - `deleteById(id)`
 - `deleteAllById(ids)`
+- `deleteAll()` → 删除所有实体
+
+### 方式二：注入 Repository 接口
+
+对于简单的 CRUD 操作，无需创建 Repository 子类，直接注入 `Repository<T, ID>` 接口：
+
+```java
+@Service
+public class CustomerService {
+
+    @Autowired
+    private Repository<Customer, Long> customerRepository;
+
+    public Customer getById(Long id) {
+        return customerRepository.getById(id);
+    }
+
+    public List<Customer> findAll() {
+        return customerRepository.query().list();
+    }
+}
+```
+
+> **注意**：`query()` 方法在 `Repository` 接口中是公共的，可以直接调用。
+> 而 `AbstractRepository` 中 `query()` 是 `protected` 的，只能在子类内部使用。
 
 ---
 
@@ -64,8 +98,8 @@ AbstractRepository 提供以下基于 ID 的方法：
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     // 查询全部
@@ -102,8 +136,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     // 动态条件查询
@@ -143,8 +177,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     // 分页查询
@@ -170,8 +204,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     // 单字段排序
@@ -197,8 +231,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     // 计数
@@ -229,8 +263,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     public int deactivateEmployeesByDepartment(Long departmentId) {
@@ -255,9 +289,10 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
 ## 事务处理
 
-> **重要**: 推荐在 Service 层使用 Spring 的 `@Transactional` 注解，Service 应调用 Repository 的公共方法，而非直接使用 `query()`。
+> **重要**: 推荐在 Service 层使用 Spring 的 `@Transactional` 注解，Service 应调用 Repository 的公共方法。
 
-Service 层应该调用 Repository 提供的公共查询方法，而不是直接访问 `query()` 方法（`query()` 在 `AbstractRepository` 中是 `protected` 的）。
+- 继承 `AbstractRepository` 时，`query()` 是 `protected` 方法，只能在 Repository 内部使用
+- 注入 `Repository<T, ID>` 接口时，`query()` 是公共方法，可以在 Service 中直接调用
 
 ```java
 @Service
@@ -293,8 +328,8 @@ public class EmployeeService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     // 在 Repository 内部使用 query()，对外提供公共接口

@@ -1,11 +1,11 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.api.DeleteWhereStep;
-import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.api.EntityDescriptor;
-import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.core.PersistExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
+import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.expression.UpdateStructure;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
@@ -19,9 +19,7 @@ import java.sql.*;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.function.Supplier;
 
-///
 /// JDBC更新执行器实现
 ///
 /// 该类负责通过JDBC执行数据库更新操作，包括插入、更新、删除等操作。
@@ -30,9 +28,9 @@ import java.util.function.Supplier;
 /// @author HuangChengwei
 /// @since 1.0.0
 ///
-public class JdbcUpdateExecutor implements UpdateExecutor {
+public class JdbcPersistExecutor implements PersistExecutor {
 
-    private static final Logger log = org.slf4j.LoggerFactory.getLogger(JdbcUpdateExecutor.class);
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(JdbcPersistExecutor.class);
     private final JdbcUpdateSqlBuilder sqlBuilder;
     private final ConnectionProvider connectionProvider;
     private final JdbcConfig config;
@@ -41,19 +39,19 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     ///
     /// @param sqlBuilder         更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
-                              ConnectionProvider connectionProvider) {
+    public JdbcPersistExecutor(JdbcUpdateSqlBuilder sqlBuilder,
+                               ConnectionProvider connectionProvider) {
         this(sqlBuilder, connectionProvider, JdbcConfig.DEFAULT);
     }
 
     /// 构造JDBC更新执行器
     ///
-    /// @param sqlBuilder 更新SQL构建器，用于生成更新相关的SQL语句
+    /// @param sqlBuilder         更新SQL构建器，用于生成更新相关的SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param config JDBC配置
-    public JdbcUpdateExecutor(JdbcUpdateSqlBuilder sqlBuilder,
-                              ConnectionProvider connectionProvider,
-                              JdbcConfig config) {
+    /// @param config             JDBC配置
+    public JdbcPersistExecutor(JdbcUpdateSqlBuilder sqlBuilder,
+                               ConnectionProvider connectionProvider,
+                               JdbcConfig config) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.config = config;
@@ -61,8 +59,8 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 插入所有实体
     ///
-    /// @param <T> 实体类型
-    /// @param entities 实体集合
+    /// @param <T>        实体类型
+    /// @param entities   实体集合
     /// @param descriptor 实体上下文
     @Override
     public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
@@ -91,8 +89,8 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 更新所有实体
     ///
-    /// @param <T> 实体类型
-    /// @param entities 实体集合
+    /// @param <T>        实体类型
+    /// @param entities   实体集合
     /// @param descriptor 实体上下文
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
@@ -130,8 +128,8 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 删除所有实体
     ///
-    /// @param <T> 实体类型
-    /// @param entities 实体集合
+    /// @param <T>        实体类型
+    /// @param entities   实体集合
     /// @param descriptor 实体上下文
     @Override
     public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
@@ -155,58 +153,49 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
         });
     }
 
-    /// 在事务中执行命令
-    ///
-    /// @param command 要执行的命令
     @Override
-    public void doInTransaction(Runnable command) {
-        try {
-            connectionProvider.executeInTransaction(connection -> {
-                command.run();
-                return null;
-            });
-        } catch (SQLException e) {
-            throw new SqlException(e);
+    public <T> int update(UpdateStructure structure, @NonNull EntityDescriptor<T> descriptor) {
+        if (structure.setClauses().isEmpty()) {
+            return 0;
         }
+        EntityType entityType = descriptor.entityType();
+        UpdateSqlStatement sql = sqlBuilder.buildConditionalUpdateStatement(
+                entityType,
+                descriptor.metamodel(),
+                structure.setClauses(),
+                structure.where()
+        );
+        return execute(connection -> {
+            sql.debug();
+            //noinspection SqlSourceToSinkFlow
+            try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
+                setParameters(statement, sql.parameters());
+                return statement.executeUpdate();
+            }
+        });
     }
 
-    /// 在事务中执行带返回值的命令
-    ///
-    /// @param <T> 返回值类型
-    /// @param command 要执行的命令
-    /// @return 命令执行结果
     @Override
-    public <T> T doInTransaction(Supplier<T> command) {
-        try {
-            return connectionProvider.executeInTransaction(connection -> command.get());
-        } catch (SQLException e) {
-            throw new SqlException(e);
-        }
-    }
-
-    /// 创建条件更新构建器
-    ///
-    /// @param descriptor 实体上下文
-    /// @param <T>        实体类型参数
-    /// @return 条件更新构建器实例
-    @Override
-    public <T> UpdateSetStep<T> update(@NonNull EntityDescriptor<T> descriptor) {
-        return new JdbcUpdateWhereStep<>(descriptor, connectionProvider, sqlBuilder);
-    }
-
-    /// 创建条件删除构建器
-    ///
-    /// @param descriptor 实体上下文
-    /// @param <T>        实体类型参数
-    /// @return 条件删除构建器实例
-    @Override
-    public <T> DeleteWhereStep<T> delete(@NonNull EntityDescriptor<T> descriptor) {
-        return new JdbcDeleteWhereStep<>(descriptor, connectionProvider, sqlBuilder);
+    public <T> int delete(ExpressionNode predicate, @NonNull EntityDescriptor<T> descriptor) {
+        EntityType entityType = descriptor.entityType();
+        DeleteSqlStatement sql = sqlBuilder.buildConditionalDeleteStatement(
+                entityType,
+                descriptor.metamodel(),
+                predicate
+        );
+        return execute(connection -> {
+            sql.debug();
+            //noinspection SqlSourceToSinkFlow
+            try (PreparedStatement statement = connection.prepareStatement(sql.sql())) {
+                setParameters(statement, sql.parameters());
+                return statement.executeUpdate();
+            }
+        });
     }
 
     /// 设置新版本号
     ///
-    /// @param entity 实体对象
+    /// @param entity    实体对象
     /// @param attribute 版本属性
     protected static void setNewVersion(Object entity, EntityAttribute attribute) {
         Object version = attribute.getDatabaseValue(entity);
@@ -223,8 +212,8 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 执行插入操作
     ///
-    /// @param entityType 实体类型
-    /// @param connection 数据库连接
+    /// @param entityType      实体类型
+    /// @param connection      数据库连接
     /// @param insertStatement 插入SQL语句
     /// @throws SQLException SQL异常
     protected void doInsert(EntitySchema entityType, Connection connection, InsertSqlStatement insertStatement) throws SQLException {
@@ -314,7 +303,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 执行更新操作
     ///
-    /// @param statement 预编译语句
+    /// @param statement  预编译语句
     /// @param parameters 参数集合
     /// @return 更新行数数组
     /// @throws SQLException SQL异常
@@ -372,7 +361,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
 
     /// 设置参数
     ///
-    /// @param statement 预编译语句
+    /// @param statement  预编译语句
     /// @param parameters 参数集合
     /// @throws SQLException SQL异常
     protected static void setParameters(PreparedStatement statement, Iterable<?> parameters) throws SQLException {
@@ -385,7 +374,7 @@ public class JdbcUpdateExecutor implements UpdateExecutor {
     /// @return 操作结果
     protected <T> T execute(ConnectionCallback<T> action) {
         try {
-            return connectionProvider.executeInTransaction(action);
+            return connectionProvider.execute(action);
         } catch (SQLException e) {
             throw new SqlException(e);
         }

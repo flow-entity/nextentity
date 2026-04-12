@@ -37,7 +37,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should first with LockModeType return value")
     void shouldFirstWithLockModeReturnValue(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).first()
@@ -55,7 +55,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should first with pessimistic write lock")
     void shouldFirstWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_WRITE).first()
@@ -75,7 +75,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getFirst with LockModeType return result")
     void shouldGetFirstWithLockModeReturnResult(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).first()
@@ -93,7 +93,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getFirst with pessimistic write lock")
     void shouldGetFirstWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_WRITE).first()
@@ -113,7 +113,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should requireSingle with LockModeType return result")
     void shouldRequireSingleWithLockModeReturnResult(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -131,7 +131,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should requireSingle with pessimistic write lock")
     void shouldRequireSingleWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_WRITE).single()
@@ -151,7 +151,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should single with LockModeType return value")
     void shouldSingleWithLockModeReturnValue(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -169,7 +169,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should single with LockModeType return empty when no result")
     void shouldSingleWithLockModeReturnEmptyWhenNoResult(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(999L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -186,7 +186,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should single with pessimistic write lock")
     void shouldSingleWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_WRITE).single()
@@ -205,7 +205,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getSingle with LockModeType return result")
     void shouldGetSingleWithLockModeReturnResult(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -223,7 +223,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getSingle with LockModeType return null when no result")
     void shouldGetSingleWithLockModeReturnNullWhenNoResult(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(999L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -240,7 +240,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getSingle with pessimistic write lock")
     void shouldGetSingleWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_WRITE).single()
@@ -259,7 +259,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should offset with LockModeType return results from offset")
     void shouldOffsetWithLockModeReturnResultsFromOffset(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list(2, 10)
@@ -277,7 +277,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should offset with pessimistic write lock")
     void shouldOffsetWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_WRITE).list(1, 10)
@@ -295,7 +295,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should offset zero with LockModeType return all results")
     void shouldOffsetZeroWithLockModeReturnAllResults(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list()
@@ -314,7 +314,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should limit with LockModeType return limited results")
     void shouldLimitWithLockModeReturnLimitedResults(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list(3)
@@ -331,7 +331,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should limit with pessimistic write lock")
     void shouldLimitWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_WRITE).list(2)
@@ -350,7 +350,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getList with LockModeType return all results")
     void shouldGetListWithLockModeReturnAllResults(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list()
@@ -367,7 +367,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should getList with pessimistic write lock")
     void shouldGetListWithPessimisticWriteLock(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_WRITE).list()
@@ -386,7 +386,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should first with offset and LockModeType return value")
     void shouldFirstWithOffsetAndLockModeReturnValue(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list(2, 1).getFirst()
@@ -406,7 +406,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should single with offset and LockModeType return value")
     void shouldSingleWithOffsetAndLockModeReturnValue(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(3L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -426,7 +426,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should first with LockModeType and where clause")
     void shouldFirstWithLockModeAndWhereClause(IntegrationTestContext context) {
         // When
-        LockableEntity result = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity result = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).gt(2L)
                         .orderBy(LockableEntity::getId).asc()
@@ -446,7 +446,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     void shouldGetSingleWithLockModeThrowWhenMultipleResults(IntegrationTestContext context) {
         // When & Then
         assertThatThrownBy(() ->
-                context.getUpdateExecutor().doInTransaction(() ->
+                context.doInTransaction(() ->
                         context.queryLockableEntities()
                                 .where(LockableEntity::getId).lt(3L)
                                 .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -462,7 +462,7 @@ public class CollectorLockModeMethodsIntegrationTest {
     @DisplayName("Should offset with LockModeType and where clause")
     void shouldOffsetWithLockModeAndWhereClause(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).lt(5L)
                         .orderBy(LockableEntity::getId).asc()

@@ -15,18 +15,19 @@ import java.util.List;
 /// // 单字段排序
 /// List<User> users = repository.query()
 ///     .orderBy(User::getName).asc()
-///     .getList();
+///     .list();
 ///
 /// // 多字段排序
 /// List<User> users = repository.query()
 ///     .orderBy(User::getDepartment).asc()
 ///     .orderBy(User::getName).desc()
-///     .getList();
+///     .list();
 ///
-/// // 使用 Order 对象
+/// // 使用 Order 对象（用于复用或动态构建）
+/// Order<User> order = Path.of(User::getName).asc();
 /// List<User> users = repository.query()
-///     .orderBy(Path.of(User::getName).asc())
-///     .getList();
+///     .orderBy(order)
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

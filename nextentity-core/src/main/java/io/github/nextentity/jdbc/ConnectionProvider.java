@@ -21,14 +21,6 @@ public interface ConnectionProvider {
     /// @throws SQLException SQL异常
     <T> T execute(ConnectionCallback<T> action) throws SQLException;
 
-    /// 在事务中执行操作
-    ///
-    /// @param <T> 操作返回结果类型
-    /// @param action 要执行的操作
-    /// @return 操作结果
-    /// @throws SQLException SQL异常
-    <T> T executeInTransaction(ConnectionCallback<T> action) throws SQLException;
-
     /// 数据库连接回调接口
     ///
     /// 用于在给定的数据库连接上执行具体操作

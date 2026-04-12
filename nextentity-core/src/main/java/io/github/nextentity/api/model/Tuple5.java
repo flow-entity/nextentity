@@ -1,8 +1,6 @@
 package io.github.nextentity.api.model;
 
-/// 5元组接口，表示包含 5 个元素的元组。
-///
-/// 提供类型安全的方法获取 5 个元素。
+/// 5元组接口。
 ///
 /// @param <A> 第一个元素类型
 /// @param <B> 第二个元素类型
@@ -10,6 +8,7 @@ package io.github.nextentity.api.model;
 /// @param <D> 第四个元素类型
 /// @param <E> 第五个元素类型
 /// @author HuangChengwei
+/// @see Tuple 元组的使用示例
 /// @since 1.0.0
 public interface Tuple5<A, B, C, D, E> extends Tuple4<A, B, C, D> {
 

@@ -1,33 +1,14 @@
 package io.github.nextentity.api;
 
-/// 数值表达式接口，提供数值类型表达式的操作方法。
+/// 数值表达式接口，提供数值类型的操作方法。
 ///
-/// 继承 SimpleExpression，提供基本的表达式操作方法，并添加数值特有的操作。
-///
-/// ## 使用示例
-///
-/// ```java
-/// // 算术运算
-/// NumberExpression<User, Integer> salary = Path.of(User::getSalary);
-/// NumberExpression<User, Integer> annualSalary = salary.multiply(12);
-/// NumberExpression<User, Integer> withBonus = salary.add(bonus);
-///
-/// // 聚合函数
-/// NumberExpression<User, Long> count = Path.of(User::getId).count();
-/// NumberExpression<User, Double> avgSalary = Path.of(User::getSalary).avg();
-/// NumberExpression<User, BigDecimal> maxSalary = Path.of(User::getSalary).max();
-///
-/// // 比较运算
-/// Predicate<User> p1 = Path.of(User::getAge).gt(18);
-/// Predicate<User> p2 = Path.of(User::getSalary).between(5000, 10000);
-///
-/// // 条件运算
-/// Predicate<User> p3 = Path.of(User::getSalary).multiplyIfNotNull(bonusRate).gt(100000);
-/// ```
+/// 提供算术运算（add、subtract、multiply、divide）、聚合函数（sum、avg、max、min）
+/// 以及条件运算方法。
 ///
 /// @param <T> 实体类型
 /// @param <U> 数值类型
 /// @author HuangChengwei
+/// @see SimpleExpression 基本比较操作
 /// @since 1.0.0
 public interface NumberExpression<T, U extends Number> extends SimpleExpression<T, U> {
     /// 加法操作，加上另一个表达式的值。

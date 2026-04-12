@@ -2,26 +2,15 @@ package io.github.nextentity.api;
 
 import io.github.nextentity.core.util.DefaultEntityRoot;
 
-/// 实体路径接口，表示实体之间的关联路径。
+/// 实体路径接口，用于访问嵌套实体属性。
 ///
-/// 继承 PathExpression，用于处理实体之间的关联属性访问。
-///
-/// ## 使用示例
-///
-/// ```java
-/// // 访问关联对象的属性
-/// EntityPath<User, Department> deptPath = EntityPath.of(User::getDepartment);
-/// StringPath<User> deptName = deptPath.get(Department::getName);
-///
-/// // 在查询中使用嵌套属性
-/// repository.query()
-///     .where(User::getDepartment).get(Department::getName).eq("技术部")
-///     .getList();
-/// ```
+/// 继承 Path，支持通过 {@code get()} 方法链式访问关联实体的属性。
 ///
 /// @param <T> 实体类型
 /// @param <U> 属性类型
 /// @author HuangChengwei
+/// @see Path 路径表达式创建示例
+/// @see Entity 实体标记接口
 /// @since 1.0.0
 public interface EntityPath<T, U> extends Path<T, U> {
 

@@ -15,28 +15,28 @@ import java.util.List;
 /// // 等于操作
 /// repository.query()
 ///     .where(User::getName).eq("张三")
-///     .getList();
+///     .list();
 ///
 /// // 条件操作（仅当值不为 null 时才添加条件）
 /// repository.query()
 ///     .where(User::getAge).gtIfNotNull(minAge)
 ///     .where(User::getStatus).eqIfNotNull(status)
-///     .getList();
+///     .list();
 ///
 /// // 范围查询
 /// repository.query()
 ///     .where(User::getAge).between(18, 60)
-///     .getList();
+///     .list();
 ///
 /// // IN 查询
 /// repository.query()
 ///     .where(User::getId).in(1L, 2L, 3L)
-///     .getList();
+///     .list();
 ///
 /// // 空值判断
 /// repository.query()
 ///     .where(User::getEmail).isNotNull()
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型
@@ -59,7 +59,7 @@ public interface ExpressionBuilder<T, U, B> {
     /// public List<User> search(String name) {
     ///     return repository.query()
     ///         .where(User::getName).eqIfNotNull(name)
-    ///         .getList();
+    ///         .list();
     /// }
     /// ```
     ///

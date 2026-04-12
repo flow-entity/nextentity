@@ -40,7 +40,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic read lock")
     void shouldQueryWithPessimisticReadLock(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
@@ -60,7 +60,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic write lock")
     void shouldQueryWithPessimisticWriteLock(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
@@ -80,7 +80,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic lock")
     void shouldQueryWithOptimisticLock(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
@@ -99,7 +99,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic force increment lock")
     void shouldQueryWithOptimisticForceIncrementLock(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
@@ -133,7 +133,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with lock mode")
     void shouldGetFirstWithLockMode(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .orderBy(LockableEntity::getId).asc()
@@ -152,7 +152,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with lock mode")
     void shouldGetSingleWithLockMode(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             LockableEntity entity = context.queryLockableEntities()
                     .where(LockableEntity::getId).eq(1L)
@@ -171,7 +171,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update after pessimistic lock")
     void shouldUpdateAfterPessimisticLock(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // Given
             LockableEntity testEntity = new LockableEntity(5001L, "Lock Update Test", "Test Description");
             context.getUpdateExecutor().insert(testEntity, context.getEntityContext(LockableEntity.class));
@@ -203,7 +203,7 @@ public class JpaSpecificFeaturesIntegrationTest {
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with lock mode")
     void shouldGetListWithLockMode(IntegrationTestContext context) {
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             // When
             List<LockableEntity> entities = context.queryLockableEntities()
                     .where(LockableEntity::getId).lt(4L)

@@ -17,18 +17,18 @@ import io.github.nextentity.api.PathRef.StringRef;
 /// // 简单条件
 /// List<User> users = repository.query()
 ///     .where(User::getAge).gt(18)
-///     .getList();
+///     .list();
 ///
 /// // 多个条件（AND 关系）
 /// List<User> users = repository.query()
 ///     .where(User::getAge).gt(18)
 ///     .where(User::getStatus).eq("ACTIVE")
-///     .getList();
+///     .list();
 ///
-/// // 使用路径表达式
+/// // 使用方法引用直接构建条件
 /// List<User> users = repository.query()
-///     .where(Path.of(User::getName)).like("%张%")
-///     .getList();
+///     .where(User::getName).like("%张%")
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

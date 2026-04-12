@@ -1,7 +1,5 @@
 package io.github.nextentity.api;
 
-import java.util.function.Supplier;
-
 /// 继承 QueryBuilder 并添加实体更新能力的接口。
 ///
 /// 该接口将查询构建和实体持久化操作融合为单一 API，
@@ -19,7 +17,6 @@ import java.util.function.Supplier;
 /// - 单实体 CRUD：insert, update, delete
 /// - 批量操作：insertAll, updateAll, deleteAll
 /// - 条件更新/删除：update().set(...).where(...).execute()
-/// - 事务支持：doInTransaction
 ///
 /// ## 使用示例
 ///
@@ -48,12 +45,6 @@ import java.util.function.Supplier;
 ///
 /// // 批量操作
 /// repository.query().insertAll(List.of(user1, user2, user3));
-///
-/// // 事务支持
-/// repository.query().doInTransaction(() -> {
-///     repository.query().insert(user);
-///     repository.query().update(relatedEntity);
-/// });
 /// ```
 ///
 /// @param <T> 实体类型
@@ -115,19 +106,4 @@ public interface EntityPersistor<T> {
     ///
     /// @return 条件删除构建器实例
     DeleteWhereStep<T> delete();
-
-    /// 在事务中执行不返回值的操作。
-    ///
-    /// @param command 要执行的命令
-    void doInTransaction(Runnable command);
-
-    /// 在事务中执行操作并返回结果。
-    ///
-    /// 如果操作成功，事务会自动提交；
-    /// 如果抛出异常，则回滚事务。
-    ///
-    /// @param command 要执行的命令
-    /// @param <X>     命令的返回类型
-    /// @return 命令的结果
-    <X> X doInTransaction(Supplier<X> command);
 }

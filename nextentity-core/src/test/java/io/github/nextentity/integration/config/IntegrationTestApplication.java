@@ -1,15 +1,15 @@
 package io.github.nextentity.integration.config;
 
-import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.api.UpdateSetStep;
+import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
+import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.fixtures.TestDataFactory;
 import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
-import io.github.nextentity.jpa.JpaTransactionTemplate;
-import io.github.nextentity.jpa.JpaUpdateExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
@@ -28,12 +28,13 @@ import java.sql.SQLException;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+@SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @EntityScan("io.github.nextentity.integration.entity")
 @SpringBootApplication
 public class IntegrationTestApplication {
 
     @Bean
-    public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider) {
+    public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider, TransactionTemplate transactionTemplate) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
         try {
@@ -44,7 +45,13 @@ public class IntegrationTestApplication {
         Metamodel metamodel = JpaMetamodel.of();
         SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
         JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
-        JdbcUpdateExecutor updateExecutor = new JdbcUpdateExecutor(sqlBuilder, connectionProvider);
+        PersistExecutor updateExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider);
+        updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
+            @Override
+            public <T> T executeInTransaction(Supplier<T> operation) {
+                return transactionTemplate.execute(_ -> operation.get());
+            }
+        });
         return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jdbc");
     }
 
@@ -65,10 +72,11 @@ public class IntegrationTestApplication {
         SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
-        JpaUpdateExecutor updateExecutor = new JpaUpdateExecutor(entityManager, metamodel, new JpaTransactionTemplate() {
+        PersistExecutor updateExecutor = new JpaPersistExecutor(entityManager);
+        updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
             @Override
-            public <T> T executeInTransaction(EntityManager entityManager, Supplier<T> action) {
-                return transactionTemplate.execute(status -> action.get());
+            public <T> T executeInTransaction(Supplier<T> operation) {
+                return transactionTemplate.execute(_ -> operation.get());
             }
         });
         return new SpringIntegrationTestContext(queryExecutor, updateExecutor, "jpa");
@@ -77,12 +85,10 @@ public class IntegrationTestApplication {
     @Component
     public static class SpringConnectionProvider implements ConnectionProvider {
         private final JdbcTemplate jdbcTemplate;
-        private final TransactionTemplate transactionTemplate;
 
         @Autowired
         public SpringConnectionProvider(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
             this.jdbcTemplate = jdbcTemplate;
-            this.transactionTemplate = transactionTemplate;
         }
 
         @Override
@@ -90,10 +96,6 @@ public class IntegrationTestApplication {
             return jdbcTemplate.execute(action::doInConnection);
         }
 
-        @Override
-        public <T> T executeInTransaction(ConnectionCallback<T> action) {
-            return transactionTemplate.execute(ignore -> execute(action));
-        }
     }
 
     @Component
@@ -134,9 +136,9 @@ public class IntegrationTestApplication {
 
         private final String name;
         private final QueryExecutor queryExecutor;
-        private final UpdateExecutor updateExecutor;
+        private final PersistExecutor updateExecutor;
 
-        public SpringIntegrationTestContext(QueryExecutor queryExecutor, UpdateExecutor updateExecutor, String name) {
+        public SpringIntegrationTestContext(QueryExecutor queryExecutor, PersistExecutor updateExecutor, String name) {
             this.queryExecutor = queryExecutor;
             this.updateExecutor = updateExecutor;
             this.name = name;
@@ -148,7 +150,7 @@ public class IntegrationTestApplication {
         }
 
         @Override
-        public UpdateExecutor getUpdateExecutor() {
+        public PersistExecutor getUpdateExecutor() {
             return updateExecutor;
         }
 
@@ -160,9 +162,45 @@ public class IntegrationTestApplication {
         }
 
         @Override
+        public <T> T doInTransaction(Supplier<T> command) {
+            return applicationContext.getBean(TransactionTemplate.class).execute(_ -> command.get());
+        }
+
+        @Override
         public String toString() {
             DatabaseEnvironmentVariables dbEnv = applicationContext.getBean(DatabaseEnvironmentVariables.class);
             return dbEnv.name() + "-" + name;
+        }
+
+        @Override
+        public <T> UpdateSetStep<T> update(Class<T> type) {
+            PersistDescriptor<T> descriptor = new PersistDescriptor<>() {
+                @Override
+                public PersistExecutor persistExecutor() {
+                    return updateExecutor;
+                }
+
+                @Override
+                public Metamodel metamodel() {
+                    return JpaMetamodel.of();
+                }
+
+                @Override
+                public EntityType entityType() {
+                    return JpaMetamodel.of().getEntity(type);
+                }
+
+                @Override
+                public Class<T> entityClass() {
+                    return type;
+                }
+            };
+            return new UpdateSetStepImpl<>(descriptor);
+        }
+
+        @Override
+        public <T> UpdateSetStep<T> update(EntityTemplateDescriptor<T> type) {
+            return new UpdateSetStepImpl<>(type);
         }
     }
 

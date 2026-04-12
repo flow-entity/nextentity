@@ -4,26 +4,9 @@ import io.github.nextentity.core.util.DefaultEntityRoot;
 
 /// 实体根接口，提供实体属性访问和路径构建方法。
 ///
-/// ## 使用示例
-///
-/// ```java
-/// // 创建实体根
-/// EntityRoot<User> root = EntityRoot.of();
-///
-/// // 创建字面量表达式
-/// Expression<User, String> literal = root.literal("张三");
-///
-/// // 创建路径表达式
-/// Path<User, String> namePath = root.get(User::getName);
-/// NumberPath<User, Integer> agePath = root.get(User::getAge);
-/// StringPath<User> nameStrPath = root.get(User::getName);
-///
-/// // 通过字段名创建路径（类型不安全）
-/// Path<User, Object> dynamicPath = root.path("dynamicField");
-/// ```
-///
 /// @param <T> 实体类型
 /// @author HuangChengwei
+/// @see Path 路径表达式创建和使用示例
 /// @since 1.0.0
 public interface EntityRoot<T> {
 

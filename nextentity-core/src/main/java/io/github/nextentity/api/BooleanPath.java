@@ -5,25 +5,9 @@ package io.github.nextentity.api;
 /// 同时继承 PathRef.BooleanRef，允许 BooleanPath 实例在查询构建方法中
 /// 作为 BooleanRef 参数传递。
 ///
-/// ## 使用示例
-///
-/// ```java
-/// // 创建布尔路径
-/// BooleanPath<User> activePath = BooleanPath.of(User::isActive);
-///
-/// // 在查询中使用
-/// List<User> activeUsers = repository.query()
-///     .where(BooleanPath.of(User::isActive)).eq(true)
-///     .getList();
-///
-/// // 直接作为断言使用
-/// repository.query()
-///     .where(User::isActive)
-///     .getList();
-/// ```
-///
 /// @param <T> 实体类型
 /// @author HuangChengwei
+/// @see Path 路径表达式创建和使用示例
 /// @since 1.0.0
 public interface BooleanPath<T> extends Predicate<T>, Path<T, Boolean>, PathRef.BooleanRef<T> {
     /// 从指定布尔引用创建布尔路径。

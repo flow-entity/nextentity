@@ -13,17 +13,17 @@ import java.util.Collection;
 /// List<Tuple2<String, Integer>> results = repository.query()
 ///     .select(User::getName, User::getAge)
 ///     .where(User::getStatus).eq("ACTIVE")
-///     .getList();
+///     .list();
 ///
 /// // 投影到 DTO
 /// List<UserDto> dtos = repository.query()
 ///     .select(UserDto.class)
-///     .getList();
+///     .list();
 ///
 /// // 选择不重复的值
 /// List<String> uniqueNames = repository.query()
 ///     .selectDistinct(User::getName)
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

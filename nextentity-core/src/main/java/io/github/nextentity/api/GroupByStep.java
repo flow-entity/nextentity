@@ -12,20 +12,20 @@ import java.util.List;
 /// List<Tuple2<String, Long>> results = repository.query()
 ///     .select(User::getDepartment, User::getId.count())
 ///     .groupBy(User::getDepartment)
-///     .getList();
+///     .list();
 ///
 /// // 按多个字段分组
 /// List<Tuple3<String, String, Long>> results = repository.query()
 ///     .select(User::getDepartment, User::getStatus, User::getId.count())
 ///     .groupBy(User::getDepartment, User::getStatus)
-///     .getList();
+///     .list();
 ///
 /// // 使用 having 过滤分组
 /// List<Tuple2<String, Long>> results = repository.query()
 ///     .select(User::getDepartment, User::getId.count())
 ///     .groupBy(User::getDepartment)
 ///     .having(User::getId.count().gt(5))
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

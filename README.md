@@ -61,14 +61,40 @@ public class Employee {
 
 ### 创建 Repository
 
-继承 `AbstractRepository` 并定义构造方法：
+有两种方式可以使用 Repository：
+
+#### 方式一：继承 AbstractRepository（推荐用于复杂业务）
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
+    }
+
+    // 自定义查询方法
+    public List<Employee> findActiveEmployees() {
+        return query()
+            .where(Employee::getActive).eq(true)
+            .list();
+    }
+}
+```
+
+#### 方式二：自动注入 Repository 接口（适用于简单 CRUD）
+
+无需创建 Repository 子类，直接注入 `Repository<T, ID>` 接口：
+
+```java
+@Service
+public class CustomerService {
+
+    @Autowired
+    private Repository<Customer, Long> customerRepository;
+
+    public Customer getById(Long id) {
+        return customerRepository.getById(id);
     }
 }
 ```

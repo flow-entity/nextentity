@@ -77,16 +77,23 @@ spring:
 
 ## Repository 定义
 
-### AbstractRepository 基类
+NextEntity 提供两种 Repository 使用方式：
 
-继承 `AbstractRepository` 并定义构造方法，注入 `EntityContext`：
+| 方式                        | 适用场景       | 特点           |
+|---------------------------|------------|--------------|
+| 继承 `AbstractRepository`   | 需要自定义查询方法  | 可添加业务特定的查询逻辑 |
+| 注入 `Repository<T, ID>` 接口 | 简单 CRUD 操作 | 无需创建子类，自动注入  |
+
+### 方式一：继承 AbstractRepository 基类
+
+继承 `AbstractRepository` 并定义构造方法，注入 `EntityTemplateFactory`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 }
 ```
@@ -94,12 +101,49 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 AbstractRepository 提供以下基于 ID 的方法：
 - `findById(id)` → `Optional<T>`
 - `getById(id)` → `T`（可能为 null）
+- `findAll()` → `List<T>`
 - `findAllById(ids)` / `getAllById(ids)` → `List<T>`
-- `findMapById(ids)` → `Map<ID, T>`
-- `findMapAll()` → `Map<ID, T>`
+- `findAllAsMapById(ids)` → `Map<ID, T>`
+- `findAllAsMap()` → `Map<ID, T>`
+- `count()` → `long`
 - `existsById(id)` → `boolean`
 - `countById(ids)` → `long`
 - `deleteById(id)` / `deleteAllById(ids)`
+- `deleteAll()` → 删除所有实体
+
+### 方式二：注入 Repository 接口
+
+对于简单的 CRUD 操作，无需创建 Repository 子类，直接注入 `Repository<T, ID>` 接口：
+
+```java
+@Service
+public class CustomerService {
+
+    @Autowired
+    private Repository<Customer, Long> customerRepository;
+
+    public Customer getById(Long id) {
+        return customerRepository.getById(id);
+    }
+
+    public List<Customer> findAll() {
+        return customerRepository.query().list();
+    }
+}
+```
+
+Spring Boot 自动配置会根据注入点的泛型参数自动创建对应的 Repository Bean。
+
+> **配置开关**：可通过 `nextentity.generic-repository=false` 禁用 Repository 自动注入：
+> ```yaml
+> nextentity:
+>   enabled: true
+>   generic-repository: false  # 禁用 Repository 自动注入
+> ```
+
+> **注意**：
+> - `Repository<T, ID>` 接口中 `query()` 是公共方法，可以在 Service 中直接调用
+> - `AbstractRepository` 中 `query()` 是 `protected` 的，只能在子类内部使用
 
 ### 使用示例
 
@@ -120,7 +164,7 @@ public class UserService {
     }
 
     public Map<Long, User> getUsersByIds(List<Long> ids) {
-        return userRepository.findMapById(ids);
+        return userRepository.findAllAsMapById(ids);
     }
 
     public boolean exists(Long id) {
@@ -139,8 +183,8 @@ public class UserService {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
-    protected OrderRepository(EntityContext context) {
-        super(context);
+    protected OrderRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     public List<Order> findByStatus(String status) {
@@ -185,8 +229,8 @@ public class OrderRepository extends AbstractRepository<Order, Long> {
 @Repository
 public class UserRepository extends AbstractRepository<User, Long> {
 
-    protected UserRepository(EntityContext context) {
-        super(context);
+    protected UserRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     @Transactional
@@ -213,8 +257,8 @@ public class UserRepository extends AbstractRepository<User, Long> {
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
 
-    protected LogRepository(EntityContext context) {
-        super(context);
+    protected LogRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 
     @Transactional

@@ -1,9 +1,12 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
-import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.core.EntityTemplate;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.reflect.PrimitiveTypes;
 import org.jspecify.annotations.NonNull;
 import org.springframework.core.ResolvableType;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 /// 抽象 Repository 基类，提供基本的数据库 CRUD 操作和查询构建功能。
@@ -39,9 +41,9 @@ import java.util.stream.Collectors;
 /// @param <ID> 主键类型
 /// @author HuangChengwei
 /// @since 1.0.0
-public abstract class AbstractRepository<T, ID> {
+public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
 
-    private final EntityOperations<T> operations;
+    private final EntityTemplate<T> operations;
 
     private final Class<ID> idType;
     private Path<T, ID> idPath;
@@ -49,22 +51,46 @@ public abstract class AbstractRepository<T, ID> {
 
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 EntityContext，自动检测实体类型和主键类型，
+    /// 通过构造器注入 EntityTemplateFactory，自动检测实体类型和主键类型，
     /// 并初始化操作入口。
     ///
-    /// @param context EntityContext 实体上下文
-    protected AbstractRepository(EntityContext context) {
+    /// @param factory EntityTemplateFactory 实体模板工厂
+    /// @throws ConfigurationException 如果声明的 ID 类型与实体实际 ID 类型不匹配
+    protected AbstractRepository(EntityTemplateFactory factory) {
         GenericType<T, ID> genericType = getGenericType();
-        this.idType = genericType.idType();
         Class<T> entityType = genericType.entityType();
-        this.operations = context.operations(entityType);
+        this.operations = factory.template(entityType);
+
+
+        Class<?> rawEntityIdType = operations.descriptor().entityType().id().type();
+        Class<?> entityIdType = PrimitiveTypes.getWrapper(rawEntityIdType);
+        this.idType = TypeCastUtil.cast(entityIdType);
+
+        checkGenericIdType(genericType.idType());
     }
 
-    public AbstractRepository(EntityOperations<T> operations) {
+    void checkGenericIdType(Class<ID> genericIdType) {
+        Class<ID> entityIdType = idType;
+        if (!genericIdType.equals(entityIdType)) {
+            throw new ConfigurationException(
+                    "ID type mismatch for entity " + operations.descriptor().entityType().type().getName() +
+                    ": declared " + genericIdType.getName() +
+                    " but actual is " + entityIdType.getName());
+        }
+    }
+
+    /// 创建 Repository 实例。
+    ///
+    /// 直接传入 EntityTemplate，适用于已有模板的场景。
+    ///
+    /// @param operations EntityTemplate 实例
+    protected AbstractRepository(EntityTemplate<T> operations, Class<ID> genericIdType) {
         this.operations = operations;
         EntityDescriptor<T> descriptor = operations.descriptor();
         Class<?> idClass = descriptor.entityType().id().type();
+        idClass = PrimitiveTypes.getWrapper(idClass);
         this.idType = TypeCastUtil.cast(idClass);
+        checkGenericIdType(genericIdType);
     }
 
     protected Path<T, ID> idPath() {
@@ -117,8 +143,27 @@ public abstract class AbstractRepository<T, ID> {
     /// 获取查询构建器，用于构建类型安全的查询。
     ///
     /// @return 查询构建器实例
-    protected EntityQuery<T> query() {
-        return operations;
+    @Override
+    public EntityQuery<T> query() {
+        return operations.query();
+    }
+
+    /// 查找所有实体。
+    ///
+    /// 注意：对于大表请谨慎使用，可能消耗大量内存。
+    ///
+    /// @return 所有实体列表
+    @Override
+    public List<T> findAll() {
+        return query().list();
+    }
+
+    /// 统计实体总数。
+    ///
+    /// @return 实体数量
+    @Override
+    public long count() {
+        return query().count();
     }
 
     /// 获取实体根对象，用于构建路径表达式。
@@ -147,6 +192,7 @@ public abstract class AbstractRepository<T, ID> {
     /// 该操作在事务中执行。
     ///
     /// @param entity 要插入的实体，不能为 null
+    @Override
     @Transactional
     public void insert(@NonNull T entity) {
         operations.insert(entity);
@@ -157,6 +203,7 @@ public abstract class AbstractRepository<T, ID> {
     /// 该操作在事务中执行，支持批量优化。
     ///
     /// @param entities 要插入的实体集合，不能为 null
+    @Override
     @Transactional
     public void insertAll(@NonNull Iterable<T> entities) {
         operations.insertAll(entities);
@@ -168,6 +215,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param entities 要更新的实体集合，不能为 null
     @Transactional
+    @Override
     public void updateAll(@NonNull Iterable<T> entities) {
         operations.updateAll(entities);
     }
@@ -178,6 +226,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param entity 要更新的实体，不能为 null
     @Transactional
+    @Override
     public void update(@NonNull T entity) {
         operations.update(entity);
     }
@@ -188,8 +237,21 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param entities 要删除的实体集合，不能为 null
     @Transactional
+    @Override
     public void deleteAll(@NonNull Iterable<T> entities) {
         operations.deleteAll(entities);
+    }
+
+    /// 删除所有实体。
+    ///
+    /// 警告：此方法会删除表中所有数据，请谨慎使用。
+    ///
+    /// 注意：此方式会绕过 JPA 生命周期回调（如 @PreRemove）。
+    /// 如需触发回调，请使用 {@link #deleteAll(Iterable)} 方法。
+    @Transactional
+    @Override
+    public void deleteAll() {
+        delete().execute();
     }
 
     /// 删除单个实体。
@@ -198,6 +260,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param entity 要删除的实体，不能为 null
     @Transactional
+    @Override
     public void delete(@NonNull T entity) {
         operations.delete(entity);
     }
@@ -218,6 +281,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @return 条件更新构建器实例
     /// @since 2.0.0
     @Transactional
+    @Override
     public UpdateSetStep<T> update() {
         return operations.update();
     }
@@ -237,6 +301,7 @@ public abstract class AbstractRepository<T, ID> {
     /// @return 条件删除构建器实例
     /// @since 2.0.0
     @Transactional
+    @Override
     public DeleteWhereStep<T> delete() {
         return operations.delete();
     }
@@ -249,6 +314,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param id 主键值
     /// @return 包含实体的 Optional，如果未找到则返回空 Optional
+    @Override
     public Optional<T> findById(ID id) {
         return Optional.ofNullable(query().where(idPath()).eq(id).first());
     }
@@ -260,6 +326,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param id 主键值
     /// @return 实体对象，如果未找到则返回 null
+    @Override
     public T getById(ID id) {
         return query().where(idPath()).eq(id).first();
     }
@@ -268,6 +335,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 匹配主键的实体列表
+    @Override
     public List<T> findAllById(@NonNull Collection<? extends ID> ids) {
         if (ids.isEmpty()) {
             return List.of();
@@ -287,12 +355,10 @@ public abstract class AbstractRepository<T, ID> {
 
     /// 根据主键集合查找实体并返回以 ID 为键的映射。
     ///
-    /// 注意：如果结果中存在重复 ID 的实体，将抛出 IllegalStateException。
-    /// 正常情况下主键不应重复，但需留意此行为。
-    ///
     /// @param ids 主键值集合
     /// @return 以 ID 为键、实体为值的映射
-    public Map<ID, T> findMapById(@NonNull Collection<? extends ID> ids) {
+    @Override
+    public Map<ID, T> findAllAsMapById(@NonNull Collection<? extends ID> ids) {
         List<T> entities = findAllById(ids);
         return entities.stream()
                 .collect(Collectors.toMap(idExtractor(), Function.identity()));
@@ -300,12 +366,11 @@ public abstract class AbstractRepository<T, ID> {
 
     /// 查找所有实体并返回以 ID 为键的映射。
     ///
-    /// 注意：
-    /// - 此方法会将所有实体加载到内存中，对于大表请谨慎使用。
-    /// - 如果结果中存在重复 ID 的实体，将抛出 IllegalStateException。
+    /// 注意：此方法会将所有实体加载到内存中，对于大表请谨慎使用。
     ///
     /// @return 以 ID 为键、实体为值的映射
-    public Map<ID, T> findMapAll() {
+    @Override
+    public Map<ID, T> findAllAsMap() {
         return query().list().stream()
                 .collect(Collectors.toMap(idExtractor(), Function.identity()));
     }
@@ -314,6 +379,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param id 主键值
     /// @return 如果实体存在返回 true，否则返回 false
+    @Override
     public boolean existsById(ID id) {
         return query().where(idPath()).eq(id).exists();
     }
@@ -339,6 +405,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param id 主键值
     @Transactional
+    @Override
     public void deleteById(ID id) {
         delete().where(idPath()).eq(id).execute();
     }
@@ -353,6 +420,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @param ids 主键值集合
     @Transactional
+    @Override
     public void deleteAllById(@NonNull Collection<? extends ID> ids) {
         if (!ids.isEmpty()) {
             delete().where(idPath()).in(ids).execute();
@@ -488,18 +556,6 @@ public abstract class AbstractRepository<T, ID> {
     /// @param <T>  实体类型
     /// @param <ID> 主键类型
     protected record GenericType<T, ID>(Class<T> entityType, Class<ID> idType) {
-    }
-
-    /// 在事务中执行操作。
-    ///
-    /// 该方法已标注 @Transactional，确保操作在事务上下文中执行。
-    ///
-    /// @param command 要执行的操作
-    /// @param <X>     操作返回类型
-    /// @return 操作结果
-    @Transactional
-    protected <X> X doInTransaction(Supplier<X> command) {
-        return command.get();
     }
 
 }

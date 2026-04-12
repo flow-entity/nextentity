@@ -1,18 +1,16 @@
 package io.github.nextentity.integration.config;
 
-import io.github.nextentity.core.EntityQueryImpl;
-import io.github.nextentity.api.EntityDescriptor;
-import io.github.nextentity.core.PaginationConfig;
-import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.SimpleEntityDescriptor;
-import io.github.nextentity.core.SimpleQueryDescriptor;
-import io.github.nextentity.core.UpdateExecutor;
+import io.github.nextentity.api.DeleteWhereStep;
+import io.github.nextentity.api.UpdateSetStep;
+import io.github.nextentity.core.*;
 import io.github.nextentity.integration.entity.AutoIncrementEntity;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.LockableEntity;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import org.jspecify.annotations.NonNull;
+
+import java.util.function.Supplier;
 
 ///
  /// Database configuration for integration tests.
@@ -23,16 +21,23 @@ public interface IntegrationTestContext {
 
     QueryExecutor getQueryExecutor();
 
-    UpdateExecutor getUpdateExecutor();
+    PersistExecutor getUpdateExecutor();
 
     /// 创建实体上下文，用于更新操作。
     ///
     /// @param entityClass 实体类
     /// @param <T>         实体类型
     /// @return 实体上下文实例
-    default <T> EntityDescriptor<T> getEntityContext(Class<T> entityClass) {
+    default <T> EntityTemplateDescriptor<T> getEntityContext(Class<T> entityClass) {
         var metamodel = JpaMetamodel.of();
-        return new SimpleEntityDescriptor<>(metamodel, metamodel.getEntity(entityClass), entityClass);
+        return new EntityTemplateDescriptor<>(
+                getUpdateExecutor(),
+                getQueryExecutor(),
+                PaginationConfig.DEFAULT,
+                metamodel,
+                metamodel.getEntity(entityClass),
+                entityClass
+        );
     }
 
     default EntityQueryImpl<Employee> queryEmployees() {
@@ -56,4 +61,21 @@ public interface IntegrationTestContext {
     }
 
     @NonNull IntegrationTestContext reset();
+
+    <T> T doInTransaction(Supplier<T> runnable);
+
+    default void doInTransaction(Runnable runnable) {
+        doInTransaction(() -> {
+            runnable.run();
+            return null;
+        });
+    }
+
+    <T> UpdateSetStep<T> update(Class<T> type);
+
+    <T> UpdateSetStep<T> update(EntityTemplateDescriptor<T> type);
+
+    default <T> DeleteWhereStep<T> delete(EntityTemplateDescriptor<T> entityContext) {
+        return new DeleteWhereStepImpl<>(entityContext);
+    }
 }

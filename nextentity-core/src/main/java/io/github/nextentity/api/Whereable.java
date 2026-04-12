@@ -9,30 +9,12 @@ import io.github.nextentity.api.PathRef.StringRef;
 
 /// 行选择条件步骤接口，提供条件构建方法。
 ///
-/// 继承 SelectGroupByStep 和 WhereStep，提供分组和条件构建功能。
-///
-/// ## 使用示例
-///
-/// ```java
-/// // 简单条件
-/// List<User> users = repository.query()
-///     .where(User::getAge).gt(18)
-///     .getList();
-///
-/// // 多个条件（AND 关系）
-/// List<User> users = repository.query()
-///     .where(User::getAge).gt(18)
-///     .where(User::getStatus).eq("ACTIVE")
-///     .getList();
-///
-/// // 使用路径表达式
-/// List<User> users = repository.query()
-///     .where(Path.of(User::getName)).like("%张%")
-///     .getList();
-/// ```
+/// 继承 SelectGroupByStep，提供分组和条件构建功能。
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
+/// @see BaseWhereStep where 条件构建示例
+/// @see EntityPath 嵌套实体属性访问
 /// @since 1.0.0
 public interface Whereable<T, SELF extends Whereable<T, SELF>> {
 
