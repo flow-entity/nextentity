@@ -19,7 +19,7 @@ import java.util.List;
 /// - `findById(Long id)` - 按 ID 查找，返回 Optional
 /// - `getById(Long id)` - 按 ID 获取，不存在返回 null
 /// - `findAllById(Collection)` - 按多个 ID 查找
-/// - `findMapById(Collection)` - 按 ID 查找并返回 Map
+/// - `findAllAsMapById(Collection)` - 按 ID 查找并返回 Map
 /// - `existsById(Long id)` - 检查 ID 是否存在
 /// - `deleteById(Long id)` - 按 ID 删除
 @Repository

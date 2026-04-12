@@ -101,12 +101,15 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 AbstractRepository 提供以下基于 ID 的方法：
 - `findById(id)` → `Optional<T>`
 - `getById(id)` → `T`（可能为 null）
+- `findAll()` → `List<T>`
 - `findAllById(ids)` / `getAllById(ids)` → `List<T>`
-- `findMapById(ids)` → `Map<ID, T>`
-- `findMapAll()` → `Map<ID, T>`
+- `findAllAsMapById(ids)` → `Map<ID, T>`
+- `findAllAsMap()` → `Map<ID, T>`
+- `count()` → `long`
 - `existsById(id)` → `boolean`
 - `countById(ids)` → `long`
 - `deleteById(id)` / `deleteAllById(ids)`
+- `deleteAll()` → 删除所有实体
 
 ### 方式二：注入 Repository 接口
 
@@ -161,7 +164,7 @@ public class UserService {
     }
 
     public Map<Long, User> getUsersByIds(List<Long> ids) {
-        return userRepository.findMapById(ids);
+        return userRepository.findAllAsMapById(ids);
     }
 
     public boolean exists(Long id) {

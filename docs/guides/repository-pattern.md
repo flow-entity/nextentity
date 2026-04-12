@@ -52,14 +52,17 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
 AbstractRepository 提供以下基于 ID 的方法：
 - `findById(id)` → `Optional<T>`
 - `getById(id)` → `T`
+- `findAll()` → `List<T>`
 - `findAllById(ids)` → `List<T>`
 - `getAllById(ids)` → `List<T>`
-- `findMapById(ids)` → `Map<ID, T>`
-- `findMapAll()` → `Map<ID, T>`
+- `findAllAsMapById(ids)` → `Map<ID, T>`
+- `findAllAsMap()` → `Map<ID, T>`
+- `count()` → `long`
 - `existsById(id)` → `boolean`
 - `countById(ids)` → `long`
 - `deleteById(id)`
 - `deleteAllById(ids)`
+- `deleteAll()` → 删除所有实体
 
 ### 方式二：注入 Repository 接口
 

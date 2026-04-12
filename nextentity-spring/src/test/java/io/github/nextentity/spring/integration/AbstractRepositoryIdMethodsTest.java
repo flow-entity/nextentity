@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 /// - getById(ID id) - 使用 idPath 查询
 /// - findAllById(Collection<ID> ids) - 使用 idPath 查询
 /// - getAllById(Collection<ID> ids) - 调用 findAllById
-/// - findMapById(Collection<ID> ids) - 使用 idExtractor 创建 Map
-/// - findMapAll() - 使用 idExtractor 创建 Map
+/// - findAllAsMapById(Collection<ID> ids) - 使用 idExtractor 创建 Map
+/// - findAllAsMap() - 使用 idExtractor 创建 Map
 /// - existsById(ID id) - 使用 idPath 检查存在性
 /// - countById(Collection<ID> ids) - 使用 idPath 统计数量
 /// - deleteById(ID id) - 使用 idPath 删除
@@ -172,7 +172,7 @@ class AbstractRepositoryIdMethodsTest {
         assertEquals(findAllResult, getAllResult);
     }
 
-    /// 测试 findMapById - 正常情况
+    /// 测试 findAllAsMapById - 正常情况
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void shouldFindMapByIdCreateCorrectMap(UserRepository repository) {
@@ -184,7 +184,7 @@ class AbstractRepositoryIdMethodsTest {
                 .collect(Collectors.toList());
 
         // Act
-        Map<Integer, User> result = repository.findMapById(ids);
+        Map<Integer, User> result = repository.findAllAsMapById(ids);
 
         // Assert - Map 的键应该是 ID，值应该是对应的实体
         assertEquals(ids.size(), result.size());
@@ -194,7 +194,7 @@ class AbstractRepositoryIdMethodsTest {
         }
     }
 
-    /// 测试 findMapById - 边界情况：空集合
+    /// 测试 findAllAsMapById - 边界情况：空集合
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void shouldFindMapByIdReturnEmptyMapWhenIdsIsEmpty(UserRepository repository) {
@@ -202,14 +202,14 @@ class AbstractRepositoryIdMethodsTest {
         Collection<Integer> emptyIds = List.of();
 
         // Act
-        Map<Integer, User> result = repository.findMapById(emptyIds);
+        Map<Integer, User> result = repository.findAllAsMapById(emptyIds);
 
         // Assert
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
-    /// 测试 findMapById - 使用 idExtractor 提取 ID
+    /// 测试 findAllAsMapById - 使用 idExtractor 提取 ID
     /// 验证 idExtractor 函数正确工作
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
@@ -221,7 +221,7 @@ class AbstractRepositoryIdMethodsTest {
                 .collect(Collectors.toList());
 
         // Act
-        Map<Integer, User> result = repository.findMapById(ids);
+        Map<Integer, User> result = repository.findAllAsMapById(ids);
 
         // Assert - 验证 idExtractor 正确提取了每个实体的 ID
         for (User expected : expectedUsers) {
@@ -232,7 +232,7 @@ class AbstractRepositoryIdMethodsTest {
         }
     }
 
-    /// 测试 findMapAll - 正常情况
+    /// 测试 findAllAsMap - 正常情况
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void shouldFindMapAllCreateCorrectMap(UserRepository repository) {
@@ -240,7 +240,7 @@ class AbstractRepositoryIdMethodsTest {
         List<User> allUsers = repository.users();
 
         // Act
-        Map<Integer, User> result = repository.findMapAll();
+        Map<Integer, User> result = repository.findAllAsMap();
 
         // Assert
         assertEquals(allUsers.size(), result.size());
@@ -250,13 +250,13 @@ class AbstractRepositoryIdMethodsTest {
         }
     }
 
-    /// 测试 findMapAll - 使用 idExtractor 提取 ID
+    /// 测试 findAllAsMap - 使用 idExtractor 提取 ID
     /// 验证 idExtractor 函数在全部实体上正确工作
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void shouldFindMapAllUseIdExtractorCorrectly(UserRepository repository) {
         // Act
-        Map<Integer, User> result = repository.findMapAll();
+        Map<Integer, User> result = repository.findAllAsMap();
 
         // Assert - 验证每个实体的 ID 都被正确提取并作为 Map 的键
         for (Map.Entry<Integer, User> entry : result.entrySet()) {
@@ -426,7 +426,7 @@ class AbstractRepositoryIdMethodsTest {
         assertNotNull(repository.idType());
     }
 
-    /// 测试 findMapById 与 findMapAll 结果一致性
+    /// 测试 findAllAsMapById 与 findAllAsMap 结果一致性
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void shouldFindMapByIdConsistentWithFindMapAll(UserRepository repository) {
@@ -437,8 +437,8 @@ class AbstractRepositoryIdMethodsTest {
                 .collect(Collectors.toList());
 
         // Act
-        Map<Integer, User> mapById = repository.findMapById(allIds);
-        Map<Integer, User> mapAll = repository.findMapAll();
+        Map<Integer, User> mapById = repository.findAllAsMapById(allIds);
+        Map<Integer, User> mapAll = repository.findAllAsMap();
 
         // Assert - 两个方法应该返回相同的 Map（对于全部 ID）
         assertEquals(mapAll.size(), mapById.size());
@@ -461,7 +461,7 @@ class AbstractRepositoryIdMethodsTest {
         assertEquals(singleId, result.getFirst().getId());
     }
 
-    /// 测试 findMapById 返回的 Map 不可修改性
+    /// 测试 findAllAsMapById 返回的 Map 不可修改性
     /// Collectors.toMap 返回的 HashMap 是可修改的，这是预期行为
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
@@ -471,7 +471,7 @@ class AbstractRepositoryIdMethodsTest {
         List<Integer> ids = Collections.singletonList(id);
 
         // Act
-        Map<Integer, User> result = repository.findMapById(ids);
+        Map<Integer, User> result = repository.findAllAsMapById(ids);
 
         // Assert - HashMap 是可修改的（这是 Collectors.toMap 的默认行为）
         // 如果需要不可修改的 Map，应该使用 Collections.unmodifiableMap 包装

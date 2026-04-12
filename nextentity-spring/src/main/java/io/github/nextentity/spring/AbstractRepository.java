@@ -148,6 +148,24 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
         return operations.query();
     }
 
+    /// 查找所有实体。
+    ///
+    /// 注意：对于大表请谨慎使用，可能消耗大量内存。
+    ///
+    /// @return 所有实体列表
+    @Override
+    public List<T> findAll() {
+        return query().list();
+    }
+
+    /// 统计实体总数。
+    ///
+    /// @return 实体数量
+    @Override
+    public long count() {
+        return query().count();
+    }
+
     /// 获取实体根对象，用于构建路径表达式。
     ///
     /// @return 实体根对象实例
@@ -222,6 +240,18 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     @Override
     public void deleteAll(@NonNull Iterable<T> entities) {
         operations.deleteAll(entities);
+    }
+
+    /// 删除所有实体。
+    ///
+    /// 警告：此方法会删除表中所有数据，请谨慎使用。
+    ///
+    /// 注意：此方式会绕过 JPA 生命周期回调（如 @PreRemove）。
+    /// 如需触发回调，请使用 {@link #deleteAll(Iterable)} 方法。
+    @Transactional
+    @Override
+    public void deleteAll() {
+        delete().execute();
     }
 
     /// 删除单个实体。
@@ -325,13 +355,10 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
 
     /// 根据主键集合查找实体并返回以 ID 为键的映射。
     ///
-    /// 注意：如果结果中存在重复 ID 的实体，将抛出 IllegalStateException。
-    /// 正常情况下主键不应重复，但需留意此行为。
-    ///
     /// @param ids 主键值集合
     /// @return 以 ID 为键、实体为值的映射
     @Override
-    public Map<ID, T> findMapById(@NonNull Collection<? extends ID> ids) {
+    public Map<ID, T> findAllAsMapById(@NonNull Collection<? extends ID> ids) {
         List<T> entities = findAllById(ids);
         return entities.stream()
                 .collect(Collectors.toMap(idExtractor(), Function.identity()));
@@ -339,13 +366,11 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
 
     /// 查找所有实体并返回以 ID 为键的映射。
     ///
-    /// 注意：
-    /// - 此方法会将所有实体加载到内存中，对于大表请谨慎使用。
-    /// - 如果结果中存在重复 ID 的实体，将抛出 IllegalStateException。
+    /// 注意：此方法会将所有实体加载到内存中，对于大表请谨慎使用。
     ///
     /// @return 以 ID 为键、实体为值的映射
     @Override
-    public Map<ID, T> findMapAll() {
+    public Map<ID, T> findAllAsMap() {
         return query().list().stream()
                 .collect(Collectors.toMap(idExtractor(), Function.identity()));
     }
