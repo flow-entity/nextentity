@@ -85,12 +85,10 @@ public class IntegrationTestApplication {
     @Component
     public static class SpringConnectionProvider implements ConnectionProvider {
         private final JdbcTemplate jdbcTemplate;
-        private final TransactionTemplate transactionTemplate;
 
         @Autowired
         public SpringConnectionProvider(JdbcTemplate jdbcTemplate, TransactionTemplate transactionTemplate) {
             this.jdbcTemplate = jdbcTemplate;
-            this.transactionTemplate = transactionTemplate;
         }
 
         @Override
@@ -98,10 +96,6 @@ public class IntegrationTestApplication {
             return jdbcTemplate.execute(action::doInConnection);
         }
 
-        @Override
-        public <T> T executeInTransaction(ConnectionCallback<T> action) {
-            return transactionTemplate.execute(ignore -> execute(action));
-        }
     }
 
     @Component

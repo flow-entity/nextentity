@@ -14,7 +14,7 @@ package io.github.nextentity.api;
 /// // 在查询中使用方法引用
 /// repository.query()
 ///     .where(User::getName).eq("张三")
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

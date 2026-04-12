@@ -184,11 +184,6 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         return new SubQueryBuilderImpl<>();
     }
 
-    @Override
-    public List<U> getList(int offset, int maxResult, LockModeType lockModeType) {
-        return lock(lockModeType).list(offset, maxResult);
-    }
-
     public QueryStructure getQueryStructure() {
         return queryStructure;
     }

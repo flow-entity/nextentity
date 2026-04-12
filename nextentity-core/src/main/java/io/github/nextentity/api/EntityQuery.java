@@ -19,13 +19,13 @@ package io.github.nextentity.api;
 ///
 /// ```java
 /// // 查询所有实体
-/// List<Employee> employees = repository.query().getList();
+/// List<Employee> employees = repository.query().list();
 ///
 /// // 带条件查询
 /// List<Employee> activeEmployees = repository.query()
 ///     .where(Employee::getActive).eq(true)
 ///     .orderBy(Employee::getName).asc()
-///     .getList();
+///     .list();
 /// ```
 ///
 /// ### 投影查询
@@ -35,13 +35,13 @@ package io.github.nextentity.api;
 /// List<Tuple2<String, BigDecimal>> namesAndSalaries = repository.query()
 ///     .select(Employee::getName, Employee::getSalary)
 ///     .where(Employee::getActive).eq(true)
-///     .getList();
+///     .list();
 ///
 /// // 投影到 DTO 类
 /// List<EmployeeDto> dtos = repository.query()
 ///     .select(EmployeeDto.class)
 ///     .where(Employee::getActive).eq(true)
-///     .getList();
+///     .list();
 /// ```
 ///
 /// ### 关联查询
@@ -51,7 +51,7 @@ package io.github.nextentity.api;
 /// List<Employee> employees = repository.query()
 ///     .fetch(Employee::getDepartment)
 ///     .where(Employee::getActive).eq(true)
-///     .getList();
+///     .list();
 /// ```
 ///
 /// ### 分页查询
@@ -61,7 +61,7 @@ package io.github.nextentity.api;
 /// List<Employee> page = repository.query()
 ///     .where(Employee::getActive).eq(true)
 ///     .orderBy(Employee::getId).asc()
-///     .getList(0, 10);  // offset=0, limit=10
+///     .list(0, 10);  // offset=0, limit=10
 ///
 /// // 带元数据的分片查询
 /// Slice<Employee> slice = repository.query()
@@ -78,7 +78,7 @@ package io.github.nextentity.api;
 ///     return repository.query()
 ///         .where(Employee::getDepartmentId).eqIfNotNull(departmentId)
 ///         .where(Employee::getStatus).eqIfNotNull(status)
-///         .getList();
+///         .list();
 /// }
 /// ```
 ///

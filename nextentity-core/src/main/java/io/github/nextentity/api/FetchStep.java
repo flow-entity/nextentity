@@ -15,18 +15,18 @@ import java.util.List;
 /// List<User> users = repository.query()
 ///     .fetch(User::getDepartment)
 ///     .where(User::getStatus).eq("ACTIVE")
-///     .getList();
+///     .list();
 ///
 /// // 预加载多个关联
 /// List<User> users = repository.query()
 ///     .fetch(User::getDepartment, User::getRole)
-///     .getList();
+///     .list();
 ///
 /// // 预加载嵌套关联
 /// List<User> users = repository.query()
 ///     .fetch(User::getDepartment)
 ///     .fetch(Path.of(User::getDepartment).get(Department::getManager))
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

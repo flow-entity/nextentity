@@ -17,7 +17,7 @@ import java.io.Serializable;
 /// // 在查询中使用
 /// List<User> users = repository.query()
 ///     .orderBy(order1, order2)
-///     .getList();
+///     .list();
 ///
 /// // 获取排序信息
 /// Expression<User, ?> expr = order1.expression();

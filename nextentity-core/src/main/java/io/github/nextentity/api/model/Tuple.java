@@ -12,7 +12,7 @@ import java.util.List;
 /// // 查询返回元组
 /// List<Tuple2<String, Integer>> results = repository.query()
 ///     .select(User::getName, User::getAge)
-///     .getList();
+///     .list();
 ///
 /// // 访问元组元素
 /// for (Tuple2<String, Integer> tuple : results) {

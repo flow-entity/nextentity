@@ -8,19 +8,19 @@ package io.github.nextentity.api;
 /// // 简单条件
 /// List<User> users = repository.query()
 ///     .where(User::getAge).gt(18)
-///     .getList();
+///     .list();
 ///
 /// // 多条件组合
 /// List<User> users = repository.query()
 ///     .where(User::getAge).gt(18)
 ///     .where(User::getStatus).eq("ACTIVE")
-///     .getList();
+///     .list();
 ///
 /// // 使用断言
 /// Predicate<User> predicate = Path.of(User::getAge).gt(18);
 /// List<User> users = repository.query()
 ///     .where(predicate)
-///     .getList();
+///     .list();
 /// ```
 ///
 /// @param <T> 实体类型

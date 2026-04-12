@@ -1,6 +1,5 @@
 package io.github.nextentity.spring.integration.db;
 
-import io.github.nextentity.spring.EntityContextBuilder;
 import io.github.nextentity.spring.EntityFactoryBuilder;
 import jakarta.persistence.EntityManager;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

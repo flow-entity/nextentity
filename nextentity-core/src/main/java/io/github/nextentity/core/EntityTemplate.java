@@ -5,8 +5,6 @@ import io.github.nextentity.api.EntityPersistor;
 import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.api.UpdateSetStep;
 
-import java.util.function.Supplier;
-
 public class EntityTemplate<T> implements EntityPersistor<T> {
 
     private final PersistDescriptor<T> descriptor;
@@ -68,17 +66,5 @@ public class EntityTemplate<T> implements EntityPersistor<T> {
     @Override
     public DeleteWhereStep<T> delete() {
         return new DeleteWhereStepImpl<>(descriptor);
-    }
-
-    @Override
-    @Deprecated
-    public void doInTransaction(Runnable command) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    @Deprecated
-    public <X> X doInTransaction(Supplier<X> command) {
-        throw new UnsupportedOperationException();
     }
 }

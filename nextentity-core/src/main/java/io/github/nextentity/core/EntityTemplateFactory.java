@@ -1,7 +1,6 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.EntityContext;
-import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.api.EntityPersistor;
 import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.core.meta.Metamodel;
@@ -34,11 +33,5 @@ public record EntityTemplateFactory(
     @Override
     public <T> EntityPersistor<T> persistor(Class<T> entityType) {
         return template(entityType);
-    }
-
-    @Override
-    @Deprecated
-    public <T> EntityOperations<T> operations(Class<T> entityType) {
-        throw new UnsupportedOperationException();
     }
 }
