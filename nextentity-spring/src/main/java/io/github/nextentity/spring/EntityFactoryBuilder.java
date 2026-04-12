@@ -184,19 +184,12 @@ public final class EntityFactoryBuilder {
 
     // ===================== Internal Context Class =====================
 
-    private static class FactoryContext {
-        final JdbcTemplate jdbcTemplate;
-        final SqlDialect sqlDialect;
-        final NextEntityProperties properties;
-        final TransactionTemplate template;
-
-        FactoryContext(JdbcTemplate jdbcTemplate, SqlDialect sqlDialect,
-                       NextEntityProperties properties, TransactionTemplate template) {
-            this.jdbcTemplate = jdbcTemplate;
-            this.sqlDialect = sqlDialect;
-            this.properties = properties;
-            this.template = template;
-        }
+    private record FactoryContext(
+            JdbcTemplate jdbcTemplate,
+            SqlDialect sqlDialect,
+            NextEntityProperties properties,
+            TransactionTemplate template
+    ) {
     }
 
 }

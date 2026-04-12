@@ -1,14 +1,23 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.core.EntityTemplate;
 import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.jdbc.SqlDialect;
 import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Scope;
+import org.springframework.core.ResolvableType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -55,6 +64,14 @@ import java.sql.SQLException;
 @ConditionalOnProperty(prefix = "nextentity", name = "enabled", havingValue = "true")
 @EnableConfigurationProperties(NextEntityProperties.class)
 public class NextEntityAutoConfiguration {
+
+    @Bean
+    @Primary
+    @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @ConditionalOnProperty(prefix = "nextentity", name = "generic-repository", havingValue = "true", matchIfMissing = true)
+    protected <T, ID> Repository<T, ID> genericRepository(InjectionPoint injectionPoint, EntityTemplateFactory factory) {
+        return new GenericRepository<>(factory, injectionPoint);
+    }
 
     /// 创建 EntityContext Bean。
     ///
@@ -116,4 +133,5 @@ public class NextEntityAutoConfiguration {
                     "Failed to instantiate SqlDialect: " + className, e);
         }
     }
+
 }

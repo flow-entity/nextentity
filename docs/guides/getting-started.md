@@ -125,8 +125,8 @@ public enum EmployeeStatus {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityTemplateFactory factory) {
+        super(factory);
     }
 }
 ```

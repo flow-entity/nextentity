@@ -1,6 +1,6 @@
 # v2.1.x 变更记录
 
-_从 v2.0.0 到 v2.1.3 的所有变更。_
+_从 v2.0.0 到 v2.1.4 的所有变更。_
 
 ## 迁移指南
 
@@ -16,8 +16,31 @@ _从 v2.0.0 到 v2.1.3 的所有变更。_
 2. **SqlLogger 多容器限制**：如在同一 JVM 运行多个 Spring 容器，
    SqlLogger 的静态配置会影响所有容器。建议在容器启动后立即设置配置。
 
+3. **Repository 接口注入**：v2.1.4 新增 `Repository<T, ID>` 接口，
+   对于简单 CRUD 操作，可直接注入该接口，无需创建子类：
+   ```java
+   @Autowired
+   private Repository<Customer, Long> customerRepository;
+   ```
+
+4. **ID 类型验证**：v2.1.4 新增启动时 ID 类型验证，
+   确保泛型 ID 类型与实体实际 ID 类型匹配，防止配置错误。
+
+5. **EntityRepository → GenericRepository 重命名**：v2.1.4 将 `EntityRepository` 
+   重命名为 `GenericRepository`，命名更清晰。若直接引用该类，需更新类名。
+
+6. **Repository 自动注入开关**：可通过配置禁用 Repository 自动注入功能：
+   ```yaml
+   nextentity:
+     generic-repository: false
+   ```
+
 ## Features
 
+- feat: 引入 Repository<T, ID> 接口，提供标准 CRUD 操作接口 `feat/stream-support`
+- feat: 新增 GenericRepository<T, ID> 通用实现，无需继承即可使用 Repository
+- feat: 自动注入 Repository Bean，支持泛型参数解析，可配置开关禁用
+- feat: ID 类型启动验证，防止泛型类型与实体实际类型不匹配
 - feat: 引入 EntityOperations 接口，合并查询与持久化操作 `ebcb920`
 - feat: 引入 QueryContext 接口封装查询操作共享依赖 `196139c`
 - feat: 可配置的分页自动排序行为 `f6be841`
@@ -77,6 +100,15 @@ _从 v2.0.0 到 v2.1.3 的所有变更。_
 ---
 
 ## 版本明细
+
+### v2.1.4
+
+- 引入 Repository<T, ID> 接口，提供标准 CRUD 操作接口
+- 新增 GenericRepository<T, ID> 通用实现，无需继承即可使用
+- Spring Boot 自动配置支持 Repository Bean 自动注入，可通过 `nextentity.generic-repository=false` 禁用
+- ID 类型启动验证，防止泛型类型与实体实际类型不匹配
+- query() 方法在 Repository 接口中为 public，AbstractRepository 中为 protected
+- EntityRepository 重命名为 GenericRepository，命名更清晰
 
 ### v2.1.3
 

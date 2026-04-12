@@ -38,6 +38,22 @@ public class NextEntityProperties {
     /// ```
     private boolean enabled = false;
 
+    /// 是否启用泛型 Repository 自动注入。
+    ///
+    /// 启用后可通过注入 `Repository<T, ID>` 自动创建 Repository 实例：
+    /// ```java
+    /// @Autowired
+    /// private Repository<User, Long> userRepository;
+    /// ```
+    ///
+    /// 默认为 true，可通过配置关闭：
+    /// ```yaml
+    /// nextentity:
+    ///   enabled: true
+    ///   generic-repository: false
+    /// ```
+    private boolean genericRepository = true;
+
     /// JDBC 配置
     @NestedConfigurationProperty
     private final JdbcProperties jdbc = new JdbcProperties();
@@ -76,5 +92,13 @@ public class NextEntityProperties {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isGenericRepository() {
+        return genericRepository;
+    }
+
+    public void setGenericRepository(boolean genericRepository) {
+        this.genericRepository = genericRepository;
     }
 }
