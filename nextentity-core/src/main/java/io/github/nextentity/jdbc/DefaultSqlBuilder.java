@@ -1,10 +1,13 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.meta.EntitySchema;
+import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 /// 统一的 SQL 构建器
 ///
@@ -79,7 +82,7 @@ public class DefaultSqlBuilder implements SqlBuilder {
                                                               Metamodel metamodel,
                                                               Map<String, Object> setValues,
                                                               ExpressionNode whereCondition) {
-        return new ConditionalUpdateStatementBuilder(entity, metamodel, setValues, whereCondition, dialect).build();
+        return new ConditionalUpdateStatementBuilder(entity, metamodel, setValues, whereCondition, dialect, config).build();
     }
 
     /// 构建条件删除 SQL 语句
@@ -92,7 +95,7 @@ public class DefaultSqlBuilder implements SqlBuilder {
     public DeleteSqlStatement buildConditionalDeleteStatement(EntityType entity,
                                                               Metamodel metamodel,
                                                               ExpressionNode whereCondition) {
-        return new ConditionalDeleteStatementBuilder(entity, metamodel, whereCondition, dialect).build();
+        return new ConditionalDeleteStatementBuilder(entity, metamodel, whereCondition, dialect, config).build();
     }
 
 }

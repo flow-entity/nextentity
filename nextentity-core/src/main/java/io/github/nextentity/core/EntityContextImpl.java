@@ -41,6 +41,7 @@ import org.jspecify.annotations.NonNull;
 /// @param paginationConfig 分页配置
 /// @author HuangChengwei
 /// @since 2.2.0
+@Deprecated
 public record EntityContextImpl(
         @NonNull Metamodel metamodel,
         @NonNull QueryExecutor queryExecutor,

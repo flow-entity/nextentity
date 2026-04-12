@@ -3,6 +3,7 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.*;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
@@ -39,7 +40,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected EmployeeRepository(EntityContext context) {
+    protected EmployeeRepository(EntityTemplateFactory context) {
         super(context);
     }
 

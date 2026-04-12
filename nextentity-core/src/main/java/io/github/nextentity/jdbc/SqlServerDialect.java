@@ -90,4 +90,10 @@ public class SqlServerDialect implements SqlDialect {
             sql.append(" with (updlock, rowlock, nowait)");
         }
     }
+
+    @Override
+    public UpdateJoinStyle getUpdateJoinStyle() {
+        // SQL Server: UPDATE alias SET ... FROM table alias JOIN ... WHERE ...
+        return UpdateJoinStyle.UPDATE_ALIAS_ONLY;
+    }
 }

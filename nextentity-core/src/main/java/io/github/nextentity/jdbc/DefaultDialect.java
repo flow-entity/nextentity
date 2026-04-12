@@ -39,4 +39,10 @@ public class DefaultDialect implements SqlDialect {
         }
     }
 
+    @Override
+    public UpdateJoinStyle getUpdateJoinStyle() {
+        // Default: FROM_CLAUSE_WITH_JOIN is most widely supported
+        return UpdateJoinStyle.FROM_CLAUSE_WITH_JOIN;
+    }
+
 }

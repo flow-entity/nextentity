@@ -15,6 +15,19 @@ import java.util.List;
 /// @since 2.0.0
 public interface SqlDialect {
 
+    /// UPDATE JOIN 的风格枚举
+    enum UpdateJoinStyle {
+        /// MySQL 风格: UPDATE table alias JOIN ... SET ... WHERE ...
+        /// MySQL 特有语法，JOIN 在 SET 前面
+        JOIN_BEFORE_SET,
+        /// PostgreSQL/标准风格: UPDATE table alias SET ... FROM other JOIN ... WHERE ...
+        /// UPDATE 后面写表名+别名，FROM 子句中包含 JOIN
+        FROM_CLAUSE_WITH_JOIN,
+        /// SQL Server 风格: UPDATE alias SET ... FROM table alias JOIN ... WHERE ...
+        /// UPDATE 后面只写别名，FROM 子句中写表名+别名+JOIN
+        UPDATE_ALIAS_ONLY
+    }
+
     /// 返回标识符的左引号字符
     ///
     /// @return 左引号字符（例如 MySQL 使用 "`"，标准 SQL 使用 "\""）
@@ -123,6 +136,18 @@ public interface SqlDialect {
         } else if (lockModeType == LockModeType.PESSIMISTIC_FORCE_INCREMENT) {
             sql.append(" for update nowait");
         }
+    }
+
+    /// 返回 UPDATE JOIN 的语法风格
+    ///
+    /// 不同数据库有不同的 UPDATE JOIN 语法：
+    /// - MySQL: UPDATE table alias JOIN ... SET ... WHERE ...
+    /// - PostgreSQL: UPDATE table alias SET ... FROM other JOIN ... WHERE ...
+    /// - SQL Server: UPDATE alias SET ... FROM table alias JOIN ... WHERE ...
+    ///
+    /// @return UPDATE JOIN 的语法风格
+    default UpdateJoinStyle getUpdateJoinStyle() {
+        return UpdateJoinStyle.JOIN_BEFORE_SET;
     }
 
     /// 默认 SQL 方言实例

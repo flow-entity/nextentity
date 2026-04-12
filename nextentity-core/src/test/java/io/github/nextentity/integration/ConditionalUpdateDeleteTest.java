@@ -48,7 +48,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When - 使用条件更新修改 salary 字段
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 90000.0)
                 .where(Employee::getId).eq(9001L)
                 .execute();
@@ -70,7 +70,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When - 更新多个字段
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 100000.0)
                 .set(Employee::getName, "Updated Name")
                 .set(Employee::getEmail, "updated@example.com")
@@ -95,7 +95,7 @@ public class ConditionalUpdateDeleteTest {
         long engineeringDeptId = 1L;
 
         // When - 更新 Engineering 部门中状态为 ACTIVE 的员工薪资
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 80000.0)
                 .where(Employee::getDepartmentId).eq(engineeringDeptId)
                 .where(Employee::getStatus).eq(EmployeeStatus.ACTIVE)
@@ -124,7 +124,7 @@ public class ConditionalUpdateDeleteTest {
 
         // When - 不添加 WHERE 条件，更新所有符合条件的记录
         // 注意：实际使用中无 WHERE 条件的更新会影响整个表，这里使用条件来限制范围
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getName, "Bulk Updated")
                 .where(Employee::getId).in(9010L, 9011L, 9012L)
                 .execute();
@@ -151,7 +151,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(highSalaryEmployee, context.getEntityContext(Employee.class));
 
         // When - 使用数值比较条件更新低薪员工
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 50000.0)
                 .where(Employee::getId).in(9020L, 9021L)
                 .where(Employee::getSalary).lt(50000.0)
@@ -175,7 +175,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getStatus, EmployeeStatus.INACTIVE)
                 .where(Employee::getId).eq(9030L)
                 .execute();
@@ -198,7 +198,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
 
         // When
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getActive, false)
                 .where(Employee::getId).eq(9040L)
                 .execute();
@@ -217,7 +217,7 @@ public class ConditionalUpdateDeleteTest {
     void shouldUpdateDepartmentFields(IntegrationTestContext context) {
         // Given - 使用已存在的 Department (id=1)
         // When
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Department.class))
+        int updated = context.update(context.getEntityContext(Department.class))
                 .set(Department::getBudget, 600000.0)
                 .where(Department::getId).eq(1L)
                 .execute();
@@ -235,7 +235,7 @@ public class ConditionalUpdateDeleteTest {
     @DisplayName("Should return zero when update matches no records")
     void shouldReturnZeroWhenUpdateMatchesNoRecords(IntegrationTestContext context) {
         // When - 使用一个不存在的 ID 进行更新
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 50000.0)
                 .where(Employee::getId).eq(99999L)
                 .execute();
@@ -260,7 +260,7 @@ public class ConditionalUpdateDeleteTest {
         assertThat(context.queryEmployees().where(Employee::getId).eq(9100L).exists()).isTrue();
 
         // When
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).eq(9100L)
                 .execute();
 
@@ -281,7 +281,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(toDelete, context.getEntityContext(Employee.class));
 
         // When - 使用多条件删除
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).in(9110L, 9111L, 9112L)
                 .where(Employee::getStatus).eq(EmployeeStatus.INACTIVE)
                 .execute();
@@ -303,8 +303,9 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(createTestEmployee(9122L, "Batch Delete 3", "bd3@example.com"), context.getEntityContext(Employee.class));
 
         // When
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
-                .where(Employee::getId).in(9120L, 9121L, 9122L)
+        int deleted = context.delete(context.getEntityContext(Employee.class))
+                .where(Employee::getId)
+                .in(9120L, 9121L, 9122L)
                 .execute();
 
         // Then
@@ -329,7 +330,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(highSalary, context.getEntityContext(Employee.class));
 
         // When - 删除低薪员工
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).in(9130L, 9131L)
                 .where(Employee::getSalary).lt(50000.0)
                 .execute();
@@ -352,7 +353,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(normalEmployee, context.getEntityContext(Employee.class));
 
         // When - 删除 email 为 null 的员工
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).in(9140L, 9141L)
                 .where(Employee::getEmail).isNull()
                 .execute();
@@ -375,7 +376,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(normalEmail, context.getEntityContext(Employee.class));
 
         // When - 删除 email 不为 null 的员工
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).in(9150L, 9151L)
                 .where(Employee::getEmail).isNotNull()
                 .execute();
@@ -391,7 +392,7 @@ public class ConditionalUpdateDeleteTest {
     @DisplayName("Should return zero when delete matches no records")
     void shouldReturnZeroWhenDeleteMatchesNoRecords(IntegrationTestContext context) {
         // When - 使用不存在的 ID 进行删除
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).eq(99999L)
                 .execute();
 
@@ -412,15 +413,15 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(createTestEmployee(9201L, "Combined 2", "c2@example.com"), context.getEntityContext(Employee.class));
 
         // When - 在事务中执行更新和删除
-        Integer result = context.getUpdateExecutor().doInTransaction(() -> {
+        Integer result = context.doInTransaction(() -> {
             // 先更新
-            int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+            int updated = context.update(context.getEntityContext(Employee.class))
                     .set(Employee::getSalary, 99999.0)
                     .where(Employee::getId).eq(9200L)
                     .execute();
 
             // 再删除
-            int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+            int deleted = context.delete(context.getEntityContext(Employee.class))
                     .where(Employee::getId).eq(9201L)
                     .execute();
 
@@ -444,7 +445,7 @@ public class ConditionalUpdateDeleteTest {
 
         // When - 先插入，再使用条件更新修改薪资
         context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
-        int updated = context.getUpdateExecutor().update(context.getEntityContext(Employee.class))
+        int updated = context.update(context.getEntityContext(Employee.class))
                 .set(Employee::getSalary, 60000.0)
                 .where(Employee::getId).eq(9300L)
                 .execute();
@@ -466,7 +467,7 @@ public class ConditionalUpdateDeleteTest {
         context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
         assertThat(context.queryEmployees().where(Employee::getId).eq(9400L).exists()).isTrue();
 
-        int deleted = context.getUpdateExecutor().delete(context.getEntityContext(Employee.class))
+        int deleted = context.delete(context.getEntityContext(Employee.class))
                 .where(Employee::getId).eq(9400L)
                 .execute();
 

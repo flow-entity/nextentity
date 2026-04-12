@@ -239,7 +239,7 @@ public class UpdateApiIntegrationTest {
         Employee employee = createTestEmployee(9050L, "Transaction Test");
 
         // When
-        Employee result = context.getUpdateExecutor().doInTransaction(() -> {
+        Employee result = context.doInTransaction(() -> {
             context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
             return context.queryEmployees()
                     .where(Employee::getId).eq(9050L)
@@ -259,7 +259,7 @@ public class UpdateApiIntegrationTest {
         Employee employee = createTestEmployee(9051L, "Runnable Transaction");
 
         // When
-        context.getUpdateExecutor().doInTransaction(() -> {
+        context.doInTransaction(() -> {
             context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
         });
 
@@ -276,7 +276,7 @@ public class UpdateApiIntegrationTest {
 
         // When
         assertThatThrownBy(() ->
-                context.getUpdateExecutor().doInTransaction(() -> {
+                context.doInTransaction(() -> {
                     context.getUpdateExecutor().insert(employee, context.getEntityContext(Employee.class));
                     throw new RuntimeException("Force rollback");
                 })
@@ -388,7 +388,7 @@ public class UpdateApiIntegrationTest {
     @DisplayName("Should handle complex transaction")
     void shouldHandleComplexTransaction(IntegrationTestContext context) {
         // When
-        Long count = context.getUpdateExecutor().doInTransaction(() -> {
+        Long count = context.doInTransaction(() -> {
             // Insert
             Employee e1 = createTestEmployee(9070L, "Complex 1");
             context.getUpdateExecutor().insert(e1, context.getEntityContext(Employee.class));

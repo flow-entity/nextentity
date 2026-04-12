@@ -18,6 +18,7 @@ import java.util.function.Supplier;
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
+@Deprecated
 public interface UpdateExecutor {
 
     ///

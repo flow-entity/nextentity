@@ -2,6 +2,8 @@ package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.core.EntityTemplate;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.meta.EntityAttribute;
 import org.jspecify.annotations.NonNull;
@@ -41,7 +43,7 @@ import java.util.stream.Collectors;
 /// @since 1.0.0
 public abstract class AbstractRepository<T, ID> {
 
-    private final EntityOperations<T> operations;
+    private final EntityTemplate<T> operations;
 
     private final Class<ID> idType;
     private Path<T, ID> idPath;
@@ -49,18 +51,18 @@ public abstract class AbstractRepository<T, ID> {
 
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 EntityContext，自动检测实体类型和主键类型，
+    /// 通过构造器注入 EntityTemplateFactory，自动检测实体类型和主键类型，
     /// 并初始化操作入口。
     ///
-    /// @param context EntityContext 实体上下文
-    protected AbstractRepository(EntityContext context) {
+    /// @param factory EntityTemplateFactory 实体模板工厂
+    protected AbstractRepository(EntityTemplateFactory factory) {
         GenericType<T, ID> genericType = getGenericType();
         this.idType = genericType.idType();
         Class<T> entityType = genericType.entityType();
-        this.operations = context.operations(entityType);
+        this.operations = factory.template(entityType);
     }
 
-    public AbstractRepository(EntityOperations<T> operations) {
+    public AbstractRepository(EntityTemplate<T> operations) {
         this.operations = operations;
         EntityDescriptor<T> descriptor = operations.descriptor();
         Class<?> idClass = descriptor.entityType().id().type();
@@ -118,7 +120,7 @@ public abstract class AbstractRepository<T, ID> {
     ///
     /// @return 查询构建器实例
     protected EntityQuery<T> query() {
-        return operations;
+        return operations.query();
     }
 
     /// 获取实体根对象，用于构建路径表达式。

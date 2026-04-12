@@ -1,15 +1,14 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.expression.ExpressionNodes;
+import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Map;
 
 /// 条件 SQL 语句构建器的抽象基类
 ///
@@ -17,14 +16,16 @@ import java.util.List;
 /// 支持处理 PathNode、LiteralNode、OperatorNode 等各种表达式节点类型，
 /// 包括嵌套路径的子查询生成。
 ///
+/// 提供了 UPDATE/DELETE JOIN 的通用方言处理方法：
+/// - appendJoinTablesOnly(): 用于 PostgreSQL 的 FROM/USING 子句
+/// - appendJoinConditions(): 用于 PostgreSQL 的 WHERE 连接条件
+/// - appendWhereWithJoinConditions(): 处理 PostgreSQL 风格的 WHERE 子句
+///
 /// @author HuangChengwei
 /// @since 2.0
 ///
-public abstract class AbstractConditionalStatementBuilder {
+public abstract class AbstractConditionalStatementBuilder extends AbstractStatementBuilder {
 
-    protected final StringBuilder sql = new StringBuilder();
-    protected final List<Object> params = new ArrayList<>();
-    protected final SqlDialect dialect;
     protected final EntityType entityType;
     protected final Metamodel metamodel;
     protected final ExpressionNode whereCondition;
@@ -32,218 +33,97 @@ public abstract class AbstractConditionalStatementBuilder {
     protected AbstractConditionalStatementBuilder(EntityType entityType,
                                                   Metamodel metamodel,
                                                   ExpressionNode whereCondition,
-                                                  SqlDialect dialect) {
+                                                  SqlDialect dialect,
+                                                  JdbcConfig config) {
+        super(dialect, config);
         this.entityType = entityType;
         this.metamodel = metamodel;
         this.whereCondition = whereCondition;
-        this.dialect = dialect;
+        addJoin(where());
     }
 
-    protected String leftQuotedIdentifier() {
-        return dialect.leftQuotedIdentifier();
+    @Override
+    protected QueryContext newContext(QueryStructure queryStructure) {
+        throw new UnsupportedOperationException();
     }
 
-    protected String rightQuotedIdentifier() {
-        return dialect.rightQuotedIdentifier();
+    @Override
+    protected EntityType getEntityType() {
+        return entityType;
     }
 
-    /// 添加表名
-    protected void appendTable() {
-        sql.append(leftQuotedIdentifier())
-                .append(entityType.tableName())
-                .append(rightQuotedIdentifier());
+    @Override
+    protected ExpressionNode where() {
+        return whereCondition;
     }
 
-    /// 添加 WHERE 条件
-    protected void appendWhereCondition() {
-        if (whereCondition != null) {
-            sql.append(" where ");
-            renderExpression(whereCondition);
+    protected void appendFrom() {
+        appendBlank().append(FROM);
+        appendFromTable();
+        appendFromAlias();
+    }
+
+    /// 只追加关联表的名称和别名（不含 LEFT JOIN ON）
+    /// 用于 PostgreSQL 等需要在 FROM/USING 子句中只列出关联表名的情况
+    protected void appendJoinTablesOnly() {
+        String delimiter = "";
+        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+            JoinAttribute k = entry.getKey();
+            Integer v = entry.getValue();
+            sql.append(delimiter);
+            appendTable(sql, k);
+            appendTableAlias(v);
+            delimiter = ", ";
         }
     }
 
-    /// 处理表达式节点
-    protected void renderExpression(ExpressionNode node) {
-        if (node instanceof PathNode pathNode) {
-            renderPath(pathNode);
-        } else if (node instanceof LiteralNode(Object value)) {
-            sql.append("?");
-            params.add(value);
-        } else if (node instanceof OperatorNode operatorNode) {
-            appendOperatorNode(operatorNode);
-        }
-    }
-
-    /// 处理操作符节点
-    protected void appendOperatorNode(OperatorNode node) {
-        Operator operator = node.operator();
-        List<? extends ExpressionNode> operands = node.operands();
-
-        switch (operator) {
-            case AND, OR -> {
-                sql.append("(");
-                for (int i = 0; i < operands.size(); i++) {
-                    if (i > 0) {
-                        sql.append(" ").append(operator.sign()).append(" ");
-                    }
-                    renderExpression(operands.get(i));
+    /// 添加连接条件（用于 PostgreSQL 的 WHERE 子句风格）
+    /// 在 WHERE 子句中显式添加连接条件：t_.department_id = d0_.id
+    protected void appendJoinConditions() {
+        String delimiter = "";
+        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+            JoinAttribute k = entry.getKey();
+            Integer v = entry.getValue();
+            sql.append(delimiter);
+            Schema declared = k.declareBy();
+            if (declared instanceof JoinAttribute schemaAttribute) {
+                Integer parentIndex = joins.get(schemaAttribute);
+                appendTableAlias(parentIndex);
+            } else {
+                appendFromAlias(sql);
+            }
+            if (k.isObject()) {
+                sql.append(".").append(k.joinName()).append("=");
+                appendTableAlias(v);
+                String referenced = k.referencedColumnName();
+                if (referenced.isEmpty()) {
+                    referenced = k.id().columnName();
                 }
-                sql.append(")");
+                sql.append(".").append(referenced);
+            } else {
+                throw new IllegalStateException();
             }
-            case NOT -> {
-                sql.append("not ");
-                renderExpression(operands.getFirst());
-            }
-            case EQ, NE, GT, GE, LT, LE, LIKE -> {
-                ExpressionNode leftOperand = operands.get(0);
-                ExpressionNode rightOperand = operands.get(1);
-
-                if (leftOperand instanceof PathNode pathNode && pathNode.deep() > 1) {
-                    appendNestedPathComparison(pathNode, operator, rightOperand);
-                } else {
-                    renderExpression(leftOperand);
-                    sql.append(" ").append(operator.sign()).append(" ");
-                    renderExpression(rightOperand);
-                }
-            }
-            case IN -> {
-                ExpressionNode leftOperand = operands.getFirst();
-
-                if (leftOperand instanceof PathNode pathNode && pathNode.deep() > 1) {
-                    appendNestedPathIn(pathNode, operands);
-                } else {
-                    renderExpression(leftOperand);
-                    appendIn(operands);
-                }
-            }
-            case IS_NULL -> {
-                renderExpression(operands.getFirst());
-                sql.append(" is null");
-            }
-            case IS_NOT_NULL -> {
-                renderExpression(operands.getFirst());
-                sql.append(" is not null");
-            }
-            case BETWEEN -> {
-                renderExpression(operands.get(0));
-                sql.append(" between ");
-                renderExpression(operands.get(1));
-                sql.append(" and ");
-                renderExpression(operands.get(2));
-            }
-            default -> throw new UnsupportedOperationException("Unsupported operator: " + operator);
+            delimiter = " and ";
         }
     }
 
-    /// 处理 IN 操作
-    protected void appendIn(List<? extends ExpressionNode> operands) {
-        sql.append(" IN (");
-        for (int i = 1; i < operands.size(); i++) {
-            if (i > 1) sql.append(", ");
-            renderExpression(operands.get(i));
-        }
-        sql.append(")");
-    }
+    /// 添加 WHERE 子句，处理 PostgreSQL 风格的连接条件合并
+    /// PostgreSQL 的 UPDATE/DELETE 语句需要将连接条件合并到 WHERE 子句中
+    protected void appendWhereWithJoinConditions() {
+        ExpressionNode where = where();
+        SqlDialect.UpdateJoinStyle style = dialect.getUpdateJoinStyle();
 
-    /// 处理路径节点
-    protected void renderPath(PathNode path) {
-        EntityAttribute attribute = (EntityAttribute) entityType.getAttribute(path);
-        sql.append(leftQuotedIdentifier())
-                .append(attribute.columnName())
-                .append(rightQuotedIdentifier());
-    }
-
-    /// Join 信息记录
-    protected record JoinInfo(
-            String foreignKeyColumn,
-            String joinTableName,
-            String referencedColumnName,
-            String targetColumn,
-            EntityAttribute entityAttribute
-    ) {
-    }
-
-    /// 获取嵌套路径的 Join 信息
-    protected JoinInfo getJoinInfo(PathNode nestedPath) {
-        Attribute attr = entityType.getAttribute(nestedPath);
-        if (!(attr instanceof EntityAttribute entityAttribute)) {
-            throw new UnsupportedOperationException("Unsupported nested path: " + nestedPath);
-        }
-
-        Schema declareBy = entityAttribute.declareBy();
-        if (!(declareBy instanceof JoinAttribute joinAttribute)) {
-            return null;
-        }
-
-        String foreignKeyColumn = joinAttribute.joinName();
-        String joinTableName = joinAttribute.tableName();
-        String referencedColumnName = joinAttribute.referencedColumnName();
-        if (referencedColumnName == null || referencedColumnName.isEmpty()) {
-            referencedColumnName = joinAttribute.id().columnName();
-        }
-        String targetColumn = entityAttribute.columnName();
-
-        return new JoinInfo(foreignKeyColumn, joinTableName, referencedColumnName, targetColumn, entityAttribute);
-    }
-
-    /// 构建嵌套路径子查询前缀
-    protected void appendNestedPathSubQueryPrefix(JoinInfo joinInfo) {
-        sql.append(leftQuotedIdentifier())
-                .append(joinInfo.foreignKeyColumn())
-                .append(rightQuotedIdentifier());
-        sql.append(" IN (SELECT ");
-        sql.append(leftQuotedIdentifier())
-                .append(joinInfo.referencedColumnName())
-                .append(rightQuotedIdentifier());
-        sql.append(" FROM ");
-        sql.append(leftQuotedIdentifier())
-                .append(joinInfo.joinTableName())
-                .append(rightQuotedIdentifier());
-        sql.append(" where ");
-        sql.append(leftQuotedIdentifier())
-                .append(joinInfo.targetColumn())
-                .append(rightQuotedIdentifier());
-    }
-
-    /// 嵌套路径比较操作子查询
-    protected void appendNestedPathComparison(PathNode nestedPath, Operator operator, ExpressionNode rightOperand) {
-        JoinInfo joinInfo = getJoinInfo(nestedPath);
-
-        if (joinInfo != null) {
-            appendNestedPathSubQueryPrefix(joinInfo);
-            sql.append(" ").append(operator.sign()).append(" ");
-            renderExpression(rightOperand);
-            sql.append(")");
+        if (style == SqlDialect.UpdateJoinStyle.FROM_CLAUSE_WITH_JOIN && !joins.isEmpty()) {
+            // PostgreSQL: 连接条件合并到 WHERE 子句中
+            sql.append(WHERE);
+            appendJoinConditions();
+            if (!ExpressionNodes.isNullOrTrue(where)) {
+                sql.append(AND);
+                appendPredicate(where);
+            }
         } else {
-            Attribute attr = entityType.getAttribute(nestedPath);
-            EntityAttribute entityAttribute = (EntityAttribute) attr;
-            sql.append(leftQuotedIdentifier())
-                    .append(entityAttribute.columnName())
-                    .append(rightQuotedIdentifier());
-            sql.append(" ").append(operator.sign()).append(" ");
-            renderExpression(rightOperand);
-        }
-    }
-
-    /// 嵌套路径 IN 操作子查询
-    protected void appendNestedPathIn(PathNode nestedPath, List<? extends ExpressionNode> operands) {
-        JoinInfo joinInfo = getJoinInfo(nestedPath);
-
-        if (joinInfo != null) {
-            appendNestedPathSubQueryPrefix(joinInfo);
-            sql.append(" IN (");
-            for (int i = 1; i < operands.size(); i++) {
-                if (i > 1) sql.append(", ");
-                renderExpression(operands.get(i));
-            }
-            sql.append("))");
-        } else {
-            Attribute attr = entityType.getAttribute(nestedPath);
-            EntityAttribute entityAttribute = (EntityAttribute) attr;
-            sql.append(leftQuotedIdentifier())
-                    .append(entityAttribute.columnName())
-                    .append(rightQuotedIdentifier());
-            appendIn(operands);
+            // 其他方言：正常处理 WHERE
+            super.appendWhere();
         }
     }
 }

@@ -27,6 +27,7 @@ public interface ConnectionProvider {
     /// @param action 要执行的操作
     /// @return 操作结果
     /// @throws SQLException SQL异常
+    @Deprecated
     <T> T executeInTransaction(ConnectionCallback<T> action) throws SQLException;
 
     /// 数据库连接回调接口

@@ -1,9 +1,11 @@
 package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.api.EntityContext;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.spring.AbstractRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,7 +31,7 @@ public class CategoryRepository extends AbstractRepository<Category, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected CategoryRepository(EntityContext context) {
+    protected CategoryRepository(EntityTemplateFactory context) {
         super(context);
     }
 

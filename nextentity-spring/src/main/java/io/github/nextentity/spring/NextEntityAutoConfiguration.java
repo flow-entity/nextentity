@@ -1,6 +1,6 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.api.EntityContext;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.jdbc.SqlDialect;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.ObjectProvider;
@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
@@ -66,16 +67,17 @@ public class NextEntityAutoConfiguration {
     /// @return EntityContext 实例
     @Bean
     @ConditionalOnMissingBean
-    public EntityContext entityContext(JdbcTemplate jdbcTemplate,
-                                       ObjectProvider<EntityManager> entityManagerProvider,
-                                       NextEntityProperties properties) {
+    public EntityTemplateFactory entityContext(JdbcTemplate jdbcTemplate,
+                                               ObjectProvider<EntityManager> entityManagerProvider,
+                                               NextEntityProperties properties,
+                                               TransactionTemplate transactionTemplate) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
 
         if (entityManager != null) {
-            return EntityContextBuilder.jpa(entityManager, jdbcTemplate, dialect, properties);
+            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate);
         }
-        return EntityContextBuilder.jdbc(jdbcTemplate, dialect, properties);
+        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate);
     }
 
     /// 解析 SQL 方言。

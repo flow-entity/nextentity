@@ -119,6 +119,7 @@ public interface EntityPersistor<T> {
     /// 在事务中执行不返回值的操作。
     ///
     /// @param command 要执行的命令
+    @Deprecated
     void doInTransaction(Runnable command);
 
     /// 在事务中执行操作并返回结果。
@@ -129,5 +130,6 @@ public interface EntityPersistor<T> {
     /// @param command 要执行的命令
     /// @param <X>     命令的返回类型
     /// @return 命令的结果
+    @Deprecated
     <X> X doInTransaction(Supplier<X> command);
 }

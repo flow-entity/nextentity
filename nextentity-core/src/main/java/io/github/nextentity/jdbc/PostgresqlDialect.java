@@ -41,4 +41,10 @@ public class PostgresqlDialect implements SqlDialect {
         }
         return "?";
     }
+
+    @Override
+    public UpdateJoinStyle getUpdateJoinStyle() {
+        // PostgreSQL: UPDATE table alias SET ... FROM other JOIN ... WHERE ...
+        return UpdateJoinStyle.FROM_CLAUSE_WITH_JOIN;
+    }
 }

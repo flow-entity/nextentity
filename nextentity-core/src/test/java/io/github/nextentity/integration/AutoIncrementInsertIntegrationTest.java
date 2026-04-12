@@ -252,7 +252,7 @@ public class AutoIncrementInsertIntegrationTest {
     void shouldGenerateIdInTransaction(IntegrationTestContext context) {
         // Given
         AutoIncrementEntity entity = createEntity("Transaction Entity", "In Transaction", 5, true);
-        Long generatedId = context.getUpdateExecutor().doInTransaction(() -> {
+        Long generatedId = context.doInTransaction(() -> {
             // When - insert in transaction
             context.getUpdateExecutor().insert(entity, context.getEntityContext(AutoIncrementEntity.class));
             return entity.getId();

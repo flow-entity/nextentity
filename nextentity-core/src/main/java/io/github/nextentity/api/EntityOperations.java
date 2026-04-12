@@ -62,6 +62,7 @@ package io.github.nextentity.api;
 /// @see EntityPersistor 持久化操作接口
 /// @see UpdateSetStep 条件更新构建器
 /// @see DeleteWhereStep 条件删除构建器
+@Deprecated
 public interface EntityOperations<T> extends EntityQuery<T>, EntityPersistor<T> {
 
     /// 返回实体描述符，提供实体元数据访问。

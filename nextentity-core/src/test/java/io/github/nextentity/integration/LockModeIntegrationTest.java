@@ -40,7 +40,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with pessimistic read lock")
     void shouldQueryWithPessimisticRead(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_READ).list(10)
@@ -56,7 +56,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get single with pessimistic read lock")
     void shouldGetSingleWithPessimisticRead(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_READ).single()
@@ -76,7 +76,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with pessimistic write lock")
     void shouldQueryWithPessimisticWrite(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_WRITE).list(10)
@@ -92,7 +92,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get single with pessimistic write lock")
     void shouldGetSingleWithPessimisticWrite(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.PESSIMISTIC_WRITE).single()
@@ -112,7 +112,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with optimistic lock")
     void shouldQueryWithOptimistic(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.OPTIMISTIC).list(10)
@@ -128,7 +128,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with optimistic force increment lock")
     void shouldQueryWithOptimisticForceIncrement(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.OPTIMISTIC_FORCE_INCREMENT).list(10)
@@ -148,7 +148,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with read lock")
     void shouldQueryWithReadLock(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.READ).list(10)
@@ -164,7 +164,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with write lock")
     void shouldQueryWithWriteLock(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.WRITE).list(10)
@@ -184,7 +184,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with no lock")
     void shouldQueryWithNoLock(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .lock(LockModeType.NONE).list(10)
@@ -204,7 +204,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with where condition")
     void shouldLockWithWhereCondition(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getName).like("Lockable%")
                         .orderBy(LockableEntity::getId).asc()
@@ -221,7 +221,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with multiple conditions")
     void shouldLockWithMultipleConditions(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getName).like("Lockable%")
                         .where(LockableEntity::getId).lt(4L)
@@ -245,7 +245,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with pagination")
     void shouldLockWithPagination(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list(3)
@@ -264,7 +264,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with offset")
     void shouldLockWithOffset(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list(2, 3)
@@ -284,7 +284,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get first with lock")
     void shouldGetFirstWithLock(IntegrationTestContext context) {
         // When
-        LockableEntity entity = context.getUpdateExecutor().doInTransaction(() ->
+        LockableEntity entity = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).first()
@@ -305,7 +305,7 @@ public class LockModeIntegrationTest {
     void shouldQueryWithPessimisticForceIncrement(IntegrationTestContext context) {
         // When & Then
         assertThatNoException().isThrownBy(() ->
-                context.getUpdateExecutor().doInTransaction(() -> {
+                context.doInTransaction(() -> {
                     context.queryLockableEntities()
                             .where(LockableEntity::getId).eq(1L)
                             .lock(LockModeType.PESSIMISTIC_FORCE_INCREMENT).list(10);
@@ -323,7 +323,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should lock with in condition")
     void shouldLockWithInCondition(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).in(1L, 2L, 3L)
                         .orderBy(LockableEntity::getId).asc()
@@ -343,7 +343,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should query with null lock mode")
     void shouldQueryWithNullLockMode(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .where(LockableEntity::getId).eq(1L)
                         .list(10)
@@ -363,7 +363,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should limit with lock mode")
     void shouldLimitWithLockMode(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .orderBy(LockableEntity::getId).asc()
                         .lock(LockModeType.PESSIMISTIC_READ).list(3)
@@ -382,7 +382,7 @@ public class LockModeIntegrationTest {
     @DisplayName("Should get list with lock mode")
     void shouldGetListWithLockMode(IntegrationTestContext context) {
         // When
-        List<LockableEntity> entities = context.getUpdateExecutor().doInTransaction(() ->
+        List<LockableEntity> entities = context.doInTransaction(() ->
                 context.queryLockableEntities()
                         .lock(LockModeType.PESSIMISTIC_READ).list()
         );
