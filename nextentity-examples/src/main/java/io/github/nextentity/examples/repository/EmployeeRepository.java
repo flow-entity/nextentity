@@ -918,6 +918,32 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
                 .list();
     }
 
+    // ==================== DTO Projection (select(Class<R>)) ====================
+
+    /// 投影到 DTO — 查询在职员工的薪酬报告。
+    ///
+    /// `select(EmployeeSalaryReport.class)` 通过字段名自动匹配实体属性：
+    /// DTO 的 `name` → Employee.name, `salary` → Employee.salary。
+    /// 无需手动指定映射，框架自动完成。
+    public List<EmployeeSalaryReport> findSalaryReport() {
+        return query()
+                .select(EmployeeSalaryReport.class)
+                .where(Employee::getActive).eq(true)
+                .where(Employee::getSalary).isNotNull()
+                .orderBy(Employee::getSalary).desc()
+                .list();
+    }
+
+    /// 投影到 DTO — 按部门查询薪酬报告。
+    public List<EmployeeSalaryReport> findSalaryReportByDepartment(Long departmentId) {
+        return query()
+                .select(EmployeeSalaryReport.class)
+                .where(Employee::getActive).eq(true)
+                .where(Employee::getDepartmentId).eq(departmentId)
+                .orderBy(Employee::getSalary).desc()
+                .list();
+    }
+
     // ==================== DTO Classes ====================
 
     /// DTO for employee summary projection
@@ -986,5 +1012,30 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
         public void setEmployeeName(String employeeName) { this.employeeName = employeeName; }
         public String getDepartmentName() { return departmentName; }
         public void setDepartmentName(String departmentName) { this.departmentName = departmentName; }
+    }
+
+    /// DTO for employee salary report projection.
+    ///
+    /// 字段名与 {@link Employee} 实体属性名完全匹配，
+    /// 框架自动完成映射，无需 {@link EntityPath} 注解。
+    public static class EmployeeSalaryReport {
+        private String name;
+        private BigDecimal salary;
+        private EmployeeStatus status;
+
+        public EmployeeSalaryReport() {}
+
+        public EmployeeSalaryReport(String name, BigDecimal salary, EmployeeStatus status) {
+            this.name = name;
+            this.salary = salary;
+            this.status = status;
+        }
+
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public BigDecimal getSalary() { return salary; }
+        public void setSalary(BigDecimal salary) { this.salary = salary; }
+        public EmployeeStatus getStatus() { return status; }
+        public void setStatus(EmployeeStatus status) { this.status = status; }
     }
 }

@@ -9,6 +9,7 @@ import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.examples.repository.DepartmentRepository;
 import io.github.nextentity.examples.repository.DepartmentRepository.DepartmentInfo;
 import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeInfo;
+import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeSalaryReport;
 import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeSummary;
 import io.github.nextentity.examples.repository.EmployeeRepository.EmployeeWithDept;
 import org.junit.jupiter.api.Disabled;
@@ -471,6 +472,71 @@ class ProjectionIntegrationTest extends BaseIntegrationTest {
             results.forEach(r -> {
                 assertThat(r.getEmployeeName()).isNotEmpty();
             });
+        }
+    }
+
+    // ==================== DTO Projection (select(Class<R>)) Tests ====================
+
+    @Nested
+    @DisplayName("DTO Projection (select(Class<R>)) Tests")
+    class DtoProjectionClassTests {
+
+        @Test
+        @DisplayName("Should select salary report via select(Class<R>) correctly")
+        void shouldSelectSalaryReportCorrectly() {
+            // Given
+            int expectedCount = (int) testEmployees.stream()
+                    .filter(e -> e.getActive() && e.getSalary() != null)
+                    .count();
+
+            // When
+            List<EmployeeSalaryReport> reports = employeeRepository.findSalaryReport();
+
+            // Then
+            assertThat(reports).hasSize(expectedCount);
+            assertThat(reports).allMatch(r -> r.getName() != null);
+            assertThat(reports).allMatch(r -> r.getSalary() != null);
+            assertThat(reports).allMatch(r -> r.getStatus() != null);
+
+            // Verify descending order by salary
+            for (int i = 0; i < reports.size() - 1; i++) {
+                assertThat(reports.get(i).getSalary().compareTo(reports.get(i + 1).getSalary()))
+                        .isGreaterThanOrEqualTo(0);
+            }
+
+            // Verify data correctness
+            testEmployees.stream()
+                    .filter(e -> e.getActive() && e.getSalary() != null)
+                    .forEach(emp -> {
+                        boolean found = reports.stream()
+                                .anyMatch(r -> r.getName().equals(emp.getName()) &&
+                                        r.getSalary().compareTo(emp.getSalary()) == 0);
+                        assertThat(found).isTrue();
+                    });
+        }
+
+        @Test
+        @DisplayName("Should select salary report filtered by department via select(Class<R>)")
+        void shouldSelectSalaryReportByDepartmentCorrectly() {
+            // Given
+            Long deptId = getFirstDepartmentId();
+            int expectedCount = (int) testEmployees.stream()
+                    .filter(e -> e.getActive() && e.getDepartmentId().equals(deptId))
+                    .count();
+
+            // When
+            List<EmployeeSalaryReport> reports = employeeRepository.findSalaryReportByDepartment(deptId);
+
+            // Then
+            assertThat(reports).hasSize(expectedCount);
+            assertThat(reports).allMatch(r -> r.getName() != null);
+            assertThat(reports).allMatch(r -> r.getSalary() != null);
+
+            // Verify descending order by salary
+            for (int i = 0; i < reports.size() - 1; i++) {
+                assertThat(reports.get(i).getSalary().compareTo(reports.get(i + 1).getSalary()))
+                        .isGreaterThanOrEqualTo(0);
+            }
         }
     }
 
