@@ -1,5 +1,6 @@
 package io.github.nextentity.core.meta;
 
+import io.github.nextentity.api.EntityReference;
 import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.SubSelect;
@@ -62,6 +63,22 @@ public abstract class AbstractMetamodel implements Metamodel {
         List<Attribute> javaAttributes = getJavaAttributes(projectionType);
         Schema entity = projectionType.source();
         for (Attribute javaAttribute : javaAttributes) {
+            // 检测是否是 EntityReference 类型字段
+            if (EntityReference.class.isAssignableFrom(javaAttribute.type())) {
+                ReferenceAttribute attribute = ReferenceAttribute.from(javaAttribute);
+                attribute.declareBy(projectionType);
+
+                // 尝试从实体中获取 ID 来源属性
+                Attribute sourceAttr = entity.getAttribute(attribute.idSourcePath());
+                if (sourceAttr != null) {
+                    attribute.setSourceAttribute(sourceAttr);
+                }
+
+                attributes.add(attribute);
+                continue;
+            }
+
+            // 原有逻辑
             Attribute entityAttribute = getEntityAttribute(javaAttribute, entity);
             if (entityAttribute == null) {
                 continue;

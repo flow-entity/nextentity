@@ -1,5 +1,6 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.api.ExtensionRegistry;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
@@ -9,6 +10,7 @@ import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
+import org.jspecify.annotations.Nullable;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -44,7 +46,23 @@ public final class EntityFactoryBuilder {
                                              SqlDialect sqlDialect,
                                              NextEntityProperties properties,
                                              TransactionTemplate template) {
-        FactoryContext ctx = new FactoryContext(jdbcTemplate, sqlDialect, properties, template);
+        return jdbc(jdbcTemplate, sqlDialect, properties, template, null);
+    }
+
+    /// 创建基于 JDBC 的 NextEntity 工厂（支持扩展点）。
+    ///
+    /// @param jdbcTemplate Spring JDBC 模板
+    /// @param sqlDialect   SQL 方言
+    /// @param properties   配置属性
+    /// @param template     Spring 事务模板
+    /// @param extensionRegistry 扩展点注册中心（可选）
+    /// @return JDBC 方式的 NextEntity 工厂实例
+    public static EntityTemplateFactory jdbc(JdbcTemplate jdbcTemplate,
+                                             SqlDialect sqlDialect,
+                                             NextEntityProperties properties,
+                                             TransactionTemplate template,
+                                             @Nullable ExtensionRegistry extensionRegistry) {
+        FactoryContext ctx = new FactoryContext(jdbcTemplate, sqlDialect, properties, template, extensionRegistry);
         return buildJdbcFactory(ctx);
     }
 
@@ -76,7 +94,25 @@ public final class EntityFactoryBuilder {
                                             SqlDialect sqlDialect,
                                             NextEntityProperties properties,
                                             TransactionTemplate template) {
-        FactoryContext ctx = new FactoryContext(jdbcTemplate, sqlDialect, properties, template);
+        return jpa(entityManager, jdbcTemplate, sqlDialect, properties, template, null);
+    }
+
+    /// 创建基于 JPA 的 NextEntity 工厂（支持扩展点）。
+    ///
+    /// @param entityManager JPA 实体管理器
+    /// @param jdbcTemplate  Spring JDBC 模板
+    /// @param sqlDialect    SQL 方言
+    /// @param properties    配置属性
+    /// @param template      Spring 事务模板
+    /// @param extensionRegistry 扩展点注册中心（可选）
+    /// @return JPA 方式的 NextEntity 工厂实例
+    public static EntityTemplateFactory jpa(EntityManager entityManager,
+                                            JdbcTemplate jdbcTemplate,
+                                            SqlDialect sqlDialect,
+                                            NextEntityProperties properties,
+                                            TransactionTemplate template,
+                                            @Nullable ExtensionRegistry extensionRegistry) {
+        FactoryContext ctx = new FactoryContext(jdbcTemplate, sqlDialect, properties, template, extensionRegistry);
         return buildJpaFactory(ctx, entityManager);
     }
 
@@ -117,6 +153,11 @@ public final class EntityFactoryBuilder {
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(
                 metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), jdbcConfig);
 
+        // 设置 ExtensionRegistry（用于 EntityReference 延迟加载）
+        if (ctx.extensionRegistry != null) {
+            jdbcQueryExecutor.setExtensionRegistry(ctx.extensionRegistry);
+        }
+
         SpringTransactionOperations sto = new SpringTransactionOperations(ctx.template);
         PersistExecutor jdbcUpdateExecutor = new JdbcPersistExecutor(
                 sqlBuilder, connectionProvider, jdbcConfig);
@@ -137,6 +178,11 @@ public final class EntityFactoryBuilder {
 
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(
                 metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), jdbcConfig);
+
+        // 设置 ExtensionRegistry（用于 EntityReference 延迟加载）
+        if (ctx.extensionRegistry != null) {
+            jdbcQueryExecutor.setExtensionRegistry(ctx.extensionRegistry);
+        }
 
         JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(
                 entityManager, metamodel, jdbcQueryExecutor, jpaConfig);
@@ -188,7 +234,8 @@ public final class EntityFactoryBuilder {
             JdbcTemplate jdbcTemplate,
             SqlDialect sqlDialect,
             NextEntityProperties properties,
-            TransactionTemplate template
+            TransactionTemplate template,
+            @Nullable ExtensionRegistry extensionRegistry
     ) {
     }
 

@@ -1,10 +1,14 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.api.EntityFetcher;
+import io.github.nextentity.api.ExtensionRegistry;
 import io.github.nextentity.core.EntityTemplate;
 import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.jdbc.SqlDialect;
+import io.github.nextentity.plugin.DefaultExtensionRegistry;
+import io.github.nextentity.plugin.EntityReferencePlugin;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.ObjectProvider;
@@ -87,14 +91,43 @@ public class NextEntityAutoConfiguration {
     public EntityTemplateFactory entityContext(JdbcTemplate jdbcTemplate,
                                                ObjectProvider<EntityManager> entityManagerProvider,
                                                NextEntityProperties properties,
-                                               TransactionTemplate transactionTemplate) {
+                                               TransactionTemplate transactionTemplate,
+                                               ExtensionRegistry extensionRegistry) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
 
         if (entityManager != null) {
-            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate);
+            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate, extensionRegistry);
         }
-        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate);
+        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate, extensionRegistry);
+    }
+
+    /// 创建 ExtensionRegistry Bean。
+    ///
+    /// 扩展点注册中心，管理投影字段处理器和实体获取器。
+    /// 自动注册 EntityReferencePlugin。
+    ///
+    /// @return ExtensionRegistry 实例
+    @Bean
+    @ConditionalOnMissingBean
+    public ExtensionRegistry extensionRegistry() {
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry();
+        // 自动注册 EntityReference 延迟加载插件
+        registry.registerHandler(new EntityReferencePlugin());
+        return registry;
+    }
+
+    /// 创建 EntityFetcher Bean。
+    ///
+    /// 实体获取器，用于 EntityReference 延迟加载。
+    /// 基于 EntityTemplateFactory 创建。
+    ///
+    /// @param factory EntityTemplateFactory
+    /// @return EntityFetcher 实例
+    @Bean
+    @ConditionalOnMissingBean
+    public EntityFetcher entityFetcher(EntityTemplateFactory factory) {
+        return new RepositoryEntityFetcher(factory);
     }
 
     /// 解析 SQL 方言。

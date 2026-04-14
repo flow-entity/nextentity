@@ -1,5 +1,7 @@
 package io.github.nextentity.integration.config;
 
+import io.github.nextentity.api.EntityFetcher;
+import io.github.nextentity.api.ExtensionRegistry;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
@@ -11,6 +13,8 @@ import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.meta.jpa.JpaMetamodel;
+import io.github.nextentity.plugin.DefaultExtensionRegistry;
+import io.github.nextentity.plugin.EntityReferencePlugin;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -33,8 +38,24 @@ import java.util.function.Supplier;
 @SpringBootApplication
 public class IntegrationTestApplication {
 
+    /// 创建 ExtensionRegistry Bean。
+    /// 自动注册 EntityReferencePlugin 用于延迟加载支持。
     @Bean
-    public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider, TransactionTemplate transactionTemplate) {
+    public ExtensionRegistry extensionRegistry() {
+        DefaultExtensionRegistry registry = new DefaultExtensionRegistry();
+        registry.registerHandler(new EntityReferencePlugin());
+        return registry;
+    }
+
+    /// 创建 EntityFetcher Bean。
+    /// 基于 EntityManager 提供实体获取能力。
+    @Bean
+    public EntityFetcher entityFetcher(EntityManager entityManager) {
+        return new TestEntityFetcher(entityManager);
+    }
+
+    @Bean
+    public IntegrationTestContext jdbcIntegrationTestContext(JdbcTemplate jdbcTemplate, SpringConnectionProvider connectionProvider, TransactionTemplate transactionTemplate, ExtensionRegistry extensionRegistry) {
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
         try {
@@ -45,6 +66,8 @@ public class IntegrationTestApplication {
         Metamodel metamodel = JpaMetamodel.of();
         SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
         JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        // 设置 ExtensionRegistry（用于 EntityReference 延迟加载）
+        queryExecutor.setExtensionRegistry(extensionRegistry);
         PersistExecutor updateExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
             @Override
@@ -59,7 +82,8 @@ public class IntegrationTestApplication {
     public IntegrationTestContext jpaIntegrationTestContext(EntityManager entityManager,
                                                             JdbcTemplate jdbcTemplate,
                                                             SpringConnectionProvider connectionProvider,
-                                                            TransactionTemplate transactionTemplate) {
+                                                            TransactionTemplate transactionTemplate,
+                                                            ExtensionRegistry extensionRegistry) {
 
         DataSource dataSource = Objects.requireNonNull(jdbcTemplate.getDataSource());
         SqlDialect sqlDialect;
@@ -71,6 +95,8 @@ public class IntegrationTestApplication {
         Metamodel metamodel = JpaMetamodel.of();
         SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
         JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        // 设置 ExtensionRegistry（用于 EntityReference 延迟加载）
+        jdbcQueryExecutor.setExtensionRegistry(extensionRegistry);
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
         PersistExecutor updateExecutor = new JpaPersistExecutor(entityManager);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
@@ -201,6 +227,45 @@ public class IntegrationTestApplication {
         @Override
         public <T> UpdateSetStep<T> update(EntityTemplateDescriptor<T> type) {
             return new UpdateSetStepImpl<>(type);
+        }
+    }
+
+    /// 测试环境的 EntityFetcher 实现。
+    /// 通过 EntityManager 查询实体。
+    public static class TestEntityFetcher implements EntityFetcher {
+        private final EntityManager entityManager;
+
+        public TestEntityFetcher(EntityManager entityManager) {
+            this.entityManager = entityManager;
+        }
+
+        @Override
+        public <T, ID> Optional<T> fetch(Class<T> entityType, ID id) {
+            try {
+                T entity = entityManager.find(entityType, id);
+                return Optional.ofNullable(entity);
+            } catch (Exception e) {
+                return Optional.empty();
+            }
+        }
+
+        @Override
+        public <T, ID> java.util.Map<ID, T> fetchBatch(Class<T> entityType, java.util.Collection<ID> ids) {
+            java.util.Map<ID, T> result = new java.util.HashMap<>();
+            if (ids == null || ids.isEmpty()) {
+                return result;
+            }
+
+            for (ID id : ids) {
+                Optional<T> entity = fetch(entityType, id);
+                entity.ifPresent(t -> result.put(id, t));
+            }
+            return result;
+        }
+
+        @Override
+        public <T> boolean supports(Class<T> entityType) {
+            return true;
         }
     }
 

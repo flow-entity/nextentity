@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.api.Expression;
+import io.github.nextentity.api.*;
+import io.github.nextentity.api.EntityReference;
 import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.exception.ReflectiveException;
@@ -18,6 +19,7 @@ import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 ///
@@ -30,6 +32,7 @@ public abstract class QueryContext {
     protected final Metamodel metamodel;
     protected final EntityType entityType;
     protected final boolean expandReferencePath;
+    protected ExtensionRegistry extensionRegistry;  /// 扩展点注册中心（可选）
 
     public static QueryContext create(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
         Selected select = structure.select();
@@ -52,6 +55,20 @@ public abstract class QueryContext {
             return new SelectArrayContext(structure, metamodel, expandObjectAttribute, selectArray);
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
+    }
+
+    /// 设置扩展点注册中心。
+    ///
+    /// @param extensionRegistry 扩展点注册中心
+    public void setExtensionRegistry(ExtensionRegistry extensionRegistry) {
+        this.extensionRegistry = extensionRegistry;
+    }
+
+    /// 获取扩展点注册中心。
+    ///
+    /// @return ExtensionRegistry 实例，可能为 null
+    public ExtensionRegistry getExtensionRegistry() {
+        return extensionRegistry;
     }
 
     protected QueryContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
@@ -163,6 +180,10 @@ public abstract class QueryContext {
                     attribute.set(instance, value);
                 }
             }
+            // 后处理：注入 EntityReference 延迟加载器
+            if (instance != null && extensionRegistry != null) {
+                postProcessEntityReferences(instance, entityType, attributes);
+            }
             return instance;
         } catch (ReflectiveOperationException e) {
             throw new ReflectiveException(e);
@@ -176,10 +197,35 @@ public abstract class QueryContext {
             if (schemaAttributePaths != null) {
                 value = constructSchema(schema, arguments, schemaAttributePaths);
             }
+        } else if (attribute instanceof ReferenceAttribute refAttr) {
+            // EntityReference 字段：创建引用实例并设置 ID
+            value = constructEntityReference(refAttr, arguments);
         } else {
             value = getSimpleAttributeValue(arguments, attribute);
         }
         return value;
+    }
+
+    /// 构造 EntityReference 实例。
+    ///
+    /// 从 Arguments 提取 ID，创建 EntityReference 子类实例并设置 ID。
+    private Object constructEntityReference(ReferenceAttribute refAttr, Arguments arguments) {
+        // 提取 ID 值
+        Object id = arguments.next(new IdentityValueConverter(refAttr.idType()));
+
+        if (id == null) {
+            return null;
+        }
+
+        // 创建 EntityReference 实例
+        try {
+            @SuppressWarnings("rawtypes")
+            EntityReference ref = (EntityReference) refAttr.type().getDeclaredConstructor().newInstance();
+            ref.setId(id);
+            return ref;
+        } catch (Exception e) {
+            throw new ReflectiveException("Failed to create EntityReference instance: " + refAttr.type().getName(), e);
+        }
     }
 
     protected Object [] getAttributeValues(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
@@ -258,6 +304,25 @@ public abstract class QueryContext {
             return Stream.of(expression);
         } else if (attribute instanceof ProjectionAttribute expression) {
             return Stream.of(expression.source());
+        } else if (attribute instanceof ReferenceAttribute refAttr) {
+            // EntityReference 字段：返回 ID 来源属性作为 SelectItem
+            Attribute sourceAttr = refAttr.sourceAttribute();
+            if (sourceAttr instanceof EntityAttribute entityAttr) {
+                return Stream.of(entityAttr);
+            } else if (sourceAttr instanceof SimpleEntityAttribute entityAttr) {
+                return Stream.of(entityAttr);
+            } else if (sourceAttr != null) {
+                // 嵌套路径场景
+                return stream(sourceAttr, schemaAttributePaths);
+            }
+            // 如果 sourceAttribute 未设置，尝试从实体获取 ID 字段
+            if (entityType != null) {
+                Attribute idAttr = entityType.getAttribute(refAttr.idSourcePath());
+                if (idAttr instanceof EntityAttribute entityAttr) {
+                    return Stream.of(entityAttr);
+                }
+            }
+            return Stream.empty();
         } else if (attribute instanceof Schema schema) {
             SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());
             if (sub != null) {
@@ -285,5 +350,64 @@ public abstract class QueryContext {
         } else {
             return arguments.next(IdentityValueConverter.of());
         }
+    }
+
+    /// 后处理 EntityReference 字段，注入延迟加载器。
+    ///
+    /// 在构造完成后遍历所有 ReferenceAttribute 字段，
+    /// 通过 ExtensionRegistry 获取 EntityFetcher 并设置 loader。
+    private void postProcessEntityReferences(Object instance, Schema schema, Attributes attributes) {
+        if (extensionRegistry == null || extensionRegistry.getEntityFetcher() == null) {
+            return;
+        }
+
+        EntityFetcher fetcher = extensionRegistry.getEntityFetcher();
+
+        for (Attribute attribute : attributes) {
+            if (attribute instanceof ReferenceAttribute refAttr) {
+                try {
+                    Object value = attribute.get(instance);
+                    if (value instanceof EntityReference<?, ?> ref && ref.getId() != null) {
+                        // 注入延迟加载器
+                        Class<?> targetType = refAttr.targetType();
+                        Object id = ref.getId();
+                        @SuppressWarnings("unchecked")
+                        java.util.function.Supplier<Object> loader = () -> {
+                            @SuppressWarnings("rawtypes")
+                            Optional opt = fetcher.fetch(targetType, id);
+                            return opt.orElse(null);
+                        };
+                        ref.setLoader(loader);
+                    }
+                } catch (Exception e) {
+                    // 忽略获取失败
+                }
+            }
+        }
+    }
+
+    /// 创建 ProjectionContext 用于后处理。
+    private ProjectionContext createProjectionContext(EntityFetcher fetcher) {
+        return new ProjectionContext() {
+            @Override
+            public EntityFetcher entityFetcher() {
+                return fetcher;
+            }
+
+            @Override
+            public EntityType entityType() {
+                return QueryContext.this.entityType;
+            }
+
+            @Override
+            public <ID> Collection<?> fetchEntities(Class<?> entityType, Collection<ID> ids) {
+                return fetcher.fetchBatch(entityType, ids).values();
+            }
+
+            @Override
+            public <T, ID> java.util.function.Supplier<T> createLoader(Class<T> entityType, ID id) {
+                return () -> fetcher.<T, ID>fetch(entityType, id).orElse(null);
+            }
+        };
     }
 }

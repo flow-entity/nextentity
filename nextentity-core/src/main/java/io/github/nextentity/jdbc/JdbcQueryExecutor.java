@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.api.ExtensionRegistry;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
@@ -7,6 +8,7 @@ import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,6 +36,8 @@ public class JdbcQueryExecutor implements QueryExecutor {
     private final ResultCollector collector;
     @NonNull
     private final JdbcConfig config;
+    @Nullable
+    private ExtensionRegistry extensionRegistry;  /// 扩展点注册中心（可选，用于 EntityReference 延迟加载）
 
     /// 构造JDBC查询执行器（使用默认配置）
     ///
@@ -67,6 +71,15 @@ public class JdbcQueryExecutor implements QueryExecutor {
         this.config = config;
     }
 
+    /// 设置扩展点注册中心。
+    ///
+    /// 用于 EntityReference 延迟加载等扩展功能。
+    ///
+    /// @param extensionRegistry 扩展点注册中心
+    public void setExtensionRegistry(@Nullable ExtensionRegistry extensionRegistry) {
+        this.extensionRegistry = extensionRegistry;
+    }
+
     /// 执行查询并返回结果列表
     ///
     /// @param <R> 查询结果类型
@@ -76,6 +89,10 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @NonNull
     public <R> List<R> getList(@NonNull QueryStructure queryStructure) {
         QueryContext context = QueryContext.create(queryStructure, metamodel, true);
+        // 设置扩展点注册中心（用于 EntityReference 延迟加载）
+        if (extensionRegistry != null) {
+            context.setExtensionRegistry(extensionRegistry);
+        }
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {
