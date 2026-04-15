@@ -150,6 +150,22 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
         return next(operate(Operator.IN, nodes).operate(Operator.NOT));
     }
 
+    /// 检查值是否在指定集合中（如果集合不为 null）。
+    ///
+    /// @param values 值集合，可为 null
+    /// @return 表达式构建器实例
+    public B inIfNotNull(Collection<? extends U> values) {
+        return values == null ? operateNull() : in(values);
+    }
+
+    /// 检查值是否不在指定集合中（如果集合不为 null）。
+    ///
+    /// @param values 值集合，可为 null
+    /// @return 表达式构建器实例
+    public B notInIfNotNull(Collection<? extends U> values) {
+        return values == null ? operateNull() : notIn(values);
+    }
+
     /// 检查值是否为空。
     ///
     /// @return 表达式构建器实例

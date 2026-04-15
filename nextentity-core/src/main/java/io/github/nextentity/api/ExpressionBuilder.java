@@ -152,6 +152,31 @@ public interface ExpressionBuilder<T, U, B> {
     /// @return 构建器实例
     B notIn(@NonNull Collection<? extends U> values);
 
+    /// 如果集合不为 null，则在指定值集合中。
+    ///
+    /// 适用于可选列表参数的场景：
+    /// ```java
+    /// public List<User> search(List<Long> ids) {
+    ///     return repository.query()
+    ///         .where(User::getId).inIfNotNull(ids)
+    ///         .list();
+    /// }
+    /// ```
+    ///
+    /// 注意：集合为 null 时条件跳过，空集合（size=0）时生成 `WHERE 1=0`。
+    ///
+    /// @param values 值集合，可为 null
+    /// @return 构建器实例
+    B inIfNotNull(Collection<? extends U> values);
+
+    /// 如果集合不为 null，则不在指定值集合中。
+    ///
+    /// 注意：集合为 null 时条件跳过，空集合（size=0）时生成 `WHERE 1=1`。
+    ///
+    /// @param values 值集合，可为 null
+    /// @return 构建器实例
+    B notInIfNotNull(Collection<? extends U> values);
+
     /// 值为 null。
     ///
     /// @return 构建器实例

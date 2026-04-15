@@ -139,6 +139,26 @@ public interface SimpleExpression<T, U> extends Expression<T, U> {
     /// @return 断言对象
     Predicate<T> notIn(@NonNull Collection<? extends U> values);
 
+    /// 如果集合不为 null，则在指定集合中。
+    ///
+    /// 注意：集合为 null 时条件跳过，空集合（size=0）时生成 `WHERE 1=0`。
+    ///
+    /// @param values 值集合，可为 null
+    /// @return 断言对象
+    default Predicate<T> inIfNotNull(Collection<? extends U> values) {
+        return values == null ? Predicate.ofTrue() : in(values);
+    }
+
+    /// 如果集合不为 null，则不在指定集合中。
+    ///
+    /// 注意：集合为 null 时条件跳过，空集合（size=0）时生成 `WHERE 1=1`。
+    ///
+    /// @param values 值集合，可为 null
+    /// @return 断言对象
+    default Predicate<T> notInIfNotNull(Collection<? extends U> values) {
+        return values == null ? Predicate.ofTrue() : notIn(values);
+    }
+
     /// 值为 null。
     ///
     /// @return 断言对象
