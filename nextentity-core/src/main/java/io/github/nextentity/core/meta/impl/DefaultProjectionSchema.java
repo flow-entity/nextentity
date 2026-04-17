@@ -21,7 +21,9 @@ public class DefaultProjectionSchema
     protected final DefaultMetamodel metamodel;
     protected final MetamodelResolver resolver;
 
-    public DefaultProjectionSchema(EntitySchema entitySchema, Class<?> type, DefaultMetamodel metamodel) {
+    public DefaultProjectionSchema(EntitySchema entitySchema,
+                                   Class<?> type,
+                                   DefaultMetamodel metamodel) {
         super(type);
         this.entitySchema = entitySchema;
         this.metamodel = metamodel;

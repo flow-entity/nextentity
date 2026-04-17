@@ -16,14 +16,12 @@ public class IdentityValueConverter<T> implements ValueConverter<T, T> {
         this.type = type;
     }
 
-    @SuppressWarnings("unchecked")
     public static <T> IdentityValueConverter<T> of(Class<T> type) {
         return new IdentityValueConverter<>(type);
     }
 
-    @SuppressWarnings("unchecked")
     public static ValueConverter<?, ?> of() {
-        return (ValueConverter<?, ?>) INSTANCE;
+        return INSTANCE;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.github.nextentity.core.meta.impl;
 
+import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
@@ -155,10 +156,9 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
         return resolveConverter(attribute.type());
     }
 
-    @SuppressWarnings("unchecked")
     private ValueConverter<?, ?> resolveConverter(Class<?> type) {
         if (type.isEnum()) {
-            return new EnumValueConverter(type);
+            return EnumValueConverter.of(type);
         }
         if (type == Instant.class) {
             return IdentityValueConverter.of();
@@ -189,25 +189,28 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
 
     @Override
     public boolean isAnyToOne(SchemaAttribute attribute) {
-        return getAnnotation(attribute, ManyToOne.class) != null || getAnnotation(attribute, OneToOne.class) != null;
+        return getAnnotation(attribute, ManyToOne.class) != null
+               || getAnnotation(attribute, OneToOne.class) != null;
     }
 
     @Override
-    public EntityBasicAttribute getJoinSourceAttribute(DefaultEntitySchema sourceSchema, Attribute attribute) {
+    public EntityBasicAttribute getJoinSourceAttribute(DefaultEntitySchema sourceSchema,
+                                                       Attribute attribute) {
         String joinColumnName = getJoinColumnName(attribute);
         if (joinColumnName != null) {
             return (EntityBasicAttribute) sourceSchema.getAttribute(joinColumnName);
         }
-        return (EntityBasicAttribute) sourceSchema.id();
+        return sourceSchema.id();
     }
 
     @Override
-    public EntityBasicAttribute getJoinTargetAttribute(DefaultEntitySchema targetSchema, Attribute attribute) {
+    public EntityBasicAttribute getJoinTargetAttribute(DefaultEntitySchema targetSchema,
+                                                       Attribute attribute) {
         String referencedColumnName = getReferencedColumnName(attribute);
         if (referencedColumnName != null && !referencedColumnName.isEmpty()) {
             return (EntityBasicAttribute) targetSchema.getAttribute(referencedColumnName);
         }
-        return (EntityBasicAttribute) targetSchema.id();
+        return targetSchema.id();
     }
 
     @Override

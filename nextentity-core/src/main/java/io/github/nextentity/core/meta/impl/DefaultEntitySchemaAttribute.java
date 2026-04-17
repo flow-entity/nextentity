@@ -3,7 +3,10 @@ package io.github.nextentity.core.meta.impl;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.PathNode;
-import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
+import io.github.nextentity.core.meta.EntitySchema;
+import io.github.nextentity.core.meta.EntitySchemaAttribute;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
@@ -14,7 +17,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class DefaultEntitySchemaAttribute extends DefaultEntitySchema implements EntitySchemaAttribute {
+public class DefaultEntitySchemaAttribute
+        extends DefaultEntitySchema
+        implements EntitySchemaAttribute {
 
     private final DefaultAttribute attribute;
     private final PathNode path;
@@ -33,7 +38,6 @@ public class DefaultEntitySchemaAttribute extends DefaultEntitySchema implements
             this.targetAttribute = targetAttribute;
         }
 
-
         public EntityBasicAttribute sourceAttribute() {
             return sourceAttribute;
         }
@@ -43,12 +47,10 @@ public class DefaultEntitySchemaAttribute extends DefaultEntitySchema implements
         }
     }
 
-
     public DefaultEntitySchemaAttribute(Attribute attribute,
                                         DefaultEntitySchema declareBy,
                                         DefaultMetamodel metamodel,
                                         int ordinal) {
-
         super(attribute.type(), metamodel);
         this.attribute = new DefaultAttribute(declareBy, attribute, ordinal);
         this.path = new PathNode(this.attribute.path().toArray(String[]::new));

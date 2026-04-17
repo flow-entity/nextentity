@@ -9,7 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 默认元模型实现，管理实体类型元数据。
- *
+ * <p>
  * 复制自 AbstractMetamodel 的核心逻辑，后期将删除原类。
  */
 public class DefaultMetamodel implements Metamodel {

@@ -1,8 +1,8 @@
 package io.github.nextentity.core.meta.impl;
 
+import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.meta.ValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
-import io.github.nextentity.core.reflect.schema.Attribute;
 
 /// 枚举值转换器，使用 ordinal 进行实体属性与数据库列之间的转换。
 ///
@@ -12,12 +12,17 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 public class EnumValueConverter<E extends Enum<E>> implements ValueConverter<E, Integer> {
     private final Class<E> enumType;
 
-    public EnumValueConverter(Attribute attribute) {
-        this.enumType = (Class<E>) attribute.type();
-    }
-
     public EnumValueConverter(Class<E> enumType) {
         this.enumType = enumType;
+    }
+
+    public static EnumValueConverter<? extends Enum<?>> of(Class<?> enumType) {
+        return newEnumEnumValueConverter(enumType);
+    }
+
+    private static <E extends Enum<E>> EnumValueConverter<E> newEnumEnumValueConverter(Class<?> type) {
+        Class<E> enumType = TypeCastUtil.cast(type);
+        return new EnumValueConverter<>(enumType);
     }
 
     @Override

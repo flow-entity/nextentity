@@ -9,8 +9,6 @@ import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -18,8 +16,6 @@ public class DefaultProjectionSchemaAttribute
         extends DefaultProjectionSchema
         implements ProjectionSchemaAttribute {
 
-
-    private static final Logger log = LoggerFactory.getLogger(DefaultProjectionSchemaAttribute.class);
     private final DefaultProjectionSchema declareBy;
     private final Attribute attribute;
     private final EntitySchemaAttribute source;
