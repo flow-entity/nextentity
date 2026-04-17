@@ -12,6 +12,7 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.Lazy;
+import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -127,5 +128,10 @@ public class DefaultEntitySchemaAttribute
         var sourceAttribute = resolver.getJoinSourceAttribute(declareBy(), this);
         var targetAttribute = resolver.getJoinTargetAttribute(schema, this);
         return new Attributes(entityAttributeList, id, version, sourceAttribute, targetAttribute);
+    }
+
+    @Override
+    public FetchType fetchType() {
+        return resolver.getFetchType(attribute);
     }
 }

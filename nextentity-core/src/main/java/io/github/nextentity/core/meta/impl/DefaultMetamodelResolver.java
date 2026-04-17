@@ -2,6 +2,7 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.annotation.EntityPath;
+import io.github.nextentity.core.annotation.Fetch;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
@@ -242,6 +243,12 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
             return entity.name();
         }
         return type.getSimpleName();
+    }
+
+    @Override
+    public FetchType getFetchType(Attribute attribute) {
+        Fetch fetch = getAnnotation(attribute, Fetch.class);
+        return fetch != null ? fetch.value() : null;
     }
 
     protected <T extends Annotation> T getAnnotation(Attribute attribute, Class<T> annotationClass) {

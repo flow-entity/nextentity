@@ -9,6 +9,7 @@ import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
+import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
 
@@ -78,5 +79,15 @@ public class DefaultProjectionSchemaAttribute
     @Override
     public int ordinal() {
         return attribute.ordinal();
+    }
+
+    @Override
+    public FetchType fetchType() {
+        // 优先级：投影级 @Fetch > source().fetchType() > 全局默认
+        FetchType projectionFetch = resolver.getFetchType(attribute);
+        if (projectionFetch != null) {
+            return projectionFetch;
+        }
+        return source().fetchType();
     }
 }
