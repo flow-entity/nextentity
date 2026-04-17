@@ -25,3 +25,7 @@ spring:
 logging:
   level:
     io.github.nextentity: DEBUG
+
+
+nextentity:
+  enabled: true

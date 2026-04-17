@@ -6,13 +6,14 @@ import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Attributes;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.util.Collection;
@@ -112,21 +113,22 @@ public abstract class QueryContext {
             parameterTypes[i] = components[i].getType();
         }
         Object[] args = new Object[components.length];
-        Attributes attributes = schema.attributes();
+        ImmutableArray<? extends Attribute> attributes = schema.getAttributes();
         int i = 0;
         for (Attribute attribute : attributes) {
             args[attribute.ordinal()] = objects[i++];
         }
         try {
-            return schema.type().getConstructor(parameterTypes).newInstance(args);
-        } catch (ReflectiveOperationException e) {
+            Constructor<?> constructor = schema.type().getConstructor(parameterTypes);
+            return constructor.newInstance(args);
+        } catch (ReflectiveOperationException | IllegalArgumentException e) {
             throw new ReflectiveException(e);
         }
     }
 
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         Map<Method, Object> map = new HashMap<>();
-        for (Attribute attribute : rootSchema.attributes()) {
+        for (Attribute attribute : rootSchema.getAttributes()) {
             if (attribute instanceof Schema schema) {
                 SchemaAttributePaths schemaAttributePaths = schemaAttributes.get(attribute.name());
                 if (schemaAttributePaths != null) {
@@ -135,7 +137,7 @@ public abstract class QueryContext {
                 }
             } else {
                 ValueConverter<?, ?> convertor;
-                if (attribute instanceof DatabaseColumnAttribute entityAttribute) {
+                if (attribute instanceof EntityBasicAttribute entityAttribute) {
                     convertor = entityAttribute.valueConvertor();
                 } else {
                     convertor = IdentityValueConverter.of();
@@ -152,7 +154,7 @@ public abstract class QueryContext {
 
     protected Object constructSimpleSchema(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         try {
-            Attributes attributes = entityType.attributes();
+            ImmutableArray<? extends Attribute> attributes = entityType.getAttributes();
             Object instance = null;
             for (Attribute attribute : attributes) {
                 Object value = constructAttribute(attribute, arguments, schemaAttributes);
@@ -183,7 +185,7 @@ public abstract class QueryContext {
     }
 
     protected Object [] getAttributeValues(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        Attributes attributes = entityType.attributes();
+        ImmutableArray<? extends Attribute> attributes = entityType.getAttributes();
         int attributeSize = attributes.size();
         Object[] objects = null;
         for (int i = 0; i < attributeSize; i++) {
@@ -201,7 +203,7 @@ public abstract class QueryContext {
 
     protected Object constructSimpleSchema(Schema entityType, Arguments arguments) {
         try {
-            ImmutableArray<Attribute> attributes = entityType.attributes().getPrimitives();
+            ImmutableArray<? extends Attribute> attributes = entityType.getPrimitives();
             int attributeSize = attributes.size();
             Object result = null;
             for (int i = 0; i < attributeSize; i++) {
@@ -222,7 +224,7 @@ public abstract class QueryContext {
 
     protected Object getSimpleAttributeValue(Arguments arguments, Attribute attribute) {
         ValueConverter<?, ?> convertor = null;
-        if (attribute instanceof DatabaseColumnAttribute entityAttribute) {
+        if (attribute instanceof EntityBasicAttribute entityAttribute) {
             convertor = entityAttribute.valueConvertor();
         }
         if (convertor == null) {
@@ -248,20 +250,21 @@ public abstract class QueryContext {
     }
 
     protected ImmutableArray<SelectItem> getSelectSchemaExpressions(Schema schema, SchemaAttributePaths schemaAttributePaths) {
-        return schema.attributes().stream()
+        ImmutableArray<? extends Attribute> attributes = schema.getAttributes();
+        return attributes.stream()
                 .flatMap(it -> stream(it, schemaAttributePaths))
                 .collect(ImmutableList.collector());
     }
 
     protected Stream<SelectItem> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
-        if (attribute instanceof EntityAttribute expression) {
+        if (attribute instanceof EntityBasicAttribute expression) {
             return Stream.of(expression);
         } else if (attribute instanceof ProjectionAttribute expression) {
             return Stream.of(expression.source());
         } else if (attribute instanceof Schema schema) {
             SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());
             if (sub != null) {
-                return schema.attributes().stream()
+                return schema.getAttributes().stream()
                         .flatMap(subAttr -> stream(subAttr, sub));
             }
         }
@@ -271,17 +274,17 @@ public abstract class QueryContext {
     protected Object constructExpression(EntityType entityType, Arguments arguments, Object expression) {
         if (expression instanceof PathNode path) {
             expression = entityType.getAttribute(path);
-        } else if (expression instanceof Expression e) {
+        } else if (expression instanceof Expression<?, ?> e) {
             expression = ExpressionNodes.getNode(e);
         }
         if (expression instanceof Schema) {
             return constructSchema((Schema) expression, arguments, SchemaAttributePaths.empty());
-        } else if (expression instanceof DatabaseColumnAttribute attribute) {
+        } else if (expression instanceof EntityBasicAttribute attribute) {
             ValueConverter<?, ?> valueConvertor = attribute.valueConvertor();
             return arguments.next(valueConvertor);
         } else if (expression instanceof ExpressionNode node) {
             Class<?> expressionType = ExpressionTypeResolver.getExpressionType(node, entityType);
-            return arguments.next(new IdentityValueConverter(expressionType));
+            return arguments.next(new IdentityValueConverter<>(expressionType));
         } else {
             return arguments.next(IdentityValueConverter.of());
         }

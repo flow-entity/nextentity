@@ -11,6 +11,7 @@ import org.jspecify.annotations.NonNull;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.function.IntFunction;
 import java.util.stream.Stream;
 
 /// 表示实体属性路径的表达式节点。
@@ -118,6 +119,15 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     @Override
     public String get(int index) {
         return path[index];
+    }
+
+
+    @Override
+    public <T> T[] toArray(@NonNull IntFunction<T[]> generator) {
+        T[] result = generator.apply(path.length);
+        // noinspection SuspiciousSystemArraycopy
+        System.arraycopy(path, 0, result, 0, result.length);
+        return result;
     }
 
     @Override

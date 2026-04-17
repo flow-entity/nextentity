@@ -4,7 +4,7 @@ import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.ExpressionNodes;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.JoinAttribute;
+import io.github.nextentity.core.meta.EntitySchemaAttribute;
 import io.github.nextentity.core.meta.Metamodel;
 
 import java.util.Map;
@@ -57,24 +57,24 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     }
 
     /// PostgreSQL USING 子句只列出关联表名
-    /// @see #appendJoinCondition(JoinAttribute, Integer) ON/WHERE 共用的连接条件逻辑
+    /// @see #appendJoinCondition(EntitySchemaAttribute, Integer) ON/WHERE 共用的连接条件逻辑
     protected void appendJoinTablesOnly() {
         String delimiter = "";
-        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
-            JoinAttribute k = entry.getKey();
+        for (Map.Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
+            EntitySchemaAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(delimiter);
-            appendTable(sql, k);
+            appendTable(sql, k.target());
             appendTableAlias(v);
             delimiter = ", ";
         }
     }
 
     /// PostgreSQL WHERE 子句显式添加连接条件
-    /// @see #appendJoinCondition(JoinAttribute, Integer) ON/WHERE 共用的连接条件逻辑
+    /// @see #appendJoinCondition(EntitySchemaAttribute, Integer) ON/WHERE 共用的连接条件逻辑
     protected void appendJoinConditions() {
         String delimiter = "";
-        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+        for (Map.Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
             sql.append(delimiter);
             appendJoinCondition(entry.getKey(), entry.getValue());
             delimiter = " and ";

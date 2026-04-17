@@ -6,6 +6,7 @@ import org.jspecify.annotations.NonNull;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collector;
@@ -616,4 +617,8 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
         }
     }
 
+    @Override
+    public <T> T[] toArray(@NonNull IntFunction<T[]> generator) {
+        return super.toArray(generator);
+    }
 }

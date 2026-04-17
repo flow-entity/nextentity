@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.util.Iterators;
 
 ///
@@ -39,7 +40,7 @@ public abstract class AbstractBatchStatementBuilder {
     /// @param attributes 属性列表
     /// @return 参数列表
     protected Iterable<? extends Iterable<?>> getParameters(Iterable<?> entities,
-                                                            Iterable<? extends EntityAttribute> attributes) {
+                                                            Iterable<? extends EntityBasicAttribute> attributes) {
         return Iterators.map(entities, entity -> Iterators.map(attributes, attr -> {
             Object value = attr.getDatabaseValue(entity);
             if (attr.isVersion() && value == null) {

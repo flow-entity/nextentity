@@ -6,6 +6,7 @@ import io.github.nextentity.api.Predicate;
 import io.github.nextentity.api.SubQueryBuilder;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableList;
@@ -46,7 +47,7 @@ class WhereImplTest {
     protected EntityType entityType;
 
     @Mock
-    protected EntityAttribute idAttribute;
+    protected EntityBasicAttribute idAttribute;
 
     private WhereImpl<Employee, Employee> whereImpl;
     private QueryDescriptor<Employee> context;

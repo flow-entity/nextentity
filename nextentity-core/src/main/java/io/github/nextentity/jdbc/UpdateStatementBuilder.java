@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.util.ImmutableArray;
 
@@ -19,7 +20,7 @@ import java.util.Objects;
 ///
 public class UpdateStatementBuilder extends AbstractBatchStatementBuilder {
 
-    protected final List<EntityAttribute> paramAttr = new ArrayList<>();
+    protected final List<EntityBasicAttribute> paramAttr = new ArrayList<>();
     protected final Iterable<?> entities;
     protected final EntitySchema entityType;
 
@@ -52,7 +53,8 @@ public class UpdateStatementBuilder extends AbstractBatchStatementBuilder {
         EntityAttribute id = entityType.id();
         EntityAttribute version = entityType.version();
         String delimiter = "";
-        for (EntityAttribute attribute : columns) {
+        for (EntityAttribute column : columns) {
+            var attribute = (EntityBasicAttribute) column;
             if (Objects.equals(id, attribute) || !attribute.isUpdatable()) {
                 continue;
             }
@@ -74,8 +76,8 @@ public class UpdateStatementBuilder extends AbstractBatchStatementBuilder {
 
     /// 添加 WHERE 子句
     protected void appendWhereClause() {
-        EntityAttribute id = entityType.id();
-        EntityAttribute version = entityType.version();
+        var id = entityType.id();
+        var version = entityType.version();
 
         sql.append(" where ")
                 .append(leftQuotedIdentifier())

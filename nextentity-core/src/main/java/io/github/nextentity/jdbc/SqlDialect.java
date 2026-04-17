@@ -178,7 +178,7 @@ public interface SqlDialect {
             DatabaseMetaData metaData = connection.getMetaData();
             String driverName = metaData.getDriverName().toLowerCase();
 
-            if (driverName.contains("mysql") || driverName.contains("maria")) {
+            if (driverName.contains("mysql") || driverName.contains("maria") || driverName.contains("h2")) {
                 return MYSQL;
             } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
                 return SQL_SERVER;

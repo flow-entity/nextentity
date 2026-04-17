@@ -3,11 +3,11 @@ package io.github.nextentity.spring;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaConfig;
 import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
-import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -109,7 +109,7 @@ public final class EntityFactoryBuilder {
     private static EntityTemplateFactory buildJdbcFactory(FactoryContext ctx) {
         applyCommonConfig(ctx.properties);
 
-        Metamodel metamodel = JpaMetamodel.of();
+        Metamodel metamodel = DefaultMetamodel.of();
         ConnectionProvider connectionProvider = createConnectionProvider(ctx.jdbcTemplate);
         JdbcConfig jdbcConfig = toJdbcConfig(ctx.properties.getJdbc());
         SqlBuilder sqlBuilder = SqlBuilder.of(ctx.sqlDialect, jdbcConfig);
@@ -129,7 +129,7 @@ public final class EntityFactoryBuilder {
     private static EntityTemplateFactory buildJpaFactory(FactoryContext ctx, EntityManager entityManager) {
         applyCommonConfig(ctx.properties);
 
-        Metamodel metamodel = JpaMetamodel.of();
+        Metamodel metamodel = DefaultMetamodel.of();
         ConnectionProvider connectionProvider = createConnectionProvider(ctx.jdbcTemplate);
         JdbcConfig jdbcConfig = toJdbcConfig(ctx.properties.getJdbc());
         JpaConfig jpaConfig = toJpaConfig(ctx.properties.getJpa());

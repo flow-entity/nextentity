@@ -48,7 +48,7 @@ public class JpaPersistExecutor implements PersistExecutor {
         String entityName = getJpaEntityName(entityType);
         EntityAttribute idAttribute = entity.id();
         EntityAttribute versionAttribute = entity.version();
-        ImmutableArray<? extends Attribute> attributes = entity.attributes().getPrimitives();
+        ImmutableArray<? extends Attribute> attributes = entity.getPrimitives();
 
         // List<T> result = new ArrayList<>(list.size());
         for (T t : list) {

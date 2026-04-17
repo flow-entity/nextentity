@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableArray;
 
@@ -40,7 +41,7 @@ public class InsertStatementBuilder extends AbstractBatchStatementBuilder {
         // 按 ID 是否为 null 分组
         List<Object> nullIdEntities = new ArrayList<>();
         List<Object> nonNullIdEntities = new ArrayList<>();
-        EntityAttribute idAttribute = entityType.id();
+        EntityBasicAttribute idAttribute = entityType.id();
 
         for (Object entity : entities) {
             if (idAttribute.getDatabaseValue(entity) == null) {
@@ -70,19 +71,19 @@ public class InsertStatementBuilder extends AbstractBatchStatementBuilder {
     /// @return 插入SQL语句
     protected InsertSqlStatement buildStatement(List<?> entityList, boolean excludeId) {
         ImmutableArray<? extends EntityAttribute> selectList = entityType.getPrimitives();
-        List<EntityAttribute> columns = new ArrayList<>();
+        List<EntityBasicAttribute> columns = new ArrayList<>();
 
         // 确定要插入的列
         if (excludeId) {
             EntityAttribute idAttribute = entityType.id();
             for (EntityAttribute attr : selectList) {
                 if (attr != idAttribute) {
-                    columns.add(attr);
+                    columns.add((EntityBasicAttribute) attr);
                 }
             }
         } else {
             for (EntityAttribute attr : selectList) {
-                columns.add(attr);
+                columns.add((EntityBasicAttribute) attr);
             }
         }
 
@@ -95,7 +96,7 @@ public class InsertStatementBuilder extends AbstractBatchStatementBuilder {
                 .append(" (");
 
         String delimiter = "";
-        for (EntityAttribute attribute : columns) {
+        for (EntityBasicAttribute attribute : columns) {
             sql.append(delimiter)
                     .append(leftQuotedIdentifier())
                     .append(attribute.columnName())

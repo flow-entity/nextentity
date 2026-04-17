@@ -2,11 +2,9 @@ package io.github.nextentity.core.reflect.schema;
 
 
 import io.github.nextentity.core.exception.ReflectiveException;
-import io.github.nextentity.core.reflect.ReflectUtil;
-import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.ImmutableArray;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 /// 表示模式字段/属性的属性接口。
@@ -24,25 +22,35 @@ import java.lang.reflect.Method;
 /// @since 1.0.0
 public non-sealed interface Attribute extends ReflectType {
 
+    Accessor accessor();
+
     /// 获取属性名称。
     ///
     /// @return 名称
-    String name();
+    default String name() {
+        return accessor().name();
+    }
 
     /// 获取此属性的 getter 方法。
     ///
     /// @return getter 方法，如果不可用则返回 null
-    Method getter();
+    default Method getter() {
+        return accessor().getter();
+    }
 
     /// 获取此属性的 setter 方法。
     ///
     /// @return setter 方法，如果不可用则返回 null
-    Method setter();
+    default Method setter() {
+        return accessor().setter();
+    }
 
     /// 获取此属性的字段。
     ///
     /// @return 字段，如果不可用则返回 null
-    Field field();
+    default Field field() {
+        return accessor().field();
+    }
 
     /// 获取声明此属性的模式。
     ///
@@ -54,7 +62,7 @@ public non-sealed interface Attribute extends ReflectType {
     /// 对于嵌套属性，路径包括所有父属性名称。
     ///
     /// @return 属性路径，作为名称的不可变列表
-    ImmutableList<String> path();
+    ImmutableArray<String> path();
 
     /// 获取此属性的序号位置。
     ///
@@ -76,16 +84,7 @@ public non-sealed interface Attribute extends ReflectType {
     /// @return 属性值
     /// @throws ReflectiveException 如果访问失败
     default Object get(Object entity) {
-        try {
-            Method getter = getter();
-            if (getter != null && ReflectUtil.isAccessible(getter, entity)) {
-                return getter.invoke(entity);
-            } else {
-                return ReflectUtil.getFieldValue(field(), entity);
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ReflectiveException(e);
-        }
+        return accessor().get(entity);
     }
 
     /// 在实体实例上设置属性值。
@@ -96,18 +95,12 @@ public non-sealed interface Attribute extends ReflectType {
     /// @param value 要设置的值
     /// @throws ReflectiveException 如果访问失败
     default void set(Object entity, Object value) {
-        try {
-            Method setter = setter();
-            if (setter != null && ReflectUtil.isAccessible(setter, entity)) {
-                ReflectUtil.typeCheck(value, setter.getParameterTypes()[0]);
-                setter.invoke(entity, value);
-            } else {
-                ReflectUtil.typeCheck(value, field().getType());
-                ReflectUtil.setFieldValue(field(), entity, value);
-            }
-        } catch (IllegalAccessException | InvocationTargetException e) {
-            throw new ReflectiveException(e);
-        }
+        accessor().set(entity, value);
+    }
+
+    @Override
+    default Class<?> type() {
+        return accessor().type();
     }
 
 }

@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 
@@ -84,7 +85,7 @@ public class ConditionalUpdateStatementBuilder extends AbstractConditionalStatem
         String delimiter = "";
         for (Map.Entry<String, Object> entry : setValues.entrySet()) {
             sql.append(delimiter);
-            EntityAttribute attribute = (EntityAttribute) entityType.getAttribute(entry.getKey());
+            var attribute = (EntityBasicAttribute) entityType.getAttribute(entry.getKey());
             sql.append(leftQuotedIdentifier()).append(attribute.columnName()).append(rightQuotedIdentifier());
             sql.append("=");
             appendLiteralValue(entry.getValue());

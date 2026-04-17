@@ -4,11 +4,11 @@ import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.meta.ProjectionType;
+import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.util.ImmutableArray;
 
 public class SelectProjectionContext extends QueryContext {
-    private final ProjectionType projection;
+    private final ProjectionSchema projection;
     private final ImmutableArray<SelectItem> expressions;
     private final SchemaAttributePaths schemaAttributePaths;
 

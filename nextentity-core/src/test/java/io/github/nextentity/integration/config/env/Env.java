@@ -8,6 +8,8 @@ public class Env {
             new MysqlEnvironmentVariables(),
             new PostgresqlEnvironmentVariables(),
             new SqlServerEnvironmentVariables()
+            // ,
+            // new H2EnvironmentVariables()
     );
 
     public static List<DatabaseEnvironmentVariables> dbs() {

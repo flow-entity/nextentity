@@ -12,4 +12,5 @@ public interface EmployeeInfo {
     String getEmail();
 
     Double getSalary();
+
 }

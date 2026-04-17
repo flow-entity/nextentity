@@ -1,5 +1,6 @@
 package io.github.nextentity.core.reflect.schema;
 
+import io.github.nextentity.core.reflect.schema.impl.DefaultSchema;
 import io.github.nextentity.core.util.ImmutableArray;
 
 /// 表示具有属性的结构化类型的模式接口。
@@ -14,10 +15,14 @@ import io.github.nextentity.core.util.ImmutableArray;
 /// @since 1.0.0
 public non-sealed interface Schema extends ReflectType {
 
+    static Schema of(Class<?> type) {
+        return DefaultSchema.of(type);
+    }
+
     /// 获取此模式的所有属性。
     ///
     /// @return 属性集合
-    Attributes attributes();
+    ImmutableArray<? extends Attribute> getAttributes();
 
     /// 获取此模式的基本（非关联）属性。
     ///
@@ -25,18 +30,14 @@ public non-sealed interface Schema extends ReflectType {
     /// 而不是到其他实体的关联。
     ///
     /// @return 基本属性的不可变数组
-    default ImmutableArray<? extends Attribute> getPrimitives() {
-        return attributes().getPrimitives();
-    }
+    ImmutableArray<? extends Attribute> getPrimitives();
 
     /// 按名称获取属性。
     ///
     /// @param name 属性名称
     /// @return 属性
     /// @throws IllegalArgumentException 如果不存在具有给定名称的属性
-    default Attribute getAttribute(String name) {
-        return attributes().get(name);
-    }
+    Attribute getAttribute(String name);
 
     /// 按字段名称的嵌套路径获取属性。
     ///
@@ -45,13 +46,7 @@ public non-sealed interface Schema extends ReflectType {
     /// @param fieldNames 字段名称路径
     /// @return 路径末端的属性
     /// @throws IllegalArgumentException 如果路径无效
-    default Attribute getAttribute(Iterable<String> fieldNames) {
-        ReflectType schema = this;
-        for (String fieldName : fieldNames) {
-            schema = ((Schema) schema).getAttribute(fieldName);
-        }
-        return (Attribute) schema;
-    }
+    Attribute getAttribute(Iterable<String> fieldNames);
 
     /// 指示这是对象类型（非基本类型）。
     ///
