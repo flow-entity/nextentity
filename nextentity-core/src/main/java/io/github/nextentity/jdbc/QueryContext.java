@@ -116,7 +116,7 @@ public abstract class QueryContext {
         ImmutableArray<? extends Attribute> attributes = schema.getAttributes();
         int i = 0;
         for (Attribute attribute : attributes) {
-            args[attribute.ordinal()] = objects[i++];
+            args[attribute.accessor().ordinal()] = objects[i++];
         }
         try {
             Constructor<?> constructor = schema.type().getConstructor(parameterTypes);
@@ -259,7 +259,7 @@ public abstract class QueryContext {
     protected Stream<SelectItem> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
         if (attribute instanceof EntityBasicAttribute expression) {
             return Stream.of(expression);
-        } else if (attribute instanceof ProjectionAttribute expression) {
+        } else if (attribute instanceof ProjectionBasicAttribute expression) {
             return Stream.of(expression.source());
         } else if (attribute instanceof Schema schema) {
             SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());

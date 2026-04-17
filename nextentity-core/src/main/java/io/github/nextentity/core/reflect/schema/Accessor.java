@@ -34,6 +34,8 @@ public interface Accessor {
     /// @return 字段，如果不可用则返回 null
     Field field();
 
+    int ordinal();
+
     /// 从实体实例获取属性值。
     ///
     /// 如果 getter 方法可访问则使用它，否则直接访问字段。

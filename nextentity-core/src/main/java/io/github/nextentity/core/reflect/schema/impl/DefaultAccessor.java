@@ -12,6 +12,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.lang.reflect.RecordComponent;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -21,7 +22,8 @@ public record DefaultAccessor(
         String name,
         Method getter,
         Method setter,
-        Field field
+        Field field,
+        int ordinal
 ) implements Accessor {
 
     private static final Map<Class<?>, List<DefaultAccessor>> cache = new ConcurrentHashMap<>();
@@ -34,6 +36,9 @@ public record DefaultAccessor(
     }
 
     private static List<DefaultAccessor> createAccessors(Class<?> type) {
+        if (type.isRecord()) {
+            return createRecordAccessors(type);
+        }
         Map<String, PropertyDescriptor> descriptorMap = new HashMap<>();
         try {
             BeanInfo beanInfo = Introspector.getBeanInfo(type);
@@ -58,6 +63,7 @@ public record DefaultAccessor(
         // 创建属性列表
         List<DefaultAccessor> result = new ArrayList<>();
 
+        int ordinal = 0;
         // 先处理有对应字段的属性
         for (Field field : fieldMap.values()) {
             PropertyDescriptor descriptor = descriptorMap.remove(field.getName());
@@ -70,7 +76,8 @@ public record DefaultAccessor(
                     name,
                     descriptor == null ? null : descriptor.getReadMethod(),
                     descriptor == null ? null : descriptor.getWriteMethod(),
-                    field
+                    field,
+                    ordinal++
             );
             result.add(attribute);
         }
@@ -86,11 +93,31 @@ public record DefaultAccessor(
                     name,
                     descriptor.getReadMethod(),
                     descriptor.getWriteMethod(),
-                    null
+                    null,
+                    ordinal++
             );
             result.add(attribute);
         }
 
+        return List.copyOf(result);
+    }
+
+    private static List<DefaultAccessor> createRecordAccessors(Class<?> type) {
+        RecordComponent[] components = type.getRecordComponents();
+        ArrayList<DefaultAccessor> result = new ArrayList<>(components.length);
+        int ordinal = 0;
+        for (RecordComponent descriptor : components) {
+            String name = descriptor.getName();
+            DefaultAccessor attribute = new DefaultAccessor(
+                    descriptor.getType(),
+                    name,
+                    descriptor.getAccessor(),
+                    null,
+                    null,
+                    ordinal++
+            );
+            result.add(attribute);
+        }
         return List.copyOf(result);
     }
 
