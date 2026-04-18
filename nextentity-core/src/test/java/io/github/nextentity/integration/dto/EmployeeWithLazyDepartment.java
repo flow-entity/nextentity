@@ -2,6 +2,7 @@ package io.github.nextentity.integration.dto;
 
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.Fetch;
+import io.github.nextentity.integration.entity.Department;
 
 import static jakarta.persistence.FetchType.LAZY;
 
@@ -29,7 +30,7 @@ public interface EmployeeWithLazyDepartment {
      */
     @EntityPath("department")
     @Fetch(LAZY)
-    DepartmentInfoLazy getDepartment();
+    Department getDepartment();
 
     /**
      * 部门的嵌套投影接口。

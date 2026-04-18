@@ -3,7 +3,7 @@ package io.github.nextentity.integration;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.dto.*;
-import io.github.nextentity.integration.dto.EmployeeWithLazyDepartment;
+import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.fast.FastIntegrationTestProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -622,7 +622,7 @@ public class ProjectionQueryIntegrationTest {
 
         // 首次访问 LAZY 属性 - 触发批量加载
         EmployeeWithLazyDepartment first = results.getFirst();
-        EmployeeWithLazyDepartment.DepartmentInfoLazy dept = first.getDepartment();
+        Department dept = first.getDepartment();
 
         if (dept != null) {
             assertThat(dept.getId()).isNotNull();
@@ -631,7 +631,7 @@ public class ProjectionQueryIntegrationTest {
 
         // 后续访问应从缓存获取
         for (EmployeeWithLazyDepartment emp : results) {
-            EmployeeWithLazyDepartment.DepartmentInfoLazy d = emp.getDepartment();
+            Department d = emp.getDepartment();
             if (d != null) {
                 assertThat(d.getId()).isNotNull();
             }

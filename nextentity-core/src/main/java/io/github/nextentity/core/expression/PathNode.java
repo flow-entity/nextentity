@@ -196,4 +196,9 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
         System.arraycopy(path, 0, strings, 0, strings.length);
         return new PathNode(strings);
     }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(path);
+    }
 }

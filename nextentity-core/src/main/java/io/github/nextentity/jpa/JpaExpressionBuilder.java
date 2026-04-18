@@ -111,7 +111,11 @@ public class JpaExpressionBuilder {
                         CriteriaBuilder.In<Object> in = cb.in(firstExpression(operation));
                         for (int i = 1; i < operands.size(); i++) {
                             ExpressionNode arg = operands.get(i);
-                            in = in.value(toExpression(arg));
+                            try {
+                                in = in.value(toExpression(arg));
+                            } catch (Exception e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                         return in;
                     }

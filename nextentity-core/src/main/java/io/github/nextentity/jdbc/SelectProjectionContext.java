@@ -26,7 +26,7 @@ public class SelectProjectionContext extends QueryContext {
     private final SchemaAttributePaths schemaAttributePaths;
 
     /// 批量加载上下文（延迟初始化）
-    private volatile Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContext = new ConcurrentHashMap<>();
+    private final Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContext = new ConcurrentHashMap<>();
 
     /// 存储懒加载属性元数据，供二次查询批量加载使用
     ///
@@ -128,7 +128,8 @@ public class SelectProjectionContext extends QueryContext {
                 FetchType fetchType = schemaAttr.fetchType();
                 if (fetchType == FetchType.LAZY) {
                     // LAZY: 添加到 lazyList，子属性不遍历（父 LAZY → 全跳过）
-                    eagerList.add(schemaAttr.source());
+                    EntityBasicAttribute source = schemaAttr.source().sourceAttribute();
+                    eagerList.add(source);
                 } else {
                     // EAGER: 递归添加到 expressions
                     SchemaAttributePaths subPaths = paths.get(attr.name());

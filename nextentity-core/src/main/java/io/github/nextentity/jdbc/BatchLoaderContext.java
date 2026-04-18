@@ -8,6 +8,7 @@ import io.github.nextentity.core.meta.EntitySchemaAttribute;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.BatchAttributeLoader;
+import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -75,8 +76,8 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
 
         // 获取关联元数据
         EntitySchemaAttribute schemaAttribute = attribute.source();
-        EntitySchema targetEntity = schemaAttribute.target();
-        EntityBasicAttribute targetAttribute = schemaAttribute.targetAttribute();
+        EntitySchema targetEntity = queryContext.getMetamodel().getEntity(attribute.type());
+        EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntity.getAttribute(schemaAttribute.targetAttribute().name());
 
         // 构建批量查询 QueryStructure（投影类型而非实体类型）
         QueryStructure queryStructure = buildBatchQuery(targetEntity, foreignKeys);
@@ -95,9 +96,6 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
     /// SELECT * FROM target_entity WHERE targetAttribute IN (foreignKeys)
     /// 结果投影到 attribute.type() 类型
     private QueryStructure buildBatchQuery(EntitySchema targetEntity, Set<Object> foreignKeys) {
-        // 投影类型（如 DepartmentInfoLazy.class）
-        Class<?> projectionType = attribute.type();
-
         // 构建 WHERE IN 表达式
         Collection<ExpressionNode> literals = foreignKeys.stream()
                 .map(LiteralNode::new)
@@ -106,15 +104,14 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
         // 使用 targetAttribute 作为 WHERE 条件属性
         // 例如：id IN (1, 2, 3)
         EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
-        PathNode targetPath = new PathNode(targetAttribute.name());
+        PathNode targetPath = targetAttribute.path();
         ExpressionNode whereClause = targetPath.operate(Operator.IN, literals);
 
         // 构建投影查询 QueryStructure
-        SelectProjection selectProjection = new SelectProjection(projectionType, false);
+        Selected selectProjection = new SelectEntity(ImmutableList.empty(), false);
         FromEntity fromEntity = new FromEntity(targetEntity.type());
 
-        return QueryStructure.of(selectProjection, fromEntity)
-                .where(whereClause);
+        return QueryStructure.of(selectProjection, fromEntity).where(whereClause);
     }
 
     /// 构建缓存映射
