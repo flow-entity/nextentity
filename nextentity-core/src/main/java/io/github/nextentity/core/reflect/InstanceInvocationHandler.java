@@ -1,13 +1,13 @@
 package io.github.nextentity.core.reflect;
 
-import io.github.nextentity.core.PathReference;
+import io.github.nextentity.core.util.Lazy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class InstanceInvocationHandler implements InvocationHandler {
     private final Class<?> resultType;
@@ -18,10 +18,25 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         this.data = data;
     }
 
+    public InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data, Map<Method, Lazy<Object>> lazyAttributes) {
+        this.resultType = resultType;
+        if (lazyAttributes != null && !lazyAttributes.isEmpty()) {
+            data = new ConcurrentHashMap<>(data);
+            for (Map.Entry<Method, Lazy<Object>> entry : lazyAttributes.entrySet()) {
+                data.put(entry.getKey(), new LazyWrapper(entry.getValue()));
+            }
+        }
+        this.data = data;
+    }
+
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (data.containsKey(method)) {
-            return data.get(method);
+            Object value = data.get(method);
+            if (value instanceof LazyWrapper wrapper) {
+                return wrapper.get(data, method);
+            }
+            return value;
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
@@ -53,13 +68,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
 
     @Override
     public String toString() {
-        String str = data.entrySet().stream()
-                .map(e -> {
-                    String name = PathReference.getFieldName(e.getKey().getName());
-                    return name + "=" + e.getValue();
-                })
-                .collect(Collectors.joining(", "));
-        return resultType.getSimpleName() + "(" + str + ")";
+        return resultType.getSimpleName() + "@" + System.identityHashCode(resultType);
     }
 
     public Class<?> resultType() {
@@ -69,4 +78,13 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     public Map<Method, Object> data() {
         return this.data;
     }
+
+    private record LazyWrapper(Lazy<Object> target) {
+        public synchronized Object get(Map<Method, Object> data, Method method) {
+            Object value = target.get();
+            data.put(method, value);
+            return value;
+        }
+    }
+
 }
