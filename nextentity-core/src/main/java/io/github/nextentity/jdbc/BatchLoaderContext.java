@@ -31,15 +31,15 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
     }
 
     @Override
-    public AttributeLoader addForeignKey(Object loader) {
-        return attributeLoaders.computeIfAbsent(loader, this::getEntityLoader);
+    public AttributeLoader addForeignKey(Object foreignKey) {
+        return attributeLoaders.computeIfAbsent(foreignKey, this::getEntityLoader);
     }
 
-    private AttributeLoader getEntityLoader(Object k) {
+    private AttributeLoader getEntityLoader(Object foreignKey) {
         if (attribute.type() == attribute.source().type()) {
-            return new EntityAttributeLoader(this, k);
+            return new EntityAttributeLoader(this, foreignKey);
         } else {
-            return new ProjectionAttributeLoader(this, k);
+            return new ProjectionAttributeLoader(this, foreignKey);
         }
     }
 
