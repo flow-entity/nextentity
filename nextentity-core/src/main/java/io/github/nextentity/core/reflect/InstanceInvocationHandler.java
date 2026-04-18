@@ -6,7 +6,6 @@ import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 public final class InstanceInvocationHandler implements InvocationHandler {
     private static final Object NULL = new Object();
@@ -14,42 +13,41 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     private final Class<?> resultType;
     private final Map<Method, Object> data;
 
-    public InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data) {
-        this.resultType = resultType;
-        this.data = data;
+    InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data) {
+        this(resultType, data, null);
     }
 
-    public InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data, Map<Method, Function<Map<Method, Object>, Object>> lazyAttributes) {
+    InstanceInvocationHandler(Class<?> resultType,
+                              Map<Method, Object> data,
+                              Map<Method, LazyLoader> lazyAttributeLoaders) {
         this.resultType = resultType;
-        if (lazyAttributes != null && !lazyAttributes.isEmpty()) {
-            data = wrapAsConcurrentHashMap(data);
-            for (Map.Entry<Method, Function<Map<Method, Object>, Object>> entry : lazyAttributes.entrySet()) {
-                data.put(entry.getKey(), new LazyWrapper(entry.getValue()));
-            }
+        data.replaceAll((_, value) -> wrapIfNull(value));
+        if (lazyAttributeLoaders != null && !lazyAttributeLoaders.isEmpty()) {
+            this.data = wrapAsConcurrentHashMap(data, lazyAttributeLoaders);
+        } else {
+            this.data = data;
         }
-        this.data = data;
     }
 
-    private Map<Method, Object> wrapAsConcurrentHashMap(Map<Method, Object> data) {
-        Map<Method, Object> map = new ConcurrentHashMap<>();
-        for (Map.Entry<Method, Object> entry : data.entrySet()) {
-            Object value = entry.getValue();
-            Method key = entry.getKey();
-            if (key != null) {
-                map.put(key, value == null ? NULL : value);
-            }
+    private Map<Method, Object> wrapAsConcurrentHashMap(Map<Method, Object> data,
+                                                        Map<Method, LazyLoader> lazyAttributeLoaders) {
+        ConcurrentHashMap<Method, Object> map = new ConcurrentHashMap<>(data);
+        for (Map.Entry<Method, LazyLoader> entry : lazyAttributeLoaders.entrySet()) {
+            map.put(entry.getKey(), new LazyWrapper(entry.getValue()));
         }
         return map;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (data.containsKey(method)) {
-            Object value = data.get(method);
-            if (value instanceof LazyWrapper wrapper) {
-                return wrapper.get(data, method);
+        Object result = data.get(method);
+        if (result != null) {
+            if (result instanceof LazyWrapper wrapper) {
+                LazyLoader loader = wrapper.loader();
+                result = wrapIfNull(loader.load(data));
+                data.replace(method, wrapper, result);
             }
-            return value == NULL ? null : value;
+            return unwrapIfNull(result);
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
@@ -60,14 +58,23 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         throw new AbstractMethodError(method.toString());
     }
 
+    private Object wrapIfNull(Object value) {
+        return value == null ? NULL : value;
+    }
+
+    private Object unwrapIfNull(Object value) {
+        return value == NULL ? null : value;
+    }
+
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (o == null) return false;
         if (Proxy.isProxyClass(o.getClass())) {
             o = Proxy.getInvocationHandler(o);
+            if (this == o) return true;
         }
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (getClass() != o.getClass()) return false;
         InstanceInvocationHandler that = (InstanceInvocationHandler) o;
         return Objects.equals(resultType, that.resultType) && Objects.equals(data, that.data);
     }
@@ -92,13 +99,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         return this.data;
     }
 
-    private record LazyWrapper(Function<Map<Method, Object>, Object> target) {
-        public Object get(Map<Method, Object> data, Method method) {
-            return data.computeIfPresent(method, (_, v) -> {
-                Object value = v == this ? target.apply(data) : v;
-                return value == null ? NULL : value;
-            });
-        }
+    private record LazyWrapper(LazyLoader loader) {
     }
 
 }

@@ -12,7 +12,6 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 /// 反射工具类，提供各种反射操作的便捷方法。
 ///
@@ -135,17 +134,17 @@ public class ReflectUtil {
     ///
     /// @param resultType 代理接口类型
     /// @param data EAGER 属性的方法到值映射
-    /// @param lazyAttributes LAZY 属性的方法到懒加载值映射
+    /// @param lazyAttributeLoaders LAZY 属性的方法到懒加载器映射
     /// @return 代理实例
     @NonNull
     public static Object newProxyInstance(
             @NonNull Class<?> resultType,
             Map<Method, Object> data,
-            Map<Method, Function<Map<Method, Object>, Object>> lazyAttributes) {
+            Map<Method, LazyLoader> lazyAttributeLoaders) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Class<?>[] interfaces = {resultType};
         return Proxy.newProxyInstance(classLoader, interfaces,
-                new InstanceInvocationHandler(resultType, data, lazyAttributes));
+                new InstanceInvocationHandler(resultType, data, lazyAttributeLoaders));
     }
 
     /// 类型检查。

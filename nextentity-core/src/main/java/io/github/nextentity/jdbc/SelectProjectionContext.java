@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.reflect.InstanceInvocationHandler;
+import io.github.nextentity.core.reflect.LazyLoader;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.meta.*;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class SelectProjectionContext extends QueryContext {
@@ -85,8 +87,8 @@ public class SelectProjectionContext extends QueryContext {
             }
         }
 
-        // 创建懒加载 Function（从缓存获取，批量加载由 setResults 触发）
-        Map<Method, Function<Map<Method, Object>, Object>> lazyMap = new HashMap<>();
+        // 创建懒加载器（从缓存获取，批量加载由 setResults 触发）
+        Map<Method, LazyLoader> lazyMap = new HashMap<>();
         for (LazyAttributeInfo info : lazyAttributes) {
             lazyMap.put(info.attribute().getter(), createLazyLoader(info));
         }
@@ -98,7 +100,7 @@ public class SelectProjectionContext extends QueryContext {
     }
 
     /// 创建懒加载器（首次 load 时遍历 results 批量加载）
-    private Function<Map<Method, Object>, Object> createLazyLoader(LazyAttributeInfo info) {
+    private LazyLoader createLazyLoader(LazyAttributeInfo info) {
         ProjectionSchemaAttribute attribute = info.attribute();
         EntityBasicAttribute sourceAttribute = info.sourceAttribute();
         EntityBasicAttribute targetIdAttribute = info.targetIdAttribute();
@@ -109,7 +111,7 @@ public class SelectProjectionContext extends QueryContext {
         Class<?> targetType = targetSchema.type();
 
         // 创建外键收集器：遍历 results 提取所有外键值
-        java.util.function.Supplier<Set<Object>> foreignKeyCollector = () -> {
+        Supplier<Set<Object>> foreignKeyCollector = () -> {
             List<?> results = getResults();
             Set<Object> keys = new HashSet<>();
             if (results != null) {
