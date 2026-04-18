@@ -75,6 +75,11 @@ public class SelectProjectionContext extends QueryContext {
         // 直接使用父类方法构建 EAGER 属性数据
         Map<Method, Object> data = new HashMap<>();
         for (Attribute attr : schema.getAttributes()) {
+            // 检查是否是 LAZY 属性，如果是则跳过
+            if (attr instanceof ProjectionSchemaAttribute schemaAttr
+                    && schemaAttr.fetchType() == FetchType.LAZY) {
+                continue;  // LAZY 属性不处理，由 lazyMap 处理
+            }
             SchemaAttributePaths subPaths = paths.get(attr.name());
             if (subPaths != null) {
                 if (attr instanceof Schema nestedSchema) {

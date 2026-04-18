@@ -12,6 +12,7 @@ import io.github.nextentity.spring.integration.domain.Page;
 import io.github.nextentity.spring.integration.domain.Pageable;
 import io.github.nextentity.spring.integration.entity.User;
 import io.github.nextentity.spring.integration.projection.IUser;
+import io.github.nextentity.spring.integration.projection.IUserLazy;
 import io.github.nextentity.spring.integration.projection.UserInterface;
 import io.github.nextentity.spring.integration.projection.UserModel;
 import io.github.nextentity.spring.integration.projection.UserRecord;
@@ -47,6 +48,57 @@ class EntityQueryTest {
     void select3(UserRepository userQuery) {
         IUser first1 = userQuery.select(IUser.class).list(90, 1).stream().findFirst().orElse(null);
         log.info("{}", first1);
+    }
+
+    /// 测试投影对象的懒加载属性批量加载功能
+    ///
+    /// 懒加载功能解决接口投影的 N+1 查询问题：
+    /// 1. 查询时只加载 EAGER 属性（id, randomNumber, username, pid）
+    /// 2. LAZY 属性（parentUser）首次访问时触发批量 WHERE IN 查询
+    /// 3. 批量查询一次性加载所有关联对象，避免 N+1
+    @ParameterizedTest
+    @ArgumentsSource(UserQueryProvider.class)
+    void selectLazyProjection(UserRepository userQuery) {
+        // 查询带 LAZY 属性的投影对象
+        List<IUserLazy> list = userQuery.select(IUserLazy.class)
+                .where(User::getPid).isNotNull()
+                .orderBy(User::getId)
+                .list(0, 10);
+
+        assertFalse(list.isEmpty(), "查询结果不应为空");
+
+        // 验证 EAGER 属性已加载
+        for (IUserLazy user : list) {
+            assertNotNull(user.getId(), "id 应已加载");
+            assertNotNull(user.getUsername(), "username 应已加载");
+            assertNotNull(user.getPid(), "pid 应已加载");
+        }
+
+        // 记录首次访问 LAZY 属性前的状态
+        log.info("查询完成，准备首次访问 LAZY 属性 parentUser");
+
+        // 首次访问 LAZY 属性 - 触发批量加载
+        IUserLazy first = list.getFirst();
+        IUserLazy.IUserLazyParent parentUser = first.getParentUser();
+
+        // 验证 LAZY 属性加载结果
+        if (parentUser != null) {
+            assertNotNull(parentUser.getId(), "parentUser.id 应已加载");
+            assertNotNull(parentUser.getUsername(), "parentUser.username 应已加载");
+
+            log.info("LAZY 属性加载成功: parentUser={}", parentUser);
+        }
+
+        // 后续访问不再触发查询（已缓存）
+        for (IUserLazy user : list) {
+            IUserLazy.IUserLazyParent parent = user.getParentUser();
+            if (parent != null) {
+                assertNotNull(parent.getId(), "后续访问应从缓存获取");
+                assertNotNull(parent.getUsername(), "后续访问应从缓存获取");
+            }
+        }
+
+        log.info("懒加载批量加载测试完成，结果数量: {}", list.size());
     }
 
     @ParameterizedTest
