@@ -55,7 +55,7 @@ public class JpaQueryExecutor implements QueryExecutor {
             List<?> resultList = getEntityResultList(queryStructure);
             return TypeCastUtil.cast(resultList);
         }
-        QueryContext context = QueryContext.create(queryStructure, metamodel, false);
+        QueryContext context = QueryContext.create(this, queryStructure, metamodel, false);
         List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
         List<Object> result = objectsList.stream()
                 .map(objects -> {

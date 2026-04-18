@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.Metamodel;
@@ -13,8 +14,8 @@ public class SelectEntityContext extends QueryContext {
     private final SchemaAttributePaths schemaAttributePaths;
     private final ImmutableArray<SelectItem> expressions;
 
-    public SelectEntityContext(QueryStructure structure, Metamodel metamodel, Collection<? extends Attribute> fetch) {
-        super(structure, metamodel, true);
+    public SelectEntityContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, Collection<? extends Attribute> fetch) {
+        super(executor, structure, metamodel, true);
         this.schemaAttributePaths = newJoinPaths(fetch);
         this.expressions = getSelectSchemaExpressions(entityType, schemaAttributePaths);
     }

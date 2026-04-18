@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.QueryStructure;
@@ -13,8 +14,8 @@ public class SelectPrimitiveContext extends QueryContext {
     private final ExpressionNode expression;
 
 
-    protected SelectPrimitiveContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectExpression selectPrimitive) {
-        super(structure, metamodel, expandObjectAttribute);
+    protected SelectPrimitiveContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectExpression selectPrimitive) {
+        super(executor, structure, metamodel, expandObjectAttribute);
         this.expression = selectPrimitive.expression();
         this.expressions = getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));
     }

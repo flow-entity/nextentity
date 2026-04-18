@@ -37,7 +37,7 @@ public abstract class QueryContext {
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
 
-    public static QueryContext create(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
+    public static QueryContext create(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
         Selected select = structure.select();
         if (select instanceof SelectEntity selectEntity) {
             ImmutableList<PathNode> fetch = selectEntity.fetch();
@@ -46,21 +46,21 @@ public abstract class QueryContext {
                         .stream()
                         .map(it -> it.getAttribute(metamodel.getEntity(((FromEntity) structure.from()).type())))
                         .toList();
-                return new SelectEntityContext(structure, metamodel, attributes);
+                return new SelectEntityContext(executor, structure, metamodel, attributes);
             } else {
-                return new SelectSimpleEntityContext(structure, metamodel, expandObjectAttribute);
+                return new SelectSimpleEntityContext(executor, structure, metamodel, expandObjectAttribute);
             }
         } else if (select instanceof SelectProjection selectProjection) {
-            return new SelectProjectionContext(structure, metamodel, expandObjectAttribute, selectProjection);
+            return new SelectProjectionContext(executor, structure, metamodel, expandObjectAttribute, selectProjection);
         } else if (select instanceof SelectExpression selectPrimitive) {
-            return new SelectPrimitiveContext(structure, metamodel, expandObjectAttribute, selectPrimitive);
+            return new SelectPrimitiveContext(executor, structure, metamodel, expandObjectAttribute, selectPrimitive);
         } else if (select instanceof SelectExpressions selectArray) {
-            return new SelectArrayContext(structure, metamodel, expandObjectAttribute, selectArray);
+            return new SelectArrayContext(executor, structure, metamodel, expandObjectAttribute, selectArray);
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
     }
 
-    protected QueryContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
+    protected QueryContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
         this.structure = structure;
         this.metamodel = metamodel;
         this.expandReferencePath = expandObjectAttribute;
@@ -69,7 +69,7 @@ public abstract class QueryContext {
     }
 
     public QueryContext newContext(QueryStructure structure) {
-        return create(structure, metamodel, expandReferencePath);
+        return create(queryExecutor, structure, metamodel, expandReferencePath);
     }
 
     public abstract ImmutableArray<SelectItem> getSelectedExpression();

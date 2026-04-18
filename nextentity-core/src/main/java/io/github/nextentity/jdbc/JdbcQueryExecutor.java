@@ -75,7 +75,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @Override
     @NonNull
     public <R> List<R> getList(@NonNull QueryStructure queryStructure) {
-        QueryContext context = QueryContext.create(queryStructure, metamodel, true);
+        QueryContext context = QueryContext.create(this, queryStructure, metamodel, true);
         // 设置 queryExecutor 供懒加载使用
         context.setQueryExecutor(this);
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);

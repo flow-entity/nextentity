@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectProjection;
@@ -39,8 +40,8 @@ public class SelectProjectionContext extends QueryContext {
     ) {
     }
 
-    public SelectProjectionContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectProjection select) {
-        super(structure, metamodel, expandObjectAttribute);
+    public SelectProjectionContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectProjection select) {
+        super(executor, structure, metamodel, expandObjectAttribute);
         this.projection = entityType.getProjection(select.type());
         this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
 

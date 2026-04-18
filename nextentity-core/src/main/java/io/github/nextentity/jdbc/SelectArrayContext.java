@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.QueryStructure;
@@ -13,8 +14,8 @@ public class SelectArrayContext extends QueryContext {
     private final ImmutableArray<io.github.nextentity.core.SelectItem> expressions;
     private final ImmutableArray<Object> selectExpressions;
 
-    public SelectArrayContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectExpressions selectArray) {
-        super(structure, metamodel, expandObjectAttribute);
+    public SelectArrayContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectExpressions selectArray) {
+        super(executor, structure, metamodel, expandObjectAttribute);
         this.selectExpressions = selectArray.items().stream()
                 .map(it -> it instanceof PathNode pathExpression
                         ? entityType.getAttribute(pathExpression) : it)

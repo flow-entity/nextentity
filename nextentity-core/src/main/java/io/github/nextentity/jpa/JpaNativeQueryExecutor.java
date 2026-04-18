@@ -40,7 +40,7 @@ public class JpaNativeQueryExecutor implements QueryExecutor {
     }
 
     private <T> List<T> queryByNativeSql(@NonNull QueryStructure queryStructure) {
-        QueryContext context = QueryContext.create(queryStructure, metamodel, true);
+        QueryContext context = QueryContext.create(this, queryStructure, metamodel, true);
         QuerySqlStatement preparedSql = sqlBuilder.buildQueryStatement(context);
         jakarta.persistence.Query query = entityManager.createNativeQuery(preparedSql.sql());
         int position = 0;
