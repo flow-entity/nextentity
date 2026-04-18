@@ -8,30 +8,19 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class ApplicationContexts {
 
-    private static final Map<String, ConfigurableApplicationContext> CACHE = new ConcurrentHashMap<>();
+    private static final List<ConfigurableApplicationContext> CONTEXTS = Env.dbs().stream()
+            .map(ApplicationContexts::getApplicationContext)
+            .toList();
 
     public static List<ConfigurableApplicationContext> contexts() {
-        return Env.getSelectedDbTypes().stream()
-                .map(ApplicationContexts::getOrCreateContext)
-                .toList();
+        return CONTEXTS;
     }
 
-    private static @NonNull ConfigurableApplicationContext getOrCreateContext(String dbType) {
-        return CACHE.computeIfAbsent(dbType, k -> {
-            DatabaseEnvironmentVariables dbEnv = Env.dbs().stream()
-                    .filter(e -> e.name().equals(k))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Database not found: " + k));
-            return createApplicationContext(dbEnv);
-        });
-    }
-
-    private static @NonNull ConfigurableApplicationContext createApplicationContext(DatabaseEnvironmentVariables dbEnv) {
+    private static @NonNull ConfigurableApplicationContext getApplicationContext(DatabaseEnvironmentVariables dbEnv) {
+        // spring.datasource.password
         ConfigurableApplicationContext context = SpringApplication.run(
                 IntegrationTestApplication.class,
                 "--spring.datasource.password=" + dbEnv.getPassword(),
@@ -43,12 +32,14 @@ public class ApplicationContexts {
         DefaultListableBeanFactory defaultListableBeanFactory = (DefaultListableBeanFactory) context.getAutowireCapableBeanFactory();
         defaultListableBeanFactory.registerSingleton("databaseEnvironmentVariables", dbEnv);
 
+        // Initialize database schema and test data once per context
         initializeDatabase(context);
 
         return context;
     }
 
     private static void initializeDatabase(ConfigurableApplicationContext context) {
+        // Get all IntegrationTestContext beans and call reset() to initialize database
         context.getBeansOfType(IntegrationTestContext.class).values()
                 .forEach(IntegrationTestContext::reset);
     }

@@ -2,20 +2,20 @@ package io.github.nextentity.core.reflect;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
 
 public final class ResultMap {
     private static final Object NULL = new Object();
 
     private final Map<Method, Object> target = new ConcurrentHashMap<>();
 
-    public void replaceAll(BiFunction<? super Method, Object, ?> function) {
-        target.replaceAll(function);
+    public Object get(Method method) {
+        return target.get(method);
     }
 
-    public Object get(Method method) {
-        return unwrapIfNull(target.get(method));
+    boolean isNull(Object value) {
+        return value == NULL;
     }
 
     public boolean replace(Method method, Object loader, Object result) {
@@ -36,5 +36,9 @@ public final class ResultMap {
 
     public boolean isEmpty() {
         return target.isEmpty();
+    }
+
+    public Set<Method> keySet() {
+        return target.keySet();
     }
 }

@@ -25,7 +25,12 @@ public interface SqlDialect {
         FROM_CLAUSE_WITH_JOIN,
         /// SQL Server 风格: UPDATE alias SET ... FROM table alias JOIN ... WHERE ...
         /// UPDATE 后面只写别名，FROM 子句中写表名+别名+JOIN
-        UPDATE_ALIAS_ONLY
+        UPDATE_ALIAS_ONLY,
+        /// H2/Oracle 风格: 使用 EXISTS 子查询处理 JOIN 条件
+        /// UPDATE table SET col = ? WHERE EXISTS (SELECT 1 FROM other WHERE table.join_col = other.col AND ...)
+        /// DELETE FROM table WHERE EXISTS (SELECT 1 FROM other WHERE table.join_col = other.col AND ...)
+        /// 不支持 UPDATE FROM 和 DELETE USING 语法的数据库使用此风格
+        EXISTS_SUBQUERY
     }
 
     /// 返回标识符的左引号字符
@@ -162,6 +167,8 @@ public interface SqlDialect {
     /// SQL Server SQL 方言实例
     SqlDialect SQL_SERVER = new SqlServerDialect();
 
+    SqlDialect H2 = new H2Dialect();
+
     /// 根据数据源自动检测 SQL 方言
     ///
     /// 通过读取数据库元数据中的驱动名称来判断数据库类型：
@@ -178,12 +185,14 @@ public interface SqlDialect {
             DatabaseMetaData metaData = connection.getMetaData();
             String driverName = metaData.getDriverName().toLowerCase();
 
-            if (driverName.contains("mysql") || driverName.contains("maria") || driverName.contains("h2")) {
+            if (driverName.contains("mysql") || driverName.contains("maria")) {
                 return MYSQL;
             } else if (driverName.contains("mssql") || driverName.contains("sql server")) {
                 return SQL_SERVER;
             } else if (driverName.contains("postgresql")) {
                 return POSTGRESQL;
+            } else if (driverName.contains("h2")) {
+                return H2;
             } else {
                 return DEFAULT;
             }

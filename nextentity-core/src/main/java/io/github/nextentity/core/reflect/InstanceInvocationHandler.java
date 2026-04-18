@@ -3,38 +3,30 @@ package io.github.nextentity.core.reflect;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 public final class InstanceInvocationHandler implements InvocationHandler {
-    private static final Object NULL = new Object();
 
     private final Class<?> resultType;
     private final ResultMap data;
 
-    InstanceInvocationHandler(Class<?> resultType,
-                              ResultMap data) {
+    InstanceInvocationHandler(Class<?> resultType, ResultMap data) {
         this.resultType = resultType;
-        data.replaceAll((_, value) -> wrapIfNull(value));
         this.data = data;
-    }
-
-    private Map<Method, Object> wrapAsConcurrentHashMap(Map<Method, Object> data) {
-        ConcurrentHashMap<Method, Object> map = new ConcurrentHashMap<>(data);
-
-        return map;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = data.get(method);
         if (result != null) {
+            if (data.isNull(result)) {
+                return null;
+            }
             if (result instanceof AttributeLoader loader) {
-                result = wrapIfNull(loader.load());
+                result = loader.load();
                 data.replace(method, loader, result);
             }
-            return unwrapIfNull(result);
+            return result;
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
@@ -42,15 +34,12 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         if (method.isDefault()) {
             return ReflectUtil.invokeDefaultMethod(proxy, method, args);
         }
+        for (Method m : data.keySet()) {
+            if (m.getName().equals(method.getName())) {
+                System.out.println(m.equals(method));
+            }
+        }
         throw new AbstractMethodError(method.toString());
-    }
-
-    private Object wrapIfNull(Object value) {
-        return value == null ? NULL : value;
-    }
-
-    private Object unwrapIfNull(Object value) {
-        return value == NULL ? null : value;
     }
 
     @Override
