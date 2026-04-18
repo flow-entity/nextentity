@@ -26,7 +26,7 @@ public class SelectProjectionContext extends QueryContext {
     private final SchemaAttributePaths schemaAttributePaths;
 
     /// 批量加载上下文（延迟初始化）
-    private final Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContext = new ConcurrentHashMap<>();
+    private final Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContexts = new ConcurrentHashMap<>();
 
     /// 存储懒加载属性元数据，供二次查询批量加载使用
     ///
@@ -40,7 +40,11 @@ public class SelectProjectionContext extends QueryContext {
     ) {
     }
 
-    public SelectProjectionContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectProjection select) {
+    public SelectProjectionContext(QueryExecutor executor,
+                                   QueryStructure structure,
+                                   Metamodel metamodel,
+                                   boolean expandObjectAttribute,
+                                   SelectProjection select) {
         super(executor, structure, metamodel, expandObjectAttribute);
         this.projection = entityType.getProjection(select.type());
         this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
@@ -63,7 +67,9 @@ public class SelectProjectionContext extends QueryContext {
     }
 
     /// 构建支持懒加载属性的 Interface 代理对象
-    private Object constructInterfaceSchemaWithLazy(ProjectionSchema schema, Arguments arguments, SchemaAttributePaths paths) {
+    private Object constructInterfaceSchemaWithLazy(ProjectionSchema schema,
+                                                    Arguments arguments,
+                                                    SchemaAttributePaths paths) {
         // 直接使用父类方法构建 EAGER 属性数据
         ResultMap data = new ResultMap();
         for (Attribute attr : schema.getAttributes()) {
@@ -91,7 +97,8 @@ public class SelectProjectionContext extends QueryContext {
 
     /// 创建懒加载器（首次 load 时遍历 results 批量加载）
     private AttributeLoader createLazyLoader(ProjectionSchemaAttribute attribute, Object foreignKey) {
-        return new AttributeLoader(getBatchLoaderContext(attribute), foreignKey);
+        BatchLoaderContext batchLoaderContext = getBatchLoaderContext(attribute);
+        return batchLoaderContext.addForeignKey(foreignKey);
     }
 
     /// 获取批量加载上下文（延迟初始化）
@@ -101,7 +108,7 @@ public class SelectProjectionContext extends QueryContext {
     ///
     /// @return 批量加载上下文
     private BatchLoaderContext getBatchLoaderContext(ProjectionSchemaAttribute attribute) {
-        return batchLoaderContext.computeIfAbsent(attribute, k -> new BatchLoaderContext(k,this));
+        return batchLoaderContexts.computeIfAbsent(attribute, k -> new BatchLoaderContext(k, this));
     }
 
     /// 设置查询结果列表

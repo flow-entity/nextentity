@@ -9,22 +9,23 @@ import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.util.ImmutableList;
 
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EntityLoader implements Supplier<Object> {
+public class EntityAttributeLoader implements AttributeLoader {
     private final BatchLoaderContext context;
-    private final AttributeLoader loader;
+    private final Object foreignKey;
 
-    public EntityLoader(BatchLoaderContext context, AttributeLoader loader) {
+    public EntityAttributeLoader(BatchLoaderContext context, Object foreignKey) {
         this.context = context;
-        this.loader = loader;
+        this.foreignKey = foreignKey;
     }
 
     @Override
-    public Object get() {
-        Object foreignKey = loader.getForeignKey();
+    public Object load() {
         Map<Object, Object> cache = context.getCache();
 
         // 如果缓存中已有结果，直接返回
@@ -46,14 +47,10 @@ public class EntityLoader implements Supplier<Object> {
     ///
     /// 收集所有外键值，构建 WHERE IN 查询，一次性加载所有关联对象
     private void executeBatchLoad() {
-        List<AttributeLoader> attributeLoaders = context.getAttributeLoaders();
+        Set<Object> foreignKeys = context.getForeignKeys();
         ProjectionSchemaAttribute attribute = context.getAttribute();
         QueryContext queryContext = context.getQueryContext();
         // 收集所有外键值（去重，排除 null）
-        Set<Object> foreignKeys = attributeLoaders.stream()
-                .map(AttributeLoader::getForeignKey)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
 
         if (foreignKeys.isEmpty()) {
             // 没有有效的外键值，无需查询
@@ -113,11 +110,10 @@ public class EntityLoader implements Supplier<Object> {
                 cache.put(key, entity);
             }
         }
-        List<AttributeLoader> attributeLoaders = context.getAttributeLoaders();
+        Set<Object> foreignKeys = context.getForeignKeys();
         // 对于没有匹配结果的外键值，缓存 null
         // 这样可以避免后续对同一外键值重复查询
-        for (AttributeLoader loader : attributeLoaders) {
-            Object foreignKey = loader.getForeignKey();
+        for (Object foreignKey : foreignKeys) {
             if (foreignKey != null && !cache.containsKey(foreignKey)) {
                 cache.put(foreignKey, null);
             }

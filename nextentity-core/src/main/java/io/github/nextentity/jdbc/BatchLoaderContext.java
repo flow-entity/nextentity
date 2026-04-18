@@ -4,11 +4,10 @@ import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.BatchAttributeLoader;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /// 批量加载上下文
 ///
@@ -22,7 +21,7 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
     private final QueryContext queryContext;
     private final ProjectionSchemaAttribute attribute;
 
-    private final List<AttributeLoader> attributeLoaders = new ArrayList<>();
+    private final Map<Object, AttributeLoader> attributeLoaders = new ConcurrentHashMap<>();
     private final Map<Object, Object> cache = new HashMap<>();
     private boolean loaded = false;
 
@@ -32,10 +31,13 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
     }
 
     @Override
-    public Supplier<Object> addForeignKey(AttributeLoader loader) {
-        attributeLoaders.add(loader);
+    public AttributeLoader addForeignKey(Object loader) {
+        return attributeLoaders.computeIfAbsent(loader, this::getEntityLoader);
+    }
+
+    private AttributeLoader getEntityLoader(Object k) {
         if (attribute.type() == attribute.source().type()) {
-            return new EntityLoader(this, loader);
+            return new EntityAttributeLoader(this, k);
         } else {
             throw new UnsupportedOperationException(attribute.type() + " is not supported");
         }
@@ -49,8 +51,8 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
         return attribute;
     }
 
-    public List<AttributeLoader> getAttributeLoaders() {
-        return attributeLoaders;
+    public Set<Object> getForeignKeys() {
+        return attributeLoaders.keySet();
     }
 
     public Map<Object, Object> getCache() {
