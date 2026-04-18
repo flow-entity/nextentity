@@ -56,11 +56,14 @@ public abstract class QueryContext {
             return new SelectPrimitiveContext(executor, structure, metamodel, expandObjectAttribute, selectPrimitive);
         } else if (select instanceof SelectExpressions selectArray) {
             return new SelectArrayContext(executor, structure, metamodel, expandObjectAttribute, selectArray);
+        } else if (select instanceof SelectNested selectNested) {
+            return new SelectNestedContext(executor, structure, metamodel, expandObjectAttribute, selectNested);
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
     }
 
     protected QueryContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
+        this.queryExecutor = executor;
         this.structure = structure;
         this.metamodel = metamodel;
         this.expandReferencePath = expandObjectAttribute;
