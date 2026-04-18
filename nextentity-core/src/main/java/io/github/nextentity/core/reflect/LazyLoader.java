@@ -17,5 +17,5 @@ public interface LazyLoader {
     ///
     /// @param data 投影对象的属性数据映射，包含所有已加载的 EAGER 属性
     /// @return 加载后的属性值，可以为 null
-    Object load(Map<Method, Object> data);
+    Object load(Object data);
 }

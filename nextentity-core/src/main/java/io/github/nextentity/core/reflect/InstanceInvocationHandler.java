@@ -44,7 +44,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         if (result != null) {
             if (result instanceof LazyWrapper wrapper) {
                 LazyLoader loader = wrapper.loader();
-                result = wrapIfNull(loader.load(data));
+                result = wrapIfNull(loader.load(this));
                 data.replace(method, wrapper, result);
             }
             return unwrapIfNull(result);

@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.reflect.BatchLazyAttributeLoader;
 import io.github.nextentity.core.reflect.InstanceInvocationHandler;
 import io.github.nextentity.core.reflect.LazyLoader;
 import io.github.nextentity.core.expression.QueryStructure;
@@ -21,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -101,46 +101,42 @@ public class SelectProjectionContext extends QueryContext {
 
     /// 创建懒加载器（首次 load 时遍历 results 批量加载）
     private LazyLoader createLazyLoader(LazyAttributeInfo info) {
-        ProjectionSchemaAttribute attribute = info.attribute();
         EntityBasicAttribute sourceAttribute = info.sourceAttribute();
-        EntityBasicAttribute targetIdAttribute = info.targetIdAttribute();
         Method foreignKeyGetter = sourceAttribute.getter();
 
-        // 目标实体类型
-        EntitySchema targetSchema = attribute.source().target();
-        Class<?> targetType = targetSchema.type();
+        // 外键收集器：针对此属性的 getter 遍历 results 提取所有外键值
+        Supplier<Set<Object>> foreignKeyCollector = () -> collectForeignKeys(foreignKeyGetter);
 
-        // 创建外键收集器：遍历 results 提取所有外键值
-        Supplier<Set<Object>> foreignKeyCollector = () -> {
-            List<?> results = getResults();
-            Set<Object> keys = new HashSet<>();
-            if (results != null) {
-                for (Object result : results) {
-                    if (result != null && Proxy.isProxyClass(result.getClass())) {
-                        InstanceInvocationHandler handler = (InstanceInvocationHandler)
-                                Proxy.getInvocationHandler(result);
-                        Map<Method, Object> data = handler.data();
-                        Object foreignKey = data.get(foreignKeyGetter);
-                        if (foreignKey != null) {
-                            keys.add(foreignKey);
-                        }
+        // 批量加载上下文提供者（延迟初始化）
+        Supplier<BatchLoaderContext> batchLoaderContextSupplier = this::getBatchLoaderContext;
+
+        return new BatchLazyAttributeLoader(info, batchLoaderContextSupplier, foreignKeyCollector);
+    }
+
+    /// 收集指定 getter 对应的所有外键值
+    ///
+    /// 遍历 results，从每个代理对象的 data 中提取外键值。
+    ///
+    /// @param foreignKeyGetter 外键属性的 getter 方法
+    /// @return 外键值集合
+    private Set<Object> collectForeignKeys(Method foreignKeyGetter) {
+        List<?> results = getResults();
+        Set<Object> keys = new HashSet<>();
+
+        if (results != null) {
+            for (Object result : results) {
+                if (result != null && Proxy.isProxyClass(result.getClass())) {
+                    InstanceInvocationHandler handler = (InstanceInvocationHandler)
+                            Proxy.getInvocationHandler(result);
+                    Map<Method, Object> data = handler.data();
+                    Object foreignKey = data.get(foreignKeyGetter);
+                    if (foreignKey != null) {
+                        keys.add(foreignKey);
                     }
                 }
             }
-            return keys;
-        };
-
-        return data -> {
-            // 从 EAGER 属性数据获取外键值
-            Object foreignKey = data.get(foreignKeyGetter);
-
-            // 获取批量加载器（带外键收集器）
-            BatchLoaderContext ctx = getBatchLoaderContext();
-            BatchLazyLoader loader = ctx.getBatchLoader(targetType, targetIdAttribute, foreignKeyCollector);
-
-            // load() 首次调用时会触发批量加载（遍历 results 收集所有外键）
-            return loader.load(foreignKey);
-        };
+        }
+        return keys;
     }
 
     /// 获取批量加载上下文（延迟初始化）
