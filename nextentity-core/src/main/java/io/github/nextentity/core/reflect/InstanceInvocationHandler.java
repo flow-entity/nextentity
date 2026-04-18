@@ -1,15 +1,16 @@
 package io.github.nextentity.core.reflect;
 
-import io.github.nextentity.core.util.Lazy;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public final class InstanceInvocationHandler implements InvocationHandler {
+    private static final Object NULL = new Object();
+
     private final Class<?> resultType;
     private final Map<Method, Object> data;
 
@@ -18,15 +19,27 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         this.data = data;
     }
 
-    public InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data, Map<Method, Lazy<Object>> lazyAttributes) {
+    public InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data, Map<Method, Function<Map<Method, Object>, Object>> lazyAttributes) {
         this.resultType = resultType;
         if (lazyAttributes != null && !lazyAttributes.isEmpty()) {
-            data = new ConcurrentHashMap<>(data);
-            for (Map.Entry<Method, Lazy<Object>> entry : lazyAttributes.entrySet()) {
+            data = wrapAsConcurrentHashMap(data);
+            for (Map.Entry<Method, Function<Map<Method, Object>, Object>> entry : lazyAttributes.entrySet()) {
                 data.put(entry.getKey(), new LazyWrapper(entry.getValue()));
             }
         }
         this.data = data;
+    }
+
+    private Map<Method, Object> wrapAsConcurrentHashMap(Map<Method, Object> data) {
+        Map<Method, Object> map = new ConcurrentHashMap<>();
+        for (Map.Entry<Method, Object> entry : data.entrySet()) {
+            Object value = entry.getValue();
+            Method key = entry.getKey();
+            if (key != null) {
+                map.put(key, value == null ? NULL : value);
+            }
+        }
+        return map;
     }
 
     @Override
@@ -36,7 +49,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
             if (value instanceof LazyWrapper wrapper) {
                 return wrapper.get(data, method);
             }
-            return value;
+            return value == NULL ? null : value;
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);
@@ -79,11 +92,12 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         return this.data;
     }
 
-    private record LazyWrapper(Lazy<Object> target) {
-        public synchronized Object get(Map<Method, Object> data, Method method) {
-            Object value = target.get();
-            data.put(method, value);
-            return value;
+    private record LazyWrapper(Function<Map<Method, Object>, Object> target) {
+        public Object get(Map<Method, Object> data, Method method) {
+            return data.computeIfPresent(method, (_, v) -> {
+                Object value = v == this ? target.apply(data) : v;
+                return value == null ? NULL : value;
+            });
         }
     }
 

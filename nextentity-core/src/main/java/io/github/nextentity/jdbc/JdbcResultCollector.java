@@ -58,6 +58,8 @@ public class JdbcResultCollector implements ResultCollector {
             Object o = context.construct(arguments);
             result.add(o);
         }
+        // 查询完成后设置结果列表（触发后处理）
+        context.setResults(result);
         return TypeCastUtil.cast(result);
     }
 

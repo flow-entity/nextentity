@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
+import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
@@ -18,6 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -31,6 +33,11 @@ public abstract class QueryContext {
     protected final Metamodel metamodel;
     protected final EntityType entityType;
     protected final boolean expandReferencePath;
+    protected QueryExecutor queryExecutor;
+    protected FetchConfig fetchConfig = FetchConfig.DEFAULT;
+
+    /// 查询结果列表（在 resolve 完成后设置）
+    private List<?> results;
 
     public static QueryContext create(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
         Selected select = structure.select();
@@ -288,5 +295,38 @@ public abstract class QueryContext {
         } else {
             return arguments.next(IdentityValueConverter.of());
         }
+    }
+
+    public QueryExecutor getQueryExecutor() {
+        return queryExecutor;
+    }
+
+    public void setQueryExecutor(QueryExecutor queryExecutor) {
+        this.queryExecutor = queryExecutor;
+    }
+
+    public FetchConfig getFetchConfig() {
+        return fetchConfig;
+    }
+
+    public void setFetchConfig(FetchConfig fetchConfig) {
+        this.fetchConfig = fetchConfig;
+    }
+
+    /// 获取查询结果列表
+    ///
+    /// @return 查询结果列表，在 resolve 完成后可用
+    public List<?> getResults() {
+        return results;
+    }
+
+    /// 设置查询结果列表
+    ///
+    /// 由 JdbcResultCollector 在完成所有行构建后调用。
+    /// 子类可覆盖此方法实现后处理逻辑（如批量加载 LAZY 属性）。
+    ///
+    /// @param results 查询结果列表
+    public void setResults(List<?> results) {
+        this.results = results;
     }
 }
