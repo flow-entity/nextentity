@@ -3,7 +3,9 @@ package io.github.nextentity.integration;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.dto.*;
+import io.github.nextentity.integration.dto.EmployeeWithLazyDepartment;
 import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.fast.FastIntegrationTestProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -593,6 +595,47 @@ public class ProjectionQueryIntegrationTest {
         // Then
         assertThat(results).isNotEmpty();
         assertThat(results).allMatch(r -> r.salary() > 50000.0);
+    }
+
+    // ========================================
+    // 6. Lazy Loading Projection Tests
+    // ========================================
+
+    @ParameterizedTest
+    @ArgumentsSource(FastIntegrationTestProvider.class)
+    @DisplayName("Should project with LAZY attribute - EmployeeWithLazyDepartment")
+    void shouldProjectWithLazyDepartment(IntegrationTestContext context) {
+        // When - 查询带 LAZY 属性的投影对象
+        List<EmployeeWithLazyDepartment> results = context.queryEmployees()
+                .select(EmployeeWithLazyDepartment.class)
+                .where(Employee::getDepartmentId).isNotNull()
+                .orderBy(Employee::getId).asc()
+                .list(5);
+
+        // Then - EAGER 属性应已加载
+        assertThat(results).isNotEmpty();
+        for (EmployeeWithLazyDepartment emp : results) {
+            assertThat(emp.getId()).isNotNull();
+            assertThat(emp.getName()).isNotNull();
+            assertThat(emp.getDepartmentId()).isNotNull();
+        }
+
+        // 首次访问 LAZY 属性 - 触发批量加载
+        EmployeeWithLazyDepartment first = results.getFirst();
+        EmployeeWithLazyDepartment.DepartmentInfoLazy dept = first.getDepartment();
+
+        if (dept != null) {
+            assertThat(dept.getId()).isNotNull();
+            assertThat(dept.getName()).isNotNull();
+        }
+
+        // 后续访问应从缓存获取
+        for (EmployeeWithLazyDepartment emp : results) {
+            EmployeeWithLazyDepartment.DepartmentInfoLazy d = emp.getDepartment();
+            if (d != null) {
+                assertThat(d.getId()).isNotNull();
+            }
+        }
     }
 }
 

@@ -5,6 +5,7 @@ import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.jdbc.QueryContext;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -121,6 +122,11 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     @Override
     public long count() {
         return descriptor.queryExecutor().<Number>getList(buildCountData()).getFirst().longValue();
+    }
+
+    protected <R> List<R> executeQuery(QueryStructure queryStructure) {
+        //TODO
+        return descriptor.queryExecutor().getList(queryStructure);
     }
 
     @Override

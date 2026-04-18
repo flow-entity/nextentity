@@ -9,18 +9,16 @@ import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
+import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 ///
@@ -134,7 +132,7 @@ public abstract class QueryContext {
     }
 
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        Map<Method, Object> map = new HashMap<>();
+        ResultMap map = new ResultMap();
         for (Attribute attribute : rootSchema.getAttributes()) {
             if (attribute instanceof Schema schema) {
                 SchemaAttributePaths schemaAttributePaths = schemaAttributes.get(attribute.name());

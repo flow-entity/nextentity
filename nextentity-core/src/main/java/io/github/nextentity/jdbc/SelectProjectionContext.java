@@ -1,38 +1,31 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.SelectItem;
-import io.github.nextentity.core.reflect.BatchLazyAttributeLoader;
-import io.github.nextentity.core.reflect.InstanceInvocationHandler;
-import io.github.nextentity.core.reflect.LazyLoader;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.ReflectUtil;
+import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.FetchType;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.function.Supplier;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class SelectProjectionContext extends QueryContext {
     private final ProjectionSchema projection;
     private final ImmutableArray<SelectItem> expressions;
-    private final ImmutableArray<LazyAttributeInfo> lazyAttributes;
     private final SchemaAttributePaths schemaAttributePaths;
 
     /// 批量加载上下文（延迟初始化）
-    private volatile BatchLoaderContext batchLoaderContext;
+    private volatile Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContext = new ConcurrentHashMap<>();
 
     /// 存储懒加载属性元数据，供二次查询批量加载使用
     ///
@@ -52,9 +45,7 @@ public class SelectProjectionContext extends QueryContext {
         this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
 
         // 分离 EAGER 和 LAZY 属性
-        SeparatedAttributes separated = separateAttributes(projection, schemaAttributePaths);
-        this.expressions = separated.eager;
-        this.lazyAttributes = separated.lazy;
+        this.expressions = separateAttributes(projection, schemaAttributePaths);
     }
 
     @Override
@@ -73,11 +64,13 @@ public class SelectProjectionContext extends QueryContext {
     /// 构建支持懒加载属性的 Interface 代理对象
     private Object constructInterfaceSchemaWithLazy(ProjectionSchema schema, Arguments arguments, SchemaAttributePaths paths) {
         // 直接使用父类方法构建 EAGER 属性数据
-        Map<Method, Object> data = new HashMap<>();
+        ResultMap data = new ResultMap();
         for (Attribute attr : schema.getAttributes()) {
             // 检查是否是 LAZY 属性，如果是则跳过
             if (attr instanceof ProjectionSchemaAttribute schemaAttr
                     && schemaAttr.fetchType() == FetchType.LAZY) {
+                Object foreignKey = getSimpleAttributeValue(arguments, attr);
+                data.put(attr.getter(), createLazyLoader(schemaAttr, foreignKey));
                 continue;  // LAZY 属性不处理，由 lazyMap 处理
             }
             SchemaAttributePaths subPaths = paths.get(attr.name());
@@ -92,56 +85,12 @@ public class SelectProjectionContext extends QueryContext {
             }
         }
 
-        // 创建懒加载器（从缓存获取，批量加载由 setResults 触发）
-        Map<Method, LazyLoader> lazyMap = new HashMap<>();
-        for (LazyAttributeInfo info : lazyAttributes) {
-            lazyMap.put(info.attribute().getter(), createLazyLoader(info));
-        }
-
-        if (data.isEmpty() && lazyMap.isEmpty()) {
-            return null;
-        }
-        return ReflectUtil.newProxyInstance(schema.type(), data, lazyMap);
+        return ReflectUtil.newProxyInstance(schema.type(), data);
     }
 
     /// 创建懒加载器（首次 load 时遍历 results 批量加载）
-    private LazyLoader createLazyLoader(LazyAttributeInfo info) {
-        EntityBasicAttribute sourceAttribute = info.sourceAttribute();
-        Method foreignKeyGetter = sourceAttribute.getter();
-
-        // 外键收集器：针对此属性的 getter 遍历 results 提取所有外键值
-        Supplier<Set<Object>> foreignKeyCollector = () -> collectForeignKeys(foreignKeyGetter);
-
-        // 批量加载上下文提供者（延迟初始化）
-        Supplier<BatchLoaderContext> batchLoaderContextSupplier = this::getBatchLoaderContext;
-
-        return new BatchLazyAttributeLoader(info, batchLoaderContextSupplier, foreignKeyCollector);
-    }
-
-    /// 收集指定 getter 对应的所有外键值
-    ///
-    /// 遍历 results，从每个代理对象的 data 中提取外键值。
-    ///
-    /// @param foreignKeyGetter 外键属性的 getter 方法
-    /// @return 外键值集合
-    private Set<Object> collectForeignKeys(Method foreignKeyGetter) {
-        List<?> results = getResults();
-        Set<Object> keys = new HashSet<>();
-
-        if (results != null) {
-            for (Object result : results) {
-                if (result != null && Proxy.isProxyClass(result.getClass())) {
-                    InstanceInvocationHandler handler = (InstanceInvocationHandler)
-                            Proxy.getInvocationHandler(result);
-                    Map<Method, Object> data = handler.data();
-                    Object foreignKey = data.get(foreignKeyGetter);
-                    if (foreignKey != null) {
-                        keys.add(foreignKey);
-                    }
-                }
-            }
-        }
-        return keys;
+    private AttributeLoader createLazyLoader(ProjectionSchemaAttribute attribute, Object foreignKey) {
+        return new AttributeLoader(getBatchLoaderContext(attribute), foreignKey);
     }
 
     /// 获取批量加载上下文（延迟初始化）
@@ -150,23 +99,8 @@ public class SelectProjectionContext extends QueryContext {
     /// 因此在首次需要时创建 BatchLoaderContext。
     ///
     /// @return 批量加载上下文
-    private BatchLoaderContext getBatchLoaderContext() {
-        if (batchLoaderContext == null) {
-            synchronized (this) {
-                if (batchLoaderContext == null) {
-                    batchLoaderContext = new BatchLoaderContext(
-                            getQueryExecutor(),
-                            getFetchConfig()
-                    );
-                }
-            }
-        }
-        return batchLoaderContext;
-    }
-
-    /// 获取懒加载属性列表
-    public ImmutableArray<LazyAttributeInfo> getLazyAttributes() {
-        return lazyAttributes;
+    private BatchLoaderContext getBatchLoaderContext(ProjectionSchemaAttribute attribute) {
+        return batchLoaderContext.computeIfAbsent(attribute, k -> new BatchLoaderContext(k,this));
     }
 
     /// 设置查询结果列表
@@ -181,9 +115,8 @@ public class SelectProjectionContext extends QueryContext {
     }
 
     /// 分离 EAGER 和 LAZY 属性
-    private SeparatedAttributes separateAttributes(ProjectionSchema schema, SchemaAttributePaths paths) {
+    private ImmutableArray<SelectItem> separateAttributes(ProjectionSchema schema, SchemaAttributePaths paths) {
         List<SelectItem> eagerList = new ArrayList<>();
-        List<LazyAttributeInfo> lazyList = new ArrayList<>();
 
         for (ProjectionAttribute attr : schema.getAttributes()) {
             if (attr instanceof ProjectionBasicAttribute basicAttr) {
@@ -194,7 +127,7 @@ public class SelectProjectionContext extends QueryContext {
                 FetchType fetchType = schemaAttr.fetchType();
                 if (fetchType == FetchType.LAZY) {
                     // LAZY: 添加到 lazyList，子属性不遍历（父 LAZY → 全跳过）
-                    lazyList.add(createLazyAttributeInfo(schemaAttr, paths));
+                    eagerList.add(schemaAttr.source());
                 } else {
                     // EAGER: 递归添加到 expressions
                     SchemaAttributePaths subPaths = paths.get(attr.name());
@@ -205,10 +138,7 @@ public class SelectProjectionContext extends QueryContext {
             }
         }
 
-        return new SeparatedAttributes(
-                ImmutableList.ofCollection(eagerList),
-                ImmutableList.ofCollection(lazyList)
-        );
+        return ImmutableList.ofCollection(eagerList);
     }
 
     /// 创建懒加载属性信息
@@ -244,10 +174,4 @@ public class SelectProjectionContext extends QueryContext {
                 });
     }
 
-    /// 属性分离结果
-    private record SeparatedAttributes(
-            ImmutableArray<SelectItem> eager,
-            ImmutableArray<LazyAttributeInfo> lazy
-    ) {
-    }
 }

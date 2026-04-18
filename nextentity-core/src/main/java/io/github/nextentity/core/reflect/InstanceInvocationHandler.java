@@ -11,30 +11,18 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     private static final Object NULL = new Object();
 
     private final Class<?> resultType;
-    private final Map<Method, Object> data;
-
-    InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data) {
-        this(resultType, data, null);
-    }
+    private final ResultMap data;
 
     InstanceInvocationHandler(Class<?> resultType,
-                              Map<Method, Object> data,
-                              Map<Method, LazyLoader> lazyAttributeLoaders) {
+                              ResultMap data) {
         this.resultType = resultType;
         data.replaceAll((_, value) -> wrapIfNull(value));
-        if (lazyAttributeLoaders != null && !lazyAttributeLoaders.isEmpty()) {
-            this.data = wrapAsConcurrentHashMap(data, lazyAttributeLoaders);
-        } else {
-            this.data = data;
-        }
+        this.data = data;
     }
 
-    private Map<Method, Object> wrapAsConcurrentHashMap(Map<Method, Object> data,
-                                                        Map<Method, LazyLoader> lazyAttributeLoaders) {
+    private Map<Method, Object> wrapAsConcurrentHashMap(Map<Method, Object> data) {
         ConcurrentHashMap<Method, Object> map = new ConcurrentHashMap<>(data);
-        for (Map.Entry<Method, LazyLoader> entry : lazyAttributeLoaders.entrySet()) {
-            map.put(entry.getKey(), new LazyWrapper(entry.getValue()));
-        }
+
         return map;
     }
 
@@ -42,10 +30,9 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = data.get(method);
         if (result != null) {
-            if (result instanceof LazyWrapper wrapper) {
-                LazyLoader loader = wrapper.loader();
-                result = wrapIfNull(loader.load(this));
-                data.replace(method, wrapper, result);
+            if (result instanceof AttributeLoader loader) {
+                result = wrapIfNull(loader.load());
+                data.replace(method, loader, result);
             }
             return unwrapIfNull(result);
         }
@@ -93,13 +80,6 @@ public final class InstanceInvocationHandler implements InvocationHandler {
 
     public Class<?> resultType() {
         return this.resultType;
-    }
-
-    public Map<Method, Object> data() {
-        return this.data;
-    }
-
-    private record LazyWrapper(LazyLoader loader) {
     }
 
 }
