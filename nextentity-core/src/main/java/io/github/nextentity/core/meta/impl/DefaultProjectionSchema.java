@@ -78,4 +78,9 @@ public class DefaultProjectionSchema
     public ProjectionSchemaAttribute getAttribute(Iterable<String> fieldNames) {
         return (ProjectionSchemaAttribute) super.getAttribute(fieldNames);
     }
+
+    @Override
+    public EntitySchema getEntitySchema() {
+        return entitySchema;
+    }
 }

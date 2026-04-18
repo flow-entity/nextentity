@@ -2,13 +2,9 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.meta.EntityBasicAttribute;
-import io.github.nextentity.core.meta.EntitySchema;
-import io.github.nextentity.core.meta.EntitySchemaAttribute;
-import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
+import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
 import java.util.List;
@@ -16,11 +12,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class EntityAttributeLoader implements AttributeLoader {
+public class ProjectionAttributeLoader implements AttributeLoader {
     private final BatchLoaderContext context;
     private final Object foreignKey;
 
-    public EntityAttributeLoader(BatchLoaderContext context, Object foreignKey) {
+    public ProjectionAttributeLoader(BatchLoaderContext context, Object foreignKey) {
         this.context = context;
         this.foreignKey = foreignKey;
     }
@@ -60,11 +56,23 @@ public class EntityAttributeLoader implements AttributeLoader {
 
         // 获取关联元数据
         EntitySchemaAttribute schemaAttribute = attribute.source();
-        EntitySchema targetEntity = queryContext.getMetamodel().getEntity(attribute.type());
+        EntityType targetEntity = queryContext.getMetamodel().getEntity(schemaAttribute.type());
         EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntity.getAttribute(schemaAttribute.targetAttribute().name());
+        ProjectionSchema projection = targetEntity.getProjection(attribute.type());
+        ProjectionAttribute projectionAttribute = null;
+        for (ProjectionAttribute attr : projection.getAttributes()) {
+            if (attr.source().path().equals(targetAttribute.path())) {
+                projectionAttribute = attr;
+                break;
+            }
+        }
+        if (projectionAttribute == null) {
+            // TODO
+            throw new IllegalStateException();
+        }
 
         // 构建批量查询 QueryStructure（投影类型而非实体类型）
-        QueryStructure queryStructure = buildBatchQuery(targetEntity, foreignKeys);
+        QueryStructure queryStructure = buildBatchQuery(projection, foreignKeys);
 
         // 执行查询
         QueryExecutor queryExecutor = queryContext.getQueryExecutor();
@@ -72,14 +80,14 @@ public class EntityAttributeLoader implements AttributeLoader {
 
         // 构建缓存映射：外键 -> 投影对象
         // 使用 targetAttribute 作为缓存 key 提取属性
-        buildCacheMap(targetAttribute, results);
+        buildCacheMap(projectionAttribute, results);
     }
 
     /// 构建批量查询的 QueryStructure
     ///
     /// SELECT * FROM target_entity WHERE targetAttribute IN (foreignKeys)
     /// 结果投影到 attribute.type() 类型
-    private QueryStructure buildBatchQuery(EntitySchema targetEntity, Set<Object> foreignKeys) {
+    private QueryStructure buildBatchQuery(ProjectionSchema targetEntity, Set<Object> foreignKeys) {
         ProjectionSchemaAttribute attribute = context.getAttribute();
         // 构建 WHERE IN 表达式
         Collection<ExpressionNode> literals = foreignKeys.stream()
@@ -93,8 +101,8 @@ public class EntityAttributeLoader implements AttributeLoader {
         ExpressionNode whereClause = targetPath.operate(Operator.IN, literals);
 
         // 构建投影查询 QueryStructure
-        Selected selectProjection = new SelectEntity(ImmutableList.empty(), false);
-        FromEntity fromEntity = new FromEntity(targetEntity.type());
+        Selected selectProjection = new SelectProjection(targetEntity.type(), false);
+        FromEntity fromEntity = new FromEntity(targetEntity.getEntitySchema().type());
 
         return QueryStructure.of(selectProjection, fromEntity).where(whereClause);
     }

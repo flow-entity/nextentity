@@ -1,5 +1,6 @@
 package io.github.nextentity.integration.dto;
 
+import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.Fetch;
 import io.github.nextentity.integration.entity.Department;
 
@@ -11,7 +12,7 @@ import static jakarta.persistence.FetchType.LAZY;
  * 用于测试投影对象 LAZY 属性的批量加载功能。
  * department 属性标记为 LAZY，首次访问时触发批量 WHERE IN 查询。
  */
-public interface EmployeeWithLazyDepartment {
+public interface EmployeeWithLazyIDepartment {
 
     Long getId();
 
@@ -27,7 +28,19 @@ public interface EmployeeWithLazyDepartment {
      * 使用 @Fetch(LAZY) 标记为延迟加载，
      * 首次访问时通过批量 WHERE IN 查询加载所有关联对象。
      */
+    @EntityPath("department")
     @Fetch(LAZY)
-    Department getDepartment();
+    DepartmentInfoLazy getDepartment();
 
+    /**
+     * 部门的嵌套投影接口。
+     */
+    interface DepartmentInfoLazy {
+
+        Long getId();
+
+        String getName();
+
+        String getLocation();
+    }
 }

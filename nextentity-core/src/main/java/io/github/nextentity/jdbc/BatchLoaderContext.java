@@ -39,7 +39,7 @@ public final class BatchLoaderContext implements BatchAttributeLoader {
         if (attribute.type() == attribute.source().type()) {
             return new EntityAttributeLoader(this, k);
         } else {
-            throw new UnsupportedOperationException(attribute.type() + " is not supported");
+            return new ProjectionAttributeLoader(this, k);
         }
     }
 
