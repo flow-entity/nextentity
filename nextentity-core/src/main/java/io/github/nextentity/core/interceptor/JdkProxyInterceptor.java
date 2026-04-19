@@ -1,5 +1,6 @@
 package io.github.nextentity.core.interceptor;
 
+import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Attribute;
@@ -37,9 +38,10 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     @Override
     public boolean supports(QueryContext context) {
         Schema schema = context.getSchema();
-        if (schema == null) {
+        if (!(schema instanceof ProjectionSchema)) {
             return false;
         }
+        // TODO 检查是否有懒加载字段
         // 只处理 interface 类型
         return schema.type().isInterface();
     }
