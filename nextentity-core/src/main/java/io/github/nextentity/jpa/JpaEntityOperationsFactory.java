@@ -4,6 +4,8 @@ import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.configuration.PersistConfiguration;
 import io.github.nextentity.core.configuration.QueryConfiguration;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.core.meta.impl.DefaultMetamodelResolver;
 import io.github.nextentity.jdbc.ConnectionProvider;
@@ -65,13 +67,18 @@ public class JpaEntityOperationsFactory implements EntityOperationsFactory {
 
         JdbcConfig jdbcConfig = config.jdbcConfig();
 
+        // 创建拦截器选择器
+        InterceptorSelector<ConstructInterceptor> interceptorSelector = new InterceptorSelector<>(
+                config.constructInterceptors());
+
         // 使用 JdbcQueryExecutor 作为原生查询执行器
         QueryExecutor nativeQueryExecutor = new JdbcQueryExecutor(
                 metamodel,
                 sqlBuilder,
                 connectionProvider,
                 new JdbcResultCollector(),
-                jdbcConfig
+                jdbcConfig,
+                interceptorSelector
         );
 
         // 创建主查询执行器

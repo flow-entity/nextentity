@@ -4,12 +4,16 @@ import io.github.nextentity.core.configuration.EntityOperationsConfiguration;
 import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.configuration.PersistConfiguration;
 import io.github.nextentity.core.configuration.QueryConfiguration;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.ConnectionProvider;
 import io.github.nextentity.jdbc.JdbcConfig;
 import io.github.nextentity.jdbc.SqlDialect;
 import io.github.nextentity.jpa.JpaConfig;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
+
+import java.util.List;
 
 /// JPA 实体操作配置类
 ///
@@ -33,6 +37,8 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
     /// @param persistConfiguration 持久化配置（可为 null）
     /// @param queryConfiguration  查询配置（可为 null，使用默认值）
     /// @param metamodelConfiguration 元模型配置（可为 null，使用默认值）
+    /// @param constructInterceptors 构造拦截器列表（可为 null）
+    /// @param resultInterceptors 结果拦截器列表（可为 null）
     protected JpaEntityOperationsConfiguration(
             @NonNull SqlDialect sqlDialect,
             @NonNull EntityManager entityManager,
@@ -41,8 +47,11 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
             JdbcConfig jdbcConfig,
             PersistConfiguration persistConfiguration,
             QueryConfiguration queryConfiguration,
-            MetamodelConfiguration metamodelConfiguration) {
-        super(sqlDialect, persistConfiguration, queryConfiguration, metamodelConfiguration);
+            MetamodelConfiguration metamodelConfiguration,
+            List<ConstructInterceptor> constructInterceptors,
+            List<ResultInterceptor> resultInterceptors) {
+        super(sqlDialect, persistConfiguration, queryConfiguration, metamodelConfiguration,
+              constructInterceptors, resultInterceptors);
         this.entityManager = entityManager;
         this.jpaConfig = jpaConfig != null ? jpaConfig : JpaConfig.DEFAULT;
         this.connectionProvider = connectionProvider;
@@ -130,7 +139,9 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
                     jdbcConfig,
                     persistConfiguration,
                     queryConfiguration,
-                    metamodelConfiguration);
+                    metamodelConfiguration,
+                    constructInterceptors,
+                    resultInterceptors);
         }
     }
 
@@ -147,9 +158,12 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
                 JdbcConfig jdbcConfig,
                 PersistConfiguration persistConfiguration,
                 QueryConfiguration queryConfiguration,
-                MetamodelConfiguration metamodelConfiguration) {
+                MetamodelConfiguration metamodelConfiguration,
+                List<ConstructInterceptor> constructInterceptors,
+                List<ResultInterceptor> resultInterceptors) {
             super(sqlDialect, entityManager, jpaConfig, connectionProvider, jdbcConfig,
-                  persistConfiguration, queryConfiguration, metamodelConfiguration);
+                  persistConfiguration, queryConfiguration, metamodelConfiguration,
+                  constructInterceptors, resultInterceptors);
         }
     }
 }

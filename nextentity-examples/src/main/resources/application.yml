@@ -29,3 +29,7 @@ logging:
 
 nextentity:
   enabled: true
+  proxy:
+    enabled: true
+  metamodel:
+    dto-projection-lazy-load: true

@@ -2,6 +2,8 @@ package io.github.nextentity.spring;
 
 import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.core.exception.ConfigurationException;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.SqlDialect;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.InjectionPoint;
@@ -19,6 +21,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
 /// NextEntity 自动配置类。
 ///
@@ -77,20 +80,28 @@ public class NextEntityAutoConfiguration {
     /// @param jdbcTemplate           Spring JDBC 模板（必需）
     /// @param entityManagerProvider  JPA 实体管理器提供者（可选）
     /// @param properties             NextEntity 配置属性
+    /// @param constructInterceptorsProvider 构造拦截器提供者（可选）
+    /// @param resultInterceptorsProvider 结果拦截器提供者（可选）
     /// @return EntityOperationsFactory 实例
     @Bean
     @ConditionalOnMissingBean
     public EntityOperationsFactory entityContext(JdbcTemplate jdbcTemplate,
                                                    ObjectProvider<EntityManager> entityManagerProvider,
                                                    NextEntityProperties properties,
-                                                   TransactionTemplate transactionTemplate) {
+                                                   TransactionTemplate transactionTemplate,
+                                                   ObjectProvider<ConstructInterceptor> constructInterceptorsProvider,
+                                                   ObjectProvider<ResultInterceptor> resultInterceptorsProvider) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
+        List<ConstructInterceptor> constructInterceptors = constructInterceptorsProvider.stream().toList();
+        List<ResultInterceptor> resultInterceptors = resultInterceptorsProvider.stream().toList();
 
         if (entityManager != null) {
-            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate);
+            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate,
+                                            constructInterceptors, resultInterceptors);
         }
-        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate);
+        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate,
+                                         constructInterceptors, resultInterceptors);
     }
 
     /// 解析 SQL 方言。

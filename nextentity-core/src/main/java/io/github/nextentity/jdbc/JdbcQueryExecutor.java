@@ -4,6 +4,8 @@ import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
 import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
@@ -34,6 +36,8 @@ public class JdbcQueryExecutor implements QueryExecutor {
     private final ResultCollector collector;
     @NonNull
     private final JdbcConfig config;
+    @NonNull
+    private final InterceptorSelector<ConstructInterceptor> interceptorSelector;
 
     /// 构造JDBC查询执行器（使用默认配置）
     ///
@@ -45,7 +49,8 @@ public class JdbcQueryExecutor implements QueryExecutor {
                              @NonNull QuerySqlBuilder sqlBuilder,
                              @NonNull ConnectionProvider connectionProvider,
                              @NonNull ResultCollector collector) {
-        this(metamodel, sqlBuilder, connectionProvider, collector, JdbcConfig.DEFAULT);
+        this(metamodel, sqlBuilder, connectionProvider, collector, JdbcConfig.DEFAULT,
+             InterceptorSelector.empty());
     }
 
     /// 构造JDBC查询执行器
@@ -60,11 +65,30 @@ public class JdbcQueryExecutor implements QueryExecutor {
                              @NonNull ConnectionProvider connectionProvider,
                              @NonNull ResultCollector collector,
                              @NonNull JdbcConfig config) {
+        this(metamodel, sqlBuilder, connectionProvider, collector, config,
+             InterceptorSelector.empty());
+    }
+
+    /// 构造JDBC查询执行器（含拦截器）
+    ///
+    /// @param metamodel 元模型，用于提供实体元数据信息
+    /// @param sqlBuilder SQL构建器，用于生成SQL语句
+    /// @param connectionProvider 连接提供者，用于获取数据库连接
+    /// @param collector 结果收集器，用于处理查询结果
+    /// @param config JDBC配置
+    /// @param interceptorSelector 拦截器选择器
+    public JdbcQueryExecutor(@NonNull Metamodel metamodel,
+                             @NonNull QuerySqlBuilder sqlBuilder,
+                             @NonNull ConnectionProvider connectionProvider,
+                             @NonNull ResultCollector collector,
+                             @NonNull JdbcConfig config,
+                             @NonNull InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         this.metamodel = metamodel;
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.collector = collector;
         this.config = config;
+        this.interceptorSelector = interceptorSelector;
     }
 
     /// 执行查询并返回结果列表
@@ -78,6 +102,8 @@ public class JdbcQueryExecutor implements QueryExecutor {
         QueryContext context = QueryContext.create(this, queryStructure, metamodel, true);
         // 设置 queryExecutor 供懒加载使用
         context.setQueryExecutor(this);
+        // 设置拦截器选择器
+        context.setInterceptorSelector(interceptorSelector);
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {

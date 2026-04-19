@@ -4,7 +4,7 @@ import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.api.model.Slice;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
-import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.examples.entity.Product;
 import io.github.nextentity.spring.AbstractRepository;
@@ -32,7 +32,7 @@ public class ProductRepository extends AbstractRepository<Product, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected ProductRepository(EntityTemplateFactory context) {
+    protected ProductRepository(EntityOperationsFactory context) {
         super(context);
     }
 

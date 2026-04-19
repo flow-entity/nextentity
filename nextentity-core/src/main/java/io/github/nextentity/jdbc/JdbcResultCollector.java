@@ -55,7 +55,7 @@ public class JdbcResultCollector implements ResultCollector {
         }
         while (resultSet.next()) {
             JdbcArguments arguments = new JdbcArguments(resultSet);
-            Object o = context.construct(arguments);
+            Object o = context.constructWithInterceptor(arguments);
             result.add(o);
         }
         // 查询完成后设置结果列表（触发后处理）

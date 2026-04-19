@@ -6,6 +6,9 @@ import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
+import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
@@ -14,6 +17,7 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.RecordComponent;
@@ -33,6 +37,9 @@ public abstract class QueryContext {
     protected final boolean expandReferencePath;
     protected QueryExecutor queryExecutor;
     protected FetchConfig fetchConfig = FetchConfig.DEFAULT;
+
+    /// 拦截器选择器（用于对象构造）
+    protected InterceptorSelector<ConstructInterceptor> interceptorSelector = InterceptorSelector.empty();
 
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
@@ -99,6 +106,50 @@ public abstract class QueryContext {
         return this.entityType;
     }
 
+    /// 获取当前构造的 Schema
+    ///
+    /// 用于拦截器判断是否支持处理当前场景。
+    /// 子类根据实际情况返回对应的 Schema：
+    /// - SelectProjectionContext 返回 projection
+    /// - SelectEntityContext 返回 entityType
+    /// - 其他子类可能返回 null
+    ///
+    /// @return 当前构造的 Schema，如果没有则返回 null
+    @Nullable
+    public Schema getSchema() {
+        return entityType;
+    }
+
+    /// 获取拦截器选择器
+    ///
+    /// @return 拦截器选择器
+    public InterceptorSelector<ConstructInterceptor> getInterceptorSelector() {
+        return interceptorSelector;
+    }
+
+    /// 设置拦截器选择器
+    ///
+    /// @param interceptorSelector 拦截器选择器
+    public void setInterceptorSelector(InterceptorSelector<ConstructInterceptor> interceptorSelector) {
+        this.interceptorSelector = interceptorSelector != null
+                ? interceptorSelector
+                : InterceptorSelector.empty();
+    }
+
+    /// 构造对象实例
+    ///
+    /// 首先尝试使用拦截器创建对象，若无匹配拦截器则使用默认构造。
+    ///
+    /// @param arguments 参数供应器
+    /// @return 构造的对象实例
+    public Object constructWithInterceptor(Arguments arguments) {
+        var interceptor = interceptorSelector.select(this);
+        if (interceptor != null) {
+            return interceptor.intercept(this, arguments);
+        }
+        return construct(arguments);
+    }
+
 
     protected Object constructSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         if (schema.type().isInterface()) {
@@ -108,6 +159,25 @@ public abstract class QueryContext {
         } else {
             return constructSimpleSchema(schema, arguments, schemaAttributes);
         }
+    }
+
+    /// 构造 Schema 对象（公开供拦截器使用）
+    ///
+    /// @param schema           Schema 定义
+    /// @param arguments        参数供应器
+    /// @param schemaAttributes 属性路径
+    /// @return 构造的对象实例
+    public Object buildSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        return constructSchema(schema, arguments, schemaAttributes);
+    }
+
+    /// 获取简单属性值（公开供拦截器使用）
+    ///
+    /// @param arguments 参数供应器
+    /// @param attribute 属性定义
+    /// @return 属性值
+    public Object getAttributeValue(Arguments arguments, Attribute attribute) {
+        return getSimpleAttributeValue(arguments, attribute);
     }
 
     protected Object constructRecordSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {

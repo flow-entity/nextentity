@@ -74,6 +74,10 @@ public class NextEntityProperties {
     @NestedConfigurationProperty
     private final FetchProperties fetch = new FetchProperties();
 
+    /// 元模型配置
+    @NestedConfigurationProperty
+    private final MetamodelProperties metamodel = new MetamodelProperties();
+
     public JdbcProperties getJdbc() {
         return jdbc;
     }
@@ -92,6 +96,10 @@ public class NextEntityProperties {
 
     public FetchProperties getFetch() {
         return fetch;
+    }
+
+    public MetamodelProperties getMetamodel() {
+        return metamodel;
     }
 
     public boolean isEnabled() {

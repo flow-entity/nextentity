@@ -2,6 +2,8 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.core.*;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.core.meta.impl.DefaultMetamodelResolver;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.ResultCollector;
@@ -53,12 +55,16 @@ public class JdbcEntityOperationsFactory implements EntityOperationsFactory {
         if (jdbcConfig == null) {
             jdbcConfig = JdbcConfig.DEFAULT;
         }
+        // 创建拦截器选择器
+        InterceptorSelector<ConstructInterceptor> interceptorSelector = new InterceptorSelector<>(
+                config.constructInterceptors());
         return new JdbcQueryExecutor(
                 metamodel,
                 sqlBuilder,
                 config.connectionProvider(),
                 collector,
-                jdbcConfig
+                jdbcConfig,
+                interceptorSelector
         );
     }
 

@@ -1,7 +1,11 @@
 package io.github.nextentity.core.configuration;
 
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.SqlDialect;
 import org.jspecify.annotations.NonNull;
+
+import java.util.List;
 
 /// 实体操作配置基类
 ///
@@ -14,6 +18,8 @@ public abstract class EntityOperationsConfiguration {
     protected final PersistConfiguration persistConfiguration;
     protected final QueryConfiguration queryConfiguration;
     protected final MetamodelConfiguration metamodelConfiguration;
+    protected final List<ConstructInterceptor> constructInterceptors;
+    protected final List<ResultInterceptor> resultInterceptors;
 
     /// 构造实体操作配置
     ///
@@ -21,11 +27,15 @@ public abstract class EntityOperationsConfiguration {
     /// @param persistConfiguration 持久化配置（可为 null）
     /// @param queryConfiguration  查询配置（可为 null，使用默认值）
     /// @param metamodelConfiguration 元模型配置（可为 null，使用默认值）
+    /// @param constructInterceptors 构造拦截器列表（可为 null）
+    /// @param resultInterceptors 结果拦截器列表（可为 null）
     protected EntityOperationsConfiguration(
             @NonNull SqlDialect sqlDialect,
             PersistConfiguration persistConfiguration,
             QueryConfiguration queryConfiguration,
-            MetamodelConfiguration metamodelConfiguration) {
+            MetamodelConfiguration metamodelConfiguration,
+            List<ConstructInterceptor> constructInterceptors,
+            List<ResultInterceptor> resultInterceptors) {
         this.sqlDialect = sqlDialect;
         this.persistConfiguration = persistConfiguration;
         this.queryConfiguration = queryConfiguration != null
@@ -34,6 +44,12 @@ public abstract class EntityOperationsConfiguration {
         this.metamodelConfiguration = metamodelConfiguration != null
                 ? metamodelConfiguration
                 : DefaultMetamodelConfiguration.DEFAULT;
+        this.constructInterceptors = constructInterceptors != null
+                ? constructInterceptors
+                : List.of();
+        this.resultInterceptors = resultInterceptors != null
+                ? resultInterceptors
+                : List.of();
     }
 
     /// SQL 方言
@@ -67,6 +83,24 @@ public abstract class EntityOperationsConfiguration {
         return metamodelConfiguration;
     }
 
+    /// 构造拦截器列表
+    ///
+    /// 用于扩展对象构造流程，支持代理、类型转换等。
+    ///
+    /// @return 构造拦截器列表（非 null）
+    public List<ConstructInterceptor> constructInterceptors() {
+        return constructInterceptors;
+    }
+
+    /// 结果拦截器列表
+    ///
+    /// 用于扩展结果处理流程，支持缓存、审计等。
+    ///
+    /// @return 结果拦截器列表（非 null）
+    public List<ResultInterceptor> resultInterceptors() {
+        return resultInterceptors;
+    }
+
     /// 配置构建器基类
     ///
     /// 使用泛型 SELF 实现 fluent API 返回类型协变。
@@ -77,6 +111,8 @@ public abstract class EntityOperationsConfiguration {
         protected PersistConfiguration persistConfiguration;
         protected QueryConfiguration queryConfiguration = DefaultQueryConfiguration.DEFAULT;
         protected MetamodelConfiguration metamodelConfiguration = DefaultMetamodelConfiguration.DEFAULT;
+        protected List<ConstructInterceptor> constructInterceptors = List.of();
+        protected List<ResultInterceptor> resultInterceptors = List.of();
 
         /// 设置 SQL 方言
         @SuppressWarnings("unchecked")
@@ -103,6 +139,24 @@ public abstract class EntityOperationsConfiguration {
         @SuppressWarnings("unchecked")
         public SELF metamodelConfiguration(MetamodelConfiguration metamodelConfiguration) {
             this.metamodelConfiguration = metamodelConfiguration;
+            return (SELF) this;
+        }
+
+        /// 设置构造拦截器
+        @SuppressWarnings("unchecked")
+        public SELF constructInterceptors(List<ConstructInterceptor> constructInterceptors) {
+            this.constructInterceptors = constructInterceptors != null
+                    ? constructInterceptors
+                    : List.of();
+            return (SELF) this;
+        }
+
+        /// 设置结果拦截器
+        @SuppressWarnings("unchecked")
+        public SELF resultInterceptors(List<ResultInterceptor> resultInterceptors) {
+            this.resultInterceptors = resultInterceptors != null
+                    ? resultInterceptors
+                    : List.of();
             return (SELF) this;
         }
 

@@ -9,10 +9,13 @@ import io.github.nextentity.core.TransactionOperations;
 import io.github.nextentity.core.TransactionUpdateExecutor;
 import io.github.nextentity.core.configuration.DefaultPersistConfiguration;
 import io.github.nextentity.core.configuration.DefaultQueryConfiguration;
+import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.configuration.PersistConfiguration;
 import io.github.nextentity.core.configuration.PostProcessor;
 import io.github.nextentity.core.configuration.QueryConfiguration;
 import io.github.nextentity.core.exception.SqlException;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.ConnectionProvider;
 import io.github.nextentity.jdbc.JdbcConfig;
 import io.github.nextentity.jdbc.JdbcEntityOperationsFactory;
@@ -27,6 +30,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
 
 public final class EntityFactoryBuilder {
@@ -57,12 +61,31 @@ public final class EntityFactoryBuilder {
                                                 SqlDialect sqlDialect,
                                                 NextEntityProperties properties,
                                                 TransactionTemplate template) {
+        return jdbc(jdbcTemplate, sqlDialect, properties, template, List.of(), List.of());
+    }
+
+    /// 创建基于 JDBC 的 NextEntity 工厂（含拦截器）。
+    ///
+    /// @param jdbcTemplate        Spring JDBC 模板
+    /// @param sqlDialect          SQL 方言
+    /// @param properties          配置属性
+    /// @param template            Spring 事务模板
+    /// @param constructInterceptors 构造拦截器列表
+    /// @param resultInterceptors   结果拦截器列表
+    /// @return JDBC 方式的 NextEntity 工厂实例
+    public static EntityOperationsFactory jdbc(JdbcTemplate jdbcTemplate,
+                                                SqlDialect sqlDialect,
+                                                NextEntityProperties properties,
+                                                TransactionTemplate template,
+                                                List<ConstructInterceptor> constructInterceptors,
+                                                List<ResultInterceptor> resultInterceptors) {
         applyLoggingConfig(properties);
 
         ConnectionProvider connectionProvider = createConnectionProvider(jdbcTemplate);
         JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
         PersistConfiguration persistConfig = createPersistConfiguration(template);
         QueryConfiguration queryConfig = createQueryConfiguration(properties);
+        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
 
         JdbcEntityOperationsConfiguration config = JdbcEntityOperationsConfiguration.builder()
                 .sqlDialect(sqlDialect)
@@ -70,6 +93,9 @@ public final class EntityFactoryBuilder {
                 .jdbcConfig(jdbcConfig)
                 .persistConfiguration(persistConfig)
                 .queryConfiguration(queryConfig)
+                .metamodelConfiguration(metamodelConfig)
+                .constructInterceptors(constructInterceptors)
+                .resultInterceptors(resultInterceptors)
                 .build();
 
         return new JdbcEntityOperationsFactory(config);
@@ -103,12 +129,33 @@ public final class EntityFactoryBuilder {
                                                 SqlDialect sqlDialect,
                                                 NextEntityProperties properties,
                                                 TransactionTemplate template) {
+        return jpa(entityManager, jdbcTemplate, sqlDialect, properties, template, List.of(), List.of());
+    }
+
+    /// 创建基于 JPA 的 NextEntity 工厂（含拦截器）。
+    ///
+    /// @param entityManager        JPA 实体管理器
+    /// @param jdbcTemplate         Spring JDBC 模板
+    /// @param sqlDialect           SQL 方言
+    /// @param properties           配置属性
+    /// @param template             Spring 事务模板
+    /// @param constructInterceptors 构造拦截器列表
+    /// @param resultInterceptors   结果拦截器列表
+    /// @return JPA 方式的 NextEntity 工厂实例
+    public static EntityOperationsFactory jpa(EntityManager entityManager,
+                                                JdbcTemplate jdbcTemplate,
+                                                SqlDialect sqlDialect,
+                                                NextEntityProperties properties,
+                                                TransactionTemplate template,
+                                                List<ConstructInterceptor> constructInterceptors,
+                                                List<ResultInterceptor> resultInterceptors) {
         applyLoggingConfig(properties);
 
         JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
         JpaConfig jpaConfig = toJpaConfig(properties.getJpa());
         PersistConfiguration persistConfig = createPersistConfiguration(template);
         QueryConfiguration queryConfig = createQueryConfiguration(properties);
+        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
 
         JpaEntityOperationsConfiguration config = JpaEntityOperationsConfiguration.builder()
                 .sqlDialect(sqlDialect)
@@ -116,6 +163,9 @@ public final class EntityFactoryBuilder {
                 .jpaConfig(jpaConfig)
                 .persistConfiguration(persistConfig)
                 .queryConfiguration(queryConfig)
+                .metamodelConfiguration(metamodelConfig)
+                .constructInterceptors(constructInterceptors)
+                .resultInterceptors(resultInterceptors)
                 .build();
 
         return new JpaEntityOperationsFactory(config);
@@ -189,6 +239,10 @@ public final class EntityFactoryBuilder {
                 .parameters(props.getSql().isParameters())
                 .loggerName(props.getSql().getLoggerName())
                 .build();
+    }
+
+    private static MetamodelConfiguration toMetamodelConfig(MetamodelProperties props) {
+        return props.toMetamodelConfiguration();
     }
 
 }

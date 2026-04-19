@@ -13,6 +13,7 @@
     <modules>
         <module>nextentity-core</module>
         <module>nextentity-spring</module>
+        <module>nextentity-proxy-spring</module>
         <module>nextentity-examples</module>
     </modules>
 
