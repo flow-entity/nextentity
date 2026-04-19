@@ -2,7 +2,7 @@ package io.github.nextentity.spring.integration.db;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
-import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.spring.AbstractRepository;
 import io.github.nextentity.spring.integration.entity.User;
 import jakarta.persistence.LockModeType;
@@ -28,8 +28,8 @@ public class UserRepository extends AbstractRepository<User, Integer> {
     /// 通过构造器注入 EntityContext，自动检测实体类型和主键类型，
     /// 并初始化查询构建器和更新执行器。
     ///
-    /// @param context EntityContext 实体上下文
-    protected UserRepository(EntityTemplateFactory context) {
+    /// @param context EntityOperationsFactory 实体操作工厂
+    protected UserRepository(EntityOperationsFactory context) {
         super(context);
     }
 

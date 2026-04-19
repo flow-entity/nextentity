@@ -1,7 +1,7 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.core.EntityTemplate;
-import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.exception.ConfigurationException;
 import org.springframework.beans.factory.InjectionPoint;
@@ -40,9 +40,9 @@ public class GenericRepository<T, ID> extends AbstractRepository<T, ID> {
     /// 该构造方法用于 Spring 自动配置，根据注入点的泛型参数
     /// 自动解析实体类型和主键类型。
     ///
-    /// @param factory      EntityTemplateFactory 实例
+    /// @param factory      EntityOperationsFactory 实例
     /// @param injectionPoint Spring 注入点，用于解析泛型参数
-    public GenericRepository(EntityTemplateFactory factory,
+    public GenericRepository(EntityOperationsFactory factory,
                              InjectionPoint injectionPoint) {
         if (!(injectionPoint instanceof DependencyDescriptor descriptor)) {
             throw new ConfigurationException("Unsupported injection point: " + injectionPoint);
@@ -50,7 +50,8 @@ public class GenericRepository<T, ID> extends AbstractRepository<T, ID> {
         ResolvableType resolvableType = descriptor.getResolvableType().as(Repository.class);
         Class<T> entityType = TypeCastUtil.cast(resolvableType.resolveGeneric(0));
         Class<ID> genericIdType = TypeCastUtil.cast(resolvableType.resolveGeneric(1));
-        EntityTemplate<T> template = factory.template(entityType);
+        // operations() 返回 EntityOperations，实际实现是 EntityTemplate
+        EntityTemplate<T> template = (EntityTemplate<T>) factory.operations(entityType);
         super(template, genericIdType);
     }
 

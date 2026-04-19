@@ -3,6 +3,7 @@ package io.github.nextentity.core;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
+@Deprecated
 public record EntityTemplateFactory(
         @NonNull Metamodel metamodel,
         @NonNull QueryExecutor queryExecutor,

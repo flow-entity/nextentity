@@ -33,7 +33,7 @@ public class JdbcEntityOperationsFactory implements EntityOperationsFactory {
     }
 
     @Override
-    public <T> EntityOperations<T> operations(@NonNull Class<T> entityType) {
+    public <T> EntityTemplate<T> operations(@NonNull Class<T> entityType) {
         EntityTemplateDescriptor<T> descriptor = new EntityTemplateDescriptor<>(
                 persistExecutor,
                 queryExecutor,

@@ -1,13 +1,26 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.*;
+import io.github.nextentity.core.EntityOperationsFactory;
+import io.github.nextentity.core.LoggingConfig;
+import io.github.nextentity.core.PaginationConfig;
+import io.github.nextentity.core.PersistExecutor;
+import io.github.nextentity.core.SqlLogger;
+import io.github.nextentity.core.TransactionOperations;
+import io.github.nextentity.core.TransactionUpdateExecutor;
+import io.github.nextentity.core.configuration.DefaultPersistConfiguration;
+import io.github.nextentity.core.configuration.DefaultQueryConfiguration;
+import io.github.nextentity.core.configuration.PersistConfiguration;
+import io.github.nextentity.core.configuration.PostProcessor;
+import io.github.nextentity.core.configuration.QueryConfiguration;
 import io.github.nextentity.core.exception.SqlException;
-import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.meta.impl.DefaultMetamodel;
-import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jdbc.ConnectionProvider;
+import io.github.nextentity.jdbc.JdbcConfig;
+import io.github.nextentity.jdbc.JdbcEntityOperationsFactory;
+import io.github.nextentity.jdbc.SqlDialect;
+import io.github.nextentity.jdbc.configuration.JdbcEntityOperationsConfiguration;
 import io.github.nextentity.jpa.JpaConfig;
-import io.github.nextentity.jpa.JpaPersistExecutor;
-import io.github.nextentity.jpa.JpaQueryExecutor;
+import io.github.nextentity.jpa.JpaEntityOperationsFactory;
+import io.github.nextentity.jpa.configuration.JpaEntityOperationsConfiguration;
 import jakarta.persistence.EntityManager;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -28,7 +41,7 @@ public final class EntityFactoryBuilder {
     /// @return JDBC 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
     /// @see #jdbc(JdbcTemplate, SqlDialect, NextEntityProperties, TransactionTemplate)
-    public static EntityTemplateFactory jdbc(JdbcTemplate jdbcTemplate, TransactionTemplate template) {
+    public static EntityOperationsFactory jdbc(JdbcTemplate jdbcTemplate, TransactionTemplate template) {
         SqlDialect sqlDialect = detectSqlDialect(jdbcTemplate);
         return jdbc(jdbcTemplate, sqlDialect, new NextEntityProperties(), template);
     }
@@ -40,12 +53,26 @@ public final class EntityFactoryBuilder {
     /// @param properties   配置属性
     /// @param template     Spring 事务模板
     /// @return JDBC 方式的 NextEntity 工厂实例
-    public static EntityTemplateFactory jdbc(JdbcTemplate jdbcTemplate,
-                                             SqlDialect sqlDialect,
-                                             NextEntityProperties properties,
-                                             TransactionTemplate template) {
-        FactoryContext ctx = new FactoryContext(jdbcTemplate, sqlDialect, properties, template);
-        return buildJdbcFactory(ctx);
+    public static EntityOperationsFactory jdbc(JdbcTemplate jdbcTemplate,
+                                                SqlDialect sqlDialect,
+                                                NextEntityProperties properties,
+                                                TransactionTemplate template) {
+        applyLoggingConfig(properties);
+
+        ConnectionProvider connectionProvider = createConnectionProvider(jdbcTemplate);
+        JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
+        PersistConfiguration persistConfig = createPersistConfiguration(template);
+        QueryConfiguration queryConfig = createQueryConfiguration(properties);
+
+        JdbcEntityOperationsConfiguration config = JdbcEntityOperationsConfiguration.builder()
+                .sqlDialect(sqlDialect)
+                .connectionProvider(connectionProvider)
+                .jdbcConfig(jdbcConfig)
+                .persistConfiguration(persistConfig)
+                .queryConfiguration(queryConfig)
+                .build();
+
+        return new JdbcEntityOperationsFactory(config);
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂。
@@ -56,9 +83,9 @@ public final class EntityFactoryBuilder {
     /// @return JPA 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
     /// @see #jpa(EntityManager, JdbcTemplate, SqlDialect, NextEntityProperties, TransactionTemplate)
-    public static EntityTemplateFactory jpa(EntityManager entityManager,
-                                            JdbcTemplate jdbcTemplate,
-                                            TransactionTemplate template) {
+    public static EntityOperationsFactory jpa(EntityManager entityManager,
+                                                JdbcTemplate jdbcTemplate,
+                                                TransactionTemplate template) {
         SqlDialect sqlDialect = detectSqlDialect(jdbcTemplate);
         return jpa(entityManager, jdbcTemplate, sqlDialect, new NextEntityProperties(), template);
     }
@@ -71,13 +98,27 @@ public final class EntityFactoryBuilder {
     /// @param properties    配置属性
     /// @param template      Spring 事务模板
     /// @return JPA 方式的 NextEntity 工厂实例
-    public static EntityTemplateFactory jpa(EntityManager entityManager,
-                                            JdbcTemplate jdbcTemplate,
-                                            SqlDialect sqlDialect,
-                                            NextEntityProperties properties,
-                                            TransactionTemplate template) {
-        FactoryContext ctx = new FactoryContext(jdbcTemplate, sqlDialect, properties, template);
-        return buildJpaFactory(ctx, entityManager);
+    public static EntityOperationsFactory jpa(EntityManager entityManager,
+                                                JdbcTemplate jdbcTemplate,
+                                                SqlDialect sqlDialect,
+                                                NextEntityProperties properties,
+                                                TransactionTemplate template) {
+        applyLoggingConfig(properties);
+
+        JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
+        JpaConfig jpaConfig = toJpaConfig(properties.getJpa());
+        PersistConfiguration persistConfig = createPersistConfiguration(template);
+        QueryConfiguration queryConfig = createQueryConfiguration(properties);
+
+        JpaEntityOperationsConfiguration config = JpaEntityOperationsConfiguration.builder()
+                .sqlDialect(sqlDialect)
+                .entityManager(entityManager)
+                .jpaConfig(jpaConfig)
+                .persistConfiguration(persistConfig)
+                .queryConfiguration(queryConfig)
+                .build();
+
+        return new JpaEntityOperationsFactory(config);
     }
 
     // ===================== Private Helper Methods =====================
@@ -100,61 +141,29 @@ public final class EntityFactoryBuilder {
         };
     }
 
-    private static void applyCommonConfig(NextEntityProperties properties) {
-        applyLoggingConfig(properties);
+    private static PersistConfiguration createPersistConfiguration(TransactionTemplate template) {
+        return DefaultPersistConfiguration.builder()
+                .addPostProcessor(createTransactionPostProcessor(template))
+                .build();
+    }
+
+    private static PostProcessor<PersistExecutor> createTransactionPostProcessor(TransactionTemplate template) {
+        return executor -> new TransactionUpdateExecutor(executor, new SpringTransactionOperations(template));
+    }
+
+    private static QueryConfiguration createQueryConfiguration(NextEntityProperties properties) {
         PaginationConfig paginationConfig = properties.getPagination().toConfig();
-        paginationConfig.apply();
+        return DefaultQueryConfiguration.builder()
+                .paginationConfig(paginationConfig)
+                .build();
     }
-
-    private static EntityTemplateFactory buildJdbcFactory(FactoryContext ctx) {
-        applyCommonConfig(ctx.properties);
-
-        Metamodel metamodel = DefaultMetamodel.of();
-        ConnectionProvider connectionProvider = createConnectionProvider(ctx.jdbcTemplate);
-        JdbcConfig jdbcConfig = toJdbcConfig(ctx.properties.getJdbc());
-        SqlBuilder sqlBuilder = SqlBuilder.of(ctx.sqlDialect, jdbcConfig);
-
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(
-                metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), jdbcConfig);
-
-        SpringTransactionOperations sto = new SpringTransactionOperations(ctx.template);
-        PersistExecutor jdbcUpdateExecutor = new JdbcPersistExecutor(
-                sqlBuilder, connectionProvider, jdbcConfig);
-        jdbcUpdateExecutor = new TransactionUpdateExecutor(jdbcUpdateExecutor, sto);
-
-        return new EntityTemplateFactory(
-                metamodel, jdbcQueryExecutor, jdbcUpdateExecutor, ctx.properties.getPagination().toConfig());
-    }
-
-    private static EntityTemplateFactory buildJpaFactory(FactoryContext ctx, EntityManager entityManager) {
-        applyCommonConfig(ctx.properties);
-
-        Metamodel metamodel = DefaultMetamodel.of();
-        ConnectionProvider connectionProvider = createConnectionProvider(ctx.jdbcTemplate);
-        JdbcConfig jdbcConfig = toJdbcConfig(ctx.properties.getJdbc());
-        JpaConfig jpaConfig = toJpaConfig(ctx.properties.getJpa());
-        SqlBuilder sqlBuilder = SqlBuilder.of(ctx.sqlDialect, jdbcConfig);
-
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(
-                metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), jdbcConfig);
-
-        JpaQueryExecutor jpaQueryExecutor = new JpaQueryExecutor(
-                entityManager, metamodel, jdbcQueryExecutor, jpaConfig);
-
-        SpringTransactionOperations sto = new SpringTransactionOperations(ctx.template);
-        PersistExecutor jpaUpdateExecutor = new TransactionUpdateExecutor(
-                new JpaPersistExecutor(entityManager), sto);
-
-        return new EntityTemplateFactory(metamodel, jpaQueryExecutor, jpaUpdateExecutor,
-                ctx.properties.getPagination().toConfig());
-    }
-
-    // ===================== Configuration Conversion =====================
 
     private static void applyLoggingConfig(NextEntityProperties properties) {
         LoggingConfig config = toLoggingConfig(properties.getLogging());
         SqlLogger.setConfig(config);
     }
+
+    // ===================== Configuration Conversion =====================
 
     private static JdbcConfig toJdbcConfig(JdbcProperties props) {
         return JdbcConfig.builder()
@@ -180,16 +189,6 @@ public final class EntityFactoryBuilder {
                 .parameters(props.getSql().isParameters())
                 .loggerName(props.getSql().getLoggerName())
                 .build();
-    }
-
-    // ===================== Internal Context Class =====================
-
-    private record FactoryContext(
-            JdbcTemplate jdbcTemplate,
-            SqlDialect sqlDialect,
-            NextEntityProperties properties,
-            TransactionTemplate template
-    ) {
     }
 
 }

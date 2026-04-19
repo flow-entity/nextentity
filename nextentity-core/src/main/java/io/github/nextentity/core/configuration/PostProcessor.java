@@ -5,6 +5,8 @@ public interface PostProcessor<T> {
 
     T process(T image);
 
-    int getOrder();
+    default int getOrder() {
+        return 0;
+    }
 
 }

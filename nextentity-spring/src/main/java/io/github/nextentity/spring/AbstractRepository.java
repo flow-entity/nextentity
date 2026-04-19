@@ -1,8 +1,8 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.api.*;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.core.EntityTemplate;
-import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.EntityAttribute;
@@ -51,15 +51,16 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
 
     /// 创建 Repository 实例。
     ///
-    /// 通过构造器注入 EntityTemplateFactory，自动检测实体类型和主键类型，
+    /// 通过构造器注入 EntityOperationsFactory，自动检测实体类型和主键类型，
     /// 并初始化操作入口。
     ///
-    /// @param factory EntityTemplateFactory 实体模板工厂
+    /// @param factory EntityOperationsFactory 实体操作工厂
     /// @throws ConfigurationException 如果声明的 ID 类型与实体实际 ID 类型不匹配
-    protected AbstractRepository(EntityTemplateFactory factory) {
+    protected AbstractRepository(EntityOperationsFactory factory) {
         GenericType<T, ID> genericType = getGenericType();
         Class<T> entityType = genericType.entityType();
-        this.operations = factory.template(entityType);
+        // operations() 返回 EntityOperations，实际实现是 EntityTemplate
+        this.operations = (EntityTemplate<T>) factory.operations(entityType);
 
 
         Class<?> rawEntityIdType = operations.descriptor().entityType().id().type();
