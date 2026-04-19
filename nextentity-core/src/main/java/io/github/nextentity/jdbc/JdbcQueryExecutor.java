@@ -39,36 +39,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @NonNull
     private final InterceptorSelector<ConstructInterceptor> interceptorSelector;
 
-    /// 构造JDBC查询执行器（使用默认配置）
-    ///
-    /// @param metamodel 元模型，用于提供实体元数据信息
-    /// @param sqlBuilder SQL构建器，用于生成SQL语句
-    /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param collector 结果收集器，用于处理查询结果
-    public JdbcQueryExecutor(@NonNull Metamodel metamodel,
-                             @NonNull QuerySqlBuilder sqlBuilder,
-                             @NonNull ConnectionProvider connectionProvider,
-                             @NonNull ResultCollector collector) {
-        this(metamodel, sqlBuilder, connectionProvider, collector, JdbcConfig.DEFAULT,
-             InterceptorSelector.empty());
-    }
-
-    /// 构造JDBC查询执行器
-    ///
-    /// @param metamodel 元模型，用于提供实体元数据信息
-    /// @param sqlBuilder SQL构建器，用于生成SQL语句
-    /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param collector 结果收集器，用于处理查询结果
-    /// @param config JDBC配置
-    public JdbcQueryExecutor(@NonNull Metamodel metamodel,
-                             @NonNull QuerySqlBuilder sqlBuilder,
-                             @NonNull ConnectionProvider connectionProvider,
-                             @NonNull ResultCollector collector,
-                             @NonNull JdbcConfig config) {
-        this(metamodel, sqlBuilder, connectionProvider, collector, config,
-             InterceptorSelector.empty());
-    }
-
     /// 构造JDBC查询执行器（含拦截器）
     ///
     /// @param metamodel 元模型，用于提供实体元数据信息

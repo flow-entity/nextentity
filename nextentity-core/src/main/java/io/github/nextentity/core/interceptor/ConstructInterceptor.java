@@ -8,7 +8,7 @@ import io.github.nextentity.jdbc.QueryContext;
 /// 用于扩展对象创建流程，支持代理、类型转换等场景。
 /// 每次调用返回一个对象实例，不存在"依次经过多个处理步骤"的场景。
 ///
-/// @see QueryContext#construct(Arguments)
+/// @see QueryContext#doConstruct(Arguments)
 public interface ConstructInterceptor {
 
     /// 是否支持处理当前场景

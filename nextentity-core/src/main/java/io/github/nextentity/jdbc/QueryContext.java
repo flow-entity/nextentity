@@ -8,7 +8,6 @@ import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
@@ -92,7 +91,7 @@ public abstract class QueryContext {
         return paths;
     }
 
-    public abstract Object construct(Arguments arguments);
+    protected abstract Object doConstruct(Arguments arguments);
 
     public QueryStructure getStructure() {
         return this.structure;
@@ -142,12 +141,12 @@ public abstract class QueryContext {
     ///
     /// @param arguments 参数供应器
     /// @return 构造的对象实例
-    public Object constructWithInterceptor(Arguments arguments) {
+    public final Object construct(Arguments arguments) {
         var interceptor = interceptorSelector.select(this);
         if (interceptor != null) {
             return interceptor.intercept(this, arguments);
         }
-        return construct(arguments);
+        return doConstruct(arguments);
     }
 
 

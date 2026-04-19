@@ -12,6 +12,7 @@ open module nextentity.spring {
     requires java.naming;
     requires org.slf4j;
     requires spring.beans;
+    requires nextentity.proxy.spring;
 
     exports io.github.nextentity.spring;
 }

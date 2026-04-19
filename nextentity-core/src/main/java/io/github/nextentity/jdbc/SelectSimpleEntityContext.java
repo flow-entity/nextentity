@@ -30,7 +30,7 @@ public class SelectSimpleEntityContext extends QueryContext {
     }
 
     @Override
-    public Object construct(Arguments arguments) {
+    public Object doConstruct(Arguments arguments) {
         return constructSimpleSchema(entityType, arguments);
     }
 

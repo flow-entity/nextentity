@@ -1,19 +1,11 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.configuration.PersistConfiguration;
-import io.github.nextentity.core.configuration.QueryConfiguration;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
-import io.github.nextentity.core.meta.impl.DefaultMetamodelResolver;
-import io.github.nextentity.jdbc.ConnectionProvider;
-import io.github.nextentity.jdbc.JdbcConfig;
-import io.github.nextentity.jdbc.JdbcQueryExecutor;
-import io.github.nextentity.jdbc.JdbcResultCollector;
-import io.github.nextentity.jdbc.QuerySqlBuilder;
-import io.github.nextentity.jdbc.SqlBuilder;
+import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.configuration.JpaEntityOperationsConfiguration;
 import org.jspecify.annotations.NonNull;
 
@@ -86,7 +78,8 @@ public class JpaEntityOperationsFactory implements EntityOperationsFactory {
                 config.entityManager(),
                 metamodel,
                 nativeQueryExecutor,
-                config.jpaConfig()
+                config.jpaConfig(),
+                interceptorSelector
         );
     }
 

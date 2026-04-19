@@ -31,7 +31,7 @@ public class SelectArrayContext extends QueryContext {
     }
 
     @Override
-    public Object construct(Arguments arguments) {
+    public Object doConstruct(Arguments arguments) {
         Object[] objects = new Object[selectExpressions.size()];
         for (int i = 0; i < objects.length; i++) {
             Object expression = selectExpressions.get(i);

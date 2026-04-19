@@ -69,7 +69,7 @@ public class SelectProjectionContext extends QueryContext {
     }
 
     @Override
-    public Object construct(Arguments arguments) {
+    public Object doConstruct(Arguments arguments) {
         if (projection.type().isInterface()) {
             return constructInterfaceSchemaWithLazy(projection, arguments, schemaAttributePaths);
         }

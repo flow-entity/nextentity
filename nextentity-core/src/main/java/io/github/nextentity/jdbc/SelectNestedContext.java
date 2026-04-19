@@ -53,12 +53,12 @@ public class SelectNestedContext extends QueryContext {
     }
 
     @Override
-    public Object construct(Arguments arguments) {
+    public Object doConstruct(Arguments arguments) {
         // 递归调用每个子 Context 的 construct 方法
         Object[] results = new Object[subContexts.size()];
         for (int i = 0; i < subContexts.size(); i++) {
             QueryContext subContext = subContexts.get(i);
-            results[i] = subContext.construct(arguments);
+            results[i] = subContext.doConstruct(arguments);
         }
         return results;
     }

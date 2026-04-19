@@ -38,7 +38,7 @@ public class SelectEntityContext extends QueryContext {
     }
 
     @Override
-    public Object construct(Arguments arguments) {
+    public Object doConstruct(Arguments arguments) {
         return constructSchema(entityType, arguments, schemaAttributePaths);
     }
 }

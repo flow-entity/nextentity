@@ -157,6 +157,12 @@
             <artifactId>testcontainers-mssqlserver</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.flow-entity</groupId>
+            <artifactId>nextentity-proxy-spring</artifactId>
+            <version>2.1.4</version>
+            <scope>compile</scope>
+        </dependency>
 
     </dependencies>
 

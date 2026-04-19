@@ -6,6 +6,8 @@ import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.From;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.SubQueryEntityType;
 import io.github.nextentity.core.util.ImmutableArray;
@@ -32,16 +34,23 @@ public class JpaQueryExecutor implements QueryExecutor {
     private final Metamodel metamodel;
     private final QueryExecutor nativeQueryExecutor;
     private final JpaConfig config;
+    private final InterceptorSelector<ConstructInterceptor> interceptorSelector;
 
     public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor) {
-        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT);
+        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT, InterceptorSelector.empty());
     }
 
     public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor, JpaConfig config) {
+        this(entityManager, metamodel, nativeQueryExecutor, config, InterceptorSelector.empty());
+    }
+
+    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor,
+                            JpaConfig config, InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         this.entityManager = entityManager;
         this.metamodel = metamodel;
         this.nativeQueryExecutor = nativeQueryExecutor;
         this.config = config;
+        this.interceptorSelector = interceptorSelector != null ? interceptorSelector : InterceptorSelector.empty();
     }
 
     @Override
@@ -56,6 +65,7 @@ public class JpaQueryExecutor implements QueryExecutor {
             return TypeCastUtil.cast(resultList);
         }
         QueryContext context = QueryContext.create(this, queryStructure, metamodel, false);
+        context.setInterceptorSelector(interceptorSelector);
         List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
         List<Object> result = objectsList.stream()
                 .map(objects -> {
