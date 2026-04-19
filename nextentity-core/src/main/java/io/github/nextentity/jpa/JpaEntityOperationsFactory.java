@@ -3,11 +3,16 @@ package io.github.nextentity.jpa;
 import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.configuration.PersistConfiguration;
+import io.github.nextentity.core.configuration.QueryConfiguration;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.core.meta.impl.DefaultMetamodelResolver;
-import io.github.nextentity.jpa.configuration.JpaEntityOperationsConfiguration;
+import io.github.nextentity.jdbc.ConnectionProvider;
+import io.github.nextentity.jdbc.JdbcConfig;
+import io.github.nextentity.jdbc.JdbcQueryExecutor;
+import io.github.nextentity.jdbc.JdbcResultCollector;
 import io.github.nextentity.jdbc.QuerySqlBuilder;
 import io.github.nextentity.jdbc.SqlBuilder;
+import io.github.nextentity.jpa.configuration.JpaEntityOperationsConfiguration;
 import org.jspecify.annotations.NonNull;
 
 /// JPA 实体操作工厂
@@ -49,14 +54,24 @@ public class JpaEntityOperationsFactory implements EntityOperationsFactory {
 
     /// 创建查询执行器
     private QueryExecutor createQueryExecutor(JpaEntityOperationsConfiguration config) {
-        // 使用 SqlBuilder 创建原生 SQL 构建器
         QuerySqlBuilder sqlBuilder = SqlBuilder.of(config.sqlDialect());
 
-        // 创建原生查询执行器（用于子查询）
-        QueryExecutor nativeQueryExecutor = new JpaNativeQueryExecutor(
+        // 获取或创建 ConnectionProvider
+        ConnectionProvider connectionProvider = config.connectionProvider();
+        if (connectionProvider == null) {
+            // 从 EntityManager 自动创建
+            connectionProvider = new EntityManagerConnectionProvider(config.entityManager());
+        }
+
+        JdbcConfig jdbcConfig = config.jdbcConfig();
+
+        // 使用 JdbcQueryExecutor 作为原生查询执行器
+        QueryExecutor nativeQueryExecutor = new JdbcQueryExecutor(
+                metamodel,
                 sqlBuilder,
-                config.entityManager(),
-                metamodel
+                connectionProvider,
+                new JdbcResultCollector(),
+                jdbcConfig
         );
 
         // 创建主查询执行器
