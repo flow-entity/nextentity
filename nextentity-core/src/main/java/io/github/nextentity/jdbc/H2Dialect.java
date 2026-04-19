@@ -51,7 +51,7 @@ public class H2Dialect implements SqlDialect {
         // H2 uses PostgreSQL style: LIMIT limit OFFSET offset
         if (offset > 0 || limit > 0) {
             sql.append(" limit ? offset ?");
-            args.add(limit < 0 ? Long.MAX_VALUE : limit);
+            args.add(limit < 0 ? MAX_LIMIT : limit);
             args.add(Math.max(offset, 0));
         }
     }

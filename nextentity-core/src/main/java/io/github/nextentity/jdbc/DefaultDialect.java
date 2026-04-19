@@ -43,7 +43,7 @@ public class DefaultDialect implements SqlDialect {
         if (offset > 0) {
             sql.append(" limit ?,?");
             args.add(offset);
-            args.add(limit < 0 ? Long.MAX_VALUE : limit);
+            args.add(limit < 0 ? MAX_LIMIT : limit);
         } else if (limit >= 0) {
             sql.append(" limit ?");
             args.add(limit);

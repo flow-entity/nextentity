@@ -18,6 +18,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /// @since 2.0.0
 public interface SqlDialect {
 
+    /// 最大限制值，用于处理无限查询（当 limit < 0 时使用）
+    ///
+    /// 使用 Integer.MAX_VALUE >> 1 而非 Integer.MAX_VALUE，
+    /// 避免某些数据库驱动处理 MAX_VALUE 时可能出现的问题。
+    int MAX_LIMIT = Integer.MAX_VALUE >> 1;
+
     /// 返回标识符的左引号字符
     ///
     /// @return 左引号字符（例如 MySQL 使用 "`"，标准 SQL 使用 "\""）

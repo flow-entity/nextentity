@@ -6,16 +6,13 @@ import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.spring.integration.db.DB;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.domain.Page;
 import io.github.nextentity.spring.integration.domain.Pageable;
 import io.github.nextentity.spring.integration.entity.User;
-import io.github.nextentity.spring.integration.projection.IUser;
-import io.github.nextentity.spring.integration.projection.IUserLazy;
-import io.github.nextentity.spring.integration.projection.UserInterface;
-import io.github.nextentity.spring.integration.projection.UserModel;
-import io.github.nextentity.spring.integration.projection.UserRecord;
+import io.github.nextentity.spring.integration.projection.*;
 import jakarta.persistence.LockModeType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -912,6 +909,13 @@ class EntityQueryTest {
     @ArgumentsSource(UserQueryProvider.class)
     void combinatorial(UserRepository userQuery) {
         testOrderBy(getWhereTestCase(new Checker<>(userQuery.users(), userQuery.query()), userQuery.users()));
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(UserQueryProvider.class)
+    void selectSubString(UserRepository userQuery) {
+        List<String> list = userQuery.selectDistinct(Path.of(User::getUsername).substring(15)).list();
+        assertFalse(list.isEmpty());
     }
 
     @ParameterizedTest
