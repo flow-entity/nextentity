@@ -4,6 +4,7 @@ open module nextentity.core {
     requires java.sql;
     requires org.jspecify;
     requires org.slf4j;
+    requires jdk.jlink;
 
     exports io.github.nextentity.api;
     exports io.github.nextentity.core.expression;
@@ -20,5 +21,6 @@ open module nextentity.core {
     exports io.github.nextentity.core.reflect.schema.impl;
     exports io.github.nextentity.core.annotation;
     exports io.github.nextentity.core.meta.impl;
+    exports io.github.nextentity.core.configuration;
     exports io.github.nextentity.jdbc.configuration;
 }
