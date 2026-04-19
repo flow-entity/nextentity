@@ -13,21 +13,27 @@ public abstract class EntityOperationsConfiguration {
     protected final SqlDialect sqlDialect;
     protected final PersistConfiguration persistConfiguration;
     protected final QueryConfiguration queryConfiguration;
+    protected final MetamodelConfiguration metamodelConfiguration;
 
     /// 构造实体操作配置
     ///
     /// @param sqlDialect          SQL 方言（必填）
     /// @param persistConfiguration 持久化配置（可为 null）
     /// @param queryConfiguration  查询配置（可为 null，使用默认值）
+    /// @param metamodelConfiguration 元模型配置（可为 null，使用默认值）
     protected EntityOperationsConfiguration(
             @NonNull SqlDialect sqlDialect,
             PersistConfiguration persistConfiguration,
-            QueryConfiguration queryConfiguration) {
+            QueryConfiguration queryConfiguration,
+            MetamodelConfiguration metamodelConfiguration) {
         this.sqlDialect = sqlDialect;
         this.persistConfiguration = persistConfiguration;
         this.queryConfiguration = queryConfiguration != null
                 ? queryConfiguration
                 : DefaultQueryConfiguration.DEFAULT;
+        this.metamodelConfiguration = metamodelConfiguration != null
+                ? metamodelConfiguration
+                : DefaultMetamodelConfiguration.DEFAULT;
     }
 
     /// SQL 方言
@@ -54,6 +60,13 @@ public abstract class EntityOperationsConfiguration {
         return queryConfiguration;
     }
 
+    /// 元模型配置（包含投影懒加载配置）
+    ///
+    /// @return 元模型配置实例
+    public MetamodelConfiguration metamodelConfiguration() {
+        return metamodelConfiguration;
+    }
+
     /// 配置构建器基类
     ///
     /// 使用泛型 SELF 实现 fluent API 返回类型协变。
@@ -63,6 +76,7 @@ public abstract class EntityOperationsConfiguration {
         protected SqlDialect sqlDialect;
         protected PersistConfiguration persistConfiguration;
         protected QueryConfiguration queryConfiguration = DefaultQueryConfiguration.DEFAULT;
+        protected MetamodelConfiguration metamodelConfiguration = DefaultMetamodelConfiguration.DEFAULT;
 
         /// 设置 SQL 方言
         @SuppressWarnings("unchecked")
@@ -82,6 +96,13 @@ public abstract class EntityOperationsConfiguration {
         @SuppressWarnings("unchecked")
         public SELF queryConfiguration(QueryConfiguration queryConfiguration) {
             this.queryConfiguration = queryConfiguration;
+            return (SELF) this;
+        }
+
+        /// 设置元模型配置
+        @SuppressWarnings("unchecked")
+        public SELF metamodelConfiguration(MetamodelConfiguration metamodelConfiguration) {
+            this.metamodelConfiguration = metamodelConfiguration;
             return (SELF) this;
         }
 

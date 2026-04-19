@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc.configuration;
 
 import io.github.nextentity.core.configuration.EntityOperationsConfiguration;
+import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.configuration.PersistConfiguration;
 import io.github.nextentity.core.configuration.QueryConfiguration;
 import io.github.nextentity.jdbc.ConnectionProvider;
@@ -25,13 +26,15 @@ public abstract class JdbcEntityOperationsConfiguration extends EntityOperations
     /// @param jdbcConfig           JDBC 配置（可为 null，使用默认值）
     /// @param persistConfiguration 持久化配置（可为 null）
     /// @param queryConfiguration  查询配置（可为 null，使用默认值）
+    /// @param metamodelConfiguration 元模型配置（可为 null，使用默认值）
     protected JdbcEntityOperationsConfiguration(
             @NonNull SqlDialect sqlDialect,
             @NonNull ConnectionProvider connectionProvider,
             JdbcConfig jdbcConfig,
             PersistConfiguration persistConfiguration,
-            QueryConfiguration queryConfiguration) {
-        super(sqlDialect, persistConfiguration, queryConfiguration);
+            QueryConfiguration queryConfiguration,
+            MetamodelConfiguration metamodelConfiguration) {
+        super(sqlDialect, persistConfiguration, queryConfiguration, metamodelConfiguration);
         this.connectionProvider = connectionProvider;
         this.jdbcConfig = jdbcConfig != null ? jdbcConfig : JdbcConfig.DEFAULT;
     }
@@ -86,7 +89,8 @@ public abstract class JdbcEntityOperationsConfiguration extends EntityOperations
                     connectionProvider,
                     jdbcConfig,
                     persistConfiguration,
-                    queryConfiguration);
+                    queryConfiguration,
+                    metamodelConfiguration);
         }
     }
 
@@ -100,8 +104,9 @@ public abstract class JdbcEntityOperationsConfiguration extends EntityOperations
                 ConnectionProvider connectionProvider,
                 JdbcConfig jdbcConfig,
                 PersistConfiguration persistConfiguration,
-                QueryConfiguration queryConfiguration) {
-            super(sqlDialect, connectionProvider, jdbcConfig, persistConfiguration, queryConfiguration);
+                QueryConfiguration queryConfiguration,
+                MetamodelConfiguration metamodelConfiguration) {
+            super(sqlDialect, connectionProvider, jdbcConfig, persistConfiguration, queryConfiguration, metamodelConfiguration);
         }
     }
 }

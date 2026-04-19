@@ -1,5 +1,6 @@
 package io.github.nextentity.core.meta.impl;
 
+import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.MetamodelResolver;
@@ -17,16 +18,28 @@ public class DefaultMetamodel implements Metamodel {
     private final MetamodelResolver resolver;
     private final Map<Class<?>, DefaultEntitySchema> entityTypes = new ConcurrentHashMap<>();
 
+    public DefaultMetamodel() {
+        this.resolver = DefaultMetamodelResolver.of();
+    }
+
     public DefaultMetamodel(MetamodelResolver resolver) {
         this.resolver = resolver;
     }
 
+    public DefaultMetamodel(MetamodelConfiguration config) {
+        this.resolver = DefaultMetamodelResolver.of(config);
+    }
+
     public static DefaultMetamodel of() {
-        return new DefaultMetamodel(DefaultMetamodelResolver.of());
+        return new DefaultMetamodel();
     }
 
     public static DefaultMetamodel of(MetamodelResolver resolver) {
         return new DefaultMetamodel(resolver);
+    }
+
+    public static DefaultMetamodel of(MetamodelConfiguration config) {
+        return new DefaultMetamodel(config);
     }
 
     /**

@@ -150,16 +150,6 @@ public class SelectProjectionContext extends QueryContext {
         return ImmutableList.ofCollection(eagerList);
     }
 
-    /// 创建懒加载属性信息
-    private LazyAttributeInfo createLazyAttributeInfo(ProjectionSchemaAttribute schemaAttr, SchemaAttributePaths paths) {
-        EntitySchemaAttribute source = schemaAttr.source();
-        // 外键属性：sourceAttribute 是父实体中指向目标实体的属性
-        EntityBasicAttribute sourceAttribute = source.sourceAttribute();
-        // 目标主键：targetAttribute 是目标实体中被引用的属性（通常是主键）
-        EntityBasicAttribute targetIdAttribute = source.targetAttribute();
-        return new LazyAttributeInfo(schemaAttr, sourceAttribute, targetIdAttribute);
-    }
-
     /// 递归展开 ProjectionSchema 属性
     private Stream<SelectItem> streamProjectionSchema(ProjectionSchemaAttribute schemaAttr, SchemaAttributePaths paths) {
         // ProjectionSchemaAttribute 继承 SchemaAttribute，后者继承 Schema

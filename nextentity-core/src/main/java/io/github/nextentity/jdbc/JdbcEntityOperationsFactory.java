@@ -25,8 +25,8 @@ public class JdbcEntityOperationsFactory implements EntityOperationsFactory {
     /// @param config JDBC 实体操作配置
     public JdbcEntityOperationsFactory(@NonNull JdbcEntityOperationsConfiguration config) {
         this.config = config;
-        // 内部创建 DefaultMetamodel，使用默认的 DefaultMetamodelResolver
-        this.metamodel = DefaultMetamodel.of(DefaultMetamodelResolver.of());
+        // 内部创建 DefaultMetamodel，使用配置中的 metamodelConfiguration
+        this.metamodel = DefaultMetamodel.of(config.metamodelConfiguration());
         this.queryExecutor = createQueryExecutor(config);
         this.persistExecutor = createPersistExecutor(config);
         this.paginationConfig = config.queryConfiguration().paginationConfig();

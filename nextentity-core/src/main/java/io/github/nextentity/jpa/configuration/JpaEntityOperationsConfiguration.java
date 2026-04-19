@@ -1,6 +1,7 @@
 package io.github.nextentity.jpa.configuration;
 
 import io.github.nextentity.core.configuration.EntityOperationsConfiguration;
+import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.configuration.PersistConfiguration;
 import io.github.nextentity.core.configuration.QueryConfiguration;
 import io.github.nextentity.jdbc.ConnectionProvider;
@@ -31,6 +32,7 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
     /// @param jdbcConfig          JDBC 配置（可选，用于原生 JDBC 查询）
     /// @param persistConfiguration 持久化配置（可为 null）
     /// @param queryConfiguration  查询配置（可为 null，使用默认值）
+    /// @param metamodelConfiguration 元模型配置（可为 null，使用默认值）
     protected JpaEntityOperationsConfiguration(
             @NonNull SqlDialect sqlDialect,
             @NonNull EntityManager entityManager,
@@ -38,8 +40,9 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
             ConnectionProvider connectionProvider,
             JdbcConfig jdbcConfig,
             PersistConfiguration persistConfiguration,
-            QueryConfiguration queryConfiguration) {
-        super(sqlDialect, persistConfiguration, queryConfiguration);
+            QueryConfiguration queryConfiguration,
+            MetamodelConfiguration metamodelConfiguration) {
+        super(sqlDialect, persistConfiguration, queryConfiguration, metamodelConfiguration);
         this.entityManager = entityManager;
         this.jpaConfig = jpaConfig != null ? jpaConfig : JpaConfig.DEFAULT;
         this.connectionProvider = connectionProvider;
@@ -126,7 +129,8 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
                     connectionProvider,
                     jdbcConfig,
                     persistConfiguration,
-                    queryConfiguration);
+                    queryConfiguration,
+                    metamodelConfiguration);
         }
     }
 
@@ -142,9 +146,10 @@ public abstract class JpaEntityOperationsConfiguration extends EntityOperationsC
                 ConnectionProvider connectionProvider,
                 JdbcConfig jdbcConfig,
                 PersistConfiguration persistConfiguration,
-                QueryConfiguration queryConfiguration) {
+                QueryConfiguration queryConfiguration,
+                MetamodelConfiguration metamodelConfiguration) {
             super(sqlDialect, entityManager, jpaConfig, connectionProvider, jdbcConfig,
-                  persistConfiguration, queryConfiguration);
+                  persistConfiguration, queryConfiguration, metamodelConfiguration);
         }
     }
 }

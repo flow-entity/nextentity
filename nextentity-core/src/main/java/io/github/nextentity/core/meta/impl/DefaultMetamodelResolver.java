@@ -1,8 +1,8 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.Fetch;
+import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
@@ -34,17 +34,32 @@ import java.util.List;
  */
 public class DefaultMetamodelResolver implements MetamodelResolver {
 
-    private static final DefaultMetamodelResolver INSTANCE = new DefaultMetamodelResolver();
+    private static final DefaultMetamodelResolver DEFAULT_INSTANCE = new DefaultMetamodelResolver();
     private static final Logger log = LoggerFactory.getLogger(DefaultMetamodelResolver.class);
+
+    private final MetamodelConfiguration config;
 
     private final List<Class<? extends Annotation>> JOIN_ANNOTATIONS =
             Arrays.asList(ManyToOne.class, OneToMany.class, ManyToMany.class, OneToOne.class);
 
     protected DefaultMetamodelResolver() {
+        this.config = MetamodelConfiguration.DEFAULT;
+    }
+
+    public DefaultMetamodelResolver(MetamodelConfiguration config) {
+        this.config = config != null ? config : MetamodelConfiguration.DEFAULT;
     }
 
     public static DefaultMetamodelResolver of() {
-        return INSTANCE;
+        return DEFAULT_INSTANCE;
+    }
+
+    public static DefaultMetamodelResolver of(MetamodelConfiguration config) {
+        return new DefaultMetamodelResolver(config);
+    }
+
+    public MetamodelConfiguration getConfig() {
+        return config;
     }
 
     @Override
@@ -247,8 +262,29 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
 
     @Override
     public FetchType getFetchType(Attribute attribute) {
+        Class<?> declareType = attribute.declareBy().type();
         Fetch fetch = getAnnotation(attribute, Fetch.class);
-        return fetch != null ? fetch.value() : null;
+        if (fetch == null) {
+            return null;
+        }
+        FetchType fetchType = fetch.value();
+
+        // 检查配置兼容性并发出告警
+        if (fetchType == FetchType.LAZY) {
+            // Interface 投影检查
+            if (declareType.isInterface() && !config.interfaceProjectionLazyLoadEnabled()) {
+                log.warn("Interface projection '{}' has @Fetch(LAZY) on attribute '{}' but lazy load is disabled in configuration, " +
+                         "will be treated as EAGER", declareType.getName(), attribute.name());
+            }
+            // Dto 投影检查（非接口、非 Record）
+            if (!declareType.isInterface() && !declareType.isRecord()
+                && !config.dtoProjectionLazyLoadEnabled()) {
+                log.warn("Dto projection '{}' has @Fetch(LAZY) on attribute '{}' but Dto lazy load is not enabled in configuration, " +
+                         "will be treated as EAGER", declareType.getName(), attribute.name());
+            }
+        }
+
+        return fetchType;
     }
 
     protected <T extends Annotation> T getAnnotation(Attribute attribute, Class<T> annotationClass) {
