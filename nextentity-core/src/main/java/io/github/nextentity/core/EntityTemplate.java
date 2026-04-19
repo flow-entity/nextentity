@@ -1,11 +1,11 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.DeleteWhereStep;
-import io.github.nextentity.api.EntityPersistor;
+import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.api.UpdateSetStep;
 
-public class EntityTemplate<T> implements EntityPersistor<T> {
+public class EntityTemplate<T> implements EntityOperations<T> {
 
     private final PersistDescriptor<T> descriptor;
     private final EntityQuery<T> query;
@@ -24,6 +24,7 @@ public class EntityTemplate<T> implements EntityPersistor<T> {
         return descriptor;
     }
 
+    @Override
     public EntityQuery<T> query() {
         return query;
     }

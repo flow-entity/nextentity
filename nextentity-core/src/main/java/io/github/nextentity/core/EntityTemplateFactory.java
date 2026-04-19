@@ -1,8 +1,5 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.EntityContext;
-import io.github.nextentity.api.EntityPersistor;
-import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
@@ -11,7 +8,7 @@ public record EntityTemplateFactory(
         @NonNull QueryExecutor queryExecutor,
         @NonNull PersistExecutor persistExecutor,
         @NonNull PaginationConfig paginationConfig
-) implements EntityContext {
+) implements EntityOperationsFactory {
 
     public <T> EntityTemplate<T> template(Class<T> entityType) {
         EntityTemplateDescriptor<T> descriptor = new EntityTemplateDescriptor<>(
@@ -26,12 +23,8 @@ public record EntityTemplateFactory(
     }
 
     @Override
-    public <T> EntityQuery<T> query(Class<T> entityType) {
-        return template(entityType).query();
-    }
-
-    @Override
-    public <T> EntityPersistor<T> persistor(Class<T> entityType) {
+    public <T> EntityTemplate<T> operations(Class<T> entityType) {
         return template(entityType);
     }
+
 }

@@ -20,4 +20,5 @@ open module nextentity.core {
     exports io.github.nextentity.core.reflect.schema.impl;
     exports io.github.nextentity.core.annotation;
     exports io.github.nextentity.core.meta.impl;
+    exports io.github.nextentity.jdbc.configuration;
 }
