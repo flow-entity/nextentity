@@ -64,7 +64,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
 
     @Override
     public String toString() {
-        return resultType.getSimpleName() + "@" + System.identityHashCode(resultType);
+        return resultType.getSimpleName() + "@" + System.identityHashCode(data);
     }
 
     public Class<?> resultType() {

@@ -14,7 +14,7 @@ public final class ResultMap {
         return target.get(method);
     }
 
-    boolean isNull(Object value) {
+    public boolean isNull(Object value) {
         return value == NULL;
     }
 
@@ -30,15 +30,23 @@ public final class ResultMap {
         return value == null ? NULL : value;
     }
 
-    private Object unwrapIfNull(Object value) {
-        return value == NULL ? null : value;
-    }
-
     public boolean isEmpty() {
         return target.isEmpty();
     }
 
     public Set<Method> keySet() {
         return target.keySet();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof ResultMap resultMap)) return false;
+
+        return target.equals(resultMap.target);
+    }
+
+    @Override
+    public int hashCode() {
+        return target.hashCode();
     }
 }

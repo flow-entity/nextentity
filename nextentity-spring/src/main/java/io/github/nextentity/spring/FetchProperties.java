@@ -22,7 +22,7 @@ public class FetchProperties {
     /// 未标注 @Fetch 注解时使用的默认策略：
     /// - LAZY: 延迟加载（默认）
     /// - EAGER: 立即加载
-    private FetchType defaultType = FetchType.LAZY;
+    private FetchType defaultType = FetchType.EAGER;
 
     /// 批量加载的最大批次大小
     ///

@@ -8,6 +8,7 @@
 
     <!-- Hibernate SQL logging -->
     <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="io.github.nextentity.sql" level="DEBUG"/>
     <!-- Show SQL parameter bindings -->
     <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
 

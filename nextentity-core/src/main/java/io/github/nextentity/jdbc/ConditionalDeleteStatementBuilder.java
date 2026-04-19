@@ -6,14 +6,10 @@ import io.github.nextentity.core.meta.Metamodel;
 
 /// 条件删除 SQL 语句构建器
 ///
-/// DELETE JOIN 方言差异：
-/// - MySQL: DELETE t FROM table t JOIN other ON ... WHERE ...
-/// - PostgreSQL: DELETE FROM table USING other WHERE table.join_col = other.col AND ...
-/// - SQL Server: DELETE t FROM table t JOIN other ON ... WHERE ...
+/// 通过 SqlDialect 接口处理不同数据库的 DELETE JOIN 语法差异。
 ///
 /// @author HuangChengwei
 /// @since 2.0
-///
 public class ConditionalDeleteStatementBuilder extends AbstractConditionalStatementBuilder {
 
     public ConditionalDeleteStatementBuilder(EntityType entityType,
@@ -25,63 +21,52 @@ public class ConditionalDeleteStatementBuilder extends AbstractConditionalStatem
     }
 
     public DeleteSqlStatement build() {
+        // 构建 DELETE 语句结构
         appendDeleteClause();
-        appendFromOrUsingClauseIfNecessary();
-        appendWhereWithJoinConditions();
+        appendDeleteFromClause();
+        appendJoinIfNecessary();
+        appendWhereClause();
+
         return createStatement();
     }
 
+    /// 构建 DELETE 开头部分（委托给方言）
     protected void appendDeleteClause() {
-        SqlDialect.UpdateJoinStyle style = dialect.getUpdateJoinStyle();
+        String table = getTableName();
+        String alias = fromAlias;
+        boolean hasJoin = !joins.isEmpty();
 
-        if (joins.isEmpty()) {
-            switch (style) {
-                // MySQL/SQL Server 别名必须在 DELETE 后，才能在 WHERE 中使用别名引用列
-                case JOIN_BEFORE_SET, UPDATE_ALIAS_ONLY -> {
-                    sql.append("delete ");
-                    appendFromAlias();
-                    sql.append(" from ");
-                    appendFromTable();
-                    appendFromAlias();
-                }
-                default -> {
-                    sql.append("delete from ");
-                    appendFromTable();
-                    sql.append(" as ");
-                    appendFromAlias();
-                }
-            }
-        } else {
-            sql.append("delete ");
-            switch (style) {
-                case JOIN_BEFORE_SET, UPDATE_ALIAS_ONLY -> appendFromAlias();
-                default -> appendFrom();
-            }
-        }
+        dialect.appendDeleteClause(sql, table, alias, hasJoin);
     }
 
-    protected void appendFromOrUsingClauseIfNecessary() {
-        if (joins.isEmpty()) {
-            return;
-        }
+    /// 构建 DELETE FROM/USING 子句（委托给方言）
+    protected void appendDeleteFromClause() {
+        String table = getTableName();
+        String alias = fromAlias;
+        boolean hasJoin = !joins.isEmpty();
 
-        SqlDialect.UpdateJoinStyle style = dialect.getUpdateJoinStyle();
+        dialect.appendDeleteFromClause(sql, table, alias, hasJoin);
+    }
 
-        switch (style) {
-            case JOIN_BEFORE_SET, UPDATE_ALIAS_ONLY -> {
-                sql.append(" from ");
-                appendFromTable();
-                appendFromAlias();
+    /// 构建 JOIN 子句（如有）
+    protected void appendJoinIfNecessary() {
+        if (!joins.isEmpty()) {
+            if (dialect.supportsUpdateJoinBeforeSetSyntax()) {
+                // MySQL: FROM 子句中追加 JOIN
                 appendJoin();
-            }
-            default -> {
-                sql.append(USING);
+            } else if (dialect.supportsUpdateAliasOnlySyntax()) {
+                // SQL Server: FROM 子句中追加 JOIN
+                appendJoin();
+            } else if (dialect.supportsDeleteUsingSyntax()) {
+                // PostgreSQL: USING 子句中追加表列表（逗号分隔）
                 appendJoinTablesOnly();
             }
+            // H2: 不需要 JOIN 子句，使用 EXISTS 子查询
         }
     }
 
     protected DeleteSqlStatement createStatement() {
         return new DeleteSqlStatement(sql.toString(), args);
     }
+
 }

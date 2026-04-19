@@ -12,10 +12,7 @@ public class DatabaseEnvironment {
 
     @Value("${application.env.name:}")
     public void setVariables(String name) {
-        variables = DatabaseEnvironmentVariables.DBS.stream()
-                .filter(db -> db.getName().equals(name))
-                .findAny()
-                .orElseThrow();
+        variables = DatabaseEnvironmentVariables.DBS.get(name).get();
     }
 
 
