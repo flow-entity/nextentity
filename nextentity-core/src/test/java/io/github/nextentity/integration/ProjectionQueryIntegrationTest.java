@@ -677,8 +677,6 @@ public class ProjectionQueryIntegrationTest {
     }
 
 
-
-
     @ParameterizedTest
     @ArgumentsSource(FastIntegrationTestProvider.class)
     @DisplayName("Should project with LAZY attribute - EmployeeWithLazyDepartment")

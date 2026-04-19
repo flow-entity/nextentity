@@ -123,17 +123,17 @@ public record DefaultAccessor(
 
     private static boolean isSimpleType(Class<?> type) {
         return type.isPrimitive()
-                || type.isEnum()
-                || type.isArray()
-                || type == String.class
-                || Number.class.isAssignableFrom(type)
-                || Boolean.class.isAssignableFrom(type)
-                || Character.class.isAssignableFrom(type)
-                || CharSequence.class.isAssignableFrom(type)
-                || Collection.class.isAssignableFrom(type)
-                || Map.class.isAssignableFrom(type)
-                || Temporal.class.isAssignableFrom(type)
-                || Date.class.isAssignableFrom(type);
+               || type.isEnum()
+               || type.isArray()
+               || type == String.class
+               || Number.class.isAssignableFrom(type)
+               || Boolean.class.isAssignableFrom(type)
+               || Character.class.isAssignableFrom(type)
+               || CharSequence.class.isAssignableFrom(type)
+               || Collection.class.isAssignableFrom(type)
+               || Map.class.isAssignableFrom(type)
+               || Temporal.class.isAssignableFrom(type)
+               || Date.class.isAssignableFrom(type);
     }
 
     /// 获取类型的所有声明字段（包括父类）

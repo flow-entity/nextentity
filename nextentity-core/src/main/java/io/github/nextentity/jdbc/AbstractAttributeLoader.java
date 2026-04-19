@@ -7,6 +7,8 @@ import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
+import io.github.nextentity.core.reflect.LoadObserver;
+import io.github.nextentity.core.reflect.LoadObserverRegistry;
 import io.github.nextentity.core.reflect.schema.Attribute;
 
 import java.util.Collection;
@@ -34,13 +36,19 @@ public abstract class AbstractAttributeLoader implements AttributeLoader {
     public Object load() {
         Map<Object, Object> cache = context.getCache();
         if (cache.containsKey(foreignKey)) {
-            return cache.get(foreignKey);
+            Object cached = cache.get(foreignKey);
+            notifyCacheHit(cached);
+            return cached;
         }
+        long startTime = System.nanoTime();
+        notifyBeforeLoad(startTime);
         if (!context.isLoaded()) {
             executeBatchLoad();
             context.setLoaded(true);
         }
-        return cache.get(foreignKey);
+        Object result = cache.get(foreignKey);
+        notifyAfterLoad(startTime, System.nanoTime());
+        return result;
     }
 
     /// 执行批量加载，将所有待加载的外键对应的结果缓存。
@@ -86,5 +94,43 @@ public abstract class AbstractAttributeLoader implements AttributeLoader {
         EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
         PathNode targetPath = targetAttribute.path();
         return targetPath.operate(Operator.IN, literals);
+    }
+
+    /// 通知缓存命中事件。
+    private void notifyCacheHit(Object cached) {
+        if (LoadObserverRegistry.isBound()) {
+            LoadObserver obs = LoadObserverRegistry.get();
+            obs.onCacheHit(new LoadObserver.CacheHitEvent(
+                context.getAttribute().type(),
+                foreignKey,
+                cached
+            ));
+        }
+    }
+
+    /// 通知批量加载开始事件。
+    private void notifyBeforeLoad(long startTime) {
+        if (LoadObserverRegistry.isBound()) {
+            LoadObserver obs = LoadObserverRegistry.get();
+            obs.onBeforeLoad(new LoadObserver.BatchLoadEvent(
+                context.getAttribute().type(),
+                context.getForeignKeys(),
+                startTime,
+                0
+            ));
+        }
+    }
+
+    /// 通知批量加载完成事件。
+    private void notifyAfterLoad(long startTime, long endTime) {
+        if (LoadObserverRegistry.isBound()) {
+            LoadObserver obs = LoadObserverRegistry.get();
+            obs.onAfterLoad(new LoadObserver.BatchLoadEvent(
+                context.getAttribute().type(),
+                context.getForeignKeys(),
+                startTime,
+                endTime
+            ));
+        }
     }
 }

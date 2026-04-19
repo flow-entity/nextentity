@@ -92,7 +92,7 @@ public non-sealed interface Attribute extends ReflectType {
     /// 如果 setter 方法可访问则使用它，否则直接设置字段。
     ///
     /// @param entity 实体实例
-    /// @param value 要设置的值
+    /// @param value  要设置的值
     /// @throws ReflectiveException 如果访问失败
     default void set(Object entity, Object value) {
         accessor().set(entity, value);

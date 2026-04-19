@@ -1,6 +1,8 @@
 package io.github.nextentity.core.reflect.schema.impl;
 
-import io.github.nextentity.core.reflect.schema.*;
+import io.github.nextentity.core.reflect.schema.Accessor;
+import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 
 public class DefaultSchemaAttribute extends DefaultSchema implements SchemaAttribute {
