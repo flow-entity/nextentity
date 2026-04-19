@@ -23,4 +23,5 @@ open module nextentity.core {
     exports io.github.nextentity.core.meta.impl;
     exports io.github.nextentity.core.configuration;
     exports io.github.nextentity.jdbc.configuration;
+    exports io.github.nextentity.jpa.configuration;
 }
