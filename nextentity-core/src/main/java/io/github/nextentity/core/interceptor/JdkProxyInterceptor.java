@@ -38,12 +38,16 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     @Override
     public boolean supports(QueryContext context) {
         Schema schema = context.getSchema();
-        if (!(schema instanceof ProjectionSchema)) {
+        if (!(schema instanceof ProjectionSchema projectionSchema)) {
             return false;
         }
-        // TODO 检查是否有懒加载字段
-        // 只处理 interface 类型
-        return schema.type().isInterface();
+        // 只处理有懒加载字段的投影
+        if (LazyLoadSupport.hasLazyAttribute(projectionSchema)) {
+            return schema.type().isInterface();
+        } else {
+            return false;
+        }
+
     }
 
     @Override
