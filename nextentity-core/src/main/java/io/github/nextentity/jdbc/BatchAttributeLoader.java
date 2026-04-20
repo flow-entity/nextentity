@@ -4,6 +4,7 @@ import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.LoadObserver;
 import io.github.nextentity.core.reflect.LoadObserverRegistry;
+import io.github.nextentity.core.util.NullableConcurrentMap;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,7 @@ public final class BatchAttributeLoader {
     private final AttributeLoadFunction batchLoaderFunction;
 
     private final Set<Object> foreignKeys = ConcurrentHashMap.newKeySet();
-    private final Map<Object, Object> cache = new HashMap<>();
+    private final Map<Object, Object> cache = new NullableConcurrentMap<>();
 
     /// 根据属性类型自动选择加载策略。
     ///

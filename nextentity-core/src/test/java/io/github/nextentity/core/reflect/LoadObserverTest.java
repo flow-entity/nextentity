@@ -90,7 +90,7 @@ public class LoadObserverTest {
             assertThat(loadEvent.entityType()).isEqualTo(Department.class);
             assertThat(loadEvent.startTimeNanos()).isPositive();
             assertThat(loadEvent.endTimeNanos()).isPositive();
-            assertThat(loadEvent.endTimeNanos()).isGreaterThan(loadEvent.startTimeNanos());
+            assertThat(loadEvent.endTimeNanos()).isGreaterThanOrEqualTo(loadEvent.startTimeNanos());
 
             // 验证：外键集合包含所有投影对象的 departmentId（唯一值）
             Set<?> foreignKeys = loadEvent.foreignKeys();

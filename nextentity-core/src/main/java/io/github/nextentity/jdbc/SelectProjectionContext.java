@@ -5,14 +5,15 @@ import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.ReflectUtil;
-import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.NullableConcurrentMap;
 import jakarta.persistence.FetchType;
 import org.jspecify.annotations.Nullable;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -86,15 +87,15 @@ public class SelectProjectionContext extends QueryContext {
     /// 构建支持懒加载属性的 Interface 代理对象
     private Object constructInterfaceSchemaWithLazy(Arguments arguments) {
         ProjectionSchema schema = projection;
-        ResultMap data = collectResultMap(arguments);
+        NullableConcurrentMap<Method, Object> data = collectResultMap(arguments);
         return ReflectUtil.newProxyInstance(schema.type(), data);
     }
 
-    public ResultMap collectResultMap(Arguments arguments) {
+    public NullableConcurrentMap<Method, Object> collectResultMap(Arguments arguments) {
         ProjectionSchema schema = projection;
         SchemaAttributePaths paths = schemaAttributePaths;
         // 直接使用父类方法构建 EAGER 属性数据
-        ResultMap data = new ResultMap();
+        NullableConcurrentMap<Method, Object> data = new NullableConcurrentMap<>();
         for (Attribute attr : schema.getAttributes()) {
             // 检查是否是 LAZY 属性，如果是则跳过
             if (attr instanceof ProjectionSchemaAttribute schemaAttr

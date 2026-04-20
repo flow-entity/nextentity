@@ -1,11 +1,9 @@
 package io.github.nextentity.examples.repository;
 
-import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.examples.entity.Category;
 import io.github.nextentity.spring.AbstractRepository;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 

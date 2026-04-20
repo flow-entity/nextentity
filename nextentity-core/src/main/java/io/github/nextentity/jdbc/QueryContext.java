@@ -11,14 +11,15 @@ import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
-import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.core.util.NullableConcurrentMap;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.List;
@@ -254,18 +255,18 @@ public abstract class QueryContext {
         }
     }
 
-    public ResultMap collectResultMap(Arguments arguments) {
+    public NullableConcurrentMap<Method, Object> collectResultMap(Arguments arguments) {
         return collectResultMap(entityType, arguments, getSchemaAttributePaths());
     }
 
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        ResultMap map = collectResultMap(rootSchema, arguments, schemaAttributes);
+        NullableConcurrentMap<Method, Object> map = collectResultMap(rootSchema, arguments, schemaAttributes);
         if (map == null) return null;
         return ReflectUtil.newProxyInstance(rootSchema.type(), map);
     }
 
-    private ResultMap collectResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        ResultMap map = new ResultMap();
+    private NullableConcurrentMap<Method, Object> collectResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        NullableConcurrentMap<Method, Object> map = new NullableConcurrentMap<>();
         for (Attribute attribute : rootSchema.getAttributes()) {
             if (attribute instanceof Schema schema) {
                 var schemaAttributePaths = schemaAttributes == null ? null : schemaAttributes.get(attribute.name());

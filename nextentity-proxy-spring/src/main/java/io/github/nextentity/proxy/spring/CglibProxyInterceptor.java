@@ -3,14 +3,15 @@ package io.github.nextentity.proxy.spring;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.LazyLoadSupport;
 import io.github.nextentity.core.reflect.AttributeLoader;
-import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.util.NullableConcurrentMap;
 import io.github.nextentity.jdbc.Arguments;
 import io.github.nextentity.jdbc.QueryContext;
 import org.jspecify.annotations.Nullable;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 
 /// CGLIB 代理拦截器 - 为普通类创建代理实例
@@ -86,7 +87,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     /// 创建 CGLIB 代理
     @Nullable
     protected Object createCglibProxy(QueryContext context, Schema schema, Arguments arguments) {
-        ResultMap map = context.collectResultMap(arguments);
+        NullableConcurrentMap<Method, Object> map = context.collectResultMap(arguments);
         if (map.isEmpty()) {
             return null;
         }
@@ -100,18 +101,15 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     }
 
     /// 创建方法拦截器
-    private MethodInterceptor createMethodInterceptor(ResultMap map, Class<?> resultType) {
+    private MethodInterceptor createMethodInterceptor(NullableConcurrentMap<Method, Object> map, Class<?> resultType) {
         return (proxy, method, args, methodProxy) -> {
-            Object result = map.get(method);
+            Object result = map.getRaw(method);
             if (result != null) {
-                if (map.isNull(result)) {
-                    return null;
-                }
                 if (result instanceof AttributeLoader loader) {
                     result = loader.load();
                     map.replace(method, loader, result);
                 }
-                return result;
+                return map.unwrap(result);
             }
             if (method.getDeclaringClass() == Object.class) {
                 return methodProxy.invokeSuper(proxy, args);
