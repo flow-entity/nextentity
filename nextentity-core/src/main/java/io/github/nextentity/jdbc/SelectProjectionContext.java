@@ -27,7 +27,7 @@ public class SelectProjectionContext extends QueryContext {
     private SchemaAttributePaths schemaAttributePaths;
 
     /// 批量加载上下文（延迟初始化）
-    private final Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContexts = new ConcurrentHashMap();
+    private final Map<ProjectionSchemaAttribute, BatchAttributeLoader> batchLoaderContexts = new ConcurrentHashMap<>();
 
     /// 存储懒加载属性元数据，供二次查询批量加载使用
     ///
@@ -43,6 +43,7 @@ public class SelectProjectionContext extends QueryContext {
 
     /// 无参构造函数
     public SelectProjectionContext() {
+        enableLazyloading = true;
     }
 
     /// 设置投影选择定义
@@ -118,8 +119,8 @@ public class SelectProjectionContext extends QueryContext {
 
     /// 创建懒加载器（首次 load 时遍历 results 批量加载）
     private AttributeLoader createLazyLoader(ProjectionSchemaAttribute attribute, Object foreignKey) {
-        BatchLoaderContext batchLoaderContext = getBatchLoaderContext(attribute);
-        return batchLoaderContext.addForeignKey(foreignKey);
+        BatchAttributeLoader batchAttributeLoader = getBatchLoaderContext(attribute);
+        return batchAttributeLoader.addForeignKey(foreignKey);
     }
 
     /// 获取批量加载上下文（延迟初始化）
@@ -128,8 +129,8 @@ public class SelectProjectionContext extends QueryContext {
     /// 因此在首次需要时创建 BatchLoaderContext。
     ///
     /// @return 批量加载上下文
-    private BatchLoaderContext getBatchLoaderContext(ProjectionSchemaAttribute attribute) {
-        return batchLoaderContexts.computeIfAbsent(attribute, k -> new BatchLoaderContext(k, this));
+    private BatchAttributeLoader getBatchLoaderContext(ProjectionSchemaAttribute attribute) {
+        return batchLoaderContexts.computeIfAbsent(attribute, k -> new BatchAttributeLoader(k, this));
     }
 
     /// 设置查询结果列表

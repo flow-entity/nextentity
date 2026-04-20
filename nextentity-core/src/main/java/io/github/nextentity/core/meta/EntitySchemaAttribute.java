@@ -3,7 +3,7 @@ package io.github.nextentity.core.meta;
 import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 import jakarta.persistence.FetchType;
 
-public non-sealed interface EntitySchemaAttribute extends EntityAttribute, SchemaAttribute {
+public non-sealed interface EntitySchemaAttribute extends EntityAttribute, SchemaAttribute, Fetchable {
 
     /// 获取此关联的连接表名。
     ///
@@ -22,12 +22,5 @@ public non-sealed interface EntitySchemaAttribute extends EntityAttribute, Schem
     ///
     /// @return 引用列名
     EntityBasicAttribute targetAttribute();
-
-    /// 获取加载策略（@Fetch 注解值）。
-    ///
-    /// 未标注时返回 null，使用全局默认配置。
-    ///
-    /// @return FetchType.LAZY 或 FetchType.EAGER，或 null
-    FetchType fetchType();
 
 }

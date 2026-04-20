@@ -22,6 +22,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 ///
@@ -30,12 +31,14 @@ import java.util.stream.Stream;
 ///
 public abstract class QueryContext {
 
+    protected Map<String, Object> parameters;
     protected QueryStructure structure;
     protected Metamodel metamodel;
     protected EntityType entityType;
     protected boolean expandReferencePath;
     protected QueryExecutor queryExecutor;
     protected FetchConfig fetchConfig = FetchConfig.DEFAULT;
+    protected boolean enableLazyloading = false;
 
     /// 拦截器选择器（用于对象构造）
     protected InterceptorSelector<ConstructInterceptor> interceptorSelector = InterceptorSelector.empty();
@@ -93,15 +96,14 @@ public abstract class QueryContext {
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     public <T> List<T> getResultList() {
-        return (List<T>) queryExecutor.getList(this);
+        return queryExecutor.getList(this);
     }
 
     /// 根据选择类型创建对应的子类实例
     private static QueryContext createContext(QueryStructure structure) {
         Selected select = structure.select();
-        if (select instanceof SelectEntity selectEntity) {
+        if (select instanceof SelectEntity) {
             return new SelectEntityContext();
         } else if (select instanceof SelectProjection selectProjection) {
             SelectProjectionContext context = new SelectProjectionContext();
@@ -461,5 +463,26 @@ public abstract class QueryContext {
 
     public  SchemaAttributePaths getSchemaAttributePaths(){
         return null;
+    }
+
+    /// 是否启用懒加载拦截。
+    ///
+    /// 仅在投影查询（{@link SelectProjectionContext}）中默认启用。
+    ///
+    /// @return true 表示启用懒加载
+    public boolean isEnableLazyloading() {
+        return enableLazyloading;
+    }
+
+    public void setEnableLazyloading(boolean enableLazyloading) {
+        this.enableLazyloading = enableLazyloading;
+    }
+
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
     }
 }

@@ -6,9 +6,9 @@ import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 /// 投影类型批量属性加载器。
@@ -22,18 +22,10 @@ import java.util.stream.Collectors;
 ///
 /// @author HuangChengwei
 /// @since 2.1.0
-public class ProjectionAttributeLoader extends AbstractAttributeLoader {
-
-    public ProjectionAttributeLoader(BatchLoaderContext context, Object foreignKey) {
-        super(context, foreignKey);
-    }
+public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
 
     @Override
-    protected void executeBatchLoad() {
-        Set<Object> foreignKeys = context.getForeignKeys();
-        if (foreignKeys.isEmpty()) {
-            return;
-        }
+    public Map<Object, Object> apply(BatchAttributeLoader context, Collection<Object> foreignKeys) {
 
         ProjectionSchemaAttribute attribute = context.getAttribute();
         QueryContext queryContext = context.getQueryContext();
@@ -46,9 +38,9 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
         ProjectionAttribute projectionAttribute = findProjectionAttribute(projection, targetAttribute);
 
         if (projectionAttribute == null) {
-            executeTupleQuery(projection, foreignKeys, queryContext);
+            return executeTupleQuery(projection, foreignKeys, context);
         } else {
-            executeProjectionQuery(projection, foreignKeys, queryContext, projectionAttribute);
+            return executeProjectionQuery(context, projection, foreignKeys, queryContext, projectionAttribute);
         }
     }
 
@@ -61,26 +53,31 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
         return null;
     }
 
-    private void executeProjectionQuery(ProjectionSchema projection,
-                                        Set<Object> foreignKeys,
-                                        QueryContext queryContext,
-                                        ProjectionAttribute projectionAttribute) {
-        QueryStructure queryStructure = buildBatchQuery(projection, foreignKeys);
+    private Map<Object, Object> executeProjectionQuery(BatchAttributeLoader context,
+                                                       ProjectionSchema projection,
+                                                       Collection<Object> foreignKeys,
+                                                       QueryContext queryContext,
+                                                       ProjectionAttribute projectionAttribute) {
+        QueryStructure queryStructure = buildBatchQuery(context, projection, foreignKeys);
         QueryContext newContext = queryContext.newContext(queryStructure);
         List<?> results = queryContext.getQueryExecutor().getList(newContext);
-        buildCacheMap(projectionAttribute, results);
+        return buildCacheMap(projectionAttribute, results);
     }
 
-    private void executeTupleQuery(ProjectionSchema projection,
-                                   Set<Object> foreignKeys,
-                                   QueryContext queryContext) {
-        QueryStructure queryStructure = buildTupleQuery(projection, foreignKeys);
+    private Map<Object, Object> executeTupleQuery(ProjectionSchema projection,
+                                                  Collection<Object> foreignKeys,
+                                                  BatchAttributeLoader context) {
+        QueryContext queryContext = context.getQueryContext();
+        QueryStructure queryStructure = buildTupleQuery(context, projection, foreignKeys);
         QueryContext newContext = queryContext.newContext(queryStructure);
         List<?> results = queryContext.getQueryExecutor().getList(newContext);
-        buildTupleCacheMap(results);
+        return buildTupleCacheMap(results);
     }
 
-    private QueryStructure buildBatchQuery(ProjectionSchema projection, Set<Object> foreignKeys) {
+    private QueryStructure buildBatchQuery(BatchAttributeLoader context,
+                                           ProjectionSchema projection,
+                                           Collection<Object> foreignKeys) {
+
         ExpressionNode whereClause = buildWhereClause(foreignKeys, context.getAttribute());
 
         Selected selectProjection = new SelectProjection(projection.type(), false);
@@ -89,7 +86,9 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
         return QueryStructure.of(selectProjection, fromEntity).where(whereClause);
     }
 
-    private QueryStructure buildTupleQuery(ProjectionSchema projection, Set<Object> foreignKeys) {
+    private QueryStructure buildTupleQuery(BatchAttributeLoader context,
+                                           ProjectionSchema projection,
+                                           Collection<Object> foreignKeys) {
         ProjectionSchemaAttribute attribute = context.getAttribute();
         Collection<ExpressionNode> literals = foreignKeys.stream()
                 .map(LiteralNode::new)
@@ -107,8 +106,8 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
         return QueryStructure.of(selectNested, fromEntity).where(whereClause);
     }
 
-    private void buildTupleCacheMap(List<?> results) {
-        Map<Object, Object> cache = context.getCache();
+    private Map<Object, Object> buildTupleCacheMap(List<?> results) {
+        Map<Object, Object> cache = new HashMap<>();
         for (Object result : results) {
             if (result instanceof Object[] array && array.length >= 2) {
                 cache.put(array[0], array[1]);
@@ -117,6 +116,7 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
                         "Expected Object[] tuple result but got: " + result.getClass().getName());
             }
         }
-        fillNullForMissingKeys(cache);
+        return cache;
     }
+
 }

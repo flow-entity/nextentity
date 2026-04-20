@@ -2,7 +2,6 @@ package io.github.nextentity.proxy.spring;
 
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.LazyLoadSupport;
-import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Schema;
@@ -40,12 +39,15 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
 
     @Override
     public boolean supports(QueryContext context) {
+        if (!context.isEnableLazyloading()) {
+            return false;
+        }
         Schema schema = context.getSchema();
-        if (!(schema instanceof ProjectionSchema projectionSchema)) {
+        if (schema == null) {
             return false;
         }
         // 只处理有懒加载字段的投影
-        if (LazyLoadSupport.hasLazyAttribute(projectionSchema)) {
+        if (LazyLoadSupport.hasLazyAttribute(schema)) {
             Class<?> type = schema.type();
             // 只处理普通类（非 interface、非 record、非 final）
             return !type.isInterface()

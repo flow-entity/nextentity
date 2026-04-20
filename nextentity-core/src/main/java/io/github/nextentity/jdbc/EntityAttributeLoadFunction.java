@@ -6,8 +6,9 @@ import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.util.ImmutableList;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /// 实体类型批量属性加载器。
 ///
@@ -15,18 +16,10 @@ import java.util.Set;
 ///
 /// @author HuangChengwei
 /// @since 2.1.0
-public class EntityAttributeLoader extends AbstractAttributeLoader {
-
-    public EntityAttributeLoader(BatchLoaderContext context, Object foreignKey) {
-        super(context, foreignKey);
-    }
+public class EntityAttributeLoadFunction extends AttributeLoadFunction {
 
     @Override
-    protected void executeBatchLoad() {
-        Set<Object> foreignKeys = context.getForeignKeys();
-        if (foreignKeys.isEmpty()) {
-            return;
-        }
+    public Map<Object, Object> apply(BatchAttributeLoader context, Collection<Object> foreignKeys) {
 
         ProjectionSchemaAttribute attribute = context.getAttribute();
         QueryContext queryContext = context.getQueryContext();
@@ -34,14 +27,14 @@ public class EntityAttributeLoader extends AbstractAttributeLoader {
         EntitySchema targetEntity = queryContext.getMetamodel().getEntity(attribute.type());
         EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
 
-        QueryStructure queryStructure = buildBatchQuery(targetEntity, foreignKeys);
+        QueryStructure queryStructure = buildBatchQuery(context, targetEntity, foreignKeys);
         QueryContext newContext = queryContext.newContext(queryStructure);
         List<?> results = queryContext.getQueryExecutor().getList(newContext);
 
-        buildCacheMap(targetAttribute, results);
+        return buildCacheMap(targetAttribute, results);
     }
 
-    private QueryStructure buildBatchQuery(EntitySchema targetEntity, Set<Object> foreignKeys) {
+    private QueryStructure buildBatchQuery(BatchAttributeLoader context, EntitySchema targetEntity, Collection<Object> foreignKeys) {
         ExpressionNode whereClause = buildWhereClause(foreignKeys, context.getAttribute());
 
         Selected selectProjection = new SelectEntity(ImmutableList.empty(), false);

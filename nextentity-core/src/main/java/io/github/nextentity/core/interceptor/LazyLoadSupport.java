@@ -1,8 +1,10 @@
 package io.github.nextentity.core.interceptor;
 
+import io.github.nextentity.core.meta.Fetchable;
 import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.reflect.schema.Schema;
 import jakarta.persistence.FetchType;
 
 /// 懒加载支持工具类
@@ -20,10 +22,10 @@ public final class LazyLoadSupport {
     ///
     /// @param schema 投影元模型
     /// @return true 表示存在懒加载属性，false 表示全部为立即加载
-    public static boolean hasLazyAttribute(ProjectionSchema schema) {
+    public static boolean hasLazyAttribute(Schema schema) {
         for (Attribute attr : schema.getAttributes()) {
-            if (attr instanceof ProjectionSchemaAttribute schemaAttr) {
-                if (schemaAttr.fetchType() == FetchType.LAZY) {
+            if (attr instanceof Fetchable fetchable) {
+                if (fetchable.fetchType() == FetchType.LAZY) {
                     return true;
                 }
             }

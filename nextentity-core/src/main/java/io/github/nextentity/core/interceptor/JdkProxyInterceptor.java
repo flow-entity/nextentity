@@ -1,6 +1,5 @@
 package io.github.nextentity.core.interceptor;
 
-import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.ResultMap;
 import io.github.nextentity.core.reflect.schema.Schema;
@@ -33,14 +32,11 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     @Override
     public boolean supports(QueryContext context) {
         Schema schema = context.getSchema();
-        if (!(schema instanceof ProjectionSchema projectionSchema)) {
-            return false;
-        }
-        if (context.getSchema() == null) {
+        if (schema == null) {
             return false;
         }
         // 只处理有懒加载字段的投影
-        if (LazyLoadSupport.hasLazyAttribute(projectionSchema)) {
+        if (LazyLoadSupport.hasLazyAttribute(schema)) {
             return schema.type().isInterface();
         } else {
             return false;
