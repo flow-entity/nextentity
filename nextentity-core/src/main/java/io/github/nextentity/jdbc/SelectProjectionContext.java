@@ -1,8 +1,6 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
-import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.AttributeLoader;
@@ -22,12 +20,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 public class SelectProjectionContext extends QueryContext {
-    private final ProjectionSchema projection;
-    private final ImmutableArray<SelectItem> expressions;
-    private final SchemaAttributePaths schemaAttributePaths;
+    private SelectProjection selectProjection;
+
+    private ProjectionSchema projection;
+    private ImmutableArray<SelectItem> expressions;
+    private SchemaAttributePaths schemaAttributePaths;
 
     /// 批量加载上下文（延迟初始化）
-    private final Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContexts = new ConcurrentHashMap<>();
+    private final Map<ProjectionSchemaAttribute, BatchLoaderContext> batchLoaderContexts = new ConcurrentHashMap();
 
     /// 存储懒加载属性元数据，供二次查询批量加载使用
     ///
@@ -41,15 +41,21 @@ public class SelectProjectionContext extends QueryContext {
     ) {
     }
 
-    public SelectProjectionContext(QueryExecutor executor,
-                                   QueryStructure structure,
-                                   Metamodel metamodel,
-                                   boolean expandObjectAttribute,
-                                   SelectProjection select) {
-        super(executor, structure, metamodel, expandObjectAttribute);
-        this.projection = entityType.getProjection(select.type());
-        this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
+    /// 无参构造函数
+    public SelectProjectionContext() {
+    }
 
+    /// 设置投影选择定义
+    public void setSelectProjection(SelectProjection selectProjection) {
+        this.selectProjection = selectProjection;
+    }
+
+    /// 初始化（无参版本）
+    @Override
+    protected void init() {
+        super.init();
+        this.projection = entityType.getProjection(selectProjection.type());
+        this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
         // 分离 EAGER 和 LAZY 属性
         this.expressions = separateAttributes(projection, schemaAttributePaths);
     }

@@ -3,6 +3,7 @@ package io.github.nextentity.integration.config;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
@@ -44,7 +45,7 @@ public class IntegrationTestApplication {
         }
         Metamodel metamodel = DefaultMetamodel.of();
         SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
-        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), JdbcConfig.DEFAULT, InterceptorSelector.empty());
         PersistExecutor updateExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
             @Override
@@ -70,7 +71,7 @@ public class IntegrationTestApplication {
         }
         Metamodel metamodel = DefaultMetamodel.of();
         SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), JdbcConfig.DEFAULT, InterceptorSelector.empty());
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
         PersistExecutor updateExecutor = new JpaPersistExecutor(entityManager);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {

@@ -1,25 +1,33 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.ExpressionNode;
-import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectExpression;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 
 public class SelectPrimitiveContext extends QueryContext {
 
-    private final ImmutableArray<SelectItem> expressions;
-    private final ExpressionNode expression;
+    private SelectExpression selectExpression;
 
+    private ImmutableArray<SelectItem> expressions;
+    private ExpressionNode expression;
 
-    protected SelectPrimitiveContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectExpression selectPrimitive) {
-        super(executor, structure, metamodel, expandObjectAttribute);
-        this.expression = selectPrimitive.expression();
-        this.expressions = getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));
+    /// 无参构造函数
+    public SelectPrimitiveContext() {
     }
 
+    /// 设置表达式选择定义
+    public void setSelectExpression(SelectExpression selectExpression) {
+        this.selectExpression = selectExpression;
+    }
+
+    /// 初始化（无参版本）
+    @Override
+    protected void init() {
+        super.init();
+        this.expression = selectExpression.expression();
+        this.expressions = getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));
+    }
 
     @Override
     public ImmutableArray<SelectItem> getSelectedExpression() {

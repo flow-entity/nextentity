@@ -30,10 +30,10 @@ import java.util.stream.Stream;
 ///
 public abstract class QueryContext {
 
-    protected final QueryStructure structure;
-    protected final Metamodel metamodel;
-    protected final EntityType entityType;
-    protected final boolean expandReferencePath;
+    protected QueryStructure structure;
+    protected Metamodel metamodel;
+    protected EntityType entityType;
+    protected boolean expandReferencePath;
     protected QueryExecutor queryExecutor;
     protected FetchConfig fetchConfig = FetchConfig.DEFAULT;
 
@@ -43,38 +43,90 @@ public abstract class QueryContext {
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
 
-    public static QueryContext create(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
-        Selected select = structure.select();
-        if (select instanceof SelectEntity selectEntity) {
-            ImmutableList<PathNode> fetch = selectEntity.fetch();
-            if (fetch != null && !fetch.isEmpty() && expandObjectAttribute) {
-                Collection<? extends Attribute> attributes = fetch
-                        .stream()
-                        .map(it -> it.getAttribute(metamodel.getEntity(((FromEntity) structure.from()).type())))
-                        .toList();
-                return new SelectEntityContext(executor, structure, metamodel, attributes);
-            } else {
-                return new SelectSimpleEntityContext(executor, structure, metamodel, expandObjectAttribute);
-            }
-        } else if (select instanceof SelectProjection selectProjection) {
-            return new SelectProjectionContext(executor, structure, metamodel, expandObjectAttribute, selectProjection);
-        } else if (select instanceof SelectExpression selectPrimitive) {
-            return new SelectPrimitiveContext(executor, structure, metamodel, expandObjectAttribute, selectPrimitive);
-        } else if (select instanceof SelectExpressions selectArray) {
-            return new SelectArrayContext(executor, structure, metamodel, expandObjectAttribute, selectArray);
-        } else if (select instanceof SelectNested selectNested) {
-            return new SelectNestedContext(executor, structure, metamodel, expandObjectAttribute, selectNested);
-        }
-        throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
+    /// 无参构造函数
+    protected QueryContext() {
     }
 
-    protected QueryContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute) {
-        this.queryExecutor = executor;
-        this.structure = structure;
-        this.metamodel = metamodel;
-        this.expandReferencePath = expandObjectAttribute;
+    /// 初始化核心字段（无参版本）
+    ///
+    /// 在设置参数后调用，完成字段初始化。
+    /// 子类应覆盖此方法完成子类特有的初始化，并调用 super.init()。
+    protected void init() {
         From from = structure.from();
         this.entityType = from instanceof FromEntity(Class<?> type) ? metamodel.getEntity(type) : null;
+    }
+
+    /// 设置查询结构
+    public void setStructure(QueryStructure structure) {
+        this.structure = structure;
+    }
+
+    /// 设置元模型
+    public void setMetamodel(Metamodel metamodel) {
+        this.metamodel = metamodel;
+    }
+
+    /// 设置是否展开引用路径
+    public void setExpandReferencePath(boolean expandReferencePath) {
+        this.expandReferencePath = expandReferencePath;
+    }
+
+    /// 创建 QueryContext 实例
+    ///
+    /// 根据查询类型创建对应的子类实例，先设置参数再调用 init 方法。
+    ///
+    /// @param executor          查询执行器
+    /// @param structure         查询结构
+    /// @param metamodel         元模型
+    /// @param expandObjectAttribute 是否展开对象属性
+    /// @return QueryContext 实例
+    public static QueryContext create(QueryExecutor executor,
+                                      QueryStructure structure,
+                                      Metamodel metamodel,
+                                      boolean expandObjectAttribute) {
+        QueryContext context = createContext(structure);
+
+        // 设置通用参数
+        context.setQueryExecutor(executor);
+        context.setStructure(structure);
+        context.setMetamodel(metamodel);
+        context.setExpandReferencePath(expandObjectAttribute);
+
+        // 调用无参 init 方法完成初始化
+        context.init();
+
+        return context;
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getResultList() {
+        init();
+        return (List<T>) queryExecutor.getList(structure);
+    }
+
+    /// 根据选择类型创建对应的子类实例
+    private static QueryContext createContext(QueryStructure structure) {
+        Selected select = structure.select();
+        if (select instanceof SelectEntity selectEntity) {
+            return new SelectEntityContext();
+        } else if (select instanceof SelectProjection selectProjection) {
+            SelectProjectionContext context = new SelectProjectionContext();
+            context.setSelectProjection(selectProjection);
+            return context;
+        } else if (select instanceof SelectExpression selectExpression) {
+            SelectPrimitiveContext context = new SelectPrimitiveContext();
+            context.setSelectExpression(selectExpression);
+            return context;
+        } else if (select instanceof SelectExpressions selectExpressions) {
+            SelectArrayContext context = new SelectArrayContext();
+            context.setSelectExpressions(selectExpressions);
+            return context;
+        } else if (select instanceof SelectNested selectNested) {
+            SelectNestedContext context = new SelectNestedContext();
+            context.setSelectNested(selectNested);
+            return context;
+        }
+        throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
     }
 
     public QueryContext newContext(QueryStructure structure) {

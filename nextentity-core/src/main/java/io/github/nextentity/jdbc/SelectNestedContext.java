@@ -1,11 +1,8 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
-import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectNested;
 import io.github.nextentity.core.expression.Selected;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 
@@ -21,18 +18,31 @@ import java.util.List;
 /// @since 1.0.0
 public class SelectNestedContext extends QueryContext {
 
-    private final ImmutableList<QueryContext> subContexts;
-    private final ImmutableArray<SelectItem> expressions;
+    private SelectNested selectNested;
 
-    public SelectNestedContext(QueryExecutor executor, QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectNested selectNested) {
-        super(executor, structure, metamodel, expandObjectAttribute);
+    private ImmutableList<QueryContext> subContexts;
+    private ImmutableArray<SelectItem> expressions;
+
+    /// 无参构造函数
+    public SelectNestedContext() {
+    }
+
+    /// 设置嵌套选择定义
+    public void setSelectNested(SelectNested selectNested) {
+        this.selectNested = selectNested;
+    }
+
+    /// 初始化（无参版本）
+    @Override
+    protected void init() {
+        super.init();
 
         // 为每个子选择创建对应的 Context
         List<QueryContext> contextList = new ArrayList<>(selectNested.items().size());
         List<SelectItem> expressionList = new ArrayList<>();
 
         for (Selected item : selectNested.items()) {
-            QueryContext subContext = createSubContext(executor, structure, item);
+            QueryContext subContext = createSubContext(item);
             contextList.add(subContext);
             // 收集子 Context 的表达式
             subContext.getSelectedExpression().forEach(expressionList::add);
@@ -43,8 +53,8 @@ public class SelectNestedContext extends QueryContext {
     }
 
     /// 创建子选择的 Context
-    private QueryContext createSubContext(QueryExecutor executor, QueryStructure structure, Selected selected) {
-        return create(executor, structure.select(selected), metamodel, expandReferencePath);
+    private QueryContext createSubContext(Selected selected) {
+        return create(queryExecutor, structure.select(selected), metamodel, expandReferencePath);
     }
 
     @Override
