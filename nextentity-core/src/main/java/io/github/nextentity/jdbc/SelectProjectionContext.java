@@ -52,7 +52,7 @@ public class SelectProjectionContext extends QueryContext {
 
     /// 初始化（无参版本）
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         this.projection = entityType.getProjection(selectProjection.type());
         this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);

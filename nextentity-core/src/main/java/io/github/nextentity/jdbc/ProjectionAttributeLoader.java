@@ -1,6 +1,5 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
@@ -67,8 +66,8 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
                                         QueryContext queryContext,
                                         ProjectionAttribute projectionAttribute) {
         QueryStructure queryStructure = buildBatchQuery(projection, foreignKeys);
-        QueryExecutor queryExecutor = queryContext.getQueryExecutor();
-        List<?> results = queryExecutor.getList(queryStructure);
+        QueryContext newContext = queryContext.newContext(queryStructure);
+        List<?> results = queryContext.getQueryExecutor().getList(newContext);
         buildCacheMap(projectionAttribute, results);
     }
 
@@ -76,8 +75,8 @@ public class ProjectionAttributeLoader extends AbstractAttributeLoader {
                                    Set<Object> foreignKeys,
                                    QueryContext queryContext) {
         QueryStructure queryStructure = buildTupleQuery(projection, foreignKeys);
-        QueryExecutor queryExecutor = queryContext.getQueryExecutor();
-        List<?> results = queryExecutor.getList(queryStructure);
+        QueryContext newContext = queryContext.newContext(queryStructure);
+        List<?> results = queryContext.getQueryExecutor().getList(newContext);
         buildTupleCacheMap(results);
     }
 

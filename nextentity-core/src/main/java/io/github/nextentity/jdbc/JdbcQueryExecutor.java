@@ -64,19 +64,22 @@ public class JdbcQueryExecutor implements QueryExecutor {
     /// 执行查询并返回结果列表
     ///
     /// @param <R> 查询结果类型
-    /// @param queryStructure 查询结构，包含查询的所有相关信息
+    /// @param context 查询上下文，包含查询的所有相关信息
     /// @return 查询结果列表
     @Override
     @NonNull
-    public <R> List<R> getList(@NonNull QueryStructure queryStructure) {
-        QueryContext context = QueryContext.create(this, queryStructure, metamodel, true);
+    public <R> List<R> getList(@NonNull QueryContext context) {
+        // JDBC 默认展开引用路径
+        context.setExpandReferencePath(true);
+        // 调用 init 完成初始化
+        context.init();
         // 设置拦截器选择器
         context.setInterceptorSelector(interceptorSelector);
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {
             return connectionProvider.execute(connection -> {
-                LockModeType locked = queryStructure.lockType();
+                LockModeType locked = context.getStructure().lockType();
                 if (locked != null && locked != LockModeType.NONE && connection.getAutoCommit()) {
                     throw new TransactionRequiredException();
                 }

@@ -47,11 +47,11 @@ public abstract class QueryContext {
     protected QueryContext() {
     }
 
-    /// 初始化核心字段（无参版本）
+    /// 初始化核心字段
     ///
     /// 在设置参数后调用，完成字段初始化。
     /// 子类应覆盖此方法完成子类特有的初始化，并调用 super.init()。
-    protected void init() {
+    public void init() {
         From from = structure.from();
         this.entityType = from instanceof FromEntity(Class<?> type) ? metamodel.getEntity(type) : null;
     }
@@ -73,35 +73,29 @@ public abstract class QueryContext {
 
     /// 创建 QueryContext 实例
     ///
-    /// 根据查询类型创建对应的子类实例，先设置参数再调用 init 方法。
+    /// 根据查询类型创建对应的子类实例，设置基本参数。
+    /// init() 和 expandReferencePath 由 QueryExecutor.getList 内部设置。
     ///
     /// @param executor          查询执行器
     /// @param structure         查询结构
     /// @param metamodel         元模型
-    /// @param expandObjectAttribute 是否展开对象属性
     /// @return QueryContext 实例
     public static QueryContext create(QueryExecutor executor,
                                       QueryStructure structure,
-                                      Metamodel metamodel,
-                                      boolean expandObjectAttribute) {
+                                      Metamodel metamodel) {
         QueryContext context = createContext(structure);
 
         // 设置通用参数
         context.setQueryExecutor(executor);
         context.setStructure(structure);
         context.setMetamodel(metamodel);
-        context.setExpandReferencePath(expandObjectAttribute);
-
-        // 调用无参 init 方法完成初始化
-        context.init();
 
         return context;
     }
 
     @SuppressWarnings("unchecked")
     public <T> List<T> getResultList() {
-        init();
-        return (List<T>) queryExecutor.getList(structure);
+        return (List<T>) queryExecutor.getList(this);
     }
 
     /// 根据选择类型创建对应的子类实例
@@ -130,7 +124,10 @@ public abstract class QueryContext {
     }
 
     public QueryContext newContext(QueryStructure structure) {
-        return create(queryExecutor, structure, metamodel, expandReferencePath);
+        QueryContext context = create(queryExecutor, structure, metamodel);
+        context.setExpandReferencePath(expandReferencePath);
+        context.init();
+        return context;
     }
 
     public abstract ImmutableArray<SelectItem> getSelectedExpression();

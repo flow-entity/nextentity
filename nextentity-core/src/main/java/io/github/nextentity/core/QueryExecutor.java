@@ -1,6 +1,6 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.jdbc.QueryContext;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
@@ -19,13 +19,16 @@ public interface QueryExecutor {
     ///
     /// 执行查询并返回实体列表结果。
     ///
-    /// 查询结构包含构建和执行 SQL 查询所需的所有信息，
+    /// 查询上下文包含构建和执行 SQL 查询所需的所有信息，
     /// 包括选择、过滤、排序和分页。
     ///
-    /// @param <T> 结果实体类型
-    /// @param queryStructure 要执行的查询结构
-    /// @return 符合查询条件的实体列表
-    /// @throws NullPointerException 如果 queryStructure 为 null
+    /// 实现会在执行前调用 context.init() 完成初始化，
+    /// 并设置 expandReferencePath 等配置。
     ///
-    <T> List<T> getList(@NonNull QueryStructure queryStructure);
+    /// @param <T> 结果实体类型
+    /// @param context 查询上下文
+    /// @return 符合查询条件的实体列表
+    /// @throws NullPointerException 如果 context 为 null
+    ///
+    <T> List<T> getList(@NonNull QueryContext context);
 }

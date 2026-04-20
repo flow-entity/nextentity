@@ -23,7 +23,7 @@ public class SelectPrimitiveContext extends QueryContext {
 
     /// 初始化（无参版本）
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         this.expression = selectExpression.expression();
         this.expressions = getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));

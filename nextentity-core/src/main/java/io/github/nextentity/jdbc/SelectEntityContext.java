@@ -6,13 +6,10 @@ import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.SelectEntity;
 import io.github.nextentity.core.expression.Selected;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
-import org.jspecify.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 
 public class SelectEntityContext extends QueryContext {
@@ -24,7 +21,7 @@ public class SelectEntityContext extends QueryContext {
     }
 
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         Selected select = structure.select();
         if (select instanceof SelectEntity selectEntity) {

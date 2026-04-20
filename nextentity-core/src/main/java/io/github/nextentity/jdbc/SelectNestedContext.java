@@ -34,7 +34,7 @@ public class SelectNestedContext extends QueryContext {
 
     /// 初始化（无参版本）
     @Override
-    protected void init() {
+    public void init() {
         super.init();
 
         // 为每个子选择创建对应的 Context
@@ -54,7 +54,10 @@ public class SelectNestedContext extends QueryContext {
 
     /// 创建子选择的 Context
     private QueryContext createSubContext(Selected selected) {
-        return create(queryExecutor, structure.select(selected), metamodel, expandReferencePath);
+        QueryContext context = create(queryExecutor, structure.select(selected), metamodel);
+        context.setExpandReferencePath(expandReferencePath);
+        context.init();
+        return context;
     }
 
     @Override

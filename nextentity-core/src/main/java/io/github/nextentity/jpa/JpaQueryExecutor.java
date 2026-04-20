@@ -54,17 +54,21 @@ public class JpaQueryExecutor implements QueryExecutor {
     }
 
     @Override
-    public <T> List<T> getList(@NonNull QueryStructure queryStructure) {
+    public <T> List<T> getList(@NonNull QueryContext context) {
+        // JPA 默认不展开引用路径
+        context.setExpandReferencePath(false);
+        // 调用 init 完成初始化
+        context.init();
+        QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
         if (config.nativeSubqueries() && requiredNativeQuery(queryStructure)) {
-            return nativeQueryExecutor.getList(queryStructure);
+            return nativeQueryExecutor.getList(context);
         }
         Selected selected = queryStructure.select();
         if (selected instanceof SelectEntity) {
             List<?> resultList = getEntityResultList(queryStructure);
             return TypeCastUtil.cast(resultList);
         }
-        QueryContext context = QueryContext.create(this, queryStructure, metamodel, false);
         context.setInterceptorSelector(interceptorSelector);
         List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
         List<Object> result = objectsList.stream()

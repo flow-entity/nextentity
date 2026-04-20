@@ -391,7 +391,7 @@ class WhereImplTest {
 
             // then
             verify(queryExecutor).getList(argThat(structure ->
-                    structure.lockType() == LockModeType.PESSIMISTIC_WRITE));
+                    structure.getStructure().lockType() == LockModeType.PESSIMISTIC_WRITE));
         }
     }
 
@@ -444,7 +444,7 @@ class WhereImplTest {
 
             // then
             verify(queryExecutor).<Employee>getList(argThat(structure ->
-                    structure.limit() != null && structure.limit() == 1));
+                    structure.getStructure().limit() != null && structure.getStructure().limit() == 1));
         }
 
 ///
@@ -461,7 +461,7 @@ class WhereImplTest {
 
             // then
             verify(queryExecutor).<Employee>getList(argThat(structure ->
-                    structure.offset() != null && structure.offset() == 10));
+                    structure.getStructure().offset() != null && structure.getStructure().offset() == 10));
         }
     }
 

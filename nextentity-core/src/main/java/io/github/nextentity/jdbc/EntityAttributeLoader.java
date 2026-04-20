@@ -1,6 +1,5 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
@@ -36,8 +35,8 @@ public class EntityAttributeLoader extends AbstractAttributeLoader {
         EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
 
         QueryStructure queryStructure = buildBatchQuery(targetEntity, foreignKeys);
-        QueryExecutor queryExecutor = queryContext.getQueryExecutor();
-        List<?> results = queryExecutor.getList(queryStructure);
+        QueryContext newContext = queryContext.newContext(queryStructure);
+        List<?> results = queryContext.getQueryExecutor().getList(newContext);
 
         buildCacheMap(targetAttribute, results);
     }

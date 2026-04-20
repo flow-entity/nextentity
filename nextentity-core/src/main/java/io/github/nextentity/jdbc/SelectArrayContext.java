@@ -24,7 +24,7 @@ public class SelectArrayContext extends QueryContext {
 
     /// 初始化（无参版本）
     @Override
-    protected void init() {
+    public void init() {
         super.init();
         this.selectExpressionItems = selectExpressions.items().stream()
                 .map(it -> it instanceof PathNode pathExpression
