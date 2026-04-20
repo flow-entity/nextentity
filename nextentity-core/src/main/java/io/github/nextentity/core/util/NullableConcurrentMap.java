@@ -21,8 +21,7 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     @Serial
     private static final long serialVersionUID = 8763780967753881415L;
 
-    private static final Object NULL_KEY = new Object();
-    private static final Object NULL_VALUE = new Object();
+    private static final Object NULL = new Object();
 
     private final ConcurrentHashMap<Object, Object> target;
 
@@ -40,7 +39,7 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     }
 
     public static boolean isNull(Object result) {
-        return result == NULL_VALUE || result == null;
+        return result == NULL || result == null;
     }
 
     @Override
@@ -56,11 +55,6 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     @Override
     public V get(Object key) {
         return unwrapValue(target.get(wrapKey(key)));
-    }
-
-    /// 返回原始的（可能被哨兵值包装的）值，不进行解包。
-    public Object getRaw(K key) {
-        return target.get(wrapKey(key));
     }
 
     @Override
@@ -284,8 +278,8 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
                 }
                 continue;
             }
-            if (current == NULL_VALUE) {
-                if (target.replace(wrappedKey, NULL_VALUE, wrappedValue)) {
+            if (current == NULL) {
+                if (target.replace(wrappedKey, NULL, wrappedValue)) {
                     return null;
                 }
                 continue;
@@ -329,7 +323,7 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     public V computeIfAbsent(K key, @NonNull Function<? super K, ? extends V> mappingFunction) {
         Object wrappedKey = wrapKey(key);
         Object raw = target.compute(wrappedKey, (_, current) -> {
-            if (current != null && current != NULL_VALUE) {
+            if (current != null && current != NULL) {
                 return current;
             }
             V newValue = mappingFunction.apply(key);
@@ -345,7 +339,7 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     public V computeIfPresent(K key, @NonNull BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
         Object wrappedKey = wrapKey(key);
         Object raw = target.compute(wrappedKey, (_, current) -> {
-            if (current == null || current == NULL_VALUE) {
+            if (current == null || current == NULL) {
                 return current;
             }
             V newValue = remappingFunction.apply(key, unwrapValue(current));
@@ -371,12 +365,12 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
         Object wrappedValue = wrapValue(value);
         while (true) {
             Object current = target.get(wrappedKey);
-            if (current == null || current == NULL_VALUE) {
+            if (current == null || current == NULL) {
                 if (current == null) {
                     if (target.putIfAbsent(wrappedKey, wrappedValue) == null) {
                         return value;
                     }
-                } else if (target.replace(wrappedKey, NULL_VALUE, wrappedValue)) {
+                } else if (target.replace(wrappedKey, NULL, wrappedValue)) {
                     return value;
                 }
                 continue;
@@ -397,26 +391,24 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     }
 
     @SuppressWarnings("unchecked")
-    public V unwrap(Object value) {
-        return value == NULL_VALUE ? null : (V) value;
+    private <T> T unwrap(Object value) {
+        return value == NULL ? null : (T) value;
     }
 
     private static Object wrapKey(Object key) {
-        return key == null ? NULL_KEY : key;
+        return key == null ? NULL : key;
     }
 
     private static Object wrapValue(Object value) {
-        return value == null ? NULL_VALUE : value;
+        return value == null ? NULL : value;
     }
 
-    @SuppressWarnings("unchecked")
     private K unwrapKey(Object key) {
-        return key == NULL_KEY ? null : (K) key;
+        return unwrap(key);
     }
 
-    @SuppressWarnings("unchecked")
     private V unwrapValue(Object value) {
-        return value == NULL_VALUE ? null : (V) value;
+        return unwrap(value);
     }
 
     private final class EntryView implements Entry<K, V> {

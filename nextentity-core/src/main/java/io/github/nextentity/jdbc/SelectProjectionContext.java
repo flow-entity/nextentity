@@ -87,15 +87,15 @@ public class SelectProjectionContext extends QueryContext {
     /// 构建支持懒加载属性的 Interface 代理对象
     private Object constructInterfaceSchemaWithLazy(Arguments arguments) {
         ProjectionSchema schema = projection;
-        NullableConcurrentMap<Method, Object> data = collectResultMap(arguments);
+        Map<Method, Object> data = collectResultMap(arguments);
         return ReflectUtil.newProxyInstance(schema.type(), data);
     }
 
-    public NullableConcurrentMap<Method, Object> collectResultMap(Arguments arguments) {
+    public Map<Method, Object> collectResultMap(Arguments arguments) {
         ProjectionSchema schema = projection;
         SchemaAttributePaths paths = schemaAttributePaths;
         // 直接使用父类方法构建 EAGER 属性数据
-        NullableConcurrentMap<Method, Object> data = new NullableConcurrentMap<>();
+        Map<Method, Object> data = new NullableConcurrentMap<>();
         for (Attribute attr : schema.getAttributes()) {
             // 检查是否是 LAZY 属性，如果是则跳过
             if (attr instanceof ProjectionSchemaAttribute schemaAttr

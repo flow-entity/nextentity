@@ -2,11 +2,11 @@ package io.github.nextentity.core.interceptor;
 
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.core.util.NullableConcurrentMap;
 import io.github.nextentity.jdbc.Arguments;
 import io.github.nextentity.jdbc.QueryContext;
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /// JDK 代理拦截器 - 为 interface 类型创建代理实例
 ///
@@ -51,7 +51,7 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
         if (!supports(context)) {
             throw new UnsupportedOperationException("JdkProxyInterceptor supports only interface projection types with lazy attributes");
         }
-        NullableConcurrentMap<Method, Object> resultMap = context.collectResultMap(arguments);
+        Map<Method, Object> resultMap = context.collectResultMap(arguments);
         Schema schema = context.getSchema();
         if (schema == null) {
             return null;

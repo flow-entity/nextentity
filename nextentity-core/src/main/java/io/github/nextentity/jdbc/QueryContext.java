@@ -255,18 +255,18 @@ public abstract class QueryContext {
         }
     }
 
-    public NullableConcurrentMap<Method, Object> collectResultMap(Arguments arguments) {
+    public Map<Method, Object> collectResultMap(Arguments arguments) {
         return collectResultMap(entityType, arguments, getSchemaAttributePaths());
     }
 
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        NullableConcurrentMap<Method, Object> map = collectResultMap(rootSchema, arguments, schemaAttributes);
+        Map<Method, Object> map = collectResultMap(rootSchema, arguments, schemaAttributes);
         if (map == null) return null;
         return ReflectUtil.newProxyInstance(rootSchema.type(), map);
     }
 
-    private NullableConcurrentMap<Method, Object> collectResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        NullableConcurrentMap<Method, Object> map = new NullableConcurrentMap<>();
+    private Map<Method, Object> collectResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        Map<Method, Object> map = new NullableConcurrentMap<>();
         for (Attribute attribute : rootSchema.getAttributes()) {
             if (attribute instanceof Schema schema) {
                 var schemaAttributePaths = schemaAttributes == null ? null : schemaAttributes.get(attribute.name());

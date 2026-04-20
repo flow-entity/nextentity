@@ -27,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 /// 10. compute 系列（computeIfAbsent/computeIfPresent/compute/merge）
 /// 11. 默认方法（getOrDefault/forEach/replaceAll）
 /// 12. equals/hashCode
-/// 13. unwrap/getRaw
+/// 13. containsKey + get 区分“缺失键”和“映射到 null”
 /// 14. 线程安全性
 class NullableConcurrentMapTest {
 
@@ -911,43 +911,42 @@ class NullableConcurrentMapTest {
         }
     }
 
-    // ─── unwrap / getRaw ───────────────────────────────────────
+    // ─── containsKey + get 语义 ───────────────────────────────────────
 
     @Nested
-    class UnwrapGetRawTests {
+    class ContainsKeyGetTests {
 
         @Test
-        void unwrap_WithNullValueStored_ShouldReturnNull() {
+        void get_WithNullValueStored_ShouldReturnNullAndContainsKeyTrue() {
             map.put("key", null);
-            Object raw = map.getRaw("key");
-            // raw should be the NULL sentinel, not Java null
-            assertThat(raw).isNotNull();
-            assertThat(map.unwrap(raw)).isNull();
+            assertThat(map.containsKey("key")).isTrue();
+            assertThat(map.get("key")).isNull();
         }
 
         @Test
-        void unwrap_WithNormalValue_ShouldReturnValue() {
+        void get_WithNormalValue_ShouldReturnValueAndContainsKeyTrue() {
             map.put("key", "value");
-            Object raw = map.getRaw("key");
-            assertThat(map.unwrap(raw)).isEqualTo("value");
+            assertThat(map.containsKey("key")).isTrue();
+            assertThat(map.get("key")).isEqualTo("value");
         }
 
         @Test
-        void getRaw_WithNullKey_ShouldReturnSentinel() {
+        void get_WithNullKeyMappedToNull_ShouldReturnNullAndContainsKeyTrue() {
             map.put(null, null);
-            Object raw = map.getRaw(null);
-            assertThat(raw).isNotNull();
-            assertThat(map.unwrap(raw)).isNull();
+            assertThat(map.containsKey(null)).isTrue();
+            assertThat(map.get(null)).isNull();
         }
 
         @Test
-        void getRaw_WithMissingKey_ShouldReturnNull() {
-            assertThat(map.getRaw("missing")).isNull();
+        void get_WithMissingKey_ShouldReturnNullAndContainsKeyFalse() {
+            assertThat(map.containsKey("missing")).isFalse();
+            assertThat(map.get("missing")).isNull();
         }
 
         @Test
-        void getRaw_WithNullKeyMissing_ShouldReturnNull() {
-            assertThat(map.getRaw(null)).isNull();
+        void get_WithNullKeyMissing_ShouldReturnNullAndContainsKeyFalse() {
+            assertThat(map.containsKey(null)).isFalse();
+            assertThat(map.get(null)).isNull();
         }
     }
 

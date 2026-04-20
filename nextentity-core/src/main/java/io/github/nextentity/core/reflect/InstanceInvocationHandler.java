@@ -1,31 +1,30 @@
 package io.github.nextentity.core.reflect;
 
-import io.github.nextentity.core.util.NullableConcurrentMap;
-
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Map;
 import java.util.Objects;
 
 public final class InstanceInvocationHandler implements InvocationHandler {
 
     private final Class<?> resultType;
-    private final NullableConcurrentMap<Method, Object> data;
+    private final Map<Method, Object> data;
 
-    InstanceInvocationHandler(Class<?> resultType, NullableConcurrentMap<Method, Object> data) {
+    InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data) {
         this.resultType = resultType;
         this.data = data;
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        Object result = data.getRaw(method);
-        if (result != null) {
+        if (data.containsKey(method)) {
+            Object result = data.get(method);
             if (result instanceof AttributeLoader loader) {
                 result = loader.load();
                 data.replace(method, loader, result);
             }
-            return data.unwrap(result);
+            return result;
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);

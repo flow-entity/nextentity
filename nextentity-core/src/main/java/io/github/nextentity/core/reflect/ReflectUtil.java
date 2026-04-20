@@ -124,7 +124,7 @@ public class ReflectUtil {
     /// @param map        方法到实现对象的映射
     /// @return 代理实例
     @NonNull
-    public static Object newProxyInstance(@NonNull Class<?> resultType, NullableConcurrentMap<Method, Object> map) {
+    public static Object newProxyInstance(@NonNull Class<?> resultType, Map<Method, Object> map) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         Class<?>[] interfaces = {resultType};
         return Proxy.newProxyInstance(classLoader, interfaces, new InstanceInvocationHandler(resultType, map));
