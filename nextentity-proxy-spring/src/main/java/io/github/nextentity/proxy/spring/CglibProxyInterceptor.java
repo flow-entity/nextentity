@@ -61,8 +61,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     @Override
     public Object intercept(QueryContext context, Arguments arguments) {
         if (!supports(context)) {
-            // TODO 改进异常类和消息
-            throw new IllegalStateException("JdkProxyInterceptor supports only JdkProxyInterceptor");
+            throw new UnsupportedOperationException("CglibProxyInterceptor cannot handle the given QueryContext");
         }
         Schema schema = context.getSchema();
         if (schema == null) {
@@ -87,7 +86,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     /// 创建 CGLIB 代理
     @Nullable
     protected Object createCglibProxy(QueryContext context, Schema schema, Arguments arguments) {
-        ResultMap map = context.collecteResultMap(arguments);
+        ResultMap map = context.collectResultMap(arguments);
         if (map.isEmpty()) {
             return null;
         }

@@ -86,11 +86,11 @@ public class SelectProjectionContext extends QueryContext {
     /// 构建支持懒加载属性的 Interface 代理对象
     private Object constructInterfaceSchemaWithLazy(Arguments arguments) {
         ProjectionSchema schema = projection;
-        ResultMap data = collecteResultMap(arguments);
+        ResultMap data = collectResultMap(arguments);
         return ReflectUtil.newProxyInstance(schema.type(), data);
     }
 
-    public ResultMap collecteResultMap(Arguments arguments) {
+    public ResultMap collectResultMap(Arguments arguments) {
         ProjectionSchema schema = projection;
         SchemaAttributePaths paths = schemaAttributePaths;
         // 直接使用父类方法构建 EAGER 属性数据

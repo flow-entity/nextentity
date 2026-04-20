@@ -34,11 +34,6 @@ public final class InstanceInvocationHandler implements InvocationHandler {
         if (method.isDefault()) {
             return ReflectUtil.invokeDefaultMethod(proxy, method, args);
         }
-        for (Method m : data.keySet()) {
-            if (m.getName().equals(method.getName())) {
-                System.out.println(m.equals(method));
-            }
-        }
         throw new AbstractMethodError(method.toString());
     }
 

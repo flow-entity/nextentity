@@ -254,17 +254,17 @@ public abstract class QueryContext {
         }
     }
 
-    public ResultMap collecteResultMap(Arguments arguments) {
-        return collecteResultMap(entityType, arguments, getSchemaAttributePaths());
+    public ResultMap collectResultMap(Arguments arguments) {
+        return collectResultMap(entityType, arguments, getSchemaAttributePaths());
     }
 
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        ResultMap map = collecteResultMap(rootSchema, arguments, schemaAttributes);
+        ResultMap map = collectResultMap(rootSchema, arguments, schemaAttributes);
         if (map == null) return null;
         return ReflectUtil.newProxyInstance(rootSchema.type(), map);
     }
 
-    private ResultMap collecteResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+    private ResultMap collectResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         ResultMap map = new ResultMap();
         for (Attribute attribute : rootSchema.getAttributes()) {
             if (attribute instanceof Schema schema) {

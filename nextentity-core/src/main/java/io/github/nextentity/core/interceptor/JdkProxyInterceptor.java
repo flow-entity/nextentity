@@ -47,10 +47,9 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     @Override
     public Object intercept(QueryContext context, Arguments arguments) {
         if (!supports(context)) {
-            // TODO 改进异常类和消息
-            throw new IllegalStateException("JdkProxyInterceptor supports only JdkProxyInterceptor");
+            throw new UnsupportedOperationException("JdkProxyInterceptor supports only interface projection types with lazy attributes");
         }
-        ResultMap resultMap = context.collecteResultMap(arguments);
+        ResultMap resultMap = context.collectResultMap(arguments);
         Schema schema = context.getSchema();
         if (schema == null) {
             return null;
