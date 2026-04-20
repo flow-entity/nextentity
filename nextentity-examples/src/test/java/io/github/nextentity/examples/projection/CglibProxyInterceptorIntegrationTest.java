@@ -6,7 +6,6 @@ import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.integration.BaseIntegrationTest;
 import io.github.nextentity.proxy.spring.CglibProxyInterceptor;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -99,7 +98,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影使用 CGLIB Proxy")
         void classProjectionUsesCglibProxy() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -115,7 +113,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("多属性 Class 投影使用 CGLIB Proxy")
         void multiAttributeClassProjectionUsesCglibProxy() {
             List<EmployeeDetailDto> results = employeeRepository.query()
@@ -161,7 +158,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影延迟加载正常工作")
         void classProjectionLazyLoadingWorks() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -183,7 +179,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("多延迟加载属性批量加载")
         void multipleLazyAttributesBatchLoading() {
             List<EmployeeDetailDto> results = employeeRepository.query()
@@ -215,7 +210,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("延迟加载避免 N+1 问题")
         void lazyLoadingAvoidsN1Problem() {
             // 获取所有活跃员工
@@ -255,7 +249,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
     class BasicAttributesTests {
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影基本属性正确映射")
         void classProjectionBasicAttributesCorrectlyMapped() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -272,7 +265,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("多属性 Class 投影所有属性正确映射")
         void multiAttributeClassProjectionAllAttributesMapped() {
             List<EmployeeDetailDto> results = employeeRepository.query()
@@ -298,7 +290,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
     class QueryConditionsTests {
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影支持复杂查询条件")
         void classProjectionSupportsComplexConditions() {
             // 查询活跃且薪资大于 60000 的员工
@@ -319,7 +310,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影支持排序")
         void classProjectionSupportsSorting() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -341,7 +331,6 @@ class CglibProxyInterceptorIntegrationTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影支持分页")
         void classProjectionSupportsPagination() {
             List<EmployeeInfoClass> page1 = employeeRepository.query()

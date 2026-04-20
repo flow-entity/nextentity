@@ -77,21 +77,27 @@ public class SelectProjectionContext extends QueryContext {
     @Override
     public Object doConstruct(Arguments arguments) {
         if (projection.type().isInterface()) {
-            return constructInterfaceSchemaWithLazy(projection, arguments, schemaAttributePaths);
+            return constructInterfaceSchemaWithLazy(arguments);
         }
         return constructSchema(projection, arguments, schemaAttributePaths);
     }
 
     /// 构建支持懒加载属性的 Interface 代理对象
-    private Object constructInterfaceSchemaWithLazy(ProjectionSchema schema,
-                                                    Arguments arguments,
-                                                    SchemaAttributePaths paths) {
+    private Object constructInterfaceSchemaWithLazy(Arguments arguments) {
+        ProjectionSchema schema = projection;
+        ResultMap data = collecteResultMap(arguments);
+        return ReflectUtil.newProxyInstance(schema.type(), data);
+    }
+
+    public ResultMap collecteResultMap(Arguments arguments) {
+        ProjectionSchema schema = projection;
+        SchemaAttributePaths paths = schemaAttributePaths;
         // 直接使用父类方法构建 EAGER 属性数据
         ResultMap data = new ResultMap();
         for (Attribute attr : schema.getAttributes()) {
             // 检查是否是 LAZY 属性，如果是则跳过
             if (attr instanceof ProjectionSchemaAttribute schemaAttr
-                    && schemaAttr.fetchType() == FetchType.LAZY) {
+                && schemaAttr.fetchType() == FetchType.LAZY) {
                 Object foreignKey = getSimpleAttributeValue(arguments, attr);
                 data.put(attr.getter(), createLazyLoader(schemaAttr, foreignKey));
                 continue;  // LAZY 属性不处理，由 lazyMap 处理
@@ -107,8 +113,7 @@ public class SelectProjectionContext extends QueryContext {
                 }
             }
         }
-
-        return ReflectUtil.newProxyInstance(schema.type(), data);
+        return data;
     }
 
     /// 创建懒加载器（首次 load 时遍历 results 批量加载）
@@ -189,4 +194,8 @@ public class SelectProjectionContext extends QueryContext {
                 });
     }
 
+    @Override
+    public SchemaAttributePaths getSchemaAttributePaths() {
+        return schemaAttributePaths;
+    }
 }

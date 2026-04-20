@@ -3,7 +3,6 @@ package io.github.nextentity.examples.projection;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.integration.BaseIntegrationTest;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -82,7 +81,6 @@ class ProjectionTypeTest extends BaseIntegrationTest {
     class ClassProjectionTests {
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影使用 CGLIB 创建代理")
         void classProjectionUsesCglibProxy() {
             // When
@@ -105,7 +103,6 @@ class ProjectionTypeTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影延迟加载正常工作")
         void classProjectionLazyLoadingWorks() {
             // When

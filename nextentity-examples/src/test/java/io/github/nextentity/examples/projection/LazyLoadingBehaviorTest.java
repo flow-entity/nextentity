@@ -128,7 +128,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
     class ClassProjectionLazyLoadingTests {
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Class 投影代理验证")
         void classProjectionProxyVerification() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -146,7 +145,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("首次访问触发批量加载")
         void firstAccessTriggerBatchLoading() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -166,7 +164,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("相同部门 ID 从缓存返回")
         void sameDepartmentIdFromCache() {
             Long engineeringDeptId = TestDataFactory.getDeptIdStart() + 1;
@@ -189,7 +186,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("多属性投影延迟加载正常工作")
         void multiAttributeProjectionLazyLoadingWorks() {
             List<EmployeeDetailDto> results = employeeRepository.query()
@@ -219,7 +215,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
     class LazyLoadingEdgeCaseTests {
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("空结果集正确处理")
         void emptyResultSetHandling() {
             // 使用不存在员工姓名查询
@@ -232,7 +227,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("单条结果延迟加载正常")
         void singleResultLazyLoadingWorks() {
             List<EmployeeInfoClass> results = employeeRepository.query()
@@ -251,7 +245,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("大量数据批量加载性能")
         void largeDataSetBatchLoadingPerformance() {
             // 获取所有活跃员工（测试数据约 10 人）
@@ -283,7 +276,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
     class ProjectionTypeComparisonTests {
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("Interface 和 Class 投影返回相同数据")
         void interfaceAndClassProjectionReturnSameData() {
             // Interface 投影
@@ -318,7 +310,6 @@ class LazyLoadingBehaviorTest extends BaseIntegrationTest {
         }
 
         @Test
-        @Disabled("BUG: JpaArguments 数组越界 - 框架 bug 待修复")
         @DisplayName("不同代理类型实现相同功能")
         void differentProxyTypesSameFunctionality() {
             List<EmployeeInfoInterface> interfaceResults = employeeRepository.query()

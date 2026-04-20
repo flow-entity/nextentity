@@ -5,11 +5,9 @@ import io.github.nextentity.core.interceptor.LazyLoadSupport;
 import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.ResultMap;
-import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.jdbc.Arguments;
 import io.github.nextentity.jdbc.QueryContext;
-import io.github.nextentity.jdbc.SchemaAttributePaths;
 import org.jspecify.annotations.Nullable;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -21,7 +19,6 @@ import java.lang.reflect.Modifier;
 /// 使用 Spring 内置的 CGLIB 创建代理，支持延迟加载属性。
 /// 只处理普通类（非 interface、非 record、非 final）。
 ///
-/// @see QueryContext#constructWithInterceptor(Arguments)
 public class CglibProxyInterceptor implements ConstructInterceptor {
 
     /// 默认优先级
@@ -61,6 +58,10 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
 
     @Override
     public Object intercept(QueryContext context, Arguments arguments) {
+        if (!supports(context)) {
+            // TODO 改进异常类和消息
+            throw new IllegalStateException("JdkProxyInterceptor supports only JdkProxyInterceptor");
+        }
         Schema schema = context.getSchema();
         if (schema == null) {
             return null;
@@ -84,20 +85,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     /// 创建 CGLIB 代理
     @Nullable
     protected Object createCglibProxy(QueryContext context, Schema schema, Arguments arguments) {
-        ResultMap map = new ResultMap();
-        SchemaAttributePaths paths = getSchemaAttributePaths(context);
-        for (Attribute attribute : schema.getAttributes()) {
-            if (attribute instanceof Schema nestedSchema) {
-                SchemaAttributePaths subPaths = paths != null ? paths.get(attribute.name()) : null;
-                if (subPaths != null) {
-                    Object value = context.buildSchema(nestedSchema, arguments, subPaths);
-                    map.put(attribute.getter(), value);
-                }
-            } else {
-                Object value = context.getAttributeValue(arguments, attribute);
-                map.put(attribute.getter(), value);
-            }
-        }
+        ResultMap map = context.collecteResultMap(arguments);
         if (map.isEmpty()) {
             return null;
         }
@@ -130,13 +118,6 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
             // 调用父类方法（默认值）
             return methodProxy.invokeSuper(proxy, args);
         };
-    }
-
-    /// 获取 SchemaAttributePaths
-    @Nullable
-    protected SchemaAttributePaths getSchemaAttributePaths(QueryContext context) {
-        // 默认返回 null，子类可覆盖提供具体路径
-        return null;
     }
 
     @Override

@@ -252,11 +252,21 @@ public abstract class QueryContext {
         }
     }
 
+    public ResultMap collecteResultMap(Arguments arguments) {
+        return collecteResultMap(entityType, arguments, getSchemaAttributePaths());
+    }
+
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+        ResultMap map = collecteResultMap(rootSchema, arguments, schemaAttributes);
+        if (map == null) return null;
+        return ReflectUtil.newProxyInstance(rootSchema.type(), map);
+    }
+
+    private ResultMap collecteResultMap(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         ResultMap map = new ResultMap();
         for (Attribute attribute : rootSchema.getAttributes()) {
             if (attribute instanceof Schema schema) {
-                SchemaAttributePaths schemaAttributePaths = schemaAttributes.get(attribute.name());
+                var schemaAttributePaths = schemaAttributes == null ? null : schemaAttributes.get(attribute.name());
                 if (schemaAttributePaths != null) {
                     Object value = constructSchema(schema, arguments, schemaAttributePaths);
                     map.put(attribute.getter(), value);
@@ -275,7 +285,7 @@ public abstract class QueryContext {
         if (map.isEmpty()) {
             return null;
         }
-        return ReflectUtil.newProxyInstance(rootSchema.type(), map);
+        return map;
     }
 
     protected Object constructSimpleSchema(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
@@ -447,5 +457,9 @@ public abstract class QueryContext {
     /// @param results 查询结果列表
     public void setResults(List<?> results) {
         this.results = results;
+    }
+
+    public  SchemaAttributePaths getSchemaAttributePaths(){
+        return null;
     }
 }
