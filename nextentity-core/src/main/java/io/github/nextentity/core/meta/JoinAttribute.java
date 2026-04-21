@@ -1,12 +1,13 @@
 package io.github.nextentity.core.meta;
 
+import io.github.nextentity.core.reflect.schema.Attribute;
 import jakarta.persistence.FetchType;
 
 /// 可懒加载属性标记接口。
 ///
 /// 由 {@link EntitySchemaAttribute} 和 {@link ProjectionSchemaAttribute} 共同实现，
 /// 用于统一判断属性是否需要延迟加载。
-public sealed interface JoinAttribute permits EntitySchemaAttribute, ProjectionJoinAttribute, ProjectionSchemaAttribute {
+public sealed interface JoinAttribute extends Attribute permits EntitySchemaAttribute, ProjectionJoinAttribute, ProjectionSchemaAttribute {
 
 
     /// 获取此关联的连接表名。
