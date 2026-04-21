@@ -1,8 +1,6 @@
 package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.meta.*;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import jakarta.persistence.FetchType;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,23 +22,23 @@ public final class ProjectionAttributeFactory {
         return switch (original) {
             case ProjectionBasicAttribute basic -> new DefaultProjectionBasicAttribute(
                     declareBy,
-                    basic.source(),
+                    basic.getEntityAttribute(),
                     basic,
                     ordinal.getAndIncrement());
             case ProjectionSchemaAttribute schema -> new DefaultProjectionSchemaAttribute(
                     declareBy,
-                    schema.source(),
+                    schema.getEntityAttribute(),
                     schema,
                     metamodel,
                     ordinal.getAndIncrement());
             case ProjectionJoinAttribute join -> new DefaultProjectionJoinAttribute(
                     declareBy,
-                    join.sourceAttribute(),
-                    join.targetAttribute(),
-                    join.target(),
+                    join.getSourceAttribute(),
+                    join.getTargetAttribute(),
+                    join.getTargetEntityType(),
                     metamodel,
                     ordinal.getAndIncrement(),
-                    join.fetchType(),
+                    join.getFetchType(),
                     join);
         };
     }

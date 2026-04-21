@@ -1,7 +1,6 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
@@ -90,7 +89,7 @@ public class SelectProjectionContext extends QueryContext {
         Map<Method, Object> data = new NullableConcurrentMap<>();
         for (Attribute attr : schema.getAttributes()) {
             if (attr instanceof ProjectionSchemaAttribute schemaAttr
-                && schemaAttr.fetchType() == FetchType.LAZY) {
+                && schemaAttr.getFetchType() == FetchType.LAZY) {
                 Object foreignKey = getSimpleAttributeValue(arguments, attr);
                 data.put(attr.getter(), createLazyLoader(schemaAttr, foreignKey));
                 continue;
@@ -126,11 +125,11 @@ public class SelectProjectionContext extends QueryContext {
         List<SelectItem> eagerList = new ArrayList<>();
         for (ProjectionAttribute attr : schema.getAttributes()) {
             if (attr instanceof ProjectionBasicAttribute basicAttr) {
-                eagerList.add(basicAttr.source());
+                eagerList.add(basicAttr.getEntityAttribute());
             } else if (attr instanceof ProjectionSchemaAttribute schemaAttr) {
-                FetchType fetchType = schemaAttr.fetchType();
+                FetchType fetchType = schemaAttr.getFetchType();
                 if (fetchType == FetchType.LAZY) {
-                    eagerList.add(schemaAttr.source().sourceAttribute());
+                    eagerList.add(schemaAttr.getEntityAttribute().getSourceAttribute());
                 } else {
                     SchemaAttributePaths subPaths = paths.get(attr.name());
                     if (subPaths != null) {
@@ -146,9 +145,9 @@ public class SelectProjectionContext extends QueryContext {
         return schemaAttr.getAttributes().stream()
                 .flatMap(attr -> {
                     if (attr instanceof ProjectionBasicAttribute basicAttr) {
-                        return Stream.of(basicAttr.source());
+                        return Stream.of(basicAttr.getEntityAttribute());
                     } else if (attr instanceof ProjectionSchemaAttribute nestedSchemaAttr) {
-                        if (nestedSchemaAttr.fetchType() == FetchType.LAZY) {
+                        if (nestedSchemaAttr.getFetchType() == FetchType.LAZY) {
                             return Stream.empty();
                         }
                         SchemaAttributePaths subPaths = paths.get(attr.name());

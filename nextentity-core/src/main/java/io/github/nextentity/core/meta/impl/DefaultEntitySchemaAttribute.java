@@ -3,10 +3,7 @@ package io.github.nextentity.core.meta.impl;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.PathNode;
-import io.github.nextentity.core.meta.EntityAttribute;
-import io.github.nextentity.core.meta.EntityBasicAttribute;
-import io.github.nextentity.core.meta.EntitySchema;
-import io.github.nextentity.core.meta.EntitySchemaAttribute;
+import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
@@ -58,17 +55,17 @@ public class DefaultEntitySchemaAttribute
     }
 
     @Override
-    public EntitySchema target() {
+    public EntityType getTargetEntityType() {
         return this;
     }
 
     @Override
-    public EntityBasicAttribute sourceAttribute() {
+    public EntityBasicAttribute getSourceAttribute() {
         return this.getAttributesSupplier().get().sourceAttribute();
     }
 
     @Override
-    public EntityBasicAttribute targetAttribute() {
+    public EntityBasicAttribute getTargetAttribute() {
         return this.getAttributesSupplier().get().targetAttribute();
     }
 
@@ -131,7 +128,7 @@ public class DefaultEntitySchemaAttribute
     }
 
     @Override
-    public FetchType fetchType() {
+    public FetchType getFetchType() {
         return resolver.getFetchType(attribute);
     }
 }

@@ -370,7 +370,7 @@ public abstract class QueryContext {
         if (attribute instanceof EntityBasicAttribute expression) {
             return Stream.of(expression);
         } else if (attribute instanceof ProjectionBasicAttribute expression) {
-            return Stream.of(expression.source());
+            return Stream.of(expression.getEntityAttribute());
         } else if (attribute instanceof Schema schema) {
             SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());
             if (sub != null) {

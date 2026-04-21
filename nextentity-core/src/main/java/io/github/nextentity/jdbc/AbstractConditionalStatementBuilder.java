@@ -105,7 +105,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     public void appendJoinTable(String delimiter, SqlDialect.JoinTableInfo tableInfo) {
         sql.append(delimiter);
         if (tableInfo instanceof JoinTableInfoImpl impl) {
-            appendTable(sql, impl.attribute.target());
+            appendTable(sql, impl.attribute.getTargetEntityType());
             appendTableAlias(impl.index);
         } else {
             sql.append(tableInfo.tableName()).append(" ").append(tableInfo.tableAlias());
@@ -134,9 +134,9 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             sb.append(fromAlias);
         }
         if (k.isObject()) {
-            sb.append(".").append(k.sourceAttribute().columnName()).append("=");
+            sb.append(".").append(k.getSourceAttribute().columnName()).append("=");
             appendTableAliasTo(sb, v);
-            sb.append(".").append(k.targetAttribute().columnName());
+            sb.append(".").append(k.getTargetAttribute().columnName());
         } else {
             throw new IllegalStateException();
         }
@@ -171,7 +171,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             EntitySchemaAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(delimiter);
-            appendTable(sql, k.target());
+            appendTable(sql, k.getTargetEntityType());
             appendTableAlias(v);
             delimiter = ", ";
         }
@@ -183,7 +183,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             EntitySchemaAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(LEFT_JOIN);
-            appendTable(sql, k.target());
+            appendTable(sql, k.getTargetEntityType());
             appendTableAlias(v);
             sql.append(ON);
             appendJoinConditionTo(sql, k, v);
@@ -211,7 +211,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         @Override
         public String tableName() {
             StringBuilder sb = new StringBuilder();
-            appendTable(sb, attribute.target());
+            appendTable(sb, attribute.getTargetEntityType());
             return sb.toString();
         }
 

@@ -53,14 +53,10 @@ public class DefaultProjectionSchema
                 EntityBasicAttribute sourceAttribute = (EntityBasicAttribute) entitySchema.getAttribute(sourceName);
                 EntityType targetEntitySchema = metamodel.getEntity(joinTarget);
                 EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntitySchema.getAttribute(targetName);
-                Class<?> attributeType = attribute.type();
-                MetamodelSchema<?> target = attributeType == joinTarget
-                        ? targetEntitySchema
-                        : targetEntitySchema.getProjection(attributeType);
                 var attr = new DefaultProjectionJoinAttribute(this,
                         sourceAttribute,
                         targetAttribute,
-                        target,
+                        targetEntitySchema,
                         metamodel,
                         ordinal++,
                         resolver.getFetchType(attribute),

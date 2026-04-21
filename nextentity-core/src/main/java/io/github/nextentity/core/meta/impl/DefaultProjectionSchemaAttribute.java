@@ -42,7 +42,7 @@ public class DefaultProjectionSchemaAttribute
         for (ProjectionAttribute projectionAttribute : attributes) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
-                    projectionAttribute.source(),
+                    projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
                     metamodel,
                     ordinal);
@@ -52,7 +52,7 @@ public class DefaultProjectionSchemaAttribute
     }
 
     @Override
-    public EntitySchemaAttribute source() {
+    public EntitySchemaAttribute getEntityAttribute() {
         return source;
     }
 
@@ -77,12 +77,27 @@ public class DefaultProjectionSchemaAttribute
     }
 
     @Override
-    public FetchType fetchType() {
+    public EntityType getTargetEntityType() {
+        return source.getTargetEntityType();
+    }
+
+    @Override
+    public EntityBasicAttribute getSourceAttribute() {
+        return source.getSourceAttribute();
+    }
+
+    @Override
+    public EntityBasicAttribute getTargetAttribute() {
+        return source.getTargetAttribute();
+    }
+
+    @Override
+    public FetchType getFetchType() {
         // 优先级：投影级 @Fetch > source().fetchType() > 全局默认
         FetchType projectionFetch = resolver.getFetchType(attribute);
         if (projectionFetch != null) {
             return projectionFetch;
         }
-        return source().fetchType();
+        return getEntityAttribute().getFetchType();
     }
 }

@@ -23,5 +23,5 @@ public sealed interface ProjectionAttribute
     /// 获取此投影属性对应的实体属性。
     ///
     /// @return 源实体属性
-    EntityAttribute source();
+    EntityAttribute getEntityAttribute();
 }

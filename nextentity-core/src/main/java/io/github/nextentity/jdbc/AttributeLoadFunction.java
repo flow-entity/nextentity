@@ -59,7 +59,7 @@ public abstract class AttributeLoadFunction {
                 .map(LiteralNode::new)
                 .collect(Collectors.toList());
 
-        EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
         PathNode targetPath = targetAttribute.path();
         return targetPath.operate(Operator.IN, literals);
     }

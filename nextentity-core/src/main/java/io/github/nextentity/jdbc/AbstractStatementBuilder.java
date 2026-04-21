@@ -462,7 +462,7 @@ public abstract class AbstractStatementBuilder {
         if (attribute instanceof EntityBasicAttribute eba) {
             columnName = eba.columnName();
         } else if (attribute instanceof EntitySchemaAttribute join) {
-            columnName = join.sourceAttribute().columnName();
+            columnName = join.getSourceAttribute().columnName();
         } else {
             throw new IllegalStateException(
                     "Unsupported entity attribute type '" + attribute.getClass().getName() +
@@ -476,7 +476,7 @@ public abstract class AbstractStatementBuilder {
             EntitySchemaAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(LEFT_JOIN);
-            appendTable(sql, k.target());
+            appendTable(sql, k.getTargetEntityType());
             appendTableAlias(v);
             sql.append(ON);
             appendJoinCondition(k, v);
@@ -499,8 +499,8 @@ public abstract class AbstractStatementBuilder {
             appendFromAlias(sql);
         }
         if (k.isObject()) {
-            EntityBasicAttribute source = k.sourceAttribute();
-            EntityBasicAttribute targeted = k.targetAttribute();
+            EntityBasicAttribute source = k.getSourceAttribute();
+            EntityBasicAttribute targeted = k.getTargetAttribute();
             sql.append(".").append(source.columnName()).append("=");
             appendTableAlias(v);
             String referenced = targeted.columnName();

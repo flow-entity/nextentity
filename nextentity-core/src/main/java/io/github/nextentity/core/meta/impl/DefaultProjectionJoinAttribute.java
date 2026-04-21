@@ -1,6 +1,5 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.Attribute;
@@ -21,13 +20,13 @@ public class DefaultProjectionJoinAttribute
     private final DefaultAttribute attribute;
     private final EntityBasicAttribute sourceAttribute;
     private final EntityBasicAttribute targetAttribute;
-    private final MetamodelSchema<?> target;
+    private final EntityType target;
     private final FetchType fetchType;
 
     public DefaultProjectionJoinAttribute(DefaultProjectionSchema declareBy,
                                           EntityBasicAttribute sourceAttribute,
                                           EntityBasicAttribute targetAttribute,
-                                          MetamodelSchema<?> target,
+                                          EntityType target,
                                           DefaultMetamodel metamodel,
                                           int ordinal,
                                           FetchType fetchType,
@@ -43,22 +42,13 @@ public class DefaultProjectionJoinAttribute
 
     @Override
     protected AttributeSet<ProjectionAttribute> createAttributes() {
-        ProjectionSchema projection;
-        if (target instanceof EntityType entityType) {
-            projection = entityType.getProjection(type());
-        } else if (target instanceof ProjectionSchema schema) {
-            projection = schema;
-        } else {
-            throw new ConfigurationException(
-                    "Unsupported target type for projection join attribute: " +
-                    target.getClass().getName() + ", expected EntityType or ProjectionSchema");
-        }
+        ProjectionSchema projection = target.getProjection(type());
         ArrayList<ProjectionAttribute> result = new ArrayList<>();
         AtomicInteger ordinal = new AtomicInteger();
         for (ProjectionAttribute projectionAttribute : projection.getAttributes()) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
-                    projectionAttribute.source(),
+                    projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
                     metamodel,
                     ordinal);
@@ -68,22 +58,22 @@ public class DefaultProjectionJoinAttribute
     }
 
     @Override
-    public EntityAttribute source() {
+    public EntityAttribute getEntityAttribute() {
         return sourceAttribute;
     }
 
     @Override
-    public MetamodelSchema<?> target() {
+    public EntityType getTargetEntityType() {
         return target;
     }
 
     @Override
-    public EntityBasicAttribute sourceAttribute() {
+    public EntityBasicAttribute getSourceAttribute() {
         return sourceAttribute;
     }
 
     @Override
-    public EntityBasicAttribute targetAttribute() {
+    public EntityBasicAttribute getTargetAttribute() {
         return targetAttribute;
     }
 
@@ -108,7 +98,7 @@ public class DefaultProjectionJoinAttribute
     }
 
     @Override
-    public FetchType fetchType() {
+    public FetchType getFetchType() {
         return fetchType;
     }
 }
