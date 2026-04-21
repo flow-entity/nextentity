@@ -2,6 +2,16 @@ package io.github.nextentity.core.meta;
 
 import io.github.nextentity.core.TypeCastUtil;
 
+/// 实体基本属性接口，表示直接映射到数据库列的简单字段。
+///
+/// 与 {@link EntitySchemaAttribute}（关联属性）不同，基本属性不引用其他实体，
+/// 而是直接对应数据库表中的一个列。例如 {@code String name}、{@code Integer age} 等。
+///
+/// 提供数据库列名、主键/版本标识、值转换、可更新标记等元数据，
+/// 是 SQL 生成和数据映射的核心依据。
+///
+/// @see EntitySchemaAttribute
+/// @see ValueConverter
 public non-sealed interface EntityBasicAttribute extends EntityAttribute {
 
     @Override

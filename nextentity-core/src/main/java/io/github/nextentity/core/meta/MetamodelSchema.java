@@ -5,6 +5,14 @@ import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
+/// 元模型 Schema 基础接口，定义类型安全的属性集合访问。
+///
+/// 是 {@link EntitySchema} 和 {@link ProjectionSchema} 的公共父接口，
+/// 提供属性的集合访问、按名称查找、嵌套路径查找和懒加载检测等通用能力。
+///
+/// @param <T> 属性类型，必须是 {@link Attribute} 的子类型
+/// @see EntitySchema
+/// @see ProjectionSchema
 public interface MetamodelSchema<T extends Attribute> extends Schema {
     /// 获取此模式的所有属性。
     ///
