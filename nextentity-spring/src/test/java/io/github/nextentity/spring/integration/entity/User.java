@@ -1,7 +1,6 @@
 package io.github.nextentity.spring.integration.entity;
 
 import io.github.nextentity.api.Persistable;
-import io.github.nextentity.core.util.Exceptions;
 import jakarta.persistence.*;
 import org.hibernate.Hibernate;
 
@@ -96,7 +95,7 @@ public class User extends EnableOptimisticLock implements Cloneable, Persistable
         try {
             return (User) super.clone();
         } catch (CloneNotSupportedException e) {
-            throw Exceptions.sneakyThrow(e);
+            throw new AssertionError(e);
         }
     }
 

@@ -159,7 +159,7 @@ public class JpaPersistExecutor implements PersistExecutor {
         query.setParameter("ids", ids);
         int updated = query.executeUpdate();
         if (updated != ids.size()) {
-            throw new IllegalStateException("Deleted " + updated + " entities, expected " + list.size());
+            throw new IllegalStateException("Deleted " + updated + " entities, expected " + ids.size());
         }
 
     }

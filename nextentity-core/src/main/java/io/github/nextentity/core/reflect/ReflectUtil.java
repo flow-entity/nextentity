@@ -1,14 +1,8 @@
 package io.github.nextentity.core.reflect;
 
 import io.github.nextentity.core.exception.ReflectiveException;
-import io.github.nextentity.core.util.Exceptions;
-import io.github.nextentity.core.util.NullableConcurrentMap;
 import org.jspecify.annotations.NonNull;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.*;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,35 +29,6 @@ public class ReflectUtil {
             }
         }
         return null;
-    }
-
-    /// 将源对象中非空字段复制到目标对象的空字段中。
-    ///
-    /// @param src    源对象
-    /// @param target 目标对象
-    /// @param type   对象类型
-    /// @param <T>    对象类型
-    public static <T> void copyTargetNullFields(T src, T target, Class<T> type) {
-        try {
-            BeanInfo beanInfo = Introspector.getBeanInfo(type);
-            PropertyDescriptor[] descriptors = beanInfo.getPropertyDescriptors();
-            for (PropertyDescriptor descriptor : descriptors) {
-                Method reader = descriptor.getReadMethod();
-                Method writer = descriptor.getWriteMethod();
-                if (reader != null && writer != null) {
-                    Object tv = reader.invoke(target);
-                    if (tv != null) {
-                        continue;
-                    }
-                    Object sv = reader.invoke(src);
-                    if (sv != null) {
-                        writer.invoke(target, sv);
-                    }
-                }
-            }
-        } catch (IntrospectionException | InvocationTargetException | IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     /// 调用接口的默认方法。
@@ -166,7 +131,7 @@ public class ReflectUtil {
                 setAccessible(method, null);
                 return method.invoke(null);
             } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-                throw Exceptions.sneakyThrow(e);
+                throw new ReflectiveException(e);
             }
         });
         return Array.get(array, ordinal);
@@ -187,7 +152,7 @@ public class ReflectUtil {
             setAccessible(method, null);
             return method.invoke(null, name);
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw Exceptions.sneakyThrow(e);
+            throw new ReflectiveException(e);
         }
     }
 
