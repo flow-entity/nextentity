@@ -1,16 +1,17 @@
 package io.github.nextentity.integration.config;
 
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
-import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.fixtures.TestDataFactory;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
-import io.github.nextentity.meta.jpa.JpaMetamodel;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,9 +43,14 @@ public class IntegrationTestApplication {
         } catch (SQLException e) {
             throw new SqlException(e);
         }
-        Metamodel metamodel = JpaMetamodel.of();
-        SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
-        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        Metamodel metamodel = DefaultMetamodel.of();
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
+        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel,
+                sqlBuilder,
+                connectionProvider,
+                new JdbcResultCollector(),
+                JdbcConfig.DEFAULT,
+                InterceptorSelector.empty());
         PersistExecutor updateExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
             @Override
@@ -68,9 +74,14 @@ public class IntegrationTestApplication {
         } catch (SQLException e) {
             throw new SqlException(e);
         }
-        Metamodel metamodel = JpaMetamodel.of();
+        Metamodel metamodel = DefaultMetamodel.of();
         SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector());
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel,
+                sqlBuilder,
+                connectionProvider,
+                new JdbcResultCollector(),
+                JdbcConfig.DEFAULT,
+                InterceptorSelector.empty());
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
         PersistExecutor updateExecutor = new JpaPersistExecutor(entityManager);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
@@ -174,25 +185,16 @@ public class IntegrationTestApplication {
 
         @Override
         public <T> UpdateSetStep<T> update(Class<T> type) {
+            DefaultMetamodel metamodel = DefaultMetamodel.of();
             PersistDescriptor<T> descriptor = new PersistDescriptor<>() {
                 @Override
-                public PersistExecutor persistExecutor() {
-                    return updateExecutor;
+                public EntityDescriptor<T> entityDescriptor() {
+                    return new SimpleEntityDescriptor<>(metamodel.getEntity(type), type);
                 }
 
                 @Override
-                public Metamodel metamodel() {
-                    return JpaMetamodel.of();
-                }
-
-                @Override
-                public EntityType entityType() {
-                    return JpaMetamodel.of().getEntity(type);
-                }
-
-                @Override
-                public Class<T> entityClass() {
-                    return type;
+                public PersistConfig persistConfig() {
+                    return EntityTemplateFactoryConfig.persistConfig(metamodel, updateExecutor);
                 }
             };
             return new UpdateSetStepImpl<>(descriptor);

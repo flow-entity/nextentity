@@ -1,20 +1,48 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 
 public record EntityTemplateDescriptor<T>(
 
-        PersistExecutor persistExecutor,
+        EntityTemplateFactoryConfig config,
 
-        QueryExecutor queryExecutor,
+        EntityDescriptor<T> descriptor
 
-        PaginationConfig paginationConfig,
+) implements QueryDescriptor<T>, PersistDescriptor<T> {
 
-        Metamodel metamodel,
+    public EntityTemplateDescriptor(EntityTemplateFactoryConfig config, Class<T> clazz) {
+        this(
+                config,
+                new SimpleEntityDescriptor<>(config.metamodel().getEntity(clazz), clazz)
+        );
+    }
 
-        EntityType entityType,
+    @Override
+    public PersistConfig persistConfig() {
+        return config;
+    }
 
-        Class<T> entityClass
-) implements PersistDescriptor<T>, QueryDescriptor<T> {
+    @Override
+    public EntityDescriptor<T> entityDescriptor() {
+        return descriptor;
+    }
+
+    @Override
+    public QueryConfig queryConfig() {
+        return config;
+    }
+
+    public Class<T> entityClass() {
+        return entityDescriptor().entityClass();
+    }
+
+    public Metamodel metamodel() {
+        return queryConfig().metamodel();
+    }
+
+    public EntityType entityType() {
+        return entityDescriptor().entityType();
+    }
 }

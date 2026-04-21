@@ -10,6 +10,7 @@ import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.spring.integration.db.DB;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.entity.User;
@@ -17,6 +18,7 @@ import io.github.nextentity.spring.integration.projection.UserInterface;
 import io.github.nextentity.spring.integration.projection.UserModel;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -401,9 +403,6 @@ public class GenericApiTest {
                 .collect(Collectors.toList());
 
         JsonMapper jsonMapper = new JsonMapper();
-        System.out.println(jsonMapper.writeValueAsString(qList.stream().map(Tuple2::get1)
-                .distinct()
-                .collect(Collectors.toList())));
 
         assertEquals(qList, fList);
 

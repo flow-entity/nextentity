@@ -5,6 +5,7 @@ import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.jdbc.QueryContext;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;
@@ -36,6 +37,11 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     protected WhereImpl(QueryStructure queryStructure, QueryDescriptor<T> descriptor) {
         this.queryStructure = queryStructure;
         this.descriptor = descriptor;
+    }
+
+    /// 创建 QueryContext 辅助方法
+    private QueryContext createContext(QueryStructure structure) {
+        return QueryContext.create(descriptor.queryConfig(), structure);
     }
 
     @Override
@@ -120,7 +126,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public long count() {
-        return descriptor.queryExecutor().<Number>getList(buildCountData()).getFirst().longValue();
+        return createContext(buildCountData()).<Number>getResultList().getFirst().longValue();
     }
 
     @Override
@@ -136,7 +142,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 1,
                 queryStructure.lockType()
         );
-        return !descriptor.queryExecutor().getList(structure).isEmpty();
+        return !createContext(structure).getResultList().isEmpty();
     }
 
     @Override
@@ -152,7 +158,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
                 1,
                 queryStructure.lockType()
         );
-        return !descriptor.queryExecutor().getList(structure).isEmpty();
+        return !createContext(structure).getResultList().isEmpty();
     }
 
     @Override
@@ -162,17 +168,17 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     @Override
     public List<U> list() {
-        return descriptor.queryExecutor().getList(queryStructure);
+        return createContext(queryStructure).getResultList();
     }
 
     @Override
     public List<U> list(int offset, int limit) {
-        return descriptor.queryExecutor().getList(buildPaginatedQueryStructure(offset, limit, true));
+        return createContext(buildPaginatedQueryStructure(offset, limit, true)).getResultList();
     }
 
     @Override
     public U single() {
-        List<U> list = descriptor.queryExecutor().getList(buildPaginatedQueryStructure(0, 2, false));
+        List<U> list = createContext(buildPaginatedQueryStructure(0, 2, false)).getResultList();
         if (list.size() > 1) {
             throw new IllegalStateException("found more than one");
         }

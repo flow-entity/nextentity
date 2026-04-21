@@ -1,6 +1,6 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.core.PersistDescriptor;
 import io.github.nextentity.core.PersistExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.expression.*;
@@ -31,14 +31,14 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         for (T entity : entities) {
             entityManager.persist(entity);
         }
     }
 
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
@@ -48,9 +48,8 @@ public class JpaPersistExecutor implements PersistExecutor {
         String entityName = getJpaEntityName(entityType);
         EntityAttribute idAttribute = entity.id();
         EntityAttribute versionAttribute = entity.version();
-        ImmutableArray<? extends Attribute> attributes = entity.attributes().getPrimitives();
+        ImmutableArray<? extends Attribute> attributes = entity.getPrimitives();
 
-        // List<T> result = new ArrayList<>(list.size());
         for (T t : list) {
             if (entityManager.contains(t)) {
                 continue;
@@ -135,7 +134,7 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
@@ -160,13 +159,13 @@ public class JpaPersistExecutor implements PersistExecutor {
         query.setParameter("ids", ids);
         int updated = query.executeUpdate();
         if (updated != ids.size()) {
-            throw new IllegalStateException("Deleted " + updated + " entities, expected " + list.size());
+            throw new IllegalStateException("Deleted " + updated + " entities, expected " + ids.size());
         }
 
     }
 
     @Override
-    public <T> int update(UpdateStructure structure, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> int update(UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
         Map<String, Object> setValues = structure.setClauses();
         if (setValues.isEmpty()) {
             throw new IllegalStateException("No SET values specified for update");
@@ -203,7 +202,7 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> int delete(ExpressionNode predicate, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> int delete(ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
         String entityName = getJpaEntityName(descriptor.entityClass());
         StringBuilder jpql = new StringBuilder("DELETE FROM ")
                 .append(entityName).append(" e");

@@ -1,6 +1,6 @@
 package io.github.nextentity.examples.repository;
 
-import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.spring.GenericRepository;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -22,7 +22,7 @@ import java.util.List;
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class CustomizedEntityRepository<T, ID> extends GenericRepository<T, ID> implements IExtendedEntityRepository<T, ID> {
 
-    public CustomizedEntityRepository(EntityTemplateFactory factory, InjectionPoint injectionPoint) {
+    public CustomizedEntityRepository(EntityOperationsFactory factory, InjectionPoint injectionPoint) {
         super(factory, injectionPoint);
     }
 

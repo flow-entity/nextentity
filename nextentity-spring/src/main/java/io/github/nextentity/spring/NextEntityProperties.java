@@ -70,6 +70,14 @@ public class NextEntityProperties {
     @NestedConfigurationProperty
     private final PaginationProperties pagination = new PaginationProperties();
 
+    /// 懒加载配置
+    @NestedConfigurationProperty
+    private final FetchProperties fetch = new FetchProperties();
+
+    /// 元模型配置
+    @NestedConfigurationProperty
+    private final MetamodelProperties metamodel = new MetamodelProperties();
+
     public JdbcProperties getJdbc() {
         return jdbc;
     }
@@ -84,6 +92,14 @@ public class NextEntityProperties {
 
     public PaginationProperties getPagination() {
         return pagination;
+    }
+
+    public FetchProperties getFetch() {
+        return fetch;
+    }
+
+    public MetamodelProperties getMetamodel() {
+        return metamodel;
     }
 
     public boolean isEnabled() {

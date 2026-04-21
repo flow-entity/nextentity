@@ -1,6 +1,5 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.UpdateStructure;
 import org.jspecify.annotations.NonNull;
@@ -16,27 +15,27 @@ public class TransactionUpdateExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         transaction.executeInTransaction(() -> target.insertAll(entities, descriptor));
     }
 
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         transaction.executeInTransaction(() -> target.updateAll(entities, descriptor));
     }
 
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         transaction.executeInTransaction(() -> target.deleteAll(entities, descriptor));
     }
 
     @Override
-    public <T> int update(UpdateStructure structure, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> int update(UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
         return transaction.executeInTransaction(() -> target.update(structure, descriptor));
     }
 
     @Override
-    public <T> int delete(ExpressionNode predicate, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> int delete(ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
         return transaction.executeInTransaction(() -> target.delete(predicate, descriptor));
     }
 

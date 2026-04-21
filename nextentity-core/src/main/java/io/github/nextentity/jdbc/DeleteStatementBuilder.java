@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.meta.EntityAttribute;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
 
 import java.util.Collections;
@@ -17,7 +18,7 @@ import java.util.List;
 ///
 public class DeleteStatementBuilder extends AbstractBatchStatementBuilder {
 
-    protected final List<EntityAttribute> paramAttr;
+    protected final List<EntityBasicAttribute> paramAttr;
     protected final Iterable<?> entities;
     protected final EntityType entityType;
 
@@ -36,7 +37,7 @@ public class DeleteStatementBuilder extends AbstractBatchStatementBuilder {
 
     /// 添加 DELETE FROM 子句
     protected void appendDeleteClause() {
-        EntityAttribute id = entityType.id();
+        EntityBasicAttribute id = entityType.id();
         sql.append("delete from ")
                 .append(leftQuotedIdentifier())
                 .append(entityType.tableName())

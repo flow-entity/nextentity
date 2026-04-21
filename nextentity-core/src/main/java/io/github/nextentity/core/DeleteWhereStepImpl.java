@@ -19,7 +19,11 @@ public class DeleteWhereStepImpl<T> implements DeleteWhereStep<T> {
 
     @Override
     public int execute() {
-        return descriptor.persistExecutor().delete(predicate, descriptor);
+        return persistExecutor().delete(predicate, descriptor);
+    }
+
+    private PersistExecutor persistExecutor() {
+        return descriptor.persistConfig().persistExecutor();
     }
 
     @Override

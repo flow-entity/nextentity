@@ -695,7 +695,7 @@ public interface ExpressionBuilder<T, U, B> {
         /// @param offset 起始位置
         /// @return 字符串操作器实例
         default StringOperator<T, B> substring(int offset) {
-            return substring(offset, Integer.MAX_VALUE);
+            return substring(offset, StringExpression.MAX_SUBSTRING_LENGTH);
         }
 
         /// 去除首尾空白字符。

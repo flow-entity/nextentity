@@ -1,45 +1,47 @@
 package io.github.nextentity.core.meta;
 
 import io.github.nextentity.core.SelectItem;
-import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.expression.ExpressionNode;
+import io.github.nextentity.core.expression.PathNode;
+import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.reflect.schema.Schema;
 
-/// 表示可持久化到数据库的实体属性的接口。
+/// 实体属性元数据接口，表示实体类中映射到数据库的字段或关联。
 ///
-/// 扩展 {@link DatabaseColumnAttribute} 以支持实体特定操作，如
-/// 列名、版本支持和标识支持。
-public non-sealed interface EntityAttribute extends DatabaseColumnAttribute, SelectItem {
+/// 这是元模型属性体系的核心接口，采用 sealed hierarchy 设计：
+/// - {@link EntityBasicAttribute}：基本属性，直接映射到数据库列
+/// - {@link EntitySchemaAttribute}：关联属性，引用另一个实体类型
+///
+/// 同时实现了 {@link Attribute}（反射属性）和 {@link SelectItem}（查询选择项），
+/// 使实体属性既能参与反射操作，也能作为 SQL 查询的投影列。
+///
+/// @see EntityBasicAttribute
+/// @see EntitySchemaAttribute
+public sealed interface EntityAttribute extends Attribute, SelectItem
+        permits EntityBasicAttribute, EntitySchemaAttribute {
 
-    /// 获取此属性的数据库列名。
+    /// 获取此属性在查询表达式中的路径节点。
     ///
-    /// @return 列名
-    String columnName();
+    /// 路径节点用于构建 WHERE 条件、ORDER BY 子句等查询表达式，
+    /// 例如 `Employee::getName` 会被解析为对应的列路径。
+    ///
+    /// @return 属性路径节点
+    @Override
+    PathNode path();
 
-    /// 检查此属性是否是乐观锁的版本字段。
+    /// 获取此属性对应的查询表达式节点。
     ///
-    /// @return 如果是版本字段则返回 {@code true}，否则返回 {@code false}
-    boolean isVersion();
-
-    /// 检查此属性是否是标识（主键）字段。
+    /// 默认直接返回 {@link #path()} 的结果。
     ///
-    /// @return 如果是标识字段则返回 {@code true}，否则返回 {@code false}
-    boolean isId();
-
-    /// 使用值转换器从实体获取数据库值。
-    ///
-    /// @param entity 实体实例
-    /// @return 数据库值
-    default Object getDatabaseValue(Object entity) {
-        Object o = get(entity);
-        return valueConvertor().convertToDatabaseColumn(TypeCastUtil.unsafeCast(o));
+    /// @return 表达式节点
+    @Override
+    default ExpressionNode expression() {
+        return path();
     }
 
-    /// 使用值转换器从数据库值设置实体属性值。
+    /// 获取声明此属性的实体类型元数据。
     ///
-    /// @param entity 实体实例
-    /// @param value 数据库值
-    default void setByDatabaseValue(Object entity, Object value) {
-        value = valueConvertor().convertToEntityAttribute(TypeCastUtil.unsafeCast(value));
-        set(entity, value);
-    }
-
+    /// @return 声明实体的 schema
+    @Override
+    EntitySchema declareBy();
 }

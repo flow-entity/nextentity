@@ -1,6 +1,6 @@
 package io.github.nextentity.examples.integration;
 
-import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.examples.entity.Customer;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.spring.Repository;
@@ -19,7 +19,7 @@ public class RepositoryBeanRegistrarTest {
     @Autowired(required = false)
     EntityManager entityManager;
     @Autowired(required = false)
-    EntityTemplateFactory entityTemplateFactory;
+    EntityOperationsFactory entityTemplateFactory;
     @Autowired(required = false)
     private Repository<Customer, Long> customerRepository;
     @Autowired(required = false)

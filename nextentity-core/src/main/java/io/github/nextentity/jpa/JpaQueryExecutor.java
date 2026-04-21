@@ -6,6 +6,8 @@ import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.From;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.SubQueryEntityType;
 import io.github.nextentity.core.util.ImmutableArray;
@@ -29,33 +31,41 @@ import java.util.List;
 public class JpaQueryExecutor implements QueryExecutor {
 
     private final EntityManager entityManager;
-    private final Metamodel metamodel;
     private final QueryExecutor nativeQueryExecutor;
     private final JpaConfig config;
 
-    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor) {
-        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT);
+    public JpaQueryExecutor(EntityManager entityManager,
+                            Metamodel metamodel,
+                            QueryExecutor nativeQueryExecutor) {
+        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT, InterceptorSelector.empty());
     }
 
-    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor, JpaConfig config) {
+    public JpaQueryExecutor(EntityManager entityManager,
+                            Metamodel metamodel,
+                            QueryExecutor nativeQueryExecutor,
+                            JpaConfig config,
+                            InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         this.entityManager = entityManager;
-        this.metamodel = metamodel;
         this.nativeQueryExecutor = nativeQueryExecutor;
         this.config = config;
     }
 
     @Override
-    public <T> List<T> getList(@NonNull QueryStructure queryStructure) {
+    public <T> List<T> getList(@NonNull QueryContext context) {
+        // JPA 默认不展开引用路径
+        context.setExpandReferencePath(false);
+        // 调用 init 完成初始化
+        context.init();
+        QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
-        if (config.nativeSubqueries() && requiredNativeQuery(queryStructure)) {
-            return nativeQueryExecutor.getList(queryStructure);
+        if (config.nativeSubqueries() && requiredNativeQuery(context,queryStructure)) {
+            return nativeQueryExecutor.getList(context);
         }
         Selected selected = queryStructure.select();
         if (selected instanceof SelectEntity) {
             List<?> resultList = getEntityResultList(queryStructure);
             return TypeCastUtil.cast(resultList);
         }
-        QueryContext context = QueryContext.create(queryStructure, metamodel, false);
         List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
         List<Object> result = objectsList.stream()
                 .map(objects -> {
@@ -67,10 +77,10 @@ public class JpaQueryExecutor implements QueryExecutor {
         return TypeCastUtil.cast(result);
     }
 
-    private boolean requiredNativeQuery(@NonNull QueryStructure queryStructure) {
+    private boolean requiredNativeQuery(@NonNull QueryContext context, @NonNull QueryStructure queryStructure) {
         From from = queryStructure.from();
         return from instanceof FromSubQuery
-               || metamodel.getEntity(((FromEntity) from).type()) instanceof SubQueryEntityType
+               || context.getMetamodel().getEntity(((FromEntity) from).type()) instanceof SubQueryEntityType
                || hasSubQuery(queryStructure);
     }
 

@@ -1,11 +1,11 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.DeleteWhereStep;
-import io.github.nextentity.api.EntityPersistor;
+import io.github.nextentity.api.EntityOperations;
 import io.github.nextentity.api.EntityQuery;
 import io.github.nextentity.api.UpdateSetStep;
 
-public class EntityTemplate<T> implements EntityPersistor<T> {
+public class EntityTemplate<T> implements EntityOperations<T> {
 
     private final PersistDescriptor<T> descriptor;
     private final EntityQuery<T> query;
@@ -24,38 +24,43 @@ public class EntityTemplate<T> implements EntityPersistor<T> {
         return descriptor;
     }
 
+    @Override
     public EntityQuery<T> query() {
         return query;
     }
 
     @Override
     public void insert(T entity) {
-        descriptor.persistExecutor().insert(entity, descriptor);
+        persistExecutor().insert(entity, descriptor);
+    }
+
+    private PersistExecutor persistExecutor() {
+        return descriptor.persistConfig().persistExecutor();
     }
 
     @Override
     public void insertAll(Iterable<T> entities) {
-        descriptor.persistExecutor().insertAll(entities, descriptor);
+        persistExecutor().insertAll(entities, descriptor);
     }
 
     @Override
     public void update(T entity) {
-        descriptor.persistExecutor().update(entity, descriptor);
+        persistExecutor().update(entity, descriptor);
     }
 
     @Override
     public void updateAll(Iterable<T> entities) {
-        descriptor.persistExecutor().updateAll(entities, descriptor);
+        persistExecutor().updateAll(entities, descriptor);
     }
 
     @Override
     public void delete(T entity) {
-        descriptor.persistExecutor().delete(entity, descriptor);
+        persistExecutor().delete(entity, descriptor);
     }
 
     @Override
     public void deleteAll(Iterable<T> entities) {
-        descriptor.persistExecutor().deleteAll(entities, descriptor);
+        persistExecutor().deleteAll(entities, descriptor);
     }
 
     @Override

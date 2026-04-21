@@ -1,24 +1,35 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.ExpressionNode;
-import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.expression.SelectExpression;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.util.ImmutableArray;
 
 public class SelectPrimitiveContext extends QueryContext {
 
-    private final ImmutableArray<SelectItem> expressions;
-    private final ExpressionNode expression;
+    private SelectExpression selectExpression;
 
+    private ImmutableArray<SelectItem> expressions;
+    private ExpressionNode expression;
 
-    protected SelectPrimitiveContext(QueryStructure structure, Metamodel metamodel, boolean expandObjectAttribute, SelectExpression selectPrimitive) {
-        super(structure, metamodel, expandObjectAttribute);
-        this.expression = selectPrimitive.expression();
-        this.expressions = getSelectPrimitiveExpressions(entityType, expression, DeepLimitSchemaAttributePaths.of(0));
+    public SelectPrimitiveContext(QueryConfig descriptor) {
+        super(descriptor);
     }
 
+    /// 设置表达式选择定义
+    public void setSelectExpression(SelectExpression selectExpression) {
+        this.selectExpression = selectExpression;
+    }
+
+    /// 初始化（无参版本）
+    @Override
+    public void init() {
+        super.init();
+        this.expression = selectExpression.expression();
+        this.expressions = getSelectPrimitiveExpressions(getEntityType(), expression, DeepLimitSchemaAttributePaths.of(0));
+    }
 
     @Override
     public ImmutableArray<SelectItem> getSelectedExpression() {
@@ -26,7 +37,7 @@ public class SelectPrimitiveContext extends QueryContext {
     }
 
     @Override
-    public Object construct(Arguments arguments) {
-        return constructExpression(entityType, arguments, expression);
+    public Object doConstruct(Arguments arguments) {
+        return constructExpression(getEntityType(), arguments, expression);
     }
 }

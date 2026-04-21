@@ -21,4 +21,5 @@ public interface Metamodel {
     /// @return 实体类型元数据
     /// @throws IllegalArgumentException 如果给定类型不存在元数据
     EntityType getEntity(Class<?> type);
+
 }

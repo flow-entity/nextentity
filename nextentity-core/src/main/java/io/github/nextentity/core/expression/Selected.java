@@ -12,7 +12,7 @@ package io.github.nextentity.core.expression;
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
-public sealed interface Selected permits SelectEntity, SelectExpression, SelectExpressions, SelectProjection {
+public sealed interface Selected permits SelectEntity, SelectExpression, SelectExpressions, SelectProjection, SelectNested {
 
     /// 指示是否对选择应用DISTINCT。
     ///

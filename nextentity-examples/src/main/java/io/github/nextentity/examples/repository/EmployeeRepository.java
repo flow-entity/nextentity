@@ -3,8 +3,9 @@ package io.github.nextentity.examples.repository;
 import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.api.Path;
 import io.github.nextentity.api.model.*;
-import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.core.annotation.EntityPath;
+import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.entity.EmployeeStatus;
 import io.github.nextentity.spring.AbstractRepository;
@@ -40,7 +41,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected EmployeeRepository(EntityTemplateFactory context) {
+    protected EmployeeRepository(EntityOperationsFactory context) {
         super(context);
     }
 
@@ -658,25 +659,25 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
     /// 嵌套路径查询 - 按部门名称筛选员工。
     ///
-    /// 因为 {@link io.github.nextentity.examples.entity.Department} 实现了
+    /// 因为 {@link Department} 实现了
     /// {@link io.github.nextentity.api.Entity} 接口，可以直接访问嵌套属性。
     public List<Employee> findByDepartmentName(String departmentName) {
         return query()
-                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getName).eq(departmentName)
+                .where(Employee::getDepartment).get(Department::getName).eq(departmentName)
                 .list();
     }
 
     /// 嵌套路径查询 - 按部门位置筛选员工。
     public List<Employee> findByDepartmentLocation(String locationPrefix) {
         return query()
-                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getLocation).startsWith(locationPrefix)
+                .where(Employee::getDepartment).get(Department::getLocation).startsWith(locationPrefix)
                 .list();
     }
 
     /// 嵌套路径查询 - 活跃部门中的活跃员工。
     public List<Employee> findActiveEmployeesInActiveDepartments() {
         return query()
-                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getActive).eq(true)
+                .where(Employee::getDepartment).get(Department::getActive).eq(true)
                 .where(Employee::getActive).eq(true)
                 .orderBy(Employee::getName).asc()
                 .list();
@@ -688,7 +689,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
     public List<Employee> findWithDepartmentByDepartmentName(String departmentName) {
         return query()
                 .fetch(Employee::getDepartment)
-                .where(Employee::getDepartment).get(io.github.nextentity.examples.entity.Department::getName).eq(departmentName)
+                .where(Employee::getDepartment).get(Department::getName).eq(departmentName)
                 .orderBy(Employee::getName).asc()
                 .list();
     }

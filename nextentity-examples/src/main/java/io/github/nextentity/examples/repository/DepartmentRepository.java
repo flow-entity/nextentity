@@ -2,7 +2,7 @@ package io.github.nextentity.examples.repository;
 
 import io.github.nextentity.api.EntityContext;
 import io.github.nextentity.api.EntityQuery;
-import io.github.nextentity.core.EntityTemplateFactory;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.spring.AbstractRepository;
 import org.springframework.stereotype.Repository;
@@ -32,7 +32,7 @@ public class DepartmentRepository extends AbstractRepository<Department, Long> {
     /// 并初始化查询构建器和更新执行器。
     ///
     /// @param context NextEntity 上下文
-    protected DepartmentRepository(EntityTemplateFactory context) {
+    protected DepartmentRepository(EntityOperationsFactory context) {
         super(context);
     }
 

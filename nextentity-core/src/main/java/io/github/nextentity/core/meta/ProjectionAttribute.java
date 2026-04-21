@@ -1,26 +1,27 @@
 package io.github.nextentity.core.meta;
 
-/// 用于将投影字段映射到实体属性的投影属性接口。
-///
-/// 此接口扩展 {@link DatabaseColumnAttribute}，提供投影字段与其对应实体属性之间的链接。
-///
-/// 投影属性从其源实体属性继承值转换。
-///
-/// @author HuangChengwei
-/// @since 1.0.0
-public interface ProjectionAttribute extends DatabaseColumnAttribute {
+import io.github.nextentity.core.reflect.schema.Attribute;
 
-    /// 获取此投影属性映射的源实体属性。
+/// 投影属性元数据接口，表示 DTO 或 Interface 投影中的一个字段映射。
+///
+/// 每个 {@code ProjectionAttribute} 都关联到一个 {@link EntityAttribute}（源属性），
+/// 建立从投影字段到实体字段的映射关系。
+///
+/// 采用 sealed hierarchy 设计：
+/// - {@link ProjectionBasicAttribute}：映射到实体的基本属性
+/// - {@link ProjectionSchemaAttribute}：映射到实体的关联属性
+/// - {@link ProjectionJoinAttribute}：映射到关联属性的嵌套字段
+///
+/// @see EntityAttribute
+/// @see ProjectionSchema
+public sealed interface ProjectionAttribute
+        extends Attribute permits
+        ProjectionBasicAttribute,
+        ProjectionJoinAttribute,
+        ProjectionSchemaAttribute {
+
+    /// 获取此投影属性对应的实体属性。
     ///
     /// @return 源实体属性
     EntityAttribute source();
-
-    /// 获取此属性的值转换器。
-    ///
-    /// 委托给源实体属性的值转换器。
-    ///
-    /// @return 来自源实体属性的值转换器
-    default ValueConverter<?, ?> valueConvertor() {
-        return source().valueConvertor();
-    }
 }

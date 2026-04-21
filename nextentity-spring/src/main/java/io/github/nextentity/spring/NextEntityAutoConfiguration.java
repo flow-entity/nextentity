@@ -1,15 +1,16 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.EntityTemplate;
-import io.github.nextentity.core.EntityTemplateFactory;
-import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.core.exception.ConfigurationException;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
+import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.SqlDialect;
+import io.github.nextentity.proxy.spring.CglibProxyInterceptor;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,12 +18,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
-import org.springframework.core.ResolvableType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
 /// NextEntity 自动配置类。
 ///
@@ -50,11 +51,11 @@ import java.sql.SQLException;
 ///     string-parameter-binding: true
 /// ```
 ///
-/// 用户可以通过定义自己的 EntityContext Bean 来覆盖默认配置：
+/// 用户可以通过定义自己的 EntityOperationsFactory Bean 来覆盖默认配置：
 /// ```java
 /// @Bean
-/// public EntityContext customEntityContext(JdbcTemplate jdbcTemplate) {
-///     return DefaultEntityContext.jdbc(jdbcTemplate);
+/// public EntityOperationsFactory customEntityContext(JdbcTemplate jdbcTemplate) {
+///     return EntityFactoryBuilder.jdbc(jdbcTemplate, template);
 /// }
 /// ```
 ///
@@ -69,32 +70,54 @@ public class NextEntityAutoConfiguration {
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnProperty(prefix = "nextentity", name = "generic-repository", havingValue = "true", matchIfMissing = true)
-    protected <T, ID> Repository<T, ID> genericRepository(InjectionPoint injectionPoint, EntityTemplateFactory factory) {
+    protected <T, ID> Repository<T, ID> genericRepository(InjectionPoint injectionPoint, EntityOperationsFactory factory) {
         return new GenericRepository<>(factory, injectionPoint);
     }
 
-    /// 创建 EntityContext Bean。
+    /// 创建 EntityOperationsFactory Bean。
     ///
     /// 自动检测是否存在 EntityManager 来决定使用 JPA 还是 JDBC 模式。
-    /// 如果用户已定义 EntityContext Bean，则跳过此配置。
+    /// 如果用户已定义 EntityOperationsFactory Bean，则跳过此配置。
     ///
     /// @param jdbcTemplate           Spring JDBC 模板（必需）
     /// @param entityManagerProvider  JPA 实体管理器提供者（可选）
     /// @param properties             NextEntity 配置属性
-    /// @return EntityContext 实例
+    /// @param constructInterceptorsProvider 构造拦截器提供者（可选）
+    /// @param resultInterceptorsProvider 结果拦截器提供者（可选）
+    /// @return EntityOperationsFactory 实例
     @Bean
     @ConditionalOnMissingBean
-    public EntityTemplateFactory entityContext(JdbcTemplate jdbcTemplate,
-                                               ObjectProvider<EntityManager> entityManagerProvider,
-                                               NextEntityProperties properties,
-                                               TransactionTemplate transactionTemplate) {
+    public EntityOperationsFactory entityContext(JdbcTemplate jdbcTemplate,
+                                                   ObjectProvider<EntityManager> entityManagerProvider,
+                                                   NextEntityProperties properties,
+                                                   TransactionTemplate transactionTemplate,
+                                                   ObjectProvider<ConstructInterceptor> constructInterceptorsProvider,
+                                                   ObjectProvider<ResultInterceptor> resultInterceptorsProvider) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
+        List<ConstructInterceptor> constructInterceptors = constructInterceptorsProvider.stream().toList();
+        List<ResultInterceptor> resultInterceptors = resultInterceptorsProvider.stream().toList();
 
         if (entityManager != null) {
-            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate);
+            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate,
+                                            constructInterceptors, resultInterceptors);
         }
-        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate);
+        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate,
+                                         constructInterceptors, resultInterceptors);
+    }
+
+    /// CGLIB 代理拦截器（处理普通类投影）
+    @Bean
+    @ConditionalOnMissingBean(ConstructInterceptor.class)
+    public ConstructInterceptor cglibProxyInterceptor() {
+        return new CglibProxyInterceptor();
+    }
+
+    /// JDK 代理拦截器（处理 interface 投影）
+    @Bean
+    @ConditionalOnMissingBean(name = "jdkProxyInterceptor")
+    public ConstructInterceptor jdkProxyInterceptor() {
+        return new JdkProxyInterceptor();
     }
 
     /// 解析 SQL 方言。
@@ -129,7 +152,7 @@ public class NextEntityAutoConfiguration {
             Class<?> clazz = Class.forName(className);
             return (SqlDialect) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new IllegalArgumentException(
+            throw new ConfigurationException(
                     "Failed to instantiate SqlDialect: " + className, e);
         }
     }

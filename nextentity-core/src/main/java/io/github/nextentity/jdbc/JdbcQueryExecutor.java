@@ -3,7 +3,8 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
-import io.github.nextentity.core.expression.QueryStructure;
+import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
@@ -25,8 +26,6 @@ import java.util.List;
 public class JdbcQueryExecutor implements QueryExecutor {
 
     @NonNull
-    private final Metamodel metamodel;
-    @NonNull
     private final QuerySqlBuilder sqlBuilder;
     @NonNull
     private final ConnectionProvider connectionProvider;
@@ -35,32 +34,20 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @NonNull
     private final JdbcConfig config;
 
-    /// 构造JDBC查询执行器（使用默认配置）
-    ///
-    /// @param metamodel 元模型，用于提供实体元数据信息
-    /// @param sqlBuilder SQL构建器，用于生成SQL语句
-    /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param collector 结果收集器，用于处理查询结果
-    public JdbcQueryExecutor(@NonNull Metamodel metamodel,
-                             @NonNull QuerySqlBuilder sqlBuilder,
-                             @NonNull ConnectionProvider connectionProvider,
-                             @NonNull ResultCollector collector) {
-        this(metamodel, sqlBuilder, connectionProvider, collector, JdbcConfig.DEFAULT);
-    }
-
-    /// 构造JDBC查询执行器
+    /// 构造JDBC查询执行器（含拦截器）
     ///
     /// @param metamodel 元模型，用于提供实体元数据信息
     /// @param sqlBuilder SQL构建器，用于生成SQL语句
     /// @param connectionProvider 连接提供者，用于获取数据库连接
     /// @param collector 结果收集器，用于处理查询结果
     /// @param config JDBC配置
+    /// @param interceptorSelector 拦截器选择器
     public JdbcQueryExecutor(@NonNull Metamodel metamodel,
                              @NonNull QuerySqlBuilder sqlBuilder,
                              @NonNull ConnectionProvider connectionProvider,
                              @NonNull ResultCollector collector,
-                             @NonNull JdbcConfig config) {
-        this.metamodel = metamodel;
+                             @NonNull JdbcConfig config,
+                             @NonNull InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.collector = collector;
@@ -70,17 +57,20 @@ public class JdbcQueryExecutor implements QueryExecutor {
     /// 执行查询并返回结果列表
     ///
     /// @param <R> 查询结果类型
-    /// @param queryStructure 查询结构，包含查询的所有相关信息
+    /// @param context 查询上下文，包含查询的所有相关信息
     /// @return 查询结果列表
     @Override
     @NonNull
-    public <R> List<R> getList(@NonNull QueryStructure queryStructure) {
-        QueryContext context = QueryContext.create(queryStructure, metamodel, true);
+    public <R> List<R> getList(@NonNull QueryContext context) {
+        // JDBC 默认展开引用路径
+        context.setExpandReferencePath(true);
+        // 调用 init 完成初始化
+        context.init();
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {
             return connectionProvider.execute(connection -> {
-                LockModeType locked = queryStructure.lockType();
+                LockModeType locked = context.getStructure().lockType();
                 if (locked != null && locked != LockModeType.NONE && connection.getAutoCommit()) {
                     throw new TransactionRequiredException();
                 }

@@ -28,6 +28,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- NextEntity Proxy Spring (CGLIB support for class projections) -->
+        <dependency>
+            <groupId>io.github.flow-entity</groupId>
+            <artifactId>nextentity-proxy-spring</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Boot Starter -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

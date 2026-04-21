@@ -10,6 +10,11 @@ package io.github.nextentity.api;
 /// @see SimpleExpression 基本比较操作
 /// @since 1.0.0
 public interface StringExpression<T> extends SimpleExpression<T, String> {
+
+    /// 子字符串最大长度，用于表示截取到字符串末尾
+    ///
+    /// 当 substring(offset) 不指定长度时，使用此值表示截取到末尾。
+    int MAX_SUBSTRING_LENGTH = Integer.MAX_VALUE >> 1;
     /// 匹配指定的字符串模式。
     ///
     /// @param value 字符串模式
@@ -212,7 +217,7 @@ public interface StringExpression<T> extends SimpleExpression<T, String> {
     /// @param offset 起始位置
     /// @return 子字符串表达式
     default io.github.nextentity.api.StringExpression<T> substring(int offset) {
-        return substring(offset, Integer.MAX_VALUE);
+        return substring(offset, MAX_SUBSTRING_LENGTH);
     }
 
     /// 去除字符串首尾空白字符。
