@@ -87,7 +87,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     /// @param operations EntityTemplate 实例
     protected AbstractRepository(EntityTemplate<T> operations, Class<ID> genericIdType) {
         this.operations = operations;
-        EntityDescriptor<T> descriptor = operations.descriptor();
+        var descriptor = operations.descriptor();
         Class<?> idClass = descriptor.entityType().id().type();
         idClass = PrimitiveTypes.getWrapper(idClass);
         this.idType = TypeCastUtil.cast(idClass);
@@ -116,7 +116,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @return 主键路径表达式
     protected Path<T, ID> newIdPath() {
-        EntityDescriptor<T> descriptor = operations.descriptor();
+        var descriptor = operations.descriptor();
         if (Persistable.class.isAssignableFrom(descriptor.entityClass())) {
             return Path.of("id");
         }
@@ -132,7 +132,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @return 从实体中提取 ID 的函数
     protected Function<? super T, ? extends ID> newIdExtractor() {
-        EntityDescriptor<T> descriptor = operations.descriptor();
+        var descriptor = operations.descriptor();
         if (Persistable.class.isAssignableFrom(descriptor.entityClass())) {
             Function<Persistable<ID>, ID> result = Persistable::getId;
             return TypeCastUtil.unsafeCast(result);

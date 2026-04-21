@@ -1,6 +1,5 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.UpdateStructure;
 import io.github.nextentity.core.util.ImmutableList;
@@ -16,7 +15,7 @@ public interface PersistExecutor {
     /// @param entity     要插入的实体
     /// @param descriptor 实体上下文
     /// @throws NullPointerException 如果 entity 或 descriptor 为 null
-    default <T> void insert(@NonNull T entity, @NonNull EntityDescriptor<T> descriptor) {
+    default <T> void insert(@NonNull T entity, @NonNull PersistDescriptor<T> descriptor) {
         insertAll(ImmutableList.of(entity), descriptor);
     }
 
@@ -30,7 +29,7 @@ public interface PersistExecutor {
     /// @param descriptor 实体上下文
     /// @throws NullPointerException 如果 entities 或 descriptor 为 null
     ///
-    <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor);
+    <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor);
 
     /// 更新数据库中的多个实体并返回更新后的实例。
     ///
@@ -42,7 +41,7 @@ public interface PersistExecutor {
     /// @param descriptor 实体上下文
     /// @throws NullPointerException 如果 entities 或 descriptor 为 null
     ///
-    <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor);
+    <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor);
 
     /// 更新数据库中的单个实体。
     ///
@@ -53,7 +52,7 @@ public interface PersistExecutor {
     /// @param descriptor 实体上下文
     /// @throws NullPointerException 如果 entity 或 descriptor 为 null
     ///
-    default <T> void update(@NonNull T entity, @NonNull EntityDescriptor<T> descriptor) {
+    default <T> void update(@NonNull T entity, @NonNull PersistDescriptor<T> descriptor) {
         updateAll(ImmutableList.of(entity), descriptor);
     }
 
@@ -64,7 +63,7 @@ public interface PersistExecutor {
     /// @param descriptor 实体上下文
     /// @throws NullPointerException 如果 entities 或 descriptor 为 null
     ///
-    <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor);
+    <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor);
 
     /// 从数据库中删除单个实体。
     ///
@@ -75,12 +74,12 @@ public interface PersistExecutor {
     /// @param descriptor 实体上下文
     /// @throws NullPointerException 如果 entity 或 descriptor 为 null
     ///
-    default <T> void delete(@NonNull T entity, @NonNull EntityDescriptor<T> descriptor) {
+    default <T> void delete(@NonNull T entity, @NonNull PersistDescriptor<T> descriptor) {
         deleteAll(ImmutableList.of(entity), descriptor);
     }
 
-    <T> int update(UpdateStructure structure, @NonNull EntityDescriptor<T> descriptor);
+    <T> int update(UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor);
 
-    <T> int delete(ExpressionNode predicate, @NonNull EntityDescriptor<T> descriptor);
+    <T> int delete(ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor);
 
 }

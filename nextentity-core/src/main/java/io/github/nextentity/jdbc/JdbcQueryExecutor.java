@@ -3,7 +3,6 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
-import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
@@ -27,8 +26,6 @@ import java.util.List;
 public class JdbcQueryExecutor implements QueryExecutor {
 
     @NonNull
-    private final Metamodel metamodel;
-    @NonNull
     private final QuerySqlBuilder sqlBuilder;
     @NonNull
     private final ConnectionProvider connectionProvider;
@@ -36,8 +33,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
     private final ResultCollector collector;
     @NonNull
     private final JdbcConfig config;
-    @NonNull
-    private final InterceptorSelector<ConstructInterceptor> interceptorSelector;
 
     /// 构造JDBC查询执行器（含拦截器）
     ///
@@ -53,12 +48,10 @@ public class JdbcQueryExecutor implements QueryExecutor {
                              @NonNull ResultCollector collector,
                              @NonNull JdbcConfig config,
                              @NonNull InterceptorSelector<ConstructInterceptor> interceptorSelector) {
-        this.metamodel = metamodel;
         this.sqlBuilder = sqlBuilder;
         this.connectionProvider = connectionProvider;
         this.collector = collector;
         this.config = config;
-        this.interceptorSelector = interceptorSelector;
     }
 
     /// 执行查询并返回结果列表
@@ -73,8 +66,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
         context.setExpandReferencePath(true);
         // 调用 init 完成初始化
         context.init();
-        // 设置拦截器选择器
-        context.setInterceptorSelector(interceptorSelector);
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {

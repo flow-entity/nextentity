@@ -1,5 +1,7 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.SelectExpressions;
@@ -13,8 +15,8 @@ public class SelectArrayContext extends QueryContext {
     private ImmutableArray<io.github.nextentity.core.SelectItem> expressions;
     private ImmutableArray<Object> selectExpressionItems;
 
-    /// 无参构造函数
-    public SelectArrayContext() {
+    public SelectArrayContext(QueryConfig descriptor) {
+        super(descriptor);
     }
 
     /// 设置多表达式选择定义
@@ -28,10 +30,10 @@ public class SelectArrayContext extends QueryContext {
         super.init();
         this.selectExpressionItems = selectExpressions.items().stream()
                 .map(it -> it instanceof PathNode pathExpression
-                        ? entityType.getAttribute(pathExpression) : it)
+                        ? getEntityType().getAttribute(pathExpression) : it)
                 .collect(ImmutableList.collector(selectExpressions.items().size()));
         this.expressions = selectExpressions.items().stream()
-                .flatMap(e -> stream(entityType, e, DeepLimitSchemaAttributePaths.of(0)))
+                .flatMap(e -> stream(getEntityType(), e, DeepLimitSchemaAttributePaths.of(0)))
                 .collect(ImmutableList.collector());
     }
 
@@ -45,7 +47,7 @@ public class SelectArrayContext extends QueryContext {
         Object[] objects = new Object[selectExpressionItems.size()];
         for (int i = 0; i < objects.length; i++) {
             Object expression = selectExpressionItems.get(i);
-            objects[i] = constructExpression(entityType, arguments, expression);
+            objects[i] = constructExpression(getEntityType(), arguments, expression);
         }
         return Tuples.of(objects);
     }

@@ -1,10 +1,10 @@
 package io.github.nextentity.integration.config;
 
+import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
@@ -185,25 +185,16 @@ public class IntegrationTestApplication {
 
         @Override
         public <T> UpdateSetStep<T> update(Class<T> type) {
+            DefaultMetamodel metamodel = DefaultMetamodel.of();
             PersistDescriptor<T> descriptor = new PersistDescriptor<>() {
                 @Override
-                public PersistExecutor persistExecutor() {
-                    return updateExecutor;
+                public EntityDescriptor<T> entityDescriptor() {
+                    return new SimpleEntityDescriptor<>(metamodel.getEntity(type), type);
                 }
 
                 @Override
-                public Metamodel metamodel() {
-                    return DefaultMetamodel.of();
-                }
-
-                @Override
-                public EntityType entityType() {
-                    return DefaultMetamodel.of().getEntity(type);
-                }
-
-                @Override
-                public Class<T> entityClass() {
-                    return type;
+                public PersistConfig persistConfig() {
+                    return EntityTemplateFactoryConfig.persistConfig(metamodel, updateExecutor);
                 }
             };
             return new UpdateSetStepImpl<>(descriptor);

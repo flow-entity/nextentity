@@ -1,12 +1,11 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.core.PersistDescriptor;
 import io.github.nextentity.core.PersistExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.UpdateStructure;
-import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.EntityType;
@@ -64,7 +63,7 @@ public class JdbcPersistExecutor implements PersistExecutor {
     /// @param entities   实体集合
     /// @param descriptor 实体上下文
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
@@ -94,7 +93,7 @@ public class JdbcPersistExecutor implements PersistExecutor {
     /// @param entities   实体集合
     /// @param descriptor 实体上下文
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<@NonNull T> list = ImmutableList.ofIterable(entities);
         if (list.isEmpty()) {
             return;
@@ -133,7 +132,7 @@ public class JdbcPersistExecutor implements PersistExecutor {
     /// @param entities   实体集合
     /// @param descriptor 实体上下文
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         if (!entities.iterator().hasNext()) {
             return;
         }
@@ -155,7 +154,7 @@ public class JdbcPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> int update(UpdateStructure structure, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> int update(UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
         if (structure.setClauses().isEmpty()) {
             return 0;
         }
@@ -177,7 +176,7 @@ public class JdbcPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> int delete(ExpressionNode predicate, @NonNull EntityDescriptor<T> descriptor) {
+    public <T> int delete(ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
         EntityType entityType = descriptor.entityType();
         DeleteSqlStatement sql = sqlBuilder.buildConditionalDeleteStatement(
                 entityType,

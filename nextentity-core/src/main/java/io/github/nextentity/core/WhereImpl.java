@@ -41,11 +41,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
 
     /// 创建 QueryContext 辅助方法
     private QueryContext createContext(QueryStructure structure) {
-        return QueryContext.create(
-            descriptor.queryExecutor(),
-            structure,
-            descriptor.metamodel()
-        );
+        return QueryContext.create(descriptor.queryConfig(), structure);
     }
 
     @Override

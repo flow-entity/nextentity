@@ -1,10 +1,10 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.SelectProjection;
-import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.schema.Attribute;
@@ -40,7 +40,8 @@ public class SelectProjectionContext extends QueryContext {
     ) {
     }
 
-    public SelectProjectionContext() {
+    public SelectProjectionContext(QueryConfig descriptor) {
+        super(descriptor);
         enableLazyloading = true;
     }
 
@@ -51,7 +52,7 @@ public class SelectProjectionContext extends QueryContext {
     @Override
     public void init() {
         super.init();
-        this.projection = entityType.getProjection(selectProjection.type());
+        this.projection = getEntityType().getProjection(selectProjection.type());
         this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
         this.expressions = separateAttributes(projection, schemaAttributePaths);
     }

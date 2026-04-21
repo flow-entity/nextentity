@@ -1,6 +1,9 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.EntityDescriptor;
+import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.jdbc.FetchConfig;
 
 /// 查询操作共享依赖的上下文接口。
 ///
@@ -10,16 +13,26 @@ import io.github.nextentity.api.EntityDescriptor;
 /// @param <E> 实体类型
 /// @author HuangChengwei
 /// @since 2.1.2
-public interface QueryDescriptor<E> extends EntityDescriptor<E> {
+public interface QueryDescriptor<E> {
 
-    /// 返回查询执行引擎。
-    ///
-    /// @return QueryExecutor 实例
-    QueryExecutor queryExecutor();
+    EntityDescriptor<E> entityDescriptor();
 
+    QueryConfig queryConfig();
 
-    /// 返回分页配置。
-    ///
-    /// @return PaginationConfig 实例
-    PaginationConfig paginationConfig();
+    default Class<E> entityClass() {
+        return entityDescriptor().entityClass();
+    }
+
+    default Metamodel metamodel() {
+        return queryConfig().metamodel();
+    }
+
+    default EntityType entityType() {
+        return entityDescriptor().entityType();
+    }
+
+    default PaginationConfig paginationConfig() {
+        return queryConfig().pagination();
+    }
+
 }

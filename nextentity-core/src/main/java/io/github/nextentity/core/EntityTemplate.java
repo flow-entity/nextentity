@@ -31,32 +31,36 @@ public class EntityTemplate<T> implements EntityOperations<T> {
 
     @Override
     public void insert(T entity) {
-        descriptor.persistExecutor().insert(entity, descriptor);
+        persistExecutor().insert(entity, descriptor);
+    }
+
+    private PersistExecutor persistExecutor() {
+        return descriptor.persistConfig().persistExecutor();
     }
 
     @Override
     public void insertAll(Iterable<T> entities) {
-        descriptor.persistExecutor().insertAll(entities, descriptor);
+        persistExecutor().insertAll(entities, descriptor);
     }
 
     @Override
     public void update(T entity) {
-        descriptor.persistExecutor().update(entity, descriptor);
+        persistExecutor().update(entity, descriptor);
     }
 
     @Override
     public void updateAll(Iterable<T> entities) {
-        descriptor.persistExecutor().updateAll(entities, descriptor);
+        persistExecutor().updateAll(entities, descriptor);
     }
 
     @Override
     public void delete(T entity) {
-        descriptor.persistExecutor().delete(entity, descriptor);
+        persistExecutor().delete(entity, descriptor);
     }
 
     @Override
     public void deleteAll(Iterable<T> entities) {
-        descriptor.persistExecutor().deleteAll(entities, descriptor);
+        persistExecutor().deleteAll(entities, descriptor);
     }
 
     @Override

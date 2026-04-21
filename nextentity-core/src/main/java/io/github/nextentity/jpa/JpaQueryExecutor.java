@@ -31,10 +31,8 @@ import java.util.List;
 public class JpaQueryExecutor implements QueryExecutor {
 
     private final EntityManager entityManager;
-    private final Metamodel metamodel;
     private final QueryExecutor nativeQueryExecutor;
     private final JpaConfig config;
-    private final InterceptorSelector<ConstructInterceptor> interceptorSelector;
 
     public JpaQueryExecutor(EntityManager entityManager,
                             Metamodel metamodel,
@@ -48,12 +46,8 @@ public class JpaQueryExecutor implements QueryExecutor {
                             JpaConfig config,
                             InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         this.entityManager = entityManager;
-        this.metamodel = metamodel;
         this.nativeQueryExecutor = nativeQueryExecutor;
         this.config = config;
-        this.interceptorSelector = interceptorSelector != null
-                ? interceptorSelector
-                : InterceptorSelector.empty();
     }
 
     @Override
@@ -64,7 +58,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         context.init();
         QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
-        if (config.nativeSubqueries() && requiredNativeQuery(queryStructure)) {
+        if (config.nativeSubqueries() && requiredNativeQuery(context,queryStructure)) {
             return nativeQueryExecutor.getList(context);
         }
         Selected selected = queryStructure.select();
@@ -72,7 +66,6 @@ public class JpaQueryExecutor implements QueryExecutor {
             List<?> resultList = getEntityResultList(queryStructure);
             return TypeCastUtil.cast(resultList);
         }
-        context.setInterceptorSelector(interceptorSelector);
         List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
         List<Object> result = objectsList.stream()
                 .map(objects -> {
@@ -84,10 +77,10 @@ public class JpaQueryExecutor implements QueryExecutor {
         return TypeCastUtil.cast(result);
     }
 
-    private boolean requiredNativeQuery(@NonNull QueryStructure queryStructure) {
+    private boolean requiredNativeQuery(@NonNull QueryContext context, @NonNull QueryStructure queryStructure) {
         From from = queryStructure.from();
         return from instanceof FromSubQuery
-               || metamodel.getEntity(((FromEntity) from).type()) instanceof SubQueryEntityType
+               || context.getMetamodel().getEntity(((FromEntity) from).type()) instanceof SubQueryEntityType
                || hasSubQuery(queryStructure);
     }
 

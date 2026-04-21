@@ -2,13 +2,13 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
+import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
@@ -25,6 +25,7 @@ import java.lang.reflect.RecordComponent;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 ///
@@ -33,24 +34,24 @@ import java.util.stream.Stream;
 ///
 public abstract class QueryContext {
 
-    protected Map<String, Object> parameters;
-    protected QueryStructure structure;
-    protected Metamodel metamodel;
-    protected EntityType entityType;
-    protected boolean expandReferencePath;
-    protected QueryExecutor queryExecutor;
-    protected FetchConfig fetchConfig = FetchConfig.DEFAULT;
-    protected boolean enableLazyloading = false;
+    protected final QueryConfig descriptor;
 
-    /// 拦截器选择器（用于对象构造）
-    protected InterceptorSelector<ConstructInterceptor> interceptorSelector =
-            new InterceptorSelector<>(List.of(new JdkProxyInterceptor()));
+    protected final Map<String, Object> parameters = new ConcurrentHashMap<>();
+
+    protected EntityType entityType;
+
+    protected QueryStructure structure;
+
+    protected boolean expandReferencePath;
+
+    protected boolean enableLazyloading = false;
 
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
 
     /// 无参构造函数
-    protected QueryContext() {
+    protected QueryContext(QueryConfig descriptor) {
+        this.descriptor = descriptor;
     }
 
     /// 初始化核心字段
@@ -58,8 +59,6 @@ public abstract class QueryContext {
     /// 在设置参数后调用，完成字段初始化。
     /// 子类应覆盖此方法完成子类特有的初始化，并调用 super.init()。
     public void init() {
-        From from = structure.from();
-        this.entityType = from instanceof FromEntity(Class<?> type) ? metamodel.getEntity(type) : null;
     }
 
     /// 设置查询结构
@@ -67,69 +66,55 @@ public abstract class QueryContext {
         this.structure = structure;
     }
 
-    /// 设置元模型
-    public void setMetamodel(Metamodel metamodel) {
-        this.metamodel = metamodel;
-    }
-
     /// 设置是否展开引用路径
     public void setExpandReferencePath(boolean expandReferencePath) {
         this.expandReferencePath = expandReferencePath;
     }
 
-    /// 创建 QueryContext 实例
-    ///
-    /// 根据查询类型创建对应的子类实例，设置基本参数。
-    /// init() 和 expandReferencePath 由 QueryExecutor.getList 内部设置。
-    ///
-    /// @param executor  查询执行器
-    /// @param structure 查询结构
-    /// @param metamodel 元模型
-    /// @return QueryContext 实例
-    public static QueryContext create(QueryExecutor executor,
-                                      QueryStructure structure,
-                                      Metamodel metamodel) {
-        QueryContext context = createContext(structure);
-
-        // 设置通用参数
-        context.setQueryExecutor(executor);
+    public static QueryContext create(QueryConfig descriptor, QueryStructure structure) {
+        QueryContext context = newQueryContext(descriptor, structure);
         context.setStructure(structure);
-        context.setMetamodel(metamodel);
-
+        if (structure.from() instanceof FromEntity(Class<?> type)) {
+            EntityType entity = descriptor.metamodel().getEntity(type);
+            context.setEntityType(entity);
+        }
         return context;
     }
 
-    public <T> List<T> getResultList() {
-        return queryExecutor.getList(this);
+    private void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
     }
 
-    /// 根据选择类型创建对应的子类实例
-    private static QueryContext createContext(QueryStructure structure) {
+    public static QueryContext newQueryContext(QueryConfig descriptor, QueryStructure structure) {
         Selected select = structure.select();
         if (select instanceof SelectEntity) {
-            return new SelectEntityContext();
+            return new SelectEntityContext(descriptor);
         } else if (select instanceof SelectProjection selectProjection) {
-            SelectProjectionContext context = new SelectProjectionContext();
+            SelectProjectionContext context = new SelectProjectionContext(descriptor);
             context.setSelectProjection(selectProjection);
             return context;
         } else if (select instanceof SelectExpression selectExpression) {
-            SelectPrimitiveContext context = new SelectPrimitiveContext();
+            SelectPrimitiveContext context = new SelectPrimitiveContext(descriptor);
             context.setSelectExpression(selectExpression);
             return context;
         } else if (select instanceof SelectExpressions selectExpressions) {
-            SelectArrayContext context = new SelectArrayContext();
+            SelectArrayContext context = new SelectArrayContext(descriptor);
             context.setSelectExpressions(selectExpressions);
             return context;
         } else if (select instanceof SelectNested selectNested) {
-            SelectNestedContext context = new SelectNestedContext();
+            SelectNestedContext context = new SelectNestedContext(descriptor);
             context.setSelectNested(selectNested);
             return context;
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
     }
 
+    public <T> List<T> getResultList() {
+        return getQueryExecutor().getList(this);
+    }
+
     public QueryContext newContext(QueryStructure structure) {
-        QueryContext context = create(queryExecutor, structure, metamodel);
+        QueryContext context = create(descriptor, structure);
         context.setExpandReferencePath(expandReferencePath);
         context.init();
         return context;
@@ -152,11 +137,11 @@ public abstract class QueryContext {
     }
 
     public Metamodel getMetamodel() {
-        return this.metamodel;
+        return descriptor.metamodel();
     }
 
     public EntityType getEntityType() {
-        return this.entityType;
+        return entityType;
     }
 
     /// 获取当前构造的 Schema
@@ -173,22 +158,6 @@ public abstract class QueryContext {
         return entityType;
     }
 
-    /// 获取拦截器选择器
-    ///
-    /// @return 拦截器选择器
-    public InterceptorSelector<ConstructInterceptor> getInterceptorSelector() {
-        return interceptorSelector;
-    }
-
-    /// 设置拦截器选择器
-    ///
-    /// @param interceptorSelector 拦截器选择器
-    public void setInterceptorSelector(InterceptorSelector<ConstructInterceptor> interceptorSelector) {
-        this.interceptorSelector = interceptorSelector != null
-                ? interceptorSelector
-                : InterceptorSelector.empty();
-    }
-
     /// 构造对象实例
     ///
     /// 首先尝试使用拦截器创建对象，若无匹配拦截器则使用默认构造。
@@ -196,7 +165,8 @@ public abstract class QueryContext {
     /// @param arguments 参数供应器
     /// @return 构造的对象实例
     public final Object construct(Arguments arguments) {
-        var interceptor = interceptorSelector.select(this);
+        InterceptorSelector<ConstructInterceptor> constructs = descriptor.constructors();
+        var interceptor = constructs.select(this);
         if (interceptor != null) {
             return interceptor.intercept(this, arguments);
         }
@@ -257,7 +227,7 @@ public abstract class QueryContext {
     }
 
     public Map<Method, Object> collectResultMap(Arguments arguments) {
-        return collectResultMap(entityType, arguments, getSchemaAttributePaths());
+        return collectResultMap(getEntityType(), arguments, getSchemaAttributePaths());
     }
 
     protected Object constructInterfaceSchema(Schema rootSchema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
@@ -431,19 +401,11 @@ public abstract class QueryContext {
     }
 
     public QueryExecutor getQueryExecutor() {
-        return queryExecutor;
-    }
-
-    public void setQueryExecutor(QueryExecutor queryExecutor) {
-        this.queryExecutor = queryExecutor;
+        return descriptor.queryExecutor();
     }
 
     public FetchConfig getFetchConfig() {
-        return fetchConfig;
-    }
-
-    public void setFetchConfig(FetchConfig fetchConfig) {
-        this.fetchConfig = fetchConfig;
+        return descriptor.fetch();
     }
 
     /// 获取查询结果列表
@@ -484,7 +446,4 @@ public abstract class QueryContext {
         return parameters;
     }
 
-    public void setParameters(Map<String, Object> parameters) {
-        this.parameters = parameters;
-    }
 }

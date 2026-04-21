@@ -3,7 +3,9 @@ package io.github.nextentity.integration.config;
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
+import io.github.nextentity.jdbc.FetchConfig;
 import io.github.nextentity.integration.entity.AutoIncrementEntity;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
@@ -29,35 +31,28 @@ public interface IntegrationTestContext {
     /// @param <T>         实体类型
     /// @return 实体上下文实例
     default <T> EntityTemplateDescriptor<T> getEntityContext(Class<T> entityClass) {
-        var metamodel = DefaultMetamodel.of();
-        return new EntityTemplateDescriptor<>(
-                getUpdateExecutor(),
-                getQueryExecutor(),
-                PaginationConfig.DEFAULT,
-                metamodel,
-                metamodel.getEntity(entityClass),
-                entityClass
+        DefaultMetamodel metamodel = DefaultMetamodel.of();
+        EntityTemplateFactoryConfig config = new EntityTemplateFactoryConfig(
+                metamodel, getUpdateExecutor(), getQueryExecutor(),
+                FetchConfig.DEFAULT, PaginationConfig.DEFAULT, InterceptorSelector.empty()
         );
+        return new EntityTemplateDescriptor<>(config, entityClass);
     }
 
     default EntityQueryImpl<Employee> queryEmployees() {
-        var metamodel = DefaultMetamodel.of();
-        return new EntityQueryImpl<>(new SimpleQueryDescriptor<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(Employee.class), Employee.class));
+        return new EntityQueryImpl<>(getEntityContext(Employee.class));
     }
 
     default EntityQueryImpl<Department> queryDepartments() {
-        var metamodel = DefaultMetamodel.of();
-        return new EntityQueryImpl<>(new SimpleQueryDescriptor<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(Department.class), Department.class));
+        return new EntityQueryImpl<>(getEntityContext(Department.class));
     }
 
     default EntityQueryImpl<LockableEntity> queryLockableEntities() {
-        var metamodel = DefaultMetamodel.of();
-        return new EntityQueryImpl<>(new SimpleQueryDescriptor<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(LockableEntity.class), LockableEntity.class));
+        return new EntityQueryImpl<>(getEntityContext(LockableEntity.class));
     }
 
     default EntityQueryImpl<AutoIncrementEntity> queryAutoIncrementEntities() {
-        var metamodel = DefaultMetamodel.of();
-        return new EntityQueryImpl<>(new SimpleQueryDescriptor<>(metamodel, getQueryExecutor(), PaginationConfig.DEFAULT, metamodel.getEntity(AutoIncrementEntity.class), AutoIncrementEntity.class));
+        return new EntityQueryImpl<>(getEntityContext(AutoIncrementEntity.class));
     }
 
     @NonNull IntegrationTestContext reset();

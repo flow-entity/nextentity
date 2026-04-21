@@ -1,5 +1,7 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.PathNode;
@@ -17,8 +19,10 @@ public class SelectEntityContext extends QueryContext {
     private SchemaAttributePaths schemaAttributePaths;
     private ImmutableArray<SelectItem> expressions;
 
-    public SelectEntityContext() {
+    protected SelectEntityContext(QueryConfig descriptor) {
+        super(descriptor);
     }
+
 
     @Override
     public void init() {
@@ -29,13 +33,13 @@ public class SelectEntityContext extends QueryContext {
             if (fetchNodes != null && !fetchNodes.isEmpty() && expandReferencePath) {
                 Collection<? extends Attribute> fetch = fetchNodes
                         .stream()
-                        .map(it -> it.getAttribute(entityType))
+                        .map(it -> it.getAttribute(getEntityType()))
                         .collect(Collectors.toList());
                 this.schemaAttributePaths = newJoinPaths(fetch);
-                this.expressions = getSelectSchemaExpressions(entityType, schemaAttributePaths);
+                this.expressions = getSelectSchemaExpressions(getEntityType(), schemaAttributePaths);
             } else {
                 this.schemaAttributePaths = SchemaAttributePaths.empty();
-                this.expressions = TypeCastUtil.cast(entityType.getPrimitives());
+                this.expressions = TypeCastUtil.cast(getEntityType().getPrimitives());
             }
         }
     }
@@ -48,9 +52,9 @@ public class SelectEntityContext extends QueryContext {
     @Override
     public Object doConstruct(Arguments arguments) {
         if (schemaAttributePaths.isEmpty()) {
-            return constructSimpleSchema(entityType, arguments);
+            return constructSimpleSchema(getEntityType(), arguments);
         } else {
-            return constructSchema(entityType, arguments, schemaAttributePaths);
+            return constructSchema(getEntityType(), arguments, schemaAttributePaths);
         }
     }
 }

@@ -1,30 +1,20 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.EntityOperationsFactory;
-import io.github.nextentity.core.LoggingConfig;
-import io.github.nextentity.core.PaginationConfig;
-import io.github.nextentity.core.PersistExecutor;
-import io.github.nextentity.core.SqlLogger;
-import io.github.nextentity.core.TransactionOperations;
-import io.github.nextentity.core.TransactionUpdateExecutor;
-import io.github.nextentity.core.configuration.DefaultPersistConfiguration;
-import io.github.nextentity.core.configuration.DefaultQueryConfiguration;
-import io.github.nextentity.core.configuration.MetamodelConfiguration;
+import io.github.nextentity.core.*;
 import io.github.nextentity.core.configuration.PersistConfiguration;
-import io.github.nextentity.core.configuration.PostProcessor;
-import io.github.nextentity.core.configuration.QueryConfiguration;
-import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.interceptor.ResultInterceptor;
-import io.github.nextentity.jdbc.ConnectionProvider;
-import io.github.nextentity.jdbc.JdbcConfig;
-import io.github.nextentity.jdbc.JdbcEntityOperationsFactory;
-import io.github.nextentity.jdbc.SqlDialect;
-import io.github.nextentity.jdbc.configuration.JdbcEntityOperationsConfiguration;
+import io.github.nextentity.core.exception.SqlException;
+import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jpa.JpaPersistExecutor;
+import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.jpa.JpaConfig;
-import io.github.nextentity.jpa.JpaEntityOperationsFactory;
-import io.github.nextentity.jpa.configuration.JpaEntityOperationsConfiguration;
+import io.github.nextentity.jpa.EntityManagerConnectionProvider;
+import io.github.nextentity.core.meta.impl.DefaultMetamodel;
+import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import jakarta.persistence.EntityManager;
+import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -81,24 +71,46 @@ public final class EntityFactoryBuilder {
                                                 List<ResultInterceptor> resultInterceptors) {
         applyLoggingConfig(properties);
 
+        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
+        DefaultMetamodel metamodel = new DefaultMetamodel(metamodelConfig);
         ConnectionProvider connectionProvider = createConnectionProvider(jdbcTemplate);
         JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
-        PersistConfiguration persistConfig = createPersistConfiguration(template);
-        QueryConfiguration queryConfig = createQueryConfiguration(properties);
-        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
 
-        JdbcEntityOperationsConfiguration config = JdbcEntityOperationsConfiguration.builder()
-                .sqlDialect(sqlDialect)
-                .connectionProvider(connectionProvider)
-                .jdbcConfig(jdbcConfig)
-                .persistConfiguration(persistConfig)
-                .queryConfiguration(queryConfig)
-                .metamodelConfiguration(metamodelConfig)
-                .constructInterceptors(constructInterceptors)
-                .resultInterceptors(resultInterceptors)
-                .build();
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect, jdbcConfig);
+        InterceptorSelector<ConstructInterceptor> interceptorSelector = new InterceptorSelector<>(constructInterceptors);
 
-        return new JdbcEntityOperationsFactory(config);
+        // 创建查询执行器
+        QueryExecutor queryExecutor = new JdbcQueryExecutor(
+                metamodel,
+                sqlBuilder,
+                connectionProvider,
+                new JdbcResultCollector(),
+                jdbcConfig,
+                interceptorSelector
+        );
+
+        // 创建持久化执行器
+        PersistExecutor persistExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider, jdbcConfig);
+        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector);
+    }
+
+    private static @NonNull EntityTemplateFactory getEntityTemplateFactory(NextEntityProperties properties,
+                                                                           TransactionTemplate template,
+                                                                           PersistExecutor persistExecutor,
+                                                                           DefaultMetamodel metamodel,
+                                                                           QueryExecutor queryExecutor,
+                                                                           InterceptorSelector<ConstructInterceptor> interceptorSelector) {
+        persistExecutor = applyPostProcessors(persistExecutor, template);
+
+        // 组装工厂
+        PaginationConfig paginationConfig = properties.getPagination().toConfig();
+        FetchConfig fetchConfig = properties.getFetch().toFetchConfig();
+
+        EntityTemplateFactoryConfig factoryConfig = new EntityTemplateFactoryConfig(
+                metamodel, persistExecutor, queryExecutor, fetchConfig, paginationConfig, interceptorSelector
+        );
+
+        return new EntityTemplateFactory(queryExecutor, persistExecutor, factoryConfig);
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂。
@@ -151,24 +163,33 @@ public final class EntityFactoryBuilder {
                                                 List<ResultInterceptor> resultInterceptors) {
         applyLoggingConfig(properties);
 
+        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
+        DefaultMetamodel metamodel = new DefaultMetamodel(metamodelConfig);
         JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
         JpaConfig jpaConfig = toJpaConfig(properties.getJpa());
-        PersistConfiguration persistConfig = createPersistConfiguration(template);
-        QueryConfiguration queryConfig = createQueryConfiguration(properties);
-        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
+        ConnectionProvider connectionProvider = new EntityManagerConnectionProvider(entityManager);
 
-        JpaEntityOperationsConfiguration config = JpaEntityOperationsConfiguration.builder()
-                .sqlDialect(sqlDialect)
-                .entityManager(entityManager)
-                .jpaConfig(jpaConfig)
-                .persistConfiguration(persistConfig)
-                .queryConfiguration(queryConfig)
-                .metamodelConfiguration(metamodelConfig)
-                .constructInterceptors(constructInterceptors)
-                .resultInterceptors(resultInterceptors)
-                .build();
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect, jdbcConfig);
+        InterceptorSelector<ConstructInterceptor> interceptorSelector = new InterceptorSelector<>(constructInterceptors);
 
-        return new JpaEntityOperationsFactory(config);
+        // 创建原生 JDBC 查询执行器
+        QueryExecutor nativeQueryExecutor = new JdbcQueryExecutor(
+                metamodel,
+                sqlBuilder,
+                connectionProvider,
+                new JdbcResultCollector(),
+                jdbcConfig,
+                interceptorSelector
+        );
+
+        // 创建 JPA 查询执行器
+        QueryExecutor queryExecutor = new JpaQueryExecutor(
+                entityManager, metamodel, nativeQueryExecutor, jpaConfig, interceptorSelector
+        );
+
+        // 创建持久化执行器
+        PersistExecutor persistExecutor = new JpaPersistExecutor(entityManager);
+        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector);
     }
 
     // ===================== Private Helper Methods =====================
@@ -191,21 +212,24 @@ public final class EntityFactoryBuilder {
         };
     }
 
+    private static PersistExecutor applyPostProcessors(PersistExecutor executor, TransactionTemplate template) {
+        PersistConfiguration persistConfig = createPersistConfiguration(template);
+        if (persistConfig != null) {
+            for (var processor : persistConfig.getPostProcessors()) {
+                executor = processor.process(executor);
+            }
+        }
+        return executor;
+    }
+
     private static PersistConfiguration createPersistConfiguration(TransactionTemplate template) {
-        return DefaultPersistConfiguration.builder()
+        return io.github.nextentity.core.configuration.DefaultPersistConfiguration.builder()
                 .addPostProcessor(createTransactionPostProcessor(template))
                 .build();
     }
 
-    private static PostProcessor<PersistExecutor> createTransactionPostProcessor(TransactionTemplate template) {
+    private static io.github.nextentity.core.configuration.PostProcessor<PersistExecutor> createTransactionPostProcessor(TransactionTemplate template) {
         return executor -> new TransactionUpdateExecutor(executor, new SpringTransactionOperations(template));
-    }
-
-    private static QueryConfiguration createQueryConfiguration(NextEntityProperties properties) {
-        PaginationConfig paginationConfig = properties.getPagination().toConfig();
-        return DefaultQueryConfiguration.builder()
-                .paginationConfig(paginationConfig)
-                .build();
     }
 
     private static void applyLoggingConfig(NextEntityProperties properties) {

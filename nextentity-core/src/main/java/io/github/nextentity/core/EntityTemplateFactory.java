@@ -1,25 +1,15 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
-@Deprecated
 public record EntityTemplateFactory(
-        @NonNull Metamodel metamodel,
         @NonNull QueryExecutor queryExecutor,
         @NonNull PersistExecutor persistExecutor,
-        @NonNull PaginationConfig paginationConfig
+        @NonNull EntityTemplateFactoryConfig config
 ) implements EntityOperationsFactory {
 
     public <T> EntityTemplate<T> template(Class<T> entityType) {
-        EntityTemplateDescriptor<T> descriptor = new EntityTemplateDescriptor<>(
-                persistExecutor,
-                queryExecutor,
-                paginationConfig,
-                metamodel,
-                metamodel.getEntity(entityType),
-                entityType
-        );
+        EntityTemplateDescriptor<T> descriptor = new EntityTemplateDescriptor<>(config, entityType);
         return new EntityTemplate<>(descriptor);
     }
 

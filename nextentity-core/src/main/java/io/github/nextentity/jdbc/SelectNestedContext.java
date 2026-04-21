@@ -1,5 +1,7 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.SelectNested;
 import io.github.nextentity.core.expression.Selected;
@@ -23,8 +25,8 @@ public class SelectNestedContext extends QueryContext {
     private ImmutableList<QueryContext> subContexts;
     private ImmutableArray<SelectItem> expressions;
 
-    /// 无参构造函数
-    public SelectNestedContext() {
+    public SelectNestedContext(QueryConfig descriptor) {
+        super(descriptor);
     }
 
     /// 设置嵌套选择定义
@@ -54,7 +56,7 @@ public class SelectNestedContext extends QueryContext {
 
     /// 创建子选择的 Context
     private QueryContext createSubContext(Selected selected) {
-        QueryContext context = create(queryExecutor, structure.select(selected), metamodel);
+        QueryContext context = create(descriptor, structure.select(selected));
         context.setExpandReferencePath(expandReferencePath);
         context.init();
         return context;
