@@ -2,7 +2,7 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.Fetch;
-import io.github.nextentity.core.configuration.MetamodelConfiguration;
+import io.github.nextentity.core.meta.MetamodelConfiguration;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.meta.EntityBasicAttribute;

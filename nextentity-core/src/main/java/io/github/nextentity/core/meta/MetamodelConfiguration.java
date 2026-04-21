@@ -1,4 +1,6 @@
-package io.github.nextentity.core.configuration;
+package io.github.nextentity.core.meta;
+
+import io.github.nextentity.core.meta.impl.DefaultMetamodelConfiguration;
 
 /// 元模型配置接口
 ///

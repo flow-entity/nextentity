@@ -1,6 +1,6 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.configuration.MetamodelConfiguration;
+import io.github.nextentity.core.meta.MetamodelConfiguration;
 
 /// 元模型配置属性。
 ///

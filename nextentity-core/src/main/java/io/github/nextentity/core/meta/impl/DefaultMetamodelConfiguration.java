@@ -1,4 +1,6 @@
-package io.github.nextentity.core.configuration;
+package io.github.nextentity.core.meta.impl;
+
+import io.github.nextentity.core.meta.MetamodelConfiguration;
 
 /// 默认元模型配置实现
 ///
@@ -8,7 +10,7 @@ public class DefaultMetamodelConfiguration implements MetamodelConfiguration {
     private final boolean interfaceProjectionLazyLoadEnabled;
     private final boolean dtoProjectionLazyLoadEnabled;
 
-    DefaultMetamodelConfiguration(boolean interfaceProjectionLazyLoadEnabled,
+    public DefaultMetamodelConfiguration(boolean interfaceProjectionLazyLoadEnabled,
                                            boolean dtoProjectionLazyLoadEnabled) {
         this.interfaceProjectionLazyLoadEnabled = interfaceProjectionLazyLoadEnabled;
         this.dtoProjectionLazyLoadEnabled = dtoProjectionLazyLoadEnabled;

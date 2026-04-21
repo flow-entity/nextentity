@@ -1,9 +1,8 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.configuration.DefaultMetamodelConfiguration;
-import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
+import io.github.nextentity.core.meta.MetamodelConfiguration;
 import io.github.nextentity.core.meta.MetamodelResolver;
 
 import java.util.Map;

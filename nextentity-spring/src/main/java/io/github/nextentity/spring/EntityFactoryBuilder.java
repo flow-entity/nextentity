@@ -1,7 +1,6 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.core.*;
-import io.github.nextentity.core.configuration.PersistConfiguration;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.interceptor.ResultInterceptor;
@@ -12,7 +11,7 @@ import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.jpa.JpaConfig;
 import io.github.nextentity.jpa.EntityManagerConnectionProvider;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
-import io.github.nextentity.core.configuration.MetamodelConfiguration;
+import io.github.nextentity.core.meta.MetamodelConfiguration;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -100,7 +99,7 @@ public final class EntityFactoryBuilder {
                                                                            DefaultMetamodel metamodel,
                                                                            QueryExecutor queryExecutor,
                                                                            InterceptorSelector<ConstructInterceptor> interceptorSelector) {
-        persistExecutor = applyPostProcessors(persistExecutor, template);
+        persistExecutor = wrapWithTransaction(persistExecutor, template);
 
         // 组装工厂
         PaginationConfig paginationConfig = properties.getPagination().toConfig();
@@ -212,24 +211,8 @@ public final class EntityFactoryBuilder {
         };
     }
 
-    private static PersistExecutor applyPostProcessors(PersistExecutor executor, TransactionTemplate template) {
-        PersistConfiguration persistConfig = createPersistConfiguration(template);
-        if (persistConfig != null) {
-            for (var processor : persistConfig.getPostProcessors()) {
-                executor = processor.process(executor);
-            }
-        }
-        return executor;
-    }
-
-    private static PersistConfiguration createPersistConfiguration(TransactionTemplate template) {
-        return io.github.nextentity.core.configuration.DefaultPersistConfiguration.builder()
-                .addPostProcessor(createTransactionPostProcessor(template))
-                .build();
-    }
-
-    private static io.github.nextentity.core.configuration.PostProcessor<PersistExecutor> createTransactionPostProcessor(TransactionTemplate template) {
-        return executor -> new TransactionUpdateExecutor(executor, new SpringTransactionOperations(template));
+    private static PersistExecutor wrapWithTransaction(PersistExecutor executor, TransactionTemplate template) {
+        return new TransactionUpdateExecutor(executor, new SpringTransactionOperations(template));
     }
 
     private static void applyLoggingConfig(NextEntityProperties properties) {
