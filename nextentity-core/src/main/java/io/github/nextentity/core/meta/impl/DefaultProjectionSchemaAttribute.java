@@ -1,6 +1,5 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.Attribute;
@@ -12,6 +11,7 @@ import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultProjectionSchemaAttribute
         extends DefaultProjectionSchema
@@ -38,20 +38,15 @@ public class DefaultProjectionSchemaAttribute
         ProjectionSchema projection = entity.getProjection(attribute.type());
         ImmutableArray<? extends ProjectionAttribute> attributes = projection.getAttributes();
         ArrayList<ProjectionAttribute> result = new ArrayList<>(attributes.size());
-        int ordinal = 0;
+        AtomicInteger ordinal = new AtomicInteger();
         for (ProjectionAttribute projectionAttribute : attributes) {
-            ProjectionAttribute cur;
-            if (projectionAttribute instanceof ProjectionBasicAttribute basicAttribute) {
-                cur = new DefaultProjectionBasicAttribute(this, basicAttribute.source(), basicAttribute, ordinal++);
-            } else if (projectionAttribute instanceof ProjectionSchemaAttribute schemaAttribute) {
-                cur = new DefaultProjectionSchemaAttribute(this, schemaAttribute.source(), schemaAttribute, metamodel, ordinal++);
-            } else {
-                throw new ConfigurationException(
-                        "Unknown projection attribute type '" + projectionAttribute.getClass().getName() +
-                        "' when resolving projection attribute '" + path() +
-                        "' from source path '" + source.path() + "'.");
-            }
-            result.add(cur);
+            var item = ProjectionAttributeFactory.createAttribute(
+                    this,
+                    projectionAttribute.source(),
+                    projectionAttribute,
+                    metamodel,
+                    ordinal);
+            result.add(item);
         }
         return new AttributeSet<>(result);
     }

@@ -1,7 +1,8 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.reflect.schema.SchemaAttribute;
+import jakarta.persistence.FetchType;
 
 /// 投影连接属性接口，表示 DTO 投影中通过自定义 JOIN 关联到源实体未定义的表。
 ///
@@ -12,14 +13,26 @@ import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 ///
 /// @see ProjectionAttribute
 /// @see ProjectionSchemaAttribute
-public non-sealed interface ProjectionJoinAttribute extends ProjectionAttribute, SchemaAttribute {
+public non-sealed interface ProjectionJoinAttribute extends ProjectionAttribute, SchemaAttribute, Fetchable {
 
     /// 获取此连接属性的目标 Schema。
     ///
     /// 目标可能是 {@link ProjectionSchema}（投影到另一个 DTO）或 {@link EntitySchema}（直接关联实体）。
     ///
     /// @return 目标 Schema，为 {@link ProjectionSchema} 或 {@link EntitySchema}
-    Schema target();
+    MetamodelSchema<?> target();
+
+    default EntitySchema getEntitySchema() {
+        if (target() instanceof EntitySchema entityType) {
+            return entityType;
+        } else if (target() instanceof ProjectionSchema projectionSchema) {
+            return projectionSchema.getEntitySchema();
+        } else {
+            throw new ConfigurationException(
+                    "Unsupported target type for projection join attribute: " +
+                    target().getClass().getName() + ", expected EntitySchema or ProjectionSchema");
+        }
+    }
 
     /// 获取声明实体中此连接属性的名称。
     ///
@@ -30,5 +43,8 @@ public non-sealed interface ProjectionJoinAttribute extends ProjectionAttribute,
     ///
     /// @return 引用列名
     EntityBasicAttribute targetAttribute();
+
+    @Override
+    FetchType fetchType();
 
 }

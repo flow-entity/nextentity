@@ -99,6 +99,24 @@ public interface MetamodelResolver {
     /// @return 属性名路径
     Iterable<String> getMappedEntityPath(Attribute attribute);
 
+    /// 获取投影显式 JOIN 的目标类型。
+    ///
+    /// @param attribute 投影属性
+    /// @return 目标类型，如果未标注则返回 null
+    Class<?> getProjectionJoinTarget(Attribute attribute);
+
+    /// 获取投影显式 JOIN 的源属性名。
+    ///
+    /// @param attribute 投影属性
+    /// @return 源属性名，未标注返回 null
+    String getProjectionJoinSourceAttribute(Attribute attribute);
+
+    /// 获取投影显式 JOIN 的目标属性名。
+    ///
+    /// @param attribute 投影属性
+    /// @return 目标属性名，未标注返回 null
+    String getProjectionJoinTargetAttribute(Attribute attribute);
+
     /// 检查实体关联属性是否与投影的 schema 属性匹配。
     ///
     /// @param entitySchemaAttribute 实体的关联属性
