@@ -37,13 +37,7 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
     }
 
     public static DefaultEntitySchema of(Class<?> type, DefaultMetamodel metamodel) {
-        DefaultEntitySchema result = newDefaultEntityType(type, metamodel);
-        result.getAttributes();
-        return result;
-    }
-
-    static DefaultEntitySchema newDefaultEntityType(Class<?> type, DefaultMetamodel metamodel) {
-        return new DefaultEntitySchema(type, metamodel);
+        return metamodel.getDefaultEntitySchema(type);
     }
 
     @Override

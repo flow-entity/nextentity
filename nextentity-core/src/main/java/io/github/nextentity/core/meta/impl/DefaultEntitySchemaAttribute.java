@@ -96,7 +96,7 @@ public class DefaultEntitySchemaAttribute
 
     @Override
     protected Attributes createAttributes() {
-        DefaultEntitySchema schema = DefaultEntitySchema.newDefaultEntityType(type(), metamodel);
+        DefaultEntitySchema schema = DefaultEntitySchema.of(type(), metamodel);
         ImmutableArray<? extends EntityAttribute> entityAttributes = schema.getAttributes();
         List<EntityAttribute> entityAttributeList = new ArrayList<>(entityAttributes.size());
         EntityBasicAttribute id = null;

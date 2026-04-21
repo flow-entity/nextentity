@@ -27,7 +27,9 @@ public class DefaultMetamodel implements Metamodel {
     }
 
     public EntityType getEntity(Class<?> type) {
-        return getDefaultEntitySchema(type);
+        var entityType = getDefaultEntitySchema(type);
+        entityType.getAttributes();
+        return entityType;
     }
 
     DefaultEntitySchema getDefaultEntitySchema(Class<?> type) {
@@ -35,7 +37,7 @@ public class DefaultMetamodel implements Metamodel {
     }
 
     private DefaultEntitySchema createEntityType(Class<?> type) {
-        return DefaultEntitySchema.of(type, this);
+        return new DefaultEntitySchema(type, this);
     }
 
     protected MetamodelResolver getResolver() {
