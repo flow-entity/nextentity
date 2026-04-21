@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 /// 基于 {@link ConcurrentHashMap} 的线程安全 {@link Map} 实现，支持 {@code null} 键和 {@code null} 值。
 ///
-/// 语义对齐 {@link Map} 默认方法：当值为 {@code null} 时，按“缺失映射”处理。
+/// 内部使用 NULL 哨兵对象包装 null 键/值，语义与 {@link HashMap} 一致：
 ///
 /// @param <K> 键的类型
 /// @param <V> 值的类型
@@ -361,6 +361,7 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
 
     @Override
     public V merge(K key, @NonNull V value, @NonNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        Objects.requireNonNull(value, "value");
         Object wrappedKey = wrapKey(key);
         Object wrappedValue = wrapValue(value);
         Object raw = target.compute(wrappedKey, (_, current) -> {

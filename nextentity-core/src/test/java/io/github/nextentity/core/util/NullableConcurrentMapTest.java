@@ -9,6 +9,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
@@ -772,6 +773,18 @@ class NullableConcurrentMapTest {
             assertThat(result).isEqualTo("value");
             assertThat(callCount.get()).isEqualTo(0);
             assertThat(map.get(null)).isEqualTo("value");
+        }
+
+        @Test
+        void merge_WithNullValue_ShouldThrowLikeHashMap() {
+            assertThatThrownBy(() -> map.merge("key", null, (old, newV) -> old + newV))
+                    .isInstanceOf(NullPointerException.class);
+        }
+
+        @Test
+        void merge_WithNullKeyAndNullValue_ShouldThrowLikeHashMap() {
+            assertThatThrownBy(() -> map.merge(null, null, (old, newV) -> old + newV))
+                    .isInstanceOf(NullPointerException.class);
         }
     }
 

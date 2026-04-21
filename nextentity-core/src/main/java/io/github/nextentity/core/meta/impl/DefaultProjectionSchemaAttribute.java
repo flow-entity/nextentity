@@ -83,7 +83,6 @@ public class DefaultProjectionSchemaAttribute
 
     @Override
     public FetchType fetchType() {
-        // 优先级：投影级 @Fetch > source().fetchType() > 全局默认
         FetchType projectionFetch = resolver.getFetchType(attribute);
         if (projectionFetch != null) {
             return projectionFetch;
