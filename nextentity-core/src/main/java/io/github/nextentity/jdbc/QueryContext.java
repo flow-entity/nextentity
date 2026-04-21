@@ -8,6 +8,7 @@ import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
+import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.ReflectUtil;
@@ -42,7 +43,8 @@ public abstract class QueryContext {
     protected boolean enableLazyloading = false;
 
     /// 拦截器选择器（用于对象构造）
-    protected InterceptorSelector<ConstructInterceptor> interceptorSelector = InterceptorSelector.empty();
+    protected InterceptorSelector<ConstructInterceptor> interceptorSelector =
+            new InterceptorSelector<>(List.of(new JdkProxyInterceptor()));
 
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
@@ -80,9 +82,9 @@ public abstract class QueryContext {
     /// 根据查询类型创建对应的子类实例，设置基本参数。
     /// init() 和 expandReferencePath 由 QueryExecutor.getList 内部设置。
     ///
-    /// @param executor          查询执行器
-    /// @param structure         查询结构
-    /// @param metamodel         元模型
+    /// @param executor  查询执行器
+    /// @param structure 查询结构
+    /// @param metamodel 元模型
     /// @return QueryContext 实例
     public static QueryContext create(QueryExecutor executor,
                                       QueryStructure structure,
@@ -167,7 +169,7 @@ public abstract class QueryContext {
     ///
     /// @return 当前构造的 Schema，如果没有则返回 null
     @Nullable
-    public Schema getSchema() {
+    public MetamodelSchema<?> getSchema() {
         return entityType;
     }
 
@@ -200,7 +202,6 @@ public abstract class QueryContext {
         }
         return doConstruct(arguments);
     }
-
 
     protected Object constructSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         if (schema.type().isInterface()) {
@@ -323,7 +324,7 @@ public abstract class QueryContext {
         return value;
     }
 
-    protected Object [] getAttributeValues(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
+    protected Object[] getAttributeValues(Schema entityType, Arguments arguments, SchemaAttributePaths schemaAttributes) {
         ImmutableArray<? extends Attribute> attributes = entityType.getAttributes();
         int attributeSize = attributes.size();
         Object[] objects = null;
@@ -462,7 +463,7 @@ public abstract class QueryContext {
         this.results = results;
     }
 
-    public  SchemaAttributePaths getSchemaAttributePaths(){
+    public SchemaAttributePaths getSchemaAttributePaths() {
         return null;
     }
 

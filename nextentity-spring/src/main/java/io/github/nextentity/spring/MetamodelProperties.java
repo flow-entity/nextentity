@@ -23,10 +23,7 @@ public class MetamodelProperties {
     private boolean interfaceProjectionLazyLoad = true;
 
     /// Dto 投影懒加载开关
-    ///
-    /// Dto 投影通过反射构造，不支持真正的懒加载。
-    /// 默认禁用（false）。
-    private boolean dtoProjectionLazyLoad = false;
+    private boolean dtoProjectionLazyLoad = true;
 
     public boolean isInterfaceProjectionLazyLoad() {
         return interfaceProjectionLazyLoad;
@@ -48,6 +45,6 @@ public class MetamodelProperties {
     ///
     /// @return MetamodelConfiguration 实例
     public MetamodelConfiguration toMetamodelConfiguration() {
-        return MetamodelConfiguration.of(interfaceProjectionLazyLoad, dtoProjectionLazyLoad);
+        return MetamodelConfiguration.of(isInterfaceProjectionLazyLoad(), isDtoProjectionLazyLoad());
     }
 }

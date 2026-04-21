@@ -44,8 +44,13 @@ public class IntegrationTestApplication {
             throw new SqlException(e);
         }
         Metamodel metamodel = DefaultMetamodel.of();
-        SqlBuilder sqlBuilder =  SqlBuilder.of(sqlDialect);
-        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), JdbcConfig.DEFAULT, InterceptorSelector.empty());
+        SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
+        JdbcQueryExecutor queryExecutor = new JdbcQueryExecutor(metamodel,
+                sqlBuilder,
+                connectionProvider,
+                new JdbcResultCollector(),
+                JdbcConfig.DEFAULT,
+                InterceptorSelector.empty());
         PersistExecutor updateExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
             @Override
@@ -71,7 +76,12 @@ public class IntegrationTestApplication {
         }
         Metamodel metamodel = DefaultMetamodel.of();
         SqlBuilder sqlBuilder = SqlBuilder.of(sqlDialect);
-        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel, sqlBuilder, connectionProvider, new JdbcResultCollector(), JdbcConfig.DEFAULT, InterceptorSelector.empty());
+        JdbcQueryExecutor jdbcQueryExecutor = new JdbcQueryExecutor(metamodel,
+                sqlBuilder,
+                connectionProvider,
+                new JdbcResultCollector(),
+                JdbcConfig.DEFAULT,
+                InterceptorSelector.empty());
         JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
         PersistExecutor updateExecutor = new JpaPersistExecutor(entityManager);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {

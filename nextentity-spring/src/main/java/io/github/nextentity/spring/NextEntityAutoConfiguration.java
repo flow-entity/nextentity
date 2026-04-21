@@ -107,11 +107,6 @@ public class NextEntityAutoConfiguration {
     }
 
     /// CGLIB 代理拦截器（处理普通类投影）
-    ///
-    /// **自动配置已包含**，此 Bean 供演示参考。
-    /// 若未引入 `nextentity-proxy-spring`，可使用此配置。
-    ///
-    /// @return CGLIB 代理拦截器实例
     @Bean
     @ConditionalOnMissingBean(ConstructInterceptor.class)
     public ConstructInterceptor cglibProxyInterceptor() {
@@ -119,10 +114,6 @@ public class NextEntityAutoConfiguration {
     }
 
     /// JDK 代理拦截器（处理 interface 投影）
-    ///
-    /// **自动配置已包含**，此 Bean 供演示参考。
-    ///
-    /// @return JDK 代理拦截器实例
     @Bean
     @ConditionalOnMissingBean(name = "jdkProxyInterceptor")
     public ConstructInterceptor jdkProxyInterceptor() {

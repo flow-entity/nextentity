@@ -1,5 +1,6 @@
 package io.github.nextentity.core.meta.impl;
 
+import io.github.nextentity.core.configuration.DefaultMetamodelConfiguration;
 import io.github.nextentity.core.configuration.MetamodelConfiguration;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
@@ -8,46 +9,24 @@ import io.github.nextentity.core.meta.MetamodelResolver;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 默认元模型实现，管理实体类型元数据。
- * <p>
- * 复制自 AbstractMetamodel 的核心逻辑，后期将删除原类。
- */
+/// 默认元模型实现，管理实体类型元数据
 public class DefaultMetamodel implements Metamodel {
 
     private final MetamodelResolver resolver;
     private final Map<Class<?>, DefaultEntitySchema> entityTypes = new ConcurrentHashMap<>();
 
-    public DefaultMetamodel() {
-        this.resolver = DefaultMetamodelResolver.of();
+    public static DefaultMetamodel of() {
+        return new DefaultMetamodel(DefaultMetamodelConfiguration.DEFAULT);
+    }
+
+    public DefaultMetamodel(MetamodelConfiguration config) {
+        this(DefaultMetamodelResolver.of(config));
     }
 
     public DefaultMetamodel(MetamodelResolver resolver) {
         this.resolver = resolver;
     }
 
-    public DefaultMetamodel(MetamodelConfiguration config) {
-        this.resolver = DefaultMetamodelResolver.of(config);
-    }
-
-    public static DefaultMetamodel of() {
-        return new DefaultMetamodel();
-    }
-
-    public static DefaultMetamodel of(MetamodelResolver resolver) {
-        return new DefaultMetamodel(resolver);
-    }
-
-    public static DefaultMetamodel of(MetamodelConfiguration config) {
-        return new DefaultMetamodel(config);
-    }
-
-    /**
-     * 获取指定类的实体类型元数据，并缓存结果。
-     *
-     * @param type 实体类
-     * @return 缓存的或新创建的实体类型元数据
-     */
     public EntityType getEntity(Class<?> type) {
         return getDefaultEntitySchema(type);
     }

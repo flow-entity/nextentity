@@ -1,14 +1,20 @@
 package io.github.nextentity.core.reflect;
 
-/// 批量懒加载属性加载器。
-///
-/// 实现 LazyLoader 接口，封装投影对象 LAZY 属性的批量加载逻辑。
-/// 首次访问时触发 WHERE IN 批量查询，避免 N+1 问题。
-///
-/// @author HuangChengwei
-/// @since 2.1.0
+import java.lang.reflect.Method;
+import java.util.Map;
+
+/// 懒加载属性加载器
 public interface AttributeLoader {
 
-
     Object load();
+
+    /// 从 map 中加载值，处理 AttributeLoader 延迟加载逻辑
+    static Object loadFromMap(Map<Method, Object> map, Method method) {
+        Object result = map.get(method);
+        if (result instanceof AttributeLoader loader) {
+            result = loader.load();
+            map.replace(method, loader, result);
+        }
+        return result;
+    }
 }

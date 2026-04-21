@@ -1,5 +1,5 @@
 package io.github.nextentity.core.meta;
 
-public interface ProjectionSchema extends TSchema<ProjectionAttribute> {
+public interface ProjectionSchema extends MetamodelSchema<ProjectionAttribute> {
     EntitySchema getEntitySchema();
 }

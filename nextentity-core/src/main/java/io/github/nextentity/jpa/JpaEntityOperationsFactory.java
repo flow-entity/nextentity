@@ -27,7 +27,7 @@ public class JpaEntityOperationsFactory implements EntityOperationsFactory {
     public JpaEntityOperationsFactory(@NonNull JpaEntityOperationsConfiguration config) {
         this.config = config;
         // 内部创建 DefaultMetamodel，使用配置中的 metamodelConfiguration
-        this.metamodel = DefaultMetamodel.of(config.metamodelConfiguration());
+        this.metamodel = new DefaultMetamodel(config.metamodelConfiguration());
         this.queryExecutor = createQueryExecutor(config);
         this.persistExecutor = createPersistExecutor(config);
         this.paginationConfig = config.queryConfiguration().paginationConfig();

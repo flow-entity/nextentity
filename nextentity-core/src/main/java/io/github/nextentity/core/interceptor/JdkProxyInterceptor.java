@@ -1,5 +1,6 @@
 package io.github.nextentity.core.interceptor;
 
+import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.jdbc.Arguments;
@@ -14,10 +15,16 @@ import java.util.Map;
 /// 只处理 interface 类型（非普通类、非 record）。
 public class JdkProxyInterceptor implements ConstructInterceptor {
 
+    private static final JdkProxyInterceptor INSTANCE = new JdkProxyInterceptor();
+
     /// 默认优先级
     private static final int DEFAULT_ORDER = 0;
 
     private final int order;
+
+    public static JdkProxyInterceptor of() {
+        return INSTANCE;
+    }
 
     /// 创建默认优先级的拦截器
     public JdkProxyInterceptor() {
@@ -33,12 +40,12 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
 
     @Override
     public boolean supports(QueryContext context) {
-        Schema schema = context.getSchema();
+        MetamodelSchema<?> schema = context.getSchema();
         if (schema == null) {
             return false;
         }
         // 只处理有懒加载字段的投影
-        if (LazyLoadSupport.hasLazyAttribute(schema)) {
+        if (schema.hasLazyAttribute()) {
             return schema.type().isInterface();
         } else {
             return false;

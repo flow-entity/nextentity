@@ -363,31 +363,15 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
     public V merge(K key, @NonNull V value, @NonNull BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
         Object wrappedKey = wrapKey(key);
         Object wrappedValue = wrapValue(value);
-        while (true) {
-            Object current = target.get(wrappedKey);
+        Object raw = target.compute(wrappedKey, (_, current) -> {
             if (current == null || current == NULL) {
-                if (current == null) {
-                    if (target.putIfAbsent(wrappedKey, wrappedValue) == null) {
-                        return value;
-                    }
-                } else if (target.replace(wrappedKey, NULL, wrappedValue)) {
-                    return value;
-                }
-                continue;
+                return wrappedValue;
             }
             V oldValue = unwrapValue(current);
             V newValue = remappingFunction.apply(oldValue, value);
-            if (newValue == null) {
-                if (target.remove(wrappedKey, current)) {
-                    return null;
-                }
-            } else {
-                Object next = wrapValue(newValue);
-                if (target.replace(wrappedKey, current, next)) {
-                    return newValue;
-                }
-            }
-        }
+            return newValue == null ? null : wrapValue(newValue);
+        });
+        return unwrapValue(raw);
     }
 
     @SuppressWarnings("unchecked")

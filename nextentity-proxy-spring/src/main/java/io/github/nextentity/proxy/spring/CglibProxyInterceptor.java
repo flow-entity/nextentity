@@ -1,7 +1,7 @@
 package io.github.nextentity.proxy.spring;
 
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
-import io.github.nextentity.core.interceptor.LazyLoadSupport;
+import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.jdbc.Arguments;
@@ -43,12 +43,12 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         if (!context.isEnableLazyloading()) {
             return false;
         }
-        Schema schema = context.getSchema();
+        MetamodelSchema<?> schema = context.getSchema();
         if (schema == null) {
             return false;
         }
         // 只处理有懒加载字段的投影
-        if (LazyLoadSupport.hasLazyAttribute(schema)) {
+        if (schema.hasLazyAttribute()) {
             Class<?> type = schema.type();
             // 只处理普通类（非 interface、非 record、非 final）
             return !type.isInterface()
@@ -104,14 +104,8 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     private MethodInterceptor createMethodInterceptor(Map<Method, Object> map, Class<?> resultType) {
         return (proxy, method, args, methodProxy) -> {
             if (map.containsKey(method)) {
-                Object result = map.get(method);
-                if (result instanceof AttributeLoader loader) {
-                    result = loader.load();
-                    map.replace(method, loader, result);
-                }
-                return result;
+                return AttributeLoader.loadFromMap(map, method);
             }
-
             return methodProxy.invokeSuper(proxy, args);
         };
     }

@@ -19,12 +19,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (data.containsKey(method)) {
-            Object result = data.get(method);
-            if (result instanceof AttributeLoader loader) {
-                result = loader.load();
-                data.replace(method, loader, result);
-            }
-            return result;
+            return AttributeLoader.loadFromMap(data, method);
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);

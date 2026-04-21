@@ -36,21 +36,24 @@ public class JpaQueryExecutor implements QueryExecutor {
     private final JpaConfig config;
     private final InterceptorSelector<ConstructInterceptor> interceptorSelector;
 
-    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor) {
+    public JpaQueryExecutor(EntityManager entityManager,
+                            Metamodel metamodel,
+                            QueryExecutor nativeQueryExecutor) {
         this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT, InterceptorSelector.empty());
     }
 
-    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor, JpaConfig config) {
-        this(entityManager, metamodel, nativeQueryExecutor, config, InterceptorSelector.empty());
-    }
-
-    public JpaQueryExecutor(EntityManager entityManager, Metamodel metamodel, QueryExecutor nativeQueryExecutor,
-                            JpaConfig config, InterceptorSelector<ConstructInterceptor> interceptorSelector) {
+    public JpaQueryExecutor(EntityManager entityManager,
+                            Metamodel metamodel,
+                            QueryExecutor nativeQueryExecutor,
+                            JpaConfig config,
+                            InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         this.entityManager = entityManager;
         this.metamodel = metamodel;
         this.nativeQueryExecutor = nativeQueryExecutor;
         this.config = config;
-        this.interceptorSelector = interceptorSelector != null ? interceptorSelector : InterceptorSelector.empty();
+        this.interceptorSelector = interceptorSelector != null
+                ? interceptorSelector
+                : InterceptorSelector.empty();
     }
 
     @Override

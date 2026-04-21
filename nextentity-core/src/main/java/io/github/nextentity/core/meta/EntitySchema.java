@@ -1,6 +1,6 @@
 package io.github.nextentity.core.meta;
 
-public interface EntitySchema extends TSchema<EntityAttribute> {
+public interface EntitySchema extends MetamodelSchema<EntityAttribute> {
     /// 获取此实体的主键（标识）属性。
     ///
     /// @return 标识属性

@@ -3,8 +3,9 @@ package io.github.nextentity.core.meta;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
+import jakarta.persistence.FetchType;
 
-public interface TSchema<T extends Attribute> extends Schema {
+public interface MetamodelSchema<T extends Attribute> extends Schema {
     /// 获取此模式的所有属性。
     ///
     /// @return 属性集合
@@ -33,4 +34,21 @@ public interface TSchema<T extends Attribute> extends Schema {
     /// @return 路径末端的属性
     /// @throws IllegalArgumentException 如果路径无效
     T getAttribute(Iterable<String> fieldNames);
+
+    /// 检查投影是否包含懒加载属性
+    ///
+    /// 遍历投影的所有属性，检查是否有 FetchType.LAZY 的嵌套属性。
+    /// 如果存在懒加载属性，需要创建代理对象来支持延迟加载。
+    ///
+    /// @return true 表示存在懒加载属性，false 表示全部为立即加载
+    default boolean hasLazyAttribute() {
+        for (Attribute attr : getAttributes()) {
+            if (attr instanceof Fetchable fetchable) {
+                if (fetchable.fetchType() == FetchType.LAZY) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 }
