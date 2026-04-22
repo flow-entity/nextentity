@@ -3,6 +3,7 @@ package io.github.nextentity.core.meta.impl;
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.Fetch;
 import io.github.nextentity.core.annotation.Join;
+import io.github.nextentity.core.converter.InstantConverter;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.meta.*;
@@ -174,7 +175,7 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
             return EnumValueConverter.of(type);
         }
         if (type == Instant.class) {
-            return IdentityValueConverter.of();
+            return InstantConverter.of();
         }
         if (type == LocalDate.class) {
             return LocalDateValueConverter.of();
