@@ -15,7 +15,7 @@ public interface ConnectionProvider {
 
     /// 在数据库连接上执行操作
     ///
-    /// @param <T> 操作返回结果类型
+    /// @param <T>    操作返回结果类型
     /// @param action 要执行的操作
     /// @return 操作结果
     /// @throws SQLException SQL异常

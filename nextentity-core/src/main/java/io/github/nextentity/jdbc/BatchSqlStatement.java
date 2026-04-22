@@ -15,7 +15,7 @@ public class BatchSqlStatement implements SqlStatement {
 
     /// 构造批量SQL语句对象
     ///
-    /// @param sql SQL语句字符串
+    /// @param sql        SQL语句字符串
     /// @param parameters 批量操作的参数集合，外层集合代表不同的批次，内层集合代表每批次的参数
     public BatchSqlStatement(String sql, Iterable<? extends Iterable<?>> parameters) {
         this.sql = sql;

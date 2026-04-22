@@ -3,7 +3,6 @@ package io.github.nextentity.core.expression;
 import io.github.nextentity.api.ExpressionBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
@@ -31,16 +30,16 @@ class NumberOperatorImplTest {
     @Nested
     class ArithmeticOperationsWithValues {
 
-///
-         /// 验证ies that arithmetic 操作s create correct operator nodes.
-         /// 测试s add, subtract, multiply, divide, and mod 操作s with values.
+        ///
+        /// 验证ies that arithmetic 操作s create correct operator nodes.
+        /// 测试s add, subtract, multiply, divide, and mod 操作s with values.
         @ParameterizedTest
         @CsvSource({
-            "ADD, 100.0",
-            "SUBTRACT, 50.0",
-            "MULTIPLY, 2.0",
-            "DIVIDE, 2.0",
-            "MOD, 10.0"
+                "ADD, 100.0",
+                "SUBTRACT, 50.0",
+                "MULTIPLY, 2.0",
+                "DIVIDE, 2.0",
+                "MOD, 10.0"
         })
         void shouldCreateCorrectOperator(String expectedOperator, double operandValue) {
             // given
@@ -60,7 +59,7 @@ class NumberOperatorImplTest {
         }
 
         private Function<NumberOperatorImpl<Object, Double, String>, ExpressionBuilder.NumberOperator<Object, Double, String>>
-                getOperationForOperator(String operator) {
+        getOperationForOperator(String operator) {
             return switch (operator) {
                 case "ADD" -> op -> op.add(100.0);
                 case "SUBTRACT" -> op -> op.subtract(50.0);
@@ -75,15 +74,15 @@ class NumberOperatorImplTest {
     @Nested
     class ArithmeticOperationsWithExpressions {
 
-///
-         /// 验证ies that arithmetic 操作s with expressions create correct operator nodes.
+        ///
+        /// 验证ies that arithmetic 操作s with expressions create correct operator nodes.
         @ParameterizedTest
         @CsvSource({
-            "ADD, 50.0",
-            "SUBTRACT, 25.0",
-            "MULTIPLY, 1.5",
-            "DIVIDE, 2.0",
-            "MOD, 10.0"
+                "ADD, 50.0",
+                "SUBTRACT, 25.0",
+                "MULTIPLY, 1.5",
+                "DIVIDE, 2.0",
+                "MOD, 10.0"
         })
         void shouldCreateCorrectOperatorWithExpression(String expectedOperator, double expressionValue) {
             // given
@@ -103,7 +102,7 @@ class NumberOperatorImplTest {
         }
 
         private Function<NumberOperatorImpl<Object, Double, String>, ExpressionBuilder.NumberOperator<Object, Double, String>>
-                getExpressionOperationForOperator(String operator, SimpleExpressionImpl<Object, Double> expression) {
+        getExpressionOperationForOperator(String operator, SimpleExpressionImpl<Object, Double> expression) {
             return switch (operator) {
                 case "ADD" -> op -> op.add(expression);
                 case "SUBTRACT" -> op -> op.subtract(expression);
@@ -118,15 +117,15 @@ class NumberOperatorImplTest {
     @Nested
     class ReturnType {
 
-///
-         /// 验证ies that all arithmetic 操作s return NumberOperatorImpl.
+        ///
+        /// 验证ies that all arithmetic 操作s return NumberOperatorImpl.
         @ParameterizedTest
         @CsvSource({
-            "ADD, 100.0",
-            "SUBTRACT, 50.0",
-            "MULTIPLY, 2.0",
-            "DIVIDE, 2.0",
-            "MOD, 10.0"
+                "ADD, 100.0",
+                "SUBTRACT, 50.0",
+                "MULTIPLY, 2.0",
+                "DIVIDE, 2.0",
+                "MOD, 10.0"
         })
         void arithmeticOperations_ShouldReturnNumberOperator(String operationName, double operandValue) {
             // when

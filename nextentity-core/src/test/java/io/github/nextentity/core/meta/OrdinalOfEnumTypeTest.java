@@ -5,7 +5,7 @@
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-/////
+/// //
 // /// 测试目标: 验证y OrdinalOfEnumType 正确 converts enum to ordinal
 // /// <p>
 // /// 测试场景s:

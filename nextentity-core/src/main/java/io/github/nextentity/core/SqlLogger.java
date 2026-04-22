@@ -64,7 +64,7 @@ public class SqlLogger {
 
     /// 记录 SQL 参数。
     ///
-    /// @param sql       SQL 语句
+    /// @param sql        SQL 语句
     /// @param parameters 参数列表
     public static void logParameters(String sql, Iterable<?> parameters) {
         if (config.enabled() && config.parameters() && log.isDebugEnabled()) {

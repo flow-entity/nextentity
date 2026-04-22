@@ -37,7 +37,7 @@ public interface Tuple extends Iterable<Object> {
     /// 按索引获取元素。
     ///
     /// @param index 索引
-    /// @param <T> 元素类型
+    /// @param <T>   元素类型
     /// @return 元素
     <T> T get(int index);
 

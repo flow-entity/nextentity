@@ -12,23 +12,23 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for ExpressionBuilder.StringOperator default 方法.
- /// <p>
- /// 测试s default 方法 in ExpressionBuilder.StringOperator interface including:
- /// - IfNotNull series: startsWithIfNotNull, endsWithIfNotNull, containsIfNotNull, etc.
- /// - IfNotEmpty series: startsWithIfNotEmpty, endsWithIfNotEmpty, containsIfNotEmpty, etc.
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.ExpressionBuilder.StringOperator
+/// Integration tests for ExpressionBuilder.StringOperator default 方法.
+/// <p>
+/// 测试s default 方法 in ExpressionBuilder.StringOperator interface including:
+/// - IfNotNull series: startsWithIfNotNull, endsWithIfNotNull, containsIfNotNull, etc.
+/// - IfNotEmpty series: startsWithIfNotEmpty, endsWithIfNotEmpty, containsIfNotEmpty, etc.
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.ExpressionBuilder.StringOperator
 @DisplayName("StringOperator Default Methods Integration Tests")
 public class StringOperatorDefaultMethodsIntegrationTest {
 
     // ==================== IfNotNull Default Methods Tests ====================
 
-///
-     /// 测试s startsWithIfNotNull with non-null value in WHERE clause.
+    ///
+    /// 测试s startsWithIfNotNull with non-null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWithIfNotNull in WHERE clause")
@@ -43,8 +43,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s startsWithIfNotNull with null value in WHERE clause.
+    ///
+    /// 测试s startsWithIfNotNull with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when startsWithIfNotNull is null")
@@ -61,8 +61,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s endsWithIfNotNull with non-null value in WHERE clause.
+    ///
+    /// 测试s endsWithIfNotNull with non-null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWithIfNotNull in WHERE clause")
@@ -77,8 +77,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWithIfNotNull with null value in WHERE clause.
+    ///
+    /// 测试s endsWithIfNotNull with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when endsWithIfNotNull is null")
@@ -95,8 +95,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s containsIfNotNull with non-null value in WHERE clause.
+    ///
+    /// 测试s containsIfNotNull with non-null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with containsIfNotNull in WHERE clause")
@@ -111,8 +111,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s containsIfNotNull with null value in WHERE clause.
+    ///
+    /// 测试s containsIfNotNull with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when containsIfNotNull is null")
@@ -129,8 +129,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notStartsWithIfNotNull with non-null value in WHERE clause.
+    ///
+    /// 测试s notStartsWithIfNotNull with non-null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWithIfNotNull in WHERE clause")
@@ -146,8 +146,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWithIfNotNull with null value in WHERE clause.
+    ///
+    /// 测试s notStartsWithIfNotNull with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notStartsWithIfNotNull is null")
@@ -164,8 +164,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notEndsWithIfNotNull with non-null value in WHERE clause.
+    ///
+    /// 测试s notEndsWithIfNotNull with non-null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWithIfNotNull in WHERE clause")
@@ -181,8 +181,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
     }
 
-///
-     /// 测试s notEndsWithIfNotNull with null value in WHERE clause.
+    ///
+    /// 测试s notEndsWithIfNotNull with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notEndsWithIfNotNull is null")
@@ -199,8 +199,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notContainsIfNotNull with non-null value in WHERE clause.
+    ///
+    /// 测试s notContainsIfNotNull with non-null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContainsIfNotNull in WHERE clause")
@@ -216,8 +216,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s notContainsIfNotNull with null value in WHERE clause.
+    ///
+    /// 测试s notContainsIfNotNull with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notContainsIfNotNull is null")
@@ -236,8 +236,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
 
     // ==================== IfNotEmpty Default Methods Tests ====================
 
-///
-     /// 测试s startsWithIfNotEmpty with non-empty value in WHERE clause.
+    ///
+    /// 测试s startsWithIfNotEmpty with non-empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWithIfNotEmpty in WHERE clause")
@@ -252,8 +252,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s startsWithIfNotEmpty with empty value in WHERE clause.
+    ///
+    /// 测试s startsWithIfNotEmpty with empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when startsWithIfNotEmpty is empty")
@@ -270,8 +270,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s startsWithIfNotEmpty with null value in WHERE clause.
+    ///
+    /// 测试s startsWithIfNotEmpty with null value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when startsWithIfNotEmpty is null")
@@ -288,8 +288,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s endsWithIfNotEmpty with non-empty value in WHERE clause.
+    ///
+    /// 测试s endsWithIfNotEmpty with non-empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWithIfNotEmpty in WHERE clause")
@@ -304,8 +304,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWithIfNotEmpty with empty value in WHERE clause.
+    ///
+    /// 测试s endsWithIfNotEmpty with empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when endsWithIfNotEmpty is empty")
@@ -322,8 +322,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s containsIfNotEmpty with non-empty value in WHERE clause.
+    ///
+    /// 测试s containsIfNotEmpty with non-empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with containsIfNotEmpty in WHERE clause")
@@ -338,8 +338,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s containsIfNotEmpty with empty value in WHERE clause.
+    ///
+    /// 测试s containsIfNotEmpty with empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when containsIfNotEmpty is empty")
@@ -356,8 +356,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notStartsWithIfNotEmpty with non-empty value in WHERE clause.
+    ///
+    /// 测试s notStartsWithIfNotEmpty with non-empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWithIfNotEmpty in WHERE clause")
@@ -373,8 +373,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWithIfNotEmpty with empty value in WHERE clause.
+    ///
+    /// 测试s notStartsWithIfNotEmpty with empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notStartsWithIfNotEmpty is empty")
@@ -391,8 +391,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notEndsWithIfNotEmpty with non-empty value in WHERE clause.
+    ///
+    /// 测试s notEndsWithIfNotEmpty with non-empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWithIfNotEmpty in WHERE clause")
@@ -408,8 +408,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
     }
 
-///
-     /// 测试s notEndsWithIfNotEmpty with empty value in WHERE clause.
+    ///
+    /// 测试s notEndsWithIfNotEmpty with empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notEndsWithIfNotEmpty is empty")
@@ -426,8 +426,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notContainsIfNotEmpty with non-empty value in WHERE clause.
+    ///
+    /// 测试s notContainsIfNotEmpty with non-empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContainsIfNotEmpty in WHERE clause")
@@ -443,8 +443,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s notContainsIfNotEmpty with empty value in WHERE clause.
+    ///
+    /// 测试s notContainsIfNotEmpty with empty value in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notContainsIfNotEmpty is empty")
@@ -463,8 +463,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
 
     // ==================== Combined Conditional Tests ====================
 
-///
-     /// 测试s combining multiple IfNotNull string conditions in WHERE clause.
+    ///
+    /// 测试s combining multiple IfNotNull string conditions in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple IfNotNull conditions in WHERE clause")
@@ -481,8 +481,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().contains("@"));
     }
 
-///
-     /// 测试s combining multiple IfNotEmpty string conditions in WHERE clause.
+    ///
+    /// 测试s combining multiple IfNotEmpty string conditions in WHERE clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple IfNotEmpty conditions in WHERE clause")
@@ -499,8 +499,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s combining IfNotNull and IfNotEmpty conditions.
+    ///
+    /// 测试s combining IfNotNull and IfNotEmpty conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine IfNotNull and IfNotEmpty conditions")
@@ -517,8 +517,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
                 e.getName().contains("John") && e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s that null IfNotNull values are skipped in combined conditions.
+    ///
+    /// 测试s that null IfNotNull values are skipped in combined conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip null IfNotNull in combined conditions")
@@ -534,8 +534,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s that empty IfNotEmpty values are skipped in combined conditions.
+    ///
+    /// 测试s that empty IfNotEmpty values are skipped in combined conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip empty IfNotEmpty in combined conditions")
@@ -551,8 +551,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s count with IfNotNull string condition.
+    ///
+    /// 测试s count with IfNotNull string condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with IfNotNull string condition")
@@ -566,8 +566,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(count).isPositive();
     }
 
-///
-     /// 测试s count with IfNotEmpty string condition.
+    ///
+    /// 测试s count with IfNotEmpty string condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with IfNotEmpty string condition")
@@ -581,8 +581,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(count).isPositive();
     }
 
-///
-     /// 测试s getFirst with IfNotNull string condition.
+    ///
+    /// 测试s getFirst with IfNotNull string condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst with IfNotNull string condition")
@@ -598,8 +598,8 @@ public class StringOperatorDefaultMethodsIntegrationTest {
         assertThat(employee.getName()).contains("Alice");
     }
 
-///
-     /// 测试s exist with IfNotEmpty string condition.
+    ///
+    /// 测试s exist with IfNotEmpty string condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check exist with IfNotEmpty string condition")

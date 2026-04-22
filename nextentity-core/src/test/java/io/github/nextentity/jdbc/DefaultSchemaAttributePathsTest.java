@@ -8,12 +8,12 @@ import java.util.Arrays;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y DefaultSchemaAttributePaths 正确 manages paths
- /// <p>
- /// 测试场景s:
- /// 1. Add paths
- /// 2. Get paths
- /// 3. Check inheritance
+/// 测试目标: 验证y DefaultSchemaAttributePaths 正确 manages paths
+/// <p>
+/// 测试场景s:
+/// 1. Add paths
+/// 2. Get paths
+/// 3. Check inheritance
 class DefaultSchemaAttributePathsTest {
 
     @Nested

@@ -42,7 +42,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 如需创建防御性副本的版本，请使用 {@link #copyOf(Object[])}。
     ///
     /// @param elements 要包含在列表中的元素
-    /// @param <T> 元素类型
+    /// @param <T>      元素类型
     /// @return 包含指定元素的不可变列表
     @SafeVarargs
     public static <T> ImmutableList<T> of(T... elements) {
@@ -66,7 +66,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// - 当处理新创建的私有数组时
     ///
     /// @param array 要复制并从中创建列表的数组
-    /// @param <T> 元素类型
+    /// @param <T>   元素类型
     /// @return 包含数组元素副本的不可变列表
     public static <T> ImmutableList<T> copyOf(T[] array) {
         if (array.length == 0) {
@@ -78,7 +78,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 从可迭代对象创建不可变列表。
     ///
     /// @param iterable 可迭代对象
-    /// @param <T> 元素类型
+    /// @param <T>      元素类型
     /// @return 包含可迭代对象元素的不可变列表
     public static <T> ImmutableList<T> ofIterable(Iterable<T> iterable) {
         return iterable instanceof Collection
@@ -89,7 +89,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 从集合创建不可变列表。
     ///
     /// @param collection 集合
-    /// @param <T> 元素类型
+    /// @param <T>        元素类型
     /// @return 包含集合元素的不可变列表
     public static <T> @NonNull ImmutableList<T> ofCollection(Collection<T> collection) {
         if (collection instanceof ImmutableList) {
@@ -102,8 +102,8 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
 
     /// 连接两个集合创建不可变列表。
     ///
-    /// @param a 第一个集合
-    /// @param b 第二个集合
+    /// @param a   第一个集合
+    /// @param b   第二个集合
     /// @param <T> 元素类型
     /// @return 连接后的新不可变列表
     public static <T> ImmutableList<T> concat(Collection<? extends T> a, Collection<? extends T> b) {
@@ -267,7 +267,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
 
     /// 转换为指定类型的数组。
     ///
-    /// @param a 目标数组
+    /// @param a   目标数组
     /// @param <T> 数组元素类型
     /// @return 指定类型的数组
     @Override
@@ -317,7 +317,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 在指定位置添加所有元素（不支持）。
     ///
     /// @param index 索引位置
-    /// @param c 要添加的集合
+    /// @param c     要添加的集合
     /// @return 布尔值（不适用）
     /// @throws UnsupportedOperationException 始终抛出此异常
     @Override
@@ -364,7 +364,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
 
     /// 设置指定位置的元素（不支持）。
     ///
-    /// @param index 索引
+    /// @param index   索引
     /// @param element 新元素
     /// @return 旧元素（不适用）
     /// @throws UnsupportedOperationException 始终抛出此异常
@@ -375,7 +375,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
 
     /// 在指定位置添加元素（不支持）。
     ///
-    /// @param index 索引
+    /// @param index   索引
     /// @param element 要添加的元素
     /// @throws UnsupportedOperationException 始终抛出此异常
     @Override
@@ -436,7 +436,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 获取子列表。
     ///
     /// @param fromIndex 起始索引
-    /// @param toIndex 结束索引
+    /// @param toIndex   结束索引
     /// @return 子列表
     @NonNull
     @Override
@@ -456,8 +456,8 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 检查子列表范围的有效性。
     ///
     /// @param fromIndex 起始索引
-    /// @param toIndex 结束索引
-    /// @param size 列表大小
+    /// @param toIndex   结束索引
+    /// @param size      列表大小
     static void subListRangeCheck(int fromIndex, int toIndex, int size) {
         if (fromIndex < 0)
             throw new IndexOutOfBoundsException("fromIndex = " + fromIndex);
@@ -480,7 +480,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// 获取具有初始容量的收集器。
     ///
     /// @param initialCapacity 初始容量
-    /// @param <T> 元素类型
+    /// @param <T>             元素类型
     /// @return 收集器
     public static <T> @NonNull Collector<T, ?, ImmutableList<T>> collector(int initialCapacity) {
         return Collector.of(

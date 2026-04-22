@@ -41,7 +41,7 @@ public interface SubQueryBuilder<T, U> extends Expression<T, List<U>> {
     /// 获取查询结果的一部分。
     ///
     /// @param offset 起始偏移量
-    /// @param limit 最大结果数
+    /// @param limit  最大结果数
     /// @return 分片结果表达式
     Expression<T, List<U>> slice(int offset, int limit);
 

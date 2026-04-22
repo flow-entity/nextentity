@@ -1,7 +1,5 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.SchemaAttribute;
-
 /// 投影关联属性接口，复用源实体已定义的 JPA 关联关系。
 ///
 /// 与 {@link ProjectionJoinAttribute} 可自定义 JOIN 到任意表不同，
@@ -12,7 +10,7 @@ import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 /// @see ProjectionAttribute
 /// @see EntitySchemaAttribute
 /// @see JoinAttribute
-public non-sealed interface ProjectionSchemaAttribute extends ProjectionAttribute, SchemaAttribute, JoinAttribute {
+public non-sealed interface ProjectionSchemaAttribute extends ProjectionAttribute, JoinAttribute {
 
     /// 获取此投影属性对应的实体关联属性。
     ///

@@ -98,11 +98,11 @@ public class Department implements Entity {
     @Override
     public String toString() {
         return "Department{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", location='" + location + '\'' +
-                ", budget=" + budget +
-                ", active=" + active +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", location='" + location + '\'' +
+               ", budget=" + budget +
+               ", active=" + active +
+               '}';
     }
 }

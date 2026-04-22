@@ -11,25 +11,25 @@ import org.junit.jupiter.params.provider.ArgumentsSource;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for Collector extended 方法.
- /// <p>
- /// 测试s default 方法 in Collector interface including:
- /// - first(): Get first result or null
- /// - single(): Get single result or null
- /// - window/limit terminal 操作s
- /// - slice(int, int) and page assembly via Pages
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.Collector
+/// Integration tests for Collector extended 方法.
+/// <p>
+/// 测试s default 方法 in Collector interface including:
+/// - first(): Get first result or null
+/// - single(): Get single result or null
+/// - window/limit terminal 操作s
+/// - slice(int, int) and page assembly via Pages
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.Collector
 @DisplayName("Collector Extended Methods Integration Tests")
 public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== getFirst() Tests ====================
 
-///
-     /// 测试s getFirst() returns first result.
+    ///
+    /// 测试s getFirst() returns first result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst return first result")
@@ -44,8 +44,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(first.getId()).isEqualTo(1L);
     }
 
-///
-     /// 测试s getFirst with positive offset.
+    ///
+    /// 测试s getFirst with positive offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst with positive offset")
@@ -60,8 +60,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(first.getId()).isEqualTo(3L);
     }
 
-///
-     /// 测试s getFirst returns null when offset exceeds result count.
+    ///
+    /// 测试s getFirst returns null when offset exceeds result count.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst return null when offset exceeds count")
@@ -80,8 +80,8 @@ public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== getSingle() Tests ====================
 
-///
-     /// 测试s getSingle with single result.
+    ///
+    /// 测试s getSingle with single result.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getSingle with single result")
@@ -102,8 +102,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(single.getId()).isEqualTo(firstId);
     }
 
-///
-     /// 测试s getSingle throws exception when multiple results.
+    ///
+    /// 测试s getSingle throws exception when multiple results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getSingle throw exception when multiple results")
@@ -118,8 +118,8 @@ public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== first() Tests ====================
 
-///
-     /// 测试s first() returns value.
+    ///
+    /// 测试s first() returns value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should first return value")
@@ -134,8 +134,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(first.getId()).isEqualTo(1L);
     }
 
-///
-     /// 测试s first with offset returns value.
+    ///
+    /// 测试s first with offset returns value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should first with offset return value")
@@ -152,8 +152,8 @@ public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== single() Tests ====================
 
-///
-     /// 测试s single() returns value.
+    ///
+    /// 测试s single() returns value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should single return value")
@@ -174,8 +174,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(single.getId()).isEqualTo(firstId);
     }
 
-///
-     /// 测试s single with offset returns value.
+    ///
+    /// 测试s single with offset returns value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should single with offset return value")
@@ -197,8 +197,8 @@ public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== exists() Tests ====================
 
-///
-     /// 测试s exists returns true when results exist.
+    ///
+    /// 测试s exists returns true when results exist.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should exists return true when results exist")
@@ -212,8 +212,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(exists).isTrue();
     }
 
-///
-     /// 测试s exists with offset within bounds returns true.
+    ///
+    /// 测试s exists with offset within bounds returns true.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should exists with offset within bounds return true")
@@ -230,8 +230,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(exists).isTrue();
     }
 
-///
-     /// 测试s exists with offset exceeding count returns false.
+    ///
+    /// 测试s exists with offset exceeding count returns false.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should exists with offset exceeding count return false")
@@ -250,8 +250,8 @@ public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== Slice Tests ====================
 
-///
-     /// 测试s slice(int, int) 方法.
+    ///
+    /// 测试s slice(int, int) 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with offset and limit")
@@ -266,8 +266,8 @@ public class CollectorExtendedMethodsIntegrationTest {
         assertThat(slice.data().get(0).getId()).isEqualTo(1L);
     }
 
-///
-     /// 测试s slice with non-zero offset.
+    ///
+    /// 测试s slice with non-zero offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with non-zero offset")
@@ -284,8 +284,8 @@ public class CollectorExtendedMethodsIntegrationTest {
 
     // ==================== asSubQuery Tests ====================
 
-///
-     /// 测试s asSubQuery 方法.
+    ///
+    /// 测试s asSubQuery 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should convert to subquery")

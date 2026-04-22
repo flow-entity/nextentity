@@ -13,32 +13,32 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for OrderOperator default 方法.
- /// <p>
- /// 测试s default 方法 in OrderOperator interface that delegate to asc():
- /// - orderBy(Collection): Sort by collection without explicit asc()/desc()
- /// - count(): Count without explicit asc()/desc()
- /// - getList(int, int, LockModeType): Get list without explicit asc()/desc()
- /// - exist(int): Check existence without explicit asc()/desc()
- /// - slice(int, int): Slice without explicit asc()/desc()
- /// - getPage(Pageable): Get page without explicit asc()/desc()
- /// - map(Function): Map without explicit asc()/desc()
- /// <p>
- /// These 方法 are triggered when calling 方法 on OrderOperator directly
- /// without first calling asc() or desc().
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.OrderOperator
+/// Integration tests for OrderOperator default 方法.
+/// <p>
+/// 测试s default 方法 in OrderOperator interface that delegate to asc():
+/// - orderBy(Collection): Sort by collection without explicit asc()/desc()
+/// - count(): Count without explicit asc()/desc()
+/// - getList(int, int, LockModeType): Get list without explicit asc()/desc()
+/// - exist(int): Check existence without explicit asc()/desc()
+/// - slice(int, int): Slice without explicit asc()/desc()
+/// - getPage(Pageable): Get page without explicit asc()/desc()
+/// - map(Function): Map without explicit asc()/desc()
+/// <p>
+/// These 方法 are triggered when calling 方法 on OrderOperator directly
+/// without first calling asc() or desc().
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.OrderOperator
 @DisplayName("OrderOperator Default Methods Integration Tests")
 public class OrderOperatorDefaultMethodsIntegrationTest {
 
     // ==================== count() Tests ====================
 
-///
-     /// 测试s count() without explicit asc()/desc().
-     /// This triggers OrderOperator.count() default 方法.
+    ///
+    /// 测试s count() without explicit asc()/desc().
+    /// This triggers OrderOperator.count() default 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count without explicit sort order")
@@ -54,9 +54,9 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
 
     // ==================== exist(int) Tests ====================
 
-///
-     /// 测试s exist(int) without explicit asc()/desc().
-     /// This triggers OrderOperator.exist(int) default 方法.
+    ///
+    /// 测试s exist(int) without explicit asc()/desc().
+    /// This triggers OrderOperator.exist(int) default 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check exist with offset without explicit sort order")
@@ -70,8 +70,8 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         assertThat(exists).isTrue();
     }
 
-///
-     /// 测试s exist(int) with offset exceeding count.
+    ///
+    /// 测试s exist(int) with offset exceeding count.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check exist with offset exceeding count return false")
@@ -90,9 +90,9 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
 
     // ==================== slice(int, int) Tests ====================
 
-///
-     /// 测试s slice(int, int) without explicit asc()/desc().
-     /// This triggers OrderOperator.slice(int, int) default 方法.
+    ///
+    /// 测试s slice(int, int) without explicit asc()/desc().
+    /// This triggers OrderOperator.slice(int, int) default 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice without explicit sort order")
@@ -106,8 +106,8 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
         assertThat(slice.data()).hasSize(5);
     }
 
-///
-     /// 测试s slice with non-zero offset.
+    ///
+    /// 测试s slice with non-zero offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with offset without explicit sort order")
@@ -124,9 +124,9 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
 
     // ==================== getList(int, int, LockModeType) Tests ====================
 
-///
-     /// 测试s getList(int, int, LockModeType) without explicit asc()/desc().
-     /// This triggers OrderOperator.getList(int, int, LockModeType) default 方法.
+    ///
+    /// 测试s getList(int, int, LockModeType) without explicit asc()/desc().
+    /// This triggers OrderOperator.getList(int, int, LockModeType) default 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getList without explicit sort order")
@@ -142,9 +142,9 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
 
     // ==================== asSubQuery() Tests ====================
 
-///
-     /// 测试s asSubQuery() without explicit asc()/desc().
-     /// This triggers OrderOperator.toSubQuery() default 方法.
+    ///
+    /// 测试s asSubQuery() without explicit asc()/desc().
+    /// This triggers OrderOperator.toSubQuery() default 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should convert to subquery without explicit sort order")
@@ -160,8 +160,8 @@ public class OrderOperatorDefaultMethodsIntegrationTest {
 
     // ==================== Combined Tests ====================
 
-///
-     /// 测试s combining orderBy with where clause without explicit asc()/desc().
+    ///
+    /// 测试s combining orderBy with where clause without explicit asc()/desc().
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine orderBy with where without explicit sort order")

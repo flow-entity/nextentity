@@ -448,7 +448,7 @@ public interface ExpressionBuilder<T, U, B> {
         /// 获取指定路径的路径操作器。
         ///
         /// @param path 路径
-        /// @param <V> 路径值类型
+        /// @param <V>  路径值类型
         /// @return 路径操作器实例
         <V> PathOperator<T, V, B> get(PathRef<U, V> path);
 
@@ -461,7 +461,7 @@ public interface ExpressionBuilder<T, U, B> {
         /// 获取指定数值路径的数值操作器。
         ///
         /// @param path 数值路径
-        /// @param <V> 数值类型
+        /// @param <V>  数值类型
         /// @return 数值操作器实例
         <V extends Number> NumberOperator<T, V, B> get(PathRef.NumberRef<U, V> path);
 
@@ -725,14 +725,14 @@ public interface ExpressionBuilder<T, U, B> {
         /// 与指定路径的路径操作器连接。
         ///
         /// @param path 路径
-        /// @param <R> 路径值类型
+        /// @param <R>  路径值类型
         /// @return 路径操作器实例
         <R> PathOperator<T, R, Conjunction<T>> and(PathRef<T, R> path);
 
         /// 与指定数值路径的数值操作器连接。
         ///
         /// @param path 数值路径
-        /// @param <R> 数值类型
+        /// @param <R>  数值类型
         /// @return 数值操作器实例
         <R extends Number> NumberOperator<T, R, Conjunction<T>> and(PathRef.NumberRef<T, R> path);
 
@@ -775,14 +775,14 @@ public interface ExpressionBuilder<T, U, B> {
         /// 与指定路径的路径操作器析取。
         ///
         /// @param path 路径
-        /// @param <N> 路径值类型
+        /// @param <N>  路径值类型
         /// @return 路径操作器实例
         <N> PathOperator<T, N, Disjunction<T>> or(PathRef<T, N> path);
 
         /// 与指定数值路径的数值操作器析取。
         ///
         /// @param path 数值路径
-        /// @param <N> 数值类型
+        /// @param <N>  数值类型
         /// @return 数值操作器实例
         <N extends Number> NumberOperator<T, N, Disjunction<T>> or(PathRef.NumberRef<T, N> path);
 

@@ -9,12 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 ///
- /// 测试目标: 验证y AttributeConverterWrapper 正确 wraps JPA AttributeConverter
- /// <p>
- /// 测试场景s:
- /// 1. Wrap non-ValueConverter AttributeConverter
- /// 2. Return existing ValueConverter directly
- /// 3. Delegate conversion 方法
+/// 测试目标: 验证y AttributeConverterWrapper 正确 wraps JPA AttributeConverter
+/// <p>
+/// 测试场景s:
+/// 1. Wrap non-ValueConverter AttributeConverter
+/// 2. Return existing ValueConverter directly
+/// 3. Delegate conversion 方法
 class AttributeConverterWrapperTest {
 
     @Nested
@@ -83,8 +83,8 @@ class AttributeConverterWrapperTest {
         }
     }
 
-///
-     /// 测试 implementation that implements both interfaces
+    ///
+    /// 测试 implementation that implements both interfaces
     private static class TestValueConverter implements ValueConverter<String, String>, AttributeConverter<String, String> {
         @Override
         public String convertToDatabaseColumn(String attribute) {

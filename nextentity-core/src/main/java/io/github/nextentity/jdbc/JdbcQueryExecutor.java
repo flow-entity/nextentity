@@ -36,11 +36,11 @@ public class JdbcQueryExecutor implements QueryExecutor {
 
     /// 构造JDBC查询执行器（含拦截器）
     ///
-    /// @param metamodel 元模型，用于提供实体元数据信息
-    /// @param sqlBuilder SQL构建器，用于生成SQL语句
-    /// @param connectionProvider 连接提供者，用于获取数据库连接
-    /// @param collector 结果收集器，用于处理查询结果
-    /// @param config JDBC配置
+    /// @param metamodel           元模型，用于提供实体元数据信息
+    /// @param sqlBuilder          SQL构建器，用于生成SQL语句
+    /// @param connectionProvider  连接提供者，用于获取数据库连接
+    /// @param collector           结果收集器，用于处理查询结果
+    /// @param config              JDBC配置
     /// @param interceptorSelector 拦截器选择器
     public JdbcQueryExecutor(@NonNull Metamodel metamodel,
                              @NonNull QuerySqlBuilder sqlBuilder,
@@ -56,7 +56,7 @@ public class JdbcQueryExecutor implements QueryExecutor {
 
     /// 执行查询并返回结果列表
     ///
-    /// @param <R> 查询结果类型
+    /// @param <R>     查询结果类型
     /// @param context 查询上下文，包含查询的所有相关信息
     /// @return 查询结果列表
     @Override
@@ -102,9 +102,9 @@ public class JdbcQueryExecutor implements QueryExecutor {
     public interface ResultCollector {
         /// 解析结果集
         ///
-        /// @param <T> 结果类型
+        /// @param <T>       结果类型
         /// @param resultSet 结果集
-        /// @param context 查询上下文
+        /// @param context   查询上下文
         /// @return 解析后的结果列表
         /// @throws SQLException SQL异常
         <T> List<T> resolve(ResultSet resultSet, QueryContext context) throws SQLException;

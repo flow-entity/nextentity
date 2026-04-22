@@ -25,7 +25,7 @@ public interface QueryExecutor {
     /// 实现会在执行前调用 context.init() 完成初始化，
     /// 并设置 expandReferencePath 等配置。
     ///
-    /// @param <T> 结果实体类型
+    /// @param <T>     结果实体类型
     /// @param context 查询上下文
     /// @return 符合查询条件的实体列表
     /// @throws NullPointerException 如果 context 为 null

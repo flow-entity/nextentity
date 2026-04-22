@@ -18,16 +18,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 ///
- /// Error handling integration tests.
- /// <p>
- /// 测试s error handling including:
- /// - SQL exceptions
- /// - Constraint violations
- /// - Invalid queries
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Error handling integration tests.
+/// <p>
+/// 测试s error handling including:
+/// - SQL exceptions
+/// - Constraint violations
+/// - Invalid queries
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Error Handling Integration Tests")
 public class ErrorHandlingIntegrationTest {
 
@@ -39,8 +39,8 @@ public class ErrorHandlingIntegrationTest {
         }
     }
 
-///
-     /// 测试s duplicate primary key violation.
+    ///
+    /// 测试s duplicate primary key violation.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception on duplicate primary key")
@@ -54,9 +54,9 @@ public class ErrorHandlingIntegrationTest {
                 .isInstanceOf(RuntimeException.class);
     }
 
-///
-     /// 测试s updating non-existent entity.
-     /// Note: This 行为 may vary between JPA and JDBC implementations.
+    ///
+    /// 测试s updating non-existent entity.
+    /// Note: This 行为 may vary between JPA and JDBC implementations.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle update of non-existent entity")
@@ -81,8 +81,8 @@ public class ErrorHandlingIntegrationTest {
         }
     }
 
-///
-     /// 测试s getSingle with multiple results.
+    ///
+    /// 测试s getSingle with multiple results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception when getSingle finds multiple results")
@@ -94,8 +94,8 @@ public class ErrorHandlingIntegrationTest {
                 .hasMessageContaining("more than one");
     }
 
-///
-     /// 测试s query with invalid field comparison.
+    ///
+    /// 测试s query with invalid field comparison.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle type mismatch gracefully")
@@ -109,9 +109,9 @@ public class ErrorHandlingIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s foreign key constraint violation.
-     /// Note: This depends on whether the schema has FK constraints defined.
+    ///
+    /// 测试s foreign key constraint violation.
+    /// Note: This depends on whether the schema has FK constraints defined.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle foreign key constraint")
@@ -132,8 +132,8 @@ public class ErrorHandlingIntegrationTest {
         }
     }
 
-///
-     /// 测试s null ID on insert.
+    ///
+    /// 测试s null ID on insert.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null ID on insert")
@@ -160,8 +160,8 @@ public class ErrorHandlingIntegrationTest {
         }
     }
 
-///
-     /// 测试s querying non-existent table would fail at setup time.
+    ///
+    /// 测试s querying non-existent table would fail at setup time.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle valid table query")
@@ -173,8 +173,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s constraint violation on unique field.
+    ///
+    /// 测试s constraint violation on unique field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle unique constraint on email if exists")
@@ -198,8 +198,8 @@ public class ErrorHandlingIntegrationTest {
         }
     }
 
-///
-     /// 测试s valid delete 操作.
+    ///
+    /// 测试s valid delete 操作.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete existing entity successfully")
@@ -218,8 +218,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(found).isNull();
     }
 
-///
-     /// 测试s query with complex invalid condition.
+    ///
+    /// 测试s query with complex invalid condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle complex query conditions")
@@ -236,8 +236,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s aggregation error handling.
+    ///
+    /// 测试s aggregation error handling.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle aggregation queries")
@@ -253,8 +253,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(avgSalary).isPositive();
     }
 
-///
-     /// 测试s empty result set handling.
+    ///
+    /// 测试s empty result set handling.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty result set")
@@ -274,8 +274,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(count).isZero();
     }
 
-///
-     /// 测试s pagination edge cases.
+    ///
+    /// 测试s pagination edge cases.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle pagination edge cases")
@@ -297,8 +297,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s projection with non-existent field.
+    ///
+    /// 测试s projection with non-existent field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle projection queries")
@@ -315,8 +315,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(results.getFirst().get1()).isNotNull();
     }
 
-///
-     /// 测试s department 操作s.
+    ///
+    /// 测试s department 操作s.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle department CRUD operations")
@@ -359,8 +359,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(found).isNull();
     }
 
-///
-     /// 测试s string pattern matching edge cases.
+    ///
+    /// 测试s string pattern matching edge cases.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle string pattern matching")
@@ -382,8 +382,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s multiple condition combination.
+    ///
+    /// 测试s multiple condition combination.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle multiple condition combinations")
@@ -398,8 +398,8 @@ public class ErrorHandlingIntegrationTest {
         assertThat(employees).isEmpty();
     }
 
-///
-     /// 创建 a test employee with the specified ID and name.
+    ///
+    /// 创建 a test employee with the specified ID and name.
     private Employee createTestEmployee(Long id, String name) {
         Employee employee = new Employee();
         employee.setId(id);

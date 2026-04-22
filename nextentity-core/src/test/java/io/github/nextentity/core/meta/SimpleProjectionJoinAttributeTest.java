@@ -9,7 +9,7 @@
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-/////
+/// //
 // /// 单元测试 SimpleProjectionJoinAttribute.
 //@ExtendWith(MockitoExtension.class)
 //class SimpleProjectionJoinAttributeTest {

@@ -53,7 +53,7 @@ public interface MetamodelResolver {
     ///
     /// @param attribute 属性
     /// @return 值转换器，如果没有则返回 null
-    ValueConverter<?,?> databaseType(Attribute attribute);
+    ValueConverter<?, ?> databaseType(Attribute attribute);
 
     /// 检查属性对应的列是否可更新。
     ///

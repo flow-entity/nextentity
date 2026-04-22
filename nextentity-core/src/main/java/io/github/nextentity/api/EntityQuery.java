@@ -91,10 +91,10 @@ package io.github.nextentity.api;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 1.0.0
 /// @see SelectStep 选择和投影操作
 /// @see FetchStep 关联预加载操作
 /// @see WhereStep 条件构建操作
+/// @since 1.0.0
 public interface EntityQuery<T> extends SelectStep<T> {
 
 }

@@ -14,27 +14,27 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for SimpleExpression asc() and desc() default 方法.
- /// <p>
- /// 测试s default 方法 in SimpleExpression interface including:
- /// - asc(): Returns Order for ascending sort
- /// - desc(): Returns Order for descending sort
- /// <p>
- /// These tests verify that the Order objects returned by asc()/desc()
- /// can be used with orderBy(Order) 方法.
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.SimpleExpression
+/// Integration tests for SimpleExpression asc() and desc() default 方法.
+/// <p>
+/// 测试s default 方法 in SimpleExpression interface including:
+/// - asc(): Returns Order for ascending sort
+/// - desc(): Returns Order for descending sort
+/// <p>
+/// These tests verify that the Order objects returned by asc()/desc()
+/// can be used with orderBy(Order) 方法.
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.SimpleExpression
 @DisplayName("SimpleExpression Sort Order Integration Tests")
 public class SimpleExpressionSortOrderIntegrationTest {
 
     // ==================== asc() Tests ====================
 
-///
-     /// 测试s asc() 方法 on string field.
-     /// The asc() 方法 returns an Order object that can be used with orderBy(Order).
+    ///
+    /// 测试s asc() 方法 on string field.
+    /// The asc() 方法 returns an Order object that can be used with orderBy(Order).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by string field ascending using asc()")
@@ -55,8 +55,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         }
     }
 
-///
-     /// 测试s asc() 方法 on numeric field.
+    ///
+    /// 测试s asc() 方法 on numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by numeric field ascending using asc()")
@@ -77,8 +77,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         }
     }
 
-///
-     /// 测试s asc() 方法 on ID field.
+    ///
+    /// 测试s asc() 方法 on ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by ID field ascending using asc()")
@@ -101,8 +101,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
 
     // ==================== desc() Tests ====================
 
-///
-     /// 测试s desc() 方法 on string field.
+    ///
+    /// 测试s desc() 方法 on string field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by string field descending using desc()")
@@ -123,8 +123,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         }
     }
 
-///
-     /// 测试s desc() 方法 on numeric field.
+    ///
+    /// 测试s desc() 方法 on numeric field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by numeric field descending using desc()")
@@ -145,8 +145,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         }
     }
 
-///
-     /// 测试s desc() 方法 on ID field.
+    ///
+    /// 测试s desc() 方法 on ID field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by ID field descending using desc()")
@@ -169,8 +169,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
 
     // ==================== Combined with Filter Tests ====================
 
-///
-     /// 测试s asc() combined with where clause.
+    ///
+    /// 测试s asc() combined with where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine asc() with where clause")
@@ -193,8 +193,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         }
     }
 
-///
-     /// 测试s desc() combined with where clause.
+    ///
+    /// 测试s desc() combined with where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine desc() with where clause")
@@ -219,8 +219,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
 
     // ==================== Count and Exist Tests ====================
 
-///
-     /// 测试s count with asc() ordering.
+    ///
+    /// 测试s count with asc() ordering.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with asc() ordering")
@@ -237,8 +237,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         assertThat(count).isPositive();
     }
 
-///
-     /// 测试s exist with desc() ordering.
+    ///
+    /// 测试s exist with desc() ordering.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check exist with desc() ordering")
@@ -257,8 +257,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
 
     // ==================== GetFirst/GetSingle Tests ====================
 
-///
-     /// 测试s getFirst with asc() ordering.
+    ///
+    /// 测试s getFirst with asc() ordering.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst with asc() ordering returns minimum")
@@ -276,8 +276,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         assertThat(first.getId()).isEqualTo(1L);
     }
 
-///
-     /// 测试s getFirst with desc() ordering.
+    ///
+    /// 测试s getFirst with desc() ordering.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should getFirst with desc() ordering returns maximum")
@@ -301,8 +301,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         assertThat(first.getId()).isEqualTo(maxId);
     }
 
-///
-     /// 测试s limit with asc() ordering.
+    ///
+    /// 测试s limit with asc() ordering.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit with asc() ordering")
@@ -320,8 +320,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         assertThat(employees.getFirst().getId()).isEqualTo(1L);
     }
 
-///
-     /// 测试s offset with desc() ordering.
+    ///
+    /// 测试s offset with desc() ordering.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset with desc() ordering")
@@ -341,8 +341,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
 
     // ==================== Multiple Order Tests ====================
 
-///
-     /// 测试s using multiple Order objects with orderBy(Order, Order).
+    ///
+    /// 测试s using multiple Order objects with orderBy(Order, Order).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use orderBy with two Order objects")
@@ -360,8 +360,8 @@ public class SimpleExpressionSortOrderIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s using three Order objects.
+    ///
+    /// 测试s using three Order objects.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use orderBy with three Order objects")

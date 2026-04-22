@@ -11,7 +11,7 @@ import java.util.List;
 /// 结合按其排序的表达式和排序顺序（ASC/DESC）。
 ///
 /// @param expression 按其排序的表达式
-/// @param order 排序顺序（升序或降序）
+/// @param order      排序顺序（升序或降序）
 /// @author HuangChengwei
 /// @since 1.0.0
 public record SortExpression(ExpressionNode expression, SortOrder order) {
@@ -19,7 +19,7 @@ public record SortExpression(ExpressionNode expression, SortOrder order) {
     /// 将Order对象列表映射到SortExpression实例。
     ///
     /// @param orders 要映射的Order对象
-    /// @param <T> 实体类型
+    /// @param <T>    实体类型
     /// @return SortExpression实例的不可变列表
     public static <T> ImmutableList<SortExpression> mapping(List<? extends Order<T>> orders) {
         return orders.stream().map(SortExpression::of).collect(ImmutableList.collector(orders.size()));

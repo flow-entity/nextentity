@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 /// ExpressionBuilderImpl的单元测试。
 class ExpressionBuilderImplTest {

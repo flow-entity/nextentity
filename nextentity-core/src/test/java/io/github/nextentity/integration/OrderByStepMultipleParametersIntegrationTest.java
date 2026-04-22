@@ -14,26 +14,26 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for OrderByStep multiple parameter orderBy 方法.
- /// <p>
- /// 测试s default 方法 in OrderByStep interface including:
- /// - orderBy(Order): Sort by single Order object
- /// - orderBy(Order, Order): Sort by two Order objects
- /// - orderBy(Order, Order, Order): Sort by three Order objects
- /// - orderBy(Path, Path): Sort by two paths
- /// - orderBy(Path, Path, Path): Sort by three paths
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.OrderByStep
+/// Integration tests for OrderByStep multiple parameter orderBy 方法.
+/// <p>
+/// 测试s default 方法 in OrderByStep interface including:
+/// - orderBy(Order): Sort by single Order object
+/// - orderBy(Order, Order): Sort by two Order objects
+/// - orderBy(Order, Order, Order): Sort by three Order objects
+/// - orderBy(Path, Path): Sort by two paths
+/// - orderBy(Path, Path, Path): Sort by three paths
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.OrderByStep
 @DisplayName("OrderByStep Multiple Parameters Integration Tests")
 public class OrderByStepMultipleParametersIntegrationTest {
 
     // ==================== orderBy(Order) Tests ====================
 
-///
-     /// 测试s orderBy(Order) with a single Order object.
+    ///
+    /// 测试s orderBy(Order) with a single Order object.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by single Order object")
@@ -56,8 +56,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
 
     // ==================== orderBy(Order, Order) Tests ====================
 
-///
-     /// 测试s orderBy(Order, Order) with two Order objects.
+    ///
+    /// 测试s orderBy(Order, Order) with two Order objects.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by two Order objects")
@@ -81,8 +81,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
         }
     }
 
-///
-     /// 测试s orderBy(Order, Order) with both ascending orders.
+    ///
+    /// 测试s orderBy(Order, Order) with both ascending orders.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by two ascending Order objects")
@@ -103,8 +103,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
 
     // ==================== orderBy(Order, Order, Order) Tests ====================
 
-///
-     /// 测试s orderBy(Order, Order, Order) with three Order objects.
+    ///
+    /// 测试s orderBy(Order, Order, Order) with three Order objects.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by three Order objects")
@@ -125,8 +125,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
 
     // ==================== orderBy(Path, Path) Tests ====================
 
-///
-     /// 测试s orderBy(Path, Path) with two paths.
+    ///
+    /// 测试s orderBy(Path, Path) with two paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by two paths")
@@ -141,8 +141,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s orderBy(Path, Path) with descending order.
+    ///
+    /// 测试s orderBy(Path, Path) with descending order.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by two paths descending")
@@ -164,8 +164,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
 
     // ==================== orderBy(Path, Path, Path) Tests ====================
 
-///
-     /// 测试s orderBy(Path, Path, Path) with three paths.
+    ///
+    /// 测试s orderBy(Path, Path, Path) with three paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by three paths")
@@ -180,8 +180,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s orderBy(Path, Path, Path) with descending order.
+    ///
+    /// 测试s orderBy(Path, Path, Path) with descending order.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by three paths descending")
@@ -198,8 +198,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
 
     // ==================== Combined with Filter Tests ====================
 
-///
-     /// 测试s combining multiple Order objects with where clause.
+    ///
+    /// 测试s combining multiple Order objects with where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple orders with where clause")
@@ -219,8 +219,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 50000.0);
     }
 
-///
-     /// 测试s count with multiple Order objects.
+    ///
+    /// 测试s count with multiple Order objects.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with multiple Order objects")
@@ -238,8 +238,8 @@ public class OrderByStepMultipleParametersIntegrationTest {
         assertThat(count).isPositive();
     }
 
-///
-     /// 测试s limit with multiple paths.
+    ///
+    /// 测试s limit with multiple paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit with multiple paths")

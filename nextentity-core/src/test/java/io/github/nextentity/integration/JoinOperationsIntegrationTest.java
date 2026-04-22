@@ -14,16 +14,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 ///
- /// JOIN and fetch 操作s integration tests.
- /// <p>
- /// 测试s association queries including:
- /// - Fetch associated entities
- /// - Left join queries
- /// - Many-to-one associations
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// JOIN and fetch 操作s integration tests.
+/// <p>
+/// 测试s association queries including:
+/// - Fetch associated entities
+/// - Left join queries
+/// - Many-to-one associations
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("JOIN Operations Integration Tests")
 public class JoinOperationsIntegrationTest {
 
@@ -48,8 +48,8 @@ public class JoinOperationsIntegrationTest {
         assertNotNull(emp.getDepartment().getId());
     }
 
-///
-     /// 测试s querying employees with department filter.
+    ///
+    /// 测试s querying employees with department filter.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter employees by department name")
@@ -70,8 +70,8 @@ public class JoinOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s querying departments and their employees.
+    ///
+    /// 测试s querying departments and their employees.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query departments")
@@ -90,8 +90,8 @@ public class JoinOperationsIntegrationTest {
         assertEquals("Building A", dept.getLocation());
     }
 
-///
-     /// 测试s employee count per department.
+    ///
+    /// 测试s employee count per department.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count employees per department")
@@ -113,8 +113,8 @@ public class JoinOperationsIntegrationTest {
         assertEquals(3, dept2Employees.size());
     }
 
-///
-     /// 测试s fetching with multiple associations.
+    ///
+    /// 测试s fetching with multiple associations.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with multiple conditions")
@@ -138,8 +138,8 @@ public class JoinOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s salary statistics per department.
+    ///
+    /// 测试s salary statistics per department.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should calculate salary statistics per department")
@@ -163,8 +163,8 @@ public class JoinOperationsIntegrationTest {
         assertEquals(expectedMax, maxSalary.doubleValue(), 0.01);
     }
 
-///
-     /// 测试s ordering employees by department and salary.
+    ///
+    /// 测试s ordering employees by department and salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by department and salary")
@@ -191,8 +191,8 @@ public class JoinOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s distinct department IDs.
+    ///
+    /// 测试s distinct department IDs.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get distinct department IDs")
@@ -208,8 +208,8 @@ public class JoinOperationsIntegrationTest {
         assertEquals(5, deptIds.size());
     }
 
-///
-     /// 测试s employees with specific status in department.
+    ///
+    /// 测试s employees with specific status in department.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter by status and department")
@@ -229,8 +229,8 @@ public class JoinOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s department budget query.
+    ///
+    /// 测试s department budget query.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query department budget")

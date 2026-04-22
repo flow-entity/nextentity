@@ -39,10 +39,10 @@ public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNo
     /// 对此表达式和另一个节点应用二元运算符。
     ///
     /// @param operator 要应用的运算符
-    /// @param node 右操作数
+    /// @param node     右操作数
     /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, ExpressionNode node) {
-        if(node instanceof EmptyNode) {
+        if (node instanceof EmptyNode) {
             return this;
         }
         return operate(operator, Collections.singleton(node));
@@ -51,8 +51,8 @@ public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNo
     /// 对此表达式和另外两个节点应用三元运算符。
     ///
     /// @param operator 要应用的运算符
-    /// @param node0 第一个右操作数
-    /// @param node1 第二个右操作数
+    /// @param node0    第一个右操作数
+    /// @param node1    第二个右操作数
     /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, ExpressionNode node0, ExpressionNode node1) {
         return operate(operator, List.of(node0, node1));
@@ -61,7 +61,7 @@ public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNo
     /// 对此表达式和节点数组应用运算符。
     ///
     /// @param operator 要应用的运算符
-    /// @param nodes 操作数数组
+    /// @param nodes    操作数数组
     /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, ExpressionNode[] nodes) {
         return nodes.length == 0 ? operate(operator, Collections.emptyList()) : operate(operator, Arrays.asList(nodes));
@@ -73,7 +73,7 @@ public sealed interface ExpressionNode permits LiteralNode, PathNode, OperatorNo
     /// 对 IN 运算符的空操作数进行特殊处理，返回 FALSE 表达式。
     ///
     /// @param operator 要应用的运算符
-    /// @param nodes 操作数集合
+    /// @param nodes    操作数集合
     /// @return 应用运算符后的新表达式节点
     default ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         if (operator == Operator.IN && nodes.isEmpty()) {

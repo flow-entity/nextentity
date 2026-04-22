@@ -1,7 +1,6 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.QueryDescriptor;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.SelectExpressions;

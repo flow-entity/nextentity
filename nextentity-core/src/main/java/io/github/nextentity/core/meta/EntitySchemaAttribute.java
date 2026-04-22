@@ -1,7 +1,5 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.SchemaAttribute;
-
 /// 实体关联属性接口，表示实体类中引用其他实体的关联关系。
 ///
 /// 对应 JPA 的 {@code @ManyToOne}、{@code @OneToMany}、{@code @OneToOne}、{@code @ManyToMany} 注解。
@@ -11,6 +9,6 @@ import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 ///
 /// @see EntityBasicAttribute
 /// @see JoinAttribute
-public non-sealed interface EntitySchemaAttribute extends EntityAttribute, SchemaAttribute, JoinAttribute {
+public non-sealed interface EntitySchemaAttribute extends EntityAttribute, JoinAttribute {
 
 }

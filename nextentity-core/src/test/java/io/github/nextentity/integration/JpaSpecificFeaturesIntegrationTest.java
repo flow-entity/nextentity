@@ -17,25 +17,25 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// JPA-specific features integration tests.
- /// <p>
- /// 测试s JPA-specific functionality including:
- /// - JPA Criteria API integration
- /// - EntityManager interaction
- /// - Lock modes
- /// - JPA caching 行为
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// Note: Some tests are only applicable for JPA implementation.
- /// 
- /// @author HuangChengwei
+/// JPA-specific features integration tests.
+/// <p>
+/// 测试s JPA-specific functionality including:
+/// - JPA Criteria API integration
+/// - EntityManager interaction
+/// - Lock modes
+/// - JPA caching 行为
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+/// Note: Some tests are only applicable for JPA implementation.
+///
+/// @author HuangChengwei
 @DisplayName("JPA-Specific Features Integration Tests")
 public class JpaSpecificFeaturesIntegrationTest {
 
-///
-     /// 测试s query with PESSIMISTIC_READ lock mode.
-     /// This test is primarily for JPA implementation.
-     /// Note: Requires active transaction.
+    ///
+    /// 测试s query with PESSIMISTIC_READ lock mode.
+    /// This test is primarily for JPA implementation.
+    /// Note: Requires active transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic read lock")
@@ -53,9 +53,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s query with PESSIMISTIC_WRITE lock mode.
-     /// Note: Requires active transaction.
+    ///
+    /// 测试s query with PESSIMISTIC_WRITE lock mode.
+    /// Note: Requires active transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with pessimistic write lock")
@@ -73,9 +73,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s query with OPTIMISTIC lock mode.
-     /// Note: Requires active transaction and @Version field.
+    ///
+    /// 测试s query with OPTIMISTIC lock mode.
+    /// Note: Requires active transaction and @Version field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic lock")
@@ -92,9 +92,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s query with OPTIMISTIC_FORCE_INCREMENT lock mode.
-     /// Note: Requires active transaction and @Version field.
+    ///
+    /// 测试s query with OPTIMISTIC_FORCE_INCREMENT lock mode.
+    /// Note: Requires active transaction and @Version field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query with optimistic force increment lock")
@@ -110,8 +110,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s query with null lock mode (no lock).
+    ///
+    /// 测试s query with null lock mode (no lock).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query without lock mode")
@@ -126,9 +126,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(entity).isNotNull();
     }
 
-///
-     /// 测试s first with lock mode.
-     /// Note: Requires active transaction.
+    ///
+    /// 测试s first with lock mode.
+    /// Note: Requires active transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first with lock mode")
@@ -145,9 +145,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s single with lock mode.
-     /// Note: Requires active transaction.
+    ///
+    /// 测试s single with lock mode.
+    /// Note: Requires active transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get single with lock mode")
@@ -164,9 +164,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s update after pessimistic lock.
-     /// Note: Requires active transaction.
+    ///
+    /// 测试s update after pessimistic lock.
+    /// Note: Requires active transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update after pessimistic lock")
@@ -196,9 +196,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s list with lock mode.
-     /// Note: Requires active transaction.
+    ///
+    /// 测试s list with lock mode.
+    /// Note: Requires active transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with lock mode")
@@ -215,8 +215,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         });
     }
 
-///
-     /// 测试s JPA implementation type detection.
+    ///
+    /// 测试s JPA implementation type detection.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should detect implementation type")
@@ -226,8 +226,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         System.out.println("Implementation: " + context);
     }
 
-///
-     /// 测试s query execution for JPA.
+    ///
+    /// 测试s query execution for JPA.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute JPA query")
@@ -241,9 +241,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s JPA fetch 行为.
-     /// Note: This test documents fetch 行为 but doesn't assert on laziness.
+    ///
+    /// 测试s JPA fetch 行为.
+    /// Note: This test documents fetch 行为 but doesn't assert on laziness.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA fetch behavior")
@@ -258,8 +258,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         // Note: Department association may or may not be loaded depending on JPA settings
     }
 
-///
-     /// 测试s JPA entity state management.
+    ///
+    /// 测试s JPA entity state management.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should manage JPA entity state")
@@ -285,8 +285,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s JPA transaction scope.
+    ///
+    /// 测试s JPA transaction scope.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA transaction scope")
@@ -307,9 +307,9 @@ public class JpaSpecificFeaturesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s JPA query caching 行为.
-     /// Note: This test documents caching 行为.
+    ///
+    /// 测试s JPA query caching 行为.
+    /// Note: This test documents caching 行为.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA query caching")
@@ -327,8 +327,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         assertThat(first).hasSameSizeAs(second);
     }
 
-///
-     /// 测试s JPA null handling.
+    ///
+    /// 测试s JPA null handling.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA null values")
@@ -350,8 +350,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s JPA enum handling.
+    ///
+    /// 测试s JPA enum handling.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA enum values")
@@ -375,8 +375,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s JPA date handling.
+    ///
+    /// 测试s JPA date handling.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle JPA date values")
@@ -407,8 +407,8 @@ public class JpaSpecificFeaturesIntegrationTest {
         }
     }
 
-///
-     /// 创建 a test employee with the specified ID and name.
+    ///
+    /// 创建 a test employee with the specified ID and name.
     private Employee createTestEmployee(Long id, String name) {
         Employee employee = new Employee();
         employee.setId(id);

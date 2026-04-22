@@ -1030,7 +1030,11 @@ class NullableConcurrentMapTest {
                 final int index = i;
                 Thread thread = new Thread(() -> {
                     latch.countDown();
-                    try { latch.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     map.put("key_" + index, "value_" + index);
                 });
                 threads.add(thread);
@@ -1042,7 +1046,11 @@ class NullableConcurrentMapTest {
                 final int index = i;
                 Thread thread = new Thread(() -> {
                     latch.countDown();
-                    try { latch.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     map.put(null, "nullValue_" + index);
                 });
                 threads.add(thread);
@@ -1053,7 +1061,11 @@ class NullableConcurrentMapTest {
             for (int i = 0; i < threadCount; i++) {
                 Thread thread = new Thread(() -> {
                     latch.countDown();
-                    try { latch.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     map.get("key_0");
                     map.get(null);
                     map.containsKey(null);

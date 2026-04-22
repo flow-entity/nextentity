@@ -14,20 +14,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 ///
- /// Lock mode integration tests.
- /// <p>
- /// 测试s pessimistic and optimistic locking mechanisms using
- /// the getList 方法 with LockModeType parameter.
- /// <p>
- /// Note: Lock 操作s require an active transaction.
- /// All lock tests are wrapped in doInTransaction.
- /// <p>
- /// Uses LockableEntity which has a @Version field to support
- /// optimistic locking (OPTIMISTIC, OPTIMISTIC_FORCE_INCREMENT).
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Lock mode integration tests.
+/// <p>
+/// 测试s pessimistic and optimistic locking mechanisms using
+/// the getList 方法 with LockModeType parameter.
+/// <p>
+/// Note: Lock 操作s require an active transaction.
+/// All lock tests are wrapped in doInTransaction.
+/// <p>
+/// Uses LockableEntity which has a @Version field to support
+/// optimistic locking (OPTIMISTIC, OPTIMISTIC_FORCE_INCREMENT).
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Lock Mode Integration Tests")
 public class LockModeIntegrationTest {
 

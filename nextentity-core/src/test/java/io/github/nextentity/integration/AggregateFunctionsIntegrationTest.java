@@ -294,7 +294,7 @@ public class AggregateFunctionsIntegrationTest {
 
         // Verify total count
         long totalCount = results.stream()
-                .mapToLong(t -> ((Tuple)t).<Long>get(2))
+                .mapToLong(t -> ((Tuple) t).<Long>get(2))
                 .sum();
         assertEquals(12, totalCount);
     }

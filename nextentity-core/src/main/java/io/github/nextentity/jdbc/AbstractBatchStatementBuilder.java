@@ -1,6 +1,5 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.util.Iterators;
 

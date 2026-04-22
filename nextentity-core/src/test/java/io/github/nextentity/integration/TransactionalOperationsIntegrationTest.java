@@ -16,16 +16,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Transactional 操作s integration tests.
- /// <p>
- /// 测试s transaction-related 行为 including:
- /// - Transaction boundaries
- /// - Batch 操作 atomicity
- /// - Optimistic locking 行为
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Transactional 操作s integration tests.
+/// <p>
+/// 测试s transaction-related 行为 including:
+/// - Transaction boundaries
+/// - Batch 操作 atomicity
+/// - Optimistic locking 行为
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Transactional Operations Integration Tests")
 public class TransactionalOperationsIntegrationTest {
 
@@ -37,8 +37,8 @@ public class TransactionalOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s that insert 操作s are committed.
+    ///
+    /// 测试s that insert 操作s are committed.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should commit insert operation")
@@ -60,8 +60,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s that update 操作s are committed.
+    ///
+    /// 测试s that update 操作s are committed.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should commit update operation")
@@ -84,8 +84,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s that delete 操作s are committed.
+    ///
+    /// 测试s that delete 操作s are committed.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should commit delete operation")
@@ -104,8 +104,8 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(found).isNull();
     }
 
-///
-     /// 测试s batch insert atomicity.
+    ///
+    /// 测试s batch insert atomicity.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert batch atomically")
@@ -131,8 +131,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s batch update atomicity.
+    ///
+    /// 测试s batch update atomicity.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update batch atomically")
@@ -162,8 +162,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s batch delete atomicity.
+    ///
+    /// 测试s batch delete atomicity.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete batch atomically")
@@ -187,8 +187,8 @@ public class TransactionalOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s sequential CRUD 操作s.
+    ///
+    /// 测试s sequential CRUD 操作s.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should perform sequential CRUD operations")
@@ -219,8 +219,8 @@ public class TransactionalOperationsIntegrationTest {
         assertThat(afterDelete).isNull();
     }
 
-///
-     /// 测试s multiple entity 操作s.
+    ///
+    /// 测试s multiple entity 操作s.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle multiple entity operations")
@@ -255,8 +255,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(emp3, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s status change transaction.
+    ///
+    /// 测试s status change transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update status within transaction")
@@ -280,8 +280,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s salary update transaction.
+    ///
+    /// 测试s salary update transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update salary within transaction")
@@ -305,8 +305,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s department change transaction.
+    ///
+    /// 测试s department change transaction.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update department within transaction")
@@ -330,8 +330,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s active flag toggle.
+    ///
+    /// 测试s active flag toggle.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should toggle active flag")
@@ -365,8 +365,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s query after insert.
+    ///
+    /// 测试s query after insert.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query inserted data immediately")
@@ -388,8 +388,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s count after batch insert.
+    ///
+    /// 测试s count after batch insert.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count after batch insert")
@@ -413,8 +413,8 @@ public class TransactionalOperationsIntegrationTest {
         context.getUpdateExecutor().deleteAll(employees, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 创建 a test employee with the specified ID and name.
+    ///
+    /// 创建 a test employee with the specified ID and name.
     private Employee createTestEmployee(Long id, String name) {
         Employee employee = new Employee();
         employee.setId(id);

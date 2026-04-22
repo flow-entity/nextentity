@@ -527,7 +527,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
     /// 执行指定操作符与单个节点的操作。
     ///
     /// @param operator 操作符
-    /// @param node 表达式节点
+    /// @param node     表达式节点
     /// @return 操作后的表达式节点
     protected ExpressionNode operate(Operator operator, ExpressionNode node) {
         return getRoot().operate(operator, node);
@@ -536,8 +536,8 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
     /// 执行指定操作符与两个节点的操作。
     ///
     /// @param operator 操作符
-    /// @param node0 第一个表达式节点
-    /// @param node1 第二个表达式节点
+    /// @param node0    第一个表达式节点
+    /// @param node1    第二个表达式节点
     /// @return 操作后的表达式节点
     protected ExpressionNode operate(Operator operator, ExpressionNode node0, ExpressionNode node1) {
         return getRoot().operate(operator, node0, node1);
@@ -546,7 +546,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
     /// 执行指定操作符与节点数组的操作。
     ///
     /// @param operator 操作符
-    /// @param nodes 表达式节点数组
+    /// @param nodes    表达式节点数组
     /// @return 操作后的表达式节点
     protected ExpressionNode operate(Operator operator, ExpressionNode[] nodes) {
         return getRoot().operate(operator, nodes);
@@ -555,7 +555,7 @@ public abstract class AbstractExpressionBuilder<T, U, B> implements ExpressionTr
     /// 执行指定操作符与节点集合的操作。
     ///
     /// @param operator 操作符
-    /// @param nodes 表达式节点集合
+    /// @param nodes    表达式节点集合
     /// @return 操作后的表达式节点
     protected ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {
         return getRoot().operate(operator, nodes);

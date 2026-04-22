@@ -3,28 +3,26 @@ package io.github.nextentity.core.expression;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y PathNode 正确 represents property paths
- /// <p>
- /// 测试场景s:
- /// 1. Creation with single path
- /// 2. Creation with path array
- /// 3. Path navigation (get, append)
- /// 4. ImmutableArray interface 方法
- /// 5. Equality and hashCode
+/// 测试目标: 验证y PathNode 正确 represents property paths
+/// <p>
+/// 测试场景s:
+/// 1. Creation with single path
+/// 2. Creation with path array
+/// 3. Path navigation (get, append)
+/// 4. ImmutableArray interface 方法
+/// 5. Equality and hashCode
 class PathNodeTest {
 
     @Nested
     class Creation {
 
-///
-         /// 测试目标: 验证y creation with single path element
-         /// 测试场景: Create PathNode with single string
-         /// 预期结果: Path contains one element
+        ///
+        /// 测试目标: 验证y creation with single path element
+        /// 测试场景: Create PathNode with single string
+        /// 预期结果: Path contains one element
         @Test
         void constructor_SinglePath_HasOneElement() {
             // given
@@ -38,10 +36,10 @@ class PathNodeTest {
             assertThat(node.get(0)).isEqualTo(path);
         }
 
-///
-         /// 测试目标: 验证y creation with path array
-         /// 测试场景: Create PathNode with string array
-         /// 预期结果: Path contains all elements
+        ///
+        /// 测试目标: 验证y creation with path array
+        /// 测试场景: Create PathNode with string array
+        /// 预期结果: Path contains all elements
         @Test
         void constructor_PathArray_HasAllElements() {
             // given
@@ -61,10 +59,10 @@ class PathNodeTest {
     @Nested
     class PathNavigation {
 
-///
-         /// 测试目标: 验证y get() adds path element
-         /// 测试场景: Call get() on existing PathNode
-         /// 预期结果: New PathNode with extended path
+        ///
+        /// 测试目标: 验证y get() adds path element
+        /// 测试场景: Call get() on existing PathNode
+        /// 预期结果: New PathNode with extended path
         @Test
         void get_AddsPathElement() {
             // given
@@ -79,10 +77,10 @@ class PathNodeTest {
             assertThat(result.get(1)).isEqualTo("name");
         }
 
-///
-         /// 测试目标: 验证y get() with PathNode combines paths
-         /// 测试场景: Call get() with another PathNode
-         /// 预期结果: Combined path
+        ///
+        /// 测试目标: 验证y get() with PathNode combines paths
+        /// 测试场景: Call get() with another PathNode
+        /// 预期结果: Combined path
         @Test
         void get_WithPathNode_CombinesPaths() {
             // given
@@ -100,10 +98,10 @@ class PathNodeTest {
             assertThat(result.get(3)).isEqualTo("zipCode");
         }
 
-///
-         /// 测试目标: 验证y original path is not modified
-         /// 测试场景: Call get() and check original
-         /// 预期结果: Original unchanged
+        ///
+        /// 测试目标: 验证y original path is not modified
+        /// 测试场景: Call get() and check original
+        /// 预期结果: Original unchanged
         @Test
         void get_DoesNotModifyOriginal() {
             // given
@@ -120,10 +118,10 @@ class PathNodeTest {
     @Nested
     class ImmutableArrayInterface {
 
-///
-         /// 测试目标: 验证y stream() returns elements
-         /// 测试场景: Call stream() on PathNode
-         /// 预期结果: Stream with all path elements
+        ///
+        /// 测试目标: 验证y stream() returns elements
+        /// 测试场景: Call stream() on PathNode
+        /// 预期结果: Stream with all path elements
         @Test
         void stream_ReturnsAllElements() {
             // given
@@ -133,10 +131,10 @@ class PathNodeTest {
             assertThat(node.stream()).containsExactly("a", "b", "c");
         }
 
-///
-         /// 测试目标: 验证y iterator() works 正确
-         /// 测试场景: Iterate over PathNode
-         /// 预期结果: All elements in order
+        ///
+        /// 测试目标: 验证y iterator() works 正确
+        /// 测试场景: Iterate over PathNode
+        /// 预期结果: All elements in order
         @Test
         void iterator_ReturnsAllElements() {
             // given
@@ -146,10 +144,10 @@ class PathNodeTest {
             assertThat(node.iterator()).toIterable().containsExactly("a", "b");
         }
 
-///
-         /// 测试目标: 验证y deep() returns path depth
-         /// 测试场景: Call deep() on PathNode
-         /// 预期结果: Same as size()
+        ///
+        /// 测试目标: 验证y deep() returns path depth
+        /// 测试场景: Call deep() on PathNode
+        /// 预期结果: Same as size()
         @Test
         void deep_ReturnsPathDepth() {
             // given
@@ -166,10 +164,10 @@ class PathNodeTest {
     @Nested
     class SubLength {
 
-///
-         /// 测试目标: 验证y subLength returns prefix
-         /// 测试场景: Call subLength(2) on 3-element path
-         /// 预期结果: First 2 elements
+        ///
+        /// 测试目标: 验证y subLength returns prefix
+        /// 测试场景: Call subLength(2) on 3-element path
+        /// 预期结果: First 2 elements
         @Test
         void subLength_ReturnsPrefix() {
             // given
@@ -184,10 +182,10 @@ class PathNodeTest {
             assertThat(result.get(1)).isEqualTo("b");
         }
 
-///
-         /// 测试目标: 验证y subLength(0) returns null
-         /// 测试场景: Call subLength(0)
-         /// 预期结果: null
+        ///
+        /// 测试目标: 验证y subLength(0) returns null
+        /// 测试场景: Call subLength(0)
+        /// 预期结果: null
         @Test
         void subLength_Zero_ReturnsNull() {
             // given
@@ -200,10 +198,10 @@ class PathNodeTest {
             assertThat(result).isNull();
         }
 
-///
-         /// 测试目标: 验证y subLength with negative returns null
-         /// 测试场景: Call subLength(-1)
-         /// 预期结果: null
+        ///
+        /// 测试目标: 验证y subLength with negative returns null
+        /// 测试场景: Call subLength(-1)
+        /// 预期结果: null
         @Test
         void subLength_Negative_ReturnsNull() {
             // given
@@ -220,10 +218,10 @@ class PathNodeTest {
     @Nested
     class Equality {
 
-///
-         /// 测试目标: 验证y equal paths are equal
-         /// 测试场景: Compare two PathNodes with same paths
-         /// 预期结果: Are equal
+        ///
+        /// 测试目标: 验证y equal paths are equal
+        /// 测试场景: Compare two PathNodes with same paths
+        /// 预期结果: Are equal
         @Test
         void equals_SamePaths_AreEqual() {
             // given
@@ -235,10 +233,10 @@ class PathNodeTest {
             assertThat(node1.hashCode()).isEqualTo(node2.hashCode());
         }
 
-///
-         /// 测试目标: 验证y different paths are not equal
-         /// 测试场景: Compare two PathNodes with different paths
-         /// 预期结果: Are not equal
+        ///
+        /// 测试目标: 验证y different paths are not equal
+        /// 测试场景: Compare two PathNodes with different paths
+        /// 预期结果: Are not equal
         @Test
         void equals_DifferentPaths_AreNotEqual() {
             // given
@@ -249,10 +247,10 @@ class PathNodeTest {
             assertThat(node1).isNotEqualTo(node2);
         }
 
-///
-         /// 测试目标: 验证y equals with null
-         /// 测试场景: Compare PathNode with null
-         /// 预期结果: Are not equal
+        ///
+        /// 测试目标: 验证y equals with null
+        /// 测试场景: Compare PathNode with null
+        /// 预期结果: Are not equal
         @Test
         void equals_Null_ReturnsFalse() {
             // given
@@ -262,10 +260,10 @@ class PathNodeTest {
             assertThat(node.equals(null)).isFalse();
         }
 
-///
-         /// 测试目标: 验证y equals with different type
-         /// 测试场景: Compare PathNode with string
-         /// 预期结果: Are not equal
+        ///
+        /// 测试目标: 验证y equals with different type
+        /// 测试场景: Compare PathNode with string
+        /// 预期结果: Are not equal
         @Test
         void equals_DifferentType_ReturnsFalse() {
             // given
@@ -279,10 +277,10 @@ class PathNodeTest {
     @Nested
     class JoinMethod {
 
-///
-         /// 测试目标: 验证y join creates new array with added element
-         /// 测试场景: Call join() on PathNode
-         /// 预期结果: New array with added element
+        ///
+        /// 测试目标: 验证y join creates new array with added element
+        /// 测试场景: Call join() on PathNode
+        /// 预期结果: New array with added element
         @Test
         void join_AddsElement() {
             // given
@@ -295,10 +293,10 @@ class PathNodeTest {
             assertThat(result).containsExactly("a", "b", "c");
         }
 
-///
-         /// 测试目标: 验证y join does not modify original
-         /// 测试场景: Call join() and check original
-         /// 预期结果: Original unchanged
+        ///
+        /// 测试目标: 验证y join does not modify original
+        /// 测试场景: Call join() and check original
+        /// 预期结果: Original unchanged
         @Test
         void join_DoesNotModifyOriginal() {
             // given

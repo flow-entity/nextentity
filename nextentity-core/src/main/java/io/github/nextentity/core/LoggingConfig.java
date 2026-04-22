@@ -4,10 +4,9 @@ package io.github.nextentity.core;
 ///
 /// 封装 SQL 日志的可配置参数。
 ///
-/// @param enabled      是否启用 SQL 日志
-/// @param parameters   是否记录 SQL 参数
-/// @param loggerName   日志类别名
-///
+/// @param enabled    是否启用 SQL 日志
+/// @param parameters 是否记录 SQL 参数
+/// @param loggerName 日志类别名
 /// @author HuangChengwei
 /// @since 2.1.0
 public record LoggingConfig(

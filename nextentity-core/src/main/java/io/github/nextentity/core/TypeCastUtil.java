@@ -1,7 +1,6 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.EntityRoot;
-import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.util.ImmutableArray;
 import org.jspecify.annotations.Nullable;
 
@@ -22,7 +21,7 @@ public final class TypeCastUtil {
     /// （例如，当列表是用 T 元素创建但通过泛型 API 传递时）。
     ///
     /// @param expression 要转换的列表
-    /// @param <T> 目标元素类型
+    /// @param <T>        目标元素类型
     /// @return 转换后的列表
     public static <T> List<T> cast(List<?> expression) {
         return unsafeCast(expression);
@@ -31,7 +30,7 @@ public final class TypeCastUtil {
     /// 将未知类型的 ImmutableArray 转换为目标类型的 ImmutableArray。
     ///
     /// @param expression 要转换的数组
-    /// @param <T> 目标元素类型
+    /// @param <T>        目标元素类型
     /// @return 转换后的数组
     public static <T> ImmutableArray<T> cast(ImmutableArray<?> expression) {
         return unsafeCast(expression);
@@ -40,7 +39,7 @@ public final class TypeCastUtil {
     /// 将未知类型的 Class 转换为目标类型的 Class。
     ///
     /// @param resolve 要转换的类
-    /// @param <T> 目标类型
+    /// @param <T>     目标类型
     /// @return 转换后的类
     public static <T> Class<T> cast(Class<?> resolve) {
         return unsafeCast(resolve);
@@ -49,7 +48,7 @@ public final class TypeCastUtil {
     /// 将未知类型的 EntityRoot 转换为目标类型的 EntityRoot。
     ///
     /// @param builder 要转换的实体根
-    /// @param <T> 目标实体类型
+    /// @param <T>     目标实体类型
     /// @return 转换后的实体根
     public static <T> EntityRoot<T> cast(EntityRoot<?> builder) {
         return unsafeCast(builder);
@@ -74,7 +73,7 @@ public final class TypeCastUtil {
     /// ```
     ///
     /// @param object 要转换的对象
-    /// @param <T> 目标类型
+    /// @param <T>    目标类型
     /// @return 转换后的对象
     @SuppressWarnings("unchecked")
     public static <T> T unsafeCast(@Nullable Object object) {

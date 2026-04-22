@@ -66,8 +66,8 @@ public class InsertStatementBuilder extends AbstractBatchStatementBuilder {
 
     /// 构建单个插入语句
     ///
-    /// @param entityList  实体列表
-    /// @param excludeId   是否排除 ID 列
+    /// @param entityList 实体列表
+    /// @param excludeId  是否排除 ID 列
     /// @return 插入SQL语句
     protected InsertSqlStatement buildStatement(List<?> entityList, boolean excludeId) {
         ImmutableArray<? extends EntityAttribute> selectList = entityType.getPrimitives();

@@ -2,7 +2,6 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.Metamodel;
 
 /// EntityContext 的简单 record 实现。
 ///

@@ -10,15 +10,15 @@
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-///// 测试目标：验证EnumConverter在枚举和序数之间正确转换
-///// <p>
-///// 测试场景：
-///// 1. convertToDatabaseColumn返回正确的序数
-///// 2. convertToEntityAttribute返回正确的枚举
-///// 3. 正确处理空值
-///// 4. getDatabaseColumnType返回Integer.class
-///// <p>
-///// 预期结果：枚举转换双向工作正常
+/// // 测试目标：验证EnumConverter在枚举和序数之间正确转换
+/// // <p>
+/// // 测试场景：
+/// // 1. convertToDatabaseColumn返回正确的序数
+/// // 2. convertToEntityAttribute返回正确的枚举
+/// // 3. 正确处理空值
+/// // 4. getDatabaseColumnType返回Integer.class
+/// // <p>
+/// // 预期结果：枚举转换双向工作正常
 //class EnumConverterTest {
 //
 //    enum TestStatus {

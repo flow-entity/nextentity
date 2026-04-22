@@ -2,28 +2,31 @@ package io.github.nextentity.core.util;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 ///
- /// 测试目标: 验证y Maps utility class provides fluent Map building
- /// <p>
- /// 测试场景s:
- /// 1. hashmap() creates builder for HashMap
- /// 2. put() adds key-value pairs
- /// 3. put with collections adds multiple entries
- /// 4. build() returns the built map
- /// 5. Collection size mismatch throws exception
- /// <p>
- /// 预期结果: Map can be built fluently with expected entries
+/// 测试目标: 验证y Maps utility class provides fluent Map building
+/// <p>
+/// 测试场景s:
+/// 1. hashmap() creates builder for HashMap
+/// 2. put() adds key-value pairs
+/// 3. put with collections adds multiple entries
+/// 4. build() returns the built map
+/// 5. Collection size mismatch throws exception
+/// <p>
+/// 预期结果: Map can be built fluently with expected entries
 class MapsTest {
 
-///
-     /// 测试目标: 验证y hashmap() returns builder instance
-     /// 测试场景: Call Maps.hashmap()
-     /// 预期结果: Builder is returned
+    ///
+    /// 测试目标: 验证y hashmap() returns builder instance
+    /// 测试场景: Call Maps.hashmap()
+    /// 预期结果: Builder is returned
     @Test
     void hashmap_ShouldReturnBuilder() {
         // when
@@ -33,10 +36,10 @@ class MapsTest {
         assertThat(builder).isNotNull();
     }
 
-///
-     /// 测试目标: 验证y put() adds single key-value pair
-     /// 测试场景: Use put to add entries
-     /// 预期结果: Map contains added entries
+    ///
+    /// 测试目标: 验证y put() adds single key-value pair
+    /// 测试场景: Use put to add entries
+    /// 预期结果: Map contains added entries
     @Test
     void put_ShouldAddKeyValuePair() {
         // when
@@ -53,10 +56,10 @@ class MapsTest {
                 .hasSize(3);
     }
 
-///
-     /// 测试目标: 验证y put() returns builder for chaining
-     /// 测试场景: Chain multiple put calls
-     /// 预期结果: All entries added
+    ///
+    /// 测试目标: 验证y put() returns builder for chaining
+    /// 测试场景: Chain multiple put calls
+    /// 预期结果: All entries added
     @Test
     void put_ShouldReturnBuilderForChaining() {
         // when
@@ -70,10 +73,10 @@ class MapsTest {
                 .containsEntry("key2", "value2");
     }
 
-///
-     /// 测试目标: 验证y put with collections adds multiple entries
-     /// 测试场景: Use put(keys, values) with matching sizes
-     /// 预期结果: All key-value pairs added
+    ///
+    /// 测试目标: 验证y put with collections adds multiple entries
+    /// 测试场景: Use put(keys, values) with matching sizes
+    /// 预期结果: All key-value pairs added
     @Test
     void put_WithMatchingCollections_ShouldAddAllEntries() {
         // given
@@ -92,10 +95,10 @@ class MapsTest {
                 .hasSize(3);
     }
 
-///
-     /// 测试目标: 验证y put with collections throws on size mismatch
-     /// 测试场景: Use put(keys, values) with different sizes
-     /// 预期结果: IllegalArgumentException thrown
+    ///
+    /// 测试目标: 验证y put with collections throws on size mismatch
+    /// 测试场景: Use put(keys, values) with different sizes
+    /// 预期结果: IllegalArgumentException thrown
     @Test
     void put_WithMismatchedCollections_ShouldThrowException() {
         // given
@@ -104,15 +107,15 @@ class MapsTest {
 
         // then
         assertThatThrownBy(() -> Maps.<String, Integer>hashmap()
-                        .put(keys, values)
-                        .build())
+                .put(keys, values)
+                .build())
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
-///
-     /// 测试目标: 验证y put with empty collections works
-     /// 测试场景: Use put with empty lists
-     /// 预期结果: Empty map returned
+    ///
+    /// 测试目标: 验证y put with empty collections works
+    /// 测试场景: Use put with empty lists
+    /// 预期结果: Empty map returned
     @Test
     void put_WithEmptyCollections_ShouldReturnEmptyMap() {
         // given
@@ -128,10 +131,10 @@ class MapsTest {
         assertThat(map).isEmpty();
     }
 
-///
-     /// 测试目标: 验证y build() returns the HashMap
-     /// 测试场景: Call build()
-     /// 预期结果: HashMap instance returned
+    ///
+    /// 测试目标: 验证y build() returns the HashMap
+    /// 测试场景: Call build()
+    /// 预期结果: HashMap instance returned
     @Test
     void build_ShouldReturnHashMap() {
         // when
@@ -143,10 +146,10 @@ class MapsTest {
         assertThat(map).isInstanceOf(HashMap.class);
     }
 
-///
-     /// 测试目标: 验证y can overwrite values for same key
-     /// 测试场景: Put same key multiple times
-     /// 预期结果: Last value wins
+    ///
+    /// 测试目标: 验证y can overwrite values for same key
+    /// 测试场景: Put same key multiple times
+    /// 预期结果: Last value wins
     @Test
     void put_WithSameKey_ShouldOverwriteValue() {
         // when
@@ -161,10 +164,10 @@ class MapsTest {
         assertThat(map).containsEntry("a", 3);
     }
 
-///
-     /// 测试目标: 验证y mixed put and putAll usage
-     /// 测试场景: Use both single and collection put
-     /// 预期结果: All entries added
+    ///
+    /// 测试目标: 验证y mixed put and putAll usage
+    /// 测试场景: Use both single and collection put
+    /// 预期结果: All entries added
     @Test
     void put_MixedWithPutAll_ShouldWork() {
         // given
@@ -186,10 +189,10 @@ class MapsTest {
                 .containsEntry("d", 4);
     }
 
-///
-     /// 测试目标: 验证y builder accepts null keys and values
-     /// 测试场景: Put null key and value
-     /// 预期结果: Null entries added
+    ///
+    /// 测试目标: 验证y builder accepts null keys and values
+    /// 测试场景: Put null key and value
+    /// 预期结果: Null entries added
     @Test
     void put_ShouldAllowNullKeysAndValues() {
         // when
@@ -204,10 +207,10 @@ class MapsTest {
                 .containsEntry("key", null);
     }
 
-///
-     /// 测试目标: 验证y can build empty map
-     /// 测试场景: Build without any puts
-     /// 预期结果: Empty HashMap returned
+    ///
+    /// 测试目标: 验证y can build empty map
+    /// 测试场景: Build without any puts
+    /// 预期结果: Empty HashMap returned
     @Test
     void build_WithoutPuts_ShouldReturnEmptyMap() {
         // when

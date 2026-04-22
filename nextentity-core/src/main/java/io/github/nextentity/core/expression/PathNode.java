@@ -32,7 +32,7 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
 
     /// 使用指定的路径段和属性创建 PathNode。
     ///
-    /// @param path 路径段
+    /// @param path      路径段
     /// @param attribute 关联的属性元数据（可以为 null）
     public PathNode(String[] path, Attribute attribute) {
         this.path = path;

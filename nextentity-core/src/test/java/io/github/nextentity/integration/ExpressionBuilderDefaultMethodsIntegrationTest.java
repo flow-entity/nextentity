@@ -12,28 +12,28 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for ExpressionBuilder interface default 方法.
- /// <p>
- /// 测试s default 方法 in:
- /// - ExpressionBuilder.StringOperator: likeIfNotEmpty, substring(int)
- /// - ExpressionBuilder.NumberOperator: addIfNotNull, subtractIfNotNull, multiplyIfNotNull, divideIfNotNull, modIfNotNull
- /// <p>
- /// These 方法 are tested through the query builder API where they are used
- /// as fluent 操作s on path expressions.
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.ExpressionBuilder.StringOperator
- /// @see io.github.nextentity.api.ExpressionBuilder.NumberOperator
+/// Integration tests for ExpressionBuilder interface default 方法.
+/// <p>
+/// 测试s default 方法 in:
+/// - ExpressionBuilder.StringOperator: likeIfNotEmpty, substring(int)
+/// - ExpressionBuilder.NumberOperator: addIfNotNull, subtractIfNotNull, multiplyIfNotNull, divideIfNotNull, modIfNotNull
+/// <p>
+/// These 方法 are tested through the query builder API where they are used
+/// as fluent 操作s on path expressions.
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.ExpressionBuilder.StringOperator
+/// @see io.github.nextentity.api.ExpressionBuilder.NumberOperator
 @DisplayName("ExpressionBuilder Default Methods Integration Tests")
 public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== StringOperator.likeIfNotEmpty Tests ====================
 
-///
-     /// 测试s likeIfNotEmpty(String) with a non-empty value.
-     /// This should execute the LIKE 操作.
+    ///
+    /// 测试s likeIfNotEmpty(String) with a non-empty value.
+    /// This should execute the LIKE 操作.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute likeIfNotEmpty with non-empty value")
@@ -48,9 +48,9 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Ali"));
     }
 
-///
-     /// 测试s likeIfNotEmpty(String) with an empty string.
-     /// This should skip the LIKE 操作 and return all records.
+    ///
+    /// 测试s likeIfNotEmpty(String) with an empty string.
+    /// This should skip the LIKE 操作 and return all records.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip likeIfNotEmpty with empty value")
@@ -67,9 +67,9 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s likeIfNotEmpty(String) with null value.
-     /// This should skip the LIKE 操作 and return all records.
+    ///
+    /// 测试s likeIfNotEmpty(String) with null value.
+    /// This should skip the LIKE 操作 and return all records.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip likeIfNotEmpty with null value")
@@ -88,9 +88,9 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== StringOperator.substring(int) Tests ====================
 
-///
-     /// 测试s substring(int) with an offset.
-     /// This tests the default 方法 substring(int) which calls substring(int, Integer.MAX_VALUE).
+    ///
+    /// 测试s substring(int) with an offset.
+    /// This tests the default 方法 substring(int) which calls substring(int, Integer.MAX_VALUE).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use substring with offset for filtering")
@@ -105,8 +105,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s substring(int) with a larger offset combined with like.
+    ///
+    /// 测试s substring(int) with a larger offset combined with like.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle substring with like")
@@ -122,8 +122,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== NumberOperator.addIfNotNull Tests ====================
 
-///
-     /// 测试s addIfNotNull(Number) with a non-null value.
+    ///
+    /// 测试s addIfNotNull(Number) with a non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute addIfNotNull with non-null value")
@@ -139,9 +139,9 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 80000.0);
     }
 
-///
-     /// 测试s addIfNotNull(Number) with null value.
-     /// This should skip the addition and just compare the original value.
+    ///
+    /// 测试s addIfNotNull(Number) with null value.
+    /// This should skip the addition and just compare the original value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip addIfNotNull with null value")
@@ -159,8 +159,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== NumberOperator.subtractIfNotNull Tests ====================
 
-///
-     /// 测试s subtractIfNotNull(Number) with a non-null value.
+    ///
+    /// 测试s subtractIfNotNull(Number) with a non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute subtractIfNotNull with non-null value")
@@ -176,8 +176,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 70000.0);
     }
 
-///
-     /// 测试s subtractIfNotNull(Number) with null value.
+    ///
+    /// 测试s subtractIfNotNull(Number) with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip subtractIfNotNull with null value")
@@ -194,8 +194,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== NumberOperator.multiplyIfNotNull Tests ====================
 
-///
-     /// 测试s multiplyIfNotNull(Number) with a non-null value.
+    ///
+    /// 测试s multiplyIfNotNull(Number) with a non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute multiplyIfNotNull with non-null value")
@@ -211,8 +211,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 70000.0);
     }
 
-///
-     /// 测试s multiplyIfNotNull(Number) with null value.
+    ///
+    /// 测试s multiplyIfNotNull(Number) with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip multiplyIfNotNull with null value")
@@ -229,8 +229,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== NumberOperator.divideIfNotNull Tests ====================
 
-///
-     /// 测试s divideIfNotNull(Number) with a non-null value.
+    ///
+    /// 测试s divideIfNotNull(Number) with a non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute divideIfNotNull with non-null value")
@@ -246,8 +246,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 75000.0);
     }
 
-///
-     /// 测试s divideIfNotNull(Number) with null value.
+    ///
+    /// 测试s divideIfNotNull(Number) with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip divideIfNotNull with null value")
@@ -264,10 +264,10 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== NumberOperator.modIfNotNull Tests ====================
 
-///
-     /// 测试s modIfNotNull(Number) with a non-null value.
-     /// Note: This test is primarily for coverage of the default 方法.
-     /// The actual SQL execution may vary by database.
+    ///
+    /// 测试s modIfNotNull(Number) with a non-null value.
+    /// Note: This test is primarily for coverage of the default 方法.
+    /// The actual SQL execution may vary by database.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should execute modIfNotNull with non-null value")
@@ -282,8 +282,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s modIfNotNull(Number) with null value.
+    ///
+    /// 测试s modIfNotNull(Number) with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip modIfNotNull with null value")
@@ -300,8 +300,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== Chaining Tests ====================
 
-///
-     /// 测试s chaining multiple numeric 操作s with IfNotNull variants.
+    ///
+    /// 测试s chaining multiple numeric 操作s with IfNotNull variants.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should chain multiple numeric operations with IfNotNull")
@@ -320,8 +320,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 70000.0);
     }
 
-///
-     /// 测试s chaining with null values in the middle.
+    ///
+    /// 测试s chaining with null values in the middle.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null values in chained operations")
@@ -342,8 +342,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
 
     // ==================== Combined Operations ====================
 
-///
-     /// 测试s combining numeric 操作s with like predicate.
+    ///
+    /// 测试s combining numeric 操作s with like predicate.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine numeric operations with like predicate")
@@ -359,8 +359,8 @@ public class ExpressionBuilderDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A") && e.getSalary() > 70000.0);
     }
 
-///
-     /// 测试s all IfNotNull variants in a single complex query.
+    ///
+    /// 测试s all IfNotNull variants in a single complex query.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use all numeric IfNotNull variants")
