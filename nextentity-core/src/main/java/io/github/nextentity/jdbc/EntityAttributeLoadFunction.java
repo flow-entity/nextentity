@@ -25,7 +25,7 @@ public class EntityAttributeLoadFunction extends AttributeLoadFunction {
         QueryContext queryContext = context.getQueryContext();
 
         EntitySchema targetEntity = queryContext.getMetamodel().getEntity(attribute.type());
-        EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
 
         QueryStructure queryStructure = buildBatchQuery(context, targetEntity, foreignKeys);
         QueryContext newContext = queryContext.newContext(queryStructure);

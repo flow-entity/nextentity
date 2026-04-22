@@ -252,8 +252,8 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     /// @param entityType 实体类型
     private void logAutoSort(Class<?> entityType) {
         String message = "Pagination without ORDER BY detected. " +
-                "Automatically adding primary key ordering for entity {}. " +
-                "Consider adding explicit orderBy() for deterministic results.";
+                         "Automatically adding primary key ordering for entity {}. " +
+                         "Consider adding explicit orderBy() for deterministic results.";
         switch (descriptor.paginationConfig().logLevel()) {
             case INFO -> log.info(message, entityType.getSimpleName());
             case WARN -> log.warn(message, entityType.getSimpleName());

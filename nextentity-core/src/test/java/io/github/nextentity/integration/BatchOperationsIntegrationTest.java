@@ -17,16 +17,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
 ///
- /// Batch 操作s integration tests.
- /// <p>
- /// 测试s batch 操作s including:
- /// - Large batch insert (100+ records)
- /// - Batch update performance
- /// - Batch delete
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Batch 操作s integration tests.
+/// <p>
+/// 测试s batch 操作s including:
+/// - Large batch insert (100+ records)
+/// - Batch update performance
+/// - Batch delete
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Batch Operations Integration Tests")
 public class BatchOperationsIntegrationTest {
 
@@ -40,8 +40,8 @@ public class BatchOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s batch insert of 100 records.
+    ///
+    /// 测试s batch insert of 100 records.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert 100 records in batch")
@@ -60,8 +60,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(inserted).hasSize(BATCH_SIZE);
     }
 
-///
-     /// 测试s batch insert of 200 records.
+    ///
+    /// 测试s batch insert of 200 records.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert 200 records in batch")
@@ -79,8 +79,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(count).isEqualTo(200);
     }
 
-///
-     /// 测试s batch update.
+    ///
+    /// 测试s batch update.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update multiple records in batch")
@@ -104,8 +104,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(updated).allMatch(e -> e.getSalary() >= 60000.0);
     }
 
-///
-     /// 测试s batch delete.
+    ///
+    /// 测试s batch delete.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete multiple records in batch")
@@ -130,8 +130,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(countAfter).isZero();
     }
 
-///
-     /// 测试s batch insert with empty list.
+    ///
+    /// 测试s batch insert with empty list.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch insert")
@@ -144,8 +144,8 @@ public class BatchOperationsIntegrationTest {
                 context.getUpdateExecutor().insertAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
-///
-     /// 测试s batch update with empty list.
+    ///
+    /// 测试s batch update with empty list.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch update")
@@ -158,8 +158,8 @@ public class BatchOperationsIntegrationTest {
                 context.getUpdateExecutor().updateAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
-///
-     /// 测试s batch delete with empty list.
+    ///
+    /// 测试s batch delete with empty list.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch delete")
@@ -172,8 +172,8 @@ public class BatchOperationsIntegrationTest {
                 context.getUpdateExecutor().deleteAll(emptyList, context.getEntityContext(Employee.class)));
     }
 
-///
-     /// 测试s batch insert with single element.
+    ///
+    /// 测试s batch insert with single element.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle single element batch insert")
@@ -193,8 +193,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(inserted.getName()).isEqualTo("Single Employee");
     }
 
-///
-     /// 测试s batch 操作s with varying data.
+    ///
+    /// 测试s batch 操作s with varying data.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert batch with varying data")
@@ -216,8 +216,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(inserted).hasSize(3);
     }
 
-///
-     /// 测试s batch update partial fields.
+    ///
+    /// 测试s batch update partial fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update batch with partial field changes")
@@ -241,8 +241,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(updated).allMatch(e -> e.getStatus() == EmployeeStatus.INACTIVE);
     }
 
-///
-     /// 测试s large batch insert and query performance.
+    ///
+    /// 测试s large batch insert and query performance.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle large batch operations efficiently")
@@ -266,8 +266,8 @@ public class BatchOperationsIntegrationTest {
         System.out.println("Batch insert of " + largeBatchSize + " records took: " + insertTime + "ms");
     }
 
-///
-     /// 测试s batch insert followed by batch delete.
+    ///
+    /// 测试s batch insert followed by batch delete.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert and delete batch sequentially")
@@ -294,8 +294,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(countAfterDelete).isZero();
     }
 
-///
-     /// 测试s batch insert with existing data.
+    ///
+    /// 测试s batch insert with existing data.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert batch without affecting existing data")
@@ -312,8 +312,8 @@ public class BatchOperationsIntegrationTest {
         assertThat(newCount).isEqualTo(originalCount + 10);
     }
 
-///
-     /// 创建 a list of test employees.
+    ///
+    /// 创建 a list of test employees.
     private List<Employee> createTestEmployees(long startId, int count) {
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < count; i++) {
@@ -322,8 +322,8 @@ public class BatchOperationsIntegrationTest {
         return employees;
     }
 
-///
-     /// 创建 a test employee with specified ID and name.
+    ///
+    /// 创建 a test employee with specified ID and name.
     private Employee createTestEmployee(Long id, String name) {
         Employee employee = new Employee();
         employee.setId(id);
@@ -337,8 +337,8 @@ public class BatchOperationsIntegrationTest {
         return employee;
     }
 
-///
-     /// 创建 a test employee with some null fields.
+    ///
+    /// 创建 a test employee with some null fields.
     private Employee createTestEmployeeWithNulls(Long id, String name) {
         Employee employee = new Employee();
         employee.setId(id);

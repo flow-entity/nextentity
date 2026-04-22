@@ -10,15 +10,15 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 单元测试 NumberExpression interface default 方法.
- /// <p>
- /// These tests verify that the default 方法 in NumberExpression interface
- /// 正确 handle null values by returning the same expression instance.
- /// <p>
- /// Uses Path.of() to obtain NumberPath instances which implement NumberExpression.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.NumberExpression
+/// 单元测试 NumberExpression interface default 方法.
+/// <p>
+/// These tests verify that the default 方法 in NumberExpression interface
+/// 正确 handle null values by returning the same expression instance.
+/// <p>
+/// Uses Path.of() to obtain NumberPath instances which implement NumberExpression.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.NumberExpression
 @DisplayName("NumberExpression Default Methods Unit Tests")
 class NumberExpressionDefaultMethodsTest {
 
@@ -26,8 +26,13 @@ class NumberExpressionDefaultMethodsTest {
     static class TestEntity {
         private Double amount;
 
-        public Double getAmount() { return amount; }
-        public void setAmount(Double amount) { this.amount = amount; }
+        public Double getAmount() {
+            return amount;
+        }
+
+        public void setAmount(Double amount) {
+            this.amount = amount;
+        }
     }
 
     // ==================== addIfNotNull default method ====================

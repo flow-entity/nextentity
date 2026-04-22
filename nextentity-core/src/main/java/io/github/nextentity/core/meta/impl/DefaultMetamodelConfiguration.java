@@ -11,7 +11,7 @@ public class DefaultMetamodelConfiguration implements MetamodelConfiguration {
     private final boolean dtoProjectionLazyLoadEnabled;
 
     public DefaultMetamodelConfiguration(boolean interfaceProjectionLazyLoadEnabled,
-                                           boolean dtoProjectionLazyLoadEnabled) {
+                                         boolean dtoProjectionLazyLoadEnabled) {
         this.interfaceProjectionLazyLoadEnabled = interfaceProjectionLazyLoadEnabled;
         this.dtoProjectionLazyLoadEnabled = dtoProjectionLazyLoadEnabled;
     }

@@ -18,7 +18,7 @@ public class QuerySqlStatement implements SqlStatement {
 
     /// 构造查询SQL语句对象
     ///
-    /// @param sql SQL语句字符串
+    /// @param sql        SQL语句字符串
     /// @param parameters SQL语句中使用的参数列表
     public QuerySqlStatement(String sql, List<?> parameters) {
         this.sql = sql;

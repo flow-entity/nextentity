@@ -6,13 +6,12 @@ import org.jspecify.annotations.Nullable;
 ///
 /// 封装 JDBC 执行时的可配置参数，包括查询超时、获取大小、批处理设置等。
 ///
-/// @param queryTimeout           查询超时时间（秒），null 表示无超时
-/// @param fetchSize              结果集获取大小，0 表示使用驱动默认值
-/// @param inlineNumericLiterals  整数是否直接拼接到 SQL
-/// @param batchEnabled           是否启用批处理
-/// @param batchSize              批处理大小，默认 500。建议范围 100-1000，值越大批量执行效率越高，但内存占用也越大
-/// @param returnGeneratedKeys    是否返回生成的主键
-///
+/// @param queryTimeout          查询超时时间（秒），null 表示无超时
+/// @param fetchSize             结果集获取大小，0 表示使用驱动默认值
+/// @param inlineNumericLiterals 整数是否直接拼接到 SQL
+/// @param batchEnabled          是否启用批处理
+/// @param batchSize             批处理大小，默认 500。建议范围 100-1000，值越大批量执行效率越高，但内存占用也越大
+/// @param returnGeneratedKeys   是否返回生成的主键
 /// @author HuangChengwei
 /// @since 2.1.0
 public record JdbcConfig(

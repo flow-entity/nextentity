@@ -1,7 +1,6 @@
 package io.github.nextentity.integration.config.env;
 
 import org.testcontainers.containers.JdbcDatabaseContainer;
-import org.testcontainers.mysql.MySQLContainer;
 
 public abstract class DbContainerEnvironmentVariables implements DatabaseEnvironmentVariables {
 

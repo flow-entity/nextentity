@@ -36,7 +36,7 @@ public interface Path<T, U> extends SimpleExpression<T, U>, PathRef<T, U> {
     /// 从指定布尔引用创建布尔路径。
     ///
     /// @param path 布尔引用
-    /// @param <T> 实体类型
+    /// @param <T>  实体类型
     /// @return 布尔路径
     static <T> BooleanPath<T> of(PathRef.BooleanRef<T> path) {
         return BooleanPath.of(path);
@@ -45,8 +45,8 @@ public interface Path<T, U> extends SimpleExpression<T, U>, PathRef<T, U> {
     /// 从指定数值引用创建数值路径。
     ///
     /// @param path 数值引用
-    /// @param <T> 实体类型
-    /// @param <U> 数值类型
+    /// @param <T>  实体类型
+    /// @param <U>  数值类型
     /// @return 数值路径
     static <T, U extends Number> NumberPath<T, U> of(PathRef.NumberRef<T, U> path) {
         return NumberPath.of(path);
@@ -55,7 +55,7 @@ public interface Path<T, U> extends SimpleExpression<T, U>, PathRef<T, U> {
     /// 从指定字符串引用创建字符串路径。
     ///
     /// @param path 字符串引用
-    /// @param <T> 实体类型
+    /// @param <T>  实体类型
     /// @return 字符串路径
     static <T> StringPath<T> of(PathRef.StringRef<T> path) {
         return StringPath.of(path);
@@ -76,8 +76,8 @@ public interface Path<T, U> extends SimpleExpression<T, U>, PathRef<T, U> {
     /// 从指定字段名创建路径表达式（类型不安全）。
     ///
     /// @param path 字段名
-    /// @param <T> 实体类型
-    /// @param <U> 值类型
+    /// @param <T>  实体类型
+    /// @param <U>  值类型
     /// @return 路径表达式
     static <T, U> Path<T, U> of(String path) {
         return EntityRoot.<T>of().path(path);

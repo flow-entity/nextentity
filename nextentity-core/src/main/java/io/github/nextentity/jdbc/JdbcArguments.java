@@ -27,7 +27,7 @@ public class JdbcArguments extends AbstractArguments {
 
     /// 获取指定索引位置的参数值
     ///
-    /// @param index 参数索引
+    /// @param index     参数索引
     /// @param convertor 值转换器
     /// @return 参数值
     @Override

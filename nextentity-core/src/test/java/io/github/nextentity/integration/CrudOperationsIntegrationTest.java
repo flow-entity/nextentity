@@ -19,17 +19,17 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 ///
- /// CRUD 操作s integration tests.
- /// <p>
- /// 测试s insert, update, and delete 操作s including:
- /// - Single entity insert/update/delete
- /// - Batch insert/update/delete
- /// - Optimistic locking
- /// - Partial field updates
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// CRUD 操作s integration tests.
+/// <p>
+/// 测试s insert, update, and delete 操作s including:
+/// - Single entity insert/update/delete
+/// - Batch insert/update/delete
+/// - Optimistic locking
+/// - Partial field updates
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("CRUD Operations Integration Tests")
 public class CrudOperationsIntegrationTest {
 
@@ -43,8 +43,8 @@ public class CrudOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s inserting a single employee.
+    ///
+    /// 测试s inserting a single employee.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert single employee")
@@ -64,8 +64,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(employees.get(0).getEmail()).isEqualTo("test@example.com");
     }
 
-///
-     /// 测试s inserting multiple employees.
+    ///
+    /// 测试s inserting multiple employees.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert multiple employees")
@@ -89,8 +89,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(employees.get(2).getName()).isEqualTo("User 202");
     }
 
-///
-     /// 测试s inserting a department.
+    ///
+    /// 测试s inserting a department.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert single department")
@@ -110,8 +110,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(departments.get(0).getLocation()).isEqualTo("Building E");
     }
 
-///
-     /// 测试s updating a single employee.
+    ///
+    /// 测试s updating a single employee.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update single employee")
@@ -136,8 +136,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(updated.getName()).isNotEqualTo(originalName);
     }
 
-///
-     /// 测试s updating multiple employees.
+    ///
+    /// 测试s updating multiple employees.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update multiple employees")
@@ -164,8 +164,8 @@ public class CrudOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s deleting a single employee.
+    ///
+    /// 测试s deleting a single employee.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete single employee")
@@ -190,8 +190,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(after).isEmpty();
     }
 
-///
-     /// 测试s deleting multiple employees.
+    ///
+    /// 测试s deleting multiple employees.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete multiple employees")
@@ -218,8 +218,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(after).isEmpty();
     }
 
-///
-     /// 测试s deleting by ID using where clause.
+    ///
+    /// 测试s deleting by ID using where clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should delete with where condition")
@@ -241,8 +241,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(after).isEmpty();
     }
 
-///
-     /// 测试s updating employee status.
+    ///
+    /// 测试s updating employee status.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should update employee status")
@@ -265,8 +265,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(updated.getStatus()).isNotEqualTo(originalStatus);
     }
 
-///
-     /// 测试s inserting and updating department.
+    ///
+    /// 测试s inserting and updating department.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert and update department")
@@ -291,8 +291,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(updated.getLocation()).isEqualTo("Building G");
     }
 
-///
-     /// 测试s inserting employee with all fields.
+    ///
+    /// 测试s inserting employee with all fields.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert employee with all fields")
@@ -321,8 +321,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(inserted.getHireDate()).isEqualTo(LocalDate.of(2024, 1, 15));
     }
 
-///
-     /// 测试s inserting duplicate ID should fail.
+    ///
+    /// 测试s inserting duplicate ID should fail.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fail when inserting duplicate ID")
@@ -349,12 +349,12 @@ public class CrudOperationsIntegrationTest {
 
     }
 
-///
-     /// 测试s deleting non-existent employee.
-     /// <p>
-     /// Note: JPA implementation silently ignores non-existent entities,
-     /// while JDBC implementation may have different 行为.
-     /// This test verifies the actual 行为 without asserting specific exceptions.
+    ///
+    /// 测试s deleting non-existent employee.
+    /// <p>
+    /// Note: JPA implementation silently ignores non-existent entities,
+    /// while JDBC implementation may have different 行为.
+    /// This test verifies the actual 行为 without asserting specific exceptions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle delete of non-existent employee")
@@ -371,8 +371,8 @@ public class CrudOperationsIntegrationTest {
         // This test documents that delete of non-existent entities is allowed
     }
 
-///
-     /// 测试s inserting employee with null email.
+    ///
+    /// 测试s inserting employee with null email.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should insert employee with null email")
@@ -391,8 +391,8 @@ public class CrudOperationsIntegrationTest {
         assertThat(inserted.getEmail()).isNull();
     }
 
-///
-     /// 测试s batch insert with empty list.
+    ///
+    /// 测试s batch insert with empty list.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty batch insert")

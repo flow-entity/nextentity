@@ -20,7 +20,7 @@ public class DefaultProjectionBasicAttribute
     }
 
     @Override
-    public EntityBasicAttribute source() {
+    public EntityBasicAttribute getEntityAttribute() {
         return source;
     }
 

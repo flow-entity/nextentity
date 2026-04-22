@@ -51,8 +51,8 @@ public interface MetamodelSchema<T extends Attribute> extends Schema {
     /// @return true 表示存在懒加载属性，false 表示全部为立即加载
     default boolean hasLazyAttribute() {
         for (Attribute attr : getAttributes()) {
-            if (attr instanceof Fetchable fetchable) {
-                if (fetchable.fetchType() == FetchType.LAZY) {
+            if (attr instanceof JoinAttribute joinAttribute) {
+                if (joinAttribute.getFetchType() == FetchType.LAZY) {
                     return true;
                 }
             }

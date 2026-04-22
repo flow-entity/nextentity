@@ -30,7 +30,7 @@ public interface MetamodelConfiguration {
     /// @param dtoProjectionLazyLoadEnabled       Dto投影懒加载开关
     /// @return 元模型配置实例
     static MetamodelConfiguration of(boolean interfaceProjectionLazyLoadEnabled,
-                                      boolean dtoProjectionLazyLoadEnabled) {
+                                     boolean dtoProjectionLazyLoadEnabled) {
         return new DefaultMetamodelConfiguration(interfaceProjectionLazyLoadEnabled, dtoProjectionLazyLoadEnabled);
     }
 

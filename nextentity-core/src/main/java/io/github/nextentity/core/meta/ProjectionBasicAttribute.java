@@ -12,5 +12,5 @@ public non-sealed interface ProjectionBasicAttribute extends ProjectionAttribute
     ///
     /// @return 源实体基本属性
     @Override
-    EntityBasicAttribute source();
+    EntityBasicAttribute getEntityAttribute();
 }

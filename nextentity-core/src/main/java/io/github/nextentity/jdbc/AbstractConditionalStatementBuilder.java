@@ -2,8 +2,8 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.QueryStructure;
-import io.github.nextentity.core.meta.EntitySchemaAttribute;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.meta.Metamodel;
 
 import java.util.ArrayList;
@@ -68,8 +68,8 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     public List<SqlDialect.JoinTableInfo> joinTables() {
         if (joinTableInfos == null) {
             joinTableInfos = new ArrayList<>();
-            for (Map.Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
-                EntitySchemaAttribute attr = entry.getKey();
+            for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+                JoinAttribute attr = entry.getKey();
                 Integer index = entry.getValue();
                 joinTableInfos.add(new JoinTableInfoImpl(attr, index));
             }
@@ -82,7 +82,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         if (joinConditionStrings == null) {
             joinConditionStrings = new ArrayList<>();
             StringBuilder tempSql = new StringBuilder();
-            for (Map.Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
+            for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
                 tempSql.setLength(0);
                 appendJoinConditionTo(tempSql, entry.getKey(), entry.getValue());
                 joinConditionStrings.add(tempSql.toString());
@@ -105,7 +105,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     public void appendJoinTable(String delimiter, SqlDialect.JoinTableInfo tableInfo) {
         sql.append(delimiter);
         if (tableInfo instanceof JoinTableInfoImpl impl) {
-            appendTable(sql, impl.attribute.target());
+            appendTable(sql, impl.attribute.getTargetEntityType());
             appendTableAlias(impl.index);
         } else {
             sql.append(tableInfo.tableName()).append(" ").append(tableInfo.tableAlias());
@@ -124,19 +124,19 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
 
     /// 构建 JOIN 条件字符串（追加到指定的 StringBuilder）
     protected void appendJoinConditionTo(StringBuilder sb,
-                                         EntitySchemaAttribute k,
+                                         JoinAttribute k,
                                          Integer v) {
         Object declared = k.declareBy();
-        if (declared instanceof EntitySchemaAttribute schemaAttribute) {
+        if (declared instanceof JoinAttribute schemaAttribute) {
             Integer parentIndex = joins.get(schemaAttribute);
             appendTableAliasTo(sb, parentIndex);
         } else {
             sb.append(fromAlias);
         }
         if (k.isObject()) {
-            sb.append(".").append(k.sourceAttribute().columnName()).append("=");
+            sb.append(".").append(k.getSourceAttribute().columnName()).append("=");
             appendTableAliasTo(sb, v);
-            sb.append(".").append(k.targetAttribute().columnName());
+            sb.append(".").append(k.getTargetAttribute().columnName());
         } else {
             throw new IllegalStateException();
         }
@@ -167,11 +167,11 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     /// 追加 JOIN 表列表（逗号分隔，用于 PostgreSQL FROM/USING）
     protected void appendJoinTablesOnly() {
         String delimiter = "";
-        for (Map.Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
-            EntitySchemaAttribute k = entry.getKey();
+        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+            JoinAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(delimiter);
-            appendTable(sql, k.target());
+            appendTable(sql, k.getTargetEntityType());
             appendTableAlias(v);
             delimiter = ", ";
         }
@@ -179,11 +179,11 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
 
     /// 追加 JOIN 子句（LEFT JOIN ... ON ...）
     protected void appendJoin() {
-        for (Map.Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
-            EntitySchemaAttribute k = entry.getKey();
+        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+            JoinAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(LEFT_JOIN);
-            appendTable(sql, k.target());
+            appendTable(sql, k.getTargetEntityType());
             appendTableAlias(v);
             sql.append(ON);
             appendJoinConditionTo(sql, k, v);
@@ -200,10 +200,10 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     // ========== JOIN 表信息实现类 ==========
 
     private class JoinTableInfoImpl implements SqlDialect.JoinTableInfo {
-        final EntitySchemaAttribute attribute;
+        final JoinAttribute attribute;
         final Integer index;
 
-        JoinTableInfoImpl(EntitySchemaAttribute attribute, Integer index) {
+        JoinTableInfoImpl(JoinAttribute attribute, Integer index) {
             this.attribute = attribute;
             this.index = index;
         }
@@ -211,7 +211,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         @Override
         public String tableName() {
             StringBuilder sb = new StringBuilder();
-            appendTable(sb, attribute.target());
+            appendTable(sb, attribute.getTargetEntityType());
             return sb.toString();
         }
 

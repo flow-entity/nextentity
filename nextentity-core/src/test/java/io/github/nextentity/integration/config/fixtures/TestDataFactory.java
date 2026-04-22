@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 ///
- /// 测试 data factory for integration tests.
+/// 测试 data factory for integration tests.
 public class TestDataFactory {
 
     public static List<Department> createDepartments() {

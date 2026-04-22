@@ -11,22 +11,22 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y TypeCastUtil 正确 performs type casting
- /// <p>
- /// 测试场景s:
- /// 1. Cast List
- /// 2. Cast ImmutableArray
- /// 3. Cast Class
- /// 4. Unsafe cast
+/// 测试目标: 验证y TypeCastUtil 正确 performs type casting
+/// <p>
+/// 测试场景s:
+/// 1. Cast List
+/// 2. Cast ImmutableArray
+/// 3. Cast Class
+/// 4. Unsafe cast
 class TypeCastUtilTest {
 
     @Nested
     class CastList {
 
-///
-         /// 测试目标: 验证y cast() works for List
-         /// 测试场景: Cast List<?> to List<String>
-         /// 预期结果: Correctly cast list
+        ///
+        /// 测试目标: 验证y cast() works for List
+        /// 测试场景: Cast List<?> to List<String>
+        /// 预期结果: Correctly cast list
         @Test
         void cast_List_ReturnsCastedList() {
             // given
@@ -43,10 +43,10 @@ class TypeCastUtilTest {
     @Nested
     class CastImmutableArray {
 
-///
-         /// 测试目标: 验证y cast() works for ImmutableArray
-         /// 测试场景: Cast ImmutableArray<?> to ImmutableArray<String>
-         /// 预期结果: Correctly cast array
+        ///
+        /// 测试目标: 验证y cast() works for ImmutableArray
+        /// 测试场景: Cast ImmutableArray<?> to ImmutableArray<String>
+        /// 预期结果: Correctly cast array
         @Test
         void cast_ImmutableArray_ReturnsCastedArray() {
             // given
@@ -63,10 +63,10 @@ class TypeCastUtilTest {
     @Nested
     class CastClass {
 
-///
-         /// 测试目标: 验证y cast() works for Class
-         /// 测试场景: Cast Class<?> to Class<String>
-         /// 预期结果: Correctly cast class
+        ///
+        /// 测试目标: 验证y cast() works for Class
+        /// 测试场景: Cast Class<?> to Class<String>
+        /// 预期结果: Correctly cast class
         @Test
         void cast_Class_ReturnsCastedClass() {
             // given
@@ -83,10 +83,10 @@ class TypeCastUtilTest {
     @Nested
     class UnsafeCast {
 
-///
-         /// 测试目标: 验证y unsafeCast() returns same object
-         /// 测试场景: Cast string to string
-         /// 预期结果: Same object
+        ///
+        /// 测试目标: 验证y unsafeCast() returns same object
+        /// 测试场景: Cast string to string
+        /// 预期结果: Same object
         @Test
         void unsafeCast_ReturnsSameObject() {
             // given
@@ -99,10 +99,10 @@ class TypeCastUtilTest {
             assertThat(result).isSameAs(value);
         }
 
-///
-         /// 测试目标: 验证y unsafeCast() 处理 null
-         /// 测试场景: Cast null
-         /// 预期结果: null
+        ///
+        /// 测试目标: 验证y unsafeCast() 处理 null
+        /// 测试场景: Cast null
+        /// 预期结果: null
         @Test
         void unsafeCast_Null_ReturnsNull() {
             // when

@@ -6,7 +6,7 @@
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-/////
+/// //
 // /// 单元测试 SimpleProjectionAttribute.
 //class SimpleProjectionAttributeTest {
 //

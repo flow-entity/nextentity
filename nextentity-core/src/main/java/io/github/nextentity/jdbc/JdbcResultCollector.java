@@ -28,9 +28,9 @@ public class JdbcResultCollector implements ResultCollector {
 
     /// 解析结果集
     ///
-    /// @param <T> 结果类型
+    /// @param <T>       结果类型
     /// @param resultSet 结果集
-    /// @param context 查询上下文
+    /// @param context   查询上下文
     /// @return 解析后的结果列表
     /// @throws SQLException SQL异常
     @Override
@@ -50,7 +50,7 @@ public class JdbcResultCollector implements ResultCollector {
         if (primitives.size() != columnsCount) {
             throw new IllegalStateException(
                     String.format("Column count mismatch: expected %d (from query projection), actual %d (from ResultSet). " +
-                                    "This usually indicates a mismatch between the SELECT clause and the result mapping.",
+                                  "This usually indicates a mismatch between the SELECT clause and the result mapping.",
                             primitives.size(), columnsCount));
         }
         while (resultSet.next()) {

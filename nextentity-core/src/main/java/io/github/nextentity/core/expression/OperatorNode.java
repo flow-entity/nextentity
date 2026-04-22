@@ -27,7 +27,7 @@ public record OperatorNode(
     /// - 多值运算符（AND, OR）在相同运算符时合并操作数
     ///
     /// @param operator 要应用的运算符
-    /// @param nodes 额外操作数节点
+    /// @param nodes    额外操作数节点
     /// @return 结果表达式节点
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {

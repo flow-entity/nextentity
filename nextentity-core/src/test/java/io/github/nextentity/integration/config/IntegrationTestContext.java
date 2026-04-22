@@ -5,20 +5,20 @@ import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
-import io.github.nextentity.jdbc.FetchConfig;
 import io.github.nextentity.integration.entity.AutoIncrementEntity;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.LockableEntity;
+import io.github.nextentity.jdbc.FetchConfig;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Supplier;
 
 ///
- /// Database configuration for integration tests.
- /// Encapsulates DataSource, QueryExecutor, UpdateExecutor, and test data.
- ///
- /// @author HuangChengwei
+/// Database configuration for integration tests.
+/// Encapsulates DataSource, QueryExecutor, UpdateExecutor, and test data.
+///
+/// @author HuangChengwei
 public interface IntegrationTestContext {
 
     QueryExecutor getQueryExecutor();

@@ -30,7 +30,7 @@ public abstract class AbstractStatementBuilder {
 
     protected final StringBuilder sql;
     protected final List<Object> args;
-    protected final Map<EntitySchemaAttribute, Integer> joins = new LinkedHashMap<>();
+    protected final Map<JoinAttribute, Integer> joins = new LinkedHashMap<>();
 
     protected final SqlDialect dialect;
     protected final JdbcConfig config;
@@ -454,15 +454,15 @@ public abstract class AbstractStatementBuilder {
         if (attribute.deep() == 1) {
             appendFromAlias().append(".");
         } else {
-            EntitySchemaAttribute join = (EntitySchemaAttribute) attribute.declareBy();
+            JoinAttribute join = (JoinAttribute) attribute.declareBy();
             Integer index = joins.get(join);
             appendTableAlias(index).append('.');
         }
         String columnName;
         if (attribute instanceof EntityBasicAttribute eba) {
             columnName = eba.columnName();
-        } else if (attribute instanceof EntitySchemaAttribute join) {
-            columnName = join.sourceAttribute().columnName();
+        } else if (attribute instanceof JoinAttribute join) {
+            columnName = join.getSourceAttribute().columnName();
         } else {
             throw new IllegalStateException(
                     "Unsupported entity attribute type '" + attribute.getClass().getName() +
@@ -472,11 +472,11 @@ public abstract class AbstractStatementBuilder {
     }
 
     protected void appendJoin() {
-        for (Entry<EntitySchemaAttribute, Integer> entry : joins.entrySet()) {
-            EntitySchemaAttribute k = entry.getKey();
+        for (Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
+            JoinAttribute k = entry.getKey();
             Integer v = entry.getValue();
             sql.append(LEFT_JOIN);
-            appendTable(sql, k.target());
+            appendTable(sql, k.getTargetEntityType());
             appendTableAlias(v);
             sql.append(ON);
             appendJoinCondition(k, v);
@@ -490,17 +490,17 @@ public abstract class AbstractStatementBuilder {
     ///
     /// @param k join 属性元数据
     /// @param v join 表别名索引
-    protected void appendJoinCondition(EntitySchemaAttribute k, Integer v) {
+    protected void appendJoinCondition(JoinAttribute k, Integer v) {
         Schema declared = k.declareBy();
-        if (declared instanceof EntitySchemaAttribute schemaAttribute) {
+        if (declared instanceof JoinAttribute schemaAttribute) {
             Integer parentIndex = joins.get(schemaAttribute);
             appendTableAlias(parentIndex);
         } else {
             appendFromAlias(sql);
         }
         if (k.isObject()) {
-            EntityBasicAttribute source = k.sourceAttribute();
-            EntityBasicAttribute targeted = k.targetAttribute();
+            EntityBasicAttribute source = k.getSourceAttribute();
+            EntityBasicAttribute targeted = k.getTargetAttribute();
             sql.append(".").append(source.columnName()).append("=");
             appendTableAlias(v);
             String referenced = targeted.columnName();
@@ -529,13 +529,13 @@ public abstract class AbstractStatementBuilder {
     }
 
     protected void addJoin(Attribute attribute) {
-        ArrayDeque<EntitySchemaAttribute> joinAttributes = new ArrayDeque<>(attribute.deep());
+        ArrayDeque<JoinAttribute> joinAttributes = new ArrayDeque<>(attribute.deep());
         Schema join = attribute.declareBy();
-        while (join instanceof EntitySchemaAttribute schemaAttribute) {
+        while (join instanceof JoinAttribute schemaAttribute) {
             joinAttributes.addFirst(schemaAttribute);
             join = schemaAttribute.declareBy();
         }
-        for (EntitySchemaAttribute joinAttribute : joinAttributes) {
+        for (JoinAttribute joinAttribute : joinAttributes) {
             joins.putIfAbsent(joinAttribute, joins.size());
         }
     }

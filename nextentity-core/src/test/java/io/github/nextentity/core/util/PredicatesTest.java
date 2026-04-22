@@ -10,24 +10,24 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y Predicates utility class provides predicate 操作s
- /// <p>
- /// 测试场景s:
- /// 1. of() creates Predicate from TypedExpression
- /// 2. and() combines predicates with AND operator
- /// 3. or() combines predicates with OR operator
- /// 4. not() negates a predicate
- /// <p>
- /// 预期结果: Predicates can be combined and negated 正确
+/// 测试目标: 验证y Predicates utility class provides predicate 操作s
+/// <p>
+/// 测试场景s:
+/// 1. of() creates Predicate from TypedExpression
+/// 2. and() combines predicates with AND operator
+/// 3. or() combines predicates with OR operator
+/// 4. not() negates a predicate
+/// <p>
+/// 预期结果: Predicates can be combined and negated 正确
 class PredicatesTest {
 
     @Nested
     class OfMethod {
 
-///
-         /// 测试目标: 验证y of() creates Predicate wrapping the expression
-         /// 测试场景: Create predicate from true expression
-         /// 预期结果: Predicate with TRUE literal node
+        ///
+        /// 测试目标: 验证y of() creates Predicate wrapping the expression
+        /// 测试场景: Create predicate from true expression
+        /// 预期结果: Predicate with TRUE literal node
         @Test
         void of_WithTrueExpression_ShouldCreatePredicateWithTrueNode() {
             // given
@@ -41,10 +41,10 @@ class PredicatesTest {
             assertThat(ExpressionNodes.getNode(predicate)).isSameAs(LiteralNode.TRUE);
         }
 
-///
-         /// 测试目标: 验证y of() creates Predicate from false expression
-         /// 测试场景: Create predicate from false expression
-         /// 预期结果: Predicate with FALSE literal node
+        ///
+        /// 测试目标: 验证y of() creates Predicate from false expression
+        /// 测试场景: Create predicate from false expression
+        /// 预期结果: Predicate with FALSE literal node
         @Test
         void of_WithFalseExpression_ShouldCreatePredicateWithFalseNode() {
             // given
@@ -62,10 +62,10 @@ class PredicatesTest {
     @Nested
     class AndMethod {
 
-///
-         /// 测试目标: 验证y and() combines predicates with AND operator
-         /// 测试场景: Combine false and true predicates
-         /// 预期结果: FALSE (boolean algebra optimization: FALSE AND anything = FALSE)
+        ///
+        /// 测试目标: 验证y and() combines predicates with AND operator
+        /// 测试场景: Combine false and true predicates
+        /// 预期结果: FALSE (boolean algebra optimization: FALSE AND anything = FALSE)
         @Test
         void and_WithFalseAndTrue_ShouldReturnFalse() {
             // given
@@ -81,10 +81,10 @@ class PredicatesTest {
             assertThat(ExpressionNodes.getNode(result)).isSameAs(LiteralNode.FALSE);
         }
 
-///
-         /// 测试目标: 验证y and() with two false predicates
-         /// 测试场景: Combine two false predicates
-         /// 预期结果: FALSE (optimization)
+        ///
+        /// 测试目标: 验证y and() with two false predicates
+        /// 测试场景: Combine two false predicates
+        /// 预期结果: FALSE (optimization)
         @Test
         void and_WithTwoFalsePredicates_ShouldReturnFalse() {
             // given
@@ -103,10 +103,10 @@ class PredicatesTest {
     @Nested
     class OrMethod {
 
-///
-         /// 测试目标: 验证y or() combines predicates with OR operator
-         /// 测试场景: Combine true and false predicates
-         /// 预期结果: TRUE (boolean algebra optimization: TRUE OR anything = TRUE)
+        ///
+        /// 测试目标: 验证y or() combines predicates with OR operator
+        /// 测试场景: Combine true and false predicates
+        /// 预期结果: TRUE (boolean algebra optimization: TRUE OR anything = TRUE)
         @Test
         void or_WithTrueAndFalse_ShouldReturnTrue() {
             // given
@@ -122,10 +122,10 @@ class PredicatesTest {
             assertThat(ExpressionNodes.getNode(result)).isSameAs(LiteralNode.TRUE);
         }
 
-///
-         /// 测试目标: 验证y or() with two false predicates creates an operator node
-         /// 测试场景: Combine two false predicates
-         /// 预期结果: OperatorNode is created (no optimization for false OR false)
+        ///
+        /// 测试目标: 验证y or() with two false predicates creates an operator node
+        /// 测试场景: Combine two false predicates
+        /// 预期结果: OperatorNode is created (no optimization for false OR false)
         @Test
         void or_WithTwoFalsePredicates_ShouldCreateOperatorNode() {
             // given

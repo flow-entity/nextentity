@@ -6,7 +6,6 @@ import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.SqlDialect;
-import io.github.nextentity.proxy.spring.CglibProxyInterceptor;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.ObjectProvider;

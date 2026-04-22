@@ -6,11 +6,11 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y SelectEntity 正确 represents entity selection
- /// <p>
- /// 测试场景s:
- /// 1. Create with fetch paths and distinct flag
- /// 2. Access properties
+/// 测试目标: 验证y SelectEntity 正确 represents entity selection
+/// <p>
+/// 测试场景s:
+/// 1. Create with fetch paths and distinct flag
+/// 2. Access properties
 class SelectEntityTest {
 
     @Nested

@@ -4,7 +4,6 @@ import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
 
 /// 实体属性元数据接口，表示实体类中映射到数据库的字段或关联。
 ///

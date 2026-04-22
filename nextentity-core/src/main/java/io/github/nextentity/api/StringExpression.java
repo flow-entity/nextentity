@@ -15,6 +15,7 @@ public interface StringExpression<T> extends SimpleExpression<T, String> {
     ///
     /// 当 substring(offset) 不指定长度时，使用此值表示截取到末尾。
     int MAX_SUBSTRING_LENGTH = Integer.MAX_VALUE >> 1;
+
     /// 匹配指定的字符串模式。
     ///
     /// @param value 字符串模式

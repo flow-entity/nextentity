@@ -44,13 +44,7 @@ public record DefaultAccessor(
             BeanInfo beanInfo = Introspector.getBeanInfo(type);
             PropertyDescriptor[] propertyDescriptors = beanInfo.getPropertyDescriptors();
             for (PropertyDescriptor descriptor : propertyDescriptors) {
-                Field field = ReflectUtil.getDeclaredField(type, descriptor.getName());
-                String fieldName;
-                if (field != null) {
-                    fieldName = field.getName();
-                } else {
-                    fieldName = PathReference.getFieldName(descriptor.getReadMethod().getName());
-                }
+                String fieldName = descriptor.getName();
                 descriptorMap.put(fieldName, descriptor);
             }
         } catch (IntrospectionException e) {

@@ -16,9 +16,9 @@ public class InsertSqlStatement extends BatchSqlStatement implements SqlStatemen
 
     /// 构造插入SQL语句对象
     ///
-    /// @param entities 要插入的实体集合
-    /// @param sql SQL语句字符串
-    /// @param parameters 参数集合
+    /// @param entities            要插入的实体集合
+    /// @param sql                 SQL语句字符串
+    /// @param parameters          参数集合
     /// @param returnGeneratedKeys 是否返回生成的键
     public InsertSqlStatement(Iterable<?> entities,
                               String sql,
@@ -29,11 +29,11 @@ public class InsertSqlStatement extends BatchSqlStatement implements SqlStatemen
 
     /// 构造插入SQL语句对象
     ///
-    /// @param entities 要插入的实体集合
-    /// @param sql SQL语句字符串
-    /// @param parameters 参数集合
+    /// @param entities            要插入的实体集合
+    /// @param sql                 SQL语句字符串
+    /// @param parameters          参数集合
     /// @param returnGeneratedKeys 是否返回生成的键
-    /// @param batchInsert 是否批量执行插入
+    /// @param batchInsert         是否批量执行插入
     public InsertSqlStatement(Iterable<?> entities,
                               String sql,
                               Iterable<? extends Iterable<?>> parameters,

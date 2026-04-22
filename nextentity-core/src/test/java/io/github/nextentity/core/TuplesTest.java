@@ -11,24 +11,24 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y Tuples utility class creates tuples 正确
- /// <p>
- /// 测试场景s:
- /// 1. Create tuple from array
- /// 2. Create tuple2
- /// 3. Create tuple3
- /// 4. Tuple get 方法
- /// 5. Tuple size 方法
- /// 6. Tuple equals and hashCode
+/// 测试目标: 验证y Tuples utility class creates tuples 正确
+/// <p>
+/// 测试场景s:
+/// 1. Create tuple from array
+/// 2. Create tuple2
+/// 3. Create tuple3
+/// 4. Tuple get 方法
+/// 5. Tuple size 方法
+/// 6. Tuple equals and hashCode
 class TuplesTest {
 
     @Nested
     class OfArray {
 
-///
-         /// 测试目标: 验证y of(Object[]) creates tuple
-         /// 测试场景: Create tuple from array
-         /// 预期结果: Tuple with array elements
+        ///
+        /// 测试目标: 验证y of(Object[]) creates tuple
+        /// 测试场景: Create tuple from array
+        /// 预期结果: Tuple with array elements
         @Test
         void of_Array_CreatesTuple() {
             // given
@@ -48,10 +48,10 @@ class TuplesTest {
     @Nested
     class OfTuple2 {
 
-///
-         /// 测试目标: 验证y of(a, b) creates Tuple2
-         /// 测试场景: Create tuple with two elements
-         /// 预期结果: Tuple2 with both elements
+        ///
+        /// 测试目标: 验证y of(a, b) creates Tuple2
+        /// 测试场景: Create tuple with two elements
+        /// 预期结果: Tuple2 with both elements
         @Test
         void of_TwoElements_CreatesTuple2() {
             // given
@@ -71,10 +71,10 @@ class TuplesTest {
     @Nested
     class OfTuple3 {
 
-///
-         /// 测试目标: 验证y of(a, b, c) creates Tuple3
-         /// 测试场景: Create tuple with three elements
-         /// 预期结果: Tuple3 with all elements
+        ///
+        /// 测试目标: 验证y of(a, b, c) creates Tuple3
+        /// 测试场景: Create tuple with three elements
+        /// 预期结果: Tuple3 with all elements
         @Test
         void of_ThreeElements_CreatesTuple3() {
             // given
@@ -96,10 +96,10 @@ class TuplesTest {
     @Nested
     class TupleMethods {
 
-///
-         /// 测试目标: 验证y toList() returns list
-         /// 测试场景: Call toList() on tuple
-         /// 预期结果: List with all elements
+        ///
+        /// 测试目标: 验证y toList() returns list
+        /// 测试场景: Call toList() on tuple
+        /// 预期结果: List with all elements
         @Test
         void toList_ReturnsElementsList() {
             // given
@@ -112,10 +112,10 @@ class TuplesTest {
             assertThat(list).containsExactly("a", "b", "c");
         }
 
-///
-         /// 测试目标: 验证y toArray() returns copy
-         /// 测试场景: Call toArray() on tuple
-         /// 预期结果: Array copy of elements
+        ///
+        /// 测试目标: 验证y toArray() returns copy
+        /// 测试场景: Call toArray() on tuple
+        /// 预期结果: Array copy of elements
         @Test
         void toArray_ReturnsArrayCopy() {
             // given
@@ -128,10 +128,10 @@ class TuplesTest {
             assertThat(array).containsExactly("a", "b", "c");
         }
 
-///
-         /// 测试目标: 验证y equals compares content
-         /// 测试场景: Compare two equal tuples
-         /// 预期结果: Are equal
+        ///
+        /// 测试目标: 验证y equals compares content
+        /// 测试场景: Compare two equal tuples
+        /// 预期结果: Are equal
         @Test
         void equals_SameContent_AreEqual() {
             // given
@@ -143,10 +143,10 @@ class TuplesTest {
             assertThat(tuple1.hashCode()).isEqualTo(tuple2.hashCode());
         }
 
-///
-         /// 测试目标: 验证y equals with different content
-         /// 测试场景: Compare two different tuples
-         /// 预期结果: Are not equal
+        ///
+        /// 测试目标: 验证y equals with different content
+        /// 测试场景: Compare two different tuples
+        /// 预期结果: Are not equal
         @Test
         void equals_DifferentContent_AreNotEqual() {
             // given
@@ -161,10 +161,10 @@ class TuplesTest {
     @Nested
     class TupleIterator {
 
-///
-         /// 测试目标: 验证y iterator iterates all elements
-         /// 测试场景: Iterate over tuple
-         /// 预期结果: All elements in order
+        ///
+        /// 测试目标: 验证y iterator iterates all elements
+        /// 测试场景: Iterate over tuple
+        /// 预期结果: All elements in order
         @Test
         void iterator_ReturnsAllElements() {
             // given

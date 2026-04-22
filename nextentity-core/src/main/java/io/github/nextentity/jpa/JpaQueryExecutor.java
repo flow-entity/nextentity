@@ -58,7 +58,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         context.init();
         QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
-        if (config.nativeSubqueries() && requiredNativeQuery(context,queryStructure)) {
+        if (config.nativeSubqueries() && requiredNativeQuery(context, queryStructure)) {
             return nativeQueryExecutor.getList(context);
         }
         Selected selected = queryStructure.select();

@@ -21,14 +21,14 @@ public interface EntityRoot<T> {
     /// 创建字面量表达式。
     ///
     /// @param value 字面量值
-    /// @param <U> 字面量类型
+    /// @param <U>   字面量类型
     /// @return 字面量表达式
     <U> Expression<T, U> literal(U value);
 
     /// 获取指定路径的实体路径表达式。
     ///
     /// @param path 属性路径
-    /// @param <U> 属性类型
+    /// @param <U>  属性类型
     /// @return 实体路径表达式
     <U> EntityPath<T, U> get(PathRef<T, U> path);
 
@@ -47,21 +47,21 @@ public interface EntityRoot<T> {
     /// 获取指定数值属性路径的数值路径表达式。
     ///
     /// @param path 数值属性路径
-    /// @param <U> 数值类型
+    /// @param <U>  数值类型
     /// @return 数值路径表达式
     <U extends Number> NumberPath<T, U> get(PathRef.NumberRef<T, U> path);
 
     /// 创建指定路径的路径表达式。
     ///
     /// @param path 属性路径
-    /// @param <U> 属性类型
+    /// @param <U>  属性类型
     /// @return 路径表达式
     <U> Path<T, U> path(PathRef<T, U> path);
 
     /// 创建指定路径的实体路径表达式。
     ///
     /// @param path 属性路径
-    /// @param <U> 属性类型
+    /// @param <U>  属性类型
     /// @return 实体路径表达式
     <U> EntityPath<T, U> entity(PathRef<T, U> path);
 
@@ -74,7 +74,7 @@ public interface EntityRoot<T> {
     /// 创建指定数值路径的数值路径表达式。
     ///
     /// @param path 数值属性路径
-    /// @param <U> 数值类型
+    /// @param <U>  数值类型
     /// @return 数值路径表达式
     <U extends Number> NumberPath<T, U> number(PathRef<T, U> path);
 
@@ -85,17 +85,18 @@ public interface EntityRoot<T> {
     BooleanPath<T> bool(PathRef<T, Boolean> path);
 
     // type-unsafe
+
     /// 通过字段名创建路径表达式（类型不安全）。
     ///
     /// @param fieldName 字段名
-    /// @param <U> 属性类型
+    /// @param <U>       属性类型
     /// @return 路径表达式
     <U> Path<T, U> path(String fieldName);
 
     /// 通过字段名创建实体路径表达式（类型不安全）。
     ///
     /// @param fieldName 字段名
-    /// @param <U> 属性类型
+    /// @param <U>       属性类型
     /// @return 实体路径表达式
     <U> EntityPath<T, U> entityPath(String fieldName);
 
@@ -108,7 +109,7 @@ public interface EntityRoot<T> {
     /// 通过字段名创建数值路径表达式（类型不安全）。
     ///
     /// @param fieldName 字段名
-    /// @param <U> 数值类型
+    /// @param <U>       数值类型
     /// @return 数值路径表达式
     <U extends Number> NumberPath<T, U> numberPath(String fieldName);
 

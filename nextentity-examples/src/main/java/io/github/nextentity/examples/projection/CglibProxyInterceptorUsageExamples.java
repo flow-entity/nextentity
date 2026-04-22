@@ -4,7 +4,7 @@ import io.github.nextentity.core.annotation.Fetch;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.examples.entity.Department;
-import io.github.nextentity.proxy.spring.CglibProxyInterceptor;
+import io.github.nextentity.spring.CglibProxyInterceptor;
 import jakarta.persistence.FetchType;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;

@@ -19,19 +19,19 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Select API integration tests.
- /// <p>
- /// 测试s all select 方法 variants from the Select interface including:
- /// - select(Class) projection type selection
- /// - select(Path) single path selection
- /// - select(Path...) tuple selection (2-10 paths)
- /// - selectDistinct variants
- /// - select with TypedExpression
- /// - select with Collection/List parameters
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Select API integration tests.
+/// <p>
+/// 测试s all select 方法 variants from the Select interface including:
+/// - select(Class) projection type selection
+/// - select(Path) single path selection
+/// - select(Path...) tuple selection (2-10 paths)
+/// - selectDistinct variants
+/// - select with TypedExpression
+/// - select with Collection/List parameters
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Select API Integration Tests")
 public class SelectApiIntegrationTest {
 

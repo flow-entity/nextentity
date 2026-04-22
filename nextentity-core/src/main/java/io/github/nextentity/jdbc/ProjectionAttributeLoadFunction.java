@@ -29,10 +29,10 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
 
         ProjectionSchemaAttribute attribute = context.getAttribute();
         QueryContext queryContext = context.getQueryContext();
-        EntitySchemaAttribute schemaAttribute = attribute.source();
+        EntitySchemaAttribute schemaAttribute = attribute.getEntityAttribute();
 
         EntityType targetEntity = queryContext.getMetamodel().getEntity(schemaAttribute.type());
-        EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntity.getAttribute(schemaAttribute.targetAttribute().name());
+        EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntity.getAttribute(schemaAttribute.getTargetAttribute().name());
         ProjectionSchema projection = targetEntity.getProjection(attribute.type());
 
         ProjectionAttribute projectionAttribute = findProjectionAttribute(projection, targetAttribute);
@@ -46,7 +46,7 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
 
     private ProjectionAttribute findProjectionAttribute(ProjectionSchema projection, EntityBasicAttribute targetAttribute) {
         for (ProjectionAttribute attr : projection.getAttributes()) {
-            if (attr.source().path().equals(targetAttribute.path())) {
+            if (attr.getEntityAttribute().path().equals(targetAttribute.path())) {
                 return attr;
             }
         }
@@ -94,7 +94,7 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
                 .map(LiteralNode::new)
                 .collect(Collectors.toList());
 
-        EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
         PathNode targetPath = targetAttribute.path();
         ExpressionNode whereClause = targetPath.operate(Operator.IN, literals);
 

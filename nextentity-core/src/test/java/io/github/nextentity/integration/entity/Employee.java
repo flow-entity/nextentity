@@ -6,7 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 ///
- /// Employee entity for integration testing.
+/// Employee entity for integration testing.
 @Entity
 public class Employee {
 
@@ -133,14 +133,14 @@ public class Employee {
     @Override
     public String toString() {
         return "Employee{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", email='" + email + '\'' +
-                ", salary=" + salary +
-                ", active=" + active +
-                ", status=" + status +
-                ", departmentId=" + departmentId +
-                ", hireDate=" + hireDate +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", email='" + email + '\'' +
+               ", salary=" + salary +
+               ", active=" + active +
+               ", status=" + status +
+               ", departmentId=" + departmentId +
+               ", hireDate=" + hireDate +
+               '}';
     }
 }

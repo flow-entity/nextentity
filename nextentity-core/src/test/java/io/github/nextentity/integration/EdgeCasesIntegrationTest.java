@@ -17,22 +17,22 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.*;
 
 ///
- /// Edge cases integration tests.
- /// <p>
- /// 测试s edge cases including:
- /// - Empty result sets
- /// - Null value handling
- /// - Boundary values
- /// - Special character handling
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Edge cases integration tests.
+/// <p>
+/// 测试s edge cases including:
+/// - Empty result sets
+/// - Null value handling
+/// - Boundary values
+/// - Special character handling
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Edge Cases Integration Tests")
 public class EdgeCasesIntegrationTest {
 
-///
-     /// 测试s query with no matching results.
+    ///
+    /// 测试s query with no matching results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list when no matches")
@@ -46,8 +46,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).isEmpty();
     }
 
-///
-     /// 测试s count with no matching results.
+    ///
+    /// 测试s count with no matching results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return zero count when no matches")
@@ -61,8 +61,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(count).isZero();
     }
 
-///
-     /// 测试s exist with no matching results.
+    ///
+    /// 测试s exist with no matching results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return false for exist when no matches")
@@ -76,8 +76,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(exists).isFalse();
     }
 
-///
-     /// 测试s first with no matching results.
+    ///
+    /// 测试s first with no matching results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return null for first when no matches")
@@ -91,8 +91,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employee).isNull();
     }
 
-///
-     /// 测试s getSingle with no matching results.
+    ///
+    /// 测试s getSingle with no matching results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return null for getSingle when no matches")
@@ -106,8 +106,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employee).isNull();
     }
 
-///
-     /// 测试s query with null field value.
+    ///
+    /// 测试s query with null field value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle null field value")
@@ -138,8 +138,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s IS NULL query.
+    ///
+    /// 测试s IS NULL query.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query IS NULL")
@@ -170,8 +170,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s IS NOT NULL query.
+    ///
+    /// 测试s IS NOT NULL query.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query IS NOT NULL")
@@ -186,8 +186,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(found).allMatch(e -> e.getEmail() != null);
     }
 
-///
-     /// 测试s empty list in IN clause.
+    ///
+    /// 测试s empty list in IN clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty list in IN clause")
@@ -202,8 +202,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).isEmpty();
     }
 
-///
-     /// 测试s empty list in NOT IN clause.
+    ///
+    /// 测试s empty list in NOT IN clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle empty list in NOT IN clause")
@@ -218,8 +218,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(count).isPositive();
     }
 
-///
-     /// 测试s zero offset.
+    ///
+    /// 测试s zero offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle zero offset")
@@ -233,8 +233,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).hasSize(5);
     }
 
-///
-     /// 测试s large offset.
+    ///
+    /// 测试s large offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle large offset")
@@ -248,8 +248,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).isEmpty();
     }
 
-///
-     /// 测试s zero limit.
+    ///
+    /// 测试s zero limit.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle zero limit")
@@ -263,8 +263,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s negative offset.
+    ///
+    /// 测试s negative offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle negative offset")
@@ -278,8 +278,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s special characters in string query.
+    ///
+    /// 测试s special characters in string query.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle special characters in string")
@@ -310,8 +310,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s unicode characters in string query.
+    ///
+    /// 测试s unicode characters in string query.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle unicode characters in string")
@@ -342,8 +342,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s long string within column limit.
+    ///
+    /// 测试s long string within column limit.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle long string within limit")
@@ -374,8 +374,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s boundary salary values.
+    ///
+    /// 测试s boundary salary values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle boundary salary values")
@@ -399,8 +399,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(maxEmployee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s zero salary.
+    ///
+    /// 测试s zero salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle zero salary")
@@ -430,8 +430,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s negative salary.
+    ///
+    /// 测试s negative salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle negative salary")
@@ -461,8 +461,8 @@ public class EdgeCasesIntegrationTest {
         context.getUpdateExecutor().delete(employee, context.getEntityContext(Employee.class));
     }
 
-///
-     /// 测试s getSingle with multiple results throws exception.
+    ///
+    /// 测试s getSingle with multiple results throws exception.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception for getSingle with multiple results")
@@ -472,8 +472,8 @@ public class EdgeCasesIntegrationTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-///
-     /// 测试s slice with empty results.
+    ///
+    /// 测试s slice with empty results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice with empty results")
@@ -488,8 +488,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(slice.total()).isZero();
     }
 
-///
-     /// 测试s ordering with null values.
+    ///
+    /// 测试s ordering with null values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle ordering with potential null values")
@@ -503,8 +503,8 @@ public class EdgeCasesIntegrationTest {
         assertThat(employees).isNotNull();
     }
 
-///
-     /// 测试s batch insert with empty list.
+    ///
+    /// 测试s batch insert with empty list.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle batch insert with empty list")
@@ -514,8 +514,8 @@ public class EdgeCasesIntegrationTest {
                 context.getUpdateExecutor().insertAll(new ArrayList<>(), context.getEntityContext(Employee.class)));
     }
 
-///
-     /// 测试s duplicate ID insert should fail.
+    ///
+    /// 测试s duplicate ID insert should fail.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fail on duplicate ID insert")
@@ -537,8 +537,8 @@ public class EdgeCasesIntegrationTest {
                 .isInstanceOf(RuntimeException.class);
     }
 
-///
-     /// 测试s department with null budget.
+    ///
+    /// 测试s department with null budget.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle department with null budget")

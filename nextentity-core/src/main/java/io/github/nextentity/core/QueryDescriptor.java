@@ -3,7 +3,6 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.jdbc.FetchConfig;
 
 /// 查询操作共享依赖的上下文接口。
 ///

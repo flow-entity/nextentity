@@ -15,30 +15,30 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for StringExpression default 方法.
- /// <p>
- /// 测试s default 方法 in StringExpression interface including:
- /// - endsWith(String): Match patterns ending with specified string
- /// - contains(String): Match patterns containing specified string
- /// - notStartsWith(String): Does not match patterns starting with specified string
- /// - notEndsWith(String): Does not match patterns ending with specified string
- /// - notContains(String): Does not match patterns containing specified string
- /// - IfNotNull variants: Conditional string matching when value is not null
- /// - IfNotEmpty variants: Conditional string matching when value is not empty
- /// - substring(int): Substring from offset to end
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.StringExpression
+/// Integration tests for StringExpression default 方法.
+/// <p>
+/// 测试s default 方法 in StringExpression interface including:
+/// - endsWith(String): Match patterns ending with specified string
+/// - contains(String): Match patterns containing specified string
+/// - notStartsWith(String): Does not match patterns starting with specified string
+/// - notEndsWith(String): Does not match patterns ending with specified string
+/// - notContains(String): Does not match patterns containing specified string
+/// - IfNotNull variants: Conditional string matching when value is not null
+/// - IfNotEmpty variants: Conditional string matching when value is not empty
+/// - substring(int): Substring from offset to end
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.StringExpression
 @DisplayName("StringExpression Default Methods Integration Tests")
 public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== endsWith Tests ====================
 
-///
-     /// 测试s endsWith(String) - matches patterns ending with specified string.
-     /// This is a default 方法 that calls like('%' + value).
+    ///
+    /// 测试s endsWith(String) - matches patterns ending with specified string.
+    /// This is a default 方法 that calls like('%' + value).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWith in WHERE clause")
@@ -53,8 +53,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWith with non-matching pattern.
+    ///
+    /// 测试s endsWith with non-matching pattern.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty when endsWith has no matches")
@@ -70,9 +70,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== contains Tests ====================
 
-///
-     /// 测试s contains(String) - matches patterns containing specified string.
-     /// This is a default 方法 that calls like('%' + value + '%').
+    ///
+    /// 测试s contains(String) - matches patterns containing specified string.
+    /// This is a default 方法 that calls like('%' + value + '%').
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with contains in WHERE clause")
@@ -87,8 +87,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s contains with case-sensitive match.
+    ///
+    /// 测试s contains with case-sensitive match.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with contains case-sensitive")
@@ -105,9 +105,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notStartsWith Tests ====================
 
-///
-     /// 测试s notStartsWith(String) - does not match patterns starting with specified string.
-     /// This is a default 方法 that calls notLike(value + '%').
+    ///
+    /// 测试s notStartsWith(String) - does not match patterns starting with specified string.
+    /// This is a default 方法 that calls notLike(value + '%').
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWith in WHERE clause")
@@ -125,9 +125,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notEndsWith Tests ====================
 
-///
-     /// 测试s notEndsWith(String) - does not match patterns ending with specified string.
-     /// This is a default 方法 that calls notLike('%' + value).
+    ///
+    /// 测试s notEndsWith(String) - does not match patterns ending with specified string.
+    /// This is a default 方法 that calls notLike('%' + value).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWith in WHERE clause")
@@ -145,9 +145,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notContains Tests ====================
 
-///
-     /// 测试s notContains(String) - does not match patterns containing specified string.
-     /// This is a default 方法 that calls notLike('%' + value + '%').
+    ///
+    /// 测试s notContains(String) - does not match patterns containing specified string.
+    /// This is a default 方法 that calls notLike('%' + value + '%').
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContains in WHERE clause")
@@ -165,9 +165,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== startsWithIfNotNull Tests ====================
 
-///
-     /// 测试s startsWithIfNotNull with non-null value.
-     /// Covers the branch: value != null.
+    ///
+    /// 测试s startsWithIfNotNull with non-null value.
+    /// Covers the branch: value != null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWithIfNotNull when value is not null")
@@ -182,9 +182,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s startsWithIfNotNull with null value.
-     /// Covers the branch: value == null.
+    ///
+    /// 测试s startsWithIfNotNull with null value.
+    /// Covers the branch: value == null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when startsWithIfNotNull is null")
@@ -203,9 +203,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== endsWithIfNotNull Tests ====================
 
-///
-     /// 测试s endsWithIfNotNull with non-null value.
-     /// Covers the branch: value != null.
+    ///
+    /// 测试s endsWithIfNotNull with non-null value.
+    /// Covers the branch: value != null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWithIfNotNull when value is not null")
@@ -220,9 +220,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWithIfNotNull with null value.
-     /// Covers the branch: value == null.
+    ///
+    /// 测试s endsWithIfNotNull with null value.
+    /// Covers the branch: value == null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when endsWithIfNotNull is null")
@@ -241,9 +241,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== containsIfNotNull Tests ====================
 
-///
-     /// 测试s containsIfNotNull with non-null value.
-     /// Covers the branch: value != null.
+    ///
+    /// 测试s containsIfNotNull with non-null value.
+    /// Covers the branch: value != null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with containsIfNotNull when value is not null")
@@ -258,9 +258,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s containsIfNotNull with null value.
-     /// Covers the branch: value == null.
+    ///
+    /// 测试s containsIfNotNull with null value.
+    /// Covers the branch: value == null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when containsIfNotNull is null")
@@ -279,8 +279,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notStartsWithIfNotNull Tests ====================
 
-///
-     /// 测试s notStartsWithIfNotNull with non-null value.
+    ///
+    /// 测试s notStartsWithIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWithIfNotNull when value is not null")
@@ -296,8 +296,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWithIfNotNull with null value.
+    ///
+    /// 测试s notStartsWithIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notStartsWithIfNotNull is null")
@@ -316,8 +316,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notEndsWithIfNotNull Tests ====================
 
-///
-     /// 测试s notEndsWithIfNotNull with non-null value.
+    ///
+    /// 测试s notEndsWithIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWithIfNotNull when value is not null")
@@ -333,8 +333,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
     }
 
-///
-     /// 测试s notEndsWithIfNotNull with null value.
+    ///
+    /// 测试s notEndsWithIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notEndsWithIfNotNull is null")
@@ -353,8 +353,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notContainsIfNotNull Tests ====================
 
-///
-     /// 测试s notContainsIfNotNull with non-null value.
+    ///
+    /// 测试s notContainsIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContainsIfNotNull when value is not null")
@@ -370,8 +370,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s notContainsIfNotNull with null value.
+    ///
+    /// 测试s notContainsIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notContainsIfNotNull is null")
@@ -390,9 +390,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== startsWithIfNotEmpty Tests ====================
 
-///
-     /// 测试s startsWithIfNotEmpty with non-empty value.
-     /// Covers the branch: value != null && !value.isEmpty().
+    ///
+    /// 测试s startsWithIfNotEmpty with non-empty value.
+    /// Covers the branch: value != null && !value.isEmpty().
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWithIfNotEmpty when value is not empty")
@@ -407,9 +407,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s startsWithIfNotEmpty with empty value.
-     /// Covers the branch: value.isEmpty().
+    ///
+    /// 测试s startsWithIfNotEmpty with empty value.
+    /// Covers the branch: value.isEmpty().
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when startsWithIfNotEmpty is empty")
@@ -426,9 +426,9 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s startsWithIfNotEmpty with null value.
-     /// Covers the branch: value == null.
+    ///
+    /// 测试s startsWithIfNotEmpty with null value.
+    /// Covers the branch: value == null.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when startsWithIfNotEmpty is null")
@@ -447,8 +447,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== endsWithIfNotEmpty Tests ====================
 
-///
-     /// 测试s endsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s endsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWithIfNotEmpty when value is not empty")
@@ -463,8 +463,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s endsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when endsWithIfNotEmpty is empty")
@@ -483,8 +483,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== containsIfNotEmpty Tests ====================
 
-///
-     /// 测试s containsIfNotEmpty with non-empty value.
+    ///
+    /// 测试s containsIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with containsIfNotEmpty when value is not empty")
@@ -499,8 +499,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s containsIfNotEmpty with empty value.
+    ///
+    /// 测试s containsIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when containsIfNotEmpty is empty")
@@ -519,8 +519,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notStartsWithIfNotEmpty Tests ====================
 
-///
-     /// 测试s notStartsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s notStartsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWithIfNotEmpty when value is not empty")
@@ -536,8 +536,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s notStartsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notStartsWithIfNotEmpty is empty")
@@ -556,8 +556,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notEndsWithIfNotEmpty Tests ====================
 
-///
-     /// 测试s notEndsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s notEndsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWithIfNotEmpty when value is not empty")
@@ -573,8 +573,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
     }
 
-///
-     /// 测试s notEndsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s notEndsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notEndsWithIfNotEmpty is empty")
@@ -593,8 +593,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== notContainsIfNotEmpty Tests ====================
 
-///
-     /// 测试s notContainsIfNotEmpty with non-empty value.
+    ///
+    /// 测试s notContainsIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContainsIfNotEmpty when value is not empty")
@@ -610,8 +610,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s notContainsIfNotEmpty with empty value.
+    ///
+    /// 测试s notContainsIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip filter when notContainsIfNotEmpty is empty")
@@ -630,8 +630,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== Combined Conditional Tests ====================
 
-///
-     /// 测试s combining multiple IfNotNull conditions.
+    ///
+    /// 测试s combining multiple IfNotNull conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple IfNotNull conditions")
@@ -648,8 +648,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s combining IfNotNull with null value (should skip).
+    ///
+    /// 测试s combining IfNotNull with null value (should skip).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip null IfNotNull in combined conditions")
@@ -665,8 +665,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s combining multiple IfNotEmpty conditions.
+    ///
+    /// 测试s combining multiple IfNotEmpty conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple IfNotEmpty conditions")
@@ -683,8 +683,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s combining IfNotEmpty with empty value (should skip).
+    ///
+    /// 测试s combining IfNotEmpty with empty value (should skip).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip empty IfNotEmpty in combined conditions")
@@ -702,8 +702,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== Count and Exist Tests ====================
 
-///
-     /// 测试s count with string expression condition.
+    ///
+    /// 测试s count with string expression condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count with string expression condition")
@@ -717,8 +717,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
         assertThat(count).isPositive();
     }
 
-///
-     /// 测试s exist with string expression condition.
+    ///
+    /// 测试s exist with string expression condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should check exist with string expression condition")
@@ -734,14 +734,14 @@ public class StringExpressionDefaultMethodsIntegrationTest {
 
     // ==================== Predicate as Query Condition Tests ====================
 
-///
-     /// 测试s using startsWith predicate as query condition.
+    ///
+    /// 测试s using startsWith predicate as query condition.
     @Nested
     @DisplayName("Predicate as Query Condition Tests")
     class PredicateAsQueryConditionTests {
 
-///
-         /// 测试s: startsWith creates Predicate that can be passed to where().
+        ///
+        /// 测试s: startsWith creates Predicate that can be passed to where().
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use startsWith predicate as where condition")
@@ -759,8 +759,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
         }
 
-///
-         /// 测试s: endsWith creates Predicate that can be passed to where().
+        ///
+        /// 测试s: endsWith creates Predicate that can be passed to where().
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use endsWith predicate as where condition")
@@ -778,8 +778,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
         }
 
-///
-         /// 测试s: contains creates Predicate that can be passed to where().
+        ///
+        /// 测试s: contains creates Predicate that can be passed to where().
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use contains predicate as where condition")
@@ -797,8 +797,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().contains("John"));
         }
 
-///
-         /// 测试s: notStartsWith creates Predicate that can be passed to where().
+        ///
+        /// 测试s: notStartsWith creates Predicate that can be passed to where().
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notStartsWith predicate as where condition")
@@ -817,8 +817,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
         }
 
-///
-         /// 测试s: notEndsWith creates Predicate that can be passed to where().
+        ///
+        /// 测试s: notEndsWith creates Predicate that can be passed to where().
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notEndsWith predicate as where condition")
@@ -837,8 +837,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
         }
 
-///
-         /// 测试s: notContains creates Predicate that can be passed to where().
+        ///
+        /// 测试s: notContains creates Predicate that can be passed to where().
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notContains predicate as where condition")
@@ -857,8 +857,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
         }
 
-///
-         /// 测试s: startsWithIfNotNull with non-null creates Predicate.
+        ///
+        /// 测试s: startsWithIfNotNull with non-null creates Predicate.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use startsWithIfNotNull predicate as where condition")
@@ -876,8 +876,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
         }
 
-///
-         /// 测试s: startsWithIfNotNull with null creates empty Predicate.
+        ///
+        /// 测试s: startsWithIfNotNull with null creates empty Predicate.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use startsWithIfNotNull null predicate as where condition")
@@ -895,8 +895,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-///
-         /// 测试s: endsWithIfNotNull predicate as where condition.
+        ///
+        /// 测试s: endsWithIfNotNull predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use endsWithIfNotNull predicate as where condition")
@@ -914,8 +914,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
         }
 
-///
-         /// 测试s: containsIfNotNull predicate as where condition.
+        ///
+        /// 测试s: containsIfNotNull predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use containsIfNotNull predicate as where condition")
@@ -933,8 +933,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().contains("John"));
         }
 
-///
-         /// 测试s: startsWithIfNotEmpty with non-empty creates Predicate.
+        ///
+        /// 测试s: startsWithIfNotEmpty with non-empty creates Predicate.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use startsWithIfNotEmpty predicate as where condition")
@@ -952,8 +952,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
         }
 
-///
-         /// 测试s: startsWithIfNotEmpty with empty creates empty Predicate.
+        ///
+        /// 测试s: startsWithIfNotEmpty with empty creates empty Predicate.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use startsWithIfNotEmpty empty predicate as where condition")
@@ -971,8 +971,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).hasSize((int) totalCount);
         }
 
-///
-         /// 测试s: endsWithIfNotEmpty predicate as where condition.
+        ///
+        /// 测试s: endsWithIfNotEmpty predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use endsWithIfNotEmpty predicate as where condition")
@@ -990,8 +990,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
         }
 
-///
-         /// 测试s: containsIfNotEmpty predicate as where condition.
+        ///
+        /// 测试s: containsIfNotEmpty predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use containsIfNotEmpty predicate as where condition")
@@ -1009,8 +1009,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> e.getName().contains("John"));
         }
 
-///
-         /// 测试s: notStartsWithIfNotNull predicate as where condition.
+        ///
+        /// 测试s: notStartsWithIfNotNull predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notStartsWithIfNotNull predicate as where condition")
@@ -1029,8 +1029,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
         }
 
-///
-         /// 测试s: notEndsWithIfNotNull predicate as where condition.
+        ///
+        /// 测试s: notEndsWithIfNotNull predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notEndsWithIfNotNull predicate as where condition")
@@ -1049,8 +1049,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
         }
 
-///
-         /// 测试s: notContainsIfNotNull predicate as where condition.
+        ///
+        /// 测试s: notContainsIfNotNull predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notContainsIfNotNull predicate as where condition")
@@ -1069,8 +1069,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
         }
 
-///
-         /// 测试s: notStartsWithIfNotEmpty predicate as where condition.
+        ///
+        /// 测试s: notStartsWithIfNotEmpty predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notStartsWithIfNotEmpty predicate as where condition")
@@ -1089,8 +1089,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
         }
 
-///
-         /// 测试s: notEndsWithIfNotEmpty predicate as where condition.
+        ///
+        /// 测试s: notEndsWithIfNotEmpty predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notEndsWithIfNotEmpty predicate as where condition")
@@ -1109,8 +1109,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
         }
 
-///
-         /// 测试s: notContainsIfNotEmpty predicate as where condition.
+        ///
+        /// 测试s: notContainsIfNotEmpty predicate as where condition.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use notContainsIfNotEmpty predicate as where condition")
@@ -1129,8 +1129,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
         }
 
-///
-         /// 测试s: Combining multiple string predicates with AND.
+        ///
+        /// 测试s: Combining multiple string predicates with AND.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple string predicates with AND")
@@ -1151,8 +1151,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
                     e.getName().startsWith("A") && e.getEmail().endsWith("@example.com"));
         }
 
-///
-         /// 测试s: Combining multiple string predicates with OR.
+        ///
+        /// 测试s: Combining multiple string predicates with OR.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine multiple string predicates with OR")
@@ -1174,8 +1174,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
                     e.getName().startsWith("Alice") || e.getName().contains("John"));
         }
 
-///
-         /// 测试s: Combining string predicate with other conditions.
+        ///
+        /// 测试s: Combining string predicate with other conditions.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should combine string predicate with other where conditions")
@@ -1195,8 +1195,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
                     e.getName().startsWith("A") && e.getActive());
         }
 
-///
-         /// 测试s: NOT on string predicate.
+        ///
+        /// 测试s: NOT on string predicate.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should use NOT on string predicate")
@@ -1215,8 +1215,8 @@ public class StringExpressionDefaultMethodsIntegrationTest {
             assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
         }
 
-///
-         /// 测试s: Complex predicate with string expressions.
+        ///
+        /// 测试s: Complex predicate with string expressions.
         @ParameterizedTest
         @ArgumentsSource(IntegrationTestProvider.class)
         @DisplayName("Should create complex predicate with string expressions")

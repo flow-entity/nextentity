@@ -187,7 +187,8 @@ class InlineNumericLiteralsTest {
     }
 
     /// 测试结果
-    record TestResult(String sql, List<Object> args) {}
+    record TestResult(String sql, List<Object> args) {
+    }
 
     /// 使用 InlineNumericLiteralsHandler 直接测试 appendLiteral 逻辑
     private TestResult appendLiteral(JdbcConfig config, Object value) {

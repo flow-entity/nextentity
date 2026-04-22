@@ -9,26 +9,26 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 ///
- /// 测试目标: 验证y Iterators utility class provides correct iteration 操作s
- /// <p>
- /// 测试场景s:
- /// 1. toList converts Iterable to List
- /// 2. map transforms elements using mapper function
- /// 3. toArray converts Iterable to Object array
- /// 4. sizeOf returns size for Collection/Sizeable
- /// 5. size returns correct element count
- /// 6. iterate returns ArrayIterator
- /// <p>
- /// 预期结果: All utility 方法 work 正确
+/// 测试目标: 验证y Iterators utility class provides correct iteration 操作s
+/// <p>
+/// 测试场景s:
+/// 1. toList converts Iterable to List
+/// 2. map transforms elements using mapper function
+/// 3. toArray converts Iterable to Object array
+/// 4. sizeOf returns size for Collection/Sizeable
+/// 5. size returns correct element count
+/// 6. iterate returns ArrayIterator
+/// <p>
+/// 预期结果: All utility 方法 work 正确
 class IteratorsTest {
 
     @Nested
     class ToList {
 
-///
-         /// 测试目标: 验证y toList returns same instance for List input
-         /// 测试场景: Pass a List to toList
-         /// 预期结果: Same List instance is returned
+        ///
+        /// 测试目标: 验证y toList returns same instance for List input
+        /// 测试场景: Pass a List to toList
+        /// 预期结果: Same List instance is returned
         @Test
         void toList_WithListInput_ShouldReturnSameInstance() {
             // given
@@ -41,10 +41,10 @@ class IteratorsTest {
             assertThat(result).isSameAs(list);
         }
 
-///
-         /// 测试目标: 验证y toList returns ImmutableList for non-List Iterable
-         /// 测试场景: Pass a Set to toList
-         /// 预期结果: ImmutableList with same elements
+        ///
+        /// 测试目标: 验证y toList returns ImmutableList for non-List Iterable
+        /// 测试场景: Pass a Set to toList
+        /// 预期结果: ImmutableList with same elements
         @Test
         void toList_WithNonListIterable_ShouldReturnImmutableList() {
             // given
@@ -58,10 +58,10 @@ class IteratorsTest {
             assertThat(result).isInstanceOf(ImmutableList.class);
         }
 
-///
-         /// 测试目标: 验证y toList 处理 empty iterable
-         /// 测试场景: Pass empty iterable
-         /// 预期结果: Empty list
+        ///
+        /// 测试目标: 验证y toList 处理 empty iterable
+        /// 测试场景: Pass empty iterable
+        /// 预期结果: Empty list
         @Test
         void toList_WithEmptyIterable_ShouldReturnEmptyList() {
             // given
@@ -78,10 +78,10 @@ class IteratorsTest {
     @Nested
     class Map {
 
-///
-         /// 测试目标: 验证y map transforms elements 正确
-         /// 测试场景: Map strings to their lengths
-         /// 预期结果: Iterable with transformed values
+        ///
+        /// 测试目标: 验证y map transforms elements 正确
+        /// 测试场景: Map strings to their lengths
+        /// 预期结果: Iterable with transformed values
         @Test
         void map_ShouldTransformElements() {
             // given
@@ -94,10 +94,10 @@ class IteratorsTest {
             assertThat(result).containsExactly(1, 2, 3);
         }
 
-///
-         /// 测试目标: 验证y map with empty iterable returns empty list
-         /// 测试场景: Map over empty iterable
-         /// 预期结果: Empty iterable
+        ///
+        /// 测试目标: 验证y map with empty iterable returns empty list
+        /// 测试场景: Map over empty iterable
+        /// 预期结果: Empty iterable
         @Test
         void map_WithEmptyIterable_ShouldReturnEmptyList() {
             // given
@@ -110,10 +110,10 @@ class IteratorsTest {
             assertThat(result).isEmpty();
         }
 
-///
-         /// 测试目标: 验证y map returns Sizeable when input has known size
-         /// 测试场景: Map over a Collection
-         /// 预期结果: 结果 implements Sizeable
+        ///
+        /// 测试目标: 验证y map returns Sizeable when input has known size
+        /// 测试场景: Map over a Collection
+        /// 预期结果: 结果 implements Sizeable
         @Test
         void map_WithSizedIterable_ShouldReturnSizeable() {
             // given
@@ -127,10 +127,10 @@ class IteratorsTest {
             assertThat(((Sizeable) result).size()).isEqualTo(3);
         }
 
-///
-         /// 测试目标: 验证y MappedIterable.toString works 正确
-         /// 测试场景: Call toString on mapped iterable
-         /// 预期结果: String representation with elements
+        ///
+        /// 测试目标: 验证y MappedIterable.toString works 正确
+        /// 测试场景: Call toString on mapped iterable
+        /// 预期结果: String representation with elements
         @Test
         void mappedIterable_ToString_ShouldShowElements() {
             // given
@@ -147,10 +147,10 @@ class IteratorsTest {
     @Nested
     class ToArray {
 
-///
-         /// 测试目标: 验证y toArray returns correct array
-         /// 测试场景: Convert list to array
-         /// 预期结果: Object array with all elements
+        ///
+        /// 测试目标: 验证y toArray returns correct array
+        /// 测试场景: Convert list to array
+        /// 预期结果: Object array with all elements
         @Test
         void toArray_ShouldReturnCorrectArray() {
             // given
@@ -163,10 +163,10 @@ class IteratorsTest {
             assertThat(result).containsExactly("a", "b", "c");
         }
 
-///
-         /// 测试目标: 验证y toArray with empty iterable returns shared empty array
-         /// 测试场景: Convert empty iterable to array
-         /// 预期结果: Shared EmptyArrays.OBJECT constant
+        ///
+        /// 测试目标: 验证y toArray with empty iterable returns shared empty array
+        /// 测试场景: Convert empty iterable to array
+        /// 预期结果: Shared EmptyArrays.OBJECT constant
         @Test
         void toArray_WithEmptyIterable_ShouldReturnSharedEmptyArray() {
             // given
@@ -180,10 +180,10 @@ class IteratorsTest {
             assertThat(result).isSameAs(EmptyArrays.OBJECT);
         }
 
-///
-         /// 测试目标: 验证y toArray creates new array
-         /// 测试场景: Check if result is a new array
-         /// 预期结果: New array instance
+        ///
+        /// 测试目标: 验证y toArray creates new array
+        /// 测试场景: Check if result is a new array
+        /// 预期结果: New array instance
         @Test
         void toArray_ShouldCreateNewArray() {
             // given
@@ -201,10 +201,10 @@ class IteratorsTest {
     @Nested
     class SizeOf {
 
-///
-         /// 测试目标: 验证y sizeOf returns correct size for Collection
-         /// 测试场景: Pass Collection to sizeOf
-         /// 预期结果: Correct size returned
+        ///
+        /// 测试目标: 验证y sizeOf returns correct size for Collection
+        /// 测试场景: Pass Collection to sizeOf
+        /// 预期结果: Correct size returned
         @Test
         void sizeOf_WithCollection_ShouldReturnCorrectSize() {
             // given
@@ -217,10 +217,10 @@ class IteratorsTest {
             assertThat(size).isEqualTo(3);
         }
 
-///
-         /// 测试目标: 验证y sizeOf returns correct size for Sizeable
-         /// 测试场景: Pass Sizeable to sizeOf
-         /// 预期结果: Correct size returned
+        ///
+        /// 测试目标: 验证y sizeOf returns correct size for Sizeable
+        /// 测试场景: Pass Sizeable to sizeOf
+        /// 预期结果: Correct size returned
         @Test
         void sizeOf_WithSizeable_ShouldReturnCorrectSize() {
             // given - an Iterable that also implements Sizeable
@@ -240,10 +240,10 @@ class IteratorsTest {
             assertThat(size).isEqualTo(5);
         }
 
-///
-         /// 测试目标: 验证y sizeOf returns -1 for unknown size
-         /// 测试场景: Pass non-Collection, non-Sizeable iterable
-         /// 预期结果: -1 returned
+        ///
+        /// 测试目标: 验证y sizeOf returns -1 for unknown size
+        /// 测试场景: Pass non-Collection, non-Sizeable iterable
+        /// 预期结果: -1 returned
         @Test
         void sizeOf_WithUnknownSizeIterable_ShouldReturnMinusOne() {
             // given
@@ -260,10 +260,10 @@ class IteratorsTest {
     @Nested
     class Size {
 
-///
-         /// 测试目标: 验证y size returns correct count for Collection
-         /// 测试场景: Get size of Collection
-         /// 预期结果: Correct size
+        ///
+        /// 测试目标: 验证y size returns correct count for Collection
+        /// 测试场景: Get size of Collection
+        /// 预期结果: Correct size
         @Test
         void size_WithCollection_ShouldReturnCorrectSize() {
             // given
@@ -276,10 +276,10 @@ class IteratorsTest {
             assertThat(size).isEqualTo(3);
         }
 
-///
-         /// 测试目标: 验证y size iterates to count for unknown size iterable
-         /// 测试场景: Get size of non-Collection iterable
-         /// 预期结果: Correct count by iteration
+        ///
+        /// 测试目标: 验证y size iterates to count for unknown size iterable
+        /// 测试场景: Get size of non-Collection iterable
+        /// 预期结果: Correct count by iteration
         @Test
         void size_WithUnknownSizeIterable_ShouldIterateToCount() {
             // given
@@ -292,10 +292,10 @@ class IteratorsTest {
             assertThat(size).isEqualTo(4);
         }
 
-///
-         /// 测试目标: 验证y size returns 0 for empty iterable
-         /// 测试场景: Get size of empty iterable
-         /// 预期结果: 0
+        ///
+        /// 测试目标: 验证y size returns 0 for empty iterable
+        /// 测试场景: Get size of empty iterable
+        /// 预期结果: 0
         @Test
         void size_WithEmptyIterable_ShouldReturnZero() {
             // given
@@ -312,10 +312,10 @@ class IteratorsTest {
     @Nested
     class Iterate {
 
-///
-         /// 测试目标: 验证y iterate returns correct ArrayIterator
-         /// 测试场景: Create iterator from array
-         /// 预期结果: Iterator iterates over all elements
+        ///
+        /// 测试目标: 验证y iterate returns correct ArrayIterator
+        /// 测试场景: Create iterator from array
+        /// 预期结果: Iterator iterates over all elements
         @Test
         void iterate_ShouldReturnCorrectIterator() {
             // given
@@ -330,10 +330,10 @@ class IteratorsTest {
             assertThat(result).containsExactly("a", "b", "c");
         }
 
-///
-         /// 测试目标: 验证y iterate hasNext works 正确
-         /// 测试场景: Check hasNext at different positions
-         /// 预期结果: Correct hasNext values
+        ///
+        /// 测试目标: 验证y iterate hasNext works 正确
+        /// 测试场景: Check hasNext at different positions
+        /// 预期结果: Correct hasNext values
         @Test
         void iterate_hasNext_ShouldWorkCorrectly() {
             // given
@@ -350,10 +350,10 @@ class IteratorsTest {
             assertThat(iterator.hasNext()).isFalse();
         }
 
-///
-         /// 测试目标: 验证y iterate next throws NoSuchElementException when exhausted
-         /// 测试场景: Call next after iterator is exhausted
-         /// 预期结果: NoSuchElementException thrown
+        ///
+        /// 测试目标: 验证y iterate next throws NoSuchElementException when exhausted
+        /// 测试场景: Call next after iterator is exhausted
+        /// 预期结果: NoSuchElementException thrown
         @Test
         void iterate_next_WhenExhausted_ShouldThrowNoSuchElementException() {
             // given
@@ -366,10 +366,10 @@ class IteratorsTest {
                     .isInstanceOf(NoSuchElementException.class);
         }
 
-///
-         /// 测试目标: 验证y iterate with null array throws NPE
-         /// 测试场景: Pass null array
-         /// 预期结果: NullPointerException thrown
+        ///
+        /// 测试目标: 验证y iterate with null array throws NPE
+        /// 测试场景: Pass null array
+        /// 预期结果: NullPointerException thrown
         @Test
         void iterate_WithNullArray_ShouldThrowNPE() {
             // then
@@ -381,10 +381,10 @@ class IteratorsTest {
     @Nested
     class ArrayIterator {
 
-///
-         /// 测试目标: 验证y ArrayIterator works with empty array
-         /// 测试场景: Iterate over empty array
-         /// 预期结果: hasNext is false immediately
+        ///
+        /// 测试目标: 验证y ArrayIterator works with empty array
+        /// 测试场景: Iterate over empty array
+        /// 预期结果: hasNext is false immediately
         @Test
         void arrayIterator_WithEmptyArray_ShouldHaveNoElements() {
             // given
@@ -399,10 +399,10 @@ class IteratorsTest {
     @Nested
     class MappedIterator {
 
-///
-         /// 测试目标: 验证y MappedIterator transforms elements lazily
-         /// 测试场景: Map with transformation function
-         /// 预期结果: Elements transformed on iteration
+        ///
+        /// 测试目标: 验证y MappedIterator transforms elements lazily
+        /// 测试场景: Map with transformation function
+        /// 预期结果: Elements transformed on iteration
         @Test
         void mappedIterator_ShouldTransformLazily() {
             // given
@@ -424,10 +424,10 @@ class IteratorsTest {
     @Nested
     class MappedSizeableIterable {
 
-///
-         /// 测试目标: 验证y MappedSizeableIterable reports correct size
-         /// 测试场景: Create mapped iterable from Collection
-         /// 预期结果: Size is reported 正确
+        ///
+        /// 测试目标: 验证y MappedSizeableIterable reports correct size
+        /// 测试场景: Create mapped iterable from Collection
+        /// 预期结果: Size is reported 正确
         @Test
         void mappedSizeableIterable_ShouldReportCorrectSize() {
             // given

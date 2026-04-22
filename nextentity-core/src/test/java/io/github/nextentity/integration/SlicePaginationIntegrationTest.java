@@ -13,24 +13,24 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Slice and pagination integration tests.
- /// <p>
- /// 测试s pagination functionality including:
- /// - slice() 方法
- /// - Pageable parameters
- /// - Page results
- /// - getList(offset, limit) boundary conditions
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Slice and pagination integration tests.
+/// <p>
+/// 测试s pagination functionality including:
+/// - slice() 方法
+/// - Pageable parameters
+/// - Page results
+/// - getList(offset, limit) boundary conditions
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Slice Pagination Integration Tests")
 public class SlicePaginationIntegrationTest {
 
     private static final int TOTAL_EMPLOYEES = 12;
 
-///
-     /// 测试s basic slice functionality.
+    ///
+    /// 测试s basic slice functionality.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice results with offset and limit")
@@ -47,8 +47,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(slice.limit()).isEqualTo(5);
     }
 
-///
-     /// 测试s slice with offset.
+    ///
+    /// 测试s slice with offset.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with non-zero offset")
@@ -69,8 +69,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(slice.data().getFirst().getId()).isEqualTo(allEmployees.get(5).getId());
     }
 
-///
-     /// 测试s slice at the end of data.
+    ///
+    /// 测试s slice at the end of data.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice at end of data")
@@ -85,8 +85,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(slice.total()).isEqualTo(TOTAL_EMPLOYEES);
     }
 
-///
-     /// 测试s slice with limit larger than total.
+    ///
+    /// 测试s slice with limit larger than total.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice with limit larger than total")
@@ -101,8 +101,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(slice.total()).isEqualTo(TOTAL_EMPLOYEES);
     }
 
-///
-     /// 测试s slice with offset at end.
+    ///
+    /// 测试s slice with offset at end.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle slice with offset at end")
@@ -117,8 +117,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(slice.total()).isEqualTo(TOTAL_EMPLOYEES);
     }
 
-///
-     /// 测试s getList with offset and limit.
+    ///
+    /// 测试s getList with offset and limit.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get list with offset and limit")
@@ -132,8 +132,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(employees).hasSize(5);
     }
 
-///
-     /// 测试s limit 方法.
+    ///
+    /// 测试s limit 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should limit results")
@@ -147,8 +147,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(employees).hasSize(5);
     }
 
-///
-     /// 测试s offset 方法.
+    ///
+    /// 测试s offset 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should offset results")
@@ -168,8 +168,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(employees.getFirst().getId()).isEqualTo(allEmployees.get(5).getId());
     }
 
-///
-     /// 测试s slice with where condition.
+    ///
+    /// 测试s slice with where condition.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with where condition")
@@ -185,8 +185,8 @@ public class SlicePaginationIntegrationTest {
         assertThat(slice.data()).allMatch(Employee::getActive);
     }
 
-///
-     /// 测试s slice with order by.
+    ///
+    /// 测试s slice with order by.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice with correct ordering")
@@ -207,8 +207,8 @@ public class SlicePaginationIntegrationTest {
                 .isGreaterThan(sliceDesc.data().get(2).getSalary());
     }
 
-///
-     /// 测试s slice total count with filter.
+    ///
+    /// 测试s slice total count with filter.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should calculate correct total with filter")

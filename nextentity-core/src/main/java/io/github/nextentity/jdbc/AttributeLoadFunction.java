@@ -27,7 +27,7 @@ public abstract class AttributeLoadFunction {
     /// 执行批量加载查询。
     ///
     /// @param batchAttributeLoader 批量加载器，提供查询上下文和属性元数据
-    /// @param foreignKeys 待加载的外键集合
+    /// @param foreignKeys          待加载的外键集合
     /// @return 外键 → 查询结果的映射
     abstract public Map<Object, Object> apply(BatchAttributeLoader batchAttributeLoader, Collection<Object> foreignKeys);
 
@@ -36,7 +36,7 @@ public abstract class AttributeLoadFunction {
     /// 使用 keyAttribute 从每个结果对象提取键值。
     ///
     /// @param keyAttribute 用于提取键值的属性
-    /// @param results 查询结果列表
+    /// @param results      查询结果列表
     /// @return 键值 → 结果对象的映射
     protected Map<Object, Object> buildCacheMap(Attribute keyAttribute, List<?> results) {
         Map<Object, Object> cache = new HashMap<>();
@@ -52,14 +52,14 @@ public abstract class AttributeLoadFunction {
     /// 构建 WHERE IN 条件子句。
     ///
     /// @param foreignKeys 外键集合
-    /// @param attribute 投影属性元数据
+    /// @param attribute   投影属性元数据
     /// @return IN 表达式节点
     protected ExpressionNode buildWhereClause(Collection<Object> foreignKeys, ProjectionSchemaAttribute attribute) {
         Collection<ExpressionNode> literals = foreignKeys.stream()
                 .map(LiteralNode::new)
                 .collect(Collectors.toList());
 
-        EntityBasicAttribute targetAttribute = attribute.source().targetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
         PathNode targetPath = targetAttribute.path();
         return targetPath.operate(Operator.IN, literals);
     }

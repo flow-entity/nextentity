@@ -18,11 +18,11 @@ public class ConditionalUpdateStatementBuilder extends AbstractConditionalStatem
     private final Map<String, Object> setValues;
 
     public ConditionalUpdateStatementBuilder(EntityType entityType,
-                                              Metamodel metamodel,
-                                              Map<String, Object> setValues,
-                                              ExpressionNode whereCondition,
-                                              SqlDialect dialect,
-                                              JdbcConfig jdbcConfig) {
+                                             Metamodel metamodel,
+                                             Map<String, Object> setValues,
+                                             ExpressionNode whereCondition,
+                                             SqlDialect dialect,
+                                             JdbcConfig jdbcConfig) {
         super(entityType, metamodel, whereCondition, dialect, jdbcConfig);
         this.setValues = setValues;
     }

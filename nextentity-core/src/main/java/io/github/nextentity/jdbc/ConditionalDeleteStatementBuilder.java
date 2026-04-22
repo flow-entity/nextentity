@@ -13,10 +13,10 @@ import io.github.nextentity.core.meta.Metamodel;
 public class ConditionalDeleteStatementBuilder extends AbstractConditionalStatementBuilder {
 
     public ConditionalDeleteStatementBuilder(EntityType entityType,
-                                              Metamodel metamodel,
-                                              ExpressionNode whereCondition,
-                                              SqlDialect dialect,
-                                              JdbcConfig config) {
+                                             Metamodel metamodel,
+                                             ExpressionNode whereCondition,
+                                             SqlDialect dialect,
+                                             JdbcConfig config) {
         super(entityType, metamodel, whereCondition, dialect, config);
     }
 

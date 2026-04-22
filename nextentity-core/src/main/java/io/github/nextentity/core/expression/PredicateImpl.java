@@ -12,6 +12,7 @@ public class PredicateImpl<T> extends SimpleExpressionImpl<T, Boolean> implement
     public static final PredicateImpl<?> EMPTY = new PredicateImpl<>(EmptyNode.INSTANCE);
     public static final PredicateImpl<?> TRUE = new PredicateImpl<>(LiteralNode.TRUE);
     public static final PredicateImpl<?> FALSE = new PredicateImpl<>(LiteralNode.FALSE);
+
     public PredicateImpl(ExpressionNode root) {
         super(root);
     }

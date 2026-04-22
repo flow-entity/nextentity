@@ -7,7 +7,7 @@ import io.github.nextentity.core.util.ImmutableList;
 /// 用于选择完整实体或实体中的特定字段时。
 /// 获取列表指定要急切获取的关联实体。
 ///
-/// @param fetch 要获取的关联路径
+/// @param fetch    要获取的关联路径
 /// @param distinct 是否应用DISTINCT
 /// @author HuangChengwei
 /// @since 1.0.0

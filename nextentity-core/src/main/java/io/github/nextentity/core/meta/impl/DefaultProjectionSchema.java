@@ -36,6 +36,34 @@ public class DefaultProjectionSchema
         List<ProjectionAttribute> attributes = new ArrayList<>();
         int ordinal = 0;
         for (Attribute attribute : beanSchema.getAttributes()) {
+            Class<?> joinTarget = resolver.getProjectionJoinTarget(attribute);
+            if (joinTarget != null) {
+                if (!(attribute instanceof SchemaAttribute)) {
+                    log.warn("Attribute '{}' in projection '{}' is not a SchemaAttribute, skipped join mapping",
+                            attribute.name(), type.getSimpleName());
+                    continue;
+                }
+                String sourceName = resolver.getProjectionJoinSourceAttribute(attribute);
+                String targetName = resolver.getProjectionJoinTargetAttribute(attribute);
+                if (sourceName == null || targetName == null) {
+                    log.warn("Projection join '{}' in '{}' is missing source/target attribute, skipped",
+                            attribute.name(), type.getSimpleName());
+                    continue;
+                }
+                EntityBasicAttribute sourceAttribute = (EntityBasicAttribute) entitySchema.getAttribute(sourceName);
+                EntityType targetEntitySchema = metamodel.getEntity(joinTarget);
+                EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntitySchema.getAttribute(targetName);
+                var attr = new DefaultProjectionJoinAttribute(this,
+                        sourceAttribute,
+                        targetAttribute,
+                        targetEntitySchema,
+                        metamodel,
+                        ordinal++,
+                        resolver.getFetchType(attribute),
+                        attribute);
+                attributes.add(attr);
+                continue;
+            }
             Iterable<String> path = resolver.getMappedEntityPath(attribute);
             if (path != null) {
                 EntityAttribute entityAttribute = entitySchema.getAttribute(path);
