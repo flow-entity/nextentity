@@ -1,18 +1,17 @@
 package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.api.model.Order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y SortExpression 正确 represents sort specification
- /// <p>
- /// 测试场景s:
- /// 1. Create with expression and order
- /// 2. Access properties
+/// 测试目标: 验证y SortExpression 正确 represents sort specification
+/// <p>
+/// 测试场景s:
+/// 1. Create with expression and order
+/// 2. Access properties
 class SortExpressionTest {
 
     @Nested

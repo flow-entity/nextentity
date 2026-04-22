@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y NullParameter 正确 represents null values
- /// <p>
- /// 测试场景s:
- /// 1. Create null parameter with type
- /// 2. 验证y value returns null
- /// 3. 验证y toString output
+/// 测试目标: 验证y NullParameter 正确 represents null values
+/// <p>
+/// 测试场景s:
+/// 1. Create null parameter with type
+/// 2. 验证y value returns null
+/// 3. 验证y toString output
 class NullParameterTest {
 
     @Test

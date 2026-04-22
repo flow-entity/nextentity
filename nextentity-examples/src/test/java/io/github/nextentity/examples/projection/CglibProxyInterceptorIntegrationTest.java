@@ -5,7 +5,7 @@ import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.examples.entity.Department;
 import io.github.nextentity.examples.entity.Employee;
 import io.github.nextentity.examples.integration.BaseIntegrationTest;
-import io.github.nextentity.proxy.spring.CglibProxyInterceptor;
+import io.github.nextentity.spring.CglibProxyInterceptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

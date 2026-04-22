@@ -14,21 +14,21 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Subquery and advanced query integration tests.
- /// <p>
- /// 测试s advanced query 操作s including:
- /// - Subquery building with asSubQuery()
- /// - Subquery count, slice, getSingle, getFirst
- /// - Expression comparison with subquery
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Subquery and advanced query integration tests.
+/// <p>
+/// 测试s advanced query 操作s including:
+/// - Subquery building with asSubQuery()
+/// - Subquery count, slice, getSingle, getFirst
+/// - Expression comparison with subquery
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Subquery Integration Tests")
 public class SubqueryIntegrationTest {
 
-///
-     /// 测试s asSubQuery returns a SubQueryBuilder.
+    ///
+    /// 测试s asSubQuery returns a SubQueryBuilder.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should create subquery from query")
@@ -42,8 +42,8 @@ public class SubqueryIntegrationTest {
         assertThat(subquery).isNotNull();
     }
 
-///
-     /// 测试s subquery count.
+    ///
+    /// 测试s subquery count.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should count using subquery")
@@ -63,8 +63,8 @@ public class SubqueryIntegrationTest {
         assertThat(subqueryCount).isPositive();
     }
 
-///
-     /// 测试s subquery slice.
+    ///
+    /// 测试s subquery slice.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should slice subquery results")
@@ -79,8 +79,8 @@ public class SubqueryIntegrationTest {
         assertThat(sliceExpr).isNotNull();
     }
 
-///
-     /// 测试s expression comparison with max salary.
+    ///
+    /// 测试s expression comparison with max salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should compare with max expression")
@@ -100,8 +100,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() >= maxSalary - 0.01);
     }
 
-///
-     /// 测试s expression comparison with min salary.
+    ///
+    /// 测试s expression comparison with min salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should compare with min expression")
@@ -120,8 +120,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).isNotEmpty();
     }
 
-///
-     /// 测试s expression comparison with average salary.
+    ///
+    /// 测试s expression comparison with average salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should compare with average expression")
@@ -145,8 +145,8 @@ public class SubqueryIntegrationTest {
         assertThat(belowAvg).isNotEmpty();
     }
 
-///
-     /// 测试s nested query with two-step approach.
+    ///
+    /// 测试s nested query with two-step approach.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle two-step query")
@@ -167,8 +167,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).allMatch(e -> activeDeptIds.contains(e.getDepartmentId()));
     }
 
-///
-     /// 测试s query with pre-computed values.
+    ///
+    /// 测试s query with pre-computed values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should use pre-computed values in query")
@@ -186,8 +186,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).allMatch(e -> deptIds.contains(e.getDepartmentId()));
     }
 
-///
-     /// 测试s two-step filter with status.
+    ///
+    /// 测试s two-step filter with status.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with two-step approach for status")
@@ -208,8 +208,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).allMatch(Employee::getActive);
     }
 
-///
-     /// 测试s two-step filter with salary.
+    ///
+    /// 测试s two-step filter with salary.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with two-step approach for salary")
@@ -230,8 +230,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).allMatch(e -> e.getSalary() > 70000.0);
     }
 
-///
-     /// 测试s NOT IN with pre-computed values.
+    ///
+    /// 测试s NOT IN with pre-computed values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with NOT IN using pre-computed values")
@@ -252,8 +252,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees).allMatch(e -> e.getDepartmentId() != 1L);
     }
 
-///
-     /// 测试s aggregation with filter.
+    ///
+    /// 测试s aggregation with filter.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should aggregate with filter")
@@ -276,8 +276,8 @@ public class SubqueryIntegrationTest {
         assertThat(employees.size()).isLessThan((int) total);
     }
 
-///
-     /// 测试s combined aggregation queries.
+    ///
+    /// 测试s combined aggregation queries.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple aggregations")
@@ -314,8 +314,8 @@ public class SubqueryIntegrationTest {
         assertThat(aboveAvg.size() + belowAvg.size()).isGreaterThanOrEqualTo(count.intValue());
     }
 
-///
-     /// 测试s query by pre-selected IDs with order.
+    ///
+    /// 测试s query by pre-selected IDs with order.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should query by IDs with order")

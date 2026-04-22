@@ -19,25 +19,25 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for GroupByStep multiple parameter groupBy 方法.
- /// <p>
- /// 测试s default 方法 in GroupByStep interface including:
- /// - groupBy(Path, Path, Path): Group by three paths
- /// - groupBy(Path, Path, Path, Path): Group by four paths
- /// - groupBy(Path, Path, Path, Path, Path): Group by five paths
- /// - groupBy(Path, Path, Path, Path, Path, Path): Group by six paths
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
- /// @see io.github.nextentity.api.GroupByStep
+/// Integration tests for GroupByStep multiple parameter groupBy 方法.
+/// <p>
+/// 测试s default 方法 in GroupByStep interface including:
+/// - groupBy(Path, Path, Path): Group by three paths
+/// - groupBy(Path, Path, Path, Path): Group by four paths
+/// - groupBy(Path, Path, Path, Path, Path): Group by five paths
+/// - groupBy(Path, Path, Path, Path, Path, Path): Group by six paths
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
+/// @see io.github.nextentity.api.GroupByStep
 @DisplayName("GroupByStep Multiple Parameters Integration Tests")
 public class GroupByStepMultipleParametersIntegrationTest {
 
     // ==================== groupBy(Path, Path, Path) Tests ====================
 
-///
-     /// 测试s groupBy with three paths.
+    ///
+    /// 测试s groupBy with three paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by three paths")
@@ -57,8 +57,8 @@ public class GroupByStepMultipleParametersIntegrationTest {
         assertThat(results).isNotEmpty();
     }
 
-///
-     /// 测试s groupBy with three paths and sum aggregation.
+    ///
+    /// 测试s groupBy with three paths and sum aggregation.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by three paths with sum")
@@ -80,8 +80,8 @@ public class GroupByStepMultipleParametersIntegrationTest {
 
     // ==================== groupBy(Path, Path, Path, Path) Tests ====================
 
-///
-     /// 测试s groupBy with four paths.
+    ///
+    /// 测试s groupBy with four paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by four paths")
@@ -109,8 +109,8 @@ public class GroupByStepMultipleParametersIntegrationTest {
 
     // ==================== groupBy(Path, Path, Path, Path, Path) Tests ====================
 
-///
-     /// 测试s groupBy with five paths.
+    ///
+    /// 测试s groupBy with five paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by five paths")
@@ -140,8 +140,8 @@ public class GroupByStepMultipleParametersIntegrationTest {
 
     // ==================== groupBy(Path, Path, Path, Path, Path, Path) Tests ====================
 
-///
-     /// 测试s groupBy with six paths.
+    ///
+    /// 测试s groupBy with six paths.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should group by six paths")
@@ -173,8 +173,8 @@ public class GroupByStepMultipleParametersIntegrationTest {
 
     // ==================== Combined with Having Tests ====================
 
-///
-     /// 测试s groupBy with three paths and having clause.
+    ///
+    /// 测试s groupBy with three paths and having clause.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine groupBy with having clause")

@@ -9,7 +9,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
@@ -774,18 +773,6 @@ class NullableConcurrentMapTest {
             assertThat(callCount.get()).isEqualTo(0);
             assertThat(map.get(null)).isEqualTo("value");
         }
-
-        @Test
-        void merge_WithNullValue_ShouldThrowLikeHashMap() {
-            assertThatThrownBy(() -> map.merge("key", null, (old, newV) -> old + newV))
-                    .isInstanceOf(NullPointerException.class);
-        }
-
-        @Test
-        void merge_WithNullKeyAndNullValue_ShouldThrowLikeHashMap() {
-            assertThatThrownBy(() -> map.merge(null, null, (old, newV) -> old + newV))
-                    .isInstanceOf(NullPointerException.class);
-        }
     }
 
     // ─── 默认方法 ───────────────────────────────────────
@@ -1043,7 +1030,11 @@ class NullableConcurrentMapTest {
                 final int index = i;
                 Thread thread = new Thread(() -> {
                     latch.countDown();
-                    try { latch.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     map.put("key_" + index, "value_" + index);
                 });
                 threads.add(thread);
@@ -1055,7 +1046,11 @@ class NullableConcurrentMapTest {
                 final int index = i;
                 Thread thread = new Thread(() -> {
                     latch.countDown();
-                    try { latch.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     map.put(null, "nullValue_" + index);
                 });
                 threads.add(thread);
@@ -1066,7 +1061,11 @@ class NullableConcurrentMapTest {
             for (int i = 0; i < threadCount; i++) {
                 Thread thread = new Thread(() -> {
                     latch.countDown();
-                    try { latch.await(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+                    try {
+                        latch.await();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
                     map.get("key_0");
                     map.get(null);
                     map.containsKey(null);

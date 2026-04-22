@@ -3,6 +3,7 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.ExpressionNodes;
 import jakarta.persistence.LockModeType;
+
 import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -122,7 +123,7 @@ public interface SqlDialect {
     /// - PostgreSQL/MySQL: FOR SHARE, FOR UPDATE, FOR UPDATE NOWAIT
     /// - SQL Server: WITH (ROWLOCK), WITH (UPDLOCK, ROWLOCK), WITH (UPDLOCK, ROWLOCK, NOWAIT)
     ///
-    /// @param sql         要追加的 SQL 构建器
+    /// @param sql          要追加的 SQL 构建器
     /// @param lockModeType JPA 锁模式类型
     default void appendLockMode(StringBuilder sql, LockModeType lockModeType) {
         if (lockModeType == LockModeType.PESSIMISTIC_READ) {

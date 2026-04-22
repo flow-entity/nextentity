@@ -12,21 +12,21 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// String 操作s integration tests.
- /// <p>
- /// 测试s string 操作s including:
- /// - LIKE pattern matching
- /// - String functions (lower, upper, trim, substring, length)
- /// - String sorting
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// String 操作s integration tests.
+/// <p>
+/// 测试s string 操作s including:
+/// - LIKE pattern matching
+/// - String functions (lower, upper, trim, substring, length)
+/// - String sorting
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("String Operations Integration Tests")
 public class StringOperationsIntegrationTest {
 
-///
-     /// 测试s LIKE with prefix pattern.
+    ///
+    /// 测试s LIKE with prefix pattern.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE prefix pattern")
@@ -41,8 +41,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s LIKE with suffix pattern.
+    ///
+    /// 测试s LIKE with suffix pattern.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE suffix pattern")
@@ -57,8 +57,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s LIKE with contains pattern.
+    ///
+    /// 测试s LIKE with contains pattern.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE contains pattern")
@@ -73,8 +73,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().toLowerCase().contains("son"));
     }
 
-///
-     /// 测试s startsWith 方法.
+    ///
+    /// 测试s startsWith 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWith")
@@ -89,8 +89,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s endsWith 方法.
+    ///
+    /// 测试s endsWith 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWith")
@@ -105,8 +105,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s contains 方法.
+    ///
+    /// 测试s contains 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with contains")
@@ -121,8 +121,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s NOT LIKE.
+    ///
+    /// 测试s NOT LIKE.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with NOT LIKE")
@@ -138,8 +138,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWith 方法.
+    ///
+    /// 测试s notStartsWith 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWith")
@@ -154,8 +154,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notContains 方法.
+    ///
+    /// 测试s notContains 方法.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContains")
@@ -170,8 +170,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s likeIfNotNull with non-null value.
+    ///
+    /// 测试s likeIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with likeIfNotNull when value is not null")
@@ -186,8 +186,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s likeIfNotNull with null value.
+    ///
+    /// 测试s likeIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when likeIfNotNull is null")
@@ -204,8 +204,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s likeIfNotEmpty with non-empty value.
+    ///
+    /// 测试s likeIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with likeIfNotEmpty when value is not empty")
@@ -220,8 +220,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s likeIfNotEmpty with empty value.
+    ///
+    /// 测试s likeIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when likeIfNotEmpty is empty")
@@ -238,8 +238,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s multiple LIKE conditions.
+    ///
+    /// 测试s multiple LIKE conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with multiple LIKE conditions")
@@ -256,8 +256,8 @@ public class StringOperationsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s LIKE with special characters.
+    ///
+    /// 测试s LIKE with special characters.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with LIKE containing special characters")
@@ -272,8 +272,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().contains("@"));
     }
 
-///
-     /// 测试s case-insensitive LIKE pattern.
+    ///
+    /// 测试s case-insensitive LIKE pattern.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with case-insensitive pattern using lower")
@@ -288,8 +288,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().toLowerCase().startsWith("alice"));
     }
 
-///
-     /// 测试s string length function.
+    ///
+    /// 测试s string length function.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter by string length")
@@ -304,8 +304,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().length() >= 10);
     }
 
-///
-     /// 测试s ordering by string field ascending.
+    ///
+    /// 测试s ordering by string field ascending.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by string field ascending")
@@ -323,8 +323,8 @@ public class StringOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s ordering by string field descending.
+    ///
+    /// 测试s ordering by string field descending.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should order by string field descending")
@@ -342,8 +342,8 @@ public class StringOperationsIntegrationTest {
         }
     }
 
-///
-     /// 测试s LIKE with underscore wildcard.
+    ///
+    /// 测试s LIKE with underscore wildcard.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should handle LIKE with underscore wildcard")
@@ -359,8 +359,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).anyMatch(e -> e.getName().contains("lice"));
     }
 
-///
-     /// 测试s combined string 操作s.
+    ///
+    /// 测试s combined string 操作s.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple string operations")
@@ -378,8 +378,8 @@ public class StringOperationsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().contains("@"));
     }
 
-///
-     /// 测试s LIKE with no matches.
+    ///
+    /// 测试s LIKE with no matches.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty when LIKE has no matches")
@@ -393,8 +393,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).isEmpty();
     }
 
-///
-     /// 测试s selecting string field.
+    ///
+    /// 测试s selecting string field.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select string field")
@@ -410,8 +410,8 @@ public class StringOperationsIntegrationTest {
         assertThat(names).doesNotContainNull();
     }
 
-///
-     /// 测试s selecting distinct string values.
+    ///
+    /// 测试s selecting distinct string values.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should select distinct string values")
@@ -428,8 +428,8 @@ public class StringOperationsIntegrationTest {
 
     // ==================== IfNotNull Default Methods Tests ====================
 
-///
-     /// 测试s startsWithIfNotNull with non-null value.
+    ///
+    /// 测试s startsWithIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWithIfNotNull when value is not null")
@@ -444,8 +444,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s startsWithIfNotNull with null value.
+    ///
+    /// 测试s startsWithIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when startsWithIfNotNull is null")
@@ -462,8 +462,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s endsWithIfNotNull with non-null value.
+    ///
+    /// 测试s endsWithIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWithIfNotNull when value is not null")
@@ -478,8 +478,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWithIfNotNull with null value.
+    ///
+    /// 测试s endsWithIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when endsWithIfNotNull is null")
@@ -496,8 +496,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s containsIfNotNull with non-null value.
+    ///
+    /// 测试s containsIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with containsIfNotNull when value is not null")
@@ -512,8 +512,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s containsIfNotNull with null value.
+    ///
+    /// 测试s containsIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when containsIfNotNull is null")
@@ -530,8 +530,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notStartsWithIfNotNull with non-null value.
+    ///
+    /// 测试s notStartsWithIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWithIfNotNull when value is not null")
@@ -547,8 +547,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWithIfNotNull with null value.
+    ///
+    /// 测试s notStartsWithIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when notStartsWithIfNotNull is null")
@@ -565,8 +565,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notEndsWithIfNotNull with non-null value.
+    ///
+    /// 测试s notEndsWithIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWithIfNotNull when value is not null")
@@ -582,8 +582,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
     }
 
-///
-     /// 测试s notEndsWithIfNotNull with null value.
+    ///
+    /// 测试s notEndsWithIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when notEndsWithIfNotNull is null")
@@ -600,8 +600,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notContainsIfNotNull with non-null value.
+    ///
+    /// 测试s notContainsIfNotNull with non-null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContainsIfNotNull when value is not null")
@@ -617,8 +617,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s notContainsIfNotNull with null value.
+    ///
+    /// 测试s notContainsIfNotNull with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when notContainsIfNotNull is null")
@@ -637,8 +637,8 @@ public class StringOperationsIntegrationTest {
 
     // ==================== IfNotEmpty Default Methods Tests ====================
 
-///
-     /// 测试s startsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s startsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with startsWithIfNotEmpty when value is not empty")
@@ -653,8 +653,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("Alice"));
     }
 
-///
-     /// 测试s startsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s startsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when startsWithIfNotEmpty is empty")
@@ -671,8 +671,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s startsWithIfNotEmpty with null value.
+    ///
+    /// 测试s startsWithIfNotEmpty with null value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when startsWithIfNotEmpty is null")
@@ -689,8 +689,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s endsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s endsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with endsWithIfNotEmpty when value is not empty")
@@ -705,8 +705,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getEmail().endsWith("@example.com"));
     }
 
-///
-     /// 测试s endsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s endsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when endsWithIfNotEmpty is empty")
@@ -723,8 +723,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s containsIfNotEmpty with non-empty value.
+    ///
+    /// 测试s containsIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with containsIfNotEmpty when value is not empty")
@@ -739,8 +739,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().contains("John"));
     }
 
-///
-     /// 测试s containsIfNotEmpty with empty value.
+    ///
+    /// 测试s containsIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when containsIfNotEmpty is empty")
@@ -757,8 +757,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notStartsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s notStartsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notStartsWithIfNotEmpty when value is not empty")
@@ -774,8 +774,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s notStartsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s notStartsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when notStartsWithIfNotEmpty is empty")
@@ -792,8 +792,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notEndsWithIfNotEmpty with non-empty value.
+    ///
+    /// 测试s notEndsWithIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notEndsWithIfNotEmpty when value is not empty")
@@ -809,8 +809,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getEmail().endsWith("@nonexistent.org"));
     }
 
-///
-     /// 测试s notEndsWithIfNotEmpty with empty value.
+    ///
+    /// 测试s notEndsWithIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when notEndsWithIfNotEmpty is empty")
@@ -827,8 +827,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).hasSize((int) totalCount);
     }
 
-///
-     /// 测试s notContainsIfNotEmpty with non-empty value.
+    ///
+    /// 测试s notContainsIfNotEmpty with non-empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter with notContainsIfNotEmpty when value is not empty")
@@ -844,8 +844,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> !e.getName().contains("Alice"));
     }
 
-///
-     /// 测试s notContainsIfNotEmpty with empty value.
+    ///
+    /// 测试s notContainsIfNotEmpty with empty value.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return all when notContainsIfNotEmpty is empty")
@@ -864,8 +864,8 @@ public class StringOperationsIntegrationTest {
 
     // ==================== Combined Conditional String Tests ====================
 
-///
-     /// 测试s combining multiple IfNotNull string conditions.
+    ///
+    /// 测试s combining multiple IfNotNull string conditions.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should combine multiple IfNotNull string conditions")
@@ -882,8 +882,8 @@ public class StringOperationsIntegrationTest {
                 e.getName().startsWith("A") && e.getEmail().contains("@"));
     }
 
-///
-     /// 测试s combining IfNotNull with null value (should skip condition).
+    ///
+    /// 测试s combining IfNotNull with null value (should skip condition).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip condition when IfNotNull value is null")
@@ -902,8 +902,8 @@ public class StringOperationsIntegrationTest {
         assertThat(employees).allMatch(e -> e.getName().startsWith("A"));
     }
 
-///
-     /// 测试s combining IfNotEmpty with empty value (should skip condition).
+    ///
+    /// 测试s combining IfNotEmpty with empty value (should skip condition).
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should skip condition when IfNotEmpty value is empty")

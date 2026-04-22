@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y PredicateImpl 正确 implements predicate 操作s
- /// <p>
- /// 测试场景s:
- /// 1. Create with expression node
- /// 2. Operate null
- /// 3. Convert to predicate
+/// 测试目标: 验证y PredicateImpl 正确 implements predicate 操作s
+/// <p>
+/// 测试场景s:
+/// 1. Create with expression node
+/// 2. Operate null
+/// 3. Convert to predicate
 class PredicateImplTest {
 
     @Nested

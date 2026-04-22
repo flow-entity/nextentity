@@ -46,14 +46,14 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     /// 基于指定路径构建条件。
     ///
     /// @param path 路径
-    /// @param <N> 路径类型
+    /// @param <N>  路径类型
     /// @return PathOperator 实例
     <N> PathOperator<T, N, ? extends WhereStep<T, U>> where(PathRef<T, N> path);
 
     /// 基于指定数值路径构建条件。
     ///
     /// @param path 数值路径
-    /// @param <N> 数值类型
+    /// @param <N>  数值类型
     /// @return NumberOperator 实例
     <N extends Number> NumberOperator<T, N, ? extends WhereStep<T, U>> where(NumberRef<T, N> path);
 
@@ -66,14 +66,14 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     /// 基于指定路径表达式构建条件。
     ///
     /// @param path 路径表达式
-    /// @param <N> 路径类型
+    /// @param <N>  路径类型
     /// @return PathOperator 实例
     <N> PathOperator<T, N, ? extends WhereStep<T, U>> where(Path<T, N> path);
 
     /// 基于指定数值路径表达式构建条件。
     ///
     /// @param path 数值路径表达式
-    /// @param <N> 数值类型
+    /// @param <N>  数值类型
     /// @return NumberOperator 实例
     <N extends Number> NumberOperator<T, N, ? extends WhereStep<T, U>> where(NumberPath<T, N> path);
 
@@ -92,7 +92,7 @@ public interface WhereStep<T, U> extends GroupByStep<T, U>, BaseWhereStep<T, U> 
     /// ```
     ///
     /// @param path 实体路径
-    /// @param <R> 实体类型（必须实现 Entity 接口）
+    /// @param <R>  实体类型（必须实现 Entity 接口）
     /// @return PathOperator 实例，可继续调用 get() 访问嵌套属性
     default <R extends Entity> PathOperator<T, R, ? extends WhereStep<T, U>> where(EntityPathRef<T, R> path) {
         return where((PathRef<T, R>) path);

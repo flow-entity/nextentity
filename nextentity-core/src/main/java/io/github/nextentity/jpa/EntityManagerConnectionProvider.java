@@ -1,10 +1,8 @@
 package io.github.nextentity.jpa;
 
 import io.github.nextentity.jdbc.ConnectionProvider;
-import jakarta.persistence.ConnectionFunction;
 import jakarta.persistence.EntityManager;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 ///

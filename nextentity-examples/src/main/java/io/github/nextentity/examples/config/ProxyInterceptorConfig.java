@@ -2,7 +2,7 @@ package io.github.nextentity.examples.config;
 
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
-import io.github.nextentity.proxy.spring.CglibProxyInterceptor;
+import io.github.nextentity.spring.CglibProxyInterceptor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

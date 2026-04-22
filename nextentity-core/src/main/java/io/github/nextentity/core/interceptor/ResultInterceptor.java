@@ -14,8 +14,8 @@ public interface ResultInterceptor extends Interceptor<QueryContext> {
 
     /// 拦截结果集处理
     ///
-    /// @param context  查询上下文
-    /// @param results  查询结果列表
+    /// @param context 查询上下文
+    /// @param results 查询结果列表
     /// @return 处理后的结果列表
     List<?> intercept(QueryContext context, List<?> results);
 }

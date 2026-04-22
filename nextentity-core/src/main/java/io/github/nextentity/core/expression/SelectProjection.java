@@ -5,7 +5,7 @@ package io.github.nextentity.core.expression;
 /// 当查询结果应映射到非实体类（如
 /// DTO、记录或接口投影）时使用。
 ///
-/// @param type 投影类
+/// @param type     投影类
 /// @param distinct 是否应用DISTINCT
 /// @author HuangChengwei
 /// @since 1.0.0

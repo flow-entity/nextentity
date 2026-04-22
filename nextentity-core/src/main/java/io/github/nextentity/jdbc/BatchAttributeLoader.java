@@ -23,7 +23,7 @@ public final class BatchAttributeLoader {
     public BatchAttributeLoader(ProjectionSchemaAttribute attribute, QueryContext queryContext) {
         this.attribute = attribute;
         this.queryContext = queryContext;
-        this.batchLoaderFunction = attribute.type() == attribute.source().type()
+        this.batchLoaderFunction = attribute.type() == attribute.getEntityAttribute().type()
                 ? new EntityAttributeLoadFunction()
                 : new ProjectionAttributeLoadFunction();
     }

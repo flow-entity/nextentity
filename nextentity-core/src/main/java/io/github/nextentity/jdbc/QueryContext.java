@@ -28,6 +28,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+///
+/// @author HuangChengwei
+/// @since 1.0.0
+///
 public abstract class QueryContext {
 
     protected final QueryConfig descriptor;
@@ -366,7 +370,7 @@ public abstract class QueryContext {
         if (attribute instanceof EntityBasicAttribute expression) {
             return Stream.of(expression);
         } else if (attribute instanceof ProjectionBasicAttribute expression) {
-            return Stream.of(expression.source());
+            return Stream.of(expression.getEntityAttribute());
         } else if (attribute instanceof Schema schema) {
             SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());
             if (sub != null) {

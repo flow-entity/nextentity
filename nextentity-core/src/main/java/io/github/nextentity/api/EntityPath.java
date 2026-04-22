@@ -29,8 +29,8 @@ public interface EntityPath<T, U> extends Path<T, U> {
     /// 从指定字段名创建实体路径（类型不安全）。
     ///
     /// @param path 字段名
-    /// @param <T> 实体类型
-    /// @param <U> 属性类型
+    /// @param <T>  实体类型
+    /// @param <U>  属性类型
     /// @return 实体路径
     static <T, U> EntityPath<T, U> of(String path) {
         return DefaultEntityRoot.<T>of().entityPath(path);
@@ -40,7 +40,7 @@ public interface EntityPath<T, U> extends Path<T, U> {
     /// 获取指定路径的子路径。
     ///
     /// @param path 路径
-    /// @param <R> 结果类型
+    /// @param <R>  结果类型
     /// @return 子路径
     <R> EntityPath<T, R> get(PathRef<U, R> path);
 
@@ -53,14 +53,14 @@ public interface EntityPath<T, U> extends Path<T, U> {
     /// 获取指定数值引用的数值路径。
     ///
     /// @param path 数值引用
-    /// @param <R> 数值类型
+    /// @param <R>  数值类型
     /// @return 数值路径
     <R extends Number> NumberPath<T, R> get(PathRef.NumberRef<U, R> path);
 
     /// 获取指定路径表达式的子路径表达式。
     ///
     /// @param path 路径表达式
-    /// @param <R> 结果类型
+    /// @param <R>  结果类型
     /// @return 子路径表达式
     <R> Path<T, R> get(Path<U, R> path);
 
@@ -79,7 +79,7 @@ public interface EntityPath<T, U> extends Path<T, U> {
     /// 获取指定数值路径的数值路径。
     ///
     /// @param path 数值路径
-    /// @param <R> 数值类型
+    /// @param <R>  数值类型
     /// @return 数值路径
     <R extends Number> NumberPath<T, R> get(NumberPath<U, R> path);
 

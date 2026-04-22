@@ -2,13 +2,10 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.annotation.EntityPath;
 import io.github.nextentity.core.annotation.Fetch;
-import io.github.nextentity.core.meta.MetamodelConfiguration;
+import io.github.nextentity.core.annotation.Join;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
-import io.github.nextentity.core.meta.EntityBasicAttribute;
-import io.github.nextentity.core.meta.EntitySchemaAttribute;
-import io.github.nextentity.core.meta.MetamodelResolver;
-import io.github.nextentity.core.meta.ValueConverter;
+import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.SchemaAttribute;
 import io.github.nextentity.meta.jpa.AttributeConverterWrapper;
@@ -238,6 +235,24 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
             return List.of(split);
         }
         return List.of(attribute.name());
+    }
+
+    @Override
+    public Class<?> getProjectionJoinTarget(Attribute attribute) {
+        Join annotation = getAnnotation(attribute, Join.class);
+        return annotation != null ? annotation.target() : null;
+    }
+
+    @Override
+    public String getProjectionJoinSourceAttribute(Attribute attribute) {
+        Join annotation = getAnnotation(attribute, Join.class);
+        return annotation != null ? annotation.sourceAttribute() : null;
+    }
+
+    @Override
+    public String getProjectionJoinTargetAttribute(Attribute attribute) {
+        Join annotation = getAnnotation(attribute, Join.class);
+        return annotation != null ? annotation.targetAttribute() : null;
     }
 
     @Override

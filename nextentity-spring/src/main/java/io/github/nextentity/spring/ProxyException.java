@@ -1,4 +1,4 @@
-package io.github.nextentity.proxy.spring;
+package io.github.nextentity.spring;
 
 /// 代理异常
 ///

@@ -16,6 +16,6 @@ import io.github.nextentity.core.meta.EntityAttribute;
 /// @since 1.0.0
 public sealed interface SelectItem permits LiteralNode, OperatorNode, EntityAttribute {
 
-     ExpressionNode expression();
+    ExpressionNode expression();
 
 }

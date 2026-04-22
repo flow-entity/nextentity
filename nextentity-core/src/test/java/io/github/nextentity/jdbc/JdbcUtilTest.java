@@ -3,18 +3,15 @@ package io.github.nextentity.jdbc;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y JdbcUtil static utility 方法
- /// <p>
- /// 测试场景s:
- /// 1. 验证y TypedParameter interface implementations
- /// 2. 验证y setParameters 处理 different types
- /// Note: Methods using 结果Set/PreparedStatement require integration tests
+/// 测试目标: 验证y JdbcUtil static utility 方法
+/// <p>
+/// 测试场景s:
+/// 1. 验证y TypedParameter interface implementations
+/// 2. 验证y setParameters 处理 different types
+/// Note: Methods using 结果Set/PreparedStatement require integration tests
 class JdbcUtilTest {
 
     @Nested

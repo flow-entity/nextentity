@@ -6,7 +6,7 @@
 //
 //import static org.assertj.core.api.Assertions.assertThat;
 //
-/////
+/// //
 // /// 测试目标: 验证y SimpleEntityAttribute 正确 处理 entity attribute metadata
 // /// <p>
 // /// 测试场景s:

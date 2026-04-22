@@ -8,12 +8,12 @@ import java.time.Duration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 测试目标: 验证y DurationStringConverter 正确 converts Duration to/from String
- /// <p>
- /// 测试场景s:
- /// 1. Convert Duration to String
- /// 2. Convert String to Duration
- /// 3. Handle null values
+/// 测试目标: 验证y DurationStringConverter 正确 converts Duration to/from String
+/// <p>
+/// 测试场景s:
+/// 1. Convert Duration to String
+/// 2. Convert String to Duration
+/// 3. Handle null values
 class DurationStringConverterTest {
 
     private final DurationStringConverter converter = new DurationStringConverter();

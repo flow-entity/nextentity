@@ -9,14 +9,14 @@ import org.junit.jupiter.params.support.ParameterDeclarations;
 import java.util.stream.Stream;
 
 ///
- /// Arguments provider for parameterized integration tests.
- /// Provides DbConfig instances for MySQL and PostgreSQL.
- /// <p>
- /// Note: 测试 data reset is no longer automatic. 测试s that modify data
- /// should call {@link IntegrationTestContext#reset()} in {@code @AfterEach}
- /// or at the end of each test 方法.
- /// 
- /// @author HuangChengwei
+/// Arguments provider for parameterized integration tests.
+/// Provides DbConfig instances for MySQL and PostgreSQL.
+/// <p>
+/// Note: 测试 data reset is no longer automatic. 测试s that modify data
+/// should call {@link IntegrationTestContext#reset()} in {@code @AfterEach}
+/// or at the end of each test 方法.
+///
+/// @author HuangChengwei
 public class IntegrationTestProvider implements ArgumentsProvider {
 
     private static final ThreadLocal<IntegrationTestContext> INTEGRATION_TEST_CONTEXT_THREAD_LOCAL = new ThreadLocal<>();

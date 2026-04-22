@@ -146,4 +146,4 @@ public interface Collector<T> {
     /// @return 子查询构建器
     <X> SubQueryBuilder<X, T> toSubQuery();
 
-    }
+}

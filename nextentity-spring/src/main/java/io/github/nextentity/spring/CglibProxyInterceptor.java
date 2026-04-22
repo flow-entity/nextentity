@@ -1,4 +1,4 @@
-package io.github.nextentity.proxy.spring;
+package io.github.nextentity.spring;
 
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.MetamodelSchema;

@@ -1,8 +1,8 @@
 package io.github.nextentity.integration.dto;
 
 ///
- /// JavaBean projection for Employee summary statistics.
- /// 测试s projection with partial fields from entity.
+/// JavaBean projection for Employee summary statistics.
+/// 测试s projection with partial fields from entity.
 public class EmployeeSummary {
 
     private String name;
@@ -41,9 +41,9 @@ public class EmployeeSummary {
     @Override
     public String toString() {
         return "EmployeeSummary{" +
-                "name='" + name + '\'' +
-                ", salary=" + salary +
-                ", active=" + active +
-                '}';
+               "name='" + name + '\'' +
+               ", salary=" + salary +
+               ", active=" + active +
+               '}';
     }
 }

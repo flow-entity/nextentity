@@ -14,21 +14,21 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 ///
- /// Exception propagation integration tests.
- /// <p>
- /// 测试s exception handling and propagation including:
- /// - Constraint violation exceptions
- /// - Invalid query exceptions
- /// - Data type mismatch exceptions
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Exception propagation integration tests.
+/// <p>
+/// 测试s exception handling and propagation including:
+/// - Constraint violation exceptions
+/// - Invalid query exceptions
+/// - Data type mismatch exceptions
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Exception Propagation Integration Tests")
 public class ExceptionPropagationIntegrationTest {
 
-///
-     /// 测试s duplicate primary key exception.
+    ///
+    /// 测试s duplicate primary key exception.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception on duplicate primary key")
@@ -49,8 +49,8 @@ public class ExceptionPropagationIntegrationTest {
                 .isInstanceOf(RuntimeException.class);
     }
 
-///
-     /// 测试s getSingle with multiple results.
+    ///
+    /// 测试s getSingle with multiple results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should throw exception for getSingle with multiple results")
@@ -60,8 +60,8 @@ public class ExceptionPropagationIntegrationTest {
                 .isInstanceOf(IllegalStateException.class);
     }
 
-///
-     /// 测试s invalid query returns null for getSingle with no results.
+    ///
+    /// 测试s invalid query returns null for getSingle with no results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return null for getSingle with no results")
@@ -75,8 +75,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(employee).isNull();
     }
 
-///
-     /// 测试s first with results.
+    ///
+    /// 测试s first with results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return first result")
@@ -91,8 +91,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(employee.getId()).isEqualTo(1L);
     }
 
-///
-     /// 测试s first with no results.
+    ///
+    /// 测试s first with no results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty optional for first with no results")
@@ -106,8 +106,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(employee).isNull();
     }
 
-///
-     /// 测试s exist with results.
+    ///
+    /// 测试s exist with results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return true for exist with results")
@@ -121,8 +121,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(exists).isTrue();
     }
 
-///
-     /// 测试s exist with no results.
+    ///
+    /// 测试s exist with no results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return false for exist with no results")
@@ -136,8 +136,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(exists).isFalse();
     }
 
-///
-     /// 测试s count with no results.
+    ///
+    /// 测试s count with no results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return zero count for no results")
@@ -151,8 +151,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(count).isZero();
     }
 
-///
-     /// 测试s empty list for query with no matches.
+    ///
+    /// 测试s empty list for query with no matches.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should return empty list for no matches")
@@ -166,8 +166,8 @@ public class ExceptionPropagationIntegrationTest {
         assertThat(employees).isEmpty();
     }
 
-///
-     /// 测试s getFirst with results.
+    ///
+    /// 测试s getFirst with results.
     @ParameterizedTest
     @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should get first from ordered results")

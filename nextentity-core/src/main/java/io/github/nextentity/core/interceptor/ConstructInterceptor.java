@@ -13,8 +13,8 @@ public interface ConstructInterceptor extends Interceptor<QueryContext> {
 
     /// 拦截构造过程
     ///
-    /// @param context    查询上下文，包含元模型信息
-    /// @param arguments  参数供应器，用于获取属性值
+    /// @param context   查询上下文，包含元模型信息
+    /// @param arguments 参数供应器，用于获取属性值
     /// @return 构造的对象实例
     Object intercept(QueryContext context, Arguments arguments);
 }

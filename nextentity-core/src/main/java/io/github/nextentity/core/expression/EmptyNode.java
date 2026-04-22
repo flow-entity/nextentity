@@ -28,7 +28,7 @@ public final class EmptyNode implements ExpressionNode {
     /// 否则，使用提供的操作数创建新的 OperatorNode。
     ///
     /// @param operator 要应用的运算符
-    /// @param nodes 额外操作数节点
+    /// @param nodes    额外操作数节点
     /// @return 如果没有操作数则返回此空节点，否则返回新的 OperatorNode
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {

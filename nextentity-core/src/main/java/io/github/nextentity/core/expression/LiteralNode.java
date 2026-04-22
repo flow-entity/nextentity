@@ -32,7 +32,7 @@ public record LiteralNode(Object value) implements ExpressionNode, SelectItem {
     /// - true OR 任何值返回 true
     ///
     /// @param operator 要应用的运算符
-    /// @param nodes 额外操作数节点
+    /// @param nodes    额外操作数节点
     /// @return 结果表达式节点
     @Override
     public ExpressionNode operate(Operator operator, Collection<ExpressionNode> nodes) {

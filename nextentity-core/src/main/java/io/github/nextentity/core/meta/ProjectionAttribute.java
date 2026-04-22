@@ -10,7 +10,7 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 /// 采用 sealed hierarchy 设计：
 /// - {@link ProjectionBasicAttribute}：映射到实体的基本属性
 /// - {@link ProjectionSchemaAttribute}：映射到实体的关联属性
-/// - {@link ProjectionJoinAttribute}：映射到关联属性的嵌套字段
+/// - {@link ProjectionJoinAttribute}：显式 JOIN 到目标表
 ///
 /// @see EntityAttribute
 /// @see ProjectionSchema
@@ -23,5 +23,5 @@ public sealed interface ProjectionAttribute
     /// 获取此投影属性对应的实体属性。
     ///
     /// @return 源实体属性
-    EntityAttribute source();
+    EntityAttribute getEntityAttribute();
 }

@@ -9,7 +9,7 @@ import java.util.function.Function;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// 单元测试 StringOperatorImpl.
+/// 单元测试 StringOperatorImpl.
 class StringOperatorImplTest {
 
     private StringOperatorImpl<Object, String> operator;
@@ -29,10 +29,10 @@ class StringOperatorImplTest {
     @Nested
     class LowerOperation {
 
-///
-         /// 测试目标: 验证y lower() creates LOWER operator.
-         /// 测试场景: Call lower() then eq() on string operator.
-         /// 预期结果: 创建 LOWER operator node.
+        ///
+        /// 测试目标: 验证y lower() creates LOWER operator.
+        /// 测试场景: Call lower() then eq() on string operator.
+        /// 预期结果: 创建 LOWER operator node.
         @Test
         void lower_ShouldCreateLowerOperator() {
             // when
@@ -52,10 +52,10 @@ class StringOperatorImplTest {
     @Nested
     class UpperOperation {
 
-///
-         /// 测试目标: 验证y upper() creates UPPER operator.
-         /// 测试场景: Call upper() then eq() on string operator.
-         /// 预期结果: 创建 UPPER operator node.
+        ///
+        /// 测试目标: 验证y upper() creates UPPER operator.
+        /// 测试场景: Call upper() then eq() on string operator.
+        /// 预期结果: 创建 UPPER operator node.
         @Test
         void upper_ShouldCreateUpperOperator() {
             // when
@@ -75,10 +75,10 @@ class StringOperatorImplTest {
     @Nested
     class SubstringOperation {
 
-///
-         /// 测试目标: 验证y substring() creates SUBSTRING operator with parameters.
-         /// 测试场景: Call substring(0, 5) then eq() on string operator.
-         /// 预期结果: 创建 SUBSTRING operator node with offset and length.
+        ///
+        /// 测试目标: 验证y substring() creates SUBSTRING operator with parameters.
+        /// 测试场景: Call substring(0, 5) then eq() on string operator.
+        /// 预期结果: 创建 SUBSTRING operator node with offset and length.
         @Test
         void substring_ShouldCreateSubstringOperator() {
             // when
@@ -98,10 +98,10 @@ class StringOperatorImplTest {
     @Nested
     class TrimOperation {
 
-///
-         /// 测试目标: 验证y trim() creates TRIM operator.
-         /// 测试场景: Call trim() then eq() on string operator.
-         /// 预期结果: 创建 TRIM operator node.
+        ///
+        /// 测试目标: 验证y trim() creates TRIM operator.
+        /// 测试场景: Call trim() then eq() on string operator.
+        /// 预期结果: 创建 TRIM operator node.
         @Test
         void trim_ShouldCreateTrimOperator() {
             // when
@@ -121,10 +121,10 @@ class StringOperatorImplTest {
     @Nested
     class LengthOperation {
 
-///
-         /// 测试目标: 验证y length() creates LENGTH operator and returns NumberOperator.
-         /// 测试场景: Call length() on string operator.
-         /// 预期结果: 创建 LENGTH operator node and returns NumberOperator.
+        ///
+        /// 测试目标: 验证y length() creates LENGTH operator and returns NumberOperator.
+        /// 测试场景: Call length() on string operator.
+        /// 预期结果: 创建 LENGTH operator node and returns NumberOperator.
         @Test
         void length_ShouldCreateLengthOperator() {
             // when
@@ -135,10 +135,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(NumberOperatorImpl.class);
         }
 
-///
-         /// 测试目标: 验证y length() followed by eq creates correct expression.
-         /// 测试场景: Call length() then eq() on string operator.
-         /// 预期结果: 创建 LENGTH operator node with comparison.
+        ///
+        /// 测试目标: 验证y length() followed by eq creates correct expression.
+        /// 测试场景: Call length() then eq() on string operator.
+        /// 预期结果: 创建 LENGTH operator node with comparison.
         @Test
         void length_WithComparison_ShouldCreateLengthOperator() {
             // when
@@ -158,10 +158,10 @@ class StringOperatorImplTest {
     @Nested
     class ReturnType {
 
-///
-         /// 测试目标: 验证y lower() returns StringOperator.
-         /// 测试场景: Call lower() on string operator.
-         /// 预期结果: Returns StringOperatorImpl instance.
+        ///
+        /// 测试目标: 验证y lower() returns StringOperator.
+        /// 测试场景: Call lower() on string operator.
+        /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void lower_ShouldReturnStringOperator() {
             // when
@@ -171,10 +171,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
         }
 
-///
-         /// 测试目标: 验证y upper() returns StringOperator.
-         /// 测试场景: Call upper() on string operator.
-         /// 预期结果: Returns StringOperatorImpl instance.
+        ///
+        /// 测试目标: 验证y upper() returns StringOperator.
+        /// 测试场景: Call upper() on string operator.
+        /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void upper_ShouldReturnStringOperator() {
             // when
@@ -184,10 +184,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
         }
 
-///
-         /// 测试目标: 验证y trim() returns StringOperator.
-         /// 测试场景: Call trim() on string operator.
-         /// 预期结果: Returns StringOperatorImpl instance.
+        ///
+        /// 测试目标: 验证y trim() returns StringOperator.
+        /// 测试场景: Call trim() on string operator.
+        /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void trim_ShouldReturnStringOperator() {
             // when
@@ -197,10 +197,10 @@ class StringOperatorImplTest {
             assertThat(result).isInstanceOf(StringOperatorImpl.class);
         }
 
-///
-         /// 测试目标: 验证y substring() returns StringOperator.
-         /// 测试场景: Call substring() on string operator.
-         /// 预期结果: Returns StringOperatorImpl instance.
+        ///
+        /// 测试目标: 验证y substring() returns StringOperator.
+        /// 测试场景: Call substring() on string operator.
+        /// 预期结果: Returns StringOperatorImpl instance.
         @Test
         void substring_ShouldReturnStringOperator() {
             // when

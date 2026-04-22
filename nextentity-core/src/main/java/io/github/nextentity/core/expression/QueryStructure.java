@@ -10,14 +10,14 @@ import jakarta.persistence.LockModeType;
 ///
 /// QueryStructure 实例是不可变的；所有修改方法返回新实例。
 ///
-/// @param select 选择规范（实体或投影）
-/// @param from FROM 子句规范（实体或子查询）
-/// @param where WHERE 子句表达式
-/// @param groupBy GROUP BY 表达式
-/// @param orderBy ORDER BY 表达式
-/// @param having HAVING 子句表达式
-/// @param offset 分页的结果偏移量
-/// @param limit 最大结果数
+/// @param select   选择规范（实体或投影）
+/// @param from     FROM 子句规范（实体或子查询）
+/// @param where    WHERE 子句表达式
+/// @param groupBy  GROUP BY 表达式
+/// @param orderBy  ORDER BY 表达式
+/// @param having   HAVING 子句表达式
+/// @param offset   分页的结果偏移量
+/// @param limit    最大结果数
 /// @param lockType JPA 锁模式类型
 /// @author HuangChengwei
 /// @since 1.0.0
@@ -46,7 +46,7 @@ public record QueryStructure(
     /// 使用指定的 select 和 from 子句创建 QueryStructure。
     ///
     /// @param select 选择规范
-    /// @param from FROM 子句规范
+    /// @param from   FROM 子句规范
     /// @return 新的 QueryStructure 实例
     public static QueryStructure of(Selected select, From from) {
         return new QueryStructure(
@@ -81,7 +81,7 @@ public record QueryStructure(
     /// 返回更新了 select 和 from 子句的新 QueryStructure。
     ///
     /// @param select 新的选择规范
-    /// @param from 新的 FROM 子句规范
+    /// @param from   新的 FROM 子句规范
     /// @return 新的 QueryStructure 实例
     public QueryStructure selectFrom(Selected select, From from) {
         return new QueryStructure(select, from, where, groupBy, orderBy, having, offset, limit, lockType);

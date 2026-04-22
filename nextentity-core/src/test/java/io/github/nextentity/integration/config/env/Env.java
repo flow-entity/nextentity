@@ -1,16 +1,13 @@
 package io.github.nextentity.integration.config.env;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public class Env {
 
     private static final Map<String, Supplier<DatabaseEnvironmentVariables>> SUPPLIERS = new LinkedHashMap<>();
+
     static {
         SUPPLIERS.put("mysql", MysqlEnvironmentVariables::new);
         SUPPLIERS.put("postgresql", PostgresqlEnvironmentVariables::new);

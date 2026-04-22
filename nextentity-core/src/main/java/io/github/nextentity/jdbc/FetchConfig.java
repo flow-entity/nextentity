@@ -1,16 +1,14 @@
 package io.github.nextentity.jdbc;
 
 import jakarta.persistence.FetchType;
-import org.jspecify.annotations.Nullable;
 
 /// 懒加载配置。
 ///
 /// 控制实体关联属性的加载策略和行为。
 ///
-/// @param defaultFetchType    默认加载策略，未标注 @Fetch 时使用
-/// @param batchMaxSize        批量加载的最大批次大小
-/// @param lazyLoadEnabled     是否启用懒加载功能
-///
+/// @param defaultFetchType 默认加载策略，未标注 @Fetch 时使用
+/// @param batchMaxSize     批量加载的最大批次大小
+/// @param lazyLoadEnabled  是否启用懒加载功能
 /// @author HuangChengwei
 /// @since 2.1.0
 public record FetchConfig(

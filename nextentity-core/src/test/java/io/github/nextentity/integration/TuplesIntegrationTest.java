@@ -1,6 +1,7 @@
 package io.github.nextentity.integration;
 
-import io.github.nextentity.api.model.*;
+import io.github.nextentity.api.model.Tuple2;
+import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -14,9 +15,9 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Integration tests for Tuples class with database queries.
- /// 
- /// @author HuangChengwei
+/// Integration tests for Tuples class with database queries.
+///
+/// @author HuangChengwei
 @DisplayName("Tuples Integration Tests")
 public class TuplesIntegrationTest {
 

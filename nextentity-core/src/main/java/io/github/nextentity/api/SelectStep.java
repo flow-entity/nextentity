@@ -34,7 +34,7 @@ public interface SelectStep<T> extends FetchStep<T> {
     /// 选择指定类型的投影结果。
     ///
     /// @param projectionType 投影类型
-    /// @param <R> 投影结果类型
+    /// @param <R>            投影结果类型
     /// @return 查询条件构建步骤
     <R> BaseWhereStep<T, R> select(Class<R> projectionType);
 
@@ -47,21 +47,21 @@ public interface SelectStep<T> extends FetchStep<T> {
     /// 选择单个表达式的结果。
     ///
     /// @param expression 表达式
-    /// @param <R> 表达式结果类型
+    /// @param <R>        表达式结果类型
     /// @return 多行查询条件构建步骤
     <R> WhereStep<T, R> select(Expression<T, R> expression);
 
     /// 选择单个路径的结果。
     ///
     /// @param path 路径
-    /// @param <R> 路径结果类型
+    /// @param <R>  路径结果类型
     /// @return 多行查询条件构建步骤
     <R> WhereStep<T, R> select(PathRef<T, R> path);
 
     /// 选择两个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @return 多行查询条件构建步骤
@@ -80,10 +80,10 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择四个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -93,11 +93,11 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择五个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -108,12 +108,12 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择六个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -125,13 +125,13 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择七个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -144,14 +144,14 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择八个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
-    /// @param h 第八个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
+    /// @param h   第八个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -165,15 +165,15 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择九个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
-    /// @param h 第八个路径
-    /// @param i 第九个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
+    /// @param h   第八个路径
+    /// @param i   第九个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -188,16 +188,16 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择十个路径的结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
-    /// @param h 第八个路径
-    /// @param i 第九个路径
-    /// @param j 第十个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
+    /// @param h   第八个路径
+    /// @param i   第九个路径
+    /// @param j   第十个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -318,15 +318,15 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择九个表达式的结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
-    /// @param g 第七个表达式
-    /// @param h 第八个表达式
-    /// @param i 第九个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
+    /// @param g   第七个表达式
+    /// @param h   第八个表达式
+    /// @param i   第九个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -341,16 +341,16 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择十个表达式的结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
-    /// @param g 第七个表达式
-    /// @param h 第八个表达式
-    /// @param i 第九个表达式
-    /// @param j 第十个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
+    /// @param g   第七个表达式
+    /// @param h   第八个表达式
+    /// @param i   第九个表达式
+    /// @param j   第十个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -367,7 +367,7 @@ public interface SelectStep<T> extends FetchStep<T> {
     /// 选择不重复的指定类型投影结果。
     ///
     /// @param projectionType 投影类型
-    /// @param <R> 投影结果类型
+    /// @param <R>            投影结果类型
     /// @return 查询条件构建步骤
     <R> BaseWhereStep<T, R> selectDistinct(Class<R> projectionType);
 
@@ -380,21 +380,21 @@ public interface SelectStep<T> extends FetchStep<T> {
     /// 选择不重复的单个表达式结果。
     ///
     /// @param expression 表达式
-    /// @param <R> 表达式结果类型
+    /// @param <R>        表达式结果类型
     /// @return 多行查询条件构建步骤
     <R> WhereStep<T, R> selectDistinct(Expression<T, R> expression);
 
     /// 选择不重复的单个路径结果。
     ///
     /// @param path 路径
-    /// @param <R> 路径结果类型
+    /// @param <R>  路径结果类型
     /// @return 多行查询条件构建步骤
     <R> WhereStep<T, R> selectDistinct(PathRef<T, R> path);
 
     /// 选择不重复的两个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @return 多行查询条件构建步骤
@@ -402,9 +402,9 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的三个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -413,10 +413,10 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的四个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -426,11 +426,11 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的五个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -441,12 +441,12 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的六个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -458,13 +458,13 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的七个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -477,14 +477,14 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的八个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
-    /// @param h 第八个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
+    /// @param h   第八个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -498,15 +498,15 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的九个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
-    /// @param h 第八个路径
-    /// @param i 第九个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
+    /// @param h   第八个路径
+    /// @param i   第九个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -521,16 +521,16 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的十个路径结果。
     ///
-    /// @param a 第一个路径
-    /// @param b 第二个路径
-    /// @param c 第三个路径
-    /// @param d 第四个路径
-    /// @param e 第五个路径
-    /// @param f 第六个路径
-    /// @param g 第七个路径
-    /// @param h 第八个路径
-    /// @param i 第九个路径
-    /// @param j 第十个路径
+    /// @param a   第一个路径
+    /// @param b   第二个路径
+    /// @param c   第三个路径
+    /// @param d   第四个路径
+    /// @param e   第五个路径
+    /// @param f   第六个路径
+    /// @param g   第七个路径
+    /// @param h   第八个路径
+    /// @param i   第九个路径
+    /// @param j   第十个路径
     /// @param <A> 第一个路径类型
     /// @param <B> 第二个路径类型
     /// @param <C> 第三个路径类型
@@ -546,8 +546,8 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的两个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @return 多行查询条件构建步骤
@@ -555,9 +555,9 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的三个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -566,10 +566,10 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的四个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -579,11 +579,11 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的五个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -594,12 +594,12 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的六个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -611,13 +611,13 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的七个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
-    /// @param g 第七个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
+    /// @param g   第七个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -630,14 +630,14 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的八个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
-    /// @param g 第七个表达式
-    /// @param h 第八个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
+    /// @param g   第七个表达式
+    /// @param h   第八个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -651,15 +651,15 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的九个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
-    /// @param g 第七个表达式
-    /// @param h 第八个表达式
-    /// @param i 第九个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
+    /// @param g   第七个表达式
+    /// @param h   第八个表达式
+    /// @param i   第九个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型
@@ -674,16 +674,16 @@ public interface SelectStep<T> extends FetchStep<T> {
 
     /// 选择不重复的十个表达式结果。
     ///
-    /// @param a 第一个表达式
-    /// @param b 第二个表达式
-    /// @param c 第三个表达式
-    /// @param d 第四个表达式
-    /// @param e 第五个表达式
-    /// @param f 第六个表达式
-    /// @param g 第七个表达式
-    /// @param h 第八个表达式
-    /// @param i 第九个表达式
-    /// @param j 第十个表达式
+    /// @param a   第一个表达式
+    /// @param b   第二个表达式
+    /// @param c   第三个表达式
+    /// @param d   第四个表达式
+    /// @param e   第五个表达式
+    /// @param f   第六个表达式
+    /// @param g   第七个表达式
+    /// @param h   第八个表达式
+    /// @param i   第九个表达式
+    /// @param j   第十个表达式
     /// @param <A> 第一个表达式类型
     /// @param <B> 第二个表达式类型
     /// @param <C> 第三个表达式类型

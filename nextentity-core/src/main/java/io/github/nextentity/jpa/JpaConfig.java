@@ -6,7 +6,6 @@ package io.github.nextentity.jpa;
 ///
 /// @param stringParameterBinding 字符串是否使用参数绑定（SQL Server Unicode 支持）
 /// @param nativeSubqueries       子查询是否使用原生 SQL
-///
 /// @author HuangChengwei
 /// @since 2.1.0
 public record JpaConfig(

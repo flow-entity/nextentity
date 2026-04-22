@@ -15,16 +15,16 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 ///
- /// Projection query integration tests.
- /// <p>
- /// 测试s projection to different target types:
- /// - JavaBean (class with default constructor and setters)
- /// - Interface (dynamic proxy)
- /// - Record (immutable data carrier)
- /// <p>
- /// These tests run against MySQL and PostgreSQL using 测试containers.
- /// 
- /// @author HuangChengwei
+/// Projection query integration tests.
+/// <p>
+/// 测试s projection to different target types:
+/// - JavaBean (class with default constructor and setters)
+/// - Interface (dynamic proxy)
+/// - Record (immutable data carrier)
+/// <p>
+/// These tests run against MySQL and PostgreSQL using 测试containers.
+///
+/// @author HuangChengwei
 @DisplayName("Projection Query Integration Tests")
 public class ProjectionQueryIntegrationTest {
 

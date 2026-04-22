@@ -1,8 +1,8 @@
 package io.github.nextentity.integration.dto;
 
 ///
- /// JavaBean projection for Employee with department info.
- /// 测试s nested projection with association.
+/// JavaBean projection for Employee with department info.
+/// 测试s nested projection with association.
 public class EmployeeWithDepartment {
 
     private Long id;
@@ -50,10 +50,10 @@ public class EmployeeWithDepartment {
     @Override
     public String toString() {
         return "EmployeeWithDepartment{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", departmentName='" + departmentName + '\'' +
-                ", salary=" + salary +
-                '}';
+               "id=" + id +
+               ", name='" + name + '\'' +
+               ", departmentName='" + departmentName + '\'' +
+               ", salary=" + salary +
+               '}';
     }
 }
