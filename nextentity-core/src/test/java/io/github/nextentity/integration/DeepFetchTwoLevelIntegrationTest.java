@@ -2,9 +2,11 @@ package io.github.nextentity.integration;
 
 import io.github.nextentity.api.EntityPath;
 import io.github.nextentity.api.Path;
+import io.github.nextentity.integration.config.DB;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Category;
+import io.github.nextentity.integration.fast.FastIntegrationTestProvider;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
@@ -83,7 +85,7 @@ public class DeepFetchTwoLevelIntegrationTest {
     }
 
     @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
+    @ArgumentsSource(FastIntegrationTestProvider.class)
     void fetchTwoLevelWithNestedPathWhere(IntegrationTestContext context) {
         // Use nested path in where clause combined with two-level fetch
         List<Category> results = context.queryCategories()

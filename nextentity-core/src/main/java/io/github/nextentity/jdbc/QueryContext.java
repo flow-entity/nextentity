@@ -12,17 +12,20 @@ import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
+import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.NullableConcurrentMap;
+import jakarta.persistence.FetchType;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +36,7 @@ import java.util.stream.Stream;
 ///
 /// 持有 ValueConstructor 实例，通过 ConstructorSelector 根据 Select 类型
 /// 创建对应的构造器（ObjectConstructor / SingleValueConstructor / ArrayConstructor）。
-/// 对于 SelectProjection 类型，仍由 SelectProjectionContext 处理（支持 LAZY 加载）。
+/// 对于 SelectProjection 类型，支持 LAZY 加载属性的批量加载。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
@@ -59,6 +62,22 @@ public class QueryContext {
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
 
+    /// 投影查询相关字段
+    private SelectProjection selectProjection;
+    private ProjectionSchema projection;
+    private ImmutableArray<Column> expressions;
+
+    /// 批量加载上下文（延迟初始化，仅投影查询使用）
+    private final Map<ProjectionSchemaAttribute, BatchAttributeLoader> batchLoaderContexts = new ConcurrentHashMap<>();
+
+    /// 存储懒加载属性元数据供批量加载使用
+    public record LazyAttributeInfo(
+            ProjectionSchemaAttribute attribute,
+            EntityBasicAttribute sourceAttribute,
+            EntityBasicAttribute targetIdAttribute
+    ) {
+    }
+
     /// 公开构造函数
     public QueryContext(QueryConfig descriptor) {
         this.descriptor = descriptor;
@@ -69,13 +88,20 @@ public class QueryContext {
     /// 在设置参数后调用，完成字段初始化。
     /// 使用 ConstructorSelector 根据 Select 类型创建对应的 ValueConstructor。
     public void init() {
-        if (this.constructor == null) {
-            ConstructorSelector selector = new ConstructorSelector(entityType);
-            Selected select = structure.select();
-            this.constructor = selector.select(select, expandReferencePath);
-        }
-        if (this.schemaAttributePaths == null) {
-            this.schemaAttributePaths = buildSchemaAttributePaths(structure.select());
+        if (selectProjection != null) {
+            // SelectProjection 有自己的构造逻辑，不使用 ConstructorSelector
+            this.projection = entityType.getProjection(selectProjection.type());
+            this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
+            this.expressions = separateAttributes(projection, schemaAttributePaths);
+        } else {
+            if (this.constructor == null) {
+                ConstructorSelector selector = new ConstructorSelector(entityType);
+                Selected select = structure.select();
+                this.constructor = selector.select(select, expandReferencePath);
+            }
+            if (this.schemaAttributePaths == null) {
+                this.schemaAttributePaths = buildSchemaAttributePaths(structure.select());
+            }
         }
     }
 
@@ -140,13 +166,12 @@ public class QueryContext {
     }
 
     public static QueryContext newQueryContext(QueryConfig descriptor, QueryStructure structure) {
+        QueryContext context = new QueryContext(descriptor);
         Selected select = structure.select();
         if (select instanceof SelectProjection selectProjection) {
-            SelectProjectionContext context = new SelectProjectionContext(descriptor);
             context.setSelectProjection(selectProjection);
-            return context;
         }
-        return new QueryContext(descriptor);
+        return context;
     }
 
     public <T> List<T> getResultList() {
@@ -163,9 +188,13 @@ public class QueryContext {
     /// 获取 SELECT 子句列列表
     ///
     /// 直接返回 constructor 的列定义，保留 converter 和 tableIndex 信息。
+    /// 对于投影查询，返回预计算的 expressions。
     ///
     /// @return Column 不可变数组
     public ImmutableArray<Column> getSelectedExpression() {
+        if (expressions != null) {
+            return expressions;
+        }
         List<Column> columns = constructor.columns();
         return ImmutableList.ofCollection(columns);
     }
@@ -175,7 +204,18 @@ public class QueryContext {
     /// @param arguments 参数供应器
     /// @return 构造的对象实例
     protected Object doConstruct(Arguments arguments) {
-        return constructor.construct(arguments);
+        if (projection != null && projection.hasLazyAttribute()) {
+            var selector = InterceptorSelector.selectConstructor(this);
+            if (selector != null && selector.supports(this)) {
+                return selector.intercept(this, arguments);
+            }
+            throw new UnsupportedOperationException(
+                    "Lazy loading is not supported for projection type: " + projection.type().getName());
+        }
+        if (constructor != null) {
+            return constructor.construct(arguments);
+        }
+        return constructSchema(projection, arguments, schemaAttributePaths);
     }
 
     public QueryStructure getStructure() {
@@ -193,11 +233,14 @@ public class QueryContext {
     /// 获取当前构造的 Schema
     ///
     /// 用于拦截器判断是否支持处理当前场景。
-    /// 默认返回 entityType，SelectProjectionContext 覆盖返回 projection。
+    /// 对于投影查询返回 projection，否则返回 entityType。
     ///
     /// @return 当前构造的 Schema，如果没有则返回 null
     @Nullable
     public MetamodelSchema<?> getSchema() {
+        if (projection != null) {
+            return projection;
+        }
         return entityType;
     }
 
@@ -270,6 +313,9 @@ public class QueryContext {
     }
 
     public Map<Method, Object> collectResultMap(Arguments arguments) {
+        if (projection != null) {
+            return collectProjectionResultMap(arguments);
+        }
         return collectResultMap(getEntityType(), arguments, getSchemaAttributePaths());
     }
 
@@ -411,7 +457,7 @@ public class QueryContext {
 
     protected Stream<Column> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
         if (attribute instanceof EntityBasicAttribute expression) {
-            return Stream.of(Column.fromEntityBasicAttribute(expression, 0));
+            return Stream.of(Column.fromEntityAttribute(expression, 0));
         } else if (attribute instanceof ProjectionBasicAttribute expression) {
             return Stream.of(Column.fromProjectionBasicAttribute(expression, 0));
         } else if (attribute instanceof Schema schema) {
@@ -474,7 +520,7 @@ public class QueryContext {
 
     /// 是否启用懒加载拦截
     ///
-    /// 仅在投影查询（{@link SelectProjectionContext}）中默认启用。
+    /// 仅在投影查询中默认启用。
     ///
     /// @return true 表示启用懒加载
     public boolean isEnableLazyloading() {
@@ -501,6 +547,102 @@ public class QueryContext {
     /// @return 列列表
     public List<Column> getColumns() {
         return constructor.columns();
+    }
+
+    /// 设置投影查询类型
+    ///
+    /// @param selectProjection 投影查询定义
+    public void setSelectProjection(SelectProjection selectProjection) {
+        this.selectProjection = selectProjection;
+        this.enableLazyloading = true;
+    }
+
+    /// 分离投影属性，构建列列表
+    ///
+    /// @param schema 投影 Schema
+    /// @param paths  属性路径
+    /// @return 列列表
+    private ImmutableArray<Column> separateAttributes(ProjectionSchema schema, SchemaAttributePaths paths) {
+        List<Column> eagerList = new ArrayList<>();
+        for (ProjectionAttribute attr : schema.getAttributes()) {
+            if (attr instanceof ProjectionBasicAttribute basicAttr) {
+                eagerList.add(Column.fromProjectionBasicAttribute(basicAttr, 0));
+            } else if (attr instanceof ProjectionSchemaAttribute schemaAttr) {
+                FetchType fetchType = schemaAttr.getFetchType();
+                if (fetchType == FetchType.LAZY) {
+                    eagerList.add(Column.fromEntityAttribute(schemaAttr.getEntityAttribute().getSourceAttribute(), 0));
+                } else {
+                    SchemaAttributePaths subPaths = paths.get(attr.name());
+                    if (subPaths != null) {
+                        streamProjectionSchema(schemaAttr, subPaths).forEach(eagerList::add);
+                    }
+                }
+            }
+        }
+        return ImmutableList.ofCollection(eagerList);
+    }
+
+    private Stream<Column> streamProjectionSchema(ProjectionSchemaAttribute schemaAttr, SchemaAttributePaths paths) {
+        return schemaAttr.getAttributes().stream()
+                .flatMap(attr -> {
+                    if (attr instanceof ProjectionBasicAttribute basicAttr) {
+                        return Stream.of(Column.fromProjectionBasicAttribute(basicAttr, 0));
+                    } else if (attr instanceof ProjectionSchemaAttribute nestedSchemaAttr) {
+                        if (nestedSchemaAttr.getFetchType() == FetchType.LAZY) {
+                            return Stream.empty();
+                        }
+                        SchemaAttributePaths subPaths = paths.get(attr.name());
+                        if (subPaths != null) {
+                            return streamProjectionSchema(nestedSchemaAttr, subPaths);
+                        }
+                    }
+                    return Stream.empty();
+                });
+    }
+
+    /// 收集投影查询的结果映射（支持懒加载属性）
+    ///
+    /// @param arguments 参数供应器
+    /// @return 结果映射
+    public Map<Method, Object> collectProjectionResultMap(Arguments arguments) {
+        ProjectionSchema schema = projection;
+        SchemaAttributePaths paths = schemaAttributePaths;
+        Map<Method, Object> data = new NullableConcurrentMap<>();
+        for (Attribute attr : schema.getAttributes()) {
+            if (attr instanceof ProjectionSchemaAttribute schemaAttr
+                && schemaAttr.getFetchType() == FetchType.LAZY) {
+                Object foreignKey = getSimpleAttributeValue(arguments, attr);
+                data.put(attr.getter(), createLazyLoader(schemaAttr, foreignKey));
+                continue;
+            }
+            SchemaAttributePaths subPaths = paths.get(attr.name());
+            if (subPaths != null) {
+                if (attr instanceof Schema nestedSchema) {
+                    Object value = constructSchema(nestedSchema, arguments, subPaths);
+                    data.put(attr.getter(), value);
+                } else {
+                    Object value = getSimpleAttributeValue(arguments, attr);
+                    data.put(attr.getter(), value);
+                }
+            }
+        }
+        return data;
+    }
+
+    private AttributeLoader createLazyLoader(ProjectionSchemaAttribute attribute, Object foreignKey) {
+        return getBatchLoaderContext(attribute).getAttributeLoader(foreignKey);
+    }
+
+    private BatchAttributeLoader getBatchLoaderContext(ProjectionSchemaAttribute attribute) {
+        return batchLoaderContexts.computeIfAbsent(attribute, k -> new BatchAttributeLoader(k, this));
+    }
+
+    /// 获取投影 Schema
+    ///
+    /// @return 投影 Schema，如果不是投影查询则返回 null
+    @Nullable
+    public ProjectionSchema getProjection() {
+        return projection;
     }
 
 }
