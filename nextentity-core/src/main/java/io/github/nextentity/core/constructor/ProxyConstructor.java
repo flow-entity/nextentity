@@ -3,10 +3,7 @@ package io.github.nextentity.core.constructor;
 import io.github.nextentity.jdbc.Arguments;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /// 代理构造器抽象基类
 ///
@@ -20,9 +17,9 @@ import java.util.Map;
 public abstract class ProxyConstructor implements ValueConstructor {
 
     private final Class<?> resultType;
-    private final PropertyBinding[] properties;
+    private final Collection<PropertyBinding> properties;
 
-    protected ProxyConstructor(Class<?> resultType, PropertyBinding[] properties) {
+    protected ProxyConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
         this.resultType = resultType;
         this.properties = properties;
     }
@@ -34,7 +31,7 @@ public abstract class ProxyConstructor implements ValueConstructor {
 
     @Override
     public List<Column> columns() {
-        return Arrays.stream(properties)
+        return properties.stream()
                 .flatMap(PropertyBinding::getColumns)
                 .toList();
     }

@@ -5,6 +5,8 @@ import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
@@ -22,17 +24,23 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
+/// 查询上下文，负责从 ResultSet 构造查询结果对象。
+///
+/// 持有 ValueConstructor 实例，通过 ConstructorSelector 根据 Select 类型
+/// 创建对应的构造器（ObjectConstructor / SingleValueConstructor / ArrayConstructor）。
+/// 对于 SelectProjection 类型，仍由 SelectProjectionContext 处理（支持 LAZY 加载）。
 ///
 /// @author HuangChengwei
 /// @since 1.0.0
 ///
-public abstract class QueryContext {
+public class QueryContext {
 
     protected final QueryConfig descriptor;
 
@@ -46,19 +54,60 @@ public abstract class QueryContext {
 
     protected boolean enableLazyloading = false;
 
+    private ValueConstructor constructor;
+
+    private SchemaAttributePaths schemaAttributePaths;
+
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
 
-    /// 无参构造函数
-    protected QueryContext(QueryConfig descriptor) {
+    /// 公开构造函数
+    public QueryContext(QueryConfig descriptor) {
         this.descriptor = descriptor;
     }
 
     /// 初始化核心字段
     ///
     /// 在设置参数后调用，完成字段初始化。
-    /// 子类应覆盖此方法完成子类特有的初始化，并调用 super.init()。
+    /// 使用 ConstructorSelector 根据 Select 类型创建对应的 ValueConstructor。
     public void init() {
+        if (this.constructor == null) {
+            ConstructorSelector selector = new ConstructorSelector(entityType);
+            Selected select = structure.select();
+            this.constructor = selector.select(select);
+        }
+        if (this.schemaAttributePaths == null) {
+            this.schemaAttributePaths = buildSchemaAttributePaths(structure.select());
+        }
+    }
+
+    /// 根据 Select 类型构建 SchemaAttributePaths
+    private SchemaAttributePaths buildSchemaAttributePaths(Selected select) {
+        if (select instanceof SelectEntity selectEntity) {
+            return newJoinPaths(selectEntity.fetch());
+        }
+        if (select instanceof SelectProjection) {
+            return DeepLimitSchemaAttributePaths.of(1);
+        }
+        return SchemaAttributePaths.empty();
+    }
+
+    /// 从 PathNode 列表构建 SchemaAttributePaths
+    protected SchemaAttributePaths newJoinPaths(ImmutableList<PathNode> fetch) {
+        DefaultSchemaAttributePaths paths = new DefaultSchemaAttributePaths();
+        for (PathNode pathNode : fetch) {
+            paths.add(pathNode);
+        }
+        return paths;
+    }
+
+    /// 从 Attribute 集合构建 SchemaAttributePaths
+    protected SchemaAttributePaths newJoinPaths(Collection<? extends Attribute> fetch) {
+        DefaultSchemaAttributePaths paths = new DefaultSchemaAttributePaths();
+        for (Attribute strings : fetch) {
+            paths.add(strings.path());
+        }
+        return paths;
     }
 
     /// 设置查询结构
@@ -87,26 +136,12 @@ public abstract class QueryContext {
 
     public static QueryContext newQueryContext(QueryConfig descriptor, QueryStructure structure) {
         Selected select = structure.select();
-        if (select instanceof SelectEntity) {
-            return new SelectEntityContext(descriptor);
-        } else if (select instanceof SelectProjection selectProjection) {
+        if (select instanceof SelectProjection selectProjection) {
             SelectProjectionContext context = new SelectProjectionContext(descriptor);
             context.setSelectProjection(selectProjection);
             return context;
-        } else if (select instanceof SelectExpression selectExpression) {
-            SelectPrimitiveContext context = new SelectPrimitiveContext(descriptor);
-            context.setSelectExpression(selectExpression);
-            return context;
-        } else if (select instanceof SelectExpressions selectExpressions) {
-            SelectArrayContext context = new SelectArrayContext(descriptor);
-            context.setSelectExpressions(selectExpressions);
-            return context;
-        } else if (select instanceof SelectNested selectNested) {
-            SelectNestedContext context = new SelectNestedContext(descriptor);
-            context.setSelectNested(selectNested);
-            return context;
         }
-        throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
+        return new QueryContext(descriptor);
     }
 
     public <T> List<T> getResultList() {
@@ -120,17 +155,51 @@ public abstract class QueryContext {
         return context;
     }
 
-    public abstract ImmutableArray<SelectItem> getSelectedExpression();
-
-    protected SchemaAttributePaths newJoinPaths(Collection<? extends Attribute> fetch) {
-        DefaultSchemaAttributePaths paths = new DefaultSchemaAttributePaths();
-        for (Attribute strings : fetch) {
-            paths.add(strings.path());
+    /// 获取 SELECT 子句表达式列表
+    ///
+    /// 从 constructor.getColumns() 转换为 SelectItem 列表。
+    /// 对于 PathNode 列，尝试获取其关联的 EntityAttribute；
+    /// 对于 OperatorNode / LiteralNode，直接作为 SelectItem。
+    ///
+    /// @return SelectItem 不可变数组
+    public ImmutableArray<SelectItem> getSelectedExpression() {
+        List<Column> columns = constructor.columns();
+        List<SelectItem> items = new ArrayList<>(columns.size());
+        for (Column column : columns) {
+            ExpressionNode source = column.source();
+            if (source instanceof PathNode pathNode && entityType != null) {
+                Attribute attribute = pathNode.getAttribute(entityType);
+                if (attribute instanceof EntityAttribute entityAttribute) {
+                    items.add(entityAttribute);
+                } else {
+                    // PathNode 未关联 EntityAttribute，从 entityType 解析
+                    attribute = entityType.getAttribute(pathNode);
+                    if (attribute instanceof EntityAttribute entityAttribute) {
+                        items.add(entityAttribute);
+                    } else {
+                        throw new IllegalStateException(
+                                "Cannot resolve PathNode to EntityAttribute: " + pathNode);
+                    }
+                }
+            } else if (source instanceof OperatorNode operatorNode) {
+                items.add(operatorNode);
+            } else if (source instanceof LiteralNode literalNode) {
+                items.add(literalNode);
+            } else {
+                throw new IllegalStateException(
+                        "Unsupported column source type for SelectItem: " + source.getClass().getName());
+            }
         }
-        return paths;
+        return ImmutableList.ofCollection(items);
     }
 
-    protected abstract Object doConstruct(Arguments arguments);
+    /// 构造对象实例，委托给 ValueConstructor
+    ///
+    /// @param arguments 参数供应器
+    /// @return 构造的对象实例
+    protected Object doConstruct(Arguments arguments) {
+        return constructor.construct(arguments);
+    }
 
     public QueryStructure getStructure() {
         return this.structure;
@@ -147,10 +216,7 @@ public abstract class QueryContext {
     /// 获取当前构造的 Schema
     ///
     /// 用于拦截器判断是否支持处理当前场景。
-    /// 子类根据实际情况返回对应的 Schema：
-    /// - SelectProjectionContext 返回 projection
-    /// - SelectEntityContext 返回 entityType
-    /// - 其他子类可能返回 null
+    /// 默认返回 entityType，SelectProjectionContext 覆盖返回 projection。
     ///
     /// @return 当前构造的 Schema，如果没有则返回 null
     @Nullable
@@ -426,10 +492,10 @@ public abstract class QueryContext {
     }
 
     public SchemaAttributePaths getSchemaAttributePaths() {
-        return null;
+        return schemaAttributePaths;
     }
 
-    /// 是否启用懒加载拦截。
+    /// 是否启用懒加载拦截
     ///
     /// 仅在投影查询（{@link SelectProjectionContext}）中默认启用。
     ///
@@ -444,6 +510,20 @@ public abstract class QueryContext {
 
     public Map<String, Object> getParameters() {
         return parameters;
+    }
+
+    /// 获取值构造器
+    ///
+    /// @return 当前 ValueConstructor 实例
+    public ValueConstructor getConstructor() {
+        return constructor;
+    }
+
+    /// 获取所有列的便捷方法
+    ///
+    /// @return 列列表
+    public List<Column> getColumns() {
+        return constructor.columns();
     }
 
 }

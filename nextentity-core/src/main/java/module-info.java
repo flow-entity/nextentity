@@ -9,6 +9,7 @@ open module nextentity.core {
     exports io.github.nextentity.api;
     exports io.github.nextentity.core.expression;
     exports io.github.nextentity.core;
+    exports io.github.nextentity.core.constructor;
     exports io.github.nextentity.core.util;
     exports io.github.nextentity.core.exception;
     exports io.github.nextentity.jdbc;

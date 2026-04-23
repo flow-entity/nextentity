@@ -3,6 +3,7 @@ package io.github.nextentity.core.constructor;
 import io.github.nextentity.core.reflect.ReflectUtil;
 
 import java.lang.reflect.Method;
+import java.util.Collection;
 import java.util.Map;
 
 /// JDK 代理构造器
@@ -14,7 +15,7 @@ import java.util.Map;
 /// @since 2.2.2
 public class JdkProxyConstructor extends ProxyConstructor {
 
-    protected JdkProxyConstructor(Class<?> resultType, PropertyBinding[] properties) {
+    public JdkProxyConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
         super(resultType, properties);
     }
 
