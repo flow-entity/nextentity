@@ -60,10 +60,13 @@ public class ObjectConstructor implements ValueConstructor {
     /// 构造具体类型实例（使用构造函数 + setter）
     private Object constructConcrete(Arguments arguments) {
         try {
-            Object instance = constructor.newInstance();
+            Object instance = null;
             for (PropertyBinding prop : properties) {
                 Object value = prop.valueConstructor().construct(arguments);
                 if (value != null) {
+                    if (instance == null) {
+                        instance = constructor.newInstance();
+                    }
                     prop.attribute().set(instance, value);
                 }
             }
