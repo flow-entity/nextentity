@@ -34,6 +34,7 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
+                "DROP TABLE IF EXISTS category",
                 "DROP TABLE IF EXISTS lockable_entity",
                 """
                         CREATE TABLE "department" (
@@ -65,6 +66,13 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
                             description VARCHAR(255),
                             version BIGINT,
                             created_at TIMESTAMP
+                        )
+                        """,
+                """
+                        CREATE TABLE "category" (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL,
+                            parent_id BIGINT
                         )
                         """,
                 """

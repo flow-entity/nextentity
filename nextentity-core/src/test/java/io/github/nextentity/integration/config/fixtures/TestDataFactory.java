@@ -1,5 +1,6 @@
 package io.github.nextentity.integration.config.fixtures;
 
+import io.github.nextentity.integration.entity.Category;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.EmployeeStatus;
@@ -21,6 +22,21 @@ public class TestDataFactory {
         departments.add(new Department(4L, "HR", "Building A", 200000.0, true));
         departments.add(new Department(5L, "Finance", "Building D", 250000.0, false));
         return departments;
+    }
+
+    public static List<Category> createCategories() {
+        List<Category> categories = new ArrayList<>();
+        // Root categories (no parent)
+        categories.add(new Category(1L, "Electronics", null));
+        categories.add(new Category(2L, "Clothing", null));
+        categories.add(new Category(3L, "Books", null));
+        // Sub-categories under Electronics (parentId = 1)
+        categories.add(new Category(4L, "Computers", 1L));
+        categories.add(new Category(5L, "Phones", 1L));
+        // Sub-sub-categories under Computers (parentId = 4) — two levels deep
+        categories.add(new Category(6L, "Laptops", 4L));
+        categories.add(new Category(7L, "Desktops", 4L));
+        return categories;
     }
 
     public static List<Employee> createEmployees() {

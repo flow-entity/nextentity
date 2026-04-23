@@ -6,6 +6,7 @@ import io.github.nextentity.core.*;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.entity.AutoIncrementEntity;
+import io.github.nextentity.integration.entity.Category;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.LockableEntity;
@@ -53,6 +54,10 @@ public interface IntegrationTestContext {
 
     default EntityQueryImpl<AutoIncrementEntity> queryAutoIncrementEntities() {
         return new EntityQueryImpl<>(getEntityContext(AutoIncrementEntity.class));
+    }
+
+    default EntityQueryImpl<Category> queryCategories() {
+        return new EntityQueryImpl<>(getEntityContext(Category.class));
     }
 
     @NonNull IntegrationTestContext reset();

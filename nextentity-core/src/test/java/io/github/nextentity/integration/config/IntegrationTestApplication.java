@@ -131,6 +131,8 @@ public class IntegrationTestApplication {
             }
             TestDataFactory.createDepartments().forEach(entityManager::persist);
             entityManager.flush();
+            TestDataFactory.createCategories().forEach(entityManager::persist);
+            entityManager.flush();
             TestDataFactory.createEmployees().forEach(entityManager::persist);
             entityManager.flush();
             TestDataFactory.createLockableEntities().forEach(entityManager::persist);
