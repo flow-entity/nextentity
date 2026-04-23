@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.SelectNested;
 import io.github.nextentity.core.expression.Selected;
 import io.github.nextentity.core.util.ImmutableArray;
@@ -22,7 +22,7 @@ public class SelectNestedContext extends QueryContext {
     private SelectNested selectNested;
 
     private ImmutableList<QueryContext> subContexts;
-    private ImmutableArray<SelectItem> expressions;
+    private ImmutableArray<Column> expressions;
 
     public SelectNestedContext(QueryConfig descriptor) {
         super(descriptor);
@@ -40,12 +40,12 @@ public class SelectNestedContext extends QueryContext {
 
         // 为每个子选择创建对应的 Context
         List<QueryContext> contextList = new ArrayList<>(selectNested.items().size());
-        List<SelectItem> expressionList = new ArrayList<>();
+        List<Column> expressionList = new ArrayList<>();
 
         for (Selected item : selectNested.items()) {
             QueryContext subContext = createSubContext(item);
             contextList.add(subContext);
-            // 收集子 Context 的表达式
+            // 收集子 Context 的列
             subContext.getSelectedExpression().forEach(expressionList::add);
         }
 
@@ -62,7 +62,7 @@ public class SelectNestedContext extends QueryContext {
     }
 
     @Override
-    public ImmutableArray<SelectItem> getSelectedExpression() {
+    public ImmutableArray<Column> getSelectedExpression() {
         return expressions;
     }
 

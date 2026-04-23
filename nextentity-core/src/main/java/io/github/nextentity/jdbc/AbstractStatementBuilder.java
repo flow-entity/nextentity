@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
@@ -134,6 +135,15 @@ public abstract class AbstractStatementBuilder {
             appendAttribute(entityAttribute);
         } else {
             appendExpression(selectItem.expression());
+        }
+    }
+
+    protected void appendExpression(Column column) {
+        ExpressionNode source = column.source();
+        if (source instanceof PathNode pathNode) {
+            appendAttribute(getEntityType().getAttribute(pathNode));
+        } else {
+            appendExpression(source);
         }
     }
 
@@ -518,6 +528,10 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
+    protected void addJoin(Column column) {
+        addJoin(column.source());
+    }
+
     protected void addJoin(ExpressionNode select) {
         if (select instanceof PathNode) {
             EntityType entityType = getEntityType();
@@ -540,9 +554,9 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
-    protected void addJoinPrimitive(ImmutableArray<SelectItem> operands) {
+    protected void addJoinPrimitive(ImmutableArray<Column> operands) {
         if (operands != null && !operands.isEmpty()) {
-            for (SelectItem operand : operands) {
+            for (Column operand : operands) {
                 addJoin(operand);
             }
         }

@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.ResultCollector;
 
@@ -46,7 +46,7 @@ public class JdbcResultCollector implements ResultCollector {
             result = new ArrayList<>();
         }
         int columnsCount = resultSet.getMetaData().getColumnCount();
-        ImmutableArray<SelectItem> primitives = context.getSelectedExpression();
+        ImmutableArray<Column> primitives = context.getSelectedExpression();
         if (primitives.size() != columnsCount) {
             throw new IllegalStateException(
                     String.format("Column count mismatch: expected %d (from query projection), actual %d (from ResultSet). " +

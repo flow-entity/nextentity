@@ -4,7 +4,6 @@ import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.exception.ReflectiveException;
@@ -24,7 +23,6 @@ import org.jspecify.annotations.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.RecordComponent;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -162,42 +160,14 @@ public class QueryContext {
         return context;
     }
 
-    /// 获取 SELECT 子句表达式列表
+    /// 获取 SELECT 子句列列表
     ///
-    /// 从 constructor.getColumns() 转换为 SelectItem 列表。
-    /// 对于 PathNode 列，尝试获取其关联的 EntityAttribute；
-    /// 对于 OperatorNode / LiteralNode，直接作为 SelectItem。
+    /// 直接返回 constructor 的列定义，保留 converter 和 tableIndex 信息。
     ///
-    /// @return SelectItem 不可变数组
-    public ImmutableArray<SelectItem> getSelectedExpression() {
+    /// @return Column 不可变数组
+    public ImmutableArray<Column> getSelectedExpression() {
         List<Column> columns = constructor.columns();
-        List<SelectItem> items = new ArrayList<>(columns.size());
-        for (Column column : columns) {
-            ExpressionNode source = column.source();
-            if (source instanceof PathNode pathNode && entityType != null) {
-                Attribute attribute = pathNode.getAttribute(entityType);
-                if (attribute instanceof EntityAttribute entityAttribute) {
-                    items.add(entityAttribute);
-                } else {
-                    // PathNode 未关联 EntityAttribute，从 entityType 解析
-                    attribute = entityType.getAttribute(pathNode);
-                    if (attribute instanceof EntityAttribute entityAttribute) {
-                        items.add(entityAttribute);
-                    } else {
-                        throw new IllegalStateException(
-                                "Cannot resolve PathNode to EntityAttribute: " + pathNode);
-                    }
-                }
-            } else if (source instanceof OperatorNode operatorNode) {
-                items.add(operatorNode);
-            } else if (source instanceof LiteralNode literalNode) {
-                items.add(literalNode);
-            } else {
-                throw new IllegalStateException(
-                        "Unsupported column source type for SelectItem: " + source.getClass().getName());
-            }
-        }
-        return ImmutableList.ofCollection(items);
+        return ImmutableList.ofCollection(columns);
     }
 
     /// 构造对象实例，委托给 ValueConstructor
@@ -416,34 +386,34 @@ public class QueryContext {
         return arguments.next(convertor);
     }
 
-    protected ImmutableArray<SelectItem> getSelectPrimitiveExpressions(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
+    protected ImmutableArray<Column> getSelectPrimitiveExpressions(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
         if (expression instanceof PathNode path) {
             Attribute attribute = entityType.getAttribute(path);
             return stream(attribute, schemaAttributePaths).collect(ImmutableList.collector());
         }
-        return ImmutableList.of((SelectItem) expression);
+        return ImmutableList.of(Column.ofExpressionNode(expression, 0));
     }
 
-    protected Stream<SelectItem> stream(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
+    protected Stream<Column> stream(EntityType entityType, ExpressionNode expression, SchemaAttributePaths schemaAttributePaths) {
         if (expression instanceof PathNode path) {
             Attribute attribute = entityType.getAttribute(path);
             return stream(attribute, schemaAttributePaths);
         }
-        return Stream.of((SelectItem) expression);
+        return Stream.of(Column.ofExpressionNode(expression, 0));
     }
 
-    protected ImmutableArray<SelectItem> getSelectSchemaExpressions(Schema schema, SchemaAttributePaths schemaAttributePaths) {
+    protected ImmutableArray<Column> getSelectSchemaExpressions(Schema schema, SchemaAttributePaths schemaAttributePaths) {
         ImmutableArray<? extends Attribute> attributes = schema.getAttributes();
         return attributes.stream()
                 .flatMap(it -> stream(it, schemaAttributePaths))
                 .collect(ImmutableList.collector());
     }
 
-    protected Stream<SelectItem> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
+    protected Stream<Column> stream(Attribute attribute, SchemaAttributePaths schemaAttributePaths) {
         if (attribute instanceof EntityBasicAttribute expression) {
-            return Stream.of(expression);
+            return Stream.of(Column.fromEntityBasicAttribute(expression, 0));
         } else if (attribute instanceof ProjectionBasicAttribute expression) {
-            return Stream.of(expression.getEntityAttribute());
+            return Stream.of(Column.fromProjectionBasicAttribute(expression, 0));
         } else if (attribute instanceof Schema schema) {
             SchemaAttributePaths sub = schemaAttributePaths.get(attribute.name());
             if (sub != null) {

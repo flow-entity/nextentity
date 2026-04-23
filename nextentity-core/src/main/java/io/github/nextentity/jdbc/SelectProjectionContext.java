@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.*;
@@ -25,7 +25,7 @@ public class SelectProjectionContext extends QueryContext {
     private SelectProjection selectProjection;
 
     private ProjectionSchema projection;
-    private ImmutableArray<SelectItem> expressions;
+    private ImmutableArray<Column> expressions;
     private SchemaAttributePaths schemaAttributePaths;
 
     /// 批量加载上下文（延迟初始化）
@@ -57,7 +57,7 @@ public class SelectProjectionContext extends QueryContext {
     }
 
     @Override
-    public ImmutableArray<SelectItem> getSelectedExpression() {
+    public ImmutableArray<Column> getSelectedExpression() {
         return expressions;
     }
 
@@ -121,15 +121,15 @@ public class SelectProjectionContext extends QueryContext {
         super.setResults(results);
     }
 
-    private ImmutableArray<SelectItem> separateAttributes(ProjectionSchema schema, SchemaAttributePaths paths) {
-        List<SelectItem> eagerList = new ArrayList<>();
+    private ImmutableArray<Column> separateAttributes(ProjectionSchema schema, SchemaAttributePaths paths) {
+        List<Column> eagerList = new ArrayList<>();
         for (ProjectionAttribute attr : schema.getAttributes()) {
             if (attr instanceof ProjectionBasicAttribute basicAttr) {
-                eagerList.add(basicAttr.getEntityAttribute());
+                eagerList.add(Column.fromProjectionBasicAttribute(basicAttr, 0));
             } else if (attr instanceof ProjectionSchemaAttribute schemaAttr) {
                 FetchType fetchType = schemaAttr.getFetchType();
                 if (fetchType == FetchType.LAZY) {
-                    eagerList.add(schemaAttr.getEntityAttribute().getSourceAttribute());
+                    eagerList.add(Column.fromEntityBasicAttribute(schemaAttr.getEntityAttribute().getSourceAttribute(), 0));
                 } else {
                     SchemaAttributePaths subPaths = paths.get(attr.name());
                     if (subPaths != null) {
@@ -141,11 +141,11 @@ public class SelectProjectionContext extends QueryContext {
         return ImmutableList.ofCollection(eagerList);
     }
 
-    private Stream<SelectItem> streamProjectionSchema(ProjectionSchemaAttribute schemaAttr, SchemaAttributePaths paths) {
+    private Stream<Column> streamProjectionSchema(ProjectionSchemaAttribute schemaAttr, SchemaAttributePaths paths) {
         return schemaAttr.getAttributes().stream()
                 .flatMap(attr -> {
                     if (attr instanceof ProjectionBasicAttribute basicAttr) {
-                        return Stream.of(basicAttr.getEntityAttribute());
+                        return Stream.of(Column.fromProjectionBasicAttribute(basicAttr, 0));
                     } else if (attr instanceof ProjectionSchemaAttribute nestedSchemaAttr) {
                         if (nestedSchemaAttr.getFetchType() == FetchType.LAZY) {
                             return Stream.empty();

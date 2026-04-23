@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.Tuples;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.SelectExpressions;
 import io.github.nextentity.core.util.ImmutableArray;
@@ -11,7 +12,7 @@ public class SelectArrayContext extends QueryContext {
 
     private SelectExpressions selectExpressions;
 
-    private ImmutableArray<io.github.nextentity.core.SelectItem> expressions;
+    private ImmutableArray<Column> expressions;
     private ImmutableArray<Object> selectExpressionItems;
 
     public SelectArrayContext(QueryConfig descriptor) {
@@ -37,7 +38,7 @@ public class SelectArrayContext extends QueryContext {
     }
 
     @Override
-    public ImmutableArray<io.github.nextentity.core.SelectItem> getSelectedExpression() {
+    public ImmutableArray<Column> getSelectedExpression() {
         return expressions;
     }
 

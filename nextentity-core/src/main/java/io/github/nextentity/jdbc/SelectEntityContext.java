@@ -1,11 +1,11 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.SelectItem;
-import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.expression.SelectEntity;
 import io.github.nextentity.core.expression.Selected;
+import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class SelectEntityContext extends QueryContext {
 
     private SchemaAttributePaths schemaAttributePaths;
-    private ImmutableArray<SelectItem> expressions;
+    private ImmutableArray<Column> expressions;
 
     protected SelectEntityContext(QueryConfig descriptor) {
         super(descriptor);
@@ -38,13 +38,15 @@ public class SelectEntityContext extends QueryContext {
                 this.expressions = getSelectSchemaExpressions(getEntityType(), schemaAttributePaths);
             } else {
                 this.schemaAttributePaths = SchemaAttributePaths.empty();
-                this.expressions = TypeCastUtil.cast(getEntityType().getPrimitives());
+                this.expressions = getEntityType().getPrimitives().stream()
+                        .<Column>map(attr -> Column.fromEntityAttribute(attr, 0))
+                        .collect(ImmutableList.collector());
             }
         }
     }
 
     @Override
-    public ImmutableArray<SelectItem> getSelectedExpression() {
+    public ImmutableArray<Column> getSelectedExpression() {
         return expressions;
     }
 

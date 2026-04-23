@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.SelectExpression;
 import io.github.nextentity.core.util.ImmutableArray;
@@ -10,7 +10,7 @@ public class SelectPrimitiveContext extends QueryContext {
 
     private SelectExpression selectExpression;
 
-    private ImmutableArray<SelectItem> expressions;
+    private ImmutableArray<Column> expressions;
     private ExpressionNode expression;
 
     public SelectPrimitiveContext(QueryConfig descriptor) {
@@ -31,7 +31,7 @@ public class SelectPrimitiveContext extends QueryContext {
     }
 
     @Override
-    public ImmutableArray<SelectItem> getSelectedExpression() {
+    public ImmutableArray<Column> getSelectedExpression() {
         return expressions;
     }
 

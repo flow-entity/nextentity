@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableArray;
@@ -83,7 +83,7 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
         }
         String join = NONE_DELIMITER;
         int columnIndex = 0;
-        for (SelectItem expression : context.getSelectedExpression()) {
+        for (Column expression : context.getSelectedExpression()) {
             sql.append(join);
             appendExpression(expression);
             appendSelectAlias(expression, columnIndex++);
@@ -91,10 +91,9 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
         }
     }
 
-    protected void appendSelectAlias(SelectItem expression, int columnIndex) {
-        // SQL Server requires aliases for aggregate columns in subqueries
+    protected void appendSelectAlias(Column expression, int columnIndex) {
         if (dialect.requiresAliasForAggregateColumns()
-            && expression instanceof OperatorNode) {
+            && expression.isOperatorNode()) {
             sql.append(" as col_").append(columnIndex);
         }
     }
@@ -221,10 +220,10 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
     }
 
     private int getSelectIndex(SortExpression order) {
-        ImmutableArray<SelectItem> primitives = context.getSelectedExpression();
+        ImmutableArray<Column> primitives = context.getSelectedExpression();
         for (int i = 0; i < primitives.size(); i++) {
-            SelectItem primitive = primitives.get(i);
-            if (primitive.equals(order.expression())) {
+            Column primitive = primitives.get(i);
+            if (primitive.source().equals(order.expression())) {
                 return i;
             }
         }

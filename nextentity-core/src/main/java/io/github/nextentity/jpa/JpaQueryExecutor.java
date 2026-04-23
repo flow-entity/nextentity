@@ -2,8 +2,8 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.From;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
@@ -134,7 +134,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         return new EntityBuilder<>(root, cb, query, structure, config).getResultList();
     }
 
-    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, ImmutableArray<SelectItem> columns) {
+    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, ImmutableArray<Column> columns) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         FromEntity from = (FromEntity) structure.from();
@@ -144,13 +144,13 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     class ObjectArrayBuilder extends Builder<Object[]> {
 
-        private final ImmutableArray<SelectItem> selects;
+        private final ImmutableArray<Column> selects;
 
         public ObjectArrayBuilder(Root<?> root,
                                   CriteriaBuilder cb,
                                   CriteriaQuery<Object[]> query,
                                   QueryStructure structure,
-                                  ImmutableArray<SelectItem> selects,
+                                  ImmutableArray<Column> selects,
                                   JpaConfig config) {
             super(root, cb, query, structure, config);
             this.selects = selects;
@@ -172,7 +172,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         @Override
         protected TypedQuery<Object[]> getTypedQuery() {
             List<Selection<?>> collect = selects.stream()
-                    .map(this::toExpression)
+                    .map(column -> this.toExpression(column.source()))
                     .collect(ImmutableList.collector(selects.size()));
             Selection<Object[]> tuple = cb.array(collect);
 
