@@ -74,7 +74,7 @@ public class QueryContext {
         if (this.constructor == null) {
             ConstructorSelector selector = new ConstructorSelector(entityType);
             Selected select = structure.select();
-            this.constructor = selector.select(select);
+            this.constructor = selector.select(select, expandReferencePath);
         }
         if (this.schemaAttributePaths == null) {
             this.schemaAttributePaths = buildSchemaAttributePaths(structure.select());
@@ -84,7 +84,14 @@ public class QueryContext {
     /// 根据 Select 类型构建 SchemaAttributePaths
     private SchemaAttributePaths buildSchemaAttributePaths(Selected select) {
         if (select instanceof SelectEntity selectEntity) {
-            return newJoinPaths(selectEntity.fetch());
+            ImmutableList<PathNode> fetchNodes = selectEntity.fetch();
+            if (fetchNodes != null && !fetchNodes.isEmpty() && expandReferencePath) {
+                Collection<? extends Attribute> fetch = fetchNodes.stream()
+                        .map(it -> it.getAttribute(entityType))
+                        .collect(java.util.stream.Collectors.toList());
+                return newJoinPaths(fetch);
+            }
+            return SchemaAttributePaths.empty();
         }
         if (select instanceof SelectProjection) {
             return DeepLimitSchemaAttributePaths.of(1);

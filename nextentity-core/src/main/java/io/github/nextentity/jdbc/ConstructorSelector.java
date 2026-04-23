@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.constructor.*;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
@@ -8,7 +9,6 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
-import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -44,17 +44,27 @@ public final class ConstructorSelector {
     /// @param select Select 定义
     /// @return 对应的 ValueConstructor 实例
     public ValueConstructor select(Selected select) {
-        return select(select, 0);
+        return select(select, 0, false);
+    }
+
+    /// 根据 Select 类型创建对应的 ValueConstructor
+    ///
+    /// @param select              Select 定义
+    /// @param expandReferencePath 是否展开关联路径
+    /// @return 对应的 ValueConstructor 实例
+    public ValueConstructor select(Selected select, boolean expandReferencePath) {
+        return select(select, 0, expandReferencePath);
     }
 
     /// 根据 Select 类型创建对应的 ValueConstructor（带表索引）
     ///
-    /// @param select     Select 定义
-    /// @param tableIndex 表索引（0=主表，>0=join表）
+    /// @param select              Select 定义
+    /// @param tableIndex          表索引（0=主表，>0=join表）
+    /// @param expandReferencePath 是否展开关联路径
     /// @return 对应的 ValueConstructor 实例
-    public ValueConstructor select(Selected select, int tableIndex) {
+    public ValueConstructor select(Selected select, int tableIndex, boolean expandReferencePath) {
         if (select instanceof SelectEntity selectEntity) {
-            return selectEntity(selectEntity, tableIndex);
+            return selectEntity(selectEntity, tableIndex, expandReferencePath);
         } else if (select instanceof SelectExpression selectExpression) {
             return selectExpression(selectExpression, tableIndex);
         } else if (select instanceof SelectExpressions selectExpressions) {
@@ -62,33 +72,56 @@ public final class ConstructorSelector {
         } else if (select instanceof SelectProjection selectProjection) {
             return selectProjection(selectProjection, tableIndex);
         } else if (select instanceof SelectNested selectNested) {
-            return selectNested(selectNested, tableIndex);
+            return selectNested(selectNested, tableIndex, expandReferencePath);
         }
         throw new IllegalArgumentException("Unknown select type: " + select.getClass().getName());
     }
 
     /// 处理 SelectEntity，创建 ObjectConstructor
     ///
-    /// @param selectEntity SelectEntity 定义
-    /// @param tableIndex   表索引
+    /// @param selectEntity        SelectEntity 定义
+    /// @param tableIndex          表索引
+    /// @param expandReferencePath 是否展开关联路径
     /// @return ObjectConstructor 实例
-    private ValueConstructor selectEntity(SelectEntity selectEntity, int tableIndex) {
+    private ValueConstructor selectEntity(SelectEntity selectEntity, int tableIndex, boolean expandReferencePath) {
         ImmutableList<PathNode> fetchNodes = selectEntity.fetch();
-        if (fetchNodes == null || fetchNodes.isEmpty()) {
-            // 选择实体所有列
-            return createEntityConstructor(entityType, tableIndex);
+        if (fetchNodes == null || fetchNodes.isEmpty() || !expandReferencePath) {
+            // 无 fetch 或不展开关联路径：只选择基本属性列
+            return createPrimitiveConstructor(entityType, tableIndex);
         }
 
-        // 选择特定的属性路径
+        // 有 fetch 且展开关联路径：遍历所有属性，Schema 类型属性按 fetch 路径展开
         List<PropertyBinding> bindings = new ArrayList<>();
-        for (PathNode path : fetchNodes) {
-            PropertyBinding binding = createPropertyBinding(path, tableIndex);
-            if (binding != null) {
-                bindings.add(binding);
+        for (Attribute attr : entityType.getAttributes()) {
+            if (attr instanceof Schema nestedSchema) {
+                // 关联属性：检查是否在 fetch 路径中
+                PathNode matchingPath = findMatchingFetchPath(fetchNodes, attr);
+                if (matchingPath != null) {
+                    ValueConstructor vc = createNestedSchemaConstructor(nestedSchema, tableIndex);
+                    bindings.add(new PropertyBinding(attr, vc));
+                }
+                // 不在 fetch 路径中的关联属性跳过
+            } else {
+                // 基本属性：始终包含
+                PathNode pathNode = getPathNodeForAttribute(attr);
+                ValueConverter<?, ?> converter = getConverter(attr);
+                Column column = Column.ofPath(pathNode, converter, tableIndex);
+                bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }
 
         return new ObjectConstructor(entityType.type(), bindings);
+    }
+
+    /// 在 fetch 路径中查找匹配指定属性的路径
+    private @Nullable PathNode findMatchingFetchPath(ImmutableList<PathNode> fetchNodes, Attribute attr) {
+        for (PathNode path : fetchNodes) {
+            Attribute pathAttr = path.getAttribute(entityType);
+            if (pathAttr == attr) {
+                return path;
+            }
+        }
+        return null;
     }
 
     /// 处理 SelectExpression，创建 SingleValueConstructor
@@ -142,15 +175,16 @@ public final class ConstructorSelector {
 
     /// 处理 SelectNested，创建 ArrayConstructor
     ///
-    /// @param selectNested SelectNested 定义
-    /// @param tableIndex   表索引
+    /// @param selectNested        SelectNested 定义
+    /// @param tableIndex          表索引
+    /// @param expandReferencePath 是否展开关联路径
     /// @return ArrayConstructor 实例
-    private ValueConstructor selectNested(SelectNested selectNested, int tableIndex) {
+    private ValueConstructor selectNested(SelectNested selectNested, int tableIndex, boolean expandReferencePath) {
         ImmutableList<Selected> items = selectNested.items();
         List<ValueConstructor> constructors = new ArrayList<>(items.size());
 
         for (Selected item : items) {
-            ValueConstructor constructor = select(item, tableIndex);
+            ValueConstructor constructor = select(item, tableIndex, expandReferencePath);
             constructors.add(constructor);
         }
 
@@ -232,26 +266,22 @@ public final class ConstructorSelector {
     /// @param tableIndex 表索引
     /// @return ObjectConstructor 实例
     private ValueConstructor createNestedSchemaConstructor(Schema schema, int tableIndex) {
-        return getValueConstructor(schema, tableIndex);
+        return createPrimitiveConstructor(schema, tableIndex);
     }
 
-    /// 为实体创建 ObjectConstructor（选择所有列）
+    /// 为 Schema 创建只包含基本属性的 ObjectConstructor
     ///
     /// @param schema     实体 Schema
     /// @param tableIndex 表索引
     /// @return ObjectConstructor 实例
-    private ValueConstructor createEntityConstructor(Schema schema, int tableIndex) {
-        return getValueConstructor(schema, tableIndex);
-    }
-
-    @NonNull
-    private ValueConstructor getValueConstructor(Schema schema, int tableIndex) {
+    private ValueConstructor createPrimitiveConstructor(Schema schema, int tableIndex) {
         List<PropertyBinding> bindings = new ArrayList<>();
 
-        for (Attribute attr : schema.getAttributes()) {
+        for (Attribute attr : schema.getPrimitives()) {
             PathNode pathNode = getPathNodeForAttribute(attr);
-            ValueConstructor valueConstructor = createAttributeConstructor(pathNode, attr, tableIndex);
-            bindings.add(new PropertyBinding(attr, valueConstructor));
+            ValueConverter<?, ?> converter = getConverter(attr);
+            Column column = Column.ofPath(pathNode, converter, tableIndex);
+            bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
         }
 
         return new ObjectConstructor(schema.type(), bindings);
@@ -294,15 +324,20 @@ public final class ConstructorSelector {
     ///
     /// @param operatorNode 运算符节点
     /// @return ValueConverter 实例
-    private @Nullable ValueConverter<?, ?> getConverterForOperator(OperatorNode operatorNode) {
-        // 对于运算符，尝试从第一个操作数获取类型信息
+    private ValueConverter<?, ?> getConverterForOperator(OperatorNode operatorNode) {
+        // 优先从第一个 PathNode 操作数获取属性转换器
         if (!operatorNode.operands().isEmpty()) {
             ExpressionNode first = operatorNode.operands().getFirst();
             if (first instanceof PathNode pathNode) {
-                return getConverterForPath(pathNode);
+                ValueConverter<?, ?> converter = getConverterForPath(pathNode);
+                if (converter != null) {
+                    return converter;
+                }
             }
         }
-        return null;
+        // 回退：使用 ExpressionTypeResolver 推断类型
+        Class<?> type = ExpressionTypeResolver.getOperationType(operatorNode, entityType);
+        return IdentityValueConverter.of(type);
     }
 
     /// 为 LiteralNode 获取 ValueConverter

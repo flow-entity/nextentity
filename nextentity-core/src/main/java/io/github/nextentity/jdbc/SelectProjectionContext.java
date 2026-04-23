@@ -50,8 +50,7 @@ public class SelectProjectionContext extends QueryContext {
 
     @Override
     public void init() {
-        // 不调用 super.init()，SelectProjectionContext 有自己的构造逻辑
-        // super.init() 会运行 ConstructorSelector，对投影类型不适用
+        // SelectProjectionContext 有自己的构造逻辑，不使用 ConstructorSelector
         this.projection = getEntityType().getProjection(selectProjection.type());
         this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
         this.expressions = separateAttributes(projection, schemaAttributePaths);

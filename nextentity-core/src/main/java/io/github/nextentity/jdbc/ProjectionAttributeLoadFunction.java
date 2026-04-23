@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
@@ -111,9 +112,11 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         for (Object result : results) {
             if (result instanceof Object[] array && array.length >= 2) {
                 cache.put(array[0], array[1]);
+            } else if (result instanceof Tuple tuple) {
+                cache.put(tuple.get(0), tuple.get(1));
             } else if (result != null) {
                 throw new NextEntityException(
-                        "Expected Object[] tuple result but got: " + result.getClass().getName());
+                        "Expected tuple result but got: " + result.getClass().getName());
             }
         }
         return cache;
