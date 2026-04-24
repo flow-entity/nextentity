@@ -2,6 +2,7 @@ package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.meta.*;
 
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public final class EntityConstructorBuilder {
         if (schema.type().isInterface()) {
             return new JdkProxyConstructor(schema.type(), bindings);
         } else if (schema.type().isRecord()) {
-            // TODO
+            // TODO 改进message
             throw new UnsupportedOperationException();
         } else {
             return new ObjectConstructor(schema.type(), bindings);

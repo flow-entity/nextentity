@@ -17,19 +17,13 @@ public class ProjectionConstructorBuilder {
     private final QueryConfig queryConfig;
     private final ProjectionSchema root;
     private final SchemaAttributePaths paths;
-    private final boolean supportInterfaceProxy;
-    private final boolean supportObjectProxy;
 
     public ProjectionConstructorBuilder(QueryConfig queryConfig,
                                         ProjectionSchema root,
-                                        SchemaAttributePaths paths,
-                                        boolean supportInterfaceProxy,
-                                        boolean supportObjectProxy) {
+                                        SchemaAttributePaths paths) {
         this.queryConfig = queryConfig;
         this.root = root;
         this.paths = paths;
-        this.supportInterfaceProxy = supportInterfaceProxy;
-        this.supportObjectProxy = supportObjectProxy;
     }
 
     /// 处理 SelectEntity，创建 ObjectConstructor
@@ -41,14 +35,12 @@ public class ProjectionConstructorBuilder {
 
     private ValueConstructor build(SchemaAttributePaths paths, ProjectionSchema schema, int tableIndex) {
         List<PropertyBinding> bindings = new ArrayList<>();
-        boolean supportLazyLoading = isSupportLazyLoading(schema);
-        System.out.println(supportLazyLoading);
         for (ProjectionAttribute attr : schema.getAttributes()) {
             if (attr instanceof ProjectionSchemaAttribute schemaAttribute) {
                 SchemaAttributePaths sub;
                 if (schemaAttribute.getFetchType() == FetchType.LAZY) {
                     JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    EntityBasicAttribute entityAttribute = schemaAttribute.getTargetAttribute();
+                    EntityBasicAttribute entityAttribute = schemaAttribute.getSourceAttribute();
                     ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
                     Column column = new Column(entityAttribute.path(), converter, joinInfo.rightTableIndex());
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
@@ -74,7 +66,7 @@ public class ProjectionConstructorBuilder {
         }
     }
 
-    protected @NonNull ObjectConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
+    protected @NonNull ValueConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
         return new ObjectConstructor(schema.type(), bindings);
     }
 
@@ -82,17 +74,9 @@ public class ProjectionConstructorBuilder {
         return new RecordConstructor(schema.type(), bindings);
     }
 
-    protected @NonNull JdkProxyConstructor getInterfaceConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
+    protected @NonNull ValueConstructor getInterfaceConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
         return new JdkProxyConstructor(schema.type(), bindings);
     }
-
-    private boolean isSupportLazyLoading(ProjectionSchema schema) {
-        if (supportInterfaceProxy && schema.type().isInterface()) {
-            return true;
-        }
-        return supportObjectProxy && !schema.type().isRecord() && !schema.type().isRecord();
-    }
-
 
     private JoinInfo newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
         return new JoinInfo(JoinType.LEFT,

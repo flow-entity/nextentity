@@ -6,8 +6,6 @@ import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.jdbc.AttributeLoadFunction;
-import io.github.nextentity.jdbc.BatchAttributeLoader;
 
 import java.util.Collection;
 import java.util.List;

@@ -7,9 +7,6 @@ import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.jdbc.BatchAttributeLoader;
-import io.github.nextentity.jdbc.EntityAttributeLoadFunction;
-import io.github.nextentity.jdbc.ProjectionAttributeLoadFunction;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -23,8 +20,6 @@ import java.util.stream.Collectors;
 /// 具体的查询策略由子类实现。
 ///
 /// @see EntityAttributeLoadFunction
-/// @see ProjectionAttributeLoadFunction
-/// @see BatchAttributeLoader
 public abstract class LazyLoaderFunction {
 
     /// 执行批量加载查询。

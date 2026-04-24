@@ -1,12 +1,24 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.constructor.ValueConstructor;
+import io.github.nextentity.core.constructor.*;
+import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.expression.Selected;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
+import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.MetamodelSchema;
-import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.meta.ProjectionSchema;
+import io.github.nextentity.core.reflect.AttributeLoader;
+import io.github.nextentity.core.reflect.schema.Schema;
+import org.jspecify.annotations.NonNull;
+import org.springframework.cglib.proxy.Enhancer;
+import org.springframework.cglib.proxy.MethodInterceptor;
+import org.springframework.cglib.proxy.MethodProxy;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 /// CGLIB 代理拦截器 - 为普通类创建代理实例
 ///
@@ -41,15 +53,17 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         if (schema == null) {
             return false;
         }
+
         // 只处理有懒加载字段的投影
         if (schema.hasLazyAttribute()) {
             Class<?> type = schema.type();
             // 只处理普通类（非 interface、非 record、非 final）
             return !type.isInterface()
                    && !type.isRecord()
-                   && !Modifier.isFinal(type.getModifiers());
+                   && !Modifier.isFinal(type.getModifiers())
+                   && isProxyable(type);
         } else {
-            return false;
+            return isProxyable(schema.type());
         }
     }
 
@@ -67,7 +81,72 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
 
     @Override
     public ValueConstructor intercept(QueryContext context, Selected select) {
-        // TODO
-        return null;
+        if (!supports(context, select)) {
+            throw new UnsupportedOperationException("CglibProxyInterceptor cannot handle the given QueryContext");
+        }
+
+        Schema schema = context.getSchema();
+        if (schema == null) {
+            return null;
+        }
+        SelectProjection selectProjection = (SelectProjection) select;
+        EntityType entityType = context.getEntityType();
+        ProjectionSchema projection = entityType.getProjection(selectProjection.type());
+        ProjectionConstructorBuilder builder = new ProjectionConstructorBuilder(context.getConfig(),
+                projection,
+                DeepLimitSchemaAttributePaths.of(1)
+        ) {
+            @Override
+            protected @NonNull ValueConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
+                return new CglibProxyConstructor(schema.type(), bindings);
+            }
+        };
+        return builder.build();
+
+    }
+
+    private boolean isProxyable(Class<?> type) {
+        if (Modifier.isFinal(type.getModifiers())) {
+            return false;
+        }
+        try {
+            type.getConstructor();
+        } catch (NoSuchMethodException e) {
+            return false;
+        }
+        return true;
+    }
+
+    /// JDK 代理构造器
+    ///
+    /// 用于 interface 投影类型，使用 JDK 动态代理创建实例。
+    /// 复用现有的 ReflectUtil.newProxyInstance 处理方法调用。
+    ///
+    /// @author HuangChengwei
+    /// @since 2.2.2
+    public static class CglibProxyConstructor extends ProxyConstructor {
+
+        public CglibProxyConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
+            super(resultType, properties);
+        }
+
+        @Override
+        protected Object createProxy(Map<Method, Object> map) {
+            Enhancer enhancer = new Enhancer();
+            enhancer.setSuperclass(resultType);
+            enhancer.setCallback(new MethodInterceptorImpl(map));
+            return enhancer.create();
+        }
+
+        private record MethodInterceptorImpl(Map<Method, Object> map) implements MethodInterceptor {
+            @Override
+            public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
+                if (map.containsKey(method)) {
+                    return AttributeLoader.loadFromMap(map, method);
+                }
+                return proxy.invokeSuper(proxy, args);
+            }
+        }
+
     }
 }

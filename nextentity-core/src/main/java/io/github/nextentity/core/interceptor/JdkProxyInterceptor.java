@@ -1,9 +1,13 @@
 package io.github.nextentity.core.interceptor;
 
+import io.github.nextentity.core.constructor.DeepLimitSchemaAttributePaths;
+import io.github.nextentity.core.constructor.ProjectionConstructorBuilder;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
+import io.github.nextentity.core.expression.SelectProjection;
 import io.github.nextentity.core.expression.Selected;
-import io.github.nextentity.core.meta.MetamodelSchema;
+import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.ProjectionSchema;
 
 /// JDK 代理拦截器 - 为 interface 类型创建代理实例
 ///
@@ -36,22 +40,26 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
 
     @Override
     public boolean supports(QueryContext context, Selected select) {
-        MetamodelSchema<?> schema = context.getSchema();
-        if (schema == null) {
-            return false;
-        }
-        // 只处理有懒加载字段的投影
-        if (schema.hasLazyAttribute()) {
-            return schema.type().isInterface();
+        if (select instanceof SelectProjection selectProjection) {
+            ProjectionSchema projection = context.getEntityType().getProjection(selectProjection.type());
+            return projection.hasLazyAttribute();
         } else {
             return false;
         }
-
     }
 
     @Override
     public ValueConstructor intercept(QueryContext context, Selected select) {
-        // TODO
+        if (supports(context, select)) {
+            SelectProjection selectProjection = (SelectProjection) select;
+            EntityType entityType = context.getEntityType();
+            ProjectionSchema projection = entityType.getProjection(selectProjection.type());
+            return new ProjectionConstructorBuilder(context.getConfig(),
+                    projection,
+                    DeepLimitSchemaAttributePaths.of(1)
+            ).build();
+        }
+        // TODO 打日志
         return null;
     }
 

@@ -41,7 +41,7 @@ public class QueryContext {
     private ProjectionSchema projection;
 
     public MetamodelSchema<?> getSchema() {
-        return projection == null ? entityType : projection;
+        return projection == null ? entityType : (projection);
     }
 
     /// 存储懒加载属性元数据供批量加载使用
@@ -67,6 +67,9 @@ public class QueryContext {
 
     private ValueConstructor newConstructor(EntityType entityType, Selected select) {
         ConstructInterceptor interceptor = config.constructors().select(this, select);
+        if (select instanceof SelectProjection selectProjection) {
+            projection = entityType.getProjection(selectProjection.type());
+        }
         if (interceptor != null) {
             ValueConstructor intercept = interceptor.intercept(this, select);
             if (intercept != null) {
@@ -74,8 +77,7 @@ public class QueryContext {
             }
         }
         return switch (select) {
-            case SelectProjection selectProjection ->
-                    newConstructor(projection = entityType.getProjection(selectProjection.type()));
+            case SelectProjection _ -> newConstructor(projection);
             case SelectEntity selectEntity -> newConstructor(selectEntity, entityType);
             case SelectExpression selectExpression -> newConstructor(entityType, selectExpression.expression());
             case SelectExpressions selectExpressions -> newConstructor(entityType, selectExpressions);
@@ -130,7 +132,7 @@ public class QueryContext {
     public ValueConstructor newConstructor(ProjectionSchema projection) {
         var schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
         return new ProjectionConstructorBuilder(
-                config, projection, schemaAttributePaths, true, false).build();
+                config, projection, schemaAttributePaths).build();
     }
 
     /// 设置查询结构

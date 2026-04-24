@@ -3,7 +3,9 @@ package io.github.nextentity.core.constructor;
 import io.github.nextentity.jdbc.Arguments;
 
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 /// 代理构造器抽象基类
 ///
@@ -14,30 +16,14 @@ import java.util.*;
 ///
 /// @author HuangChengwei
 /// @since 2.2.2
-public abstract class ProxyConstructor implements ValueConstructor {
+public abstract class ProxyConstructor extends AbstractObjectConstructor {
 
-    private final Class<?> resultType;
-    private final Collection<PropertyBinding> properties;
-
-    protected ProxyConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
-        this.resultType = resultType;
-        this.properties = properties;
-    }
-
-    /// 获取结果类型
-    public Class<?> getResultType() {
-        return resultType;
+    public ProxyConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
+        super(resultType, properties);
     }
 
     @Override
-    public List<Column> columns() {
-        return properties.stream()
-                .flatMap(PropertyBinding::getColumns)
-                .toList();
-    }
-
-    @Override
-    public Object construct(Arguments arguments) {
+    public Object constructConcrete(Arguments arguments) {
         Map<Method, Object> map = new HashMap<>();
         for (PropertyBinding property : properties) {
             Method getter = property.attribute().getter();
