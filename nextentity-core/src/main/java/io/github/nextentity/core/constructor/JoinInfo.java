@@ -2,6 +2,7 @@ package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.JoinAttribute;
 
 /// Join 关系描述
 ///

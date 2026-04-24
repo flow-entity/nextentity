@@ -39,7 +39,7 @@ public final class EntityConstructorBuilder {
             if (attr instanceof EntitySchemaAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                 if (sub != null) {
-                    JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute));
+                    JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
                     ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinInfo.rightTableIndex());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
@@ -49,14 +49,21 @@ public final class EntityConstructorBuilder {
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }
+        if (schema.type().isInterface()) {
+            return new JdkProxyConstructor(schema.type(), bindings);
+        } else if (schema.type().isRecord()) {
+            // TODO
+            throw new UnsupportedOperationException();
+        } else {
+            return new ObjectConstructor(schema.type(), bindings);
+        }
 
-        return new ObjectConstructor(schema.type(), bindings);
     }
 
 
-    private JoinInfo newJoinInfo(EntitySchemaAttribute joinAttribute) {
+    private JoinInfo newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
         return new JoinInfo(JoinType.LEFT,
-                0,
+                leftTableIndex,
                 joins.size() + 1,
                 metamodel.getEntity(joinAttribute.getTargetEntityType().type()),
                 joinAttribute.getSourceAttribute(),

@@ -1,8 +1,7 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
@@ -25,10 +24,10 @@ import java.util.stream.Collectors;
 ///
 /// @author HuangChengwei
 /// @since 2.1.0
-public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
+public class ProjectionAttributeLoadFunction extends LazyLoaderFunction {
 
     @Override
-    public Map<Object, Object> apply(BatchAttributeLoader context, Collection<Object> foreignKeys) {
+    public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
 
         ProjectionSchemaAttribute attribute = context.getAttribute();
         QueryConfig config = context.getQueryConfig();
@@ -56,7 +55,7 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         return null;
     }
 
-    private Map<Object, Object> executeProjectionQuery(BatchAttributeLoader context,
+    private Map<Object, Object> executeProjectionQuery(LazyValueConstructor context,
                                                        ProjectionSchema projection,
                                                        Collection<Object> foreignKeys,
                                                        QueryConfig queryConfig,
@@ -69,7 +68,7 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
 
     private Map<Object, Object> executeTupleQuery(ProjectionSchema projection,
                                                   Collection<Object> foreignKeys,
-                                                  BatchAttributeLoader context) {
+                                                  LazyValueConstructor context) {
         QueryConfig config = context.getQueryConfig();
         QueryStructure queryStructure = buildTupleQuery(context, projection, foreignKeys);
         QueryContext newContext = QueryContext.create(config, queryStructure);
@@ -77,7 +76,7 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         return buildTupleCacheMap(results);
     }
 
-    private QueryStructure buildBatchQuery(BatchAttributeLoader context,
+    private QueryStructure buildBatchQuery(LazyValueConstructor context,
                                            ProjectionSchema projection,
                                            Collection<Object> foreignKeys) {
 
@@ -89,7 +88,7 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         return QueryStructure.of(selectProjection, fromEntity).where(whereClause);
     }
 
-    private QueryStructure buildTupleQuery(BatchAttributeLoader context,
+    private QueryStructure buildTupleQuery(LazyValueConstructor context,
                                            ProjectionSchema projection,
                                            Collection<Object> foreignKeys) {
         ProjectionSchemaAttribute attribute = context.getAttribute();

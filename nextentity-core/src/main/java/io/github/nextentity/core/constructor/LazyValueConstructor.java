@@ -1,8 +1,18 @@
 package io.github.nextentity.core.constructor;
 
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
+import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
+import io.github.nextentity.core.reflect.AttributeLoader;
+import io.github.nextentity.core.reflect.LoadObserver;
+import io.github.nextentity.core.reflect.LoadObserverRegistry;
+import io.github.nextentity.core.util.NullableConcurrentMap;
 import io.github.nextentity.jdbc.Arguments;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /// 懒加载值构造器
 ///
@@ -13,22 +23,108 @@ import java.util.List;
 /// @since 2.2.2
 public class LazyValueConstructor implements ValueConstructor {
 
-    private final Column foreignKeyColumn;
-    private final LazyLoadContext lazyLoadContext;
+    private final QueryConfig queryConfig;
+    private final ProjectionSchemaAttribute attribute;
+    private final LazyLoaderFunction batchLoaderFunction;
 
-    public LazyValueConstructor(Column foreignKeyColumn, LazyLoadContext lazyLoadContext) {
-        this.foreignKeyColumn = foreignKeyColumn;
-        this.lazyLoadContext = lazyLoadContext;
+    private final Set<Object> foreignKeys = ConcurrentHashMap.newKeySet();
+    private final Map<Object, Object> cache = new NullableConcurrentMap<>();
+    private final List<Column> columns;
+
+    public LazyValueConstructor(QueryConfig config, ProjectionSchemaAttribute attribute, Column column) {
+        this.attribute = attribute;
+        this.queryConfig = config;
+        this.batchLoaderFunction = attribute.type() == attribute.getEntityAttribute().type()
+                ? new EntityAttributeLoadFunction()
+                : new ProjectionAttributeLoadFunction();
+        this.columns = List.of(column);
+
+    }
+
+    private class AttributeLoaderImpl implements AttributeLoader {
+        private final Object foreignKey;
+
+        private AttributeLoaderImpl(Object foreignKey) {
+            this.foreignKey = foreignKey;
+        }
+
+        @Override
+        public Object load() {
+            if (cache.containsKey(foreignKey)) {
+                Object cached = cache.get(foreignKey);
+                notifyCacheHit(foreignKey, cached);
+                return cached;
+            }
+            synchronized (cache) {
+                if (!cache.containsKey(foreignKey)) {
+                    long startTime = System.currentTimeMillis();
+                    notifyBeforeLoad(startTime);
+                    LazyValueConstructor loader = LazyValueConstructor.this;
+                    Map<Object, Object> results = batchLoaderFunction.apply(loader, foreignKeys);
+                    cache.putAll(results);
+                    for (Object key : foreignKeys) {
+                        cache.putIfAbsent(key, null);
+                    }
+                    notifyAfterLoad(startTime, System.currentTimeMillis());
+                }
+            }
+            return cache.get(foreignKey);
+        }
+    }
+
+    public QueryConfig getQueryConfig() {
+        return queryConfig;
+    }
+
+    public ProjectionSchemaAttribute getAttribute() {
+        return attribute;
+    }
+
+    private void notifyCacheHit(Object foreignKey, Object cached) {
+        if (LoadObserverRegistry.isBound()) {
+            LoadObserver obs = LoadObserverRegistry.get();
+            obs.onCacheHit(new LoadObserver.CacheHitEvent(
+                    getAttribute().type(),
+                    foreignKey,
+                    cached
+            ));
+        }
+    }
+
+    private void notifyBeforeLoad(long startTime) {
+        if (LoadObserverRegistry.isBound()) {
+            LoadObserver obs = LoadObserverRegistry.get();
+            obs.onBeforeLoad(new LoadObserver.BatchLoadEvent(
+                    getAttribute().type(),
+                    foreignKeys,
+                    startTime,
+                    0
+            ));
+        }
+    }
+
+    private void notifyAfterLoad(long startTime, long endTime) {
+        if (LoadObserverRegistry.isBound()) {
+            LoadObserver obs = LoadObserverRegistry.get();
+            obs.onAfterLoad(new LoadObserver.BatchLoadEvent(
+                    getAttribute().type(),
+                    foreignKeys,
+                    startTime,
+                    endTime
+            ));
+        }
     }
 
     @Override
     public List<Column> columns() {
-        return List.of(foreignKeyColumn);
+        return columns;
     }
 
     @Override
-    public Object construct(Arguments arguments) {
-        Object foreignKey = foreignKeyColumn.getValue(arguments);
-        return lazyLoadContext.getAttributeLoader(foreignKey);
+    public AttributeLoader construct(Arguments arguments) {
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
+        Object foreignKey = arguments.next(targetAttribute.valueConvertor());
+        foreignKeys.add(foreignKey);
+        return new AttributeLoaderImpl(foreignKey);
     }
 }

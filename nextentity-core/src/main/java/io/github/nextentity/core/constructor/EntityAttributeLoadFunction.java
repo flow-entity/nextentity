@@ -1,12 +1,13 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.util.ImmutableList;
+import io.github.nextentity.jdbc.AttributeLoadFunction;
+import io.github.nextentity.jdbc.BatchAttributeLoader;
 
 import java.util.Collection;
 import java.util.List;
@@ -18,10 +19,10 @@ import java.util.Map;
 ///
 /// @author HuangChengwei
 /// @since 2.1.0
-public class EntityAttributeLoadFunction extends AttributeLoadFunction {
+public class EntityAttributeLoadFunction extends LazyLoaderFunction {
 
     @Override
-    public Map<Object, Object> apply(BatchAttributeLoader context, Collection<Object> foreignKeys) {
+    public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
 
         ProjectionSchemaAttribute attribute = context.getAttribute();
         QueryConfig config = context.getQueryConfig();
@@ -36,7 +37,7 @@ public class EntityAttributeLoadFunction extends AttributeLoadFunction {
         return buildCacheMap(targetAttribute, results);
     }
 
-    private QueryStructure buildBatchQuery(BatchAttributeLoader context, EntitySchema targetEntity, Collection<Object> foreignKeys) {
+    private QueryStructure buildBatchQuery(LazyValueConstructor context, EntitySchema targetEntity, Collection<Object> foreignKeys) {
         ExpressionNode whereClause = buildWhereClause(foreignKeys, context.getAttribute());
 
         Selected selectProjection = new SelectEntity(ImmutableList.empty(), false);

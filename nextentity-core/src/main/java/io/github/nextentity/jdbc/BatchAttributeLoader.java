@@ -1,6 +1,6 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.LoadObserver;
@@ -14,16 +14,16 @@ import java.util.concurrent.ConcurrentHashMap;
 /// 批量属性加载器，支持 WHERE IN 批量查询避免 N+1 问题
 public final class BatchAttributeLoader {
 
-    private final QueryContext queryContext;
+    private final QueryConfig queryConfig;
     private final ProjectionSchemaAttribute attribute;
     private final AttributeLoadFunction batchLoaderFunction;
 
     private final Set<Object> foreignKeys = ConcurrentHashMap.newKeySet();
     private final Map<Object, Object> cache = new NullableConcurrentMap<>();
 
-    public BatchAttributeLoader(ProjectionSchemaAttribute attribute, QueryContext queryContext) {
+    public BatchAttributeLoader(ProjectionSchemaAttribute attribute, QueryConfig config) {
         this.attribute = attribute;
-        this.queryContext = queryContext;
+        this.queryConfig = config;
         this.batchLoaderFunction = attribute.type() == attribute.getEntityAttribute().type()
                 ? new EntityAttributeLoadFunction()
                 : new ProjectionAttributeLoadFunction();
@@ -65,8 +65,8 @@ public final class BatchAttributeLoader {
         }
     }
 
-    public QueryContext getQueryContext() {
-        return queryContext;
+    public QueryConfig getQueryConfig() {
+        return queryConfig;
     }
 
     public ProjectionSchemaAttribute getAttribute() {

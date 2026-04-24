@@ -17,7 +17,9 @@ import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.NullableConcurrentMap;
-import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jdbc.Arguments;
+import io.github.nextentity.jdbc.BatchAttributeLoader;
+import io.github.nextentity.jdbc.ConstructorSelector;
 import jakarta.persistence.FetchType;
 import org.jspecify.annotations.Nullable;
 
@@ -61,12 +63,7 @@ public class QueryContext {
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
 
-    /// 投影查询相关字段
-    private SelectProjection selectProjection;
-
     private ProjectionSchema projection;
-
-    private ImmutableArray<Column> expressions;
 
     /// 批量加载上下文（延迟初始化，仅投影查询使用）
     private final Map<ProjectionSchemaAttribute, BatchAttributeLoader> batchLoaderContexts = new ConcurrentHashMap<>();
@@ -90,11 +87,11 @@ public class QueryContext {
     /// 使用 ConstructorSelector 根据 Select 类型创建对应的 ValueConstructor。
     /// TODO DELETE
     public void init() {
-        if (selectProjection != null) {
-            // SelectProjection 有自己的构造逻辑，不使用 ConstructorSelector
+        if (structure.select() instanceof SelectProjection selectProjection) {
             this.projection = entityType.getProjection(selectProjection.type());
             this.schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
-            this.expressions = separateAttributes(projection, schemaAttributePaths);
+            this.constructor = new ProjectionConstructorBuilder(
+                    config, projection, schemaAttributePaths, true, false).build();
         } else {
             if (this.constructor == null) {
                 if (structure.select() instanceof SelectEntity selectEntity) {
@@ -155,7 +152,7 @@ public class QueryContext {
     }
 
     public static QueryContext create(QueryConfig descriptor, QueryStructure structure) {
-        QueryContext context = newQueryContext(descriptor, structure);
+        QueryContext context = newQueryContext(descriptor);
         context.setStructure(structure);
         if (structure.from() instanceof FromEntity(Class<?> type)) {
             EntityType entity = descriptor.metamodel().getEntity(type);
@@ -168,13 +165,8 @@ public class QueryContext {
         this.entityType = entityType;
     }
 
-    public static QueryContext newQueryContext(QueryConfig descriptor, QueryStructure structure) {
-        QueryContext context = new QueryContext(descriptor);
-        Selected select = structure.select();
-        if (select instanceof SelectProjection selectProjection) {
-            context.setSelectProjection(selectProjection);
-        }
-        return context;
+    public static QueryContext newQueryContext(QueryConfig descriptor) {
+        return new QueryContext(descriptor);
     }
 
     public <T> List<T> getResultList() {
@@ -195,9 +187,6 @@ public class QueryContext {
     ///
     /// @return Column 不可变数组
     public ImmutableArray<Column> getSelectedExpression() {
-        if (expressions != null) {
-            return expressions;
-        }
         List<Column> columns = constructor.columns();
         return ImmutableList.ofCollection(columns);
     }
@@ -526,14 +515,6 @@ public class QueryContext {
         return constructor.columns();
     }
 
-    /// 设置投影查询类型
-    ///
-    /// @param selectProjection 投影查询定义
-    public void setSelectProjection(SelectProjection selectProjection) {
-        this.selectProjection = selectProjection;
-        this.enableLazyloading = true;
-    }
-
     /// 分离投影属性，构建列列表
     ///
     /// @param schema 投影 Schema
@@ -611,7 +592,7 @@ public class QueryContext {
     }
 
     private BatchAttributeLoader getBatchLoaderContext(ProjectionSchemaAttribute attribute) {
-        return batchLoaderContexts.computeIfAbsent(attribute, k -> new BatchAttributeLoader(k, this));
+        return batchLoaderContexts.computeIfAbsent(attribute, k -> new BatchAttributeLoader(k, config));
     }
 
     /// 获取投影 Schema
@@ -622,4 +603,7 @@ public class QueryContext {
         return projection;
     }
 
+    public QueryConfig getConfig() {
+        return config;
+    }
 }

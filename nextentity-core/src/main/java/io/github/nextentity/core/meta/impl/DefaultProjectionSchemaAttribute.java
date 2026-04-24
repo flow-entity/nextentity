@@ -100,4 +100,9 @@ public class DefaultProjectionSchemaAttribute
         }
         return getEntityAttribute().getFetchType();
     }
+
+    @Override
+    public ProjectionSchema schema() {
+        return this;
+    }
 }
