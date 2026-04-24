@@ -5,6 +5,7 @@ import io.github.nextentity.core.reflect.schema.Schema;
 import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.RecordComponent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,23 +20,36 @@ public class DefaultSchema extends AbstractSchema<AttributeSet<Attribute>, Attri
 
     protected DefaultSchema(Class<?> type) {
         super(type);
-        this.constructor = findNoArgsConstructor(type);
+        this.constructor = findDefaultConstructor(type);
     }
 
     /// 查找无参 public 构造函数
     ///
     /// @param type 类型
     /// @return 无参 public 构造函数，如果没有则返回 null
-    private static @Nullable Constructor<?> findNoArgsConstructor(Class<?> type) {
+    private static @Nullable Constructor<?> findDefaultConstructor(Class<?> type) {
         try {
-            Constructor<?> constructor = type.getConstructor();
-            if (constructor.canAccess(null)) {
-                return constructor;
+            if (type.isRecord()) {
+                return getRecordConstructor(type);
+            } else if (!type.isInterface()) {
+                Constructor<?> constructor = type.getConstructor();
+                if (constructor.canAccess(null)) {
+                    return constructor;
+                }
             }
         } catch (NoSuchMethodException _) {
             // 无参 public 构造函数不存在
         }
         return null;
+    }
+
+    private static Constructor<?> getRecordConstructor(Class<?> type) throws NoSuchMethodException {
+        RecordComponent[] components = type.getRecordComponents();
+        Class<?>[] argTypes = new Class[components.length];
+        for (int i = 0; i < components.length; i++) {
+            argTypes[i] = components[i].getType();
+        }
+        return type.getConstructor(argTypes);
     }
 
     public static DefaultSchema of(Class<?> type) {

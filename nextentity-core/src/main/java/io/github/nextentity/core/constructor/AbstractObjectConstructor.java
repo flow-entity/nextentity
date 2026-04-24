@@ -1,5 +1,6 @@
 package io.github.nextentity.core.constructor;
 
+import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.jdbc.Arguments;
 
 import java.util.Collection;
@@ -35,8 +36,14 @@ public abstract class AbstractObjectConstructor implements ValueConstructor {
 
     @Override
     public Object construct(Arguments arguments) {
-        return constructConcrete(arguments);
+        try {
+            return constructConcrete(arguments);
+        } catch (ReflectiveOperationException e) {
+            throw new ReflectiveException(e);
+        }
     }
+
+    protected abstract Object constructConcrete(Arguments arguments) throws ReflectiveOperationException;
 
 
 }

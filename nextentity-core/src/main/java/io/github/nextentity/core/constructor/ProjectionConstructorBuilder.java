@@ -79,8 +79,7 @@ public class ProjectionConstructorBuilder {
     }
 
     protected ValueConstructor getRecordConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
-        // TODO
-        throw new UnsupportedOperationException();
+        return new RecordConstructor(schema.type(), bindings);
     }
 
     protected @NonNull JdkProxyConstructor getInterfaceConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {

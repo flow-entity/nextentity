@@ -5,6 +5,7 @@ import io.github.nextentity.core.reflect.schema.impl.DefaultSchema;
 import io.github.nextentity.jdbc.Arguments;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -19,13 +20,15 @@ import java.util.Objects;
 ///
 /// @author HuangChengwei
 /// @since 2.2.2
-public class ObjectConstructor extends AbstractObjectConstructor {
+public class RecordConstructor extends AbstractObjectConstructor {
 
     /// 缓存的 Constructor（接口类型为 null）
     private final Constructor<?> constructor;
 
-    public ObjectConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
-        if (resultType.isInterface()) {
+    public RecordConstructor(Class<?> resultType,
+                             Collection<PropertyBinding> properties) {
+        if (!resultType.isRecord()) {
+            // TODO 修改message
             throw new ReflectiveException("Cannot create ObjectConstructor for interface types");
         }
         super(resultType, properties);
@@ -34,17 +37,26 @@ public class ObjectConstructor extends AbstractObjectConstructor {
     }
 
     @Override
-    public Object constructConcrete(Arguments arguments) throws ReflectiveOperationException {
-        Object instance = null;
+    public Object constructConcrete(Arguments arguments) throws ReflectiveOperationException{
+        return constructRecord(arguments);
+    }
+
+    private Object constructRecord(Arguments arguments) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        boolean hasNonnull = false;
+        Constructor<?> resultConstructor = DefaultSchema.of(resultType).getConstructor();
+        int parameterCount = Objects.requireNonNull(resultConstructor).getParameterCount();
+        Object[] args = new Object[parameterCount];
         for (PropertyBinding prop : properties) {
             Object value = prop.valueConstructor().construct(arguments);
             if (value != null) {
-                if (instance == null) {
-                    instance = constructor.newInstance();
-                }
-                prop.attribute().set(instance, value);
+                int ordinal = prop.attribute().accessor().ordinal();
+                args[ordinal] = value;
+                hasNonnull = true;
             }
         }
-        return instance;
+        if (hasNonnull) {
+            return constructor.newInstance(args);
+        }
+        return null;
     }
 }
