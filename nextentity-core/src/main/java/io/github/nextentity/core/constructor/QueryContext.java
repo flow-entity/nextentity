@@ -1,14 +1,12 @@
 package io.github.nextentity.core.constructor;
 
+import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.*;
-import io.github.nextentity.core.util.ImmutableArray;
-import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.jdbc.ConstructorSelector;
-import org.jspecify.annotations.Nullable;
+import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 
 import java.util.List;
 import java.util.Map;
@@ -42,6 +40,10 @@ public class QueryContext {
 
     private ProjectionSchema projection;
 
+    public MetamodelSchema<?> getSchema() {
+        return projection == null ? entityType : projection;
+    }
+
     /// 存储懒加载属性元数据供批量加载使用
     public record LazyAttributeInfo(
             ProjectionSchemaAttribute attribute,
@@ -56,31 +58,79 @@ public class QueryContext {
     }
 
     public ValueConstructor newConstructor() {
-        ConstructInterceptor interceptor = config.constructors().select(this);
+        return newConstructor(entityType);
+    }
+
+    public ValueConstructor newConstructor(EntityType entityType) {
+        return newConstructor(entityType, structure.select());
+    }
+
+    private ValueConstructor newConstructor(EntityType entityType, Selected select) {
+        ConstructInterceptor interceptor = config.constructors().select(this, select);
         if (interceptor != null) {
-            ValueConstructor intercept = interceptor.intercept(this);
+            ValueConstructor intercept = interceptor.intercept(this, select);
             if (intercept != null) {
                 return intercept;
             }
         }
-        if (structure.select() instanceof SelectProjection selectProjection) {
-            this.projection = entityType.getProjection(selectProjection.type());
-            var schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
-            return new ProjectionConstructorBuilder(
-                    config, projection, schemaAttributePaths, true, false).build();
-        } else {
-            if (structure.select() instanceof SelectEntity selectEntity) {
-                DefaultSchemaAttributePaths attributePaths = new DefaultSchemaAttributePaths();
-                for (PathNode fetch : selectEntity.fetch()) {
-                    attributePaths.add(fetch);
-                }
-                return new EntityConstructorBuilder(entityType, config.metamodel(), attributePaths).build();
+        return switch (select) {
+            case SelectProjection selectProjection ->
+                    newConstructor(projection = entityType.getProjection(selectProjection.type()));
+            case SelectEntity selectEntity -> newConstructor(selectEntity, entityType);
+            case SelectExpression selectExpression -> newConstructor(entityType, selectExpression.expression());
+            case SelectExpressions selectExpressions -> newConstructor(entityType, selectExpressions);
+            case SelectNested selectNested -> newConstructor(entityType, selectNested);
+            case null -> throw new IllegalStateException(); // TODO 改进异常类型和消息
+        };
+    }
+
+    public ValueConstructor newConstructor(EntityType type, SelectNested selectNested) {
+        List<ValueConstructor> constructors = selectNested.items()
+                .stream()
+                .map(selected -> newConstructor(type, selected))
+                .toList();
+        return new ArrayConstructor(constructors);
+    }
+
+    public ValueConstructor newConstructor(EntityType entityType, SelectExpressions selectExpressions) {
+        List<ValueConstructor> constructors = selectExpressions.items().stream()
+                .map(node -> newConstructor(entityType, node))
+                .toList();
+        return new ArrayConstructor(constructors);
+    }
+
+    public ValueConstructor newConstructor(EntityType entityType, ExpressionNode expression) {
+        ValueConverter<?, ?> converter = null;
+        if (expression instanceof PathNode pathNode) {
+            if (pathNode.getAttribute() instanceof EntityBasicAttribute entityBasicAttribute) {
+                converter = entityBasicAttribute.valueConvertor();
             } else {
-                ConstructorSelector selector = new ConstructorSelector(entityType);
-                Selected select = structure.select();
-                return selector.select(select, expandReferencePath);
+                EntityAttribute attribute = entityType.getAttribute(pathNode);
+                if (attribute instanceof EntityBasicAttribute basicAttribute) {
+                    converter = basicAttribute.valueConvertor();
+                }
             }
         }
+        if (converter == null) {
+            converter = IdentityValueConverter.of(ExpressionTypeResolver.getExpressionType(expression, entityType));
+        }
+
+        Column column = new Column(expression, converter, 0);
+        return new SingleValueConstructor(column);
+    }
+
+    public ValueConstructor newConstructor(SelectEntity selectEntity, EntityType entityType) {
+        DefaultSchemaAttributePaths attributePaths = new DefaultSchemaAttributePaths();
+        for (PathNode fetch : selectEntity.fetch()) {
+            attributePaths.add(fetch);
+        }
+        return new EntityConstructorBuilder(entityType, config.metamodel(), attributePaths).build();
+    }
+
+    public ValueConstructor newConstructor(ProjectionSchema projection) {
+        var schemaAttributePaths = DeepLimitSchemaAttributePaths.of(1);
+        return new ProjectionConstructorBuilder(
+                config, projection, schemaAttributePaths, true, false).build();
     }
 
     /// 设置查询结构
@@ -133,20 +183,6 @@ public class QueryContext {
         return entityType;
     }
 
-    /// 获取当前构造的 Schema
-    ///
-    /// 用于拦截器判断是否支持处理当前场景。
-    /// 对于投影查询返回 projection，否则返回 entityType。
-    ///
-    /// @return 当前构造的 Schema，如果没有则返回 null
-    @Nullable
-    public MetamodelSchema<?> getSchema() {
-        if (projection != null) {
-            return projection;
-        }
-        return entityType;
-    }
-
     public QueryExecutor getQueryExecutor() {
         return config.queryExecutor();
     }
@@ -179,14 +215,6 @@ public class QueryContext {
 
     public Map<String, Object> getParameters() {
         return parameters;
-    }
-
-    /// 获取投影 Schema
-    ///
-    /// @return 投影 Schema，如果不是投影查询则返回 null
-    @Nullable
-    public ProjectionSchema getProjection() {
-        return projection;
     }
 
     public QueryConfig getConfig() {

@@ -1,5 +1,7 @@
 package io.github.nextentity.core.interceptor;
 
+import io.github.nextentity.core.expression.Selected;
+
 /// 拦截器基础接口，定义通用行为
 ///
 /// 所有拦截器都应实现此接口，提供统一的支持检查、命名和优先级机制。
@@ -16,8 +18,9 @@ public interface Interceptor<C> {
     /// 选择器会按优先级依次检查，选择第一个返回 true 的拦截器。
     ///
     /// @param context 上下文对象，包含必要信息
+    /// @param select
     /// @return true 表示此拦截器可以处理，false 表示跳过
-    boolean supports(C context);
+    boolean supports(C context, Selected select);
 
     /// 拦截器名称，用于日志和诊断
     ///

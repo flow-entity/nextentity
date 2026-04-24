@@ -295,7 +295,7 @@ public abstract class AbstractStatementBuilder {
     protected ValueConverter<?, ?> getValueConverter(ExpressionNode leftOperand) {
         ValueConverter<?, ?> convertor = null;
         if (leftOperand instanceof PathNode pathNode) {
-            Attribute attribute = pathNode.getAttribute(getEntityType());
+            Attribute attribute = getEntityType().getAttribute(pathNode);
             if (attribute instanceof EntityBasicAttribute columnAttribute) {
                 convertor = columnAttribute.valueConvertor();
             }
@@ -456,7 +456,7 @@ public abstract class AbstractStatementBuilder {
         int iMax = column.deep() - 1;
         if (iMax == -1)
             throw new IllegalStateException();
-        EntityAttribute attribute = (EntityAttribute) column.getAttribute(getEntityType());
+        EntityAttribute attribute = getEntityType().getAttribute(column);
         appendAttribute(attribute);
     }
 

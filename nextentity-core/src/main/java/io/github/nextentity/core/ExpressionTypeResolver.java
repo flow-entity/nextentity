@@ -132,7 +132,7 @@ public class ExpressionTypeResolver {
     }
 
     public static Class<?> getColumnType(PathNode column, EntityType entityType) {
-        Attribute attribute = column.getAttribute(entityType);
+        Attribute attribute = entityType.getAttribute(column);
         return attribute.type();
     }
 

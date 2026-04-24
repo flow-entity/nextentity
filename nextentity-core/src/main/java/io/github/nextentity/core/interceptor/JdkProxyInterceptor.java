@@ -2,6 +2,7 @@ package io.github.nextentity.core.interceptor;
 
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
+import io.github.nextentity.core.expression.Selected;
 import io.github.nextentity.core.meta.MetamodelSchema;
 
 /// JDK 代理拦截器 - 为 interface 类型创建代理实例
@@ -34,7 +35,7 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     }
 
     @Override
-    public boolean supports(QueryContext context) {
+    public boolean supports(QueryContext context, Selected select) {
         MetamodelSchema<?> schema = context.getSchema();
         if (schema == null) {
             return false;
@@ -49,7 +50,7 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     }
 
     @Override
-    public ValueConstructor intercept(QueryContext context) {
+    public ValueConstructor intercept(QueryContext context, Selected select) {
         // TODO
         return null;
     }

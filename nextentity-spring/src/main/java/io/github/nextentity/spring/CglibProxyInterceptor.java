@@ -1,19 +1,12 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.core.constructor.ValueConstructor;
+import io.github.nextentity.core.expression.Selected;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.MetamodelSchema;
-import io.github.nextentity.core.reflect.AttributeLoader;
-import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.jdbc.Arguments;
 import io.github.nextentity.core.constructor.QueryContext;
-import org.jspecify.annotations.Nullable;
-import org.springframework.cglib.proxy.Enhancer;
-import org.springframework.cglib.proxy.MethodInterceptor;
 
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.util.Map;
 
 /// CGLIB 代理拦截器 - 为普通类创建代理实例
 ///
@@ -40,7 +33,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     }
 
     @Override
-    public boolean supports(QueryContext context) {
+    public boolean supports(QueryContext context, Selected select) {
         if (!context.isEnableLazyloading()) {
             return false;
         }
@@ -73,7 +66,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     }
 
     @Override
-    public ValueConstructor intercept(QueryContext context) {
+    public ValueConstructor intercept(QueryContext context, Selected select) {
         // TODO
         return null;
     }

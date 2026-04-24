@@ -1,6 +1,7 @@
 package io.github.nextentity.core.interceptor;
 
 import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.expression.Selected;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 
@@ -20,8 +21,8 @@ public class InterceptorSelector<T extends Interceptor<? super QueryContext>> {
                 .toList();
     }
 
-    public static ConstructInterceptor selectConstructor(QueryContext context) {
-        return CONSTRUCT_INTERCEPTOR.select(context);
+    public static ConstructInterceptor selectConstructor(QueryContext context, Selected select) {
+        return CONSTRUCT_INTERCEPTOR.select(context, select);
     }
 
     public static InterceptorSelector<ConstructInterceptor> empty() {
@@ -29,9 +30,9 @@ public class InterceptorSelector<T extends Interceptor<? super QueryContext>> {
     }
 
     @Nullable
-    public T select(QueryContext context) {
+    public T select(QueryContext context, Selected select) {
         for (T interceptor : interceptors) {
-            if (interceptor.supports(context)) {
+            if (interceptor.supports(context, select)) {
                 return interceptor;
             }
         }

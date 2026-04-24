@@ -380,7 +380,7 @@ public class HavingClauseIntegrationTest {
     // ========================================
 
     @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
+    @ArgumentsSource(IntegrationTestProvider.class)// TODO
     @DisplayName("Should group by status with having")
     void shouldGroupByStatusWithHaving(IntegrationTestContext context) {
         // When - Group by status with count > 0
