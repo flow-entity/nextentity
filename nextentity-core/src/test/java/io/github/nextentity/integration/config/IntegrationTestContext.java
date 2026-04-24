@@ -35,7 +35,7 @@ public interface IntegrationTestContext {
         DefaultMetamodel metamodel = DefaultMetamodel.of();
         EntityTemplateFactoryConfig config = new EntityTemplateFactoryConfig(
                 metamodel, getUpdateExecutor(), getQueryExecutor(),
-                FetchConfig.DEFAULT, PaginationConfig.DEFAULT, InterceptorSelector.empty()
+                FetchConfig.DEFAULT, PaginationConfig.DEFAULT, InterceptorSelector.empty(), true, false
         );
         return new EntityTemplateDescriptor<>(config, entityClass);
     }

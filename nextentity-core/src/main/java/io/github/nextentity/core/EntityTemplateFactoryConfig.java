@@ -11,20 +11,13 @@ public record EntityTemplateFactoryConfig(
         QueryExecutor queryExecutor,
         FetchConfig fetch,
         PaginationConfig pagination,
-        InterceptorSelector<ConstructInterceptor> constructors
+        InterceptorSelector<ConstructInterceptor> constructors,
+        boolean interfaceLazyEnabled,
+        boolean dtoObjectLazyEnabled
 ) implements QueryConfig, PersistConfig {
 
-    public static QueryConfig queryConfig(Metamodel metamodel,
-                                          QueryExecutor executor,
-                                          FetchConfig fetch,
-                                          PaginationConfig pagination,
-                                          InterceptorSelector<ConstructInterceptor> constructor
-    ) {
-        return new EntityTemplateFactoryConfig(metamodel, null, executor, fetch, pagination, constructor);
-    }
-
     public static PersistConfig persistConfig(Metamodel metamodel, PersistExecutor executor) {
-        return new EntityTemplateFactoryConfig(metamodel, executor, null, null, null, null);
+        return new EntityTemplateFactoryConfig(metamodel, executor, null, null, null, null, false, false);
     }
 
 }

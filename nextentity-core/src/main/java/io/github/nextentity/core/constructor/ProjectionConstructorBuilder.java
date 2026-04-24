@@ -35,17 +35,18 @@ public class ProjectionConstructorBuilder {
 
     private ValueConstructor build(SchemaAttributePaths paths, ProjectionSchema schema, int tableIndex) {
         List<PropertyBinding> bindings = new ArrayList<>();
+        boolean supportLazyLoading = isSupportLazyLoading(schema);
         for (ProjectionAttribute attr : schema.getAttributes()) {
             if (attr instanceof ProjectionSchemaAttribute schemaAttribute) {
-                SchemaAttributePaths sub;
-                if (schemaAttribute.getFetchType() == FetchType.LAZY) {
+                SchemaAttributePaths sub = paths.get(schemaAttribute.name());
+                if (schemaAttribute.getFetchType() == FetchType.LAZY || supportLazyLoading && sub == null) {
                     JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
                     EntityBasicAttribute entityAttribute = schemaAttribute.getSourceAttribute();
                     ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
                     Column column = new Column(entityAttribute.path(), converter, joinInfo.rightTableIndex());
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
-                } else if ((sub = paths.get(schemaAttribute.name())) != null) {
+                } else {
                     JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
                     ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinInfo.rightTableIndex());
                     bindings.add(new PropertyBinding(attr, constructor));
@@ -85,6 +86,13 @@ public class ProjectionConstructorBuilder {
                 joinAttribute.getTargetEntityType(),
                 joinAttribute.getSourceAttribute(),
                 joinAttribute.getTargetAttribute());
+    }
+
+    private boolean isSupportLazyLoading(ProjectionSchema schema) {
+        if (queryConfig.interfaceLazyEnabled() && schema.type().isInterface()) {
+            return true;
+        }
+        return queryConfig.dtoObjectLazyEnabled() && !schema.type().isRecord() && !schema.type().isRecord();
     }
 
 }

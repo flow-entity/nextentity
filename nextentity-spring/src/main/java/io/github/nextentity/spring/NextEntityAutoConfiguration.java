@@ -98,8 +98,8 @@ public class NextEntityAutoConfiguration {
         List<ResultInterceptor> resultInterceptors = resultInterceptorsProvider.stream().toList();
 
         if (entityManager != null) {
-            return EntityFactoryBuilder.jpa(entityManager, jdbcTemplate, dialect, properties, transactionTemplate,
-                                            constructInterceptors, resultInterceptors);
+            return EntityFactoryBuilder.jpa(entityManager, dialect, properties, transactionTemplate,
+                                            constructInterceptors);
         }
         return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate,
                                          constructInterceptors, resultInterceptors);

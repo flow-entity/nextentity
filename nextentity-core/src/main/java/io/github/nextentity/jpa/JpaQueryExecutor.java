@@ -8,9 +8,6 @@ import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.From;
-import io.github.nextentity.core.interceptor.ConstructInterceptor;
-import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.SubQueryEntityType;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
@@ -35,16 +32,8 @@ public class JpaQueryExecutor implements QueryExecutor {
     private final JpaConfig config;
 
     public JpaQueryExecutor(EntityManager entityManager,
-                            Metamodel metamodel,
-                            QueryExecutor nativeQueryExecutor) {
-        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT, InterceptorSelector.empty());
-    }
-
-    public JpaQueryExecutor(EntityManager entityManager,
-                            Metamodel metamodel,
                             QueryExecutor nativeQueryExecutor,
-                            JpaConfig config,
-                            InterceptorSelector<ConstructInterceptor> interceptorSelector) {
+                            JpaConfig config) {
         this.entityManager = entityManager;
         this.nativeQueryExecutor = nativeQueryExecutor;
         this.config = config;
