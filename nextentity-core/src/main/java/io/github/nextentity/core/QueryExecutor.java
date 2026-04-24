@@ -1,6 +1,6 @@
 package io.github.nextentity.core;
 
-import io.github.nextentity.jdbc.QueryContext;
+import io.github.nextentity.core.constructor.QueryContext;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;

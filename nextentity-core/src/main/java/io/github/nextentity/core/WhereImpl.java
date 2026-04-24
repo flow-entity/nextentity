@@ -2,10 +2,10 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.jdbc.QueryContext;
 import jakarta.persistence.LockModeType;
 import org.jspecify.annotations.NonNull;
 import org.slf4j.Logger;

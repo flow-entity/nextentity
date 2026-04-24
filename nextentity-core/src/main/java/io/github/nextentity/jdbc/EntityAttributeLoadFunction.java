@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;

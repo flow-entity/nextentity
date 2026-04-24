@@ -1,7 +1,6 @@
 package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.meta.*;
-import io.github.nextentity.jdbc.SchemaAttributePaths;
 
 import java.util.ArrayList;
 import java.util.List;

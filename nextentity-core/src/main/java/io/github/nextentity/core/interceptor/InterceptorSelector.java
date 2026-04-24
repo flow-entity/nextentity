@@ -1,6 +1,6 @@
 package io.github.nextentity.core.interceptor;
 
-import io.github.nextentity.jdbc.QueryContext;
+import io.github.nextentity.core.constructor.QueryContext;
 import org.jspecify.annotations.NonNull;
 import org.jspecify.annotations.Nullable;
 

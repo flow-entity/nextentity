@@ -5,7 +5,7 @@ import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.jdbc.Arguments;
-import io.github.nextentity.jdbc.QueryContext;
+import io.github.nextentity.core.constructor.QueryContext;
 import org.jspecify.annotations.Nullable;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;

@@ -12,7 +12,7 @@ import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.SubQueryEntityType;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.jdbc.QueryContext;
+import io.github.nextentity.core.constructor.QueryContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;

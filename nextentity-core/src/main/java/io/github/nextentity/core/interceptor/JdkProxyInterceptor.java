@@ -4,7 +4,7 @@ import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.jdbc.Arguments;
-import io.github.nextentity.jdbc.QueryContext;
+import io.github.nextentity.core.constructor.QueryContext;
 
 import java.lang.reflect.Method;
 import java.util.Map;

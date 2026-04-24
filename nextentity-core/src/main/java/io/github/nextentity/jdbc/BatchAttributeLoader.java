@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.LoadObserver;

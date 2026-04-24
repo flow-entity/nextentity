@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.util.ImmutableArray;

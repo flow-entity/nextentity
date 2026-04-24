@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;

@@ -1,6 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.model.Tuple;
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;

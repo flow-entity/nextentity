@@ -1,12 +1,9 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.api.Expression;
 import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.constructor.Column;
-import io.github.nextentity.core.constructor.EntityConstructorBuilder;
-import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
@@ -20,6 +17,7 @@ import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import io.github.nextentity.core.util.NullableConcurrentMap;
+import io.github.nextentity.jdbc.*;
 import jakarta.persistence.FetchType;
 import org.jspecify.annotations.Nullable;
 

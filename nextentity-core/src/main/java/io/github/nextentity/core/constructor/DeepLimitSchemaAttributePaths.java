@@ -1,4 +1,4 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
 class DeepLimitSchemaAttributePaths implements SchemaAttributePaths {
     static final DeepLimitSchemaAttributePaths[] instances = new DeepLimitSchemaAttributePaths[16];

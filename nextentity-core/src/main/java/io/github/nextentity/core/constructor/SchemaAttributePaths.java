@@ -1,4 +1,4 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
 public interface SchemaAttributePaths {
 
