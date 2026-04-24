@@ -45,7 +45,7 @@ public final class EntityConstructorBuilder {
                 }
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
                 ValueConverter<?, ?> converter = basicAttribute.valueConvertor();
-                Column column = Column.ofPath(attr.path(), converter, tableIndex);
+                Column column = new Column(attr.path(), converter, tableIndex);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }

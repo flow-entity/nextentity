@@ -50,7 +50,7 @@ public class ProjectionConstructorBuilder {
                     JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
                     EntityBasicAttribute entityAttribute = schemaAttribute.getTargetAttribute();
                     ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
-                    Column column = Column.ofPath(entityAttribute.path(), converter, joinInfo.rightTableIndex());
+                    Column column = new Column(entityAttribute.path(), converter, joinInfo.rightTableIndex());
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else if ((sub = paths.get(schemaAttribute.name())) != null) {
@@ -61,7 +61,7 @@ public class ProjectionConstructorBuilder {
             } else if (attr instanceof ProjectionBasicAttribute basicAttribute) {
                 EntityBasicAttribute entityAttribute = basicAttribute.getEntityAttribute();
                 ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
-                Column column = Column.ofPath(entityAttribute.path(), converter, tableIndex);
+                Column column = new Column(entityAttribute.path(), converter, tableIndex);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }

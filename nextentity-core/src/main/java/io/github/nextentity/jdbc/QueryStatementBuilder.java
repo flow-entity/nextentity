@@ -99,7 +99,7 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
 
     protected void appendSelectAlias(Column expression, int columnIndex) {
         if (dialect.requiresAliasForAggregateColumns()
-            && expression.isOperatorNode()) {
+            && expression.source() instanceof OperatorNode) {
             sql.append(" as col_").append(columnIndex);
         }
     }

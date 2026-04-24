@@ -105,7 +105,7 @@ public final class ConstructorSelector {
                 // 基本属性：始终包含
                 PathNode pathNode = getPathNodeForAttribute(attr);
                 ValueConverter<?, ?> converter = getConverter(attr);
-                Column column = Column.ofPath(pathNode, converter, tableIndex);
+                Column column = new Column(pathNode, converter, tableIndex);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }
@@ -191,22 +191,6 @@ public final class ConstructorSelector {
         return new ArrayConstructor(constructors);
     }
 
-    /// 为实体属性创建 PropertyBinding
-    ///
-    /// @param path       属性路径
-    /// @param tableIndex 表索引
-    /// @return PropertyBinding 实例，如果路径无效则返回 null
-    private @Nullable PropertyBinding createPropertyBinding(PathNode path, int tableIndex) {
-        Attribute attribute = path.getAttribute(entityType);
-        if (attribute == null) {
-            return null;
-        }
-
-        ValueConstructor valueConstructor = createAttributeConstructor(path, attribute, tableIndex);
-
-        return new PropertyBinding(attribute, valueConstructor);
-    }
-
     /// 为投影属性创建 PropertyBinding
     ///
     /// @param attribute  属性
@@ -215,24 +199,6 @@ public final class ConstructorSelector {
     private PropertyBinding createProjectionBinding(Attribute attribute, int tableIndex) {
         ValueConstructor valueConstructor = createProjectionConstructor(attribute, tableIndex);
         return new PropertyBinding(attribute, valueConstructor);
-    }
-
-    /// 为属性创建 ValueConstructor
-    ///
-    /// @param path       属性路径
-    /// @param attribute  属性元数据
-    /// @param tableIndex 表索引
-    /// @return ValueConstructor 实例
-    private ValueConstructor createAttributeConstructor(PathNode path, Attribute attribute, int tableIndex) {
-        // 检查是否为嵌套对象
-        if (attribute instanceof Schema nestedSchema) {
-            return createNestedSchemaConstructor(nestedSchema, tableIndex);
-        }
-
-        // 基本属性：创建 SingleValueConstructor
-        ValueConverter<?, ?> converter = getConverter(attribute);
-        Column column = Column.ofPath(path, converter, tableIndex);
-        return new SingleValueConstructor(column);
     }
 
     /// 为投影属性创建 ValueConstructor
@@ -256,7 +222,7 @@ public final class ConstructorSelector {
 
         // 创建列（投影属性的路径从 entity 获取）
         PathNode pathNode = getPathNodeForAttribute(attribute);
-        Column column = Column.ofPath(pathNode, converter, tableIndex);
+        Column column = new Column(pathNode, converter, tableIndex);
         return new SingleValueConstructor(column);
     }
 
@@ -280,7 +246,7 @@ public final class ConstructorSelector {
         for (Attribute attr : schema.getPrimitives()) {
             PathNode pathNode = getPathNodeForAttribute(attr);
             ValueConverter<?, ?> converter = getConverter(attr);
-            Column column = Column.ofPath(pathNode, converter, tableIndex);
+            Column column = new Column(pathNode, converter, tableIndex);
             bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
         }
 
@@ -295,13 +261,13 @@ public final class ConstructorSelector {
     private Column createColumn(ExpressionNode expression, int tableIndex) {
         if (expression instanceof PathNode pathNode) {
             ValueConverter<?, ?> converter = getConverterForPath(pathNode);
-            return Column.ofPath(pathNode, converter, tableIndex);
+            return new Column(pathNode, converter, tableIndex);
         } else if (expression instanceof OperatorNode operatorNode) {
             ValueConverter<?, ?> converter = getConverterForOperator(operatorNode);
-            return Column.ofOperator(operatorNode, converter);
+            return new Column(operatorNode, converter, tableIndex);
         } else if (expression instanceof LiteralNode literalNode) {
             ValueConverter<?, ?> converter = getConverterForLiteral(literalNode);
-            return Column.ofLiteral(literalNode, converter);
+            return new Column(literalNode, converter, tableIndex);
         }
 
         // 未知类型：抛出异常
