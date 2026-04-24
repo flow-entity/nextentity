@@ -5,6 +5,7 @@ import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.EntityConstructorBuilder;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.expression.*;
@@ -43,7 +44,7 @@ import java.util.stream.Stream;
 ///
 public class QueryContext {
 
-    protected final QueryConfig descriptor;
+    protected final QueryConfig config;
 
     protected final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
@@ -64,7 +65,9 @@ public class QueryContext {
 
     /// 投影查询相关字段
     private SelectProjection selectProjection;
+
     private ProjectionSchema projection;
+
     private ImmutableArray<Column> expressions;
 
     /// 批量加载上下文（延迟初始化，仅投影查询使用）
@@ -79,14 +82,15 @@ public class QueryContext {
     }
 
     /// 公开构造函数
-    public QueryContext(QueryConfig descriptor) {
-        this.descriptor = descriptor;
+    public QueryContext(QueryConfig config) {
+        this.config = config;
     }
 
     /// 初始化核心字段
     ///
     /// 在设置参数后调用，完成字段初始化。
     /// 使用 ConstructorSelector 根据 Select 类型创建对应的 ValueConstructor。
+    /// TODO DELETE
     public void init() {
         if (selectProjection != null) {
             // SelectProjection 有自己的构造逻辑，不使用 ConstructorSelector
@@ -95,9 +99,19 @@ public class QueryContext {
             this.expressions = separateAttributes(projection, schemaAttributePaths);
         } else {
             if (this.constructor == null) {
-                ConstructorSelector selector = new ConstructorSelector(entityType);
-                Selected select = structure.select();
-                this.constructor = selector.select(select, expandReferencePath);
+                if (structure.select() instanceof SelectEntity selectEntity) {
+                    DefaultSchemaAttributePaths attributePaths = new DefaultSchemaAttributePaths();
+                    for (PathNode fetch : selectEntity.fetch()) {
+                        attributePaths.add(fetch);
+                    }
+                    this.constructor = new EntityConstructorBuilder(
+                            entityType, config.metamodel(), attributePaths
+                    ).build();
+                } else {
+                    ConstructorSelector selector = new ConstructorSelector(entityType);
+                    Selected select = structure.select();
+                    this.constructor = selector.select(select, expandReferencePath);
+                }
             }
             if (this.schemaAttributePaths == null) {
                 this.schemaAttributePaths = buildSchemaAttributePaths(structure.select());
@@ -121,15 +135,6 @@ public class QueryContext {
             return DeepLimitSchemaAttributePaths.of(1);
         }
         return SchemaAttributePaths.empty();
-    }
-
-    /// 从 PathNode 列表构建 SchemaAttributePaths
-    protected SchemaAttributePaths newJoinPaths(ImmutableList<PathNode> fetch) {
-        DefaultSchemaAttributePaths paths = new DefaultSchemaAttributePaths();
-        for (PathNode pathNode : fetch) {
-            paths.add(pathNode);
-        }
-        return paths;
     }
 
     /// 从 Attribute 集合构建 SchemaAttributePaths
@@ -179,7 +184,7 @@ public class QueryContext {
     }
 
     public QueryContext newContext(QueryStructure structure) {
-        QueryContext context = create(descriptor, structure);
+        QueryContext context = create(config, structure);
         context.setExpandReferencePath(expandReferencePath);
         context.init();
         return context;
@@ -203,6 +208,7 @@ public class QueryContext {
     ///
     /// @param arguments 参数供应器
     /// @return 构造的对象实例
+    /// TODO DELETE
     protected Object doConstruct(Arguments arguments) {
         if (projection != null && projection.hasLazyAttribute()) {
             var selector = InterceptorSelector.selectConstructor(this);
@@ -223,7 +229,7 @@ public class QueryContext {
     }
 
     public Metamodel getMetamodel() {
-        return descriptor.metamodel();
+        return config.metamodel();
     }
 
     public EntityType getEntityType() {
@@ -251,7 +257,7 @@ public class QueryContext {
     /// @param arguments 参数供应器
     /// @return 构造的对象实例
     public final Object construct(Arguments arguments) {
-        InterceptorSelector<ConstructInterceptor> constructs = descriptor.constructors();
+        InterceptorSelector<ConstructInterceptor> constructs = config.constructors();
         var interceptor = constructs.select(this);
         if (interceptor != null) {
             return interceptor.intercept(this, arguments);
@@ -267,25 +273,6 @@ public class QueryContext {
         } else {
             return constructSimpleSchema(schema, arguments, schemaAttributes);
         }
-    }
-
-    /// 构造 Schema 对象（公开供拦截器使用）
-    ///
-    /// @param schema           Schema 定义
-    /// @param arguments        参数供应器
-    /// @param schemaAttributes 属性路径
-    /// @return 构造的对象实例
-    public Object buildSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
-        return constructSchema(schema, arguments, schemaAttributes);
-    }
-
-    /// 获取简单属性值（公开供拦截器使用）
-    ///
-    /// @param arguments 参数供应器
-    /// @param attribute 属性定义
-    /// @return 属性值
-    public Object getAttributeValue(Arguments arguments, Attribute attribute) {
-        return getSimpleAttributeValue(arguments, attribute);
     }
 
     protected Object constructRecordSchema(Schema schema, Arguments arguments, SchemaAttributePaths schemaAttributes) {
@@ -490,11 +477,7 @@ public class QueryContext {
     }
 
     public QueryExecutor getQueryExecutor() {
-        return descriptor.queryExecutor();
-    }
-
-    public FetchConfig getFetchConfig() {
-        return descriptor.fetch();
+        return config.queryExecutor();
     }
 
     /// 获取查询结果列表
@@ -525,10 +508,6 @@ public class QueryContext {
     /// @return true 表示启用懒加载
     public boolean isEnableLazyloading() {
         return enableLazyloading;
-    }
-
-    public void setEnableLazyloading(boolean enableLazyloading) {
-        this.enableLazyloading = enableLazyloading;
     }
 
     public Map<String, Object> getParameters() {

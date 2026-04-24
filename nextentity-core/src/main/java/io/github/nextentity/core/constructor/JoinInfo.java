@@ -16,62 +16,15 @@ import io.github.nextentity.core.meta.EntityType;
 /// @param rightEntity        右表 Entity 类型
 /// @param leftJoinAttribute  左表连接字段（外键）
 /// @param rightJoinAttribute 右表连接字段（主键或关联字段）
-/// @param alias              Join 表别名
 /// @author HuangChengwei
 /// @since 2.2.2
-public record JoinInfo(JoinType type, int leftTableIndex, int rightTableIndex, EntityType rightEntity,
-                       EntityBasicAttribute leftJoinAttribute, EntityBasicAttribute rightJoinAttribute, String alias) {
+public record JoinInfo(
+        JoinType type,
+        int leftTableIndex,
+        int rightTableIndex,
+        EntityType rightEntity,
+        EntityBasicAttribute leftJoinAttribute,
+        EntityBasicAttribute rightJoinAttribute
+) {
 
-    /// 获取 Join 类型
-    @Override
-    public JoinType type() {
-        return type;
-    }
-
-    /// 获取左表索引
-    @Override
-    public int leftTableIndex() {
-        return leftTableIndex;
-    }
-
-    /// 获取右表索引
-    @Override
-    public int rightTableIndex() {
-        return rightTableIndex;
-    }
-
-    /// 获取右表 Entity 类型
-    @Override
-    public EntityType rightEntity() {
-        return rightEntity;
-    }
-
-    /// 获取左表连接字段
-    @Override
-    public EntityBasicAttribute leftJoinAttribute() {
-        return leftJoinAttribute;
-    }
-
-    /// 获取右表连接字段
-    @Override
-    public EntityBasicAttribute rightJoinAttribute() {
-        return rightJoinAttribute;
-    }
-
-    /// 获取 Join 表别名
-    @Override
-    public String alias() {
-        return alias;
-    }
-
-    /// 构建 JOIN 子句 SQL
-    ///
-    /// @param leftAlias 左表别名
-    /// @return JOIN 子句 SQL
-    public String toJoinClause(String leftAlias) {
-        return type.keyword() + " JOIN " +
-               rightEntity.tableName() + " " + alias +
-               " ON " + leftAlias + "." + leftJoinAttribute.columnName() +
-               " = " + alias + "." + rightJoinAttribute.columnName();
-    }
 }

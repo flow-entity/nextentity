@@ -74,6 +74,9 @@ public class ObjectConstructor implements ValueConstructor {
         } catch (InstantiationException | IllegalAccessException
                  | InvocationTargetException e) {
             throw new ReflectiveException(e);
+        } catch (RuntimeException e) {
+            // TODO wrap Exception
+            throw e;
         }
     }
 }

@@ -62,7 +62,7 @@ public record Column(ExpressionNode source, ValueConverter<?, ?> converter, int 
     /// 从 ExpressionNode 创建 Column（根据节点类型分发）
     ///
     /// @param expressionNode 表达式节点
-    /// @param tableIndex 表索引
+    /// @param tableIndex     表索引
     /// @return Column 实例
     public static Column ofExpressionNode(ExpressionNode expressionNode, int tableIndex) {
         return switch (expressionNode) {
@@ -117,7 +117,7 @@ public record Column(ExpressionNode source, ValueConverter<?, ?> converter, int 
 
     /// 从 EntityAttribute 创建 Column
     ///
-    /// @param attribute 实体属性
+    /// @param attribute  实体属性
     /// @param tableIndex 表索引
     /// @return Column 实例
     public static Column fromEntityAttribute(EntityAttribute attribute, int tableIndex) {
@@ -127,7 +127,7 @@ public record Column(ExpressionNode source, ValueConverter<?, ?> converter, int 
 
     /// 从 ProjectionBasicAttribute 创建 Column
     ///
-    /// @param attribute 投影基本属性
+    /// @param attribute  投影基本属性
     /// @param tableIndex 表索引
     /// @return Column 实例
     public static Column fromProjectionBasicAttribute(ProjectionBasicAttribute attribute, int tableIndex) {

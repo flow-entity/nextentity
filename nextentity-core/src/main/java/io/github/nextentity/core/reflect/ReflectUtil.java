@@ -80,7 +80,12 @@ public class ReflectUtil {
     /// @param instance         对象实例
     /// @return 如果可访问返回true，否则返回false
     public static boolean isAccessible(AccessibleObject accessibleObject, Object instance) {
-        return accessibleObject.canAccess(instance);
+        try {
+            return accessibleObject.canAccess(instance);
+        } catch (Exception e) {
+            // TODO delete
+            throw e;
+        }
     }
 
     /// 创建代理实例。
