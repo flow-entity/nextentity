@@ -1,13 +1,8 @@
 package io.github.nextentity.core.interceptor;
 
-import io.github.nextentity.core.meta.MetamodelSchema;
-import io.github.nextentity.core.reflect.ReflectUtil;
-import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.jdbc.Arguments;
 import io.github.nextentity.core.constructor.QueryContext;
-
-import java.lang.reflect.Method;
-import java.util.Map;
+import io.github.nextentity.core.constructor.ValueConstructor;
+import io.github.nextentity.core.meta.MetamodelSchema;
 
 /// JDK 代理拦截器 - 为 interface 类型创建代理实例
 ///
@@ -54,16 +49,9 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     }
 
     @Override
-    public Object intercept(QueryContext context, Arguments arguments) {
-        if (!supports(context)) {
-            throw new UnsupportedOperationException("JdkProxyInterceptor supports only interface projection types with lazy attributes");
-        }
-        Map<Method, Object> resultMap = context.collectResultMap(arguments);
-        Schema schema = context.getSchema();
-        if (schema == null) {
-            return null;
-        }
-        return ReflectUtil.newProxyInstance(schema.type(), resultMap);
+    public ValueConstructor intercept(QueryContext context) {
+        // TODO
+        return null;
     }
 
     @Override
@@ -75,4 +63,6 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     public int order() {
         return order;
     }
+
+
 }

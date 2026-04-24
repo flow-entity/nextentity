@@ -66,7 +66,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
         // JDBC 默认展开引用路径
         context.setExpandReferencePath(true);
         // 调用 init 完成初始化
-        context.init();
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {

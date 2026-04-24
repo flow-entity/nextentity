@@ -1,5 +1,6 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.reflect.AttributeLoader;
@@ -59,56 +60,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         }
     }
 
-    @Override
-    public Object intercept(QueryContext context, Arguments arguments) {
-        if (!supports(context)) {
-            throw new UnsupportedOperationException("CglibProxyInterceptor cannot handle the given QueryContext");
-        }
-        Schema schema = context.getSchema();
-        if (schema == null) {
-            return null;
-        }
-        validateProxyable(schema.type());
-        return createCglibProxy(context, schema, arguments);
-    }
 
-    /// 验证类是否可代理
-    private void validateProxyable(Class<?> type) {
-        if (Modifier.isFinal(type.getModifiers())) {
-            throw new ProxyException("Cannot proxy final class: " + type.getName());
-        }
-        try {
-            type.getConstructor();
-        } catch (NoSuchMethodException e) {
-            throw new ProxyException("Cannot proxy class without default constructor: " + type.getName());
-        }
-    }
-
-    /// 创建 CGLIB 代理
-    @Nullable
-    protected Object createCglibProxy(QueryContext context, Schema schema, Arguments arguments) {
-        Map<Method, Object> map = context.collectResultMap(arguments);
-        if (map.isEmpty()) {
-            return null;
-        }
-
-        Class<?> type = schema.type();
-        Enhancer enhancer = new Enhancer();
-        enhancer.setSuperclass(type);
-        enhancer.setCallback(createMethodInterceptor(map, type));
-
-        return enhancer.create();
-    }
-
-    /// 创建方法拦截器
-    private MethodInterceptor createMethodInterceptor(Map<Method, Object> map, Class<?> resultType) {
-        return (proxy, method, args, methodProxy) -> {
-            if (map.containsKey(method)) {
-                return AttributeLoader.loadFromMap(map, method);
-            }
-            return methodProxy.invokeSuper(proxy, args);
-        };
-    }
 
     @Override
     public String name() {
@@ -118,5 +70,11 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
     @Override
     public int order() {
         return order;
+    }
+
+    @Override
+    public ValueConstructor intercept(QueryContext context) {
+        // TODO
+        return null;
     }
 }

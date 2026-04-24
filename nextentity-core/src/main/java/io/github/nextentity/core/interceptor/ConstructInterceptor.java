@@ -1,5 +1,6 @@
 package io.github.nextentity.core.interceptor;
 
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.jdbc.Arguments;
 import io.github.nextentity.core.constructor.QueryContext;
 
@@ -16,5 +17,5 @@ public interface ConstructInterceptor extends Interceptor<QueryContext> {
     /// @param context   查询上下文，包含元模型信息
     /// @param arguments 参数供应器，用于获取属性值
     /// @return 构造的对象实例
-    Object intercept(QueryContext context, Arguments arguments);
+    ValueConstructor intercept(QueryContext context);
 }

@@ -4,15 +4,15 @@ import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.From;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
 import io.github.nextentity.core.meta.SubQueryEntityType;
-import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.core.constructor.QueryContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
@@ -54,8 +54,6 @@ public class JpaQueryExecutor implements QueryExecutor {
     public <T> List<T> getList(@NonNull QueryContext context) {
         // JPA 默认不展开引用路径
         context.setExpandReferencePath(false);
-        // 调用 init 完成初始化
-        context.init();
         QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
         if (config.nativeSubqueries() && requiredNativeQuery(context, queryStructure)) {
@@ -66,12 +64,13 @@ public class JpaQueryExecutor implements QueryExecutor {
             List<?> resultList = getEntityResultList(queryStructure);
             return TypeCastUtil.cast(resultList);
         }
-        List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
+        ValueConstructor constructor = context.newConstructor();
+        List<Object[]> objectsList = getObjectsList(queryStructure, constructor.columns());
         List<Object> result = objectsList.stream()
                 .map(objects -> {
                     JpaArguments arguments = new JpaArguments(
                             objects);
-                    return context.construct(arguments);
+                    return constructor.construct(arguments);
                 })
                 .collect(ImmutableList.collector(objectsList.size()));
         return TypeCastUtil.cast(result);
@@ -134,7 +133,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         return new EntityBuilder<>(root, cb, query, structure, config).getResultList();
     }
 
-    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, ImmutableArray<Column> columns) {
+    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, Collection<? extends Column> columns) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         FromEntity from = (FromEntity) structure.from();
@@ -144,13 +143,13 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     class ObjectArrayBuilder extends Builder<Object[]> {
 
-        private final ImmutableArray<Column> selects;
+        private final Collection<? extends Column> selects;
 
         public ObjectArrayBuilder(Root<?> root,
                                   CriteriaBuilder cb,
                                   CriteriaQuery<Object[]> query,
                                   QueryStructure structure,
-                                  ImmutableArray<Column> selects,
+                                  Collection<? extends Column> selects,
                                   JpaConfig config) {
             super(root, cb, query, structure, config);
             this.selects = selects;

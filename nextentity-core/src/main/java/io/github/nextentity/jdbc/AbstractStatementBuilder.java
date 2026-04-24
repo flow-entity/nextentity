@@ -1,15 +1,14 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.core.util.ImmutableArray;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
@@ -555,7 +554,7 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
-    protected void addJoinPrimitive(ImmutableArray<Column> operands) {
+    protected void addJoinPrimitive(Collection<? extends Column> operands) {
         if (operands != null && !operands.isEmpty()) {
             for (Column operand : operands) {
                 addJoin(operand);
