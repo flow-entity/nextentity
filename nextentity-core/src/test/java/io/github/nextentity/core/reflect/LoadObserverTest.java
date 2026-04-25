@@ -5,7 +5,6 @@ import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.dto.EmployeeWithLazyDepartment;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
-import io.github.nextentity.integration.fast.FastIntegrationTestProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -28,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LoadObserverTest {
 
     @ParameterizedTest
-    @ArgumentsSource(FastIntegrationTestProvider.class)// TODO use IntegrationTestProvider.class
+    @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should observe batch load on first lazy access")
     void shouldObserveBatchLoadOnFirstLazyAccess(IntegrationTestContext context) {
         // Given - 创建观察器，记录事件

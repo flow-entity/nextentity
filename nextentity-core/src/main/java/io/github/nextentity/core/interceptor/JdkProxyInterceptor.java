@@ -1,5 +1,8 @@
 package io.github.nextentity.core.interceptor;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import io.github.nextentity.core.constructor.DeepLimitSchemaAttributePaths;
 import io.github.nextentity.core.constructor.ProjectionConstructorBuilder;
 import io.github.nextentity.core.constructor.QueryContext;
@@ -14,6 +17,8 @@ import io.github.nextentity.core.meta.ProjectionSchema;
 /// 使用 JDK Proxy 创建代理，支持延迟加载属性。
 /// 只处理 interface 类型（非普通类、非 record）。
 public class JdkProxyInterceptor implements ConstructInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(JdkProxyInterceptor.class);
 
     private static final JdkProxyInterceptor INSTANCE = new JdkProxyInterceptor();
 
@@ -59,7 +64,7 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
                     DeepLimitSchemaAttributePaths.of(1)
             ).build();
         }
-        // TODO 打日志
+        log.debug("JdkProxyInterceptor does not support select type: {}, returning null", select);
         return null;
     }
 

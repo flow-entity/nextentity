@@ -10,9 +10,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/// 投影构造器构建器
+///
+/// 根据 ProjectionSchema 构建 ValueConstructor，
+/// 支持接口类型（JDK 代理）、Record 类型（规范构造函数）和普通类（构造函数 + setter）。
+/// 对于 FetchType.LAZY 的嵌套属性，使用 LazyValueConstructor 实现懒加载。
+///
+/// @author HuangChengwei
+/// @since 2.2.2
 public class ProjectionConstructorBuilder {
 
-    private final Map<JoinAttribute, JoinInfo> joins = new ConcurrentHashMap<>();
+    private final Map<JoinAttribute, JoinIndex> joins = new ConcurrentHashMap<>();
 
     private final QueryConfig queryConfig;
     private final ProjectionSchema root;
@@ -26,9 +34,9 @@ public class ProjectionConstructorBuilder {
         this.paths = paths;
     }
 
-    /// 处理 SelectEntity，创建 ObjectConstructor
+    /// 处理 SelectProjection，根据类型创建对应的 ValueConstructor
     ///
-    /// @return ObjectConstructor 实例
+    /// @return ValueConstructor 实例
     public ValueConstructor build() {
         return build(paths, root, 0);
     }
@@ -40,15 +48,15 @@ public class ProjectionConstructorBuilder {
             if (attr instanceof ProjectionSchemaAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                 if (schemaAttribute.getFetchType() == FetchType.LAZY || supportLazyLoading && sub == null) {
-                    JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
+                    JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
                     EntityBasicAttribute entityAttribute = schemaAttribute.getSourceAttribute();
                     ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
-                    Column column = new Column(entityAttribute.path(), converter, joinInfo.rightTableIndex());
+                    Column column = new Column(entityAttribute.path(), converter, joinIndex.rightTableIndex());
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else {
-                    JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinInfo.rightTableIndex());
+                    JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
+                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinIndex.rightTableIndex());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof ProjectionBasicAttribute basicAttribute) {
@@ -79,8 +87,8 @@ public class ProjectionConstructorBuilder {
         return new JdkProxyConstructor(schema.type(), bindings);
     }
 
-    private JoinInfo newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
-        return new JoinInfo(JoinType.LEFT,
+    private JoinIndex newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
+        return new JoinIndex(JoinType.LEFT,
                 leftTableIndex,
                 joins.size() + 1,
                 joinAttribute.getTargetEntityType(),
@@ -92,7 +100,7 @@ public class ProjectionConstructorBuilder {
         if (queryConfig.interfaceLazyEnabled() && schema.type().isInterface()) {
             return true;
         }
-        return queryConfig.dtoObjectLazyEnabled() && !schema.type().isRecord() && !schema.type().isRecord();
+        return queryConfig.dtoObjectLazyEnabled() && !schema.type().isRecord() && !schema.type().isInterface();
     }
 
 }

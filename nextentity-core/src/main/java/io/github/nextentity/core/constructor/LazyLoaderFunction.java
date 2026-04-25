@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 /// 具体的查询策略由子类实现。
 ///
 /// @see EntityAttributeLoadFunction
+/// @see ProjectionAttributeLoadFunction
 public abstract class LazyLoaderFunction {
 
     /// 执行批量加载查询。

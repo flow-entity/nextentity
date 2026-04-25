@@ -2,19 +2,22 @@ package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.meta.*;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/// 值构造器选择器
+/// 实体构造器构建器
+///
+/// 根据 EntityType 及 SchemaAttributePaths 构建实体类型的 ValueConstructor。
+/// 支持接口类型（JDK 代理）和普通类（构造函数 + setter），
+/// 不支持 Record 类型（应使用 RecordConstructor）。
 ///
 /// @author HuangChengwei
 /// @since 2.2.2
 public final class EntityConstructorBuilder {
 
-    private final Map<JoinAttribute, JoinInfo> joins = new ConcurrentHashMap<>();
+    private final Map<JoinAttribute, JoinIndex> joins = new ConcurrentHashMap<>();
 
     private final EntityType root;
     private final Metamodel metamodel;
@@ -27,9 +30,9 @@ public final class EntityConstructorBuilder {
     }
 
 
-    /// 处理 SelectEntity，创建 ObjectConstructor
+    /// 处理 SelectEntity，根据类型创建对应的 ValueConstructor
     ///
-    /// @return ObjectConstructor 实例
+    /// @return ValueConstructor 实例
     public ValueConstructor build() {
         return build(paths, root, 0);
     }
@@ -40,8 +43,8 @@ public final class EntityConstructorBuilder {
             if (attr instanceof EntitySchemaAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                 if (sub != null) {
-                    JoinInfo joinInfo = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinInfo.rightTableIndex());
+                    JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
+                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinIndex.rightTableIndex());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
@@ -53,8 +56,8 @@ public final class EntityConstructorBuilder {
         if (schema.type().isInterface()) {
             return new JdkProxyConstructor(schema.type(), bindings);
         } else if (schema.type().isRecord()) {
-            // TODO 改进message
-            throw new UnsupportedOperationException();
+            throw new UnsupportedOperationException(
+                    "Record type '" + schema.type() + "' is not supported in entity constructor, use RecordConstructor instead");
         } else {
             return new ObjectConstructor(schema.type(), bindings);
         }
@@ -62,8 +65,8 @@ public final class EntityConstructorBuilder {
     }
 
 
-    private JoinInfo newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
-        return new JoinInfo(JoinType.LEFT,
+    private JoinIndex newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
+        return new JoinIndex(JoinType.LEFT,
                 leftTableIndex,
                 joins.size() + 1,
                 metamodel.getEntity(joinAttribute.getTargetEntityType().type()),

@@ -2,7 +2,6 @@ package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.meta.JoinAttribute;
 
 /// Join 关系描述
 ///
@@ -11,15 +10,15 @@ import io.github.nextentity.core.meta.JoinAttribute;
 ///
 /// @param type               Join 类型
 /// @param leftTableIndex     左表索引（指向已存在的表实例）
-/// 0 = 主表，>0 = join 表索引
+///                            0 = 主表，>0 = join 表索引
 /// @param rightTableIndex    右表索引（此次 join 产生的表索引）
-/// 必须 >0，因为 join 产生的表不是主表
+///                            必须 >0，因为 join 产生的表不是主表
 /// @param rightEntity        右表 Entity 类型
-/// @param leftJoinAttribute  左表连接字段（外键）
-/// @param rightJoinAttribute 右表连接字段（主键或关联字段）
+/// @param leftJoinAttribute  左表连接字段
+/// @param rightJoinAttribute 右表连接字段
 /// @author HuangChengwei
 /// @since 2.2.2
-public record JoinInfo(
+public record JoinIndex(
         JoinType type,
         int leftTableIndex,
         int rightTableIndex,

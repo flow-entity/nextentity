@@ -19,6 +19,7 @@ import java.util.Map;
 /// @since 2.1.0
 public class EntityAttributeLoadFunction extends LazyLoaderFunction {
 
+    /// 执行实体类型的批量加载查询
     @Override
     public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
 

@@ -13,8 +13,8 @@ import java.util.List;
 /// @since 2.2.2
 public record SingleValueConstructor(List<Column> columns) implements ValueConstructor {
 
-    public SingleValueConstructor(Column columns) {
-        this(List.of(columns));
+    public SingleValueConstructor(Column column) {
+        this(List.of(column));
     }
 
     @Override

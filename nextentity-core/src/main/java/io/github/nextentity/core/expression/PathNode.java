@@ -27,7 +27,7 @@ import java.util.stream.Stream;
 public final class PathNode implements ExpressionNode, ImmutableArray<String> {
 
     private final String[] path;
-    private transient Attribute attribute;
+    private final transient Attribute attribute;
 
     /// 使用指定的路径段和属性创建 PathNode。
     ///

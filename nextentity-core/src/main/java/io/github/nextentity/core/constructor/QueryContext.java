@@ -1,6 +1,7 @@
 package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.ExpressionTypeResolver;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.expression.*;
@@ -14,8 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /// 查询上下文，负责从 ResultSet 构造查询结果对象。
 ///
-/// 持有 ValueConstructor 实例，通过 ConstructorSelector 根据 Select 类型
-/// 创建对应的构造器（ObjectConstructor / SingleValueConstructor / ArrayConstructor）。
+/// 持有 ValueConstructor 实例，通过 ConstructInterceptor 根据 Select 类型
+/// 创建对应的构造器（ObjectConstructor / RecordConstructor / JdkProxyConstructor 等）。
 /// 对于 SelectProjection 类型，支持 LAZY 加载属性的批量加载。
 ///
 /// @author HuangChengwei
@@ -31,7 +32,7 @@ public class QueryContext {
 
     protected QueryStructure structure;
 
-    protected boolean expandReferencePath;
+    protected boolean expandReferencePath;// TODO DELETE
 
     protected boolean enableLazyloading = false;
 
@@ -45,6 +46,10 @@ public class QueryContext {
     }
 
     /// 存储懒加载属性元数据供批量加载使用
+    ///
+    /// @param attribute         投影属性元数据
+    /// @param sourceAttribute   源实体属性（外键所在属性）
+    /// @param targetIdAttribute 目标实体的 ID 属性
     public record LazyAttributeInfo(
             ProjectionSchemaAttribute attribute,
             EntityBasicAttribute sourceAttribute,
@@ -82,7 +87,7 @@ public class QueryContext {
             case SelectExpression selectExpression -> newConstructor(entityType, selectExpression.expression());
             case SelectExpressions selectExpressions -> newConstructor(entityType, selectExpressions);
             case SelectNested selectNested -> newConstructor(entityType, selectNested);
-            case null -> throw new IllegalStateException(); // TODO 改进异常类型和消息
+            case null -> throw new ConfigurationException("Query select clause must not be null");
         };
     }
 
@@ -155,11 +160,11 @@ public class QueryContext {
         return context;
     }
 
-    private void setEntityType(EntityType entityType) {
+    public void setEntityType(EntityType entityType) {
         this.entityType = entityType;
     }
 
-    public static QueryContext newQueryContext(QueryConfig descriptor) {
+    private static QueryContext newQueryContext(QueryConfig descriptor) {
         return new QueryContext(descriptor);
     }
 

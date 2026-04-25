@@ -19,6 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 /// 负责创建 AttributeLoader，首次访问时触发批量加载。
 /// 内部持有外键列和批量加载器，不需要 ArrayConstructor 包装外键。
 ///
+/// 线程安全：使用 ConcurrentHashMap 收集外键，synchronized(cache) 保护批量加载过程，
+/// 确保同一外键仅触发一次查询。
+///
 /// @author HuangChengwei
 /// @since 2.2.2
 public class LazyValueConstructor implements ValueConstructor {
@@ -31,6 +34,9 @@ public class LazyValueConstructor implements ValueConstructor {
     private final Map<Object, Object> cache = new NullableConcurrentMap<>();
     private final List<Column> columns;
 
+    /// @param config    查询配置
+    /// @param attribute 投影属性元数据
+    /// @param column    外键列
     public LazyValueConstructor(QueryConfig config, ProjectionSchemaAttribute attribute, Column column) {
         this.attribute = attribute;
         this.queryConfig = config;
@@ -41,6 +47,7 @@ public class LazyValueConstructor implements ValueConstructor {
 
     }
 
+    /// 懒加载代理实现，首次调用 load() 时触发批量查询
     private class AttributeLoaderImpl implements AttributeLoader {
         private final Object foreignKey;
 
@@ -120,6 +127,7 @@ public class LazyValueConstructor implements ValueConstructor {
         return columns;
     }
 
+    /// 构造 AttributeLoader，收集外键供批量加载
     @Override
     public AttributeLoader construct(Arguments arguments) {
         EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();

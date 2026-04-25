@@ -10,18 +10,18 @@ import java.util.Objects;
 
 /// 对象构造器
 ///
-/// 实现 ValueConstructor，持有 PropertyBinding[]。
-/// 每个绑定关联一个属性和一个值构造器。
-/// 支持嵌套构造（值构造器可以是 ObjectConstructor）。
+/// 用于具体类（非接口、非 Record）的对象构造。
+/// 通过无参构造函数创建实例，再通过 setter 设置属性值。
+/// 当所有属性值均为 null 时，返回 null 而非构造空实例。
 ///
-/// 对于接口类型，使用代理方式构造实例；
-/// 对于具体类/Record，使用构造函数 + setter 方式构造。
+/// 接口类型请使用 {@link ProxyConstructor}，
+/// Record 类型请使用 {@link RecordConstructor}。
 ///
 /// @author HuangChengwei
 /// @since 2.2.2
 public class ObjectConstructor extends AbstractObjectConstructor {
 
-    /// 缓存的 Constructor（接口类型为 null）
+    /// 缓存的无参构造函数
     private final Constructor<?> constructor;
 
     public ObjectConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {

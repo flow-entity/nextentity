@@ -9,9 +9,9 @@ import java.util.Map;
 
 /// 代理构造器抽象基类
 ///
-/// 统一 JDK/CGLIB 代理构造器的公共逻辑：
-/// - 从 ArrayConstructor 获取值数组
-/// - 根据 getter 索引提取值并构建 Map<Method, Object>
+/// 统一 JDK 动态代理 / CGLIB 代理构造器的公共逻辑：
+/// - 遍历 PropertyBinding，通过各属性的值构造器获取值
+/// - 构建 Map<Method, Object> 映射（getter → 值）
 /// - 子类实现 createProxy() 创建具体代理类型
 ///
 /// @author HuangChengwei
