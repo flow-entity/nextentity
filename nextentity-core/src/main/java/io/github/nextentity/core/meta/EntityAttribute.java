@@ -16,7 +16,7 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 ///
 /// @see EntityBasicAttribute
 /// @see EntitySchemaAttribute
-public sealed interface EntityAttribute extends Attribute, SelectItem
+public sealed interface EntityAttribute extends MetamodelAttribute, SelectItem
         permits EntityBasicAttribute, EntitySchemaAttribute {
 
     /// 获取此属性在查询表达式中的路径节点。

@@ -15,7 +15,7 @@ import io.github.nextentity.core.reflect.schema.Attribute;
 /// @see EntityAttribute
 /// @see ProjectionSchema
 public sealed interface ProjectionAttribute
-        extends Attribute permits
+        extends MetamodelAttribute permits
         ProjectionBasicAttribute,
         ProjectionJoinAttribute,
         ProjectionSchemaAttribute {
