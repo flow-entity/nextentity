@@ -10,8 +10,6 @@ import java.util.List;
 
 /// 拦截器选择器，按 order 排序并选择第一个 supports=true 的拦截器
 public class InterceptorSelector<T extends Interceptor<? super QueryContext>> {
-    private static final InterceptorSelector<ConstructInterceptor> CONSTRUCT_INTERCEPTOR
-            = new InterceptorSelector<>(List.of(JdkProxyInterceptor.of()));
 
     private final List<T> interceptors;
 
@@ -19,10 +17,6 @@ public class InterceptorSelector<T extends Interceptor<? super QueryContext>> {
         this.interceptors = interceptors.stream()
                 .sorted(Comparator.comparingInt(Interceptor::order))
                 .toList();
-    }
-
-    public static ConstructInterceptor selectConstructor(QueryContext context, Selected select) {
-        return CONSTRUCT_INTERCEPTOR.select(context, select);
     }
 
     public static InterceptorSelector<ConstructInterceptor> empty() {

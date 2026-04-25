@@ -32,7 +32,7 @@ public class QueryContext {
 
     protected QueryStructure structure;
 
-    protected boolean enableLazyLoading = false;
+    protected boolean enableLazyLoading = true;
 
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
@@ -69,10 +69,10 @@ public class QueryContext {
     }
 
     private ValueConstructor newConstructor(EntityType entityType, Selected select) {
-        ConstructInterceptor interceptor = config.constructors().select(this, select);
         if (select instanceof SelectProjection selectProjection) {
             projection = entityType.getProjection(selectProjection.type());
         }
+        ConstructInterceptor interceptor = config.constructors().select(this, select);
         if (interceptor != null) {
             ValueConstructor intercept = interceptor.intercept(this, select);
             if (intercept != null) {

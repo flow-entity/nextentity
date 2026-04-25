@@ -48,22 +48,25 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         if (!context.isEnableLazyLoading()) {
             return false;
         }
-        MetamodelSchema<?> schema = context.getSchema();
-        if (schema == null) {
-            return false;
-        }
+        if (select instanceof SelectProjection selectProjection) {
+            MetamodelSchema<?> schema = context.getEntityType().getProjection(selectProjection.type());
+            if (schema == null) {
+                return false;
+            }
 
-        // 只处理有懒加载字段的投影
-        if (schema.hasLazyAttribute()) {
-            Class<?> type = schema.type();
-            // 只处理普通类（非 interface、非 record、非 final）
-            return !type.isInterface()
-                   && !type.isRecord()
-                   && !Modifier.isFinal(type.getModifiers())
-                   && isProxyable(type);
-        } else {
-            return isProxyable(schema.type());
+            // 只处理有懒加载字段的投影
+            if (schema.hasLazyAttribute()) {
+                Class<?> type = schema.type();
+                // 只处理普通类（非 interface、非 record、非 final）
+                return !type.isInterface()
+                       && !type.isRecord()
+                       && !Modifier.isFinal(type.getModifiers())
+                       && isProxyable(type);
+            } else {
+                return isProxyable(schema.type());
+            }
         }
+        return false;
     }
 
 

@@ -46,7 +46,11 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     @Override
     public boolean supports(QueryContext context, Selected select) {
         if (select instanceof SelectProjection selectProjection) {
-            ProjectionSchema projection = context.getEntityType().getProjection(selectProjection.type());
+            Class<?> type = selectProjection.type();
+            if (!type.isInterface()) {
+                return false;
+            }
+            ProjectionSchema projection = context.getEntityType().getProjection(type);
             return projection.hasLazyAttribute();
         } else {
             return false;
