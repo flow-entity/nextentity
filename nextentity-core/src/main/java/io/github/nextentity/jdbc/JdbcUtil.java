@@ -97,11 +97,11 @@ public abstract class JdbcUtil {
         int i = 0;
         for (Object arg : args) {
             i++;
-            if (arg instanceof Enum) {
-                arg = ((Enum<?>) arg).ordinal();
+            if (arg instanceof Enum<?> ea) {
+                arg = ea.ordinal();
             }
-            if (arg instanceof TypedParameter) {
-                setNullParam(pst, i, (TypedParameter) arg);
+            if (arg instanceof TypedParameter tp) {
+                setNullParam(pst, i, tp);
             } else {
                 pst.setObject(i, arg);
             }

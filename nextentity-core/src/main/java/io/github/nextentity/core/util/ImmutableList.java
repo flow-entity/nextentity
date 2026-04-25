@@ -81,8 +81,8 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// @param <T>      元素类型
     /// @return 包含可迭代对象元素的不可变列表
     public static <T> ImmutableList<T> ofIterable(Iterable<T> iterable) {
-        return iterable instanceof Collection
-                ? ofCollection((Collection<T>) iterable)
+        return iterable instanceof Collection<T> collection
+                ? ofCollection(collection)
                 : new ImmutableList<>(Iterators.toArray(iterable));
     }
 
@@ -92,8 +92,8 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
     /// @param <T>        元素类型
     /// @return 包含集合元素的不可变列表
     public static <T> @NonNull ImmutableList<T> ofCollection(Collection<T> collection) {
-        if (collection instanceof ImmutableList) {
-            return (ImmutableList<T>) collection;
+        if (collection instanceof ImmutableList<T> list) {
+            return list;
         } else if (collection.isEmpty()) {
             return empty();
         }

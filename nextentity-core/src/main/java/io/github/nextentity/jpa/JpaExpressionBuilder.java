@@ -187,8 +187,8 @@ public class JpaExpressionBuilder {
     }
 
     private Predicate toPredicate(Expression<?> result) {
-        if (result instanceof Predicate) {
-            return (Predicate) result;
+        if (result instanceof Predicate predicate) {
+            return predicate;
         }
         return cb.isTrue(cast(result));
     }

@@ -24,8 +24,8 @@ public class AttributeConverterWrapper<X, Y> implements ValueConverter<X, Y> {
     }
 
     public static ValueConverter<?, ?> of(AttributeConverter<?, ?> converter) {
-        if (converter instanceof ValueConverter) {
-            return (ValueConverter<?, ?>) converter;
+        if (converter instanceof ValueConverter<?,?> result) {
+            return result;
         }
         return new AttributeConverterWrapper<>(converter);
     }

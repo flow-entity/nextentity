@@ -53,10 +53,10 @@ public class Iterators {
     /// @return size if iterable is Collection or Sizeable otherwise -1
     ///
     public static int sizeOf(Iterable<?> iterable) {
-        if (iterable instanceof Collection<?>) {
-            return ((Collection<?>) iterable).size();
-        } else if (iterable instanceof Sizeable) {
-            return ((Sizeable) iterable).size();
+        if (iterable instanceof Collection<?> collection) {
+            return collection.size();
+        } else if (iterable instanceof Sizeable sizeable) {
+            return sizeable.size();
         }
         return -1;
     }

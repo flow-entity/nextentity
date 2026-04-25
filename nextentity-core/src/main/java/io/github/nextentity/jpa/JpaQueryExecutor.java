@@ -102,8 +102,8 @@ public class JpaQueryExecutor implements QueryExecutor {
         if (expression instanceof QueryStructure) {
             return true;
         }
-        if (expression instanceof OperatorNode) {
-            List<? extends ExpressionNode> expressions = ((OperatorNode) expression).operands();
+        if (expression instanceof OperatorNode operator) {
+            List<? extends ExpressionNode> expressions = operator.operands();
             return hasSubQuery(expressions);
         }
         return false;
@@ -151,8 +151,8 @@ public class JpaQueryExecutor implements QueryExecutor {
             return resultList
                     .stream()
                     .map(it -> {
-                        if (it instanceof Object[]) {
-                            return (Object[]) it;
+                        if (it instanceof Object[] objects) {
+                            return objects;
                         }
                         return new Object[]{it};
                     })
@@ -305,9 +305,8 @@ public class JpaQueryExecutor implements QueryExecutor {
         protected List<?> getResultList() {
             Selected select = structure.select();
             setDistinct(select);
-            if (select instanceof SelectEntity) {
-                Collection<? extends PathNode> attributes = ((SelectEntity) select)
-                        .fetch();
+            if (select instanceof SelectEntity selectEntity) {
+                Collection<? extends PathNode> attributes = selectEntity.fetch();
                 setFetch(attributes);
             }
             setWhere(structure.where());

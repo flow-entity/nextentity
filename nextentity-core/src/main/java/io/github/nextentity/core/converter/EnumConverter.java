@@ -22,17 +22,17 @@ public class EnumConverter implements TypeConverter {
         if (!targetType.isEnum() || input == null || targetType.isInstance(input)) {
             return input;
         }
-        if (input instanceof String) {
+        if (input instanceof String string) {
             try {
-                return ReflectUtil.getEnum(targetType, (String) input);
+                return ReflectUtil.getEnum(targetType, string);
             } catch (Exception e) {
                 log.warn("Enum conversion failed: {} -> {}", input, targetType, e);
             }
         }
         Object num = NumberConverter.of().convert(input, Integer.class);
-        if (num instanceof Integer) {
+        if (num instanceof Integer integer) {
             try {
-                return ReflectUtil.getEnum(targetType, (Integer) num);
+                return ReflectUtil.getEnum(targetType, integer);
             } catch (Exception e) {
                 log.warn("Enum conversion failed: {} -> {}", num, targetType, e);
             }

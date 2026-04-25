@@ -29,14 +29,14 @@ public class ExpressionTypeResolver {
 
 
     public static Class<?> getExpressionType(ExpressionNode expression, EntityType entityType) {
-        if (expression instanceof PathNode) {
-            return getColumnType((PathNode) expression, entityType);
-        } else if (expression instanceof LiteralNode) {
-            return getLiteralType((LiteralNode) expression);
-        } else if (expression instanceof OperatorNode) {
-            return getOperationType((OperatorNode) expression, entityType);
-        } else if (expression instanceof QueryStructure) {
-            return getSubQueryType((QueryStructure) expression, entityType);
+        if (expression instanceof PathNode path) {
+            return getColumnType(path, entityType);
+        } else if (expression instanceof LiteralNode literal) {
+            return getLiteralType(literal);
+        } else if (expression instanceof OperatorNode operator) {
+            return getOperationType(operator, entityType);
+        } else if (expression instanceof QueryStructure structure) {
+            return getSubQueryType(structure, entityType);
         }
         return Object.class;
     }
