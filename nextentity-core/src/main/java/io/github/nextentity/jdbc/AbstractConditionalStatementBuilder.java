@@ -148,19 +148,6 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         }
     }
 
-    /// 追加 JOIN 子句（LEFT JOIN ... ON ...）
-    protected void appendJoin() {
-        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
-            JoinAttribute k = entry.getKey();
-            Integer v = entry.getValue();
-            sql.append(LEFT_JOIN);
-            appendTable(sql, k.getTargetEntityType());
-            appendTableAlias(k, v);
-            sql.append(ON);
-            appendJoinCondition(sql, k, v);
-        }
-    }
-
     /// 返回主表名（已引用）
     protected String getTableName() {
         StringBuilder sb = new StringBuilder();

@@ -7,7 +7,7 @@ import jakarta.persistence.FetchType;
 ///
 /// 由 {@link EntitySchemaAttribute} 和 {@link ProjectionSchemaAttribute} 共同实现，
 /// 用于统一判断属性是否需要延迟加载。
-public sealed interface JoinAttribute extends SchemaAttribute
+public sealed interface JoinAttribute extends SchemaAttribute, MetamodelAttribute
         permits EntitySchemaAttribute, ProjectionJoinAttribute, ProjectionSchemaAttribute {
 
 

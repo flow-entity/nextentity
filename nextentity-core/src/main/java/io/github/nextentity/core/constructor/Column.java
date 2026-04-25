@@ -27,7 +27,7 @@ public interface Column {
         ProjectionSchema projectionSchema = attribute.declareBy();
         EntityBasicAttribute basicAttribute = attribute.getEntityAttribute();
         if (projectionSchema instanceof JoinAttribute target) {
-            return new Joined(attribute.getEntityAttribute(), target);
+            return new Joined(basicAttribute, target);
         } else {
             return new Expr(basicAttribute.path(), basicAttribute.valueConvertor());
         }
@@ -48,7 +48,7 @@ public interface Column {
 
     record Joined(
             EntityBasicAttribute attribute,
-            JoinAttribute targetAttr
+            JoinAttribute join
     ) implements Column {
 
         @Override

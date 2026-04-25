@@ -131,11 +131,9 @@ public abstract class AbstractStatementBuilder {
 
     protected void appendExpression(Column column) {
         ExpressionNode source = column.source();
-        if (column instanceof Column.Joined attr) {
-            JoinAttribute joinAttribute = attr.targetAttr();
-            EntityBasicAttribute attribute = attr.attribute();
-            Integer index = joins.get(joinAttribute);
-            appendTableAlias(joinAttribute, index).append('.')
+        if (column instanceof Column.Joined(var attribute, var join)) {
+            Integer index = joins.get(join);
+            appendTableAlias(join, index).append('.')
                     .append(leftQuotedIdentifier())
                     .append(attribute.columnName())
                     .append(rightQuotedIdentifier());
@@ -511,17 +509,17 @@ public abstract class AbstractStatementBuilder {
     }
 
     protected void addJoin(Column column) {
-        if (column instanceof Column.Joined attr) {
-            addJoinAttribute(attr.targetAttr());
+        if (column instanceof Column.Joined joined) {
+            addJoinAttribute(joined.join());
         } else {
             addJoin(column.source());
         }
     }
 
     protected void addJoin(ExpressionNode select) {
-        if (select instanceof PathNode) {
+        if (select instanceof PathNode path) {
             EntityType entityType = getEntityType();
-            Attribute attribute = entityType.getAttribute((PathNode) select);
+            Attribute attribute = entityType.getAttribute(path);
             addJoin(attribute);
         } else if (select instanceof OperatorNode) {
             addJoin(((OperatorNode) select).operands());
@@ -550,18 +548,18 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
-    protected void addJoinPrimitive(Collection<? extends Column> operands) {
-        if (operands != null && !operands.isEmpty()) {
-            for (Column operand : operands) {
-                addJoin(operand);
+    protected void addJoinPrimitive(Collection<? extends Column> columns) {
+        if (columns != null && !columns.isEmpty()) {
+            for (Column column : columns) {
+                addJoin(column);
             }
         }
     }
 
-    protected void addJoin(List<? extends ExpressionNode> operands) {
-        if (operands != null && !operands.isEmpty()) {
-            for (ExpressionNode operand : operands) {
-                addJoin(operand);
+    protected void addJoin(List<? extends ExpressionNode> expressions) {
+        if (expressions != null && !expressions.isEmpty()) {
+            for (ExpressionNode expression : expressions) {
+                addJoin(expression);
             }
         }
     }

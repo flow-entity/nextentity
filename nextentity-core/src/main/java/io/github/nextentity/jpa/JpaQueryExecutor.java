@@ -7,17 +7,20 @@ import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.expression.From;
 import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.From;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 ///
 /// JPA 查询执行器，使用 JPA Criteria API 执行查询操作。
@@ -66,7 +69,7 @@ public class JpaQueryExecutor implements QueryExecutor {
     }
 
     private boolean requiredNativeQuery(@NonNull QueryContext context, @NonNull QueryStructure queryStructure) {
-        From from = queryStructure.from();
+        var from = queryStructure.from();
         return from instanceof FromSubQuery
                || context.getMetamodel().getEntity(((FromEntity) from).type()) instanceof SubQueryEntityType
                || hasSubQuery(queryStructure);
@@ -133,6 +136,7 @@ public class JpaQueryExecutor implements QueryExecutor {
     class ObjectArrayBuilder extends Builder<Object[]> {
 
         private final Collection<? extends Column> selects;
+        private final Map<JoinAttribute, From<?, ?>> joins = new HashMap<>();
 
         public ObjectArrayBuilder(Root<?> root,
                                   CriteriaBuilder cb,
@@ -170,16 +174,52 @@ public class JpaQueryExecutor implements QueryExecutor {
         }
 
         private Expression<?> getExpression(Column column) {
-            if (column instanceof Column.Joined(EntityBasicAttribute attribute, JoinAttribute targetAttr)) {
-                EntityType entityType = targetAttr.getTargetEntityType();
-                if (entityType instanceof EntitySchemaAttribute esa) {
-                    PathNode strings = esa.path().get(attribute.name());
-                    return this.toExpression(strings);
-                } else {
-                    System.out.println(123);
-                }
+            if (column instanceof Column.Joined(var attribute, var join)) {
+                return getJoinedExpression(attribute, join);
             }
             return this.toExpression(column.source());
+        }
+
+        private Expression<?> getJoinedExpression(EntityBasicAttribute attribute,
+                                                  JoinAttribute join) {
+            return getJoin(join).get(attribute.name());
+        }
+
+        private From<?, ?> getJoin(JoinAttribute join) {
+            return joins.computeIfAbsent(join, this::createJoin);
+        }
+
+        private From<?, ?> createJoin(JoinAttribute join) {
+            return switch (join) {
+                case ProjectionJoinAttribute projectionJoin -> createProjectionJoin(projectionJoin);
+                case ProjectionSchemaAttribute projectionSchema -> createSchemaJoin(
+                        projectionSchema,
+                        projectionSchema.getEntityAttribute().name()
+                );
+                case EntitySchemaAttribute entitySchema -> createSchemaJoin(entitySchema, entitySchema.name());
+            };
+        }
+
+        private From<?, ?> createProjectionJoin(ProjectionJoinAttribute projectionJoin) {
+            From<?, ?> left = resolveParentFrom(projectionJoin.declareBy());
+            Join<?, ?> join = left.join(projectionJoin.getTargetEntityType().type(), JoinType.LEFT);
+            join.on(cb.equal(
+                    left.get(projectionJoin.getSourceAttribute().name()),
+                    join.get(projectionJoin.getTargetAttribute().name())
+            ));
+            return join;
+        }
+
+        private From<?, ?> createSchemaJoin(JoinAttribute join, String attributeName) {
+            From<?, ?> left = resolveParentFrom(join.declareBy());
+            return left.join(attributeName, JoinType.LEFT);
+        }
+
+        private From<?, ?> resolveParentFrom(Schema schema) {
+            if (schema instanceof JoinAttribute join) {
+                return getJoin(join);
+            }
+            return root;
         }
 
     }
