@@ -140,7 +140,9 @@ public abstract class AbstractStatementBuilder {
 
     protected void appendExpression(Column column) {
         ExpressionNode source = column.source();
-        if (source instanceof PathNode pathNode) {
+        if (column instanceof Column.JoinedAttr attr) {
+            appendAttribute(attr.attribute());
+        } else if (source instanceof PathNode pathNode) {
             appendAttribute(getEntityType().getAttribute(pathNode));
         } else {
             appendExpression(source);
@@ -529,7 +531,11 @@ public abstract class AbstractStatementBuilder {
     }
 
     protected void addJoin(Column column) {
-        addJoin(column.source());
+        if (column instanceof Column.JoinedAttr attr) {
+            addJoin((Attribute) attr.attribute());
+        } else {
+            addJoin(column.source());
+        }
     }
 
     protected void addJoin(ExpressionNode select) {

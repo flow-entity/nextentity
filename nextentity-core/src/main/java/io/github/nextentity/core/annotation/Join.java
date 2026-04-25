@@ -1,7 +1,5 @@
 package io.github.nextentity.core.annotation;
 
-import jakarta.persistence.FetchType;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -23,5 +21,4 @@ public @interface Join {
 
     String targetAttribute();
 
-    FetchType fetch() default FetchType.LAZY;
 }

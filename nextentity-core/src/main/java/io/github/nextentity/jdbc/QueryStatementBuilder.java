@@ -1,17 +1,14 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.LockModeType;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -89,7 +86,8 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
         }
         String join = NONE_DELIMITER;
         int columnIndex = 0;
-        for (Column expression : constructor.columns()) {
+        List<Column> columns = constructor.columns();
+        for (Column expression : columns) {
             sql.append(join);
             appendExpression(expression);
             appendSelectAlias(expression, columnIndex++);

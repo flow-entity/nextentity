@@ -1,7 +1,12 @@
 package io.github.nextentity.integration.dto;
 
+import io.github.nextentity.core.annotation.Fetch;
 import io.github.nextentity.core.annotation.Join;
 import io.github.nextentity.integration.entity.Customer;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 
 import java.math.BigDecimal;
 
@@ -38,5 +43,7 @@ public interface OrderWithCustomer {
             sourceAttribute = "customerId",
             targetAttribute = "id"
     )
+    @ManyToOne
+    @Fetch(FetchType.LAZY)
     Customer getCustomer();
 }
