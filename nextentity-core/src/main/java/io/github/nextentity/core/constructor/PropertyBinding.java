@@ -1,6 +1,6 @@
 package io.github.nextentity.core.constructor;
 
-import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 
 import java.util.stream.Stream;
 
@@ -10,15 +10,15 @@ import java.util.stream.Stream;
 /// 与 ValueConstructor 形成组合关系：ObjectConstructor 持有 PropertyBinding[]，
 /// PropertyBinding 持有 ValueConstructor。
 ///
-/// @param attribute        属性元数据（使用现有 Attribute 接口）
+/// @param attribute        属性元数据（使用现有 MetamodelAttribute 接口）
 /// @param valueConstructor 值构造器（负责构造值）
 /// @author HuangChengwei
 /// @since 2.2.2
-public record PropertyBinding(Attribute attribute, ValueConstructor valueConstructor) {
+public record PropertyBinding(MetamodelAttribute attribute, ValueConstructor valueConstructor) {
 
-    /// 获取 Attribute（包含 setter、getter、type 等元数据）
+    /// 获取 MetamodelAttribute（包含 setter、getter、type 等元数据）
     @Override
-    public Attribute attribute() {
+    public MetamodelAttribute attribute() {
         return attribute;
     }
 

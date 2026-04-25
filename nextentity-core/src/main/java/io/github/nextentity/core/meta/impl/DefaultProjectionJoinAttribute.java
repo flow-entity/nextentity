@@ -10,7 +10,6 @@ import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultProjectionJoinAttribute
         extends DefaultProjectionSchema
@@ -43,7 +42,6 @@ public class DefaultProjectionJoinAttribute
     protected AttributeSet<ProjectionAttribute> createAttributes() {
         ProjectionSchema projection = target.getProjection(type());
         ArrayList<ProjectionAttribute> result = new ArrayList<>();
-        AtomicInteger ordinal = new AtomicInteger();
         for (ProjectionAttribute projectionAttribute : projection.getAttributes()) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,

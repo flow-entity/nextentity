@@ -1,8 +1,6 @@
 package io.github.nextentity.core.reflect.schema.impl;
 
-import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.exception.ReflectiveException;
-import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.Accessor;
 
 import java.beans.BeanInfo;

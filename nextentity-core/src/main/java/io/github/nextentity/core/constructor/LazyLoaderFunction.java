@@ -5,8 +5,8 @@ import io.github.nextentity.core.expression.LiteralNode;
 import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
-import io.github.nextentity.core.reflect.schema.Attribute;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -37,7 +37,7 @@ public abstract class LazyLoaderFunction {
     /// @param keyAttribute 用于提取键值的属性
     /// @param results      查询结果列表
     /// @return 键值 → 结果对象的映射
-    protected Map<Object, Object> buildCacheMap(Attribute keyAttribute, List<?> results) {
+    protected Map<Object, Object> buildCacheMap(MetamodelAttribute keyAttribute, List<?> results) {
         Map<Object, Object> cache = new HashMap<>();
         for (Object entity : results) {
             if (entity != null) {
