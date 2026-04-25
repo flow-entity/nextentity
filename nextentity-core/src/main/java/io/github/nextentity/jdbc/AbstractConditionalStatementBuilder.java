@@ -107,7 +107,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         sql.append(delimiter);
         if (tableInfo instanceof JoinTableInfoImpl impl) {
             appendTable(sql, impl.attribute.getTargetEntityType());
-            appendTableAlias(impl.index);
+            appendTableAlias(impl.attribute, impl.index);
         } else {
             sql.append(tableInfo.tableName()).append(" ").append(tableInfo.tableAlias());
         }
@@ -130,27 +130,17 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         Object declared = k.declareBy();
         if (declared instanceof JoinAttribute schemaAttribute) {
             Integer parentIndex = joins.get(schemaAttribute);
-            appendTableAliasTo(sb, parentIndex);
+            appendTableAliasTo(sb, k, parentIndex);
         } else {
             sb.append(fromAlias);
         }
         if (k.isObject()) {
             sb.append(".").append(k.getSourceAttribute().columnName()).append("=");
-            appendTableAliasTo(sb, v);
+            appendTableAliasTo(sb,k, v);
             sb.append(".").append(k.getTargetAttribute().columnName());
         } else {
             throw new IllegalStateException();
         }
-    }
-
-    /// 构建表别名（追加到指定的 StringBuilder）
-    protected void appendTableAliasTo(StringBuilder sb, Integer index) {
-        String tableName = entityType.type().getSimpleName();
-        sb.append(shortAlias(tableName));
-        if (subIndex > 0) {
-            sb.append(subIndex).append("_");
-        }
-        sb.append(index).append("_");
     }
 
     /// 追加 WHERE 子句（委托给方言）
@@ -173,7 +163,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             Integer v = entry.getValue();
             sql.append(delimiter);
             appendTable(sql, k.getTargetEntityType());
-            appendTableAlias(v);
+            appendTableAlias(k, v);
             delimiter = ", ";
         }
     }
@@ -185,7 +175,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             Integer v = entry.getValue();
             sql.append(LEFT_JOIN);
             appendTable(sql, k.getTargetEntityType());
-            appendTableAlias(v);
+            appendTableAlias(k, v);
             sql.append(ON);
             appendJoinConditionTo(sql, k, v);
         }
@@ -219,7 +209,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         @Override
         public String tableAlias() {
             StringBuilder sb = new StringBuilder();
-            appendTableAliasTo(sb, index);
+            appendTableAliasTo(sb, attribute, index);
             return sb.toString();
         }
     }

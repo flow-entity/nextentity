@@ -132,11 +132,9 @@ public class H2Dialect implements SqlDialect {
             // 追加 WHERE 条件（包含 JOIN 条件和用户条件）
             sql.append(" where ");
             delimiter = "";
-            int index = 0;
             for (String condition : context.joinConditions()) {
                 sql.append(delimiter).append(condition);
                 delimiter = " and ";
-                index++;
             }
             if (!context.isNullOrTrue(context.whereCondition())) {
                 sql.append(delimiter);

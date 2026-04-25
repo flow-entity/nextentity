@@ -1,6 +1,5 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.Column;
 import io.github.nextentity.core.constructor.QueryContext;
@@ -128,14 +127,6 @@ public abstract class AbstractStatementBuilder {
             node = node.operate(Operator.EQ, LiteralNode.TRUE);
         }
         appendExpression(node);
-    }
-
-    protected void appendExpression(SelectItem selectItem) {
-        if (selectItem instanceof EntityAttribute entityAttribute) {
-            appendAttribute(entityAttribute);
-        } else {
-            appendExpression(selectItem.expression());
-        }
     }
 
     protected void appendExpression(Column column) {
@@ -468,7 +459,7 @@ public abstract class AbstractStatementBuilder {
         } else {
             JoinAttribute join = (JoinAttribute) attribute.declareBy();
             Integer index = joins.get(join);
-            appendTableAlias(index).append('.');
+            appendTableAlias(join, index).append('.');
         }
         String columnName;
         if (attribute instanceof EntityBasicAttribute eba) {
@@ -489,7 +480,7 @@ public abstract class AbstractStatementBuilder {
             Integer v = entry.getValue();
             sql.append(LEFT_JOIN);
             appendTable(sql, k.getTargetEntityType());
-            appendTableAlias(v);
+            appendTableAlias(k, v);
             sql.append(ON);
             appendJoinCondition(k, v);
         }
@@ -506,7 +497,7 @@ public abstract class AbstractStatementBuilder {
         Schema declared = k.declareBy();
         if (declared instanceof JoinAttribute schemaAttribute) {
             Integer parentIndex = joins.get(schemaAttribute);
-            appendTableAlias(parentIndex);
+            appendTableAlias(schemaAttribute, parentIndex);
         } else {
             appendFromAlias(sql);
         }
@@ -514,7 +505,7 @@ public abstract class AbstractStatementBuilder {
             EntityBasicAttribute source = k.getSourceAttribute();
             EntityBasicAttribute targeted = k.getTargetAttribute();
             sql.append(".").append(source.columnName()).append("=");
-            appendTableAlias(v);
+            appendTableAlias(k, v);
             String referenced = targeted.columnName();
             sql.append(".").append(referenced);
         } else {
@@ -522,17 +513,9 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
-    protected void addJoin(SelectItem select) {
-        if (select instanceof Attribute attribute) {
-            addJoin(attribute);
-        } else {
-            addJoin(select.expression());
-        }
-    }
-
     protected void addJoin(Column column) {
         if (column instanceof Column.JoinedAttr attr) {
-            addJoin((Attribute) attr.attribute());
+            addJoin(attr.attribute());
         } else {
             addJoin(column.source());
         }
@@ -588,15 +571,17 @@ public abstract class AbstractStatementBuilder {
         return expression instanceof OperatorNode ? ((OperatorNode) expression).operator() : null;
     }
 
-    protected StringBuilder appendTableAlias(Integer index) {
-        StringBuilder sql = this.sql;
-        EntityType entityType = getEntityType();
-        String tableName = entityType.type().getSimpleName();
-        StringBuilder append = appendBlank(sql).append(shortAlias(tableName));
+    protected StringBuilder appendTableAlias(JoinAttribute attribute, Integer index) {
+        return appendTableAliasTo(this.sql, attribute, index);
+    }
+
+    protected StringBuilder appendTableAliasTo(StringBuilder sb, JoinAttribute attribute, Integer index) {
+        String tableName = attribute.getTargetEntityType().type().getSimpleName();
+        sb.append(shortAlias(tableName));
         if (subIndex > 0) {
-            sql.append(subIndex).append("_");
+            sb.append(subIndex).append("_");
         }
-        return append.append(index).append("_");
+        return sb.append(index);
     }
 
 }
