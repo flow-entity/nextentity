@@ -100,6 +100,18 @@ class EntityQueryTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
+    void selectPlainDtoProjectionShouldNotReturnProxy(UserRepository userQuery) {
+        UserModel model = userQuery.select(UserModel.class)
+                .where(User::getId).eq(1)
+                .single();
+
+        assertNotNull(model);
+        assertEquals(UserModel.class, model.getClass());
+        assertDoesNotThrow(model::toString);
+    }
+
+    @ParameterizedTest
+    @ArgumentsSource(UserQueryProvider.class)
     void select4(UserRepository userQuery) {
         List<User> list = userQuery.selectDistinct(User::getParentUser).list();
         log.info("{}", list);

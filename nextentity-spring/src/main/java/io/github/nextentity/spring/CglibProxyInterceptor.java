@@ -62,8 +62,6 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
                        && !type.isRecord()
                        && !Modifier.isFinal(type.getModifiers())
                        && isProxyable(type);
-            } else {
-                return isProxyable(schema.type());
             }
         }
         return false;
@@ -143,7 +141,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
                 if (map.containsKey(method)) {
                     return AttributeLoader.loadFromMap(map, method);
                 }
-                return proxy.invokeSuper(proxy, args);
+                return proxy.invokeSuper(obj, args);
             }
         }
 
