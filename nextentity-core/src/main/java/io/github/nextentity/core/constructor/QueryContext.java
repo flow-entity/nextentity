@@ -120,7 +120,7 @@ public class QueryContext {
             converter = IdentityValueConverter.of(ExpressionTypeResolver.getExpressionType(expression, entityType));
         }
 
-        Column column = Column.of(expression, converter);
+        SelectItem column = SelectItem.of(expression, converter);
         return new SingleValueConstructor(column);
     }
 

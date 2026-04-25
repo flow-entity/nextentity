@@ -227,26 +227,4 @@ class OperatorNodeTest {
         }
     }
 
-    @Nested
-    class ExpressionMethod {
-
-        ///
-        /// 测试目标: 验证y expression() returns self
-        /// 测试场景: Call expression() on OperatorNode
-        /// 预期结果: Returns same instance
-        @Test
-        void expression_ReturnsSelf() {
-            // given
-            OperatorNode node = new OperatorNode(
-                    ImmutableList.of(new LiteralNode("a")),
-                    Operator.NOT
-            );
-
-            // when
-            ExpressionNode result = node.expression();
-
-            // then
-            assertThat(result).isSameAs(node);
-        }
-    }
 }

@@ -29,7 +29,7 @@ public record PropertyBinding(MetamodelAttribute attribute, ValueConstructor val
     }
 
     /// 获取所有列（委托给值构造器）
-    public Stream<Column> getColumns() {
+    public Stream<SelectItem> getColumns() {
         return valueConstructor.columns().stream();
     }
 

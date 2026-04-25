@@ -47,7 +47,7 @@ public class ProjectionConstructorBuilder {
             if (attr instanceof JoinAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths == null ? null : paths.get(schemaAttribute.name());
                 if (schemaAttribute.getFetchType() == FetchType.LAZY || supportLazyLoading && sub == null) {
-                    Column column = Column.ofLazy(schemaAttribute);
+                    SelectItem column = SelectItem.ofLazy(schemaAttribute);
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else if (sub != null) {
@@ -55,7 +55,7 @@ public class ProjectionConstructorBuilder {
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof ProjectionBasicAttribute pba) {
-                Column column = Column.of(pba);
+                SelectItem column = SelectItem.of(pba);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }

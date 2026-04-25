@@ -1,6 +1,5 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
@@ -18,7 +17,7 @@ import java.util.Collection;
 public record OperatorNode(
         ImmutableList<ExpressionNode> operands,
         Operator operator
-) implements ExpressionNode, SelectItem {
+) implements ExpressionNode {
 
     /// 将运算符应用于此节点和额外操作数。
     ///
@@ -65,11 +64,4 @@ public record OperatorNode(
         return operands.size() > 2 ? operands.get(2) : null;
     }
 
-    /// 返回此运算符节点作为其自身的表达式。
-    ///
-    /// @return 此节点
-    @Override
-    public ExpressionNode expression() {
-        return this;
-    }
 }

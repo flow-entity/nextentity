@@ -1,7 +1,7 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
@@ -129,16 +129,16 @@ public abstract class AbstractStatementBuilder {
         appendExpression(node);
     }
 
-    protected void appendExpression(Column column) {
+    protected void appendExpression(SelectItem column) {
         switch (column) {
-            case Column.Joined(var attribute, var join) -> {
+            case SelectItem.Joined(var attribute, var join) -> {
                 Integer index = joins.get(join);
                 appendTableAlias(join, index).append('.')
                         .append(leftQuotedIdentifier())
                         .append(attribute.columnName())
                         .append(rightQuotedIdentifier());
             }
-            case Column.Expr(var source, var _) -> {
+            case SelectItem.Expr(var source, var _) -> {
                 if (source instanceof PathNode pathNode) {
                     appendAttribute(getEntityType().getAttribute(pathNode));
                 } else {
@@ -514,10 +514,10 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
-    protected void addJoin(Column column) {
+    protected void addJoin(SelectItem column) {
         switch (column) {
-            case Column.Joined joined -> addJoinAttribute(joined.join());
-            case Column.Expr(var source, var _) -> addJoin(source);
+            case SelectItem.Joined joined -> addJoinAttribute(joined.join());
+            case SelectItem.Expr(var source, var _) -> addJoin(source);
             case null -> throw new IllegalArgumentException("Column must not be null");
             default -> throw new IllegalArgumentException("Unsupported Column type: " + column.getClass().getName());
         }
@@ -555,9 +555,9 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
-    protected void addJoinPrimitive(Collection<? extends Column> columns) {
+    protected void addJoinPrimitive(Collection<? extends SelectItem> columns) {
         if (columns != null && !columns.isEmpty()) {
-            for (Column column : columns) {
+            for (SelectItem column : columns) {
                 addJoin(column);
             }
         }

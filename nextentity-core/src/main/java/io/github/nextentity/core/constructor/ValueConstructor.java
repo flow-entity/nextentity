@@ -18,7 +18,7 @@ public interface ValueConstructor {
     /// 获取所有列（按 SQL select 顺序）
     ///
     /// @return 列列表
-    List<Column> columns();
+    List<SelectItem> columns();
 
     /// 构造值（按列序消费 Arguments）
     ///

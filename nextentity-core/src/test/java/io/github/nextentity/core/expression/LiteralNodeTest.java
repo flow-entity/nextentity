@@ -216,24 +216,4 @@ class LiteralNodeTest {
         }
     }
 
-    @Nested
-    class ExpressionMethod {
-
-        ///
-        /// 测试目标：验证expression()返回自身
-        /// 测试场景：在LiteralNode上调用expression()
-        /// 预期结果：返回相同的实例
-        ///
-        @Test
-        void expression_ReturnsSelf() {
-            // given
-            LiteralNode node = new LiteralNode("test");
-
-            // when
-            ExpressionNode result = node.expression();
-
-            // then
-            assertThat(result).isSameAs(node);
-        }
-    }
 }

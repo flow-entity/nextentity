@@ -1,6 +1,5 @@
 package io.github.nextentity.jpa;
 
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.*;
 import jakarta.persistence.criteria.*;
@@ -34,18 +33,10 @@ public class JpaExpressionBuilder {
 
     protected final JpaConfig config;
 
-    public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb) {
-        this(root, cb, JpaConfig.DEFAULT);
-    }
-
     public JpaExpressionBuilder(Root<?> root, CriteriaBuilder cb, JpaConfig config) {
         this.root = root;
         this.cb = cb;
         this.config = config;
-    }
-
-    public Expression<?> toExpression(SelectItem selectItem) {
-        return toExpression(selectItem.expression());
     }
 
     public Expression<?> toExpression(ExpressionNode expression) {

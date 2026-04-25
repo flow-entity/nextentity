@@ -35,7 +35,7 @@ public abstract class AbstractObjectConstructor implements ValueConstructor {
     }
 
     @Override
-    public List<Column> columns() {
+    public List<SelectItem> columns() {
         return properties.stream()
                 .flatMap(PropertyBinding::getColumns)
                 .toList();

@@ -41,7 +41,7 @@ public final class EntityConstructorBuilder {
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
-                Column column = Column.of(basicAttribute);
+                SelectItem column = SelectItem.of(basicAttribute);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }

@@ -3,7 +3,7 @@ package io.github.nextentity.jpa;
 import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
@@ -123,7 +123,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         return new EntityBuilder<>(root, cb, query, structure, config).getResultList();
     }
 
-    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, Collection<? extends Column> columns) {
+    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, Collection<? extends SelectItem> columns) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         FromEntity from = (FromEntity) structure.from();
@@ -133,14 +133,14 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     class ObjectArrayBuilder extends Builder<Object[]> {
 
-        private final Collection<? extends Column> selects;
+        private final Collection<? extends SelectItem> selects;
         private final Map<JoinAttribute, From<?, ?>> joins = new HashMap<>();
 
         public ObjectArrayBuilder(Root<?> root,
                                   CriteriaBuilder cb,
                                   CriteriaQuery<Object[]> query,
                                   QueryStructure structure,
-                                  Collection<? extends Column> selects,
+                                  Collection<? extends SelectItem> selects,
                                   JpaConfig config) {
             super(root, cb, query, structure, config);
             this.selects = selects;
@@ -171,12 +171,12 @@ public class JpaQueryExecutor implements QueryExecutor {
             return entityManager.createQuery(select);
         }
 
-        private Expression<?> getExpression(Column column) {
+        private Expression<?> getExpression(SelectItem column) {
             switch (column) {
-                case Column.Joined(var attribute, var join) -> {
+                case SelectItem.Joined(var attribute, var join) -> {
                     return getJoinedExpression(attribute, join);
                 }
-                case Column.Expr(var source, var _) -> {
+                case SelectItem.Expr(var source, var _) -> {
                     return this.toExpression(source);
                 }
                 case null -> throw new IllegalArgumentException("Column must not be null");

@@ -11,9 +11,9 @@ import java.util.List;
 ///
 /// @author HuangChengwei
 /// @since 2.2.2
-public record SingleValueConstructor(List<Column> columns) implements ValueConstructor {
+public record SingleValueConstructor(List<SelectItem> columns) implements ValueConstructor {
 
-    public SingleValueConstructor(Column column) {
+    public SingleValueConstructor(SelectItem column) {
         this(List.of(column));
     }
 

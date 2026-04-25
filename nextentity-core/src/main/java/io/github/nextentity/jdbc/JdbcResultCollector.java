@@ -2,9 +2,8 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.constructor.Column;
+import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.constructor.ValueConstructor;
-import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.ResultCollector;
 
 import java.sql.ResultSet;
@@ -50,7 +49,7 @@ public class JdbcResultCollector implements ResultCollector {
         }
         int columnsCount = resultSet.getMetaData().getColumnCount();
         ValueConstructor constructor = context.newConstructor();
-        Collection<Column> primitives = constructor.columns();
+        Collection<SelectItem> primitives = constructor.columns();
         if (primitives.size() != columnsCount) {
             throw new IllegalStateException(
                     String.format("Column count mismatch: expected %d (from query projection), actual %d (from ResultSet). " +

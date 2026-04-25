@@ -32,12 +32,12 @@ public class LazyValueConstructor implements ValueConstructor {
 
     private final Set<Object> foreignKeys = ConcurrentHashMap.newKeySet();
     private final Map<Object, Object> cache = new NullableConcurrentMap<>();
-    private final List<Column> columns;
+    private final List<SelectItem> columns;
 
     /// @param config    查询配置
     /// @param attribute 投影属性元数据
     /// @param column    外键列
-    public LazyValueConstructor(QueryConfig config, JoinAttribute attribute, Column column) {
+    public LazyValueConstructor(QueryConfig config, JoinAttribute attribute, SelectItem column) {
         this.attribute = attribute;
         this.queryConfig = config;
         this.batchLoaderFunction = attribute.type() == attribute.getTargetEntityType().type()
@@ -123,7 +123,7 @@ public class LazyValueConstructor implements ValueConstructor {
     }
 
     @Override
-    public List<Column> columns() {
+    public List<SelectItem> columns() {
         return columns;
     }
 

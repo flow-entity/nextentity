@@ -21,7 +21,7 @@ public class ArrayConstructor implements ValueConstructor {
     }
 
     @Override
-    public List<Column> columns() {
+    public List<SelectItem> columns() {
         return elements.stream()
                 .map(ValueConstructor::columns)
                 .flatMap(List::stream)
