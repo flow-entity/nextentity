@@ -117,7 +117,7 @@ public class JoinOperationsIntegrationTest {
     ///
     /// 测试s fetching with multiple associations.
     @ParameterizedTest
-    @ArgumentsSource(FastIntegrationTestProvider.class) // TODO use IntegrationTestProvider.class
+    @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should fetch with multiple conditions")
     void shouldFetchWithMultipleConditions(IntegrationTestContext context) {
         // When

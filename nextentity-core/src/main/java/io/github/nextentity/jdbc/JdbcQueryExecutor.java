@@ -63,9 +63,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @Override
     @NonNull
     public <R> List<R> getList(@NonNull QueryContext context) {
-        // JDBC 默认展开引用路径
-        context.setExpandReferencePath(true);
-        // 调用 init 完成初始化
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {

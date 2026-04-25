@@ -130,17 +130,23 @@ public abstract class AbstractStatementBuilder {
     }
 
     protected void appendExpression(Column column) {
-        ExpressionNode source = column.source();
-        if (column instanceof Column.Joined(var attribute, var join)) {
-            Integer index = joins.get(join);
-            appendTableAlias(join, index).append('.')
-                    .append(leftQuotedIdentifier())
-                    .append(attribute.columnName())
-                    .append(rightQuotedIdentifier());
-        } else if (source instanceof PathNode pathNode) {
-            appendAttribute(getEntityType().getAttribute(pathNode));
-        } else {
-            appendExpression(source);
+        switch (column) {
+            case Column.Joined(var attribute, var join) -> {
+                Integer index = joins.get(join);
+                appendTableAlias(join, index).append('.')
+                        .append(leftQuotedIdentifier())
+                        .append(attribute.columnName())
+                        .append(rightQuotedIdentifier());
+            }
+            case Column.Expr(var source, var _) -> {
+                if (source instanceof PathNode pathNode) {
+                    appendAttribute(getEntityType().getAttribute(pathNode));
+                } else {
+                    appendExpression(source);
+                }
+            }
+            case null -> throw new IllegalArgumentException("Column must not be null");
+            default -> throw new IllegalArgumentException("Unsupported Column type: " + column.getClass().getName());
         }
     }
 
@@ -509,10 +515,11 @@ public abstract class AbstractStatementBuilder {
     }
 
     protected void addJoin(Column column) {
-        if (column instanceof Column.Joined joined) {
-            addJoinAttribute(joined.join());
-        } else {
-            addJoin(column.source());
+        switch (column) {
+            case Column.Joined joined -> addJoinAttribute(joined.join());
+            case Column.Expr(var source, var _) -> addJoin(source);
+            case null -> throw new IllegalArgumentException("Column must not be null");
+            default -> throw new IllegalArgumentException("Unsupported Column type: " + column.getClass().getName());
         }
     }
 

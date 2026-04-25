@@ -27,10 +27,10 @@ import java.util.stream.Collectors;
 public class ProjectionAttributeLoadFunction extends LazyLoaderFunction {
 
     @Override
-    public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
+    public Map<Object, Object> apply(LazyValueConstructor constructor, Collection<Object> foreignKeys) {
 
-        JoinAttribute attribute = context.getAttribute();
-        QueryConfig config = context.getQueryConfig();
+        JoinAttribute attribute = constructor.getAttribute();
+        QueryConfig config = constructor.getQueryConfig();
         EntitySchema schemaAttribute = attribute.getTargetEntityType();
 
         EntityType targetEntity = config.metamodel().getEntity(schemaAttribute.type());
@@ -40,9 +40,9 @@ public class ProjectionAttributeLoadFunction extends LazyLoaderFunction {
         ProjectionAttribute projectionAttribute = findProjectionAttribute(projection, targetAttribute);
 
         if (projectionAttribute == null) {
-            return executeTupleQuery(projection, foreignKeys, context);
+            return executeTupleQuery(projection, foreignKeys, constructor);
         } else {
-            return executeProjectionQuery(context, projection, foreignKeys, config, projectionAttribute);
+            return executeProjectionQuery(constructor, projection, foreignKeys, config, projectionAttribute);
         }
     }
 

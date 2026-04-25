@@ -22,15 +22,15 @@ public class EntityAttributeLoadFunction extends LazyLoaderFunction {
 
     /// 执行实体类型的批量加载查询
     @Override
-    public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
+    public Map<Object, Object> apply(LazyValueConstructor constructor, Collection<Object> foreignKeys) {
 
-        JoinAttribute attribute = context.getAttribute();
-        QueryConfig config = context.getQueryConfig();
+        JoinAttribute attribute = constructor.getAttribute();
+        QueryConfig config = constructor.getQueryConfig();
 
         EntitySchema targetEntity = config.metamodel().getEntity(attribute.type());
         EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
 
-        QueryStructure queryStructure = buildBatchQuery(context, targetEntity, foreignKeys);
+        QueryStructure queryStructure = buildBatchQuery(constructor, targetEntity, foreignKeys);
         QueryContext newContext = QueryContext.create(config, queryStructure);
         List<?> results = config.queryExecutor().getList(newContext);
 

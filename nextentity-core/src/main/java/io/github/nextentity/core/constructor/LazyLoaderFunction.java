@@ -25,10 +25,10 @@ public abstract class LazyLoaderFunction {
 
     /// 执行批量加载查询。
     ///
-    /// @param batchAttributeLoader 批量加载器，提供查询上下文和属性元数据
+    /// @param constructor 批量加载器，提供查询上下文和属性元数据
     /// @param foreignKeys          待加载的外键集合
     /// @return 外键 → 查询结果的映射
-    abstract public Map<Object, Object> apply(LazyValueConstructor batchAttributeLoader, Collection<Object> foreignKeys);
+    abstract public Map<Object, Object> apply(LazyValueConstructor constructor, Collection<Object> foreignKeys);
 
     /// 从查询结果构建缓存映射。
     ///

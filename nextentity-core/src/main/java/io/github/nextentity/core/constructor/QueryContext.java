@@ -32,9 +32,7 @@ public class QueryContext {
 
     protected QueryStructure structure;
 
-    protected boolean expandReferencePath;// TODO DELETE
-
-    protected boolean enableLazyloading = false;
+    protected boolean enableLazyLoading = false;
 
     /// 查询结果列表（在 resolve 完成后设置）
     private List<?> results;
@@ -131,7 +129,7 @@ public class QueryContext {
         for (PathNode fetch : selectEntity.fetch()) {
             attributePaths.add(fetch);
         }
-        return new EntityConstructorBuilder(entityType, config.metamodel(), attributePaths).build();
+        return new EntityConstructorBuilder(entityType, attributePaths).build();
     }
 
     public ValueConstructor newConstructor(ProjectionSchema projection) {
@@ -143,11 +141,6 @@ public class QueryContext {
     /// 设置查询结构
     public void setStructure(QueryStructure structure) {
         this.structure = structure;
-    }
-
-    /// 设置是否展开引用路径
-    public void setExpandReferencePath(boolean expandReferencePath) {
-        this.expandReferencePath = expandReferencePath;
     }
 
     public static QueryContext create(QueryConfig descriptor, QueryStructure structure) {
@@ -173,9 +166,7 @@ public class QueryContext {
     }
 
     public QueryContext newContext(QueryStructure structure) {
-        QueryContext context = create(config, structure);
-        context.setExpandReferencePath(expandReferencePath);
-        return context;
+        return create(config, structure);
     }
 
     public QueryStructure getStructure() {
@@ -216,8 +207,8 @@ public class QueryContext {
     /// 仅在投影查询中默认启用。
     ///
     /// @return true 表示启用懒加载
-    public boolean isEnableLazyloading() {
-        return enableLazyloading;
+    public boolean isEnableLazyLoading() {
+        return enableLazyLoading;
     }
 
     public Map<String, Object> getParameters() {

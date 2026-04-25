@@ -4,8 +4,6 @@ import io.github.nextentity.core.meta.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /// 实体构造器构建器
 ///
@@ -17,15 +15,11 @@ import java.util.concurrent.ConcurrentHashMap;
 /// @since 2.2.2
 public final class EntityConstructorBuilder {
 
-    private final Map<JoinAttribute, JoinIndex> joins = new ConcurrentHashMap<>();
-
     private final EntityType root;
-    private final Metamodel metamodel;
     private final SchemaAttributePaths paths;
 
-    public EntityConstructorBuilder(EntityType root, Metamodel metamodel, SchemaAttributePaths paths) {
+    public EntityConstructorBuilder(EntityType root, SchemaAttributePaths paths) {
         this.root = root;
-        this.metamodel = metamodel;
         this.paths = paths;
     }
 
@@ -34,17 +28,16 @@ public final class EntityConstructorBuilder {
     ///
     /// @return ValueConstructor 实例
     public ValueConstructor build() {
-        return build(paths, root, 0);
+        return build(paths, root);
     }
 
-    private ValueConstructor build(SchemaAttributePaths paths, EntitySchema schema, int tableIndex) {
+    private ValueConstructor build(SchemaAttributePaths paths, EntitySchema schema) {
         List<PropertyBinding> bindings = new ArrayList<>();
         for (EntityAttribute attr : schema.getAttributes()) {
             if (attr instanceof EntitySchemaAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                 if (sub != null) {
-                    JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinIndex.rightTableIndex());
+                    ValueConstructor constructor = build(sub, schemaAttribute.schema());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
@@ -64,12 +57,4 @@ public final class EntityConstructorBuilder {
     }
 
 
-    private JoinIndex newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
-        return new JoinIndex(JoinType.LEFT,
-                leftTableIndex,
-                joins.size() + 1,
-                metamodel.getEntity(joinAttribute.getTargetEntityType().type()),
-                joinAttribute.getSourceAttribute(),
-                joinAttribute.getTargetAttribute());
-    }
 }

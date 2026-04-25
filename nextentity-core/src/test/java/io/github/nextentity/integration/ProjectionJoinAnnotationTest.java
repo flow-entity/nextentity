@@ -68,7 +68,7 @@ public class ProjectionJoinAnnotationTest {
      * 测试 @Join 投影结合 WHERE 条件过滤。
      */
     @ParameterizedTest
-    @ArgumentsSource(FastIntegrationTestProvider.class)// TODO use IntegrationTestProvider.class
+    @ArgumentsSource(IntegrationTestProvider.class)
     @DisplayName("Should filter orders by customer ID via @Join projection")
     void shouldFilterOrdersByCustomerIdViaJoinProjection(IntegrationTestContext context) {
         // When - 查询特定客户的订单

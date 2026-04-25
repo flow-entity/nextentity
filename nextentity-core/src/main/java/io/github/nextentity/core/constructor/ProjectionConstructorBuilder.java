@@ -10,8 +10,6 @@ import org.jspecify.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 /// 投影构造器构建器
 ///
@@ -22,8 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /// @author HuangChengwei
 /// @since 2.2.2
 public class ProjectionConstructorBuilder {
-
-    private final Map<JoinAttribute, JoinIndex> joins = new ConcurrentHashMap<>();
 
     private final QueryConfig queryConfig;
     private final ProjectionSchema root;
@@ -41,10 +37,10 @@ public class ProjectionConstructorBuilder {
     ///
     /// @return ValueConstructor 实例
     public ValueConstructor build() {
-        return build(paths, root, 0);
+        return build(paths, root);
     }
 
-    private ValueConstructor build(SchemaAttributePaths paths, ProjectionSchema schema, int tableIndex) {
+    private ValueConstructor build(SchemaAttributePaths paths, ProjectionSchema schema) {
         List<PropertyBinding> bindings = new ArrayList<>();
         boolean supportLazyLoading = isSupportLazyLoading(schema);
         for (ProjectionAttribute attr : schema.getAttributes()) {
@@ -55,8 +51,7 @@ public class ProjectionConstructorBuilder {
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else if (sub != null) {
-                    JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    ValueConstructor constructor = build(sub, (ProjectionSchema) attr, joinIndex.rightTableIndex());
+                    ValueConstructor constructor = build(sub, (ProjectionSchema) attr);
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof ProjectionBasicAttribute pba) {
@@ -83,15 +78,6 @@ public class ProjectionConstructorBuilder {
 
     protected @NonNull ValueConstructor getInterfaceConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
         return new JdkProxyConstructor(schema.type(), bindings);
-    }
-
-    private JoinIndex newJoinInfo(JoinAttribute joinAttribute, int leftTableIndex) {
-        return new JoinIndex(JoinType.LEFT,
-                leftTableIndex,
-                joins.size() + 1,
-                joinAttribute.getTargetEntityType(),
-                joinAttribute.getSourceAttribute(),
-                joinAttribute.getTargetAttribute());
     }
 
     private boolean isSupportLazyLoading(ProjectionSchema schema) {

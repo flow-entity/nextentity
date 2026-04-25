@@ -67,7 +67,7 @@ public class FastProjectionQueryIntegrationTest {
 
 
     @ParameterizedTest
-    @ArgumentsSource(FastIntegrationTestProvider.class)// TODO
+    @ArgumentsSource(FastIntegrationTestProvider.class)
     @DisplayName("Should project with LAZY attribute - EmployeeWithLazyDepartment")
     void shouldProjectWithLazyIDepartment(IntegrationTestContext context) {
         // When - 查询带 LAZY 属性的投影对象

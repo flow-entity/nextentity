@@ -24,7 +24,6 @@ import java.util.Map;
 ///
 /// 使用 Spring 内置的 CGLIB 创建代理，支持延迟加载属性。
 /// 只处理普通类（非 interface、非 record、非 final）。
-///
 public class CglibProxyInterceptor implements ConstructInterceptor {
 
     /// 默认优先级
@@ -46,7 +45,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
 
     @Override
     public boolean supports(QueryContext context, Selected select) {
-        if (!context.isEnableLazyloading()) {
+        if (!context.isEnableLazyLoading()) {
             return false;
         }
         MetamodelSchema<?> schema = context.getSchema();
@@ -117,10 +116,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         return true;
     }
 
-    /// JDK 代理构造器
-    ///
-    /// 用于 interface 投影类型，使用 JDK 动态代理创建实例。
-    /// 复用现有的 ReflectUtil.newProxyInstance 处理方法调用。
+    /// CGLIB 代理构造器
     ///
     /// @author HuangChengwei
     /// @since 2.2.2
@@ -133,7 +129,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         @Override
         protected Object createProxy(Map<Method, Object> map) {
             Enhancer enhancer = new Enhancer();
-            enhancer.setSuperclass(resultType);
+            enhancer.setSuperclass(getResultType());
             enhancer.setCallback(new MethodInterceptorImpl(map));
             return enhancer.create();
         }

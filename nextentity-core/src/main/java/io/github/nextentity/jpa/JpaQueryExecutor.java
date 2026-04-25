@@ -44,8 +44,6 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     @Override
     public <T> List<T> getList(@NonNull QueryContext context) {
-        // JPA 默认不展开引用路径
-        context.setExpandReferencePath(false);
         QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
         if (config.nativeSubqueries() && requiredNativeQuery(context, queryStructure)) {
@@ -174,10 +172,16 @@ public class JpaQueryExecutor implements QueryExecutor {
         }
 
         private Expression<?> getExpression(Column column) {
-            if (column instanceof Column.Joined(var attribute, var join)) {
-                return getJoinedExpression(attribute, join);
+            switch (column) {
+                case Column.Joined(var attribute, var join) -> {
+                    return getJoinedExpression(attribute, join);
+                }
+                case Column.Expr(var source, var _) -> {
+                    return this.toExpression(source);
+                }
+                case null -> throw new IllegalArgumentException("Column must not be null");
+                default -> throw new IllegalArgumentException("Unsupported Column type: " + column.getClass().getName());
             }
-            return this.toExpression(column.source());
         }
 
         private Expression<?> getJoinedExpression(EntityBasicAttribute attribute,
