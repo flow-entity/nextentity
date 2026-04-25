@@ -132,7 +132,13 @@ public abstract class AbstractStatementBuilder {
     protected void appendExpression(Column column) {
         ExpressionNode source = column.source();
         if (column instanceof Column.JoinedAttr attr) {
-            appendAttribute(attr.attribute());
+            JoinAttribute joinAttribute = attr.targetAttr();
+            EntityBasicAttribute attribute = attr.attribute();
+            Integer index = joins.get(joinAttribute);
+            appendTableAlias(joinAttribute, index).append('.')
+                    .append(leftQuotedIdentifier())
+                    .append(attribute.columnName())
+                    .append(rightQuotedIdentifier());
         } else if (source instanceof PathNode pathNode) {
             appendAttribute(getEntityType().getAttribute(pathNode));
         } else {
@@ -515,7 +521,8 @@ public abstract class AbstractStatementBuilder {
 
     protected void addJoin(Column column) {
         if (column instanceof Column.JoinedAttr attr) {
-            addJoin(attr.attribute());
+            addJoinAttribute(attr.sourceAttr());
+            addJoinAttribute(attr.targetAttr());
         } else {
             addJoin(column.source());
         }
@@ -539,8 +546,15 @@ public abstract class AbstractStatementBuilder {
             join = schemaAttribute.declareBy();
         }
         for (JoinAttribute joinAttribute : joinAttributes) {
-            joins.putIfAbsent(joinAttribute, joins.size());
+            addJoinAttribute(joinAttribute);
         }
+    }
+
+    private void addJoinAttribute(JoinAttribute joinAttribute) {
+        if (joinAttribute == null) {
+            return;
+        }
+        joins.putIfAbsent(joinAttribute, joins.size());
     }
 
     protected void addJoinPrimitive(Collection<? extends Column> operands) {

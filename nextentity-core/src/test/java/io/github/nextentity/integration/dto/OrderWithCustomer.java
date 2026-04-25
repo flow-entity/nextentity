@@ -44,6 +44,6 @@ public interface OrderWithCustomer {
             targetAttribute = "id"
     )
     @ManyToOne
-    @Fetch(FetchType.LAZY)
+//    @Fetch(FetchType.LAZY)
     Customer getCustomer();
 }
