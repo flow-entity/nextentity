@@ -103,7 +103,7 @@ public class DeepFetchTwoLevelIntegrationTest {
     }
 
     @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
+    @ArgumentsSource(FastIntegrationTestProvider.class) // TODO use IntegrationTestProvider.class
     void fetchTwoLevelWithOrderBy(IntegrationTestContext context) {
         List<Category> results = context.queryCategories()
                 .fetch(Path.of(Category::getParentCategory).get(Category::getParentCategory))

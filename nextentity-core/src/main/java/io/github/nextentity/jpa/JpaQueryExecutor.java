@@ -8,7 +8,7 @@ import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.expression.From;
-import io.github.nextentity.core.meta.SubQueryEntityType;
+import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -160,13 +160,26 @@ public class JpaQueryExecutor implements QueryExecutor {
         @Override
         protected TypedQuery<Object[]> getTypedQuery() {
             List<Selection<?>> collect = selects.stream()
-                    .map(column -> this.toExpression(column.source()))
+                    .map(this::getExpression)
                     .collect(ImmutableList.collector(selects.size()));
             Selection<Object[]> tuple = cb.array(collect);
 
             CriteriaQuery<Object[]> select = query.select(tuple);
 
             return entityManager.createQuery(select);
+        }
+
+        private Expression<?> getExpression(Column column) {
+            if (column instanceof Column.Joined(EntityBasicAttribute attribute, JoinAttribute targetAttr)) {
+                EntityType entityType = targetAttr.getTargetEntityType();
+                if (entityType instanceof EntitySchemaAttribute esa) {
+                    PathNode strings = esa.path().get(attribute.name());
+                    return this.toExpression(strings);
+                } else {
+                    System.out.println(123);
+                }
+            }
+            return this.toExpression(column.source());
         }
 
     }

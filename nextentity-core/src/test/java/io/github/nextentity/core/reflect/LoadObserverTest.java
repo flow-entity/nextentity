@@ -28,7 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class LoadObserverTest {
 
     @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
+    @ArgumentsSource(FastIntegrationTestProvider.class) // TODO use IntegrationTestProvider.class
     @DisplayName("Should observe batch load on first lazy access")
     void shouldObserveBatchLoadOnFirstLazyAccess(IntegrationTestContext context) {
         // Given - 创建观察器，记录事件

@@ -16,11 +16,7 @@ public interface Column {
     static Column of(EntityBasicAttribute attribute) {
         EntitySchema schema = attribute.declareBy();
         if (schema instanceof EntitySchemaAttribute target) {
-            JoinAttribute source = null;
-            if (target.declareBy() instanceof JoinAttribute s) {
-                source = s;
-            }
-            return new JoinedAttr(attribute, source, target);
+            return new Joined(attribute, target);
         } else {
             return new Expr(attribute.path(), attribute.valueConvertor());
         }
@@ -31,11 +27,7 @@ public interface Column {
         ProjectionSchema projectionSchema = attribute.declareBy();
         EntityBasicAttribute basicAttribute = attribute.getEntityAttribute();
         if (projectionSchema instanceof JoinAttribute target) {
-            JoinAttribute source = null;
-            if (target.declareBy() instanceof JoinAttribute s) {
-                source = s;
-            }
-            return new JoinedAttr(basicAttribute, source, target);
+            return new Joined(attribute.getEntityAttribute(), target);
         } else {
             return new Expr(basicAttribute.path(), basicAttribute.valueConvertor());
         }
@@ -43,11 +35,8 @@ public interface Column {
     }
 
     static Column ofLazy(JoinAttribute target) {
-        JoinAttribute source = null;
-        if (target.declareBy() instanceof JoinAttribute s) {
-            source = s;
-        }
-        return new JoinedAttr(target.getSourceAttribute(), source, target);
+        EntityBasicAttribute targetAttribute = target.getTargetAttribute();
+        return new Joined(targetAttribute, target);
     }
 
     ValueConverter<?, ?> converter();
@@ -57,9 +46,8 @@ public interface Column {
     record Expr(ExpressionNode source, ValueConverter<?, ?> converter) implements Column {
     }
 
-    record JoinedAttr(
+    record Joined(
             EntityBasicAttribute attribute,
-            JoinAttribute sourceAttr,
             JoinAttribute targetAttr
     ) implements Column {
 

@@ -5,6 +5,7 @@ import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.fast.FastIntegrationTestProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -116,7 +117,7 @@ public class JoinOperationsIntegrationTest {
     ///
     /// 测试s fetching with multiple associations.
     @ParameterizedTest
-    @ArgumentsSource(IntegrationTestProvider.class)
+    @ArgumentsSource(FastIntegrationTestProvider.class) // TODO use IntegrationTestProvider.class
     @DisplayName("Should fetch with multiple conditions")
     void shouldFetchWithMultipleConditions(IntegrationTestContext context) {
         // When
