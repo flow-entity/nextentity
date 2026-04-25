@@ -42,7 +42,7 @@ public interface Column {
 
     }
 
-    static Column ofLazy(ProjectionSchemaAttribute target) {
+    static Column ofLazy(JoinAttribute target) {
         JoinAttribute source = null;
         if (target.declareBy() instanceof JoinAttribute s) {
             source = s;
@@ -55,9 +55,7 @@ public interface Column {
     ExpressionNode source();
 
     record Expr(ExpressionNode source, ValueConverter<?, ?> converter) implements Column {
-
     }
-
 
     record JoinedAttr(
             EntityBasicAttribute attribute,

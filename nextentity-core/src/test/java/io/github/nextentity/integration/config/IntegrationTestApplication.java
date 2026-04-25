@@ -138,6 +138,10 @@ public class IntegrationTestApplication {
             entityManager.flush();
             TestDataFactory.createLockableEntities().forEach(entityManager::persist);
             entityManager.flush();
+            TestDataFactory.createCustomers().forEach(entityManager::persist);
+            entityManager.flush();
+            TestDataFactory.createSalesOrders().forEach(entityManager::persist);
+            entityManager.flush();
             entityManager.clear();
         }
     }

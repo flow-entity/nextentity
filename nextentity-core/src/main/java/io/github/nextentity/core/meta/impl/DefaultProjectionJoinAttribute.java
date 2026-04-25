@@ -3,7 +3,6 @@ package io.github.nextentity.core.meta.impl;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;

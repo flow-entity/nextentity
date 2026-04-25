@@ -5,8 +5,8 @@ import io.github.nextentity.core.expression.LiteralNode;
 import io.github.nextentity.core.expression.Operator;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
+import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.meta.MetamodelAttribute;
-import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -53,12 +53,12 @@ public abstract class LazyLoaderFunction {
     /// @param foreignKeys 外键集合
     /// @param attribute   投影属性元数据
     /// @return IN 表达式节点
-    protected ExpressionNode buildWhereClause(Collection<Object> foreignKeys, ProjectionSchemaAttribute attribute) {
+    protected ExpressionNode buildWhereClause(Collection<Object> foreignKeys, JoinAttribute attribute) {
         Collection<ExpressionNode> literals = foreignKeys.stream()
                 .map(LiteralNode::new)
                 .collect(Collectors.toList());
 
-        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         PathNode targetPath = targetAttribute.path();
         return targetPath.operate(Operator.IN, literals);
     }

@@ -1,11 +1,8 @@
 package io.github.nextentity.integration.config.fixtures;
 
-import io.github.nextentity.integration.entity.Category;
-import io.github.nextentity.integration.entity.Department;
-import io.github.nextentity.integration.entity.Employee;
-import io.github.nextentity.integration.entity.EmployeeStatus;
-import io.github.nextentity.integration.entity.LockableEntity;
+import io.github.nextentity.integration.entity.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -104,5 +101,22 @@ public class TestDataFactory {
 
     public static LockableEntity createLockableEntity(Long id, String name, String description) {
         return new LockableEntity(id, name, description);
+    }
+
+    public static List<Customer> createCustomers() {
+        List<Customer> customers = new ArrayList<>();
+        customers.add(new Customer(1L, "John Doe", "john@example.com"));
+        customers.add(new Customer(2L, "Jane Smith", "jane@example.com"));
+        customers.add(new Customer(3L, "Bob Johnson", "bob@example.com"));
+        return customers;
+    }
+
+    public static List<SalesOrder> createSalesOrders() {
+        List<SalesOrder> orders = new ArrayList<>();
+        orders.add(new SalesOrder(1L, "ORD-001", 1L, new BigDecimal("99.99")));
+        orders.add(new SalesOrder(2L, "ORD-002", 1L, new BigDecimal("199.99")));
+        orders.add(new SalesOrder(3L, "ORD-003", 2L, new BigDecimal("299.99")));
+        orders.add(new SalesOrder(4L, "ORD-004", 3L, new BigDecimal("399.99")));
+        return orders;
     }
 }

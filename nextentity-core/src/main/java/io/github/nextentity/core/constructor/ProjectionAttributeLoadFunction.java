@@ -29,12 +29,12 @@ public class ProjectionAttributeLoadFunction extends LazyLoaderFunction {
     @Override
     public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
 
-        ProjectionSchemaAttribute attribute = context.getAttribute();
+        JoinAttribute attribute = context.getAttribute();
         QueryConfig config = context.getQueryConfig();
-        EntitySchemaAttribute schemaAttribute = attribute.getEntityAttribute();
+        EntitySchema schemaAttribute = attribute.getTargetEntityType();
 
         EntityType targetEntity = config.metamodel().getEntity(schemaAttribute.type());
-        EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntity.getAttribute(schemaAttribute.getTargetAttribute().name());
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         ProjectionSchema projection = targetEntity.getProjection(attribute.type());
 
         ProjectionAttribute projectionAttribute = findProjectionAttribute(projection, targetAttribute);
@@ -91,12 +91,12 @@ public class ProjectionAttributeLoadFunction extends LazyLoaderFunction {
     private QueryStructure buildTupleQuery(LazyValueConstructor context,
                                            ProjectionSchema projection,
                                            Collection<Object> foreignKeys) {
-        ProjectionSchemaAttribute attribute = context.getAttribute();
+        JoinAttribute attribute = context.getAttribute();
         Collection<ExpressionNode> literals = foreignKeys.stream()
                 .map(LiteralNode::new)
                 .collect(Collectors.toList());
 
-        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         PathNode targetPath = targetAttribute.path();
         ExpressionNode whereClause = targetPath.operate(Operator.IN, literals);
 

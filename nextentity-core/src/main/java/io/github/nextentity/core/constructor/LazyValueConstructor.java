@@ -2,7 +2,7 @@ package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
-import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
+import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.LoadObserver;
 import io.github.nextentity.core.reflect.LoadObserverRegistry;
@@ -27,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class LazyValueConstructor implements ValueConstructor {
 
     private final QueryConfig queryConfig;
-    private final ProjectionSchemaAttribute attribute;
+    private final JoinAttribute attribute;
     private final LazyLoaderFunction batchLoaderFunction;
 
     private final Set<Object> foreignKeys = ConcurrentHashMap.newKeySet();
@@ -37,10 +37,10 @@ public class LazyValueConstructor implements ValueConstructor {
     /// @param config    查询配置
     /// @param attribute 投影属性元数据
     /// @param column    外键列
-    public LazyValueConstructor(QueryConfig config, ProjectionSchemaAttribute attribute, Column column) {
+    public LazyValueConstructor(QueryConfig config, JoinAttribute attribute, Column column) {
         this.attribute = attribute;
         this.queryConfig = config;
-        this.batchLoaderFunction = attribute.type() == attribute.getEntityAttribute().type()
+        this.batchLoaderFunction = attribute.type() == attribute.getTargetEntityType().type()
                 ? new EntityAttributeLoadFunction()
                 : new ProjectionAttributeLoadFunction();
         this.columns = List.of(column);
@@ -83,7 +83,7 @@ public class LazyValueConstructor implements ValueConstructor {
         return queryConfig;
     }
 
-    public ProjectionSchemaAttribute getAttribute() {
+    public JoinAttribute getAttribute() {
         return attribute;
     }
 

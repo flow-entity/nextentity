@@ -4,6 +4,7 @@ import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
+import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
 import io.github.nextentity.core.util.ImmutableList;
 
@@ -23,11 +24,11 @@ public class EntityAttributeLoadFunction extends LazyLoaderFunction {
     @Override
     public Map<Object, Object> apply(LazyValueConstructor context, Collection<Object> foreignKeys) {
 
-        ProjectionSchemaAttribute attribute = context.getAttribute();
+        JoinAttribute attribute = context.getAttribute();
         QueryConfig config = context.getQueryConfig();
 
         EntitySchema targetEntity = config.metamodel().getEntity(attribute.type());
-        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
 
         QueryStructure queryStructure = buildBatchQuery(context, targetEntity, foreignKeys);
         QueryContext newContext = QueryContext.create(config, queryStructure);

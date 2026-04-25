@@ -1,7 +1,10 @@
 package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.meta.JoinAttribute;
+import io.github.nextentity.core.meta.ProjectionAttribute;
+import io.github.nextentity.core.meta.ProjectionBasicAttribute;
+import io.github.nextentity.core.meta.ProjectionSchema;
 import jakarta.persistence.FetchType;
 import org.jspecify.annotations.NonNull;
 
@@ -45,7 +48,7 @@ public class ProjectionConstructorBuilder {
         List<PropertyBinding> bindings = new ArrayList<>();
         boolean supportLazyLoading = isSupportLazyLoading(schema);
         for (ProjectionAttribute attr : schema.getAttributes()) {
-            if (attr instanceof ProjectionSchemaAttribute schemaAttribute) {
+            if (attr instanceof JoinAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                 if (schemaAttribute.getFetchType() == FetchType.LAZY || supportLazyLoading && sub == null) {
                     Column column = Column.ofLazy(schemaAttribute);
@@ -53,7 +56,7 @@ public class ProjectionConstructorBuilder {
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else {
                     JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinIndex.rightTableIndex());
+                    ValueConstructor constructor = build(sub, (ProjectionSchema) attr, joinIndex.rightTableIndex());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof ProjectionBasicAttribute pba) {
