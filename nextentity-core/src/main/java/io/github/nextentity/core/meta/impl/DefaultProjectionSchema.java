@@ -34,7 +34,6 @@ public class DefaultProjectionSchema
     protected AttributeSet<ProjectionAttribute> createAttributes() {
         Schema beanSchema = Schema.of(type);
         List<ProjectionAttribute> attributes = new ArrayList<>();
-        int ordinal = 0;
         for (Attribute attribute : beanSchema.getAttributes()) {
             Class<?> joinTarget = resolver.getProjectionJoinTarget(attribute);
             if (joinTarget != null) {
@@ -58,7 +57,6 @@ public class DefaultProjectionSchema
                         targetAttribute,
                         targetEntitySchema,
                         metamodel,
-                        ordinal++,
                         resolver.getFetchType(attribute),
                         attribute);
                 attributes.add(attr);
@@ -76,7 +74,7 @@ public class DefaultProjectionSchema
                         }
                         if (resolver.matchProjectionSchemaAttribute(source, bsa)) {
                             DefaultProjectionSchema declareBy = this;
-                            var attr = new DefaultProjectionSchemaAttribute(declareBy, source, bsa, metamodel, ordinal++);
+                            var attr = new DefaultProjectionSchemaAttribute(declareBy, source, bsa, metamodel);
                             attributes.add(attr);
                         }
                     }
@@ -88,7 +86,7 @@ public class DefaultProjectionSchema
                         }
                         if (resolver.matchProjectionBasicAttribute(eba, attribute)) {
                             DefaultProjectionSchema declareBy = this;
-                            var attr = new DefaultProjectionBasicAttribute(declareBy, eba, attribute, ordinal++);
+                            var attr = new DefaultProjectionBasicAttribute(declareBy, eba, attribute);
                             attributes.add(attr);
                         }
                     }

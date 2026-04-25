@@ -28,12 +28,11 @@ public class DefaultProjectionJoinAttribute
                                           EntityBasicAttribute targetAttribute,
                                           EntityType target,
                                           DefaultMetamodel metamodel,
-                                          int ordinal,
                                           FetchType fetchType,
                                           Attribute attribute) {
         super(declareBy.getEntitySchema(), attribute.type(), metamodel);
         this.declareBy = declareBy;
-        this.attribute = new DefaultAttribute(declareBy, attribute, ordinal);
+        this.attribute = new DefaultAttribute(declareBy, attribute);
         this.sourceAttribute = sourceAttribute;
         this.targetAttribute = targetAttribute;
         this.target = target;
@@ -50,8 +49,8 @@ public class DefaultProjectionJoinAttribute
                     this,
                     projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
-                    metamodel,
-                    ordinal);
+                    metamodel
+            );
             result.add(item);
         }
         return new AttributeSet<>(result);
@@ -90,11 +89,6 @@ public class DefaultProjectionJoinAttribute
     @Override
     public ImmutableArray<String> path() {
         return attribute.path();
-    }
-
-    @Override
-    public int ordinal() {
-        return attribute.ordinal();
     }
 
     @Override

@@ -78,7 +78,6 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
         EntityBasicAttribute versionAttribute = null;
         boolean hasVersion = false;
         ArrayList<EntityAttribute> attributes = new ArrayList<>();
-        int ordinal = 0;
         for (Attribute attribute : javaSchema.getAttributes()) {
             if (resolver.isTransient(attribute)) {
                 continue;
@@ -86,7 +85,7 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
             if (attribute instanceof SchemaAttribute schemaAttribute
                 && resolver.isAnyToOne(schemaAttribute)) {
                 var entitySchemaAttribute = new DefaultEntitySchemaAttribute(
-                        schemaAttribute, this, metamodel, ordinal++);
+                        schemaAttribute, this, metamodel);
                 attributes.add(entitySchemaAttribute);
             } else if (resolver.isBasicField(attribute)) {
                 boolean versionField = false;
@@ -99,7 +98,7 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
                     versionField = true;
                 }
                 var entityAttribute = new DefaultEntityBasicAttribute(
-                        attribute, this, resolver, ordinal++);
+                        attribute, this, resolver);
                 attributes.add(entityAttribute);
                 if (resolver.isMarkedId(attribute)) {
                     idAttribute = entityAttribute;

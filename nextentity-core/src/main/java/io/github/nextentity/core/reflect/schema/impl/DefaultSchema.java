@@ -75,14 +75,13 @@ public class DefaultSchema extends AbstractSchema<AttributeSet<Attribute>, Attri
 
         // 创建属性列表
         ArrayList<Attribute> attributes = new ArrayList<>();
-        int ordinal = 0;
         for (DefaultAccessor accessor : accessors) {
             List<DefaultAccessor> nestedAccessors = DefaultAccessor.of(accessor.type());
             if (nestedAccessors.isEmpty()) {
-                DefaultAttribute attribute = new DefaultAttribute(this, accessor, ordinal++);
+                DefaultAttribute attribute = new DefaultAttribute(this, accessor);
                 attributes.add(attribute);
             } else {
-                attributes.add(new DefaultSchemaAttribute(accessor, this, ordinal++));
+                attributes.add(new DefaultSchemaAttribute(accessor, this));
             }
         }
 

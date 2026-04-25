@@ -13,9 +13,8 @@ public class DefaultProjectionBasicAttribute
 
     public DefaultProjectionBasicAttribute(DefaultProjectionSchema declareBy,
                                            EntityBasicAttribute source,
-                                           Attribute attribute,
-                                           int ordinal) {
-        super(declareBy, attribute, ordinal);
+                                           Attribute attribute) {
+        super(declareBy, attribute);
         this.source = source;
     }
 

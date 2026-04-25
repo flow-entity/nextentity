@@ -11,21 +11,19 @@ public class DefaultAttribute implements Attribute {
 
     private final Accessor accessor;
     private final Schema declareBy;
-    private final int ordinal;
     private final ImmutableList<String> path;
 
-    public DefaultAttribute(Schema declareBy, Attribute attribute, int ordinal) {
-        this(declareBy, attribute.accessor(), ordinal);
+    public DefaultAttribute(Schema declareBy, Attribute attribute) {
+        this(declareBy, attribute.accessor());
     }
 
-    public DefaultAttribute(Schema declareBy, Accessor accessor, int ordinal) {
-        this(declareBy, accessor, ordinal, newPath(declareBy, accessor.name()));
+    public DefaultAttribute(Schema declareBy, Accessor accessor) {
+        this(declareBy, accessor, newPath(declareBy, accessor.name()));
     }
 
-    public DefaultAttribute(Schema declareBy, Accessor accessor, int ordinal, ImmutableList<String> path) {
+    public DefaultAttribute(Schema declareBy, Accessor accessor, ImmutableList<String> path) {
         this.accessor = accessor;
         this.declareBy = declareBy;
-        this.ordinal = ordinal;
         this.path = path;
     }
 
@@ -57,11 +55,6 @@ public class DefaultAttribute implements Attribute {
     @Override
     public Schema declareBy() {
         return declareBy;
-    }
-
-    @Override
-    public int ordinal() {
-        return ordinal;
     }
 
     @Override

@@ -17,9 +17,8 @@ public class DefaultEntityBasicAttribute extends DefaultAttribute implements Ent
 
     public DefaultEntityBasicAttribute(Attribute attribute,
                                        DefaultEntitySchema declareBy,
-                                       MetamodelResolver resolver,
-                                       int ordinal) {
-        super(declareBy, attribute, ordinal);
+                                       MetamodelResolver resolver) {
+        super(declareBy, attribute);
         this.columnName = resolver.getColumnName(attribute);
         this.updatable = resolver.isUpdatable(attribute);
         this.valueConverter = resolver.databaseType(attribute);

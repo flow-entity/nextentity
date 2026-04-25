@@ -24,11 +24,10 @@ public class DefaultProjectionSchemaAttribute
     public DefaultProjectionSchemaAttribute(DefaultProjectionSchema declareBy,
                                             EntitySchemaAttribute source,
                                             SchemaAttribute attribute,
-                                            DefaultMetamodel metamodel,
-                                            int ordinal) {
+                                            DefaultMetamodel metamodel) {
         super(source.declareBy(), attribute.type(), metamodel);
         this.declareBy = declareBy;
-        this.attribute = new DefaultAttribute(declareBy, attribute, ordinal);
+        this.attribute = new DefaultAttribute(declareBy, attribute);
         this.source = source;
     }
 
@@ -44,8 +43,8 @@ public class DefaultProjectionSchemaAttribute
                     this,
                     projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
-                    metamodel,
-                    ordinal);
+                    metamodel
+            );
             result.add(item);
         }
         return new AttributeSet<>(result);
@@ -69,11 +68,6 @@ public class DefaultProjectionSchemaAttribute
     @Override
     public ImmutableArray<String> path() {
         return attribute.path();
-    }
-
-    @Override
-    public int ordinal() {
-        return attribute.ordinal();
     }
 
     @Override

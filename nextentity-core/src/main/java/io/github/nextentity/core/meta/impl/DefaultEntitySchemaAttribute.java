@@ -47,10 +47,9 @@ public class DefaultEntitySchemaAttribute
 
     public DefaultEntitySchemaAttribute(Attribute attribute,
                                         DefaultEntitySchema declareBy,
-                                        DefaultMetamodel metamodel,
-                                        int ordinal) {
+                                        DefaultMetamodel metamodel) {
         super(attribute.type(), metamodel);
-        this.attribute = new DefaultAttribute(declareBy, attribute, ordinal);
+        this.attribute = new DefaultAttribute(declareBy, attribute);
         this.path = new PathNode(this.attribute.path().toArray(String[]::new));
     }
 
@@ -90,22 +89,16 @@ public class DefaultEntitySchemaAttribute
     }
 
     @Override
-    public int ordinal() {
-        return attribute.ordinal();
-    }
-
-    @Override
     protected Attributes createAttributes() {
         DefaultEntitySchema schema = DefaultEntitySchema.of(type(), metamodel);
         ImmutableArray<? extends EntityAttribute> entityAttributes = schema.getAttributes();
         List<EntityAttribute> entityAttributeList = new ArrayList<>(entityAttributes.size());
         EntityBasicAttribute id = null;
         EntityBasicAttribute version = null;
-        int ordinal = 0;
         for (EntityAttribute attribute : entityAttributes) {
             EntityAttribute cur;
             if (attribute instanceof EntityBasicAttribute basicAttribute) {
-                var attr = new DefaultEntityBasicAttribute(basicAttribute, this, resolver, ordinal++);
+                var attr = new DefaultEntityBasicAttribute(basicAttribute, this, resolver);
                 cur = attr;
                 if (basicAttribute.isId()) {
                     id = attr;
@@ -113,7 +106,7 @@ public class DefaultEntitySchemaAttribute
                     version = attr;
                 }
             } else if (attribute instanceof EntitySchemaAttribute schemaAttribute) {
-                cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel, ordinal++);
+                cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel);
             } else {
                 throw new ConfigurationException(
                         "Unknown entity attribute type '" + attribute.getClass().getName() +
