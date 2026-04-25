@@ -61,7 +61,7 @@ public class DefaultProjectionSchemaAttribute
     }
 
     @Override
-    public Schema declareBy() {
+    public ProjectionSchema declareBy() {
         return declareBy;
     }
 

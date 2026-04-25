@@ -48,10 +48,7 @@ public class ProjectionConstructorBuilder {
             if (attr instanceof ProjectionSchemaAttribute schemaAttribute) {
                 SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                 if (schemaAttribute.getFetchType() == FetchType.LAZY || supportLazyLoading && sub == null) {
-                    JoinIndex joinIndex = joins.computeIfAbsent(schemaAttribute, _ -> newJoinInfo(schemaAttribute, tableIndex));
-                    EntityBasicAttribute entityAttribute = schemaAttribute.getSourceAttribute();
-                    ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
-                    Column column = new Column(entityAttribute.path(), converter, joinIndex.rightTableIndex());
+                    Column column = Column.ofLazy(schemaAttribute);
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else {
@@ -59,10 +56,8 @@ public class ProjectionConstructorBuilder {
                     ValueConstructor constructor = build(sub, schemaAttribute.schema(), joinIndex.rightTableIndex());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
-            } else if (attr instanceof ProjectionBasicAttribute basicAttribute) {
-                EntityBasicAttribute entityAttribute = basicAttribute.getEntityAttribute();
-                ValueConverter<?, ?> converter = entityAttribute.valueConvertor();
-                Column column = new Column(entityAttribute.path(), converter, tableIndex);
+            } else if (attr instanceof ProjectionBasicAttribute pba) {
+                Column column = Column.of(pba);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }

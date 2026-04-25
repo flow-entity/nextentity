@@ -1,9 +1,9 @@
 package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.ExpressionTypeResolver;
-import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.*;
@@ -122,7 +122,7 @@ public class QueryContext {
             converter = IdentityValueConverter.of(ExpressionTypeResolver.getExpressionType(expression, entityType));
         }
 
-        Column column = new Column(expression, converter, 0);
+        Column column = Column.of(expression, converter);
         return new SingleValueConstructor(column);
     }
 

@@ -1,7 +1,5 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.Attribute;
-
 /// 投影属性元数据接口，表示 DTO 或 Interface 投影中的一个字段映射。
 ///
 /// 每个 {@code ProjectionAttribute} 都关联到一个 {@link EntityAttribute}（源属性），
@@ -24,4 +22,7 @@ public sealed interface ProjectionAttribute
     ///
     /// @return 源实体属性
     EntityAttribute getEntityAttribute();
+
+    @Override
+    ProjectionSchema declareBy();
 }

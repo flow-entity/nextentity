@@ -48,8 +48,7 @@ public final class EntityConstructorBuilder {
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
-                ValueConverter<?, ?> converter = basicAttribute.valueConvertor();
-                Column column = new Column(attr.path(), converter, tableIndex);
+                Column column = Column.of(basicAttribute);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }
