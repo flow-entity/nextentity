@@ -45,14 +45,20 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
 
     @Override
     public <T> int update(@NonNull UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
-        // TODO EntityEventListener添加监听方法，处理此事件
-        return doUpdate(structure, descriptor);
+        List<T> entities = List.of();
+        fireEvent(descriptor, EntityEventType.BEFORE_UPDATED, entities);
+        int updated = doUpdate(structure, descriptor);
+        fireEvent(descriptor, EntityEventType.AFTER_UPDATED, entities);
+        return updated;
     }
 
     @Override
     public <T> int delete(@NonNull ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
-        // TODO EntityEventListener添加监听方法，处理此事件
-        return doDelete(predicate, descriptor);
+        List<T> entities = List.of();
+        fireEvent(descriptor, EntityEventType.BEFORE_DELETED, entities);
+        int deleted = doDelete(predicate, descriptor);
+        fireEvent(descriptor, EntityEventType.AFTER_DELETED, entities);
+        return deleted;
     }
 
     protected abstract <T> void doInsertAll(List<T> entities, PersistDescriptor<T> descriptor);

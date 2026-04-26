@@ -38,8 +38,7 @@ public class FastApplicationContexts {
     }
 
     private static void initializeDatabase(ConfigurableApplicationContext context) {
-        context.getBeansOfType(IntegrationTestContext.class).values()
-                .forEach(IntegrationTestContext::reset);
+        context.getBean(IntegrationTestApplication.DatabaseInitializer.class).init();
     }
 
     public static List<ConfigurableApplicationContext> contexts() {

@@ -39,8 +39,6 @@ public class ApplicationContexts {
     }
 
     private static void initializeDatabase(ConfigurableApplicationContext context) {
-        // Get all IntegrationTestContext beans and call reset() to initialize database
-        context.getBeansOfType(IntegrationTestContext.class).values()
-                .forEach(IntegrationTestContext::reset);
+        context.getBean(IntegrationTestApplication.DatabaseInitializer.class).init();
     }
 }

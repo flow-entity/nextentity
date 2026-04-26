@@ -3,8 +3,6 @@ package io.github.nextentity.integration.config;
 import io.github.nextentity.api.DeleteWhereStep;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
-import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.entity.*;
 import org.jspecify.annotations.NonNull;
 
@@ -17,9 +15,15 @@ import java.util.function.Supplier;
 /// @author HuangChengwei
 public interface IntegrationTestContext {
 
-    QueryExecutor getQueryExecutor();
+    EntityTemplateFactory getEntityTemplateFactory();
 
-    PersistExecutor getUpdateExecutor();
+    default QueryExecutor getQueryExecutor() {
+        return getEntityTemplateFactory().queryExecutor();
+    }
+
+    default PersistExecutor getUpdateExecutor() {
+        return getEntityTemplateFactory().persistExecutor();
+    }
 
     /// 创建实体上下文，用于更新操作。
     ///
@@ -27,12 +31,7 @@ public interface IntegrationTestContext {
     /// @param <T>         实体类型
     /// @return 实体上下文实例
     default <T> EntityTemplateDescriptor<?, T> getEntityContext(Class<T> entityClass) {
-        DefaultMetamodel metamodel = DefaultMetamodel.of();
-        EntityTemplateFactoryConfig config = new EntityTemplateFactoryConfig(
-                metamodel, getUpdateExecutor(), getQueryExecutor(), InterceptorSelector.empty(),
-                QueryProperties.DEFAULT
-        );
-        return new EntityTemplateDescriptor<>(config, entityClass);
+        return new EntityTemplateDescriptor<>(getEntityTemplateFactory(), entityClass);
     }
 
     default EntityQueryImpl<Employee> queryEmployees() {
@@ -76,9 +75,11 @@ public interface IntegrationTestContext {
 
     <T> UpdateSetStep<T> update(Class<T> type);
 
-    <T> UpdateSetStep<T> update(EntityTemplateDescriptor<?, T> type);
-
     default <T> DeleteWhereStep<T> delete(EntityTemplateDescriptor<?, T> entityContext) {
         return new DeleteWhereStepImpl<>(entityContext);
+    }
+
+    default <T> UpdateSetStep<T> update(EntityTemplateDescriptor<?, T> type) {
+        return new UpdateSetStepImpl<>(type);
     }
 }
