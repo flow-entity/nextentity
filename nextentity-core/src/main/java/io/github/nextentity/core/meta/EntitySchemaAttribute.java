@@ -10,5 +10,5 @@ package io.github.nextentity.core.meta;
 /// @see EntityBasicAttribute
 /// @see JoinAttribute
 public non-sealed interface EntitySchemaAttribute extends EntityAttribute, JoinAttribute {
-
+    EntitySchema schema();
 }

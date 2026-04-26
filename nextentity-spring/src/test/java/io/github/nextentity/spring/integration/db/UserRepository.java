@@ -37,6 +37,10 @@ public class UserRepository extends AbstractRepository<User, Integer> {
         this.name = name;
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void delete(@NonNull Iterable<User> entities) {
         super.deleteAll(entities);
     }

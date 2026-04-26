@@ -42,7 +42,7 @@ public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T
         EntityType entityType = descriptor.metamodel().getEntity(fromType());
         for (PathRef<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
-            Attribute attribute = entityPath.getAttribute(entityType);
+            Attribute attribute = entityType.getAttribute(entityPath);
             if (!attribute.isObject()) {
                 log.warn("ignoring fetch a non-entity attribute `{}` of {}",
                         entityPath.stream().collect(Collectors.joining(".")),

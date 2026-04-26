@@ -1,5 +1,7 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
+import io.github.nextentity.api.model.Tuple;
+import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
@@ -22,25 +24,25 @@ import java.util.stream.Collectors;
 ///
 /// @author HuangChengwei
 /// @since 2.1.0
-public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
+public class ProjectionAttributeLoadFunction extends LazyLoaderFunction {
 
     @Override
-    public Map<Object, Object> apply(BatchAttributeLoader context, Collection<Object> foreignKeys) {
+    public Map<Object, Object> apply(LazyValueConstructor constructor, Collection<Object> foreignKeys) {
 
-        ProjectionSchemaAttribute attribute = context.getAttribute();
-        QueryContext queryContext = context.getQueryContext();
-        EntitySchemaAttribute schemaAttribute = attribute.getEntityAttribute();
+        JoinAttribute attribute = constructor.getAttribute();
+        QueryConfig config = constructor.getQueryConfig();
+        EntitySchema schemaAttribute = attribute.getTargetEntityType();
 
-        EntityType targetEntity = queryContext.getMetamodel().getEntity(schemaAttribute.type());
-        EntityBasicAttribute targetAttribute = (EntityBasicAttribute) targetEntity.getAttribute(schemaAttribute.getTargetAttribute().name());
+        EntityType targetEntity = config.metamodel().getEntity(schemaAttribute.type());
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         ProjectionSchema projection = targetEntity.getProjection(attribute.type());
 
         ProjectionAttribute projectionAttribute = findProjectionAttribute(projection, targetAttribute);
 
         if (projectionAttribute == null) {
-            return executeTupleQuery(projection, foreignKeys, context);
+            return executeTupleQuery(projection, foreignKeys, constructor);
         } else {
-            return executeProjectionQuery(context, projection, foreignKeys, queryContext, projectionAttribute);
+            return executeProjectionQuery(constructor, projection, foreignKeys, config, projectionAttribute);
         }
     }
 
@@ -53,28 +55,28 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         return null;
     }
 
-    private Map<Object, Object> executeProjectionQuery(BatchAttributeLoader context,
+    private Map<Object, Object> executeProjectionQuery(LazyValueConstructor context,
                                                        ProjectionSchema projection,
                                                        Collection<Object> foreignKeys,
-                                                       QueryContext queryContext,
+                                                       QueryConfig queryConfig,
                                                        ProjectionAttribute projectionAttribute) {
         QueryStructure queryStructure = buildBatchQuery(context, projection, foreignKeys);
-        QueryContext newContext = queryContext.newContext(queryStructure);
-        List<?> results = queryContext.getQueryExecutor().getList(newContext);
+        QueryContext newContext = QueryContext.create(queryConfig, queryStructure);
+        List<?> results = queryConfig.queryExecutor().getList(newContext);
         return buildCacheMap(projectionAttribute, results);
     }
 
     private Map<Object, Object> executeTupleQuery(ProjectionSchema projection,
                                                   Collection<Object> foreignKeys,
-                                                  BatchAttributeLoader context) {
-        QueryContext queryContext = context.getQueryContext();
+                                                  LazyValueConstructor context) {
+        QueryConfig config = context.getQueryConfig();
         QueryStructure queryStructure = buildTupleQuery(context, projection, foreignKeys);
-        QueryContext newContext = queryContext.newContext(queryStructure);
-        List<?> results = queryContext.getQueryExecutor().getList(newContext);
+        QueryContext newContext = QueryContext.create(config, queryStructure);
+        List<?> results = config.queryExecutor().getList(newContext);
         return buildTupleCacheMap(results);
     }
 
-    private QueryStructure buildBatchQuery(BatchAttributeLoader context,
+    private QueryStructure buildBatchQuery(LazyValueConstructor context,
                                            ProjectionSchema projection,
                                            Collection<Object> foreignKeys) {
 
@@ -86,15 +88,15 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         return QueryStructure.of(selectProjection, fromEntity).where(whereClause);
     }
 
-    private QueryStructure buildTupleQuery(BatchAttributeLoader context,
+    private QueryStructure buildTupleQuery(LazyValueConstructor context,
                                            ProjectionSchema projection,
                                            Collection<Object> foreignKeys) {
-        ProjectionSchemaAttribute attribute = context.getAttribute();
+        JoinAttribute attribute = context.getAttribute();
         Collection<ExpressionNode> literals = foreignKeys.stream()
                 .map(LiteralNode::new)
                 .collect(Collectors.toList());
 
-        EntityBasicAttribute targetAttribute = attribute.getEntityAttribute().getTargetAttribute();
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         PathNode targetPath = targetAttribute.path();
         ExpressionNode whereClause = targetPath.operate(Operator.IN, literals);
 
@@ -111,9 +113,11 @@ public class ProjectionAttributeLoadFunction extends AttributeLoadFunction {
         for (Object result : results) {
             if (result instanceof Object[] array && array.length >= 2) {
                 cache.put(array[0], array[1]);
+            } else if (result instanceof Tuple tuple) {
+                cache.put(tuple.get(0), tuple.get(1));
             } else if (result != null) {
                 throw new NextEntityException(
-                        "Expected Object[] tuple result but got: " + result.getClass().getName());
+                        "Expected tuple result but got: " + result.getClass().getName());
             }
         }
         return cache;

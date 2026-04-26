@@ -1,4 +1,4 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

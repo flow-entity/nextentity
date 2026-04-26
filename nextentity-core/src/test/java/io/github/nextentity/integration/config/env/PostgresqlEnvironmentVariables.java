@@ -32,8 +32,11 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
     public List<String> ddl() {
         return List.of(
                 "DROP TABLE IF EXISTS auto_increment_entity",
+                "DROP TABLE IF EXISTS sales_order",
+                "DROP TABLE IF EXISTS customer",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
+                "DROP TABLE IF EXISTS category",
                 "DROP TABLE IF EXISTS lockable_entity",
                 """
                         CREATE TABLE "department" (
@@ -68,6 +71,13 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
                         )
                         """,
                 """
+                        CREATE TABLE "category" (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL,
+                            parent_id BIGINT
+                        )
+                        """,
+                """
                         CREATE TABLE "auto_increment_entity" (
                             id BIGSERIAL PRIMARY KEY,
                             name VARCHAR(100) NOT NULL,
@@ -75,6 +85,21 @@ public class PostgresqlEnvironmentVariables extends DbContainerEnvironmentVariab
                             priority INTEGER,
                             active BOOLEAN,
                             created_at TIMESTAMP
+                        )
+                        """,
+                """
+                        CREATE TABLE "customer" (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL,
+                            email VARCHAR(100)
+                        )
+                        """,
+                """
+                        CREATE TABLE "sales_order" (
+                            id BIGINT PRIMARY KEY,
+                            order_no VARCHAR(100) NOT NULL,
+                            customer_id BIGINT,
+                            amount DECIMAL(19,2)
                         )
                         """
         );

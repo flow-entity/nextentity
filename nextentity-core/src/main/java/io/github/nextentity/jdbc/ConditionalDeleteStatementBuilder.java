@@ -33,19 +33,17 @@ public class ConditionalDeleteStatementBuilder extends AbstractConditionalStatem
     /// 构建 DELETE 开头部分（委托给方言）
     protected void appendDeleteClause() {
         String table = getTableName();
-        String alias = fromAlias;
         boolean hasJoin = !joins.isEmpty();
 
-        dialect.appendDeleteClause(sql, table, alias, hasJoin);
+        dialect.appendDeleteClause(sql, table, fromAlias, hasJoin);
     }
 
     /// 构建 DELETE FROM/USING 子句（委托给方言）
     protected void appendDeleteFromClause() {
         String table = getTableName();
-        String alias = fromAlias;
         boolean hasJoin = !joins.isEmpty();
 
-        dialect.appendDeleteFromClause(sql, table, alias, hasJoin);
+        dialect.appendDeleteFromClause(sql, table, fromAlias, hasJoin);
     }
 
     /// 构建 JOIN 子句（如有）

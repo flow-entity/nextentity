@@ -1,13 +1,15 @@
 package io.github.nextentity.jdbc;
 
-import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.util.ImmutableArray;
+import io.github.nextentity.core.constructor.SelectItem;
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.jdbc.JdbcQueryExecutor.ResultCollector;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 ///
@@ -46,7 +48,8 @@ public class JdbcResultCollector implements ResultCollector {
             result = new ArrayList<>();
         }
         int columnsCount = resultSet.getMetaData().getColumnCount();
-        ImmutableArray<SelectItem> primitives = context.getSelectedExpression();
+        ValueConstructor constructor = context.newConstructor();
+        Collection<SelectItem> primitives = constructor.columns();
         if (primitives.size() != columnsCount) {
             throw new IllegalStateException(
                     String.format("Column count mismatch: expected %d (from query projection), actual %d (from ResultSet). " +
@@ -55,7 +58,7 @@ public class JdbcResultCollector implements ResultCollector {
         }
         while (resultSet.next()) {
             JdbcArguments arguments = new JdbcArguments(resultSet);
-            Object o = context.construct(arguments);
+            Object o = constructor.construct(arguments);
             result.add(o);
         }
         // 查询完成后设置结果列表（触发后处理）

@@ -1,19 +1,24 @@
 package io.github.nextentity.core.interceptor;
 
-import io.github.nextentity.core.meta.MetamodelSchema;
-import io.github.nextentity.core.reflect.ReflectUtil;
-import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.jdbc.Arguments;
-import io.github.nextentity.jdbc.QueryContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-import java.util.Map;
+import io.github.nextentity.core.constructor.DeepLimitSchemaAttributePaths;
+import io.github.nextentity.core.constructor.ProjectionConstructorBuilder;
+import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.constructor.ValueConstructor;
+import io.github.nextentity.core.expression.SelectProjection;
+import io.github.nextentity.core.expression.Selected;
+import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.ProjectionSchema;
 
 /// JDK 代理拦截器 - 为 interface 类型创建代理实例
 ///
 /// 使用 JDK Proxy 创建代理，支持延迟加载属性。
 /// 只处理 interface 类型（非普通类、非 record）。
 public class JdkProxyInterceptor implements ConstructInterceptor {
+
+    private static final Logger log = LoggerFactory.getLogger(JdkProxyInterceptor.class);
 
     private static final JdkProxyInterceptor INSTANCE = new JdkProxyInterceptor();
 
@@ -39,31 +44,32 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     }
 
     @Override
-    public boolean supports(QueryContext context) {
-        MetamodelSchema<?> schema = context.getSchema();
-        if (schema == null) {
-            return false;
-        }
-        // 只处理有懒加载字段的投影
-        if (schema.hasLazyAttribute()) {
-            return schema.type().isInterface();
+    public boolean supports(QueryContext context, Selected select) {
+        if (select instanceof SelectProjection selectProjection) {
+            Class<?> type = selectProjection.type();
+            if (!type.isInterface()) {
+                return false;
+            }
+            ProjectionSchema projection = context.getEntityType().getProjection(type);
+            return projection.hasLazyAttribute();
         } else {
             return false;
         }
-
     }
 
     @Override
-    public Object intercept(QueryContext context, Arguments arguments) {
-        if (!supports(context)) {
-            throw new UnsupportedOperationException("JdkProxyInterceptor supports only interface projection types with lazy attributes");
+    public ValueConstructor intercept(QueryContext context, Selected select) {
+        if (supports(context, select)) {
+            SelectProjection selectProjection = (SelectProjection) select;
+            EntityType entityType = context.getEntityType();
+            ProjectionSchema projection = entityType.getProjection(selectProjection.type());
+            return new ProjectionConstructorBuilder(context.getConfig(),
+                    projection,
+                    DeepLimitSchemaAttributePaths.of(1)
+            ).build();
         }
-        Map<Method, Object> resultMap = context.collectResultMap(arguments);
-        Schema schema = context.getSchema();
-        if (schema == null) {
-            return null;
-        }
-        return ReflectUtil.newProxyInstance(schema.type(), resultMap);
+        log.debug("JdkProxyInterceptor does not support select type: {}, returning null", select);
+        return null;
     }
 
     @Override
@@ -75,4 +81,6 @@ public class JdkProxyInterceptor implements ConstructInterceptor {
     public int order() {
         return order;
     }
+
+
 }

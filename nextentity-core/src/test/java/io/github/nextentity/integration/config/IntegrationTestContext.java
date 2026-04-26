@@ -5,10 +5,7 @@ import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
-import io.github.nextentity.integration.entity.AutoIncrementEntity;
-import io.github.nextentity.integration.entity.Department;
-import io.github.nextentity.integration.entity.Employee;
-import io.github.nextentity.integration.entity.LockableEntity;
+import io.github.nextentity.integration.entity.*;
 import io.github.nextentity.jdbc.FetchConfig;
 import org.jspecify.annotations.NonNull;
 
@@ -34,7 +31,7 @@ public interface IntegrationTestContext {
         DefaultMetamodel metamodel = DefaultMetamodel.of();
         EntityTemplateFactoryConfig config = new EntityTemplateFactoryConfig(
                 metamodel, getUpdateExecutor(), getQueryExecutor(),
-                FetchConfig.DEFAULT, PaginationConfig.DEFAULT, InterceptorSelector.empty()
+                FetchConfig.DEFAULT, PaginationConfig.DEFAULT, InterceptorSelector.empty(), true, false
         );
         return new EntityTemplateDescriptor<>(config, entityClass);
     }
@@ -53,6 +50,18 @@ public interface IntegrationTestContext {
 
     default EntityQueryImpl<AutoIncrementEntity> queryAutoIncrementEntities() {
         return new EntityQueryImpl<>(getEntityContext(AutoIncrementEntity.class));
+    }
+
+    default EntityQueryImpl<Category> queryCategories() {
+        return new EntityQueryImpl<>(getEntityContext(Category.class));
+    }
+
+    default EntityQueryImpl<SalesOrder> querySalesOrders() {
+        return new EntityQueryImpl<>(getEntityContext(SalesOrder.class));
+    }
+
+    default EntityQueryImpl<Customer> queryCustomers() {
+        return new EntityQueryImpl<>(getEntityContext(Customer.class));
     }
 
     @NonNull IntegrationTestContext reset();

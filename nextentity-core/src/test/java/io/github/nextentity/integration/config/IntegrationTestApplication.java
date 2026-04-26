@@ -10,6 +10,7 @@ import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import io.github.nextentity.integration.config.fixtures.TestDataFactory;
 import io.github.nextentity.jdbc.*;
+import io.github.nextentity.jpa.JpaConfig;
 import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import jakarta.persistence.EntityManager;
@@ -82,7 +83,7 @@ public class IntegrationTestApplication {
                 new JdbcResultCollector(),
                 JdbcConfig.DEFAULT,
                 InterceptorSelector.empty());
-        JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, metamodel, jdbcQueryExecutor);
+        JpaQueryExecutor queryExecutor = new JpaQueryExecutor(entityManager, jdbcQueryExecutor, JpaConfig.DEFAULT);
         PersistExecutor updateExecutor = new JpaPersistExecutor(entityManager);
         updateExecutor = new TransactionUpdateExecutor(updateExecutor, new TransactionOperations() {
             @Override
@@ -131,9 +132,15 @@ public class IntegrationTestApplication {
             }
             TestDataFactory.createDepartments().forEach(entityManager::persist);
             entityManager.flush();
+            TestDataFactory.createCategories().forEach(entityManager::persist);
+            entityManager.flush();
             TestDataFactory.createEmployees().forEach(entityManager::persist);
             entityManager.flush();
             TestDataFactory.createLockableEntities().forEach(entityManager::persist);
+            entityManager.flush();
+            TestDataFactory.createCustomers().forEach(entityManager::persist);
+            entityManager.flush();
+            TestDataFactory.createSalesOrders().forEach(entityManager::persist);
             entityManager.flush();
             entityManager.clear();
         }

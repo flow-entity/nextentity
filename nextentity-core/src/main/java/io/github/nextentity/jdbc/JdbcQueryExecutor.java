@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
@@ -62,10 +63,6 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @Override
     @NonNull
     public <R> List<R> getList(@NonNull QueryContext context) {
-        // JDBC 默认展开引用路径
-        context.setExpandReferencePath(true);
-        // 调用 init 完成初始化
-        context.init();
         QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
         sql.debug();
         try {

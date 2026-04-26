@@ -90,7 +90,7 @@ public final class EntityFactoryBuilder {
 
         // 创建持久化执行器
         PersistExecutor persistExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider, jdbcConfig);
-        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector);
+        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector, metamodelConfig);
     }
 
     private static @NonNull EntityTemplateFactory getEntityTemplateFactory(NextEntityProperties properties,
@@ -98,7 +98,8 @@ public final class EntityFactoryBuilder {
                                                                            PersistExecutor persistExecutor,
                                                                            DefaultMetamodel metamodel,
                                                                            QueryExecutor queryExecutor,
-                                                                           InterceptorSelector<ConstructInterceptor> interceptorSelector) {
+                                                                           InterceptorSelector<ConstructInterceptor> interceptorSelector,
+                                                                           MetamodelConfiguration metamodelConfiguration) {
         persistExecutor = wrapWithTransaction(persistExecutor, template);
 
         // 组装工厂
@@ -106,7 +107,8 @@ public final class EntityFactoryBuilder {
         FetchConfig fetchConfig = properties.getFetch().toFetchConfig();
 
         EntityTemplateFactoryConfig factoryConfig = new EntityTemplateFactoryConfig(
-                metamodel, persistExecutor, queryExecutor, fetchConfig, paginationConfig, interceptorSelector
+                metamodel, persistExecutor, queryExecutor, fetchConfig, paginationConfig, interceptorSelector,
+                metamodelConfiguration.interfaceProjectionLazyLoadEnabled(), metamodelConfiguration.dtoProjectionLazyLoadEnabled()
         );
 
         return new EntityTemplateFactory(queryExecutor, persistExecutor, factoryConfig);
@@ -119,47 +121,41 @@ public final class EntityFactoryBuilder {
     /// @param template      Spring 事务模板
     /// @return JPA 方式的 NextEntity 工厂实例
     /// @throws SqlException 如果无法确定数据库类型
-    /// @see #jpa(EntityManager, JdbcTemplate, SqlDialect, NextEntityProperties, TransactionTemplate)
+    /// @see #jpa(EntityManager, SqlDialect, NextEntityProperties, TransactionTemplate)
     public static EntityOperationsFactory jpa(EntityManager entityManager,
                                                 JdbcTemplate jdbcTemplate,
                                                 TransactionTemplate template) {
         SqlDialect sqlDialect = detectSqlDialect(jdbcTemplate);
-        return jpa(entityManager, jdbcTemplate, sqlDialect, new NextEntityProperties(), template);
+        return jpa(entityManager, sqlDialect, new NextEntityProperties(), template);
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂。
     ///
     /// @param entityManager JPA 实体管理器
-    /// @param jdbcTemplate  Spring JDBC 模板
     /// @param sqlDialect    SQL 方言
     /// @param properties    配置属性
     /// @param template      Spring 事务模板
     /// @return JPA 方式的 NextEntity 工厂实例
     public static EntityOperationsFactory jpa(EntityManager entityManager,
-                                                JdbcTemplate jdbcTemplate,
-                                                SqlDialect sqlDialect,
+                                              SqlDialect sqlDialect,
                                                 NextEntityProperties properties,
                                                 TransactionTemplate template) {
-        return jpa(entityManager, jdbcTemplate, sqlDialect, properties, template, List.of(), List.of());
+        return jpa(entityManager, sqlDialect, properties, template, List.of());
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂（含拦截器）。
     ///
     /// @param entityManager        JPA 实体管理器
-    /// @param jdbcTemplate         Spring JDBC 模板
     /// @param sqlDialect           SQL 方言
     /// @param properties           配置属性
     /// @param template             Spring 事务模板
     /// @param constructInterceptors 构造拦截器列表
-    /// @param resultInterceptors   结果拦截器列表
     /// @return JPA 方式的 NextEntity 工厂实例
     public static EntityOperationsFactory jpa(EntityManager entityManager,
-                                                JdbcTemplate jdbcTemplate,
-                                                SqlDialect sqlDialect,
+                                              SqlDialect sqlDialect,
                                                 NextEntityProperties properties,
                                                 TransactionTemplate template,
-                                                List<ConstructInterceptor> constructInterceptors,
-                                                List<ResultInterceptor> resultInterceptors) {
+                                                List<ConstructInterceptor> constructInterceptors) {
         applyLoggingConfig(properties);
 
         MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
@@ -183,12 +179,13 @@ public final class EntityFactoryBuilder {
 
         // 创建 JPA 查询执行器
         QueryExecutor queryExecutor = new JpaQueryExecutor(
-                entityManager, metamodel, nativeQueryExecutor, jpaConfig, interceptorSelector
+                entityManager, nativeQueryExecutor, jpaConfig
         );
 
         // 创建持久化执行器
         PersistExecutor persistExecutor = new JpaPersistExecutor(entityManager);
-        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector);
+        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector,
+                metamodelConfig);
     }
 
     // ===================== Private Helper Methods =====================

@@ -3,7 +3,6 @@ package io.github.nextentity.core.expression;
 import io.github.nextentity.api.PathRef;
 import io.github.nextentity.core.PathReference;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jspecify.annotations.NonNull;
@@ -28,7 +27,7 @@ import java.util.stream.Stream;
 public final class PathNode implements ExpressionNode, ImmutableArray<String> {
 
     private final String[] path;
-    private transient Attribute attribute;
+    private final transient Attribute attribute;
 
     /// 使用指定的路径段和属性创建 PathNode。
     ///
@@ -155,12 +154,8 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     ///
     /// 缓存结果以供后续调用。
     ///
-    /// @param schema 要从中解析属性的模式
     /// @return 属性元数据
-    public Attribute getAttribute(Schema schema) {
-        if (attribute == null) {
-            attribute = schema.getAttribute(this);
-        }
+    public Attribute getAttribute() {
         return attribute;
     }
 

@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.QueryStructure;
 import io.github.nextentity.core.meta.EntityType;
@@ -84,7 +85,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             StringBuilder tempSql = new StringBuilder();
             for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
                 tempSql.setLength(0);
-                appendJoinConditionTo(tempSql, entry.getKey(), entry.getValue());
+                appendJoinCondition(tempSql, entry.getKey(), entry.getValue());
                 joinConditionStrings.add(tempSql.toString());
             }
         }
@@ -106,7 +107,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         sql.append(delimiter);
         if (tableInfo instanceof JoinTableInfoImpl impl) {
             appendTable(sql, impl.attribute.getTargetEntityType());
-            appendTableAlias(impl.index);
+            appendTableAlias(impl.attribute, impl.index);
         } else {
             sql.append(tableInfo.tableName()).append(" ").append(tableInfo.tableAlias());
         }
@@ -121,36 +122,6 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
     }
 
     // ========== 辅助方法 ==========
-
-    /// 构建 JOIN 条件字符串（追加到指定的 StringBuilder）
-    protected void appendJoinConditionTo(StringBuilder sb,
-                                         JoinAttribute k,
-                                         Integer v) {
-        Object declared = k.declareBy();
-        if (declared instanceof JoinAttribute schemaAttribute) {
-            Integer parentIndex = joins.get(schemaAttribute);
-            appendTableAliasTo(sb, parentIndex);
-        } else {
-            sb.append(fromAlias);
-        }
-        if (k.isObject()) {
-            sb.append(".").append(k.getSourceAttribute().columnName()).append("=");
-            appendTableAliasTo(sb, v);
-            sb.append(".").append(k.getTargetAttribute().columnName());
-        } else {
-            throw new IllegalStateException();
-        }
-    }
-
-    /// 构建表别名（追加到指定的 StringBuilder）
-    protected void appendTableAliasTo(StringBuilder sb, Integer index) {
-        String tableName = entityType.type().getSimpleName();
-        sb.append(shortAlias(tableName));
-        if (subIndex > 0) {
-            sb.append(subIndex).append("_");
-        }
-        sb.append(index).append("_");
-    }
 
     /// 追加 WHERE 子句（委托给方言）
     protected void appendWhereClause() {
@@ -172,21 +143,8 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
             Integer v = entry.getValue();
             sql.append(delimiter);
             appendTable(sql, k.getTargetEntityType());
-            appendTableAlias(v);
+            appendTableAlias(k, v);
             delimiter = ", ";
-        }
-    }
-
-    /// 追加 JOIN 子句（LEFT JOIN ... ON ...）
-    protected void appendJoin() {
-        for (Map.Entry<JoinAttribute, Integer> entry : joins.entrySet()) {
-            JoinAttribute k = entry.getKey();
-            Integer v = entry.getValue();
-            sql.append(LEFT_JOIN);
-            appendTable(sql, k.getTargetEntityType());
-            appendTableAlias(v);
-            sql.append(ON);
-            appendJoinConditionTo(sql, k, v);
         }
     }
 
@@ -218,7 +176,7 @@ public abstract class AbstractConditionalStatementBuilder extends AbstractStatem
         @Override
         public String tableAlias() {
             StringBuilder sb = new StringBuilder();
-            appendTableAliasTo(sb, index);
+            appendTableAliasTo(sb, attribute, index);
             return sb.toString();
         }
     }

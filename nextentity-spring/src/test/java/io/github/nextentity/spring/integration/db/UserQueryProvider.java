@@ -29,6 +29,19 @@ public class UserQueryProvider implements ArgumentsProvider {
         }
         return ApplicationContexts.contexts(dbs.toArray(new String[0])).stream()
                 .flatMap(ctx -> ctx.getBeansOfType(UserRepository.class).values().stream())
+                .filter(repo -> {
+                    DB annotation = context.getRequiredTestMethod().getAnnotation(DB.class);
+                    if(annotation != null&& annotation.type().length > 0) {
+                        String name = repo.getName();
+                        for (String s : annotation.type()) {
+                            if (name.contains(s)) {
+                                return true;
+                            }
+                        }
+                        return false;
+                    }
+                    return true;
+                })
                 .map(Arguments::of);
     }
 }

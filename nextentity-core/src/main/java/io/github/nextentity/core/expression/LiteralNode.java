@@ -1,6 +1,5 @@
 package io.github.nextentity.core.expression;
 
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.Collection;
@@ -16,7 +15,7 @@ import java.util.Collection;
 /// @param value 文字值
 /// @author HuangChengwei
 /// @since 1.0.0
-public record LiteralNode(Object value) implements ExpressionNode, SelectItem {
+public record LiteralNode(Object value) implements ExpressionNode {
 
     /// 布尔值 true 的预定义实例。
     public static final LiteralNode TRUE = new LiteralNode(true);
@@ -61,11 +60,4 @@ public record LiteralNode(Object value) implements ExpressionNode, SelectItem {
         return ExpressionNode.super.operate(operator, nodes);
     }
 
-    /// 返回此字面量节点作为其自身的表达式。
-    ///
-    /// @return 此节点
-    @Override
-    public ExpressionNode expression() {
-        return this;
-    }
 }

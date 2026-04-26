@@ -1,38 +1,53 @@
-package io.github.nextentity.jdbc;
+package io.github.nextentity.core.constructor;
 
-import io.github.nextentity.core.meta.ProjectionSchemaAttribute;
+import io.github.nextentity.core.QueryConfig;
+import io.github.nextentity.core.meta.EntityBasicAttribute;
+import io.github.nextentity.core.meta.JoinAttribute;
 import io.github.nextentity.core.reflect.AttributeLoader;
 import io.github.nextentity.core.reflect.LoadObserver;
 import io.github.nextentity.core.reflect.LoadObserverRegistry;
 import io.github.nextentity.core.util.NullableConcurrentMap;
+import io.github.nextentity.jdbc.Arguments;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-/// 批量属性加载器，支持 WHERE IN 批量查询避免 N+1 问题
-public final class BatchAttributeLoader {
+/// 懒加载值构造器
+///
+/// 负责创建 AttributeLoader，首次访问时触发批量加载。
+/// 内部持有外键列和批量加载器，不需要 ArrayConstructor 包装外键。
+///
+/// 线程安全：使用 ConcurrentHashMap 收集外键，synchronized(cache) 保护批量加载过程，
+/// 确保同一外键仅触发一次查询。
+///
+/// @author HuangChengwei
+/// @since 2.2.2
+public class LazyValueConstructor implements ValueConstructor {
 
-    private final QueryContext queryContext;
-    private final ProjectionSchemaAttribute attribute;
-    private final AttributeLoadFunction batchLoaderFunction;
+    private final QueryConfig queryConfig;
+    private final JoinAttribute attribute;
+    private final LazyLoaderFunction batchLoaderFunction;
 
     private final Set<Object> foreignKeys = ConcurrentHashMap.newKeySet();
     private final Map<Object, Object> cache = new NullableConcurrentMap<>();
+    private final List<SelectItem> columns;
 
-    public BatchAttributeLoader(ProjectionSchemaAttribute attribute, QueryContext queryContext) {
+    /// @param config    查询配置
+    /// @param attribute 投影属性元数据
+    /// @param column    外键列
+    public LazyValueConstructor(QueryConfig config, JoinAttribute attribute, SelectItem column) {
         this.attribute = attribute;
-        this.queryContext = queryContext;
-        this.batchLoaderFunction = attribute.type() == attribute.getEntityAttribute().type()
+        this.queryConfig = config;
+        this.batchLoaderFunction = attribute.type() == attribute.getTargetEntityType().type()
                 ? new EntityAttributeLoadFunction()
                 : new ProjectionAttributeLoadFunction();
+        this.columns = List.of(column);
+
     }
 
-    public AttributeLoader getAttributeLoader(Object foreignKey) {
-        foreignKeys.add(foreignKey);
-        return new AttributeLoaderImpl(foreignKey);
-    }
-
+    /// 懒加载代理实现，首次调用 load() 时触发批量查询
     private class AttributeLoaderImpl implements AttributeLoader {
         private final Object foreignKey;
 
@@ -51,7 +66,7 @@ public final class BatchAttributeLoader {
                 if (!cache.containsKey(foreignKey)) {
                     long startTime = System.currentTimeMillis();
                     notifyBeforeLoad(startTime);
-                    BatchAttributeLoader loader = BatchAttributeLoader.this;
+                    LazyValueConstructor loader = LazyValueConstructor.this;
                     Map<Object, Object> results = batchLoaderFunction.apply(loader, foreignKeys);
                     cache.putAll(results);
                     for (Object key : foreignKeys) {
@@ -64,11 +79,11 @@ public final class BatchAttributeLoader {
         }
     }
 
-    public QueryContext getQueryContext() {
-        return queryContext;
+    public QueryConfig getQueryConfig() {
+        return queryConfig;
     }
 
-    public ProjectionSchemaAttribute getAttribute() {
+    public JoinAttribute getAttribute() {
         return attribute;
     }
 
@@ -105,5 +120,19 @@ public final class BatchAttributeLoader {
                     endTime
             ));
         }
+    }
+
+    @Override
+    public List<SelectItem> columns() {
+        return columns;
+    }
+
+    /// 构造 AttributeLoader，收集外键供批量加载
+    @Override
+    public AttributeLoader construct(Arguments arguments) {
+        EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
+        Object foreignKey = arguments.next(targetAttribute.valueConvertor());
+        foreignKeys.add(foreignKey);
+        return new AttributeLoaderImpl(foreignKey);
     }
 }

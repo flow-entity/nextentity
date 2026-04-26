@@ -1,10 +1,11 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.api.SortOrder;
-import io.github.nextentity.core.SelectItem;
+import io.github.nextentity.core.constructor.SelectItem;
+import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.LockModeType;
 
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
     protected static final String ASC = "asc";
 
     protected final QueryContext context;
+    protected final ValueConstructor constructor;
 
 
     protected QueryStatementBuilder(StringBuilder sql,
@@ -39,6 +41,7 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
                                     int subIndex) {
         super(sql, args, dialect, config, selectIndex, subIndex, getFromAlias(context, subIndex));
         this.context = context;
+        this.constructor = context.newConstructor();
     }
 
     private static String getFromAlias(QueryContext context, int subIndex) {
@@ -83,7 +86,8 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
         }
         String join = NONE_DELIMITER;
         int columnIndex = 0;
-        for (SelectItem expression : context.getSelectedExpression()) {
+        List<SelectItem> columns = constructor.columns();
+        for (SelectItem expression : columns) {
             sql.append(join);
             appendExpression(expression);
             appendSelectAlias(expression, columnIndex++);
@@ -92,9 +96,8 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
     }
 
     protected void appendSelectAlias(SelectItem expression, int columnIndex) {
-        // SQL Server requires aliases for aggregate columns in subqueries
         if (dialect.requiresAliasForAggregateColumns()
-            && expression instanceof OperatorNode) {
+            && expression.source() instanceof OperatorNode) {
             sql.append(" as col_").append(columnIndex);
         }
     }
@@ -152,7 +155,7 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
 
     private void initJoinColumnIndex() {
         QueryStructure structure = context.getStructure();
-        addJoinPrimitive(context.getSelectedExpression());
+        addJoinPrimitive(constructor.columns());
         addJoin(structure.where());
         addJoin(structure.groupBy());
         for (SortExpression order : structure.orderBy()) {
@@ -221,10 +224,10 @@ public class QueryStatementBuilder extends AbstractStatementBuilder {
     }
 
     private int getSelectIndex(SortExpression order) {
-        ImmutableArray<SelectItem> primitives = context.getSelectedExpression();
+        List<SelectItem> primitives = constructor.columns();
         for (int i = 0; i < primitives.size(); i++) {
             SelectItem primitive = primitives.get(i);
-            if (primitive.equals(order.expression())) {
+            if (primitive.source().equals(order.expression())) {
                 return i;
             }
         }

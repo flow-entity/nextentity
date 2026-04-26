@@ -1,5 +1,7 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.constructor.QueryContext;
+
 /// 查询SQL构建器接口
 ///
 /// 用于构建查询相关的SQL语句

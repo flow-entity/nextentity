@@ -31,7 +31,7 @@ public class ExpressionNodes {
     /// @return 如果节点为空或为真值则返回true，否则返回false
     public static boolean isNullOrTrue(ExpressionNode node) {
         return node == null || node == EmptyNode.INSTANCE
-               || (node instanceof LiteralNode literalNode) && Boolean.TRUE.equals(literalNode.value());
+               || (node instanceof LiteralNode(Object value)) && Boolean.TRUE.equals(value);
     }
 
     /// 获取表达式的根节点。

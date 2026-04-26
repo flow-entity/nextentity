@@ -9,14 +9,12 @@ public class DefaultSchemaAttribute extends DefaultSchema implements SchemaAttri
 
     private final Accessor accessor;
     private final Schema declareBy;
-    private final int ordinal;
     private final ImmutableArray<String> path;
 
-    public DefaultSchemaAttribute(Accessor accessor, Schema declareBy, int ordinal) {
+    public DefaultSchemaAttribute(Accessor accessor, Schema declareBy) {
         super(accessor.type());
         this.accessor = accessor;
         this.declareBy = declareBy;
-        this.ordinal = ordinal;
         this.path = DefaultAttribute.newPath(declareBy, accessor.name());
     }
 
@@ -28,11 +26,6 @@ public class DefaultSchemaAttribute extends DefaultSchema implements SchemaAttri
     @Override
     public Schema declareBy() {
         return declareBy;
-    }
-
-    @Override
-    public int ordinal() {
-        return ordinal;
     }
 
     @Override

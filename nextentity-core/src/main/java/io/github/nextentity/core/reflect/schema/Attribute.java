@@ -64,11 +64,6 @@ public non-sealed interface Attribute extends ReflectType {
     /// @return 属性路径，作为名称的不可变列表
     ImmutableArray<String> path();
 
-    /// 获取此属性的序号位置。
-    ///
-    /// @return 序号
-    int ordinal();
-
     /// 获取此属性在路径层次结构中的深度。
     ///
     /// @return 路径深度

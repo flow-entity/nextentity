@@ -13,7 +13,7 @@ import jakarta.persistence.FetchType;
 /// @param <T> 属性类型，必须是 {@link Attribute} 的子类型
 /// @see EntitySchema
 /// @see ProjectionSchema
-public interface MetamodelSchema<T extends Attribute> extends Schema {
+public interface MetamodelSchema<T extends MetamodelAttribute> extends Schema {
     /// 获取此模式的所有属性。
     ///
     /// @return 属性集合

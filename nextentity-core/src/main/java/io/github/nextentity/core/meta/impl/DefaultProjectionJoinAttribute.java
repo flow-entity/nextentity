@@ -3,14 +3,12 @@ package io.github.nextentity.core.meta.impl;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultProjectionJoinAttribute
         extends DefaultProjectionSchema
@@ -28,12 +26,11 @@ public class DefaultProjectionJoinAttribute
                                           EntityBasicAttribute targetAttribute,
                                           EntityType target,
                                           DefaultMetamodel metamodel,
-                                          int ordinal,
                                           FetchType fetchType,
                                           Attribute attribute) {
         super(declareBy.getEntitySchema(), attribute.type(), metamodel);
         this.declareBy = declareBy;
-        this.attribute = new DefaultAttribute(declareBy, attribute, ordinal);
+        this.attribute = new DefaultAttribute(declareBy, attribute);
         this.sourceAttribute = sourceAttribute;
         this.targetAttribute = targetAttribute;
         this.target = target;
@@ -44,14 +41,13 @@ public class DefaultProjectionJoinAttribute
     protected AttributeSet<ProjectionAttribute> createAttributes() {
         ProjectionSchema projection = target.getProjection(type());
         ArrayList<ProjectionAttribute> result = new ArrayList<>();
-        AtomicInteger ordinal = new AtomicInteger();
         for (ProjectionAttribute projectionAttribute : projection.getAttributes()) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
                     projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
-                    metamodel,
-                    ordinal);
+                    metamodel
+            );
             result.add(item);
         }
         return new AttributeSet<>(result);
@@ -83,18 +79,13 @@ public class DefaultProjectionJoinAttribute
     }
 
     @Override
-    public Schema declareBy() {
+    public ProjectionSchema declareBy() {
         return declareBy;
     }
 
     @Override
     public ImmutableArray<String> path() {
         return attribute.path();
-    }
-
-    @Override
-    public int ordinal() {
-        return attribute.ordinal();
     }
 
     @Override

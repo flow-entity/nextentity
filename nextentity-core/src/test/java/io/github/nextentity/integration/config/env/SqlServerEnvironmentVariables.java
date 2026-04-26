@@ -29,8 +29,11 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
     public List<String> ddl() {
         return List.of(
                 "DROP TABLE IF EXISTS auto_increment_entity",
+                "DROP TABLE IF EXISTS sales_order",
+                "DROP TABLE IF EXISTS customer",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
+                "DROP TABLE IF EXISTS category",
                 "DROP TABLE IF EXISTS lockable_entity",
                 """
                         CREATE TABLE department (
@@ -65,6 +68,13 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                         )
                         """,
                 """
+                        CREATE TABLE category (
+                            id BIGINT PRIMARY KEY,
+                            name NVARCHAR(100) NOT NULL,
+                            parent_id BIGINT
+                        )
+                        """,
+                """
                         CREATE TABLE auto_increment_entity (
                             id BIGINT PRIMARY KEY IDENTITY(1,1),
                             name NVARCHAR(100) NOT NULL,
@@ -72,6 +82,21 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                             priority INT,
                             active BIT,
                             created_at DATETIME2
+                        )
+                        """,
+                """
+                        CREATE TABLE customer (
+                            id BIGINT PRIMARY KEY,
+                            name NVARCHAR(100) NOT NULL,
+                            email NVARCHAR(100)
+                        )
+                        """,
+                """
+                        CREATE TABLE sales_order (
+                            id BIGINT PRIMARY KEY,
+                            order_no NVARCHAR(100) NOT NULL,
+                            customer_id BIGINT,
+                            amount DECIMAL(19,2)
                         )
                         """
         );

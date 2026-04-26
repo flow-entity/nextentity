@@ -2,25 +2,25 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.SelectItem;
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.constructor.SelectItem;
+import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
-import io.github.nextentity.core.expression.From;
-import io.github.nextentity.core.interceptor.ConstructInterceptor;
-import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.meta.Metamodel;
-import io.github.nextentity.core.meta.SubQueryEntityType;
-import io.github.nextentity.core.util.ImmutableArray;
+import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.jdbc.QueryContext;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
+import jakarta.persistence.criteria.From;
 import org.jspecify.annotations.NonNull;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 ///
 /// JPA 查询执行器，使用 JPA Criteria API 执行查询操作。
@@ -35,16 +35,8 @@ public class JpaQueryExecutor implements QueryExecutor {
     private final JpaConfig config;
 
     public JpaQueryExecutor(EntityManager entityManager,
-                            Metamodel metamodel,
-                            QueryExecutor nativeQueryExecutor) {
-        this(entityManager, metamodel, nativeQueryExecutor, JpaConfig.DEFAULT, InterceptorSelector.empty());
-    }
-
-    public JpaQueryExecutor(EntityManager entityManager,
-                            Metamodel metamodel,
                             QueryExecutor nativeQueryExecutor,
-                            JpaConfig config,
-                            InterceptorSelector<ConstructInterceptor> interceptorSelector) {
+                            JpaConfig config) {
         this.entityManager = entityManager;
         this.nativeQueryExecutor = nativeQueryExecutor;
         this.config = config;
@@ -52,10 +44,6 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     @Override
     public <T> List<T> getList(@NonNull QueryContext context) {
-        // JPA 默认不展开引用路径
-        context.setExpandReferencePath(false);
-        // 调用 init 完成初始化
-        context.init();
         QueryStructure queryStructure = context.getStructure();
         // 应用 nativeSubqueries 配置
         if (config.nativeSubqueries() && requiredNativeQuery(context, queryStructure)) {
@@ -66,19 +54,20 @@ public class JpaQueryExecutor implements QueryExecutor {
             List<?> resultList = getEntityResultList(queryStructure);
             return TypeCastUtil.cast(resultList);
         }
-        List<Object[]> objectsList = getObjectsList(queryStructure, context.getSelectedExpression());
+        ValueConstructor constructor = context.newConstructor();
+        List<Object[]> objectsList = getObjectsList(queryStructure, constructor.columns());
         List<Object> result = objectsList.stream()
                 .map(objects -> {
                     JpaArguments arguments = new JpaArguments(
                             objects);
-                    return context.construct(arguments);
+                    return constructor.construct(arguments);
                 })
                 .collect(ImmutableList.collector(objectsList.size()));
         return TypeCastUtil.cast(result);
     }
 
     private boolean requiredNativeQuery(@NonNull QueryContext context, @NonNull QueryStructure queryStructure) {
-        From from = queryStructure.from();
+        var from = queryStructure.from();
         return from instanceof FromSubQuery
                || context.getMetamodel().getEntity(((FromEntity) from).type()) instanceof SubQueryEntityType
                || hasSubQuery(queryStructure);
@@ -113,8 +102,8 @@ public class JpaQueryExecutor implements QueryExecutor {
         if (expression instanceof QueryStructure) {
             return true;
         }
-        if (expression instanceof OperatorNode) {
-            List<? extends ExpressionNode> expressions = ((OperatorNode) expression).operands();
+        if (expression instanceof OperatorNode operator) {
+            List<? extends ExpressionNode> expressions = operator.operands();
             return hasSubQuery(expressions);
         }
         return false;
@@ -134,7 +123,7 @@ public class JpaQueryExecutor implements QueryExecutor {
         return new EntityBuilder<>(root, cb, query, structure, config).getResultList();
     }
 
-    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, ImmutableArray<SelectItem> columns) {
+    private List<Object[]> getObjectsList(@NonNull QueryStructure structure, Collection<? extends SelectItem> columns) {
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> query = cb.createQuery(Object[].class);
         FromEntity from = (FromEntity) structure.from();
@@ -144,13 +133,14 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     class ObjectArrayBuilder extends Builder<Object[]> {
 
-        private final ImmutableArray<SelectItem> selects;
+        private final Collection<? extends SelectItem> selects;
+        private final Map<JoinAttribute, From<?, ?>> joins = new HashMap<>();
 
         public ObjectArrayBuilder(Root<?> root,
                                   CriteriaBuilder cb,
                                   CriteriaQuery<Object[]> query,
                                   QueryStructure structure,
-                                  ImmutableArray<SelectItem> selects,
+                                  Collection<? extends SelectItem> selects,
                                   JpaConfig config) {
             super(root, cb, query, structure, config);
             this.selects = selects;
@@ -161,8 +151,8 @@ public class JpaQueryExecutor implements QueryExecutor {
             return resultList
                     .stream()
                     .map(it -> {
-                        if (it instanceof Object[]) {
-                            return (Object[]) it;
+                        if (it instanceof Object[] objects) {
+                            return objects;
                         }
                         return new Object[]{it};
                     })
@@ -172,13 +162,68 @@ public class JpaQueryExecutor implements QueryExecutor {
         @Override
         protected TypedQuery<Object[]> getTypedQuery() {
             List<Selection<?>> collect = selects.stream()
-                    .map(this::toExpression)
+                    .map(this::getExpression)
                     .collect(ImmutableList.collector(selects.size()));
             Selection<Object[]> tuple = cb.array(collect);
 
             CriteriaQuery<Object[]> select = query.select(tuple);
 
             return entityManager.createQuery(select);
+        }
+
+        private Expression<?> getExpression(SelectItem column) {
+            switch (column) {
+                case SelectItem.Joined(var attribute, var join) -> {
+                    return getJoinedExpression(attribute, join);
+                }
+                case SelectItem.Expr(var source, var _) -> {
+                    return this.toExpression(source);
+                }
+                case null -> throw new IllegalArgumentException("Column must not be null");
+                default -> throw new IllegalArgumentException("Unsupported Column type: " + column.getClass().getName());
+            }
+        }
+
+        private Expression<?> getJoinedExpression(EntityBasicAttribute attribute,
+                                                  JoinAttribute join) {
+            return getJoin(join).get(attribute.name());
+        }
+
+        private From<?, ?> getJoin(JoinAttribute join) {
+            return joins.computeIfAbsent(join, this::createJoin);
+        }
+
+        private From<?, ?> createJoin(JoinAttribute join) {
+            return switch (join) {
+                case ProjectionJoinAttribute projectionJoin -> createProjectionJoin(projectionJoin);
+                case ProjectionSchemaAttribute projectionSchema -> createSchemaJoin(
+                        projectionSchema,
+                        projectionSchema.getEntityAttribute().name()
+                );
+                case EntitySchemaAttribute entitySchema -> createSchemaJoin(entitySchema, entitySchema.name());
+            };
+        }
+
+        private From<?, ?> createProjectionJoin(ProjectionJoinAttribute projectionJoin) {
+            From<?, ?> left = resolveParentFrom(projectionJoin.declareBy());
+            Join<?, ?> join = left.join(projectionJoin.getTargetEntityType().type(), JoinType.LEFT);
+            join.on(cb.equal(
+                    left.get(projectionJoin.getSourceAttribute().name()),
+                    join.get(projectionJoin.getTargetAttribute().name())
+            ));
+            return join;
+        }
+
+        private From<?, ?> createSchemaJoin(JoinAttribute join, String attributeName) {
+            From<?, ?> left = resolveParentFrom(join.declareBy());
+            return left.join(attributeName, JoinType.LEFT);
+        }
+
+        private From<?, ?> resolveParentFrom(Schema schema) {
+            if (schema instanceof JoinAttribute join) {
+                return getJoin(join);
+            }
+            return root;
         }
 
     }
@@ -260,9 +305,8 @@ public class JpaQueryExecutor implements QueryExecutor {
         protected List<?> getResultList() {
             Selected select = structure.select();
             setDistinct(select);
-            if (select instanceof SelectEntity) {
-                Collection<? extends PathNode> attributes = ((SelectEntity) select)
-                        .fetch();
+            if (select instanceof SelectEntity selectEntity) {
+                Collection<? extends PathNode> attributes = selectEntity.fetch();
                 setFetch(attributes);
             }
             setWhere(structure.where());
