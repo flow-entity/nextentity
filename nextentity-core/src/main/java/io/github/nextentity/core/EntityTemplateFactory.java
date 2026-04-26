@@ -8,6 +8,7 @@ import io.github.nextentity.core.meta.Metamodel;
 import org.jspecify.annotations.NonNull;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class EntityTemplateFactory implements EntityOperationsFactory, QueryConfig, PersistConfig {
@@ -38,6 +39,7 @@ public final class EntityTemplateFactory implements EntityOperationsFactory, Que
     }
 
     public void registerEventListener(EntityEventListener listener) {
+        Objects.requireNonNull(listener, "listener must not be null");
         this.eventListener.add(listener);
     }
 

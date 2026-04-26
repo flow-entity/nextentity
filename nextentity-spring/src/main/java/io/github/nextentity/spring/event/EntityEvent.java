@@ -12,7 +12,7 @@ import java.util.List;
 ///
 /// @param <T> 实体类型
 /// @author HuangChengwei
-/// @since 2.1.0
+/// @since 2.2.2
 public class EntityEvent<T> extends ApplicationEvent {
 
     private final Class<T> entityType;

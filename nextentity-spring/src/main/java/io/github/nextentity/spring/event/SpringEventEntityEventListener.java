@@ -17,7 +17,7 @@ import java.util.List;
 /// 2. 使用 @EventListener 注解监听具体事件类型
 ///
 /// @author HuangChengwei
-/// @since 2.1.0
+/// @since 2.2.2
 public class SpringEventEntityEventListener implements EntityEventListener {
 
     private final ApplicationEventPublisher eventPublisher;

@@ -26,7 +26,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 ///   auto-add-id-order: true
 ///   pagination-log-level: DEBUG
 ///   interface-lazy-enabled: true
-///   dto-lazy-enabled: false
+///   class-lazy-enabled: false
 ///   jdbc:
 ///     dialect: auto
 ///     query:
