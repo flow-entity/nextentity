@@ -208,7 +208,7 @@ public class IntegrationTestApplication {
         }
 
         @Override
-        public <T> UpdateSetStep<T> update(EntityTemplateDescriptor<T> type) {
+        public <T> UpdateSetStep<T> update(EntityTemplateDescriptor<?, T> type) {
             return new UpdateSetStepImpl<>(type);
         }
     }

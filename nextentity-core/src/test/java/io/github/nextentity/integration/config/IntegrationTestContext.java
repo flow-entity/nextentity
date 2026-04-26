@@ -26,7 +26,7 @@ public interface IntegrationTestContext {
     /// @param entityClass 实体类
     /// @param <T>         实体类型
     /// @return 实体上下文实例
-    default <T> EntityTemplateDescriptor<T> getEntityContext(Class<T> entityClass) {
+    default <T> EntityTemplateDescriptor<?, T> getEntityContext(Class<T> entityClass) {
         DefaultMetamodel metamodel = DefaultMetamodel.of();
         EntityTemplateFactoryConfig config = new EntityTemplateFactoryConfig(
                 metamodel, getUpdateExecutor(), getQueryExecutor(), InterceptorSelector.empty(),
@@ -76,9 +76,9 @@ public interface IntegrationTestContext {
 
     <T> UpdateSetStep<T> update(Class<T> type);
 
-    <T> UpdateSetStep<T> update(EntityTemplateDescriptor<T> type);
+    <T> UpdateSetStep<T> update(EntityTemplateDescriptor<?, T> type);
 
-    default <T> DeleteWhereStep<T> delete(EntityTemplateDescriptor<T> entityContext) {
+    default <T> DeleteWhereStep<T> delete(EntityTemplateDescriptor<?, T> entityContext) {
         return new DeleteWhereStepImpl<>(entityContext);
     }
 }

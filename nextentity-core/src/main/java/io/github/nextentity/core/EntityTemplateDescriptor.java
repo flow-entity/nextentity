@@ -4,15 +4,15 @@ import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.Metamodel;
 
-public record EntityTemplateDescriptor<T>(
+public record EntityTemplateDescriptor<C extends QueryConfig & PersistConfig, T>(
 
-        EntityTemplateFactoryConfig config,
+        C config,
 
         EntityDescriptor<T> descriptor
 
 ) implements QueryDescriptor<T>, PersistDescriptor<T> {
 
-    public EntityTemplateDescriptor(EntityTemplateFactoryConfig config, Class<T> clazz) {
+    public EntityTemplateDescriptor(C config, Class<T> clazz) {
         this(
                 config,
                 new SimpleEntityDescriptor<>(config.metamodel().getEntity(clazz), clazz)

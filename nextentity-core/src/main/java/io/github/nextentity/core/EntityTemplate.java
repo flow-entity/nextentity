@@ -10,7 +10,7 @@ public class EntityTemplate<T> implements EntityOperations<T> {
     private final PersistDescriptor<T> descriptor;
     private final EntityQuery<T> query;
 
-    public EntityTemplate(EntityTemplateDescriptor<T> descriptor) {
+    public EntityTemplate(EntityTemplateDescriptor<?, T> descriptor) {
         this.descriptor = descriptor;
         this.query = new EntityQueryImpl<>(descriptor);
     }

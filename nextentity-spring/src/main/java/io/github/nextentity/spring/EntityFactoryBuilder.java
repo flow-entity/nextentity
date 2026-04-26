@@ -109,7 +109,7 @@ public final class EntityFactoryBuilder {
                 metamodel, persistExecutor, queryExecutor, interceptorSelector, queryProperties
         );
 
-        return new EntityTemplateFactory(queryExecutor, persistExecutor, factoryConfig);
+        return new EntityTemplateFactory(factoryConfig);
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂。

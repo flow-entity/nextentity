@@ -1,5 +1,6 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.core.event.EntityEventListener;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.Metamodel;
@@ -18,4 +19,8 @@ public record EntityTemplateFactoryConfig(
         );
     }
 
+    @Override
+    public EntityEventListener eventListener() {
+        return null;
+    }
 }
