@@ -4,7 +4,6 @@ import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
-import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.jdbc.SqlDialect;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.InjectionPoint;
@@ -82,7 +81,6 @@ public class NextEntityAutoConfiguration {
     /// @param entityManagerProvider  JPA 实体管理器提供者（可选）
     /// @param properties             NextEntity 配置属性
     /// @param constructInterceptorsProvider 构造拦截器提供者（可选）
-    /// @param resultInterceptorsProvider 结果拦截器提供者（可选）
     /// @return EntityOperationsFactory 实例
     @Bean
     @ConditionalOnMissingBean
@@ -90,19 +88,17 @@ public class NextEntityAutoConfiguration {
                                                    ObjectProvider<EntityManager> entityManagerProvider,
                                                    NextEntityProperties properties,
                                                    TransactionTemplate transactionTemplate,
-                                                   ObjectProvider<ConstructInterceptor> constructInterceptorsProvider,
-                                                   ObjectProvider<ResultInterceptor> resultInterceptorsProvider) {
+                                                   ObjectProvider<ConstructInterceptor> constructInterceptorsProvider) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
         List<ConstructInterceptor> constructInterceptors = constructInterceptorsProvider.stream().toList();
-        List<ResultInterceptor> resultInterceptors = resultInterceptorsProvider.stream().toList();
 
         if (entityManager != null) {
             return EntityFactoryBuilder.jpa(entityManager, dialect, properties, transactionTemplate,
                                             constructInterceptors);
         }
         return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate,
-                                         constructInterceptors, resultInterceptors);
+                                         constructInterceptors);
     }
 
     /// CGLIB 代理拦截器（处理普通类投影）

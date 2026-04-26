@@ -6,7 +6,6 @@ import io.github.nextentity.core.*;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
 import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.entity.*;
-import io.github.nextentity.jdbc.FetchConfig;
 import org.jspecify.annotations.NonNull;
 
 import java.util.function.Supplier;
@@ -30,8 +29,8 @@ public interface IntegrationTestContext {
     default <T> EntityTemplateDescriptor<T> getEntityContext(Class<T> entityClass) {
         DefaultMetamodel metamodel = DefaultMetamodel.of();
         EntityTemplateFactoryConfig config = new EntityTemplateFactoryConfig(
-                metamodel, getUpdateExecutor(), getQueryExecutor(),
-                FetchConfig.DEFAULT, PaginationConfig.DEFAULT, InterceptorSelector.empty(), true, false
+                metamodel, getUpdateExecutor(), getQueryExecutor(), InterceptorSelector.empty(),
+                QueryProperties.DEFAULT
         );
         return new EntityTemplateDescriptor<>(config, entityClass);
     }

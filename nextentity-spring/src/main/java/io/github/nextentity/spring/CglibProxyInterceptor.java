@@ -67,8 +67,6 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         return false;
     }
 
-
-
     @Override
     public String name() {
         return "cglib-proxy";

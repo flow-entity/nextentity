@@ -11,6 +11,13 @@ spring:
 # NextEntity 配置测试
 nextentity:
   enabled: true
+  default-fetch-type: EAGER
+  fetch-batch-max-size: 500
+  lazy-load-enabled: true
+  auto-add-id-order: false
+  pagination-log-level: INFO
+  interface-lazy-enabled: true
+  class-lazy-enabled: true
   jdbc:
     dialect: io.github.nextentity.jdbc.MySqlDialect
     query:

@@ -221,7 +221,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         ImmutableList<SortExpression> orderBy = queryStructure.orderBy();
 
         // 只有在配置启用、非聚合查询且未指定排序时才自动添加主键排序
-        if (descriptor.paginationConfig().autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
+        if (descriptor.queryConfig().properties().autoAddIdOrder() && orderBy.isEmpty() && !isAggregateQuery()) {
             EntityType entity = descriptor.entityType();
             if (entity != null) {
                 var idAttr = entity.id();
@@ -254,7 +254,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         String message = "Pagination without ORDER BY detected. " +
                          "Automatically adding primary key ordering for entity {}. " +
                          "Consider adding explicit orderBy() for deterministic results.";
-        switch (descriptor.paginationConfig().logLevel()) {
+        switch (descriptor.queryConfig().properties().paginationLogLevel()) {
             case INFO -> log.info(message, entityType.getSimpleName());
             case WARN -> log.warn(message, entityType.getSimpleName());
             default -> log.debug(message, entityType.getSimpleName());
