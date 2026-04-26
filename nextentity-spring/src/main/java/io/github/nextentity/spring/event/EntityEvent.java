@@ -23,7 +23,7 @@ public class EntityEvent<T> extends ApplicationEvent {
     public EntityEvent(Object source, Class<T> entityType, List<T> entities, EntityEventType eventType, int affectedRows) {
         super(source);
         this.entityType = entityType;
-        this.entities = List.copyOf(entities);
+        this.entities = entities;
         this.eventType = eventType;
         this.affectedRows = affectedRows;
     }
@@ -43,6 +43,10 @@ public class EntityEvent<T> extends ApplicationEvent {
         return eventType;
     }
 
+    /// 获取受影响行数。
+    ///
+    /// Before 事件始终为 0，After 事件为实际影响行数；
+    /// Predicate 类事件的 After 变体反映 SQL 语句的实际影响行数。
     public int getAffectedRows() {
         return affectedRows;
     }

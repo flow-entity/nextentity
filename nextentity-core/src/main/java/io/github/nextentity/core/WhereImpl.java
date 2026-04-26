@@ -247,18 +247,11 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
         );
     }
 
-    /// 根据配置的日志级别记录自动排序日志。
-    ///
-    /// @param entityType 实体类型
     private void logAutoSort(Class<?> entityType) {
-        String message = "Pagination without ORDER BY detected. " +
-                         "Automatically adding primary key ordering for entity {}. " +
-                         "Consider adding explicit orderBy() for deterministic results.";
-        switch (descriptor.queryConfig().properties().paginationLogLevel()) {
-            case INFO -> log.info(message, entityType.getSimpleName());
-            case WARN -> log.warn(message, entityType.getSimpleName());
-            default -> log.debug(message, entityType.getSimpleName());
-        }
+        log.debug("Pagination without ORDER BY detected. " +
+                  "Automatically adding primary key ordering for entity {}. " +
+                  "Consider adding explicit orderBy() for deterministic results.",
+                entityType.getSimpleName());
     }
 
     /// 检查是否是聚合查询。

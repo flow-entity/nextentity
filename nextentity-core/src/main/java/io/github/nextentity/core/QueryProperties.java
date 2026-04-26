@@ -11,7 +11,6 @@ public record QueryProperties(
         int fetchBatchMaxSize,
         boolean lazyLoadEnabled,
         boolean autoAddIdOrder,
-        PaginationConfig.LogLevel paginationLogLevel,
         boolean interfaceLazyEnabled,
         boolean classLazyEnabled
 ) {
@@ -21,7 +20,6 @@ public record QueryProperties(
             1000,
             true,
             true,
-            PaginationConfig.LogLevel.DEBUG,
             true,
             false
     );

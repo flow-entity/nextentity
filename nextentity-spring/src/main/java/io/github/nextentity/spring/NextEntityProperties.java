@@ -1,6 +1,5 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.PaginationConfig;
 import jakarta.persistence.FetchType;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -24,7 +23,6 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 ///   fetch-batch-max-size: 1000
 ///   lazy-load-enabled: true
 ///   auto-add-id-order: true
-///   pagination-log-level: DEBUG
 ///   interface-lazy-enabled: true
 ///   class-lazy-enabled: false
 ///   jdbc:
@@ -78,9 +76,6 @@ public class NextEntityProperties {
 
     /// 当分页查询未指定排序时，是否自动添加主键排序（默认 true）
     private boolean autoAddIdOrder = true;
-
-    /// 分页自动排序日志级别（默认 DEBUG）
-    private PaginationConfig.LogLevel paginationLogLevel = PaginationConfig.LogLevel.DEBUG;
 
     // ===================== Metamodel 配置 =====================
 
@@ -175,14 +170,6 @@ public class NextEntityProperties {
 
     public void setAutoAddIdOrder(boolean autoAddIdOrder) {
         this.autoAddIdOrder = autoAddIdOrder;
-    }
-
-    public PaginationConfig.LogLevel getPaginationLogLevel() {
-        return paginationLogLevel;
-    }
-
-    public void setPaginationLogLevel(PaginationConfig.LogLevel paginationLogLevel) {
-        this.paginationLogLevel = paginationLogLevel;
     }
 
     public boolean isInterfaceLazyEnabled() {

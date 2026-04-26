@@ -210,10 +210,7 @@ public class IntegrationTestApplication {
                 @Override
                 public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities, int affectedRows) {
                     switch (eventType) {
-                        case BEFORE_INSERT, BEFORE_UPDATE, BEFORE_PREDICATE_UPDATE,
-                             BEFORE_DELETE, BEFORE_PREDICATE_DELETE,
-                             AFTER_INSERT, AFTER_UPDATE, AFTER_PREDICATE_UPDATE,
-                             AFTER_DELETE, AFTER_PREDICATE_DELETE -> dirtyEntityTypes.add(entityType);
+                        default -> dirtyEntityTypes.add(entityType);
                     }
                 }
             };

@@ -102,7 +102,7 @@ public final class EntityFactoryBuilder {
 
         QueryProperties queryProperties = new QueryProperties(
                 properties.getDefaultFetchType(), properties.getFetchBatchMaxSize(), properties.isLazyLoadEnabled(),
-                properties.isAutoAddIdOrder(), properties.getPaginationLogLevel(),
+                properties.isAutoAddIdOrder(),
                 properties.isInterfaceLazyEnabled(), properties.isClassLazyEnabled()
         );
         EntityTemplateFactoryConfig factoryConfig = new EntityTemplateFactoryConfig(

@@ -73,6 +73,11 @@ public final class EntityTemplateFactory implements EntityOperationsFactory, Que
         return eventListener;
     }
 
+    /// 复合监听器集合，按注册顺序依次调用所有监听器。
+    ///
+    /// **异常行为：**若某个监听器抛出异常，后续监听器将不会被调用，
+    /// 异常将向上传播。如需异常隔离（一个监听器的失败不影响其他监听器），
+    /// 请在监听器实现内部自行 try-catch。
     private static class EntityEventListenerSet implements EntityEventListener {
         private final CopyOnWriteArrayList<EntityEventListener> listeners = new CopyOnWriteArrayList<>();
 

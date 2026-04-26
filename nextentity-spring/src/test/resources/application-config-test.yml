@@ -15,7 +15,6 @@ nextentity:
   fetch-batch-max-size: 500
   lazy-load-enabled: true
   auto-add-id-order: false
-  pagination-log-level: INFO
   interface-lazy-enabled: true
   class-lazy-enabled: true
   jdbc:
