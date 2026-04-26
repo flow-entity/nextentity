@@ -12,7 +12,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public final class EntityTemplateFactory implements EntityOperationsFactory, QueryConfig, PersistConfig {
 
-
     private final Metamodel metamodel;
     private final PersistExecutor persistExecutor;
     private final QueryExecutor queryExecutor;

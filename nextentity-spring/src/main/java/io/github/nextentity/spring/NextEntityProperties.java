@@ -90,6 +90,21 @@ public class NextEntityProperties {
     /// Dto 投影懒加载开关（默认 false）
     private boolean classLazyEnabled = false;
 
+    // ===================== 事件配置 =====================
+
+    /// 是否启用事件发布功能。
+    ///
+    /// 启用后，CRUD 操作会通过 Spring ApplicationEventPublisher 发布事件，
+    /// 可使用 @EventListener 注解监听具体事件类型。
+    ///
+    /// 默认为 false，可通过配置启用：
+    /// ```yaml
+    /// nextentity:
+    ///   enabled: true
+    ///   event-publishing: true
+    /// ```
+    private boolean eventPublishing = false;
+
     // ===================== 执行器配置 =====================
 
     /// JDBC 配置
@@ -120,6 +135,14 @@ public class NextEntityProperties {
 
     public void setGenericRepository(boolean genericRepository) {
         this.genericRepository = genericRepository;
+    }
+
+    public boolean isEventPublishing() {
+        return eventPublishing;
+    }
+
+    public void setEventPublishing(boolean eventPublishing) {
+        this.eventPublishing = eventPublishing;
     }
 
     public FetchType getDefaultFetchType() {

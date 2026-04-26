@@ -1,10 +1,12 @@
 package io.github.nextentity.spring;
 
 import io.github.nextentity.core.EntityOperationsFactory;
+import io.github.nextentity.core.EntityTemplateFactory;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.JdkProxyInterceptor;
 import io.github.nextentity.jdbc.SqlDialect;
+import io.github.nextentity.spring.event.SpringEventEntityEventListener;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.ObjectProvider;
@@ -13,6 +15,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Scope;
@@ -77,28 +80,50 @@ public class NextEntityAutoConfiguration {
     /// 自动检测是否存在 EntityManager 来决定使用 JPA 还是 JDBC 模式。
     /// 如果用户已定义 EntityOperationsFactory Bean，则跳过此配置。
     ///
-    /// @param jdbcTemplate           Spring JDBC 模板（必需）
-    /// @param entityManagerProvider  JPA 实体管理器提供者（可选）
-    /// @param properties             NextEntity 配置属性
+    /// 当配置 {@code nextentity.event-publishing=true} 时，
+    /// 会自动注册 {@link SpringEventEntityEventListener} 将 CRUD 事件转换为 Spring ApplicationEvent。
+    ///
+    /// @param jdbcTemplate                  Spring JDBC 模板（必需）
+    /// @param entityManagerProvider         JPA 实体管理器提供者（可选）
+    /// @param properties                    NextEntity 配置属性
+    /// @param transactionTemplate           Spring 事务模板（必需）
+    /// @param eventPublisher                Spring 事件发布器（必需）
     /// @param constructInterceptorsProvider 构造拦截器提供者（可选）
     /// @return EntityOperationsFactory 实例
     @Bean
     @ConditionalOnMissingBean
     public EntityOperationsFactory entityContext(JdbcTemplate jdbcTemplate,
-                                                   ObjectProvider<EntityManager> entityManagerProvider,
-                                                   NextEntityProperties properties,
-                                                   TransactionTemplate transactionTemplate,
-                                                   ObjectProvider<ConstructInterceptor> constructInterceptorsProvider) {
+                                                 ObjectProvider<EntityManager> entityManagerProvider,
+                                                 NextEntityProperties properties,
+                                                 TransactionTemplate transactionTemplate,
+                                                 ApplicationEventPublisher eventPublisher,
+                                                 ObjectProvider<ConstructInterceptor> constructInterceptorsProvider) {
         SqlDialect dialect = resolveDialect(jdbcTemplate, properties.getJdbc().getDialect());
         EntityManager entityManager = entityManagerProvider.getIfAvailable();
         List<ConstructInterceptor> constructInterceptors = constructInterceptorsProvider.stream().toList();
 
+        EntityOperationsFactory factory;
         if (entityManager != null) {
-            return EntityFactoryBuilder.jpa(entityManager, dialect, properties, transactionTemplate,
-                                            constructInterceptors);
+            factory = EntityFactoryBuilder.jpa(
+                    entityManager,
+                    dialect,
+                    properties,
+                    transactionTemplate,
+                    constructInterceptors
+            );
+        } else {
+            factory = EntityFactoryBuilder.jdbc(
+                    jdbcTemplate,
+                    dialect,
+                    properties,
+                    transactionTemplate,
+                    constructInterceptors
+            );
         }
-        return EntityFactoryBuilder.jdbc(jdbcTemplate, dialect, properties, transactionTemplate,
-                                         constructInterceptors);
+        if (properties.isEventPublishing() && factory instanceof EntityTemplateFactory templateFactory) {
+            templateFactory.registerEventListener(new SpringEventEntityEventListener(eventPublisher));
+        }
+        return factory;
     }
 
     /// CGLIB 代理拦截器（处理普通类投影）
@@ -117,8 +142,8 @@ public class NextEntityAutoConfiguration {
 
     /// 解析 SQL 方言。
     ///
-    /// @param jdbcTemplate  JDBC 模板
-    /// @param dialectName   方言名称或实现类全名（null 表示自动检测）
+    /// @param jdbcTemplate JDBC 模板
+    /// @param dialectName  方言名称或实现类全名（null 表示自动检测）
     /// @return SqlDialect 实例
     private SqlDialect resolveDialect(JdbcTemplate jdbcTemplate, String dialectName) {
         if (dialectName == null || dialectName.isEmpty()) {
@@ -147,8 +172,7 @@ public class NextEntityAutoConfiguration {
             Class<?> clazz = Class.forName(className);
             return (SqlDialect) clazz.getDeclaredConstructor().newInstance();
         } catch (Exception e) {
-            throw new ConfigurationException(
-                    "Failed to instantiate SqlDialect: " + className, e);
+            throw new ConfigurationException("Failed to instantiate SqlDialect: " + className, e);
         }
     }
 
