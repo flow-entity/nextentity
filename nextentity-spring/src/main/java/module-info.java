@@ -14,4 +14,5 @@ open module nextentity.spring {
     requires spring.beans;
 
     exports io.github.nextentity.spring;
+    exports io.github.nextentity.spring.event;
 }

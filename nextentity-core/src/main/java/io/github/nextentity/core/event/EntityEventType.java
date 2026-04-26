@@ -1,0 +1,14 @@
+package io.github.nextentity.core.event;
+
+public enum EntityEventType {
+    BEFORE_INSERT,
+    BEFORE_UPDATE,
+    BEFORE_PREDICATE_UPDATE,
+    BEFORE_DELETE,
+    BEFORE_PREDICATE_DELETE,
+    AFTER_INSERT,
+    AFTER_UPDATE,
+    AFTER_PREDICATE_UPDATE,
+    AFTER_DELETE,
+    AFTER_PREDICATE_DELETE
+}

@@ -30,8 +30,4 @@ public interface QueryDescriptor<E> {
         return entityDescriptor().entityType();
     }
 
-    default PaginationConfig paginationConfig() {
-        return queryConfig().pagination();
-    }
-
 }

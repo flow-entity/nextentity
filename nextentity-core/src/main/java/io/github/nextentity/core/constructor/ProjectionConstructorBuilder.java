@@ -81,10 +81,10 @@ public class ProjectionConstructorBuilder {
     }
 
     private boolean isSupportLazyLoading(ProjectionSchema schema) {
-        if (queryConfig.interfaceLazyEnabled() && schema.type().isInterface()) {
+        if (queryConfig.properties().interfaceLazyEnabled() && schema.type().isInterface()) {
             return true;
         }
-        return queryConfig.dtoObjectLazyEnabled() && !schema.type().isRecord() && !schema.type().isInterface();
+        return queryConfig.properties().classLazyEnabled() && !schema.type().isRecord() && !schema.type().isInterface();
     }
 
 }

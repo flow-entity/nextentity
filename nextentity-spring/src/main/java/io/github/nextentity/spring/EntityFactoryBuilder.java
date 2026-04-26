@@ -3,15 +3,14 @@ package io.github.nextentity.spring;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.interceptor.InterceptorSelector;
-import io.github.nextentity.core.interceptor.ResultInterceptor;
 import io.github.nextentity.core.exception.SqlException;
+import io.github.nextentity.core.meta.MetamodelConfiguration;
+import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaPersistExecutor;
 import io.github.nextentity.jpa.JpaQueryExecutor;
 import io.github.nextentity.jpa.JpaConfig;
 import io.github.nextentity.jpa.EntityManagerConnectionProvider;
-import io.github.nextentity.core.meta.impl.DefaultMetamodel;
-import io.github.nextentity.core.meta.MetamodelConfiguration;
 import jakarta.persistence.EntityManager;
 import org.jspecify.annotations.NonNull;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -50,7 +49,7 @@ public final class EntityFactoryBuilder {
                                                 SqlDialect sqlDialect,
                                                 NextEntityProperties properties,
                                                 TransactionTemplate template) {
-        return jdbc(jdbcTemplate, sqlDialect, properties, template, List.of(), List.of());
+        return jdbc(jdbcTemplate, sqlDialect, properties, template, List.of());
     }
 
     /// 创建基于 JDBC 的 NextEntity 工厂（含拦截器）。
@@ -60,17 +59,17 @@ public final class EntityFactoryBuilder {
     /// @param properties          配置属性
     /// @param template            Spring 事务模板
     /// @param constructInterceptors 构造拦截器列表
-    /// @param resultInterceptors   结果拦截器列表
     /// @return JDBC 方式的 NextEntity 工厂实例
     public static EntityOperationsFactory jdbc(JdbcTemplate jdbcTemplate,
                                                 SqlDialect sqlDialect,
                                                 NextEntityProperties properties,
                                                 TransactionTemplate template,
-                                                List<ConstructInterceptor> constructInterceptors,
-                                                List<ResultInterceptor> resultInterceptors) {
+                                                List<ConstructInterceptor> constructInterceptors) {
         applyLoggingConfig(properties);
 
-        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
+        MetamodelConfiguration metamodelConfig = MetamodelConfiguration.of(
+                properties.isInterfaceLazyEnabled(), properties.isClassLazyEnabled()
+        );
         DefaultMetamodel metamodel = new DefaultMetamodel(metamodelConfig);
         ConnectionProvider connectionProvider = createConnectionProvider(jdbcTemplate);
         JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
@@ -90,7 +89,7 @@ public final class EntityFactoryBuilder {
 
         // 创建持久化执行器
         PersistExecutor persistExecutor = new JdbcPersistExecutor(sqlBuilder, connectionProvider, jdbcConfig);
-        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector, metamodelConfig);
+        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector);
     }
 
     private static @NonNull EntityTemplateFactory getEntityTemplateFactory(NextEntityProperties properties,
@@ -98,20 +97,19 @@ public final class EntityFactoryBuilder {
                                                                            PersistExecutor persistExecutor,
                                                                            DefaultMetamodel metamodel,
                                                                            QueryExecutor queryExecutor,
-                                                                           InterceptorSelector<ConstructInterceptor> interceptorSelector,
-                                                                           MetamodelConfiguration metamodelConfiguration) {
+                                                                           InterceptorSelector<ConstructInterceptor> interceptorSelector) {
         persistExecutor = wrapWithTransaction(persistExecutor, template);
 
-        // 组装工厂
-        PaginationConfig paginationConfig = properties.getPagination().toConfig();
-        FetchConfig fetchConfig = properties.getFetch().toFetchConfig();
-
+        QueryProperties queryProperties = new QueryProperties(
+                properties.getDefaultFetchType(), properties.getFetchBatchMaxSize(), properties.isLazyLoadEnabled(),
+                properties.isAutoAddIdOrder(),
+                properties.isInterfaceLazyEnabled(), properties.isClassLazyEnabled()
+        );
         EntityTemplateFactoryConfig factoryConfig = new EntityTemplateFactoryConfig(
-                metamodel, persistExecutor, queryExecutor, fetchConfig, paginationConfig, interceptorSelector,
-                metamodelConfiguration.interfaceProjectionLazyLoadEnabled(), metamodelConfiguration.dtoProjectionLazyLoadEnabled()
+                metamodel, persistExecutor, queryExecutor, interceptorSelector, queryProperties
         );
 
-        return new EntityTemplateFactory(queryExecutor, persistExecutor, factoryConfig);
+        return new EntityTemplateFactory(factoryConfig);
     }
 
     /// 创建基于 JPA 的 NextEntity 工厂。
@@ -158,7 +156,9 @@ public final class EntityFactoryBuilder {
                                                 List<ConstructInterceptor> constructInterceptors) {
         applyLoggingConfig(properties);
 
-        MetamodelConfiguration metamodelConfig = toMetamodelConfig(properties.getMetamodel());
+        MetamodelConfiguration metamodelConfig = MetamodelConfiguration.of(
+                properties.isInterfaceLazyEnabled(), properties.isClassLazyEnabled()
+        );
         DefaultMetamodel metamodel = new DefaultMetamodel(metamodelConfig);
         JdbcConfig jdbcConfig = toJdbcConfig(properties.getJdbc());
         JpaConfig jpaConfig = toJpaConfig(properties.getJpa());
@@ -184,8 +184,7 @@ public final class EntityFactoryBuilder {
 
         // 创建持久化执行器
         PersistExecutor persistExecutor = new JpaPersistExecutor(entityManager);
-        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector,
-                metamodelConfig);
+        return getEntityTemplateFactory(properties, template, persistExecutor, metamodel, queryExecutor, interceptorSelector);
     }
 
     // ===================== Private Helper Methods =====================
@@ -243,10 +242,6 @@ public final class EntityFactoryBuilder {
                 .parameters(props.getSql().isParameters())
                 .loggerName(props.getSql().getLoggerName())
                 .build();
-    }
-
-    private static MetamodelConfiguration toMetamodelConfig(MetamodelProperties props) {
-        return props.toMetamodelConfiguration();
     }
 
 }
