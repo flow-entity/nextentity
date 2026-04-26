@@ -13,8 +13,8 @@ import java.util.List;
 /// @since 2.1.0
 public class BeforeUpdateEvent<T> extends EntityEvent<T> {
 
-    public BeforeUpdateEvent(Object source, Class<T> entityType, List<T> entities) {
-        super(source, entityType, entities, EntityEventType.BEFORE_UPDATED);
+    public BeforeUpdateEvent(Object source, Class<T> entityType, List<T> entities, int affectedRows) {
+        super(source, entityType, entities, EntityEventType.BEFORE_UPDATE, affectedRows);
     }
 
 }

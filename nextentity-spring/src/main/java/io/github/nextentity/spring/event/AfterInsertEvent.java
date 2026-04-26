@@ -13,8 +13,8 @@ import java.util.List;
 /// @since 2.1.0
 public class AfterInsertEvent<T> extends EntityEvent<T> {
 
-    public AfterInsertEvent(Object source, Class<T> entityType, List<T> entities) {
-        super(source, entityType, entities, EntityEventType.AFTER_INSERT);
+    public AfterInsertEvent(Object source, Class<T> entityType, List<T> entities, int affectedRows) {
+        super(source, entityType, entities, EntityEventType.AFTER_INSERT, affectedRows);
     }
 
 }

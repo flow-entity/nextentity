@@ -13,8 +13,8 @@ import java.util.List;
 /// @since 2.1.0
 public class AfterDeleteEvent<T> extends EntityEvent<T> {
 
-    public AfterDeleteEvent(Object source, Class<T> entityType, List<T> entities) {
-        super(source, entityType, entities, EntityEventType.AFTER_DELETED);
+    public AfterDeleteEvent(Object source, Class<T> entityType, List<T> entities, int affectedRows) {
+        super(source, entityType, entities, EntityEventType.AFTER_DELETE, affectedRows);
     }
 
 }

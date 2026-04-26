@@ -18,12 +18,14 @@ public class EntityEvent<T> extends ApplicationEvent {
     private final Class<T> entityType;
     private final List<T> entities;
     private final EntityEventType eventType;
+    private final int affectedRows;
 
-    public EntityEvent(Object source, Class<T> entityType, List<T> entities, EntityEventType eventType) {
+    public EntityEvent(Object source, Class<T> entityType, List<T> entities, EntityEventType eventType, int affectedRows) {
         super(source);
         this.entityType = entityType;
         this.entities = List.copyOf(entities);
         this.eventType = eventType;
+        this.affectedRows = affectedRows;
     }
 
     /// 获取实体类型。
@@ -39,6 +41,10 @@ public class EntityEvent<T> extends ApplicationEvent {
     /// 获取事件类型。
     public EntityEventType getEventType() {
         return eventType;
+    }
+
+    public int getAffectedRows() {
+        return affectedRows;
     }
 
 }

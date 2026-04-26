@@ -13,8 +13,8 @@ import java.util.List;
 /// @since 2.1.0
 public class BeforeDeleteEvent<T> extends EntityEvent<T> {
 
-    public BeforeDeleteEvent(Object source, Class<T> entityType, List<T> entities) {
-        super(source, entityType, entities, EntityEventType.BEFORE_DELETED);
+    public BeforeDeleteEvent(Object source, Class<T> entityType, List<T> entities, int affectedRows) {
+        super(source, entityType, entities, EntityEventType.BEFORE_DELETE, affectedRows);
     }
 
 }

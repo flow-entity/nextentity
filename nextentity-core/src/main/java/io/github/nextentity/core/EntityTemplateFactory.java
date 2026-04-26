@@ -75,9 +75,9 @@ public final class EntityTemplateFactory implements EntityOperationsFactory, Que
         private final CopyOnWriteArrayList<EntityEventListener> listeners = new CopyOnWriteArrayList<>();
 
         @Override
-        public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities) {
+        public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities, int affectedRows) {
             for (EntityEventListener listener : listeners) {
-                listener.on(entityType, eventType, entities);
+                listener.on(entityType, eventType, entities, affectedRows);
             }
         }
 

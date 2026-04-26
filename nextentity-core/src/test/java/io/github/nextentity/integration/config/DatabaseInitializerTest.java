@@ -1,7 +1,6 @@
 package io.github.nextentity.integration.config;
 
 import io.github.nextentity.core.event.EntityEventType;
-import io.github.nextentity.core.meta.impl.DefaultMetamodel;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.config.env.DatabaseEnvironmentVariables;
 import jakarta.persistence.EntityManager;
@@ -45,7 +44,7 @@ class DatabaseInitializerTest {
         IntegrationTestApplication.DatabaseInitializer initializer =
                 new IntegrationTestApplication.DatabaseInitializer(jdbcTemplate, entityManager, applicationContext);
 
-        initializer.changeTracker().on(Employee.class, EntityEventType.AFTER_UPDATED, List.of());
+        initializer.changeTracker().on(Employee.class, EntityEventType.AFTER_UPDATE, List.of(), 1);
 
         initializer.reset();
 

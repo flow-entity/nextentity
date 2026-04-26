@@ -27,19 +27,23 @@ public class SpringEventEntityEventListener implements EntityEventListener {
     }
 
     @Override
-    public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities) {
-        EntityEvent<T> event = createEvent(entityType, eventType, entities);
+    public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities, int affectedRows) {
+        EntityEvent<T> event = createEvent(entityType, eventType, entities, affectedRows);
         eventPublisher.publishEvent(event);
     }
 
-    private <T> EntityEvent<T> createEvent(Class<T> entityType, EntityEventType eventType, List<T> entities) {
+    private <T> EntityEvent<T> createEvent(Class<T> entityType, EntityEventType eventType, List<T> entities, int affectedRows) {
         return switch (eventType) {
-            case BEFORE_INSERT -> new BeforeInsertEvent<>(this, entityType, entities);
-            case AFTER_INSERT -> new AfterInsertEvent<>(this, entityType, entities);
-            case BEFORE_UPDATED -> new BeforeUpdateEvent<>(this, entityType, entities);
-            case AFTER_UPDATED -> new AfterUpdateEvent<>(this, entityType, entities);
-            case BEFORE_DELETED -> new BeforeDeleteEvent<>(this, entityType, entities);
-            case AFTER_DELETED -> new AfterDeleteEvent<>(this, entityType, entities);
+            case BEFORE_INSERT -> new BeforeInsertEvent<>(this, entityType, entities, affectedRows);
+            case AFTER_INSERT -> new AfterInsertEvent<>(this, entityType, entities, affectedRows);
+            case BEFORE_UPDATE -> new BeforeUpdateEvent<>(this, entityType, entities, affectedRows);
+            case AFTER_UPDATE -> new AfterUpdateEvent<>(this, entityType, entities, affectedRows);
+            case BEFORE_PREDICATE_UPDATE -> new BeforePredicateUpdateEvent<>(this, entityType, entities, affectedRows);
+            case AFTER_PREDICATE_UPDATE -> new AfterPredicateUpdateEvent<>(this, entityType, entities, affectedRows);
+            case BEFORE_DELETE -> new BeforeDeleteEvent<>(this, entityType, entities, affectedRows);
+            case AFTER_DELETE -> new AfterDeleteEvent<>(this, entityType, entities, affectedRows);
+            case BEFORE_PREDICATE_DELETE -> new BeforePredicateDeleteEvent<>(this, entityType, entities, affectedRows);
+            case AFTER_PREDICATE_DELETE -> new AfterPredicateDeleteEvent<>(this, entityType, entities, affectedRows);
         };
     }
 

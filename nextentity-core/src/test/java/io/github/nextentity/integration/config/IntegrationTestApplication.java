@@ -1,6 +1,5 @@
 package io.github.nextentity.integration.config;
 
-import io.github.nextentity.api.EntityDescriptor;
 import io.github.nextentity.api.UpdateSetStep;
 import io.github.nextentity.core.*;
 import io.github.nextentity.core.exception.SqlException;
@@ -209,10 +208,12 @@ public class IntegrationTestApplication {
         public EntityEventListener changeTracker() {
             return new EntityEventListener() {
                 @Override
-                public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities) {
+                public <T> void on(Class<T> entityType, EntityEventType eventType, List<T> entities, int affectedRows) {
                     switch (eventType) {
-                        case BEFORE_INSERT, BEFORE_UPDATED, BEFORE_DELETED,
-                             AFTER_INSERT, AFTER_UPDATED, AFTER_DELETED -> dirtyEntityTypes.add(entityType);
+                        case BEFORE_INSERT, BEFORE_UPDATE, BEFORE_PREDICATE_UPDATE,
+                             BEFORE_DELETE, BEFORE_PREDICATE_DELETE,
+                             AFTER_INSERT, AFTER_UPDATE, AFTER_PREDICATE_UPDATE,
+                             AFTER_DELETE, AFTER_PREDICATE_DELETE -> dirtyEntityTypes.add(entityType);
                     }
                 }
             };

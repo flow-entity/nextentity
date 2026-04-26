@@ -22,42 +22,42 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
     @Override
     public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
-        fireEvent(descriptor, EntityEventType.BEFORE_INSERT, list);
+        fireEvent(descriptor, EntityEventType.BEFORE_INSERT, list, list.size());
         doInsertAll(list, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_INSERT, list);
+        fireEvent(descriptor, EntityEventType.AFTER_INSERT, list, list.size());
     }
 
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
-        fireEvent(descriptor, EntityEventType.BEFORE_UPDATED, list);
+        fireEvent(descriptor, EntityEventType.BEFORE_UPDATE, list, list.size());
         doUpdateAll(list, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_UPDATED, list);
+        fireEvent(descriptor, EntityEventType.AFTER_UPDATE, list, list.size());
     }
 
     @Override
     public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
-        fireEvent(descriptor, EntityEventType.BEFORE_DELETED, list);
+        fireEvent(descriptor, EntityEventType.BEFORE_DELETE, list, list.size());
         doDeleteAll(list, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_DELETED, list);
+        fireEvent(descriptor, EntityEventType.AFTER_DELETE, list, list.size());
     }
 
     @Override
     public <T> int update(@NonNull UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
         List<T> entities = List.of();
-        fireEvent(descriptor, EntityEventType.BEFORE_UPDATED, entities);
+        fireEvent(descriptor, EntityEventType.BEFORE_PREDICATE_UPDATE, entities, 0);
         int updated = doUpdate(structure, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_UPDATED, entities);
+        fireEvent(descriptor, EntityEventType.AFTER_PREDICATE_UPDATE, entities, updated);
         return updated;
     }
 
     @Override
     public <T> int delete(@NonNull ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
         List<T> entities = List.of();
-        fireEvent(descriptor, EntityEventType.BEFORE_DELETED, entities);
+        fireEvent(descriptor, EntityEventType.BEFORE_PREDICATE_DELETE, entities, 0);
         int deleted = doDelete(predicate, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_DELETED, entities);
+        fireEvent(descriptor, EntityEventType.AFTER_PREDICATE_DELETE, entities, deleted);
         return deleted;
     }
 
@@ -71,10 +71,10 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
 
     protected abstract <T> int doDelete(ExpressionNode predicate, PersistDescriptor<T> descriptor);
 
-    private <T> void fireEvent(PersistDescriptor<T> descriptor, EntityEventType eventType, List<T> entities) {
+    private <T> void fireEvent(PersistDescriptor<T> descriptor, EntityEventType eventType, List<T> entities, int affectedRows) {
         EntityEventListener listener = descriptor.persistConfig().eventListener();
         if (listener != null) {
-            listener.on(descriptor.entityClass(), eventType, entities);
+            listener.on(descriptor.entityClass(), eventType, entities, affectedRows);
         }
     }
 
