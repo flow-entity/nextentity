@@ -22,7 +22,10 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
     @Override
     public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
-        fireEvent(descriptor, EntityEventType.BEFORE_INSERT, list, list.size());
+        if (list.isEmpty()) {
+            return;
+        }
+        fireEvent(descriptor, EntityEventType.BEFORE_INSERT, list, 0);
         doInsertAll(list, descriptor);
         fireEvent(descriptor, EntityEventType.AFTER_INSERT, list, list.size());
     }
@@ -30,7 +33,10 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
-        fireEvent(descriptor, EntityEventType.BEFORE_UPDATE, list, list.size());
+        if (list.isEmpty()) {
+            return;
+        }
+        fireEvent(descriptor, EntityEventType.BEFORE_UPDATE, list, 0);
         doUpdateAll(list, descriptor);
         fireEvent(descriptor, EntityEventType.AFTER_UPDATE, list, list.size());
     }
@@ -38,7 +44,10 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
     @Override
     public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
         List<T> list = ImmutableList.ofIterable(entities);
-        fireEvent(descriptor, EntityEventType.BEFORE_DELETE, list, list.size());
+        if (list.isEmpty()) {
+            return;
+        }
+        fireEvent(descriptor, EntityEventType.BEFORE_DELETE, list, 0);
         doDeleteAll(list, descriptor);
         fireEvent(descriptor, EntityEventType.AFTER_DELETE, list, list.size());
     }
