@@ -1,17 +1,15 @@
 package io.github.nextentity.jpa;
 
+import io.github.nextentity.core.AbstractPersistExecutor;
 import io.github.nextentity.core.PersistDescriptor;
-import io.github.nextentity.core.PersistExecutor;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableArray;
-import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
-import org.jspecify.annotations.NonNull;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 ///
 /// @author HuangChengwei
 /// @since 2.0.0
-public class JpaPersistExecutor implements PersistExecutor {
+public class JpaPersistExecutor extends AbstractPersistExecutor {
 
     private final EntityManager entityManager;
 
@@ -31,16 +29,15 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
+    protected <T> void doInsertAll(List<T> entities, PersistDescriptor<T> descriptor) {
         for (T entity : entities) {
             entityManager.persist(entity);
         }
     }
 
     @Override
-    public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> list = ImmutableList.ofIterable(entities);
-        if (list.isEmpty()) {
+    protected <T> void doUpdateAll(List<T> entities, PersistDescriptor<T> descriptor) {
+        if (entities.isEmpty()) {
             return;
         }
         Class<T> entityType = descriptor.entityClass();
@@ -50,7 +47,7 @@ public class JpaPersistExecutor implements PersistExecutor {
         EntityAttribute versionAttribute = entity.version();
         ImmutableArray<? extends Attribute> attributes = entity.getPrimitives();
 
-        for (T t : list) {
+        for (T t : entities) {
             if (entityManager.contains(t)) {
                 continue;
             }
@@ -134,9 +131,8 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> list = ImmutableList.ofIterable(entities);
-        if (list.isEmpty()) {
+    protected <T> void doDeleteAll(List<T> entities, PersistDescriptor<T> descriptor) {
+        if (entities.isEmpty()) {
             return;
         }
         Class<T> entityClass = descriptor.entityClass();
@@ -145,7 +141,7 @@ public class JpaPersistExecutor implements PersistExecutor {
         EntityAttribute idAttribute = entity.id();
 
         Set<Object> ids = new HashSet<>();
-        for (T t : list) {
+        for (T t : entities) {
             if (!entityManager.contains(t)) {
                 Object id = idAttribute.get(t);
                 ids.add(id);
@@ -165,7 +161,7 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> int update(UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
+    protected <T> int doUpdate(UpdateStructure structure, PersistDescriptor<T> descriptor) {
         Map<String, Object> setValues = structure.setClauses();
         if (setValues.isEmpty()) {
             throw new IllegalStateException("No SET values specified for update");
@@ -202,7 +198,7 @@ public class JpaPersistExecutor implements PersistExecutor {
     }
 
     @Override
-    public <T> int delete(ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
+    protected <T> int doDelete(ExpressionNode predicate, PersistDescriptor<T> descriptor) {
         String entityName = getJpaEntityName(descriptor.entityClass());
         StringBuilder jpql = new StringBuilder("DELETE FROM ")
                 .append(entityName).append(" e");
