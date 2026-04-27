@@ -18,12 +18,10 @@ public class LazyValueMap extends NullableConcurrentMap<Method, Object> {
     /// @param method 方法
     /// @return 加载后的值
     public Object get(Method method) {
-        Object result = compute(method, (_, current) -> {
-            if (current instanceof LazyValue loader) {
-                return wrapValue(loader.load());
-            }
-            return current;
-        });
-        return unwrapValue(result);
+        Object result = super.get(method);
+        if (result instanceof LazyValue lazyValue) {
+            return lazyValue.get();
+        }
+        return result;
     }
 }

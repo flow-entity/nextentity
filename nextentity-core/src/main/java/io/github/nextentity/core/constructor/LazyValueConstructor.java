@@ -47,36 +47,26 @@ public class LazyValueConstructor implements ValueConstructor {
 
     }
 
-    /// 懒加载代理实现，首次调用 load() 时触发批量查询
-    private class LazyValueImpl implements LazyValue {
-        private final Object foreignKey;
-
-        private LazyValueImpl(Object foreignKey) {
-            this.foreignKey = foreignKey;
+    public Object findByForeignKey(Object foreignKey) {
+        if (cache.containsKey(foreignKey)) {
+            Object cached = cache.get(foreignKey);
+            notifyCacheHit(foreignKey, cached);
+            return cached;
         }
-
-        @Override
-        public Object load() {
-            if (cache.containsKey(foreignKey)) {
-                Object cached = cache.get(foreignKey);
-                notifyCacheHit(foreignKey, cached);
-                return cached;
-            }
-            synchronized (cache) {
-                if (!cache.containsKey(foreignKey)) {
-                    long startTime = System.currentTimeMillis();
-                    notifyBeforeLoad(startTime);
-                    LazyValueConstructor loader = LazyValueConstructor.this;
-                    Map<Object, Object> results = batchLoaderFunction.apply(loader, foreignKeys);
-                    cache.putAll(results);
-                    for (Object key : foreignKeys) {
-                        cache.putIfAbsent(key, null);
-                    }
-                    notifyAfterLoad(startTime, System.currentTimeMillis());
+        synchronized (cache) {
+            if (!cache.containsKey(foreignKey)) {
+                long startTime = System.currentTimeMillis();
+                notifyBeforeLoad(startTime);
+                LazyValueConstructor loader = LazyValueConstructor.this;
+                Map<Object, Object> results = batchLoaderFunction.apply(loader, foreignKeys);
+                cache.putAll(results);
+                for (Object key : foreignKeys) {
+                    cache.putIfAbsent(key, null);
                 }
+                notifyAfterLoad(startTime, System.currentTimeMillis());
             }
-            return cache.get(foreignKey);
         }
+        return cache.get(foreignKey);
     }
 
     public QueryConfig getQueryConfig() {
@@ -133,6 +123,6 @@ public class LazyValueConstructor implements ValueConstructor {
         EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         Object foreignKey = arguments.next(targetAttribute.valueConvertor());
         foreignKeys.add(foreignKey);
-        return new LazyValueImpl(foreignKey);
+        return new LazyValue(this::findByForeignKey, foreignKey);
     }
 }
