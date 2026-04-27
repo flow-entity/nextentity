@@ -3,15 +3,14 @@ package io.github.nextentity.core.reflect;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Map;
 import java.util.Objects;
 
 public final class InstanceInvocationHandler implements InvocationHandler {
 
     private final Class<?> resultType;
-    private final Map<Method, Object> data;
+    private final MethodValueMap data;
 
-    InstanceInvocationHandler(Class<?> resultType, Map<Method, Object> data) {
+    InstanceInvocationHandler(Class<?> resultType, MethodValueMap data) {
         this.resultType = resultType;
         this.data = data;
     }
@@ -19,7 +18,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (data.containsKey(method)) {
-            return AttributeLoader.loadFromMap(data, method);
+            return data.load(method);
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);

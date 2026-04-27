@@ -170,7 +170,12 @@ public class NextEntityAutoConfiguration {
     private SqlDialect instantiateDialect(String className) {
         try {
             Class<?> clazz = Class.forName(className);
+            if (!SqlDialect.class.isAssignableFrom(clazz)) {
+                throw new ConfigurationException(className + " is not a SqlDialect implementation");
+            }
             return (SqlDialect) clazz.getDeclaredConstructor().newInstance();
+        } catch (ConfigurationException e) {
+            throw e;
         } catch (Exception e) {
             throw new ConfigurationException("Failed to instantiate SqlDialect: " + className, e);
         }

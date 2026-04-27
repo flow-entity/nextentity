@@ -7,7 +7,7 @@ import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.meta.ProjectionSchema;
-import io.github.nextentity.core.reflect.AttributeLoader;
+import io.github.nextentity.core.reflect.MethodValueMap;
 import io.github.nextentity.core.reflect.schema.Schema;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cglib.proxy.Enhancer;
@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /// CGLIB 代理拦截器 - 为普通类创建代理实例
 ///
@@ -126,18 +125,18 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         }
 
         @Override
-        protected Object createProxy(Map<Method, Object> map) {
+        protected Object createProxy(MethodValueMap map) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(getResultType());
             enhancer.setCallback(new MethodInterceptorImpl(map));
             return enhancer.create();
         }
 
-        private record MethodInterceptorImpl(Map<Method, Object> map) implements MethodInterceptor {
+        private record MethodInterceptorImpl(MethodValueMap map) implements MethodInterceptor {
             @Override
             public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
                 if (map.containsKey(method)) {
-                    return AttributeLoader.loadFromMap(map, method);
+                    return map.load(method);
                 }
                 return proxy.invokeSuper(obj, args);
             }

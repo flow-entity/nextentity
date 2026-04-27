@@ -74,7 +74,7 @@ public interface EntityPath<T, U> extends Path<T, U> {
     ///
     /// @param path 布尔引用
     /// @return 布尔路径
-    BooleanPath<T> get(PathRef.BooleanRef<T> path);
+    BooleanPath<T> get(PathRef.BooleanRef<U> path);
 
     /// 获取指定数值路径的数值路径。
     ///

@@ -211,8 +211,7 @@ class LiteralNodeTest {
             // then
             assertThat(result).isInstanceOf(OperatorNode.class);
             OperatorNode opNode = (OperatorNode) result;
-            // Note: Implementation uses Operator.AND in OR case (appears to be a bug)
-            assertThat(opNode.operator()).isEqualTo(Operator.AND);
+            assertThat(opNode.operator()).isEqualTo(Operator.OR);
         }
     }
 

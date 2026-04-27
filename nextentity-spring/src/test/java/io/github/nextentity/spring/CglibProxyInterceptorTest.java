@@ -1,9 +1,9 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.core.reflect.MethodValueMap;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +16,9 @@ class CglibProxyInterceptorTest {
                 new CglibProxyInterceptor.CglibProxyConstructor(TestDto.class, java.util.List.of());
 
         Method getter = TestDto.class.getMethod("getValue");
-        TestDto proxy = (TestDto) constructor.createProxy(Map.of(getter, "mapped"));
+        MethodValueMap map = new MethodValueMap();
+        map.put(getter, "mapped");
+        TestDto proxy = (TestDto) constructor.createProxy(map);
 
         assertEquals("mapped", proxy.getValue());
         assertDoesNotThrow(proxy::toString);

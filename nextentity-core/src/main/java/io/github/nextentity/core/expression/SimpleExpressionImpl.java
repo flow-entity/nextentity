@@ -52,7 +52,7 @@ public class SimpleExpressionImpl<T, U>
     }
 
     @Override
-    public BooleanPath<T> get(PathRef.BooleanRef<T> path) {
+    public BooleanPath<T> get(PathRef.BooleanRef<U> path) {
         return new PredicateImpl<>(appendPathRef(path));
     }
 
