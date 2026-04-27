@@ -3,7 +3,7 @@ package io.github.nextentity.core.constructor;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.JoinAttribute;
-import io.github.nextentity.core.reflect.AttributeLoader;
+import io.github.nextentity.core.reflect.LazyValue;
 import io.github.nextentity.core.reflect.LoadObserver;
 import io.github.nextentity.core.reflect.LoadObserverRegistry;
 import io.github.nextentity.core.util.NullableConcurrentMap;
@@ -48,10 +48,10 @@ public class LazyValueConstructor implements ValueConstructor {
     }
 
     /// 懒加载代理实现，首次调用 load() 时触发批量查询
-    private class AttributeLoaderImpl implements AttributeLoader {
+    private class LazyValueImpl implements LazyValue {
         private final Object foreignKey;
 
-        private AttributeLoaderImpl(Object foreignKey) {
+        private LazyValueImpl(Object foreignKey) {
             this.foreignKey = foreignKey;
         }
 
@@ -129,10 +129,10 @@ public class LazyValueConstructor implements ValueConstructor {
 
     /// 构造 AttributeLoader，收集外键供批量加载
     @Override
-    public AttributeLoader construct(Arguments arguments) {
+    public LazyValue construct(Arguments arguments) {
         EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         Object foreignKey = arguments.next(targetAttribute.valueConvertor());
         foreignKeys.add(foreignKey);
-        return new AttributeLoaderImpl(foreignKey);
+        return new LazyValueImpl(foreignKey);
     }
 }

@@ -7,7 +7,7 @@ import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.meta.ProjectionSchema;
-import io.github.nextentity.core.reflect.MethodValueMap;
+import io.github.nextentity.core.reflect.LazyValueMap;
 import io.github.nextentity.core.reflect.schema.Schema;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cglib.proxy.Enhancer;
@@ -125,18 +125,18 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         }
 
         @Override
-        protected Object createProxy(MethodValueMap map) {
+        protected Object createProxy(LazyValueMap map) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(getResultType());
             enhancer.setCallback(new MethodInterceptorImpl(map));
             return enhancer.create();
         }
 
-        private record MethodInterceptorImpl(MethodValueMap map) implements MethodInterceptor {
+        private record MethodInterceptorImpl(LazyValueMap map) implements MethodInterceptor {
             @Override
             public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
                 if (map.containsKey(method)) {
-                    return map.load(method);
+                    return map.get(method);
                 }
                 return proxy.invokeSuper(obj, args);
             }

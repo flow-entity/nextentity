@@ -8,9 +8,9 @@ import java.util.Objects;
 public final class InstanceInvocationHandler implements InvocationHandler {
 
     private final Class<?> resultType;
-    private final MethodValueMap data;
+    private final LazyValueMap data;
 
-    InstanceInvocationHandler(Class<?> resultType, MethodValueMap data) {
+    InstanceInvocationHandler(Class<?> resultType, LazyValueMap data) {
         this.resultType = resultType;
         this.data = data;
     }
@@ -18,7 +18,7 @@ public final class InstanceInvocationHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (data.containsKey(method)) {
-            return data.load(method);
+            return data.get(method);
         }
         if (method.getDeclaringClass() == Object.class) {
             return method.invoke(this, args);

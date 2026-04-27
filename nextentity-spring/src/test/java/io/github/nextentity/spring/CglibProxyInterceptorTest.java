@@ -1,6 +1,6 @@
 package io.github.nextentity.spring;
 
-import io.github.nextentity.core.reflect.MethodValueMap;
+import io.github.nextentity.core.reflect.LazyValueMap;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
@@ -16,7 +16,7 @@ class CglibProxyInterceptorTest {
                 new CglibProxyInterceptor.CglibProxyConstructor(TestDto.class, java.util.List.of());
 
         Method getter = TestDto.class.getMethod("getValue");
-        MethodValueMap map = new MethodValueMap();
+        LazyValueMap map = new LazyValueMap();
         map.put(getter, "mapped");
         TestDto proxy = (TestDto) constructor.createProxy(map);
 

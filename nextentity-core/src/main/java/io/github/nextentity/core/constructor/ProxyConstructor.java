@@ -1,6 +1,6 @@
 package io.github.nextentity.core.constructor;
 
-import io.github.nextentity.core.reflect.MethodValueMap;
+import io.github.nextentity.core.reflect.LazyValueMap;
 import io.github.nextentity.jdbc.Arguments;
 
 import java.lang.reflect.Method;
@@ -23,7 +23,7 @@ public abstract class ProxyConstructor extends AbstractObjectConstructor {
 
     @Override
     public Object constructConcrete(Arguments arguments) {
-        MethodValueMap map = new MethodValueMap();
+        LazyValueMap map = new LazyValueMap();
         for (PropertyBinding property : properties) {
             Method getter = property.attribute().getter();
             Object value = property.valueConstructor().construct(arguments);
@@ -36,6 +36,6 @@ public abstract class ProxyConstructor extends AbstractObjectConstructor {
     ///
     /// @param map getter 到值的映射
     /// @return 代理对象实例
-    protected abstract Object createProxy(MethodValueMap map);
+    protected abstract Object createProxy(LazyValueMap map);
 
 }
