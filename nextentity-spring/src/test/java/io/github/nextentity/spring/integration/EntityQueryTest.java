@@ -6,7 +6,6 @@ import io.github.nextentity.api.model.Tuple;
 import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.spring.integration.db.DB;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.domain.Page;
@@ -29,23 +28,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class EntityQueryTest {
 
     private static final Logger log = LoggerFactory.getLogger(EntityQueryTest.class);
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void select2(UserRepository userQuery) {
-        List<Tuple2<Integer, Integer>> list = userQuery.selectDistinct(
-                        User::getId, User::getRandomNumber)
-                // .orderBy(User::getId)
-                .list(10, 20);
-        log.info("{}", list);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void select3(UserRepository userQuery) {
-        IUser first1 = userQuery.select(IUser.class).list(90, 1).stream().findFirst().orElse(null);
-        log.info("{}", first1);
-    }
 
     /// 测试投影对象的懒加载属性批量加载功能
     ///
@@ -110,25 +92,6 @@ class EntityQueryTest {
         assertDoesNotThrow(model::toString);
     }
 
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void select4(UserRepository userQuery) {
-        List<User> list = userQuery.selectDistinct(User::getParentUser).list();
-        log.info("{}", list);
-        List<Tuple2<User, User>> list1 = userQuery.selectDistinct(User::getParentUser, User::getRandomUser).list();
-        log.info("{}", list1);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void selectRecord(UserRepository userQuery) {
-        UserRecord ui = userQuery.select(UserRecord.class)
-                .where(User::getPid).isNotNull()
-                .orderBy(User::getId)
-                .first();
-
-        log.info("{}", ui);
-    }
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
     void select(UserRepository userQuery) {

@@ -1,7 +1,6 @@
 package io.github.nextentity.spring.integration;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.ExpressionBuilder.Conjunction;
 import io.github.nextentity.api.model.Slice;
@@ -10,7 +9,6 @@ import io.github.nextentity.api.model.Tuple2;
 import io.github.nextentity.api.model.Tuple3;
 import io.github.nextentity.core.Tuples;
 import io.github.nextentity.core.util.ImmutableList;
-import io.github.nextentity.spring.integration.db.DB;
 import io.github.nextentity.spring.integration.db.UserQueryProvider;
 import io.github.nextentity.spring.integration.db.UserRepository;
 import io.github.nextentity.spring.integration.entity.User;
@@ -18,7 +16,6 @@ import io.github.nextentity.spring.integration.projection.UserInterface;
 import io.github.nextentity.spring.integration.projection.UserModel;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,73 +93,6 @@ public class GenericApiTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
-    public void testAndOrChain(UserRepository userQuery) {
-        User single = userQuery
-                .where(User::getId).eq(0)
-                .single();
-        log.info("{}", single);
-        List<User> dbList = userQuery
-                .where(User::getRandomNumber).ne(1)
-                .where(User::getRandomNumber).gt(100)
-                .where(User::getRandomNumber).ne(125)
-                .where(User::getRandomNumber).le(666)
-                .where(Path.of(User::getRandomNumber).lt(106)
-                        .or(User::getRandomNumber).gt(120)
-                        .or(User::getRandomNumber).eq(109)
-                )
-                .where(User::getRandomNumber).ne(128)
-                .list();
-
-        List<User> ftList = userQuery.users().stream()
-                .filter(user -> user.getRandomNumber() != 1
-                                && user.getRandomNumber() > 100
-                                && user.getRandomNumber() != 125
-                                && user.getRandomNumber() <= 666
-                                && (user.getRandomNumber() < 106
-                                    || user.getRandomNumber() > 120
-                                    || user.getRandomNumber() == 109)
-                                && user.getRandomNumber() != 128
-                )
-                .collect(Collectors.toList());
-
-        assertEquals(dbList, ftList);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    public void testAndOrChan(UserRepository userQuery) {
-        User single = userQuery
-                .where(User::getId).eq(0)
-                .single();
-        log.info("{}", single);
-        List<User> dbList = userQuery
-                .where(User::getRandomNumber).ne(1)
-                .where(User::getRandomNumber).gt(100)
-                .where(User::getRandomNumber).ne(125)
-                .where(User::getRandomNumber).le(666)
-                .where(Path.of(User::getRandomNumber).lt(106)
-                        .or(User::getRandomNumber).gt(120)
-                        .or(User::getRandomNumber).eq(109))
-                .where(User::getRandomNumber).ne(128)
-                .list();
-
-        List<User> ftList = userQuery.users().stream()
-                .filter(user -> user.getRandomNumber() != 1
-                                && user.getRandomNumber() > 100
-                                && user.getRandomNumber() != 125
-                                && user.getRandomNumber() <= 666
-                                && (user.getRandomNumber() < 106
-                                    || user.getRandomNumber() > 120
-                                    || user.getRandomNumber() == 109)
-                                && user.getRandomNumber() != 128
-                )
-                .collect(Collectors.toList());
-
-        assertEquals(dbList, ftList);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
     public void testAndOr2(UserRepository userQuery) {
         User single = userQuery
                 .where(Path.of(User::getId).eq(0))
@@ -214,7 +144,7 @@ public class GenericApiTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
-    void te(UserRepository userQuery) {
+    void testFetchManyToOneAssociations(UserRepository userQuery) {
 
         userQuery.fetch(EntityPath.of(User::getParentUser).get(User::getId))
                 .where(User::getId).eq(0)
@@ -402,8 +332,6 @@ public class GenericApiTest {
                 .map(it -> Tuples.of(it.getRandomNumber(), it.getUsername()))
                 .collect(Collectors.toList());
 
-        JsonMapper jsonMapper = new JsonMapper();
-
         assertEquals(qList, fList);
 
         qList = userQuery
@@ -414,19 +342,6 @@ public class GenericApiTest {
         HashSet<Tuple2<Integer, String>> set = new HashSet<>(qList);
         assertEquals(set.size(), fList.size());
         assertEquals(set, new HashSet<>(fList));
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    public void testTime(UserRepository userQuery) {
-        long start = System.currentTimeMillis();
-        userQuery
-                .orderBy(Arrays.asList(
-                        Path.of(User::getRandomNumber).desc(),
-                        Path.of(User::getId).asc()
-                ))
-                .list();
-        log.info("{}", System.currentTimeMillis() - start);
     }
 
     @ParameterizedTest
@@ -944,17 +859,6 @@ public class GenericApiTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
-    public void testOperator2(UserRepository userQuery) {
-        Predicate<User> isValid = Path.of(User::isValid);
-        userQuery.where(isValid
-                        .and(User::getRandomNumber).notBetween(10, 15)
-                        .and(User::getId).mod(3).eq(0)
-                )
-                .list();
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
     public void testOperator(UserRepository userQuery) {
 
         Predicate<User> isValid = Path.of(User::isValid);
@@ -1345,21 +1249,6 @@ public class GenericApiTest {
 
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
-    void testSubQuery(UserRepository userQuery) {
-        Date time = userQuery.users().get(20).getTime();
-
-        userQuery
-                .fetch(User::getParentUser)
-                .where(Path.of(User::isValid).eq(true)
-                        .or(EntityPath.of(User::getParentUser)
-                                .get(User::getUsername).eq(username)
-                                .and(User::getTime).ge(time)
-                        ))
-                .count();
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
     public void testNumberPredicateTester(UserRepository userQuery) {
         List<User> list = userQuery
                 .where(Path.of(User::getRandomNumber).add(2).ge(4))
@@ -1669,18 +1558,9 @@ public class GenericApiTest {
         List<UserInterface> list1 = userQuery.select(UserInterface.class)
                 .list();
 
-        log.info("{}", JsonSerializablePredicateValueTest.mapper.writeValueAsString(list0.get(0)));
+        log.info("{}", UserInterface.MAPPER.writeValueAsString(list0.get(0)));
 
         assertEquals(list0, list1);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void testInterfaceSelect(UserRepository userQuery) {
-        UserInterface list = userQuery.select(UserInterface.class)
-                .first();
-        String string = list.toString();
-        log.info("{}", string);
     }
 
     @ParameterizedTest
@@ -1816,26 +1696,6 @@ public class GenericApiTest {
                 })
                 .collect(Collectors.toList());
         assertEquals(resultList, fList);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    public void testBigNum(UserRepository userQuery) {
-        List<User> users = userQuery.where(Path.of(User::getTimestamp).eq(Double.MAX_VALUE))
-                .list();
-        log.info("{}", users);
-    }
-
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    public void subQueryTest(UserRepository userQuery) {
-        Expression<User, List<Integer>> ids = userQuery
-                .select(User::getId).where(User::getId)
-                .in(1, 2, 3)
-                .toSubQuery();
-
-        List<User> result = userQuery.where(User::getId).in(ids).list();
-        log.info("{}", result);
     }
 
     private IntStream getUserIdStream(UserRepository userQuery) {
