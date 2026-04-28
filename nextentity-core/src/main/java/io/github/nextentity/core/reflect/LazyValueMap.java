@@ -11,35 +11,55 @@ import java.util.concurrent.ConcurrentHashMap;
 /// @since 2.2.2
 public class LazyValueMap {
 
-    private final Map<Method, Object> target = new ConcurrentHashMap<>();
+    private final Map<Method, Object> values = new ConcurrentHashMap<>();
 
-    /// 加载方法对应的值，如果值是 {@link LazyValue} 则触发加载并替换。
+    /// 加载方法对应的值，如果值是 {@link Resolvable} 则触发加载并替换。
     ///
     /// @param method 方法
     /// @return 加载后的值
     public Object get(Method method) {
-        Object result = target.get(method);
-        if (result instanceof LazyValue lazyValue) {
-            return lazyValue.get();
+        Object result = values.get(method);
+        if (result instanceof Resolvable resolvable) {
+            return resolvable.get();
         }
         return result;
     }
 
     public void put(Method getter, Object value) {
-        target.put(getter, value);
+        if (value == null) {
+            value = NullValue.of();
+        }
+        values.put(getter, value);
     }
 
     public boolean containsKey(Method method) {
-        return target.containsKey(method);
+        return values.containsKey(method);
     }
 
     @Override
     public final boolean equals(Object o) {
-        return o instanceof LazyValueMap that && target.equals(that.target);
+        return o instanceof LazyValueMap that && values.equals(that.values);
     }
 
     @Override
     public int hashCode() {
-        return target.hashCode();
+        return values.hashCode();
+    }
+
+    sealed interface Resolvable permits LazyValue, NullValue {
+        Object get();
+    }
+
+    private static final class NullValue implements Resolvable {
+        private static final NullValue INSTANCE = new NullValue();
+
+        static NullValue of() {
+            return INSTANCE;
+        }
+
+        @Override
+        public Object get() {
+            return null;
+        }
     }
 }

@@ -4,7 +4,7 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /// 懒加载属性加载器
-public final class LazyValue {
+public final class LazyValue implements LazyValueMap.Resolvable {
     private volatile Function<Object, Object> loader;
     private final Object identifier;
     private Object value;
@@ -30,7 +30,7 @@ public final class LazyValue {
 
     private void preventReentry() {
         if (Thread.holdsLock(this)) {
-            throw new IllegalStateException("Recursive invocation of a LazyConstant's computing function: " + loader);
+            throw new IllegalStateException("Recursive invocation of a LazyValue's computing function: " + loader);
         }
     }
 
