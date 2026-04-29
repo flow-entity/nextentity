@@ -18,14 +18,14 @@
 
 投影允许只查询需要的字段，减少数据传输，提升性能。
 
-> **重要**: `query()` 方法在 `AbstractRepository` 中是 `protected` 的，以下示例均为 Repository 内部方法实现。
+> **重要**: 投影操作中 `query()` 为公共方法，但涉及 `select()` 和聚合路径表达式的复杂投影在 Repository 内部使用更简洁。以下示例均为 Repository 内部方法实现。
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     // 查询全部字段（完整实体）

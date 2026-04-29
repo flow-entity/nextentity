@@ -46,6 +46,12 @@ NextEntity 是一个类型安全的 SQL DSL 框架，提供：
 
 `nextentity-spring` 同时支持 JDBC 和 JPA 两种后端，根据配置自动选择。
 
+> **注意**：v2.1+ 需要显式启用 NextEntity 自动配置：
+> ```yaml
+> nextentity:
+>   enabled: true
+> ```
+
 ---
 
 ## 数据库配置
@@ -125,7 +131,7 @@ public enum EmployeeStatus {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 }

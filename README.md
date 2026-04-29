@@ -69,7 +69,7 @@ public class Employee {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 

@@ -35,7 +35,7 @@ NextEntity 提供两种 Repository 使用方式：
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 }
@@ -43,7 +43,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class DepartmentRepository extends AbstractRepository<Department, Long> {
 
-    protected DepartmentRepository(EntityTemplateFactory factory) {
+    protected DepartmentRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 }
@@ -85,8 +85,9 @@ public class CustomerService {
 }
 ```
 
-> **注意**：`query()` 方法在 `Repository` 接口中是公共的，可以直接调用。
-> 而 `AbstractRepository` 中 `query()` 是 `protected` 的，只能在子类内部使用。
+> **注意**：`query()` 方法在 `Repository` 接口和 `AbstractRepository` 中都是公共方法，可在 Service 层直接调用。
+> 而 `path()` 和 `root()` 方法是 `protected` 的，只能在 `AbstractRepository` 子类内部使用。
+> 因此，在 Service 层如需要自定义查询条件，建议在 Repository 中封装公共方法。
 
 ---
 
@@ -98,7 +99,7 @@ public class CustomerService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -136,7 +137,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -177,7 +178,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -204,7 +205,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -231,7 +232,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -263,7 +264,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -291,8 +292,9 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
 > **重要**: 推荐在 Service 层使用 Spring 的 `@Transactional` 注解，Service 应调用 Repository 的公共方法。
 
-- 继承 `AbstractRepository` 时，`query()` 是 `protected` 方法，只能在 Repository 内部使用
-- 注入 `Repository<T, ID>` 接口时，`query()` 是公共方法，可以在 Service 中直接调用
+- `query()` 在 `AbstractRepository` 和 `Repository<T, ID>` 接口中均为公共方法
+- `path()` 和 `root()` 是 `protected` 方法，只能在 `AbstractRepository` 子类内部使用
+- 推荐在 Repository 中封装业务查询方法，Service 层调用这些公共方法
 
 ```java
 @Service
@@ -328,7 +330,7 @@ public class EmployeeService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 

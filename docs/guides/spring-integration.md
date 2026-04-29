@@ -41,6 +41,12 @@
 </dependency>
 ```
 
+> **v2.1+ 须知**：NextEntity 自动配置默认不启用，需在 `application.yml` 中显式开启：
+> ```yaml
+> nextentity:
+>   enabled: true
+> ```
+
 ---
 
 ## 数据库配置
@@ -86,13 +92,13 @@ NextEntity 提供两种 Repository 使用方式：
 
 ### 方式一：继承 AbstractRepository 基类
 
-继承 `AbstractRepository` 并定义构造方法，注入 `EntityTemplateFactory`：
+继承 `AbstractRepository` 并定义构造方法，注入 `EntityOperationsFactory`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 }
@@ -142,8 +148,8 @@ Spring Boot 自动配置会根据注入点的泛型参数自动创建对应的 R
 > ```
 
 > **注意**：
-> - `Repository<T, ID>` 接口中 `query()` 是公共方法，可以在 Service 中直接调用
-> - `AbstractRepository` 中 `query()` 是 `protected` 的，只能在子类内部使用
+> - `Repository<T, ID>` 接口和 `AbstractRepository` 中的 `query()` 均为公共方法
+> - `path()` 和 `root()` 方法是 `protected` 的，只能在 `AbstractRepository` 子类内部使用
 
 ### 使用示例
 
@@ -183,7 +189,7 @@ public class UserService {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
-    protected OrderRepository(EntityTemplateFactory factory) {
+    protected OrderRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -229,7 +235,7 @@ public class OrderRepository extends AbstractRepository<Order, Long> {
 @Repository
 public class UserRepository extends AbstractRepository<User, Long> {
 
-    protected UserRepository(EntityTemplateFactory factory) {
+    protected UserRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -257,7 +263,7 @@ public class UserRepository extends AbstractRepository<User, Long> {
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
 
-    protected LogRepository(EntityTemplateFactory factory) {
+    protected LogRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 

@@ -231,15 +231,44 @@ public class Employee {
 
 ### Repository 定义
 
+NextEntity 提供两种使用方式，JDBC 和 JPA 后端均支持：
+
+**方式一：继承 AbstractRepository**
+
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 }
 ```
+
+**方式二：注入 Repository<T, ID> 接口（无需创建子类）**
+
+对于简单 CRUD 操作，可以直接注入 `Repository<T, ID>` 接口：
+
+```java
+@Service
+public class CustomerService {
+
+    @Autowired
+    private Repository<Customer, Long> customerRepository;
+
+    public Customer getById(Long id) {
+        return customerRepository.getById(id);
+    }
+
+    public List<Customer> findAll() {
+        return customerRepository.query().list();
+    }
+}
+```
+
+JDBC 和 JPA 后端均支持此方式。
+
+> **注意**：`query()` 在 `Repository` 接口和 `AbstractRepository` 中均为公共方法。
 
 ### JDBC 后端特点与限制
 
@@ -700,8 +729,8 @@ for (Employee emp : dept.getEmployees()) {
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
 
-    protected LogRepository(EntityContext context) {
-        super(context);
+    protected LogRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
     // JDBC 足够
 }
@@ -710,8 +739,8 @@ public class LogRepository extends AbstractRepository<Log, Long> {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
-    protected OrderRepository(EntityContext context) {
-        super(context);
+    protected OrderRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
     // 需要懒加载订单项、客户等
 }

@@ -29,14 +29,14 @@ NextEntity 使用流式 API 构建查询：
 query() → where() → orderBy() → list()/list(offset, limit)/slice(offset, limit)/first()/single()/count()
 ```
 
-> **重要**: `query()` 方法在 `AbstractRepository` 中是 `protected` 的，只能在 Repository 内部使用。以下示例均为 Repository 内部的方法实现。
+> **重要**: `path()` 和 `root()` 方法在 `AbstractRepository` 中是 `protected` 的，只能在 Repository 子类内部使用。`query()` 方法已公开为公共方法。以下示例均为 Repository 内部的方法实现。
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     // Repository 内部使用 query() 的示例
@@ -243,8 +243,8 @@ Set<EmployeeStatus> statuses = Set.of(ACTIVE, ON_LEAVE);
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     // 当值为 null 时跳过该条件
@@ -470,8 +470,8 @@ List<Employee> employees = employeeRepository.query()
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     // 获取全部
