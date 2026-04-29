@@ -47,10 +47,10 @@ public class NextEntityProperties {
 
     /// 是否启用泛型 Repository 自动注入。
     ///
-    /// 启用后可通过注入 `Repository<T, ID>` 自动创建 Repository 实例：
+    /// 启用后可通过注入 `EntityRepository<T, ID>` 自动创建 Repository 实例：
     /// ```java
     /// @Autowired
-    /// private Repository<User, Long> userRepository;
+    /// private EntityRepository<User, Long> userRepository;
     /// ```
     ///
     /// 默认为 true，可通过配置关闭：

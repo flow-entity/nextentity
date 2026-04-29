@@ -19,7 +19,7 @@ import org.springframework.core.ResolvableType;
 ///
 /// // 或通过自动配置注入
 /// @Autowired
-/// Repository<User, Long> userRepository;
+/// EntityRepository<User, Long> userRepository;
 /// ```
 ///
 /// @param <T>  实体类型

@@ -16,11 +16,11 @@ _从 v2.0.0 到 v2.1.4 的所有变更。_
 2. **SqlLogger 多容器限制**：如在同一 JVM 运行多个 Spring 容器，
    SqlLogger 的静态配置会影响所有容器。建议在容器启动后立即设置配置。
 
-3. **Repository 接口注入**：v2.1.4 新增 `Repository<T, ID>` 接口，
+3. **Repository 接口注入**：v2.1.4 新增 `EntityRepository<T, ID>` 接口，
    对于简单 CRUD 操作，可直接注入该接口，无需创建子类：
    ```java
    @Autowired
-   private Repository<Customer, Long> customerRepository;
+   private EntityRepository<Customer, Long> customerRepository;
    ```
 
 4. **ID 类型验证**：v2.1.4 新增启动时 ID 类型验证，
@@ -37,7 +37,7 @@ _从 v2.0.0 到 v2.1.4 的所有变更。_
 
 ## Features
 
-- feat: 引入 Repository<T, ID> 接口，提供标准 CRUD 操作接口 `feat/stream-support`
+- feat: 引入 EntityRepository<T, ID> 接口，提供标准 CRUD 操作接口 `feat/stream-support`
 - feat: 新增 GenericRepository<T, ID> 通用实现，无需继承即可使用 Repository
 - feat: 自动注入 Repository Bean，支持泛型参数解析，可配置开关禁用
 - feat: ID 类型启动验证，防止泛型类型与实体实际类型不匹配
@@ -103,7 +103,7 @@ _从 v2.0.0 到 v2.1.4 的所有变更。_
 
 ### v2.1.4
 
-- 引入 Repository<T, ID> 接口，提供标准 CRUD 操作接口
+- 引入 EntityRepository<T, ID> 接口，提供标准 CRUD 操作接口
 - 新增 GenericRepository<T, ID> 通用实现，无需继承即可使用
 - Spring Boot 自动配置支持 Repository Bean 自动注入，可通过 `nextentity.generic-repository=false` 禁用
 - ID 类型启动验证，防止泛型类型与实体实际类型不匹配

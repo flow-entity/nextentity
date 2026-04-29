@@ -245,16 +245,16 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 }
 ```
 
-**方式二：注入 Repository<T, ID> 接口（无需创建子类）**
+**方式二：注入 EntityRepository<T, ID> 接口（无需创建子类）**
 
-对于简单 CRUD 操作，可以直接注入 `Repository<T, ID>` 接口：
+对于简单 CRUD 操作，可以直接注入 `EntityRepository<T, ID>` 接口：
 
 ```java
 @Service
 public class CustomerService {
 
     @Autowired
-    private Repository<Customer, Long> customerRepository;
+    private EntityRepository<Customer, Long> customerRepository;
 
     public Customer getById(Long id) {
         return customerRepository.getById(id);

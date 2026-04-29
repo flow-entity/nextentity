@@ -21,7 +21,7 @@ NextEntity 提供两种 Repository 使用方式：
 | 方式                        | 适用场景       | 特点           |
 |---------------------------|------------|--------------|
 | 继承 `AbstractRepository`   | 需要自定义查询方法  | 可添加业务特定的查询逻辑 |
-| 注入 `Repository<T, ID>` 接口 | 简单 CRUD 操作 | 无需创建子类，自动注入  |
+| 注入 `EntityRepository<T, ID>` 接口 | 简单 CRUD 操作 | 无需创建子类，自动注入  |
 
 ---
 
@@ -66,14 +66,14 @@ AbstractRepository 提供以下基于 ID 的方法：
 
 ### 方式二：注入 Repository 接口
 
-对于简单的 CRUD 操作，无需创建 Repository 子类，直接注入 `Repository<T, ID>` 接口：
+对于简单的 CRUD 操作，无需创建 Repository 子类，直接注入 `EntityRepository<T, ID>` 接口：
 
 ```java
 @Service
 public class CustomerService {
 
     @Autowired
-    private Repository<Customer, Long> customerRepository;
+    private EntityRepository<Customer, Long> customerRepository;
 
     public Customer getById(Long id) {
         return customerRepository.getById(id);
@@ -292,7 +292,7 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
 > **重要**: 推荐在 Service 层使用 Spring 的 `@Transactional` 注解，Service 应调用 Repository 的公共方法。
 
-- `query()` 在 `AbstractRepository` 和 `Repository<T, ID>` 接口中均为公共方法
+- `query()` 在 `AbstractRepository` 和 `EntityRepository<T, ID>` 接口中均为公共方法
 - `path()` 和 `root()` 是 `protected` 方法，只能在 `AbstractRepository` 子类内部使用
 - 推荐在 Repository 中封装业务查询方法，Service 层调用这些公共方法
 

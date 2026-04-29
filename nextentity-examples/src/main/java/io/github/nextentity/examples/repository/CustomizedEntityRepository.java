@@ -13,7 +13,7 @@ import java.util.List;
 /// 扩展的 Repository 基类，提供通用的便捷方法。
 ///
 /// 用户可以继承此类获得额外的查询方法，
-/// 而注入时只需使用 `Repository<T, ID>` 接口。
+/// 而注入时只需使用 `EntityRepository<T, ID>` 接口。
 ///
 /// @param <T>  实体类型
 /// @param <ID> 主键类型
