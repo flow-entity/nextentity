@@ -32,7 +32,6 @@ public final class ProjectionAttributeFactory {
                     join.getTargetAttribute(),
                     join.getTargetEntityType(),
                     metamodel,
-                    join.getFetchType(),
                     join);
         };
     }

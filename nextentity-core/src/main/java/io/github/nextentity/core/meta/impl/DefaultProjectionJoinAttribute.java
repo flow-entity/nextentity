@@ -25,16 +25,15 @@ public class DefaultProjectionJoinAttribute
                                           EntityBasicAttribute targetAttribute,
                                           EntityType target,
                                           DefaultMetamodel metamodel,
-                                          FetchType fetchType,
                                           MetamodelAttribute attribute) {
         super(declareBy.getEntitySchema(), attribute.type(), metamodel);
         this.declareBy = declareBy;
         this.sourceAttribute = sourceAttribute;
         this.targetAttribute = targetAttribute;
         this.target = target;
-        this.fetchType = metamodel.getResolver().getFetchType(this);
         this.accessor = attribute.accessor();
         this.path = declareBy.getPath(attribute.name());
+        this.fetchType = metamodel.getResolver().getFetchType(this);
     }
 
     @Override

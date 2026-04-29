@@ -53,7 +53,6 @@ public class DefaultProjectionSchema
                         targetAttribute,
                         targetEntitySchema,
                         metamodel,
-                        resolver.getFetchType(attr),
                         attr);
                 attributes.add(projAttr);
                 continue;
