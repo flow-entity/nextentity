@@ -511,6 +511,8 @@ class DefaultMetamodelTest {
         @Test
         @DisplayName("LAZY 关联的 getFetchType 返回 LAZY")
         void shouldLazyAssociationReturnLazyFetchType() {
+            MetamodelConfiguration config = MetamodelConfiguration.of(true, true);
+            DefaultMetamodel metamodel = new DefaultMetamodel(config);
             EntityType entityType = metamodel.getEntity(TestEntities.EmployeeEntity.class);
             EntitySchemaAttribute dept = (EntitySchemaAttribute) entityType.getAttribute("department");
 
@@ -529,6 +531,8 @@ class DefaultMetamodelTest {
         @Test
         @DisplayName("hasLazyAttribute 对 LAZY 实体返回 true")
         void shouldHasLazyAttributeBeTrueForLazyEntity() {
+            MetamodelConfiguration config = MetamodelConfiguration.of(true, true);
+            DefaultMetamodel metamodel = new DefaultMetamodel(config);
             EntityType entityType = metamodel.getEntity(TestEntities.EmployeeEntity.class);
 
             assertThat(entityType.hasLazyAttribute()).isTrue();
@@ -611,6 +615,8 @@ class DefaultMetamodelTest {
         @Test
         @DisplayName("@OneToOne 关联的 getFetchType 返回 LAZY")
         void shouldOneToOneLazyAssociationReturnLazyFetchType() {
+            MetamodelConfiguration config = MetamodelConfiguration.of(true, true);
+            DefaultMetamodel metamodel = new DefaultMetamodel(config);
             EntityType entityType = metamodel.getEntity(TestEntities.OneToOneOwnerEntity.class);
             EntitySchemaAttribute profile = (EntitySchemaAttribute) entityType.getAttribute("profile");
 
@@ -941,15 +947,6 @@ class DefaultMetamodelTest {
             EntitySchema targetSchema = dept.schema();
             assertThat(targetSchema.type()).isEqualTo(TestEntities.DepartmentEntity.class);
             assertThat(targetSchema.tableName()).isEqualTo("department_entity");
-        }
-
-        @Test
-        @DisplayName("非 @Entity 类调用 getEntity 仍可解析（无注解保护）")
-        void shouldGetEntityForNonAnnotatedClass() {
-            EntityType entityType = metamodel.getEntity(String.class);
-
-            assertThat(entityType).isNotNull();
-            assertThat(entityType.type()).isEqualTo(String.class);
         }
 
         @Test

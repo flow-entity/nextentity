@@ -82,8 +82,8 @@ public class NextEntityProperties {
     /// Interface 投影懒加载开关（默认 true）
     private boolean interfaceLazyEnabled = true;
 
-    /// Dto 投影懒加载开关（默认 false）
-    private boolean classLazyEnabled = false;
+    /// Dto 投影懒加载开关（默认 true）
+    private boolean classLazyEnabled = true;
 
     // ===================== 事件配置 =====================
 

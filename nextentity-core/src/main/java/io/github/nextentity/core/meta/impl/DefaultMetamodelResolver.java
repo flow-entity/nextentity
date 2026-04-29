@@ -40,7 +40,7 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
             Arrays.asList(ManyToOne.class, OneToMany.class, ManyToMany.class, OneToOne.class);
 
     protected DefaultMetamodelResolver() {
-        this.config = MetamodelConfiguration.DEFAULT;
+        this(MetamodelConfiguration.DEFAULT);
     }
 
     public DefaultMetamodelResolver(MetamodelConfiguration config) {
