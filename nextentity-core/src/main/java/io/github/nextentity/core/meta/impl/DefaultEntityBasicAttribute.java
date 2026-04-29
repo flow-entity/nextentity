@@ -1,28 +1,20 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.expression.PathNode;
-import io.github.nextentity.core.meta.EntityBasicAttribute;
-import io.github.nextentity.core.meta.EntitySchema;
-import io.github.nextentity.core.meta.MetamodelResolver;
-import io.github.nextentity.core.meta.ValueConverter;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
+import io.github.nextentity.core.meta.*;
 
-public class DefaultEntityBasicAttribute extends DefaultAttribute implements EntityBasicAttribute {
+public class DefaultEntityBasicAttribute extends DefaultMetamodelAttribute implements EntityBasicAttribute {
 
     private final String columnName;
     private final boolean updatable;
     private final ValueConverter<?, ?> valueConverter;
-    private final PathNode pathNode;
 
-    public DefaultEntityBasicAttribute(Attribute attribute,
+    public DefaultEntityBasicAttribute(MetamodelAttribute attribute,
                                        DefaultEntitySchema declareBy,
                                        MetamodelResolver resolver) {
-        super(declareBy, attribute);
-        this.columnName = resolver.getColumnName(attribute);
-        this.updatable = resolver.isUpdatable(attribute);
-        this.valueConverter = resolver.databaseType(attribute);
-        this.pathNode = new PathNode(super.path().toArray(String[]::new), this);
+        super(declareBy, attribute.accessor(), declareBy.getPath(attribute.name()));
+        this.columnName = resolver.getColumnName(attribute.accessor());
+        this.updatable = resolver.isUpdatable(attribute.accessor());
+        this.valueConverter = resolver.databaseType(attribute.accessor());
     }
 
     @Override
@@ -53,10 +45,5 @@ public class DefaultEntityBasicAttribute extends DefaultAttribute implements Ent
     @Override
     public boolean isUpdatable() {
         return updatable && !isId();
-    }
-
-    @Override
-    public PathNode path() {
-        return pathNode;
     }
 }

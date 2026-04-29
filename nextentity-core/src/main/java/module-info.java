@@ -17,9 +17,8 @@ open module nextentity.core {
     exports io.github.nextentity.core.meta;
     exports io.github.nextentity.jpa;
     exports io.github.nextentity.api.model;
-    exports io.github.nextentity.core.reflect.schema;
     exports io.github.nextentity.core.reflect;
-    exports io.github.nextentity.core.reflect.schema.impl;
+    exports io.github.nextentity.core.reflect.schema;
     exports io.github.nextentity.core.annotation;
     exports io.github.nextentity.core.meta.impl;
     exports io.github.nextentity.core.interceptor;

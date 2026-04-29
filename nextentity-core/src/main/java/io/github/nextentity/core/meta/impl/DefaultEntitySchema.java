@@ -2,15 +2,11 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.*;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.SchemaAttribute;
-import io.github.nextentity.core.reflect.schema.impl.AbstractSchema;
-import io.github.nextentity.core.reflect.schema.impl.DefaultSchema;
+import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
 import io.github.nextentity.core.util.Lazy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,9 +14,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * 默认实体类型实现，实现 EntityType 接口。
  * 提供实体元数据的核心实现，包括属性、表名、版本字段、投影等。
  */
-public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, EntityAttribute> implements EntityType {
+public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute> implements EntityType {
 
-    private static final Logger log = LoggerFactory.getLogger(DefaultEntitySchema.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DefaultEntitySchema.class);
 
     protected final DefaultMetamodel metamodel;
     protected final MetamodelResolver resolver;
@@ -42,7 +38,7 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
 
     @Override
     public EntityBasicAttribute id() {
-        return attributesSupplier.get().id();
+        return ((EntityAttributeSet) attributesSupplier.get()).id();
     }
 
     @Override
@@ -57,12 +53,17 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
 
     @Override
     public EntityBasicAttribute version() {
-        return attributesSupplier.get().version();
+        return ((EntityAttributeSet) attributesSupplier.get()).version();
     }
 
     @Override
     public EntityAttribute getAttribute(Iterable<String> fieldNames) {
-        return (EntityAttribute) super.getAttribute(fieldNames);
+        return super.getAttribute(fieldNames);
+    }
+
+    @Override
+    public EntityAttribute getAttribute(String name) {
+        return super.getAttribute(name);
     }
 
     @Override
@@ -72,42 +73,43 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
     }
 
     @Override
-    protected EntityAttributeSet createAttributes() {
-        DefaultSchema javaSchema = DefaultSchema.of(type);
+    protected AttributeSet<EntityAttribute> createAttributes() {
+        List<DefaultAccessor> accessors = DefaultAccessor.of(type);
         EntityBasicAttribute idAttribute = null;
         EntityBasicAttribute versionAttribute = null;
         boolean hasVersion = false;
         ArrayList<EntityAttribute> attributes = new ArrayList<>();
-        for (Attribute attribute : javaSchema.getAttributes()) {
-            if (resolver.isTransient(attribute)) {
+        for (DefaultAccessor accessor : accessors) {
+            if (resolver.isTransient(accessor)) {
                 continue;
             }
-            if (attribute instanceof SchemaAttribute schemaAttribute
-                && resolver.isAnyToOne(schemaAttribute)) {
+            boolean isComplexType = !DefaultAccessor.of(accessor.type()).isEmpty();
+            DefaultMetamodelAttribute attr = new DefaultMetamodelAttribute(this, accessor);
+            if (isComplexType && resolver.isAnyToOne(attr)) {
                 var entitySchemaAttribute = new DefaultEntitySchemaAttribute(
-                        schemaAttribute, this, metamodel);
+                        attr, this, metamodel);
                 attributes.add(entitySchemaAttribute);
-            } else if (resolver.isBasicField(attribute)) {
+            } else if (resolver.isBasicField(accessor)) {
                 boolean versionField = false;
-                if (resolver.isVersionField(attribute)) {
+                if (resolver.isVersionField(accessor)) {
                     if (hasVersion) {
-                        log.warn("duplicate attributes: {}, ignored", attribute.name());
+                        log.warn("duplicate attributes: {}, ignored", accessor.name());
                         continue;
                     }
                     hasVersion = true;
                     versionField = true;
                 }
                 var entityAttribute = new DefaultEntityBasicAttribute(
-                        attribute, this, resolver);
+                        attr, this, resolver);
                 attributes.add(entityAttribute);
-                if (resolver.isMarkedId(attribute)) {
+                if (resolver.isMarkedId(accessor)) {
                     idAttribute = entityAttribute;
                 }
                 if (versionField) {
                     versionAttribute = entityAttribute;
                 }
             } else {
-                log.warn("ignored attribute {}", attribute.field());
+                log.warn("ignored attribute {}", accessor.field());
             }
         }
         if (idAttribute == null) {
@@ -129,7 +131,7 @@ public class DefaultEntitySchema extends AbstractSchema<EntityAttributeSet, Enti
     }
 
     @Override
-    protected Lazy<? extends EntityAttributeSet> getAttributesSupplier() {
-        return super.getAttributesSupplier();
+    protected Lazy<? extends AttributeSet<EntityAttribute>> getAttributesSupplier() {
+        return attributesSupplier;
     }
 }

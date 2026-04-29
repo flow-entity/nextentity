@@ -1,20 +1,19 @@
 package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.meta.EntityBasicAttribute;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.meta.ProjectionBasicAttribute;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 
 public class DefaultProjectionBasicAttribute
-        extends DefaultAttribute
+        extends DefaultMetamodelAttribute
         implements ProjectionBasicAttribute {
 
     private final EntityBasicAttribute source;
 
     public DefaultProjectionBasicAttribute(DefaultProjectionSchema declareBy,
                                            EntityBasicAttribute source,
-                                           Attribute attribute) {
-        super(declareBy, attribute);
+                                           MetamodelAttribute attribute) {
+        super(declareBy, attribute.accessor());
         this.source = source;
     }
 

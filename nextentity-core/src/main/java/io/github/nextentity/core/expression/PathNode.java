@@ -2,7 +2,7 @@ package io.github.nextentity.core.expression;
 
 import io.github.nextentity.api.PathRef;
 import io.github.nextentity.core.PathReference;
-import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 import org.jspecify.annotations.NonNull;
@@ -27,13 +27,13 @@ import java.util.stream.Stream;
 public final class PathNode implements ExpressionNode, ImmutableArray<String> {
 
     private final String[] path;
-    private final transient Attribute attribute;
+    private final transient MetamodelAttribute attribute;
 
     /// 使用指定的路径段和属性创建 PathNode。
     ///
     /// @param path      路径段
     /// @param attribute 关联的属性元数据（可以为 null）
-    public PathNode(String[] path, Attribute attribute) {
+    public PathNode(String[] path, MetamodelAttribute attribute) {
         this.path = path;
         this.attribute = attribute;
     }
@@ -155,7 +155,7 @@ public final class PathNode implements ExpressionNode, ImmutableArray<String> {
     /// 缓存结果以供后续调用。
     ///
     /// @return 属性元数据
-    public Attribute getAttribute() {
+    public MetamodelAttribute getAttribute() {
         return attribute;
     }
 

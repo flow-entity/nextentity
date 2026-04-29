@@ -4,7 +4,7 @@ import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.*;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.util.ImmutableList;
 import org.slf4j.Logger;
 
@@ -42,7 +42,7 @@ public class EntityQueryImpl<T> extends WhereImpl<T, T> implements EntityQuery<T
         EntityType entityType = descriptor.metamodel().getEntity(fromType());
         for (PathRef<T, ?> expression : expressions) {
             PathNode entityPath = (PathNode) ExpressionNodes.getNode(expression);
-            Attribute attribute = entityType.getAttribute(entityPath);
+            MetamodelAttribute attribute = entityType.getAttribute(entityPath);
             if (!attribute.isObject()) {
                 log.warn("ignoring fetch a non-entity attribute `{}` of {}",
                         entityPath.stream().collect(Collectors.joining(".")),

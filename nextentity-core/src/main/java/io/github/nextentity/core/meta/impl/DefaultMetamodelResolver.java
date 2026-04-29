@@ -7,8 +7,7 @@ import io.github.nextentity.core.converter.InstantConverter;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.meta.*;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.SchemaAttribute;
+import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.meta.jpa.AttributeConverterWrapper;
 import jakarta.persistence.*;
 import org.slf4j.Logger;
@@ -88,18 +87,18 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public boolean isTransient(Attribute attribute) {
-        return attribute == null
-               || attribute.field() == null
-               || Modifier.isTransient(attribute.field().getModifiers())
-               || Modifier.isStatic(attribute.field().getModifiers())
-               || getAnnotation(attribute, Transient.class) != null;
+    public boolean isTransient(Accessor accessor) {
+        return accessor == null
+               || accessor.field() == null
+               || Modifier.isTransient(accessor.field().getModifiers())
+               || Modifier.isStatic(accessor.field().getModifiers())
+               || getAnnotation(accessor, Transient.class) != null;
     }
 
     @Override
-    public boolean isBasicField(Attribute attribute) {
+    public boolean isBasicField(Accessor accessor) {
         for (Class<? extends Annotation> type : JOIN_ANNOTATIONS) {
-            if (getAnnotation(attribute, type) != null) {
+            if (getAnnotation(accessor, type) != null) {
                 return false;
             }
         }
@@ -107,10 +106,10 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public boolean isVersionField(Attribute attribute) {
-        Version version = getAnnotation(attribute, Version.class);
+    public boolean isVersionField(Accessor accessor) {
+        Version version = getAnnotation(accessor, Version.class);
         if (version != null) {
-            Class<?> type = attribute.type();
+            Class<?> type = accessor.type();
             if (isSupportVersion(type)) {
                 return true;
             } else {
@@ -125,21 +124,21 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public boolean isMarkedId(Attribute attribute) {
-        return getAnnotation(attribute, Id.class) != null;
+    public boolean isMarkedId(Accessor accessor) {
+        return getAnnotation(accessor, Id.class) != null;
     }
 
     @Override
-    public String getColumnName(Attribute attribute) {
-        String columnName = getColumnNameByAnnotation(attribute);
+    public String getColumnName(Accessor accessor) {
+        String columnName = getColumnNameByAnnotation(accessor);
         if (columnName == null) {
-            columnName = camelbackToUnderline(attribute.name());
+            columnName = camelbackToUnderline(accessor.name());
         }
         return unwrapSymbol(columnName);
     }
 
-    protected String getColumnNameByAnnotation(Attribute attribute) {
-        Column column = getAnnotation(attribute, Column.class);
+    protected String getColumnNameByAnnotation(Accessor accessor) {
+        Column column = getAnnotation(accessor, Column.class);
         if (column != null && !column.name().isEmpty()) {
             return column.name();
         }
@@ -147,14 +146,14 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public boolean isUpdatable(Attribute attribute) {
-        Column column = getAnnotation(attribute, Column.class);
+    public boolean isUpdatable(Accessor accessor) {
+        Column column = getAnnotation(accessor, Column.class);
         return column == null || column.updatable();
     }
 
     @Override
-    public ValueConverter<?, ?> databaseType(Attribute attribute) {
-        Convert convert = getAnnotation(attribute, Convert.class);
+    public ValueConverter<?, ?> databaseType(Accessor accessor) {
+        Convert convert = getAnnotation(accessor, Convert.class);
         if (convert != null) {
             Class<?> type = convert.converter();
             if (type != void.class) {
@@ -162,12 +161,12 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
                     AttributeConverter<?, ?> converter = (AttributeConverter<?, ?>) type.getConstructor().newInstance();
                     return AttributeConverterWrapper.of(converter);
                 } catch (ReflectiveOperationException e) {
-                    log.error("create AttributeConverter error, attribute: {}", attribute);
+                    log.error("create AttributeConverter error, accessor: {}", accessor);
                     throw new ReflectiveException(e.getMessage(), e);
                 }
             }
         }
-        return resolveConverter(attribute.type());
+        return resolveConverter(accessor.type());
     }
 
     private ValueConverter<?, ?> resolveConverter(Class<?> type) {
@@ -190,27 +189,28 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public String getJoinColumnName(Attribute attribute) {
-        JoinColumn annotation = getAnnotation(attribute, JoinColumn.class);
+    public String getJoinColumnName(Accessor accessor) {
+        JoinColumn annotation = getAnnotation(accessor, JoinColumn.class);
         return annotation != null ? annotation.name() : null;
     }
 
     @Override
-    public String getReferencedColumnName(Attribute attribute) {
-        JoinColumn annotation = getAnnotation(attribute, JoinColumn.class);
+    public String getReferencedColumnName(Accessor accessor) {
+        JoinColumn annotation = getAnnotation(accessor, JoinColumn.class);
         return annotation != null ? annotation.referencedColumnName() : null;
     }
 
     @Override
-    public boolean isAnyToOne(SchemaAttribute attribute) {
-        return getAnnotation(attribute, ManyToOne.class) != null
-               || getAnnotation(attribute, OneToOne.class) != null;
+    public boolean isAnyToOne(MetamodelAttribute attribute) {
+        Accessor accessor = attribute.accessor();
+        return getAnnotation(accessor, ManyToOne.class) != null
+               || getAnnotation(accessor, OneToOne.class) != null;
     }
 
     @Override
     public EntityBasicAttribute getJoinSourceAttribute(DefaultEntitySchema sourceSchema,
-                                                       Attribute attribute) {
-        String joinColumnName = getJoinColumnName(attribute);
+                                                       Accessor accessor) {
+        String joinColumnName = getJoinColumnName(accessor);
         if (joinColumnName != null) {
             return (EntityBasicAttribute) sourceSchema.getAttribute(joinColumnName);
         }
@@ -219,8 +219,8 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
 
     @Override
     public EntityBasicAttribute getJoinTargetAttribute(DefaultEntitySchema targetSchema,
-                                                       Attribute attribute) {
-        String referencedColumnName = getReferencedColumnName(attribute);
+                                                       Accessor accessor) {
+        String referencedColumnName = getReferencedColumnName(accessor);
         if (referencedColumnName != null && !referencedColumnName.isEmpty()) {
             return (EntityBasicAttribute) targetSchema.getAttribute(referencedColumnName);
         }
@@ -228,42 +228,42 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public Iterable<String> getMappedEntityPath(Attribute attribute) {
-        EntityPath annotation = getAnnotation(attribute, EntityPath.class);
+    public Iterable<String> getMappedEntityPath(Accessor accessor) {
+        EntityPath annotation = getAnnotation(accessor, EntityPath.class);
         if (annotation != null) {
             String value = annotation.value();
             String[] split = value.split("\\.");
             return List.of(split);
         }
-        return List.of(attribute.name());
+        return List.of(accessor.name());
     }
 
     @Override
-    public Class<?> getProjectionJoinTarget(Attribute attribute) {
-        Join annotation = getAnnotation(attribute, Join.class);
+    public Class<?> getProjectionJoinTarget(Accessor accessor) {
+        Join annotation = getAnnotation(accessor, Join.class);
         return annotation != null ? annotation.target() : null;
     }
 
     @Override
-    public String getProjectionJoinSourceAttribute(Attribute attribute) {
-        Join annotation = getAnnotation(attribute, Join.class);
+    public String getProjectionJoinSourceAttribute(Accessor accessor) {
+        Join annotation = getAnnotation(accessor, Join.class);
         return annotation != null ? annotation.sourceAttribute() : null;
     }
 
     @Override
-    public String getProjectionJoinTargetAttribute(Attribute attribute) {
-        Join annotation = getAnnotation(attribute, Join.class);
+    public String getProjectionJoinTargetAttribute(Accessor accessor) {
+        Join annotation = getAnnotation(accessor, Join.class);
         return annotation != null ? annotation.targetAttribute() : null;
     }
 
     @Override
-    public boolean matchProjectionSchemaAttribute(EntitySchemaAttribute entitySchemaAttribute, SchemaAttribute schemaAttribute) {
+    public boolean matchProjectionSchemaAttribute(EntitySchemaAttribute entitySchemaAttribute, MetamodelAttribute schemaAttribute) {
         return entitySchemaAttribute.type() == schemaAttribute.type()
-               || entitySchemaAttribute.getAttributes().iterator().hasNext();
+               || entitySchemaAttribute.schema().getAttributes().iterator().hasNext();
     }
 
     @Override
-    public boolean matchProjectionBasicAttribute(EntityBasicAttribute entityBasicAttribute, Attribute attribute) {
+    public boolean matchProjectionBasicAttribute(EntityBasicAttribute entityBasicAttribute, MetamodelAttribute attribute) {
         return entityBasicAttribute.type() == attribute.type();
     }
 
@@ -277,22 +277,19 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
     }
 
     @Override
-    public FetchType getFetchType(Attribute attribute) {
+    public FetchType getFetchType(MetamodelAttribute attribute) {
         Class<?> declareType = attribute.declareBy().type();
-        Fetch fetch = getAnnotation(attribute, Fetch.class);
+        Fetch fetch = getAnnotation(attribute.accessor(), Fetch.class);
         if (fetch == null) {
             return null;
         }
         FetchType fetchType = fetch.value();
 
-        // 检查配置兼容性并发出告警
         if (fetchType == FetchType.LAZY) {
-            // Interface 投影检查
             if (declareType.isInterface() && !config.interfaceProjectionLazyLoadEnabled()) {
                 log.warn("Interface projection '{}' has @Fetch(LAZY) on attribute '{}' but lazy load is disabled in configuration, " +
                          "will be treated as EAGER", declareType.getName(), attribute.name());
             }
-            // Dto 投影检查（非接口、非 Record）
             if (!declareType.isInterface() && !declareType.isRecord()
                 && !config.dtoProjectionLazyLoadEnabled()) {
                 log.warn("Dto projection '{}' has @Fetch(LAZY) on attribute '{}' but Dto lazy load is not enabled in configuration, " +
@@ -303,13 +300,13 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
         return fetchType;
     }
 
-    protected <T extends Annotation> T getAnnotation(Attribute attribute, Class<T> annotationClass) {
+    protected <T extends Annotation> T getAnnotation(Accessor accessor, Class<T> annotationClass) {
         T annotation = null;
-        if (attribute.field() != null) {
-            annotation = attribute.field().getAnnotation(annotationClass);
+        if (accessor.field() != null) {
+            annotation = accessor.field().getAnnotation(annotationClass);
         }
-        if (annotation == null && attribute.getter() != null) {
-            annotation = attribute.getter().getAnnotation(annotationClass);
+        if (annotation == null && accessor.getter() != null) {
+            annotation = accessor.getter().getAnnotation(annotationClass);
         }
         return annotation;
     }

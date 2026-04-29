@@ -1,11 +1,8 @@
 package io.github.nextentity.core.meta.impl;
 
+import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
-import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
-import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
@@ -15,11 +12,13 @@ public class DefaultProjectionJoinAttribute
         implements ProjectionJoinAttribute {
 
     private final DefaultProjectionSchema declareBy;
-    private final DefaultAttribute attribute;
     private final EntityBasicAttribute sourceAttribute;
     private final EntityBasicAttribute targetAttribute;
     private final EntityType target;
     private final FetchType fetchType;
+
+    private final Accessor accessor;
+    private final PathNode path;
 
     public DefaultProjectionJoinAttribute(DefaultProjectionSchema declareBy,
                                           EntityBasicAttribute sourceAttribute,
@@ -27,14 +26,15 @@ public class DefaultProjectionJoinAttribute
                                           EntityType target,
                                           DefaultMetamodel metamodel,
                                           FetchType fetchType,
-                                          Attribute attribute) {
+                                          MetamodelAttribute attribute) {
         super(declareBy.getEntitySchema(), attribute.type(), metamodel);
         this.declareBy = declareBy;
-        this.attribute = new DefaultAttribute(declareBy, attribute);
         this.sourceAttribute = sourceAttribute;
         this.targetAttribute = targetAttribute;
         this.target = target;
         this.fetchType = fetchType == null ? FetchType.EAGER : fetchType;
+        this.accessor = attribute.accessor();
+        this.path = declareBy.getPath(attribute.name());
     }
 
     @Override
@@ -75,7 +75,7 @@ public class DefaultProjectionJoinAttribute
 
     @Override
     public Accessor accessor() {
-        return attribute.accessor();
+            return accessor;
     }
 
     @Override
@@ -84,8 +84,8 @@ public class DefaultProjectionJoinAttribute
     }
 
     @Override
-    public ImmutableArray<String> path() {
-        return attribute.path();
+    public PathNode path() {
+        return path;
     }
 
     @Override

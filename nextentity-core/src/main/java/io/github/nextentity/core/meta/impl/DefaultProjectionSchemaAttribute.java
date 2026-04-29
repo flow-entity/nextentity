@@ -1,43 +1,40 @@
 package io.github.nextentity.core.meta.impl;
 
+import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
-import io.github.nextentity.core.reflect.schema.SchemaAttribute;
-import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
-import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DefaultProjectionSchemaAttribute
         extends DefaultProjectionSchema
         implements ProjectionSchemaAttribute {
 
     private final DefaultProjectionSchema declareBy;
-    private final Attribute attribute;
     private final EntitySchemaAttribute source;
+
+    private final Accessor accessor;
+    private final PathNode path;
 
     public DefaultProjectionSchemaAttribute(DefaultProjectionSchema declareBy,
                                             EntitySchemaAttribute source,
-                                            SchemaAttribute attribute,
+                                            MetamodelAttribute attribute,
                                             DefaultMetamodel metamodel) {
         super(source.declareBy(), attribute.type(), metamodel);
         this.declareBy = declareBy;
-        this.attribute = new DefaultAttribute(declareBy, attribute);
         this.source = source;
+        this.accessor = attribute.accessor();
+        this.path = declareBy.getPath(attribute.name());
     }
 
     @Override
     protected AttributeSet<ProjectionAttribute> createAttributes() {
         DefaultEntitySchema entity = (DefaultEntitySchemaAttribute) source;
-        ProjectionSchema projection = entity.getProjection(attribute.type());
+        ProjectionSchema projection = entity.getProjection(accessor.type());
         ImmutableArray<? extends ProjectionAttribute> attributes = projection.getAttributes();
         ArrayList<ProjectionAttribute> result = new ArrayList<>(attributes.size());
-        AtomicInteger ordinal = new AtomicInteger();
         for (ProjectionAttribute projectionAttribute : attributes) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
@@ -57,7 +54,7 @@ public class DefaultProjectionSchemaAttribute
 
     @Override
     public Accessor accessor() {
-        return attribute.accessor();
+        return accessor;
     }
 
     @Override
@@ -66,8 +63,8 @@ public class DefaultProjectionSchemaAttribute
     }
 
     @Override
-    public ImmutableArray<String> path() {
-        return attribute.path();
+    public PathNode path() {
+        return path;
     }
 
     @Override
@@ -87,7 +84,7 @@ public class DefaultProjectionSchemaAttribute
 
     @Override
     public FetchType getFetchType() {
-        FetchType projectionFetch = resolver.getFetchType(attribute);
+        FetchType projectionFetch = resolver.getFetchType(this);
         if (projectionFetch != null) {
             return projectionFetch;
         }

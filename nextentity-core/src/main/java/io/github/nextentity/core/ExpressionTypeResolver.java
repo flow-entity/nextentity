@@ -2,8 +2,8 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.reflect.PrimitiveTypes;
-import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.math.BigDecimal;
@@ -132,7 +132,7 @@ public class ExpressionTypeResolver {
     }
 
     public static Class<?> getColumnType(PathNode column, EntityType entityType) {
-        Attribute attribute = entityType.getAttribute(column);
+        MetamodelAttribute attribute = entityType.getAttribute(column);
         return attribute.type();
     }
 

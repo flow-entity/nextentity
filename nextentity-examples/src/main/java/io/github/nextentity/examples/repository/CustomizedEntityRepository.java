@@ -6,6 +6,7 @@ import org.springframework.beans.factory.InjectionPoint;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -47,6 +48,7 @@ public class CustomizedEntityRepository<T, ID> extends GenericRepository<T, ID> 
     }
 
     /// 根据主键批量删除（便捷方法）。
+    @Transactional
     public void deleteByIds(List<ID> ids) {
         if (ids != null && !ids.isEmpty()) {
             deleteAllById(ids);

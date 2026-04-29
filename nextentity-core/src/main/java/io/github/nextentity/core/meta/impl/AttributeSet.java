@@ -1,12 +1,12 @@
-package io.github.nextentity.core.reflect.schema.impl;
+package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.reflect.schema.Attribute;
+import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
 
 import java.util.*;
 
-public class AttributeSet<T extends Attribute> {
+public class AttributeSet<T extends MetamodelAttribute> {
     private final Map<String, T> index;
     private final ImmutableArray<T> attributes;
     private final ImmutableArray<T> primitives;

@@ -8,7 +8,6 @@ import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.meta.ProjectionSchema;
 import io.github.nextentity.core.reflect.LazyValueMap;
-import io.github.nextentity.core.reflect.schema.Schema;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -82,7 +81,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
             throw new UnsupportedOperationException("CglibProxyInterceptor cannot handle the given QueryContext");
         }
 
-        Schema schema = context.getSchema();
+        MetamodelSchema<?> schema = context.getSchema();
         if (schema == null) {
             return null;
         }

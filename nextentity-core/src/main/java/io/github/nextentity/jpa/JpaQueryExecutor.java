@@ -8,7 +8,6 @@ import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
-import io.github.nextentity.core.reflect.schema.Schema;
 import io.github.nextentity.core.util.ImmutableList;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
@@ -219,7 +218,7 @@ public class JpaQueryExecutor implements QueryExecutor {
             return left.join(attributeName, JoinType.LEFT);
         }
 
-        private From<?, ?> resolveParentFrom(Schema schema) {
+        private From<?, ?> resolveParentFrom(MetamodelSchema<?> schema) {
             if (schema instanceof JoinAttribute join) {
                 return getJoin(join);
             }
