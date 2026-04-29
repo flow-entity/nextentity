@@ -17,6 +17,7 @@ public class DefaultProjectionSchemaAttribute
 
     private final Accessor accessor;
     private final PathNode path;
+    private final FetchType fetchType;
 
     public DefaultProjectionSchemaAttribute(DefaultProjectionSchema declareBy,
                                             EntitySchemaAttribute source,
@@ -27,6 +28,7 @@ public class DefaultProjectionSchemaAttribute
         this.source = source;
         this.accessor = attribute.accessor();
         this.path = declareBy.getPath(attribute.name());
+        this.fetchType = resolver.getFetchType(this);
     }
 
     @Override
@@ -84,11 +86,7 @@ public class DefaultProjectionSchemaAttribute
 
     @Override
     public FetchType getFetchType() {
-        FetchType projectionFetch = resolver.getFetchType(this);
-        if (projectionFetch != null) {
-            return projectionFetch;
-        }
-        return getEntityAttribute().getFetchType();
+        return fetchType;
     }
 
     @Override

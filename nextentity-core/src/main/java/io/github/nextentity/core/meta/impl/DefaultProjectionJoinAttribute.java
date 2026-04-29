@@ -32,7 +32,7 @@ public class DefaultProjectionJoinAttribute
         this.sourceAttribute = sourceAttribute;
         this.targetAttribute = targetAttribute;
         this.target = target;
-        this.fetchType = fetchType == null ? FetchType.EAGER : fetchType;
+        this.fetchType = metamodel.getResolver().getFetchType(this);
         this.accessor = attribute.accessor();
         this.path = declareBy.getPath(attribute.name());
     }
