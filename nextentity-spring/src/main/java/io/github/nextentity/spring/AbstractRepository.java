@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 /// @param <ID> 主键类型
 /// @author HuangChengwei
 /// @since 1.0.0
-public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
+public abstract class AbstractRepository<T, ID> implements EntityRepository<T, ID> {
 
     private final EntityTemplate<T> operations;
 

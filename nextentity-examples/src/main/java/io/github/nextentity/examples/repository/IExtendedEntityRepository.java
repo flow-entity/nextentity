@@ -1,6 +1,6 @@
 package io.github.nextentity.examples.repository;
 
-import io.github.nextentity.spring.Repository;
+import io.github.nextentity.spring.EntityRepository;
 
-public interface IExtendedEntityRepository<T, ID> extends Repository<T, ID> {
+public interface IExtendedEntityRepository<T, ID> extends EntityRepository<T, ID> {
 }

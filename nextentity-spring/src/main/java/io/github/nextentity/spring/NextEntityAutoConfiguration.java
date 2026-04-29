@@ -71,7 +71,7 @@ public class NextEntityAutoConfiguration {
     @Primary
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnProperty(prefix = "nextentity", name = "generic-repository", havingValue = "true", matchIfMissing = true)
-    protected <T, ID> Repository<T, ID> genericRepository(InjectionPoint injectionPoint, EntityOperationsFactory factory) {
+    protected <T, ID> EntityRepository<T, ID> genericRepository(InjectionPoint injectionPoint, EntityOperationsFactory factory) {
         return new GenericRepository<>(factory, injectionPoint);
     }
 

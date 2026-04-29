@@ -2,7 +2,7 @@ package io.github.nextentity.examples.integration;
 
 import io.github.nextentity.examples.entity.Customer;
 import io.github.nextentity.examples.entity.Department;
-import io.github.nextentity.spring.Repository;
+import io.github.nextentity.spring.EntityRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MultiRepositoryAutowiredTest {
 
     @Autowired(required = false)
-    private Repository<Customer, Long> customerRepository;
+    private EntityRepository<Customer, Long> customerRepository;
 
     @Autowired(required = false)
-    private Repository<Department, Long> departmentRepository;
+    private EntityRepository<Department, Long> departmentRepository;
 
     @Test
     void bothRepositoriesExist() {
