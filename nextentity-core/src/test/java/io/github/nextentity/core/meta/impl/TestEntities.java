@@ -158,6 +158,66 @@ public class TestEntities {
     }
 
     @jakarta.persistence.Entity
+    public static class CompanyEntity {
+        @Id
+        private Long id;
+        private String name;
+
+        public CompanyEntity() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class DeptWithCompanyEntity implements io.github.nextentity.api.Entity {
+        @Id
+        private Long id;
+        private String name;
+        private Long companyId;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "companyId", insertable = false, updatable = false)
+        @Fetch(FetchType.LAZY)
+        private CompanyEntity company;
+
+        public DeptWithCompanyEntity() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public Long getCompanyId() { return companyId; }
+        public void setCompanyId(Long companyId) { this.companyId = companyId; }
+        public CompanyEntity getCompany() { return company; }
+        public void setCompany(CompanyEntity company) { this.company = company; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EmployeeWithDeptCompanyEntity {
+        @Id
+        private Long id;
+        private String name;
+        private Long departmentId;
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "departmentId", insertable = false, updatable = false)
+        @Fetch(FetchType.LAZY)
+        private DeptWithCompanyEntity department;
+
+        public EmployeeWithDeptCompanyEntity() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public Long getDepartmentId() { return departmentId; }
+        public void setDepartmentId(Long departmentId) { this.departmentId = departmentId; }
+        public DeptWithCompanyEntity getDepartment() { return department; }
+        public void setDepartment(DeptWithCompanyEntity department) { this.department = department; }
+    }
+
+    @jakarta.persistence.Entity
     public static class EagerAssocEntity {
         @Id
         private Long id;

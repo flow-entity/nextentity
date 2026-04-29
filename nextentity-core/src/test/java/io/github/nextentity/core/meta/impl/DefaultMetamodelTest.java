@@ -699,6 +699,105 @@ class DefaultMetamodelTest {
             assertThat(deptAttr.path().size()).isEqualTo(1);
             assertThat(deptAttr.path().get(0)).isEqualTo("department");
         }
+
+        // ── 多层嵌套路径 ──
+
+        @Test
+        @DisplayName("三层嵌套路径穿越两个关联")
+        void shouldTraverseThreeLevelNestedPath() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute attr = entityType.getAttribute(List.of("department", "company", "name"));
+
+            assertThat(attr).isNotNull();
+            assertThat(attr).isInstanceOf(EntityBasicAttribute.class);
+            assertThat(attr.name()).isEqualTo("name");
+            assertThat(attr.type()).isEqualTo(String.class);
+        }
+
+        @Test
+        @DisplayName("三层嵌套路径中间层属性正确")
+        void shouldThreeLevelIntermediateAttributesCorrect() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute dept = entityType.getAttribute(List.of("department", "company"));
+
+            assertThat(dept).isNotNull();
+            assertThat(dept).isInstanceOf(EntitySchemaAttribute.class);
+            assertThat(dept.name()).isEqualTo("company");
+            assertThat(dept.type()).isEqualTo(TestEntities.CompanyEntity.class);
+        }
+
+        @Test
+        @DisplayName("三层嵌套路径中间层无效路径返回 null")
+        void shouldThreeLevelInvalidPathReturnNull() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute attr = entityType.getAttribute(List.of("department", "company", "nonExistent"));
+
+            assertThat(attr).isNull();
+        }
+
+        @Test
+        @DisplayName("三层嵌套: department 的 path() 为单段")
+        void shouldThreeLevelFirstAssociationPathBeSingleSegment() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute deptAttr = entityType.getAttribute("department");
+
+            assertThat(deptAttr.path().size()).isEqualTo(1);
+            assertThat(deptAttr.path().get(0)).isEqualTo("department");
+        }
+
+        @Test
+        @DisplayName("三层嵌套: department.company 的 path() 为两段")
+        void shouldThreeLevelSecondAssociationPathBeTwoSegments() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute companyAttr = entityType.getAttribute(List.of("department", "company"));
+
+            assertThat(companyAttr.path().size()).isEqualTo(2);
+            assertThat(companyAttr.path().get(0)).isEqualTo("department");
+            assertThat(companyAttr.path().get(1)).isEqualTo("company");
+        }
+
+        @Test
+        @DisplayName("三层嵌套: department.company.name 的 path() 为三段")
+        void shouldThreeLevelDeepBasicAttributePathBeThreeSegments() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute nameAttr = entityType.getAttribute(List.of("department", "company", "name"));
+
+            assertThat(nameAttr.path().size()).isEqualTo(3);
+            assertThat(nameAttr.path().get(0)).isEqualTo("department");
+            assertThat(nameAttr.path().get(1)).isEqualTo("company");
+            assertThat(nameAttr.path().get(2)).isEqualTo("name");
+        }
+
+        @Test
+        @DisplayName("两层嵌套: department.name 的 path() 为两段")
+        void shouldTwoLevelNestedAttributePathBeTwoSegments() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute nameAttr = entityType.getAttribute(List.of("department", "name"));
+
+            assertThat(nameAttr.path().size()).isEqualTo(2);
+            assertThat(nameAttr.path().get(0)).isEqualTo("department");
+            assertThat(nameAttr.path().get(1)).isEqualTo("name");
+        }
+
+        @Test
+        @DisplayName("三层嵌套: 中间层 declareBy() 返回父关联属性")
+        void shouldThreeLevelIntermediateDeclareByReturnParentAssociation() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute dept = entityType.getAttribute("department");
+            EntityAttribute company = entityType.getAttribute(List.of("department", "company"));
+
+            assertThat(company.declareBy()).isSameAs(dept);
+        }
+
+        @Test
+        @DisplayName("三层嵌套: 深层基本属性 declareBy() 返回父关联属性")
+        void shouldThreeLevelDeepBasicDeclareByReturnParentAssociation() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+            EntityAttribute company = entityType.getAttribute(List.of("department", "company"));
+            EntityAttribute name = entityType.getAttribute(List.of("department", "company", "name"));
+
+            assertThat(name.declareBy()).isSameAs(company);
+        }
     }
 
     // ── 投影解析测试 ──
@@ -911,6 +1010,143 @@ class DefaultMetamodelTest {
                 assertThat(deptAttr).isInstanceOf(ProjectionSchemaAttribute.class);
                 assertThat(((ProjectionSchemaAttribute) deptAttr).getFetchType()).isEqualTo(FetchType.LAZY);
                 assertThat(projection.hasLazyAttribute()).isTrue();
+            }
+        }
+
+        @Nested
+        @DisplayName("多层嵌套投影")
+        class DeepNestedProjectionTests {
+
+            @Test
+            @DisplayName("三层嵌套接口投影解析")
+            void shouldResolveDeepNestedInterfaceProjection() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedProjection.class);
+
+                assertThat(projection).isNotNull();
+                assertThat(projection.getAttributes()).hasSize(3);
+                assertThat(projection.getAttribute("id")).isNotNull();
+                assertThat(projection.getAttribute("name")).isNotNull();
+                assertThat(projection.getAttribute("department")).isNotNull();
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影第一层产生 ProjectionSchemaAttribute")
+            void shouldDeepNestedFirstLevelBeSchemaAttribute() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedProjection.class);
+                ProjectionAttribute deptAttr = projection.getAttribute("department");
+
+                assertThat(deptAttr).isInstanceOf(ProjectionSchemaAttribute.class);
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影第二层产生 ProjectionSchemaAttribute")
+            void shouldDeepNestedSecondLevelBeSchemaAttribute() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedProjection.class);
+                ProjectionSchemaAttribute deptAttr = (ProjectionSchemaAttribute) projection.getAttribute("department");
+
+                ProjectionAttribute companyAttr = deptAttr.schema().getAttribute("company");
+                assertThat(companyAttr).isInstanceOf(ProjectionSchemaAttribute.class);
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影第三层包含基本属性")
+            void shouldDeepNestedThirdLevelContainBasicAttributes() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedProjection.class);
+                ProjectionSchemaAttribute deptAttr = (ProjectionSchemaAttribute) projection.getAttribute("department");
+                ProjectionSchemaAttribute companyAttr = (ProjectionSchemaAttribute) deptAttr.schema().getAttribute("company");
+
+                ProjectionAttribute nameAttr = companyAttr.schema().getAttribute("name");
+                assertThat(nameAttr).isInstanceOf(ProjectionBasicAttribute.class);
+                assertThat(nameAttr.name()).isEqualTo("name");
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影 @EntityPath department.company.name 解析")
+            void shouldDeepNestedEntityPathResolveCorrectly() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedEntityPathProjection.class);
+
+                ProjectionAttribute companyNameAttr = projection.getAttribute("companyName");
+                assertThat(companyNameAttr).isInstanceOf(ProjectionBasicAttribute.class);
+                EntityBasicAttribute entityAttr = ((ProjectionBasicAttribute) companyNameAttr).getEntityAttribute();
+                assertThat(entityAttr.name()).isEqualTo("name");
+                assertThat(entityAttr.declareBy().type()).isEqualTo(TestEntities.CompanyEntity.class);
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影 @Fetch(LAZY) 属性的 getFetchType 返回 LAZY")
+            void shouldDeepNestedProjectionFetchLazyAttributeReturnLazy() {
+                MetamodelConfiguration config = MetamodelConfiguration.of(true, true);
+                DefaultMetamodel lazyMetamodel = new DefaultMetamodel(config);
+                EntityType entityType = lazyMetamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedProjection.class);
+
+                ProjectionAttribute deptAttr = projection.getAttribute("department");
+                assertThat(deptAttr).isInstanceOf(ProjectionSchemaAttribute.class);
+                assertThat(((ProjectionSchemaAttribute) deptAttr).getFetchType()).isEqualTo(FetchType.LAZY);
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影 path() 逐层递增")
+            void shouldDeepNestedProjectionPathIncrementPerLevel() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedProjection.class);
+
+                ProjectionSchemaAttribute deptAttr = (ProjectionSchemaAttribute) projection.getAttribute("department");
+                assertThat(deptAttr.path().size()).isEqualTo(1);
+                assertThat(deptAttr.path().get(0)).isEqualTo("department");
+
+                ProjectionSchemaAttribute companyAttr = (ProjectionSchemaAttribute) deptAttr.schema().getAttribute("company");
+                assertThat(companyAttr.path().size()).isEqualTo(2);
+                assertThat(companyAttr.path().get(0)).isEqualTo("department");
+                assertThat(companyAttr.path().get(1)).isEqualTo("company");
+
+                ProjectionAttribute nameAttr = companyAttr.schema().getAttribute("name");
+                assertThat(nameAttr.path().size()).isEqualTo(3);
+                assertThat(nameAttr.path().get(0)).isEqualTo("department");
+                assertThat(nameAttr.path().get(1)).isEqualTo("company");
+                assertThat(nameAttr.path().get(2)).isEqualTo("name");
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影 @EntityPath 属性的 path() 使用投影属性名")
+            void shouldDeepNestedEntityPathAttributePathUseProjectionName() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedEntityPathProjection.class);
+
+                ProjectionAttribute deptNameAttr = projection.getAttribute("departmentName");
+                assertThat(deptNameAttr.path().size()).isEqualTo(1);
+                assertThat(deptNameAttr.path().get(0)).isEqualTo("departmentName");
+
+                ProjectionAttribute companyNameAttr = projection.getAttribute("companyName");
+                assertThat(companyNameAttr.path().size()).isEqualTo(1);
+                assertThat(companyNameAttr.path().get(0)).isEqualTo("companyName");
+            }
+
+            @Test
+            @DisplayName("三层嵌套投影 @EntityPath 映射的实体属性路径正确")
+            void shouldDeepNestedEntityPathMapToCorrectEntityPath() {
+                EntityType entityType = metamodel.getEntity(TestEntities.EmployeeWithDeptCompanyEntity.class);
+                ProjectionSchema projection = entityType.getProjection(TestProjections.DeepNestedEntityPathProjection.class);
+
+                ProjectionBasicAttribute deptNameAttr = (ProjectionBasicAttribute) projection.getAttribute("departmentName");
+                EntityBasicAttribute deptNameEntityAttr = deptNameAttr.getEntityAttribute();
+                assertThat(deptNameEntityAttr.name()).isEqualTo("name");
+                assertThat(deptNameEntityAttr.path().size()).isEqualTo(2);
+                assertThat(deptNameEntityAttr.path().get(0)).isEqualTo("department");
+                assertThat(deptNameEntityAttr.path().get(1)).isEqualTo("name");
+
+                ProjectionBasicAttribute companyNameAttr = (ProjectionBasicAttribute) projection.getAttribute("companyName");
+                EntityBasicAttribute companyNameEntityAttr = companyNameAttr.getEntityAttribute();
+                assertThat(companyNameEntityAttr.name()).isEqualTo("name");
+                assertThat(companyNameEntityAttr.path().size()).isEqualTo(3);
+                assertThat(companyNameEntityAttr.path().get(0)).isEqualTo("department");
+                assertThat(companyNameEntityAttr.path().get(1)).isEqualTo("company");
+                assertThat(companyNameEntityAttr.path().get(2)).isEqualTo("name");
             }
         }
     }

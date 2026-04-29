@@ -78,5 +78,37 @@ public class TestProjections {
         TestEntities.CustomerEntity getCustomer();
     }
 
+    // ── 多层嵌套投影 ──
+
+    public interface DeepNestedProjection {
+        Long getId();
+        String getName();
+        @Fetch(FetchType.LAZY)
+        @EntityPath("department")
+        DeptWithCompanyProjection getDepartment();
+
+        interface DeptWithCompanyProjection {
+            Long getId();
+            String getName();
+            @Fetch(FetchType.LAZY)
+            @EntityPath("company")
+            CompanyProjection getCompany();
+        }
+
+        interface CompanyProjection {
+            Long getId();
+            String getName();
+        }
+    }
+
+    public interface DeepNestedEntityPathProjection {
+        Long getId();
+        String getName();
+        @EntityPath("department.name")
+        String getDepartmentName();
+        @EntityPath("department.company.name")
+        String getCompanyName();
+    }
+
     private TestProjections() {}
 }
