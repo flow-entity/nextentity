@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -563,7 +564,7 @@ class ObjectConstructorTest {
             List<PropertyBinding> props = List.of(mockPropertyBinding(attr, "test"));
 
             // Abstract classes can't be instantiated; DefaultSchema returns null constructor
-            assertThatThrownBy(() -> new ObjectConstructor(java.util.AbstractList.class, props))
+            assertThatThrownBy(() -> new ObjectConstructor(AbstractList.class, props))
                     .isInstanceOf(NullPointerException.class);
         }
     }

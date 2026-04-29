@@ -4,6 +4,7 @@ import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.meta.ValueConverter;
 
 import java.math.BigDecimal;
+import java.io.InputStream;
 import java.sql.*;
 import java.time.*;
 import java.util.Date;
@@ -56,8 +57,8 @@ public abstract class JdbcUtil {
         put(java.sql.Date.class, ResultSet::getDate);
         put(Blob.class, ResultSet::getBlob);
         put(Clob.class, ResultSet::getClob);
-        put(java.sql.Array.class, ResultSet::getArray);
-        put(java.io.InputStream.class, ResultSet::getBinaryStream);
+        put(Array.class, ResultSet::getArray);
+        put(InputStream.class, ResultSet::getBinaryStream);
         put(byte[].class, ResultSet::getBytes);
         put(Timestamp.class, ResultSet::getTimestamp);
         put(Instant.class, (resultSet, columnIndex) -> {

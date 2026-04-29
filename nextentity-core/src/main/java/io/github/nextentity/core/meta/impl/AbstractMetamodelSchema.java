@@ -5,6 +5,7 @@ import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.Lazy;
 
+import java.util.Iterator;
 import java.util.Map;
 
 public abstract class AbstractMetamodelSchema<A extends MetamodelAttribute> implements MetamodelSchema<A> {
@@ -38,7 +39,7 @@ public abstract class AbstractMetamodelSchema<A extends MetamodelAttribute> impl
     @Override
     public A getAttribute(Iterable<String> fieldNames) {
         MetamodelSchema<?> schema = this;
-        java.util.Iterator<String> it = fieldNames.iterator();
+        Iterator<String> it = fieldNames.iterator();
         while (it.hasNext()) {
             String fieldName = it.next();
             MetamodelAttribute attr = schema.getAttribute(fieldName);

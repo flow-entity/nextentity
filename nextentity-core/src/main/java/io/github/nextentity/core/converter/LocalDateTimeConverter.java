@@ -1,5 +1,6 @@
 package io.github.nextentity.core.converter;
 
+import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -27,7 +28,7 @@ public class LocalDateTimeConverter implements TypeConverter {
             return value;
         }
         switch (value) {
-            case java.sql.Date date when targetType == LocalDate.class -> {
+            case Date date when targetType == LocalDate.class -> {
                 return date.toLocalDate();
             }
             case Timestamp timestamp when targetType == LocalDateTime.class -> {
@@ -39,7 +40,7 @@ public class LocalDateTimeConverter implements TypeConverter {
             case java.util.Date date -> {
                 long time = date.getTime();
                 if (targetType == LocalDate.class) {
-                    return new java.sql.Date(time).toLocalDate();
+                    return new Date(time).toLocalDate();
                 }
                 if (targetType == LocalDateTime.class) {
                     return (new Timestamp(time)).toLocalDateTime();

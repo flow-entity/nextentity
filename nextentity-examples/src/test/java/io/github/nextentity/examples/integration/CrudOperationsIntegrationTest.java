@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -149,8 +151,8 @@ class CrudOperationsIntegrationTest extends BaseIntegrationTest {
             assertThat(beforeUpdate).isNotEmpty();
 
             // Store original salaries for comparison
-            java.util.Map<Long, BigDecimal> originalSalaries = beforeUpdate.stream()
-                    .collect(java.util.stream.Collectors.toMap(Employee::getId, Employee::getSalary));
+            Map<Long, BigDecimal> originalSalaries = beforeUpdate.stream()
+                    .collect(Collectors.toMap(Employee::getId, Employee::getSalary));
 
             // When
             List<Employee> updated = employeeRepository.giveRaiseToDepartment(deptId, raisePercentage);

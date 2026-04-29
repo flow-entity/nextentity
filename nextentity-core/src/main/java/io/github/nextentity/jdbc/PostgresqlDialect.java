@@ -2,6 +2,8 @@ package io.github.nextentity.jdbc;
 
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /// PostgreSQL SQL 方言实现
@@ -55,7 +57,7 @@ public class PostgresqlDialect implements SqlDialect {
     @Override
     public String typedPlaceholder(Class<?> type) {
         // PostgreSQL uses ::timestamp cast for date types
-        if (java.util.Date.class.isAssignableFrom(type) || java.sql.Timestamp.class.isAssignableFrom(type)) {
+        if (Date.class.isAssignableFrom(type) || Timestamp.class.isAssignableFrom(type)) {
             return "?::timestamp";
         }
         return "?";

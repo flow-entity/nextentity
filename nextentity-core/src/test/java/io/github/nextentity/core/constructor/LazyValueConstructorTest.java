@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -362,7 +363,7 @@ class LazyValueConstructorTest {
             }
 
             ExecutorService executor = Executors.newFixedThreadPool(keyCount);
-            Map<Integer, Object> results = new java.util.concurrent.ConcurrentHashMap<>();
+            Map<Integer, Object> results = new ConcurrentHashMap<>();
             CountDownLatch startLatch = new CountDownLatch(1);
 
             for (int i = 0; i < keyCount; i++) {

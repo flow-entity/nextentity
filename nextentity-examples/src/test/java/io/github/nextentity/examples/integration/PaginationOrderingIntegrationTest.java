@@ -8,6 +8,8 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -229,7 +231,7 @@ class PaginationOrderingIntegrationTest extends BaseIntegrationTest {
             if (employees.size() >= n) {
                 List<Employee> allActive = employeeRepository.findActiveEmployees();
                 BigDecimal lowestTopSalary = employees.get(employees.size() - 1).getSalary();
-                java.util.Set<Long> topEarnerIds = employees.stream().map(Employee::getId).collect(java.util.stream.Collectors.toSet());
+                Set<Long> topEarnerIds = employees.stream().map(Employee::getId).collect(Collectors.toSet());
                 allActive.stream()
                         .filter(e -> !topEarnerIds.contains(e.getId()))
                         .forEach(e -> assertThat(e.getSalary().compareTo(lowestTopSalary))

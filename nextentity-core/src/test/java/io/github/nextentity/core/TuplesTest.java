@@ -6,6 +6,7 @@ import io.github.nextentity.api.model.Tuple3;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Iterator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -169,7 +170,7 @@ class TuplesTest {
         void iterator_ReturnsAllElements() {
             // given
             Tuple tuple = Tuples.of("a", "b", "c");
-            java.util.Iterator<Object> iter = tuple.iterator();
+            Iterator<Object> iter = tuple.iterator();
 
             // when & then
             assertThat(iter.hasNext()).isTrue();

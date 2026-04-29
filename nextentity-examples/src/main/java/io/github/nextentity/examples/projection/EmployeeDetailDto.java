@@ -4,6 +4,8 @@ import io.github.nextentity.core.annotation.Fetch;
 import io.github.nextentity.examples.entity.Department;
 import jakarta.persistence.FetchType;
 
+import java.math.BigDecimal;
+
 /// Class 投影示例 - 员工详细信息（多属性延迟加载）
 ///
 /// **特点**：
@@ -28,7 +30,7 @@ public class EmployeeDetailDto {
     private Long id;
     private String name;
     private String email;
-    private java.math.BigDecimal salary;
+    private BigDecimal salary;
     private Boolean active;
     private Department department;
 
@@ -46,8 +48,8 @@ public class EmployeeDetailDto {
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
-    public java.math.BigDecimal getSalary() { return salary; }
-    public void setSalary(java.math.BigDecimal salary) { this.salary = salary; }
+    public BigDecimal getSalary() { return salary; }
+    public void setSalary(BigDecimal salary) { this.salary = salary; }
 
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }

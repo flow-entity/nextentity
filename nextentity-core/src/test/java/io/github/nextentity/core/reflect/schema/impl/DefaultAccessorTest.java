@@ -4,6 +4,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -51,7 +52,7 @@ class DefaultAccessorTest {
         @DisplayName("Number subclasses return empty list")
         void numberTypes() {
             assertThat(DefaultAccessor.of(Number.class)).isEmpty();
-            assertThat(DefaultAccessor.of(java.math.BigDecimal.class)).isEmpty();
+            assertThat(DefaultAccessor.of(BigDecimal.class)).isEmpty();
         }
 
         @Test
