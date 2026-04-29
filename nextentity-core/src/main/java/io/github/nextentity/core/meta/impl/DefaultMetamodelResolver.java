@@ -289,11 +289,13 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
             if (declareType.isInterface() && !config.interfaceProjectionLazyLoadEnabled()) {
                 log.warn("Interface projection '{}' has @Fetch(LAZY) on attribute '{}' but lazy load is disabled in configuration, " +
                          "will be treated as EAGER", declareType.getName(), attribute.name());
+                return FetchType.EAGER;
             }
             if (!declareType.isInterface() && !declareType.isRecord()
                 && !config.dtoProjectionLazyLoadEnabled()) {
                 log.warn("Dto projection '{}' has @Fetch(LAZY) on attribute '{}' but Dto lazy load is not enabled in configuration, " +
                          "will be treated as EAGER", declareType.getName(), attribute.name());
+                return FetchType.EAGER;
             }
         }
 
