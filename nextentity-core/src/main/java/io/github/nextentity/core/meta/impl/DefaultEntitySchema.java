@@ -144,4 +144,9 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
     protected Lazy<? extends AttributeSet<EntityAttribute>> getAttributesSupplier() {
         return attributesSupplier;
     }
+
+    /// 获取当前实体/嵌入类型上的 @AttributeOverride / @AttributeOverrides 映射。
+    protected Map<String, String> getAttributeOverrides() {
+        return resolver.getAttributeOverrides(type());
+    }
 }

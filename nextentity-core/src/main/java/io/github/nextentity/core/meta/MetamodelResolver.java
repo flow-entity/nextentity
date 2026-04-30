@@ -4,6 +4,8 @@ import io.github.nextentity.core.meta.impl.DefaultEntitySchema;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import jakarta.persistence.FetchType;
 
+import java.util.Map;
+
 /// 元模型解析器接口，从 JPA 注解中提取实体元数据。
 ///
 /// 负责将 JPA 注解（如 {@code @Column}、{@code @JoinColumn}、{@code @Id} 等）
@@ -150,4 +152,14 @@ public interface MetamodelResolver {
     /// @param attribute 要检查的属性
     /// @return 加载策略，或 {@code null} 表示使用全局默认
     FetchType getFetchType(MetamodelAttribute attribute);
+
+    /// 获取属性/类上的 @AttributeOverride 映射。
+    ///
+    /// @param accessor 字段访问器
+    /// @return 嵌入子字段名 → 覆盖列名，无覆盖时返回空 Map
+    Map<String, String> getAttributeOverrides(Accessor accessor);
+
+    /// @param type 实体类（用于 {@code @MappedSuperclass} 继承场景）
+    /// @return 嵌入子字段名 → 覆盖列名，无覆盖时返回空 Map
+    Map<String, String> getAttributeOverrides(Class<?> type);
 }

@@ -20,7 +20,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * JPA 注解元模型解析器实现。
@@ -311,6 +313,48 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
         }
 
         return fetchType;
+    }
+
+    @Override
+    public Map<String, String> getAttributeOverrides(Accessor accessor) {
+        Map<String, String> overrides = new HashMap<>();
+        AttributeOverride single = getAnnotation(accessor, AttributeOverride.class);
+        if (single != null && !single.name().isEmpty()) {
+            String column = single.column().name();
+            if (!column.isEmpty()) {
+                overrides.put(single.name(), column);
+            }
+        }
+        AttributeOverrides multiple = getAnnotation(accessor, AttributeOverrides.class);
+        if (multiple != null) {
+            for (AttributeOverride ao : multiple.value()) {
+                if (!ao.name().isEmpty() && !ao.column().name().isEmpty()) {
+                    overrides.put(ao.name(), ao.column().name());
+                }
+            }
+        }
+        return overrides;
+    }
+
+    @Override
+    public Map<String, String> getAttributeOverrides(Class<?> type) {
+        Map<String, String> overrides = new HashMap<>();
+        AttributeOverride single = type.getAnnotation(AttributeOverride.class);
+        if (single != null && !single.name().isEmpty()) {
+            String column = single.column().name();
+            if (!column.isEmpty()) {
+                overrides.put(single.name(), column);
+            }
+        }
+        AttributeOverrides multiple = type.getAnnotation(AttributeOverrides.class);
+        if (multiple != null) {
+            for (AttributeOverride ao : multiple.value()) {
+                if (!ao.name().isEmpty() && !ao.column().name().isEmpty()) {
+                    overrides.put(ao.name(), ao.column().name());
+                }
+            }
+        }
+        return overrides;
     }
 
     protected <T extends Annotation> T getAnnotation(Accessor accessor, Class<T> annotationClass) {
