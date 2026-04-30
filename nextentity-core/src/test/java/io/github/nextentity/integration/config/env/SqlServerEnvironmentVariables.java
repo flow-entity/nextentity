@@ -31,6 +31,8 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS sales_order",
                 "DROP TABLE IF EXISTS customer",
+                "DROP TABLE IF EXISTS person_with_nested_address",
+                "DROP TABLE IF EXISTS person_with_address",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
                 "DROP TABLE IF EXISTS category",
@@ -97,6 +99,26 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                             order_no NVARCHAR(100) NOT NULL,
                             customer_id BIGINT,
                             amount DECIMAL(19,2)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_address (
+                            id BIGINT PRIMARY KEY,
+                            name NVARCHAR(100),
+                            street NVARCHAR(100),
+                            city NVARCHAR(100),
+                            zip_code NVARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_nested_address (
+                            id BIGINT PRIMARY KEY,
+                            name NVARCHAR(100),
+                            email NVARCHAR(100),
+                            phone NVARCHAR(20),
+                            street NVARCHAR(100),
+                            city NVARCHAR(100),
+                            zip_code NVARCHAR(20)
                         )
                         """
         );

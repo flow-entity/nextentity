@@ -35,6 +35,8 @@ public class H2EnvironmentVariables implements DatabaseEnvironmentVariables {
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS sales_order",
                 "DROP TABLE IF EXISTS customer",
+                "DROP TABLE IF EXISTS person_with_nested_address",
+                "DROP TABLE IF EXISTS person_with_address",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
                 "DROP TABLE IF EXISTS category",
@@ -101,6 +103,26 @@ public class H2EnvironmentVariables implements DatabaseEnvironmentVariables {
                             order_no VARCHAR(100) NOT NULL,
                             customer_id BIGINT,
                             amount DECIMAL(19,2)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_address (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100),
+                            street VARCHAR(100),
+                            city VARCHAR(100),
+                            zip_code VARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_nested_address (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100),
+                            email VARCHAR(100),
+                            phone VARCHAR(20),
+                            street VARCHAR(100),
+                            city VARCHAR(100),
+                            zip_code VARCHAR(20)
                         )
                         """
         );

@@ -62,6 +62,14 @@ public interface IntegrationTestContext {
         return new EntityQueryImpl<>(getEntityContext(Customer.class));
     }
 
+    default EntityQueryImpl<PersonWithAddress> queryPersonWithAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithAddress.class));
+    }
+
+    default EntityQueryImpl<PersonWithNestedAddress> queryPersonWithNestedAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithNestedAddress.class));
+    }
+
     @NonNull IntegrationTestContext reset();
 
     <T> T doInTransaction(Supplier<T> runnable);
