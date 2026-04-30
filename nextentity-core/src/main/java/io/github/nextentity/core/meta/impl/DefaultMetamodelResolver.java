@@ -95,6 +95,17 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
                || getAnnotation(accessor, Transient.class) != null;
     }
 
+    /**
+     * 检查访问器对应的属性是否标记了 {@code @Embedded} 注解。
+     *
+     * @param accessor 属性访问器
+     * @return 存在 {@code @Embedded} 注解则返回 {@code true}
+     */
+    @Override
+    public boolean isEmbedded(Accessor accessor) {
+        return getAnnotation(accessor, Embedded.class) != null;
+    }
+
     @Override
     public boolean isBasicField(Accessor accessor) {
         for (Class<? extends Annotation> type : JOIN_ANNOTATIONS) {

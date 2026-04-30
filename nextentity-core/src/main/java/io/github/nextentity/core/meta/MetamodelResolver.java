@@ -24,6 +24,12 @@ public interface MetamodelResolver {
     /// @return 如果是 transient 则返回 {@code true}
     boolean isTransient(Accessor accessor);
 
+    /// 检查属性是否为嵌入字段。
+    ///
+    /// @param accessor 属性访问器
+    /// @return 如果是嵌入字段则返回 {@code true}
+    boolean isEmbedded(Accessor accessor);
+
     /// 检查属性是否为基本字段（非关联字段）。
     ///
     /// @param accessor 属性访问器

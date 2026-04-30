@@ -93,4 +93,14 @@ public class DefaultProjectionSchemaAttribute
     public ProjectionSchema schema() {
         return this;
     }
+
+    /**
+     * 委托到源实体属性判断是否为嵌入类型。
+     *
+     * @return 如果源属性是嵌入类型则返回 {@code true}
+     */
+    @Override
+    public boolean isEmbedded() {
+        return source.schema().isEmbedded();
+    }
 }

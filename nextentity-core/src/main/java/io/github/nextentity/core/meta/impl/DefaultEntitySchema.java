@@ -61,6 +61,16 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
         return super.getAttribute(fieldNames);
     }
 
+    /**
+     * 实体模式本身不是嵌入类型，始终返回 {@code false}。
+     *
+     * @return {@code false}
+     */
+    @Override
+    public boolean isEmbedded() {
+        return false;
+    }
+
     @Override
     public EntityAttribute getAttribute(String name) {
         return super.getAttribute(name);

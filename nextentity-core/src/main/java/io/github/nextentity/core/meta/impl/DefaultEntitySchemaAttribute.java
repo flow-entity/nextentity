@@ -21,6 +21,8 @@ public class DefaultEntitySchemaAttribute
     private final DefaultEntitySchema declareBy;
     private final PathNode path;
     private final FetchType fetchType;
+    /** 标记该属性是否为嵌入字段（{@code @Embedded}） */
+    private final boolean embedded;
 
     protected static class Attributes extends EntityAttributeSet {
         private final EntityBasicAttribute sourceAttribute;
@@ -53,6 +55,7 @@ public class DefaultEntitySchemaAttribute
         this.accessor = attribute.accessor();
         this.path = declareBy.getPath(attribute.name());
         this.fetchType = resolver.getFetchType(this);
+        this.embedded = resolver.isEmbedded(accessor);
     }
 
     @Override
@@ -130,5 +133,15 @@ public class DefaultEntitySchemaAttribute
     @Override
     public EntitySchema schema() {
         return this;
+    }
+
+    /**
+     * 返回该属性是否为嵌入字段。
+     *
+     * @return 如果是 {@code @Embedded} 注解的嵌入字段则返回 {@code true}
+     */
+    @Override
+    public boolean isEmbedded() {
+        return embedded;
     }
 }
