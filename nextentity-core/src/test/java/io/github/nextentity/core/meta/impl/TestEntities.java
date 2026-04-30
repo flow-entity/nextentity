@@ -1,6 +1,8 @@
 package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.annotation.Fetch;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -468,6 +470,18 @@ public class TestEntities {
         public void setZipCode(String zipCode) { this.zipCode = zipCode; }
     }
 
+    public static class FullName {
+        private String firstName;
+        private String lastName;
+
+        public FullName() {}
+
+        public String getFirstName() { return firstName; }
+        public void setFirstName(String firstName) { this.firstName = firstName; }
+        public String getLastName() { return lastName; }
+        public void setLastName(String lastName) { this.lastName = lastName; }
+    }
+
     @jakarta.persistence.Entity
     public static class EntityWithEmbedded {
         @Id
@@ -515,6 +529,63 @@ public class TestEntities {
         public void setId(Long id) { this.id = id; }
         public ContactInfo getContactInfo() { return contactInfo; }
         public void setContactInfo(ContactInfo contactInfo) { this.contactInfo = contactInfo; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithNestedAttributeOverride {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        @AttributeOverrides({
+                @AttributeOverride(name = "email", column = @Column(name = "contact_email")),
+                @AttributeOverride(name = "address.street", column = @Column(name = "deep_street"))
+        })
+        private ContactInfo contactInfo;
+
+        public EntityWithNestedAttributeOverride() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public ContactInfo getContactInfo() { return contactInfo; }
+        public void setContactInfo(ContactInfo contactInfo) { this.contactInfo = contactInfo; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithAttributeOverride {
+        @Id
+        private Long id;
+        private String name;
+        @jakarta.persistence.Embedded
+        @AttributeOverride(name = "firstName", column = @Column(name = "first_name_ov"))
+        private FullName fullName;
+
+        public EntityWithAttributeOverride() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public FullName getFullName() { return fullName; }
+        public void setFullName(FullName fullName) { this.fullName = fullName; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithAttributeOverrides {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        @AttributeOverrides({
+                @AttributeOverride(name = "street", column = @Column(name = "addr_street")),
+                @AttributeOverride(name = "city", column = @Column(name = "addr_city"))
+        })
+        private Address address;
+
+        public EntityWithAttributeOverrides() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public Address getAddress() { return address; }
+        public void setAddress(Address address) { this.address = address; }
     }
 
     private TestEntities() {}

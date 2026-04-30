@@ -1225,6 +1225,190 @@ class DefaultMetamodelTest {
         }
     }
 
+    // ── @AttributeOverride / @AttributeOverrides 测试 ──
+
+    @Nested
+    @DisplayName("@AttributeOverride / @AttributeOverrides")
+    class AttributeOverrideTests {
+
+        @Test
+        @DisplayName("@AttributeOverride 覆盖嵌入字段的列名")
+        void shouldAttributeOverrideChangeColumnNameOfEmbeddedField() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
+
+            // 嵌入子属性通过 getPrimitives() 获取
+            EntityBasicAttribute firstName = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("firstName"))
+                    .findFirst().orElse(null);
+            assertThat(firstName).isNotNull();
+            // 当前缺陷: @AttributeOverride 未处理，列名仍为默认的 "first_name"
+            assertThat(firstName.columnName()).isEqualTo("first_name_ov");
+        }
+
+        @Test
+        @DisplayName("@AttributeOverride 未覆盖的嵌入字段保持默认列名")
+        void shouldNonOverriddenFieldKeepDefaultColumnName() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
+
+            EntityBasicAttribute lastName = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("lastName"))
+                    .findFirst().orElse(null);
+            assertThat(lastName).isNotNull();
+            assertThat(lastName.columnName()).isEqualTo("last_name");
+        }
+
+        @Test
+        @DisplayName("@AttributeOverrides 覆盖多个嵌入字段的列名")
+        void shouldAttributeOverridesChangeMultipleColumnNames() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverrides.class);
+
+            EntityBasicAttribute street = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("street"))
+                    .findFirst().orElse(null);
+            assertThat(street).isNotNull();
+            // 当前缺陷: @AttributeOverrides 未处理，列名仍为默认的 "street"
+            assertThat(street.columnName()).isEqualTo("addr_street");
+
+            EntityBasicAttribute city = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("city"))
+                    .findFirst().orElse(null);
+            assertThat(city).isNotNull();
+            // 当前缺陷: @AttributeOverrides 未处理，列名仍为默认的 "city"
+            assertThat(city.columnName()).isEqualTo("addr_city");
+        }
+
+        @Test
+        @DisplayName("@AttributeOverrides 未覆盖的字段保持默认列名")
+        void shouldNonOverriddenFieldKeepDefaultColumnNameInOverridesEntity() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverrides.class);
+
+            EntityBasicAttribute zipCode = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("zipCode"))
+                    .findFirst().orElse(null);
+            assertThat(zipCode).isNotNull();
+            assertThat(zipCode.columnName()).isEqualTo("zip_code");
+        }
+
+        @Test
+        @DisplayName("@AttributeOverride 嵌入字段出现在 getPrimitives 中")
+        void shouldOverriddenEmbeddedFieldsAppearInPrimitives() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("firstName"))
+                    .anyMatch(a -> a.name().equals("lastName"));
+            assertThat(entityType.getPrimitives())
+                    .noneMatch(a -> a.name().equals("fullName"));
+        }
+
+        @Test
+        @DisplayName("@AttributeOverrides 嵌入字段出现在 getPrimitives 中")
+        void shouldAttributeOverridesEmbeddedFieldsAppearInPrimitives() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverrides.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("street"))
+                    .anyMatch(a -> a.name().equals("city"))
+                    .anyMatch(a -> a.name().equals("zipCode"));
+            assertThat(entityType.getPrimitives())
+                    .noneMatch(a -> a.name().equals("address"));
+        }
+
+        @Test
+        @DisplayName("@AttributeOverride 嵌入属性也有正确的 getAttribute(name)")
+        void shouldOverriddenEmbeddedFieldResolvedByGetAttribute() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
+
+            EntityAttribute fullName = entityType.getAttribute("fullName");
+            assertThat(fullName).isInstanceOf(EntitySchemaAttribute.class);
+            assertThat(((MetamodelSchema<?>) fullName).isEmbedded()).isTrue();
+        }
+
+        @Test
+        @DisplayName("嵌入子属性（非 id 字段）不是 id 也不是 version")
+        void shouldEmbeddedFieldPrimitivesNotBeIdOrVersion() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
+
+            assertThat(entityType.getPrimitives())
+                    .filteredOn(a -> !a.name().equals("id") && !a.name().equals("name"))
+                    .allSatisfy(a -> {
+                        EntityBasicAttribute basic = (EntityBasicAttribute) a;
+                        assertThat(basic.isId()).isFalse();
+                        assertThat(basic.isVersion()).isFalse();
+                    });
+        }
+
+        // ── 多层嵌套 @AttributeOverride 测试 ──
+
+        @Test
+        @DisplayName("多层嵌套: 一层深度 @AttributeOverride(email) 覆盖列名")
+        void shouldNestedAttributeOverrideOneLevelDeep() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedAttributeOverride.class);
+
+            // email 在 ContactInfo 中，被 @AttributeOverride(name="email", column=@Column(name="contact_email")) 覆盖
+            EntityBasicAttribute email = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("email"))
+                    .findFirst().orElse(null);
+            assertThat(email).isNotNull();
+            // 当前缺陷: 多层嵌套 @AttributeOverride 未处理，列名仍为默认的 "email"
+            assertThat(email.columnName()).isEqualTo("contact_email");
+        }
+
+        @Test
+        @DisplayName("多层嵌套: 两层深度 @AttributeOverride(address.street) 覆盖列名")
+        void shouldNestedAttributeOverrideTwoLevelsDeep() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedAttributeOverride.class);
+
+            // street 在 ContactInfo.address 中，被 @AttributeOverride(name="address.street", column=@Column(name="deep_street")) 覆盖
+            EntityBasicAttribute street = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("street"))
+                    .findFirst().orElse(null);
+            assertThat(street).isNotNull();
+            // 当前缺陷: 多层嵌套 @AttributeOverride 未处理，列名仍为默认的 "street"
+            assertThat(street.columnName()).isEqualTo("deep_street");
+        }
+
+        @Test
+        @DisplayName("多层嵌套: 未覆盖字段保持默认列名")
+        void shouldNestedAttributeOverrideKeepDefaultForNonOverridden() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedAttributeOverride.class);
+
+            EntityBasicAttribute phone = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("phone"))
+                    .findFirst().orElse(null);
+            assertThat(phone).isNotNull();
+            assertThat(phone.columnName()).isEqualTo("phone");
+
+            EntityBasicAttribute city = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("city"))
+                    .findFirst().orElse(null);
+            assertThat(city).isNotNull();
+            assertThat(city.columnName()).isEqualTo("city");
+
+            EntityBasicAttribute zipCode = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("zipCode"))
+                    .findFirst().orElse(null);
+            assertThat(zipCode).isNotNull();
+            assertThat(zipCode.columnName()).isEqualTo("zip_code");
+        }
+
+        @Test
+        @DisplayName("多层嵌套: 嵌入字段展开到 getPrimitives 中")
+        void shouldNestedAttributeOverrideExpandPrimitives() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedAttributeOverride.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("email"))
+                    .anyMatch(a -> a.name().equals("phone"))
+                    .anyMatch(a -> a.name().equals("street"))
+                    .anyMatch(a -> a.name().equals("city"))
+                    .anyMatch(a -> a.name().equals("zipCode"));
+            assertThat(entityType.getPrimitives())
+                    .noneMatch(a -> a.name().equals("contactInfo"))
+                    .noneMatch(a -> a.name().equals("address"));
+        }
+    }
+
     @Nested
     @DisplayName("边界情况")
     class EdgeCaseTests {
