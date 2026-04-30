@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -171,9 +173,9 @@ class EmployeeServiceIntegrationTest extends BaseIntegrationTest {
             assertThat(beforeRaise).isNotEmpty();
 
             // Create map of employee ID to original salary
-            java.util.Map<Long, BigDecimal> originalSalaries = beforeRaise.stream()
+            Map<Long, BigDecimal> originalSalaries = beforeRaise.stream()
                     .filter(e -> e.getActive() && e.getSalary() != null)
-                    .collect(java.util.stream.Collectors.toMap(Employee::getId, Employee::getSalary));
+                    .collect(Collectors.toMap(Employee::getId, Employee::getSalary));
 
             // When
             employeeService.giveDepartmentRaise(deptId, raisePercentage);

@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 ///
 /// ```java
 /// @Autowired
-/// Repository<Customer, Long> customerRepository;
+/// EntityRepository<Customer, Long> customerRepository;
 ///
 /// // 直接使用
 /// customerRepository.findById(1L);

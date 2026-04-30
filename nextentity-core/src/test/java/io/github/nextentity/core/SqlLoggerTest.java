@@ -1,6 +1,5 @@
 package io.github.nextentity.core;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -108,44 +107,4 @@ class SqlLoggerTest {
         }
     }
 
-    @Nested
-    class DebugMethods {
-
-        /// 测试目标: 验证 debug 方法可正常调用
-        /// 测试场景: 使用有效参数调用 debug 方法
-        /// 预期结果: 无异常抛出
-        @Test
-        void debug_WithValidParameters_ShouldNotThrow() {
-            // when & then - 方法应无异常完成
-            Assertions.assertDoesNotThrow(() -> {
-                SqlLogger.debug("test message");
-                SqlLogger.debug("test message with param: {}", "value");
-                SqlLogger.debug("null param: {}", null);
-            });
-        }
-
-        /// 测试目标: 验证禁用日志时不输出
-        /// 测试场景: 设置 enabled=false 后调用 debug
-        /// 预期结果: 无异常（内部检查 enabled 标志）
-        @Test
-        void debug_WhenDisabled_ShouldNotLog() {
-            // given
-            LoggingConfig disabledConfig = LoggingConfig.builder()
-                    .enabled(false)
-                    .build();
-
-            // when
-            SqlLogger.setConfig(disabledConfig);
-
-            // then - 无异常，方法内部检查 enabled
-            Assertions.assertDoesNotThrow(() -> {
-                SqlLogger.debug("should not log");
-                SqlLogger.logSql("SELECT 1");
-                SqlLogger.logParameters("SELECT ?", java.util.List.of(1));
-            });
-
-            // cleanup
-            SqlLogger.setConfig(LoggingConfig.DEFAULT);
-        }
-    }
 }

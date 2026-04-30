@@ -22,7 +22,7 @@ import java.util.Optional;
 /// @param <ID> 主键类型
 /// @author HuangChengwei
 /// @since 2.1.4
-public interface Repository<T, ID> {
+public interface EntityRepository<T, ID> {
 
     /// 获取查询构建器，用于构建类型安全的查询。
     ///

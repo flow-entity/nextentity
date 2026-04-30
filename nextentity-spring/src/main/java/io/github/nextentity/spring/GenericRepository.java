@@ -19,7 +19,7 @@ import org.springframework.core.ResolvableType;
 ///
 /// // 或通过自动配置注入
 /// @Autowired
-/// Repository<User, Long> userRepository;
+/// EntityRepository<User, Long> userRepository;
 /// ```
 ///
 /// @param <T>  实体类型
@@ -47,7 +47,7 @@ public class GenericRepository<T, ID> extends AbstractRepository<T, ID> {
         if (!(injectionPoint instanceof DependencyDescriptor descriptor)) {
             throw new ConfigurationException("Unsupported injection point: " + injectionPoint);
         }
-        ResolvableType resolvableType = descriptor.getResolvableType().as(Repository.class);
+        ResolvableType resolvableType = descriptor.getResolvableType().as(EntityRepository.class);
         Class<T> entityType = TypeCastUtil.cast(resolvableType.resolveGeneric(0));
         Class<ID> genericIdType = TypeCastUtil.cast(resolvableType.resolveGeneric(1));
         // operations() 返回 EntityOperations，实际实现是 EntityTemplate

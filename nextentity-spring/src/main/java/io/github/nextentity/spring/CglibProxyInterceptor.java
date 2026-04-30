@@ -7,8 +7,7 @@ import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.MetamodelSchema;
 import io.github.nextentity.core.meta.ProjectionSchema;
-import io.github.nextentity.core.reflect.AttributeLoader;
-import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.reflect.LazyValueMap;
 import org.jspecify.annotations.NonNull;
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;
@@ -18,7 +17,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 /// CGLIB 代理拦截器 - 为普通类创建代理实例
 ///
@@ -83,7 +81,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
             throw new UnsupportedOperationException("CglibProxyInterceptor cannot handle the given QueryContext");
         }
 
-        Schema schema = context.getSchema();
+        MetamodelSchema<?> schema = context.getSchema();
         if (schema == null) {
             return null;
         }
@@ -126,18 +124,18 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
         }
 
         @Override
-        protected Object createProxy(Map<Method, Object> map) {
+        protected Object createProxy(LazyValueMap map) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(getResultType());
             enhancer.setCallback(new MethodInterceptorImpl(map));
             return enhancer.create();
         }
 
-        private record MethodInterceptorImpl(Map<Method, Object> map) implements MethodInterceptor {
+        private record MethodInterceptorImpl(LazyValueMap map) implements MethodInterceptor {
             @Override
             public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
                 if (map.containsKey(method)) {
-                    return AttributeLoader.loadFromMap(map, method);
+                    return map.get(method);
                 }
                 return proxy.invokeSuper(obj, args);
             }

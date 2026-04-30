@@ -608,7 +608,7 @@ public interface ExpressionBuilder<T, U, B> {
         /// @param value 包含值
         /// @return 字符串操作器实例
         default B notContainsIfNotNull(String value) {
-            return notLikeIfNotNull(value == null || value.isEmpty() ? null : '%' + value + '%');
+            return notLikeIfNotNull(value == null ? null : '%' + value + '%');
         }
 
         /// 如果字符串不为空，则模糊匹配指定值。
@@ -670,7 +670,7 @@ public interface ExpressionBuilder<T, U, B> {
         /// @param value 包含值
         /// @return 字符串操作器实例
         default B notContainsIfNotEmpty(String value) {
-            return notLikeIfNotNull(value == null || value.isEmpty() ? null : '%' + value + '%');
+            return notLikeIfNotEmpty(value == null || value.isEmpty() ? null : '%' + value + '%');
         }
 
         /// 转换为小写。

@@ -6,8 +6,6 @@ import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
 import org.jspecify.annotations.NonNull;
 
 import java.util.*;
@@ -296,7 +294,7 @@ public abstract class AbstractStatementBuilder {
 
     protected ValueConverter<?, ?> getValueConverter(ExpressionNode leftOperand) {
         if (leftOperand instanceof PathNode pathNode) {
-            Attribute attribute = getEntityType().getAttribute(pathNode);
+            MetamodelAttribute attribute = getEntityType().getAttribute(pathNode);
             if (attribute instanceof EntityBasicAttribute columnAttribute) {
                 return columnAttribute.valueConvertor();
             }
@@ -458,7 +456,10 @@ public abstract class AbstractStatementBuilder {
         if (attribute.deep() == 1) {
             appendFromAlias().append(".");
         } else {
-            JoinAttribute join = (JoinAttribute) attribute.declareBy();
+            MetamodelSchema<?> parent = attribute.declareBy();
+            if (!(parent instanceof JoinAttribute join)) {
+                throw new IllegalStateException();
+            }
             Integer index = joins.get(join);
             appendTableAlias(join, index).append('.');
         }
@@ -496,7 +497,7 @@ public abstract class AbstractStatementBuilder {
     /// @param k join 属性元数据
     /// @param v join 表别名索引
     protected void appendJoinCondition(StringBuilder sb, JoinAttribute k, Integer v) {
-        Schema declared = k.declareBy();
+        MetamodelSchema<?> declared = k.declareBy();
         if (declared instanceof JoinAttribute schemaAttribute) {
             Integer parentIndex = joins.get(schemaAttribute);
             appendTableAliasTo(sb, schemaAttribute, parentIndex);
@@ -526,16 +527,16 @@ public abstract class AbstractStatementBuilder {
     protected void addJoin(ExpressionNode select) {
         if (select instanceof PathNode path) {
             EntityType entityType = getEntityType();
-            Attribute attribute = entityType.getAttribute(path);
+            MetamodelAttribute attribute = entityType.getAttribute(path);
             addJoin(attribute);
         } else if (select instanceof OperatorNode) {
             addJoin(((OperatorNode) select).operands());
         }
     }
 
-    protected void addJoin(Attribute attribute) {
+    protected void addJoin(MetamodelAttribute attribute) {
         ArrayDeque<JoinAttribute> joinAttributes = new ArrayDeque<>(attribute.deep());
-        Schema join = attribute.declareBy();
+        MetamodelSchema<?> join = attribute.declareBy();
         while (join instanceof JoinAttribute schemaAttribute) {
             joinAttributes.addFirst(schemaAttribute);
             join = schemaAttribute.declareBy();

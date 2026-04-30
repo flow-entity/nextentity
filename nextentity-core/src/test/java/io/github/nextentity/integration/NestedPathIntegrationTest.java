@@ -115,8 +115,8 @@ public class NestedPathIntegrationTest {
 
             // Then - HR department has 1 employee
             assertThat(employees).hasSize(1);
-            assertThat(employees.get(0).getDepartment()).isNotNull();
-            assertThat(employees.get(0).getDepartment().getName()).isEqualTo("HR");
+            assertThat(employees.getFirst().getDepartment()).isNotNull();
+            assertThat(employees.getFirst().getDepartment().getName()).isEqualTo("HR");
         }
 
         ///
@@ -134,8 +134,8 @@ public class NestedPathIntegrationTest {
 
             // Then - Finance department has 1 employee
             assertThat(employees).hasSize(1);
-            assertThat(employees.get(0).getDepartment()).isNotNull();
-            assertThat(employees.get(0).getDepartment().getName()).isEqualTo("Finance");
+            assertThat(employees.getFirst().getDepartment()).isNotNull();
+            assertThat(employees.getFirst().getDepartment().getName()).isEqualTo("Finance");
         }
 
         ///
@@ -269,8 +269,9 @@ public class NestedPathIntegrationTest {
             // Then - Engineering(5) + Marketing(3) + Sales(2) + HR(1) = 11 employees
             assertThat(employees).hasSize(11);
             for (Employee emp : employees) {
-                assertThat(emp.getDepartment()).isNotNull();
-                assertThat(emp.getDepartment().getActive()).isTrue();
+                Department department = emp.getDepartment();
+                assertThat(department).isNotNull();
+                assertThat(department.getActive()).isTrue();
             }
         }
 
@@ -289,9 +290,9 @@ public class NestedPathIntegrationTest {
 
             // Then - Finance has 1 employee
             assertThat(employees).hasSize(1);
-            assertThat(employees.get(0).getDepartment()).isNotNull();
-            assertThat(employees.get(0).getDepartment().getActive()).isFalse();
-            assertThat(employees.get(0).getDepartment().getName()).isEqualTo("Finance");
+            assertThat(employees.getFirst().getDepartment()).isNotNull();
+            assertThat(employees.getFirst().getDepartment().getActive()).isFalse();
+            assertThat(employees.getFirst().getDepartment().getName()).isEqualTo("Finance");
         }
     }
 

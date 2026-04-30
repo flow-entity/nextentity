@@ -2,7 +2,6 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
-import io.github.nextentity.core.reflect.schema.impl.AttributeSet;
 
 import java.util.Collection;
 

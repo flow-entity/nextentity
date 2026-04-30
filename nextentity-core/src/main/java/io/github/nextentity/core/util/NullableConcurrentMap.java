@@ -379,19 +379,19 @@ public class NullableConcurrentMap<K, V> implements Map<K, V>, Serializable {
         return value == NULL ? null : (T) value;
     }
 
-    private static Object wrapKey(Object key) {
+    protected static Object wrapKey(Object key) {
         return key == null ? NULL : key;
     }
 
-    private static Object wrapValue(Object value) {
+    protected static Object wrapValue(Object value) {
         return value == null ? NULL : value;
     }
 
-    private K unwrapKey(Object key) {
+    protected K unwrapKey(Object key) {
         return unwrap(key);
     }
 
-    private V unwrapValue(Object value) {
+    protected V unwrapValue(Object value) {
         return unwrap(value);
     }
 

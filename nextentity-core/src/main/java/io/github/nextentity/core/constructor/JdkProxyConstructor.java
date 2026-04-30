@@ -1,10 +1,9 @@
 package io.github.nextentity.core.constructor;
 
+import io.github.nextentity.core.reflect.LazyValueMap;
 import io.github.nextentity.core.reflect.ReflectUtil;
 
-import java.lang.reflect.Method;
 import java.util.Collection;
-import java.util.Map;
 
 /// JDK 代理构造器
 ///
@@ -20,7 +19,7 @@ public class JdkProxyConstructor extends ProxyConstructor {
     }
 
     @Override
-    protected Object createProxy(Map<Method, Object> map) {
+    protected Object createProxy(LazyValueMap map) {
         return ReflectUtil.newProxyInstance(getResultType(), map);
     }
 }

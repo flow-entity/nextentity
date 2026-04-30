@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import java.util.List;
 import java.util.Map;
 
@@ -179,7 +180,7 @@ public class ProductRepository extends AbstractRepository<Product, Long> {
                 .list();
 
         return products.stream()
-                .collect(java.util.stream.Collectors.groupingBy(
+                .collect(Collectors.groupingBy(
                         p -> p.getCategoryId() != null ? p.getCategoryId() : -1L
                 ));
     }

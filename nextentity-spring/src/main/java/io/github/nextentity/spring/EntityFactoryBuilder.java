@@ -98,7 +98,6 @@ public final class EntityFactoryBuilder {
                                                                            DefaultMetamodel metamodel,
                                                                            QueryExecutor queryExecutor,
                                                                            InterceptorSelector<ConstructInterceptor> interceptorSelector) {
-        persistExecutor = wrapWithTransaction(persistExecutor, template);
 
         QueryProperties queryProperties = new QueryProperties(
                 properties.getDefaultFetchType(), properties.getFetchBatchMaxSize(), properties.isLazyLoadEnabled(),
@@ -205,10 +204,6 @@ public final class EntityFactoryBuilder {
                 return jdbcTemplate.execute(action::doInConnection);
             }
         };
-    }
-
-    private static PersistExecutor wrapWithTransaction(PersistExecutor executor, TransactionTemplate template) {
-        return new TransactionUpdateExecutor(executor, new SpringTransactionOperations(template));
     }
 
     private static void applyLoggingConfig(NextEntityProperties properties) {

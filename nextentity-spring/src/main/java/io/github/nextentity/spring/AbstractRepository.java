@@ -41,13 +41,13 @@ import java.util.stream.Collectors;
 /// @param <ID> 主键类型
 /// @author HuangChengwei
 /// @since 1.0.0
-public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
+public abstract class AbstractRepository<T, ID> implements EntityRepository<T, ID> {
 
     private final EntityTemplate<T> operations;
 
     private final Class<ID> idType;
-    private Path<T, ID> idPath;
-    private Function<? super T, ? extends ID> idExtractor;
+    private volatile Path<T, ID> idPath;
+    private volatile Function<? super T, ? extends ID> idExtractor;
 
     /// 创建 Repository 实例。
     ///
@@ -155,6 +155,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @return 所有实体列表
     @Override
+    @Transactional(readOnly = true)
     public List<T> findAll() {
         return query().list();
     }
@@ -163,6 +164,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @return 实体数量
     @Override
+    @Transactional(readOnly = true)
     public long count() {
         return query().count();
     }
@@ -316,6 +318,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     /// @param id 主键值
     /// @return 包含实体的 Optional，如果未找到则返回空 Optional
     @Override
+    @Transactional(readOnly = true)
     public Optional<T> findById(ID id) {
         return Optional.ofNullable(query().where(idPath()).eq(id).first());
     }
@@ -328,6 +331,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     /// @param id 主键值
     /// @return 实体对象，如果未找到则返回 null
     @Override
+    @Transactional(readOnly = true)
     public T getById(ID id) {
         return query().where(idPath()).eq(id).first();
     }
@@ -337,6 +341,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     /// @param ids 主键值集合
     /// @return 匹配主键的实体列表
     @Override
+    @Transactional(readOnly = true)
     public List<T> findAllById(@NonNull Collection<? extends ID> ids) {
         if (ids.isEmpty()) {
             return List.of();
@@ -350,6 +355,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 匹配主键的实体列表
+    @Transactional(readOnly = true)
     public List<T> getAllById(@NonNull Collection<? extends ID> ids) {
         return findAllById(ids);
     }
@@ -359,6 +365,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     /// @param ids 主键值集合
     /// @return 以 ID 为键、实体为值的映射
     @Override
+    @Transactional(readOnly = true)
     public Map<ID, T> findAllAsMapById(@NonNull Collection<? extends ID> ids) {
         List<T> entities = findAllById(ids);
         return entities.stream()
@@ -371,6 +378,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @return 以 ID 为键、实体为值的映射
     @Override
+    @Transactional(readOnly = true)
     public Map<ID, T> findAllAsMap() {
         return query().list().stream()
                 .collect(Collectors.toMap(idExtractor(), Function.identity()));
@@ -381,6 +389,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     /// @param id 主键值
     /// @return 如果实体存在返回 true，否则返回 false
     @Override
+    @Transactional(readOnly = true)
     public boolean existsById(ID id) {
         return query().where(idPath()).eq(id).exists();
     }
@@ -389,6 +398,7 @@ public abstract class AbstractRepository<T, ID> implements Repository<T, ID> {
     ///
     /// @param ids 主键值集合
     /// @return 存在的实体数量
+    @Transactional(readOnly = true)
     public long countById(@NonNull Collection<? extends ID> ids) {
         if (ids.isEmpty()) {
             return 0;

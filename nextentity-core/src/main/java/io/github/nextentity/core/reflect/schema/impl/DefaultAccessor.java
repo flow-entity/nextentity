@@ -7,6 +7,7 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -14,6 +15,8 @@ import java.lang.reflect.RecordComponent;
 import java.time.temporal.Temporal;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+
+import org.jspecify.annotations.Nullable;
 
 public record DefaultAccessor(
         Class<?> type,
@@ -148,6 +151,30 @@ public record DefaultAccessor(
             }
         }
         collectDeclaredFields(clazz.getSuperclass(), map);
+    }
+
+    /// 查找无参 public 构造函数（Record 返回规范构造函数）
+    ///
+    /// @param type 类型
+    /// @return 构造函数，如果没有则返回 null
+    public static @Nullable Constructor<?> getConstructor(Class<?> type) {
+        try {
+            if (type.isRecord()) {
+                RecordComponent[] components = type.getRecordComponents();
+                Class<?>[] argTypes = new Class[components.length];
+                for (int i = 0; i < components.length; i++) {
+                    argTypes[i] = components[i].getType();
+                }
+                return type.getConstructor(argTypes);
+            } else if (!type.isInterface()) {
+                Constructor<?> constructor = type.getConstructor();
+                if (constructor.canAccess(null)) {
+                    return constructor;
+                }
+            }
+        } catch (NoSuchMethodException _) {
+        }
+        return null;
     }
 
 }

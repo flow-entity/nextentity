@@ -53,7 +53,7 @@ public record LiteralNode(Object value) implements ExpressionNode {
                 if (b) {
                     return TRUE;
                 } else {
-                    return new OperatorNode(ImmutableList.ofCollection(nodes), Operator.AND);
+                    return new OperatorNode(ImmutableList.ofCollection(nodes), Operator.OR);
                 }
             }
         }

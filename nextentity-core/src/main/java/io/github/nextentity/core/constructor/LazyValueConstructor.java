@@ -3,7 +3,7 @@ package io.github.nextentity.core.constructor;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.JoinAttribute;
-import io.github.nextentity.core.reflect.AttributeLoader;
+import io.github.nextentity.core.reflect.LazyValue;
 import io.github.nextentity.core.reflect.LoadObserver;
 import io.github.nextentity.core.reflect.LoadObserverRegistry;
 import io.github.nextentity.core.util.NullableConcurrentMap;
@@ -47,36 +47,26 @@ public class LazyValueConstructor implements ValueConstructor {
 
     }
 
-    /// 懒加载代理实现，首次调用 load() 时触发批量查询
-    private class AttributeLoaderImpl implements AttributeLoader {
-        private final Object foreignKey;
-
-        private AttributeLoaderImpl(Object foreignKey) {
-            this.foreignKey = foreignKey;
+    public Object findByForeignKey(Object foreignKey) {
+        if (cache.containsKey(foreignKey)) {
+            Object cached = cache.get(foreignKey);
+            notifyCacheHit(foreignKey, cached);
+            return cached;
         }
-
-        @Override
-        public Object load() {
-            if (cache.containsKey(foreignKey)) {
-                Object cached = cache.get(foreignKey);
-                notifyCacheHit(foreignKey, cached);
-                return cached;
-            }
-            synchronized (cache) {
-                if (!cache.containsKey(foreignKey)) {
-                    long startTime = System.currentTimeMillis();
-                    notifyBeforeLoad(startTime);
-                    LazyValueConstructor loader = LazyValueConstructor.this;
-                    Map<Object, Object> results = batchLoaderFunction.apply(loader, foreignKeys);
-                    cache.putAll(results);
-                    for (Object key : foreignKeys) {
-                        cache.putIfAbsent(key, null);
-                    }
-                    notifyAfterLoad(startTime, System.currentTimeMillis());
+        synchronized (cache) {
+            if (!cache.containsKey(foreignKey)) {
+                long startTime = System.currentTimeMillis();
+                notifyBeforeLoad(startTime);
+                LazyValueConstructor loader = LazyValueConstructor.this;
+                Map<Object, Object> results = batchLoaderFunction.apply(loader, foreignKeys);
+                cache.putAll(results);
+                for (Object key : foreignKeys) {
+                    cache.putIfAbsent(key, null);
                 }
+                notifyAfterLoad(startTime, System.currentTimeMillis());
             }
-            return cache.get(foreignKey);
         }
+        return cache.get(foreignKey);
     }
 
     public QueryConfig getQueryConfig() {
@@ -129,10 +119,10 @@ public class LazyValueConstructor implements ValueConstructor {
 
     /// 构造 AttributeLoader，收集外键供批量加载
     @Override
-    public AttributeLoader construct(Arguments arguments) {
+    public LazyValue construct(Arguments arguments) {
         EntityBasicAttribute targetAttribute = attribute.getTargetAttribute();
         Object foreignKey = arguments.next(targetAttribute.valueConvertor());
         foreignKeys.add(foreignKey);
-        return new AttributeLoaderImpl(foreignKey);
+        return new LazyValue(this::findByForeignKey, foreignKey);
     }
 }

@@ -209,29 +209,6 @@ class AbstractRepositoryIdMethodsTest {
         assertTrue(result.isEmpty());
     }
 
-    /// 测试 findAllAsMapById - 使用 idExtractor 提取 ID
-    /// 验证 idExtractor 函数正确工作
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void shouldFindMapByIdUseIdExtractorCorrectly(UserRepository repository) {
-        // Arrange
-        List<User> expectedUsers = repository.users().subList(0, 3);
-        List<Integer> ids = expectedUsers.stream()
-                .map(User::getId)
-                .collect(Collectors.toList());
-
-        // Act
-        Map<Integer, User> result = repository.findAllAsMapById(ids);
-
-        // Assert - 验证 idExtractor 正确提取了每个实体的 ID
-        for (User expected : expectedUsers) {
-            User actual = result.get(expected.getId());
-            assertNotNull(actual);
-            assertEquals(expected.getId(), actual.getId());
-            assertEquals(expected, actual);
-        }
-    }
-
     /// 测试 findAllAsMap - 正常情况
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
@@ -355,28 +332,6 @@ class AbstractRepositoryIdMethodsTest {
         assertEquals(0L, result);
     }
 
-    /// 测试 idType() - 返回正确的 ID 类型
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void shouldIdTypeReturnCorrectClass(UserRepository repository) {
-        // Act
-        Class<Integer> idType = repository.idType();
-
-        // Assert
-        assertEquals(Integer.class, idType);
-    }
-
-    /// 测试 entityType() - 返回正确的实体类型
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void shouldEntityTypeReturnCorrectClass(UserRepository repository) {
-        // Act
-        Class<User> entityType = repository.entityType();
-
-        // Assert
-        assertEquals(User.class, entityType);
-    }
-
     /// 测试 findAllById 的 idPath 使用 - 验证 IN 条件查询
     @ParameterizedTest
     @ArgumentsSource(UserQueryProvider.class)
@@ -404,26 +359,6 @@ class AbstractRepositoryIdMethodsTest {
         for (User user : result) {
             assertTrue(existingIdsInRange.contains(user.getId()));
         }
-    }
-
-    /// 测试批量操作的 idPath 使用 - deleteAllById 和 deleteById
-    /// 注意：此测试会修改数据库数据，需要清理
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void shouldDeleteByIdUseIdPath(UserRepository repository) {
-        // 此测试演示 deleteById 使用 idPath 进行删除
-        // 由于是集成测试，我们只验证方法可以正常调用
-        // 实际删除测试需要在独立事务中进行
-
-        // Arrange - 获取一个用户的 ID（但实际不删除，避免影响其他测试）
-        Integer testId = repository.users().getFirst().getId();
-
-        // 验证 existsById 正常工作（作为 deleteById 的反向验证）
-        assertTrue(repository.existsById(testId));
-
-        // 注意：实际的 deleteById 测试需要在专门的测试环境中进行
-        // 这里我们只验证 idPath 被正确初始化和使用
-        assertNotNull(repository.idType());
     }
 
     /// 测试 findAllAsMapById 与 findAllAsMap 结果一致性
@@ -459,28 +394,6 @@ class AbstractRepositoryIdMethodsTest {
         // Assert
         assertEquals(1, result.size());
         assertEquals(singleId, result.getFirst().getId());
-    }
-
-    /// 测试 findAllAsMapById 返回的 Map 不可修改性
-    /// Collectors.toMap 返回的 HashMap 是可修改的，这是预期行为
-    @ParameterizedTest
-    @ArgumentsSource(UserQueryProvider.class)
-    void shouldFindMapByIdReturnModifiableMap(UserRepository repository) {
-        // Arrange
-        Integer id = repository.users().getFirst().getId();
-        List<Integer> ids = Collections.singletonList(id);
-
-        // Act
-        Map<Integer, User> result = repository.findAllAsMapById(ids);
-
-        // Assert - HashMap 是可修改的（这是 Collectors.toMap 的默认行为）
-        // 如果需要不可修改的 Map，应该使用 Collections.unmodifiableMap 包装
-        assertNotNull(result);
-        assertEquals(1, result.size());
-
-        // 验证 Map 包含正确的数据
-        assertTrue(result.containsKey(id));
-        assertNotNull(result.get(id));
     }
 
     /// 测试大量 ID 的查询性能

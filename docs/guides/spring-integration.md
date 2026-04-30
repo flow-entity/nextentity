@@ -41,6 +41,12 @@
 </dependency>
 ```
 
+> **v2.1+ 须知**：NextEntity 自动配置默认不启用，需在 `application.yml` 中显式开启：
+> ```yaml
+> nextentity:
+>   enabled: true
+> ```
+
 ---
 
 ## 数据库配置
@@ -82,17 +88,17 @@ NextEntity 提供两种 Repository 使用方式：
 | 方式                        | 适用场景       | 特点           |
 |---------------------------|------------|--------------|
 | 继承 `AbstractRepository`   | 需要自定义查询方法  | 可添加业务特定的查询逻辑 |
-| 注入 `Repository<T, ID>` 接口 | 简单 CRUD 操作 | 无需创建子类，自动注入  |
+| 注入 `EntityRepository<T, ID>` 接口 | 简单 CRUD 操作 | 无需创建子类，自动注入  |
 
 ### 方式一：继承 AbstractRepository 基类
 
-继承 `AbstractRepository` 并定义构造方法，注入 `EntityTemplateFactory`：
+继承 `AbstractRepository` 并定义构造方法，注入 `EntityOperationsFactory`：
 
 ```java
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityTemplateFactory factory) {
+    protected EmployeeRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 }
@@ -113,14 +119,14 @@ AbstractRepository 提供以下基于 ID 的方法：
 
 ### 方式二：注入 Repository 接口
 
-对于简单的 CRUD 操作，无需创建 Repository 子类，直接注入 `Repository<T, ID>` 接口：
+对于简单的 CRUD 操作，无需创建 Repository 子类，直接注入 `EntityRepository<T, ID>` 接口：
 
 ```java
 @Service
 public class CustomerService {
 
     @Autowired
-    private Repository<Customer, Long> customerRepository;
+    private EntityRepository<Customer, Long> customerRepository;
 
     public Customer getById(Long id) {
         return customerRepository.getById(id);
@@ -142,8 +148,8 @@ Spring Boot 自动配置会根据注入点的泛型参数自动创建对应的 R
 > ```
 
 > **注意**：
-> - `Repository<T, ID>` 接口中 `query()` 是公共方法，可以在 Service 中直接调用
-> - `AbstractRepository` 中 `query()` 是 `protected` 的，只能在子类内部使用
+> - `EntityRepository<T, ID>` 接口和 `AbstractRepository` 中的 `query()` 均为公共方法
+> - `path()` 和 `root()` 方法是 `protected` 的，只能在 `AbstractRepository` 子类内部使用
 
 ### 使用示例
 
@@ -183,7 +189,7 @@ public class UserService {
 @Repository
 public class OrderRepository extends AbstractRepository<Order, Long> {
 
-    protected OrderRepository(EntityTemplateFactory factory) {
+    protected OrderRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -229,7 +235,7 @@ public class OrderRepository extends AbstractRepository<Order, Long> {
 @Repository
 public class UserRepository extends AbstractRepository<User, Long> {
 
-    protected UserRepository(EntityTemplateFactory factory) {
+    protected UserRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 
@@ -257,7 +263,7 @@ public class UserRepository extends AbstractRepository<User, Long> {
 @Repository
 public class LogRepository extends AbstractRepository<Log, Long> {
 
-    protected LogRepository(EntityTemplateFactory factory) {
+    protected LogRepository(EntityOperationsFactory factory) {
         super(factory);
     }
 

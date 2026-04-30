@@ -5,8 +5,6 @@ import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.impl.DefaultAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.Lazy;
 import jakarta.persistence.FetchType;
@@ -19,8 +17,10 @@ public class DefaultEntitySchemaAttribute
         extends DefaultEntitySchema
         implements EntitySchemaAttribute {
 
-    private final DefaultAttribute attribute;
+    private final Accessor accessor;
+    private final DefaultEntitySchema declareBy;
     private final PathNode path;
+    private final FetchType fetchType;
 
     protected static class Attributes extends EntityAttributeSet {
         private final EntityBasicAttribute sourceAttribute;
@@ -45,12 +45,14 @@ public class DefaultEntitySchemaAttribute
         }
     }
 
-    public DefaultEntitySchemaAttribute(Attribute attribute,
+    public DefaultEntitySchemaAttribute(MetamodelAttribute attribute,
                                         DefaultEntitySchema declareBy,
                                         DefaultMetamodel metamodel) {
         super(attribute.type(), metamodel);
-        this.attribute = new DefaultAttribute(declareBy, attribute);
-        this.path = new PathNode(this.attribute.path().toArray(String[]::new));
+        this.declareBy = declareBy;
+        this.accessor = attribute.accessor();
+        this.path = declareBy.getPath(attribute.name());
+        this.fetchType = resolver.getFetchType(this);
     }
 
     @Override
@@ -75,12 +77,12 @@ public class DefaultEntitySchemaAttribute
 
     @Override
     public Accessor accessor() {
-        return attribute.accessor();
+        return accessor;
     }
 
     @Override
     public DefaultEntitySchema declareBy() {
-        return (DefaultEntitySchema) attribute.declareBy();
+        return declareBy;
     }
 
     @Override
@@ -89,7 +91,7 @@ public class DefaultEntitySchemaAttribute
     }
 
     @Override
-    protected Attributes createAttributes() {
+    protected AttributeSet<EntityAttribute> createAttributes() {
         DefaultEntitySchema schema = DefaultEntitySchema.of(type(), metamodel);
         ImmutableArray<? extends EntityAttribute> entityAttributes = schema.getAttributes();
         List<EntityAttribute> entityAttributeList = new ArrayList<>(entityAttributes.size());
@@ -115,14 +117,14 @@ public class DefaultEntitySchemaAttribute
             }
             entityAttributeList.add(cur);
         }
-        var sourceAttribute = resolver.getJoinSourceAttribute(declareBy(), this);
-        var targetAttribute = resolver.getJoinTargetAttribute(schema, this);
+        var sourceAttribute = resolver.getJoinSourceAttribute(declareBy(), accessor());
+        var targetAttribute = resolver.getJoinTargetAttribute(schema, accessor());
         return new Attributes(entityAttributeList, id, version, sourceAttribute, targetAttribute);
     }
 
     @Override
     public FetchType getFetchType() {
-        return resolver.getFetchType(attribute);
+        return fetchType;
     }
 
     @Override

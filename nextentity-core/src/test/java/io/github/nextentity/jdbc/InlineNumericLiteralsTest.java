@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -155,7 +156,7 @@ class InlineNumericLiteralsTest {
                     .inlineNumericLiterals(true)
                     .build();
 
-            TestResult result = appendLiteral(config, java.math.BigDecimal.valueOf(100.50));
+            TestResult result = appendLiteral(config, BigDecimal.valueOf(100.50));
 
             assertThat(result.sql).contains("?");
             assertThat(result.args).hasSize(1);

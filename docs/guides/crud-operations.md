@@ -243,8 +243,8 @@ public class EmployeeService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     @Transactional
@@ -353,8 +353,8 @@ for (Employee e : newEmployees) {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     @Transactional
@@ -381,8 +381,8 @@ public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     public boolean canDeleteDepartment(Long deptId) {
@@ -417,8 +417,8 @@ public class DepartmentService {
 @Repository
 public class EmployeeRepository extends AbstractRepository<Employee, Long> {
 
-    protected EmployeeRepository(EntityContext context) {
-        super(context);
+    protected EmployeeRepository(EntityOperationsFactory factory) {
+        super(factory);
     }
 
     public Optional<Employee> findByIdOptional(Long id) {

@@ -1,7 +1,6 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.reflect.schema.Attribute;
-import io.github.nextentity.core.reflect.schema.Schema;
+import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.FetchType;
 
@@ -10,10 +9,16 @@ import jakarta.persistence.FetchType;
 /// 是 {@link EntitySchema} 和 {@link ProjectionSchema} 的公共父接口，
 /// 提供属性的集合访问、按名称查找、嵌套路径查找和懒加载检测等通用能力。
 ///
-/// @param <T> 属性类型，必须是 {@link Attribute} 的子类型
+/// @param <T> 属性类型，必须是 {@link MetamodelAttribute} 的子类型
 /// @see EntitySchema
 /// @see ProjectionSchema
-public interface MetamodelSchema<T extends MetamodelAttribute> extends Schema {
+public interface MetamodelSchema<T extends MetamodelAttribute> {
+
+    /// 获取此反射类型表示的Java类型。
+    ///
+    /// @return Java类
+    Class<?> type();
+
     /// 获取此模式的所有属性。
     ///
     /// @return 属性集合
@@ -37,10 +42,10 @@ public interface MetamodelSchema<T extends MetamodelAttribute> extends Schema {
     /// 按字段名称的嵌套路径获取属性。
     ///
     /// 遍历嵌套模式以找到最终属性。
+    /// 如果路径中的某个中间节点不存在，则返回 {@code null}。
     ///
     /// @param fieldNames 字段名称路径
-    /// @return 路径末端的属性
-    /// @throws IllegalArgumentException 如果路径无效
+    /// @return 路径末端的属性，如果路径中的任何节点不存在则返回 {@code null}
     T getAttribute(Iterable<String> fieldNames);
 
     /// 检查投影是否包含懒加载属性
@@ -50,7 +55,7 @@ public interface MetamodelSchema<T extends MetamodelAttribute> extends Schema {
     ///
     /// @return true 表示存在懒加载属性，false 表示全部为立即加载
     default boolean hasLazyAttribute() {
-        for (Attribute attr : getAttributes()) {
+        for (MetamodelAttribute attr : getAttributes()) {
             if (attr instanceof JoinAttribute joinAttribute) {
                 if (joinAttribute.getFetchType() == FetchType.LAZY) {
                     return true;
@@ -58,5 +63,11 @@ public interface MetamodelSchema<T extends MetamodelAttribute> extends Schema {
             }
         }
         return false;
+    }
+
+    default PathNode getPath(String name) {
+        return this instanceof MetamodelAttribute ma
+                ? ma.path().get(name)
+                : new PathNode(name);
     }
 }

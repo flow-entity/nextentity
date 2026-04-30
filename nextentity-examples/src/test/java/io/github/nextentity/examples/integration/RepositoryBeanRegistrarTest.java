@@ -3,7 +3,7 @@ package io.github.nextentity.examples.integration;
 import io.github.nextentity.core.EntityOperationsFactory;
 import io.github.nextentity.examples.entity.Customer;
 import io.github.nextentity.examples.entity.Employee;
-import io.github.nextentity.spring.Repository;
+import io.github.nextentity.spring.EntityRepository;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,9 +21,9 @@ public class RepositoryBeanRegistrarTest {
     @Autowired(required = false)
     EntityOperationsFactory entityTemplateFactory;
     @Autowired(required = false)
-    private Repository<Customer, Long> customerRepository;
+    private EntityRepository<Customer, Long> customerRepository;
     @Autowired(required = false)
-    private Repository<Employee, Long> employeeLongRepository;
+    private EntityRepository<Employee, Long> employeeLongRepository;
 
     @Test
     void exists() {

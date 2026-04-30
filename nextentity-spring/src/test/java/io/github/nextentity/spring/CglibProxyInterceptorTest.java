@@ -1,9 +1,10 @@
 package io.github.nextentity.spring;
 
+import io.github.nextentity.core.reflect.LazyValueMap;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Method;
-import java.util.Map;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,10 +14,12 @@ class CglibProxyInterceptorTest {
     @Test
     void cglibProxyShouldDelegateUnmappedMethodToSuperclass() throws Exception {
         CglibProxyInterceptor.CglibProxyConstructor constructor =
-                new CglibProxyInterceptor.CglibProxyConstructor(TestDto.class, java.util.List.of());
+                new CglibProxyInterceptor.CglibProxyConstructor(TestDto.class, List.of());
 
         Method getter = TestDto.class.getMethod("getValue");
-        TestDto proxy = (TestDto) constructor.createProxy(Map.of(getter, "mapped"));
+        LazyValueMap map = new LazyValueMap();
+        map.put(getter, "mapped");
+        TestDto proxy = (TestDto) constructor.createProxy(map);
 
         assertEquals("mapped", proxy.getValue());
         assertDoesNotThrow(proxy::toString);

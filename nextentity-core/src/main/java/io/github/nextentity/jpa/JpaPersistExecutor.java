@@ -6,7 +6,6 @@ import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntityType;
-import io.github.nextentity.core.reflect.schema.Attribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
@@ -45,7 +44,7 @@ public class JpaPersistExecutor extends AbstractPersistExecutor {
         String entityName = getJpaEntityName(entityType);
         EntityAttribute idAttribute = entity.id();
         EntityAttribute versionAttribute = entity.version();
-        ImmutableArray<? extends Attribute> attributes = entity.getPrimitives();
+        ImmutableArray<? extends EntityAttribute> attributes = entity.getPrimitives();
 
         for (T t : entities) {
             if (entityManager.contains(t)) {
