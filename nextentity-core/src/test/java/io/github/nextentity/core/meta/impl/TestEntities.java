@@ -453,5 +453,69 @@ public class TestEntities {
         public void setInstant(Instant instant) { this.instant = instant; }
     }
 
+    public static class Address {
+        private String street;
+        private String city;
+        private String zipCode;
+
+        public Address() {}
+
+        public String getStreet() { return street; }
+        public void setStreet(String street) { this.street = street; }
+        public String getCity() { return city; }
+        public void setCity(String city) { this.city = city; }
+        public String getZipCode() { return zipCode; }
+        public void setZipCode(String zipCode) { this.zipCode = zipCode; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithEmbedded {
+        @Id
+        private Long id;
+        private String name;
+        @jakarta.persistence.Embedded
+        private Address address;
+
+        public EntityWithEmbedded() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public Address getAddress() { return address; }
+        public void setAddress(Address address) { this.address = address; }
+    }
+
+    public static class ContactInfo {
+        private String email;
+        private String phone;
+        @jakarta.persistence.Embedded
+        private Address address;
+
+        public ContactInfo() {}
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getPhone() { return phone; }
+        public void setPhone(String phone) { this.phone = phone; }
+        public Address getAddress() { return address; }
+        public void setAddress(Address address) { this.address = address; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithNestedEmbedded {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        private ContactInfo contactInfo;
+
+        public EntityWithNestedEmbedded() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public ContactInfo getContactInfo() { return contactInfo; }
+        public void setContactInfo(ContactInfo contactInfo) { this.contactInfo = contactInfo; }
+    }
+
     private TestEntities() {}
 }

@@ -95,7 +95,7 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
             }
             boolean isComplexType = !DefaultAccessor.of(accessor.type()).isEmpty();
             DefaultMetamodelAttribute attr = new DefaultMetamodelAttribute(this, accessor);
-            if (isComplexType && resolver.isAnyToOne(attr)) {
+            if (isComplexType && (resolver.isAnyToOne(attr) || resolver.isEmbedded(accessor))) {
                 var entitySchemaAttribute = new DefaultEntitySchemaAttribute(
                         attr, this, metamodel);
                 attributes.add(entitySchemaAttribute);
@@ -131,7 +131,7 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
                 }
             }
             idAttribute = found;
-            if (idAttribute == null) {
+            if (idAttribute == null && !isEmbedded()) {
                 throw new ConfigurationException(
                         "No ID attribute found for entity '" + entityName + "' (" + type.getName() + "). " +
                         "Please annotate the ID field with @Id or ensure a field named 'id' exists.");

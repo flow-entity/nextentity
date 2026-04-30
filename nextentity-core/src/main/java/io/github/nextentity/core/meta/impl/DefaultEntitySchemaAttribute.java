@@ -5,6 +5,7 @@ import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.PathNode;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
+import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.Lazy;
 import jakarta.persistence.FetchType;
@@ -16,6 +17,8 @@ import java.util.List;
 public class DefaultEntitySchemaAttribute
         extends DefaultEntitySchema
         implements EntitySchemaAttribute {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DefaultEntitySchemaAttribute.class);
 
     private final Accessor accessor;
     private final DefaultEntitySchema declareBy;
@@ -95,34 +98,51 @@ public class DefaultEntitySchemaAttribute
 
     @Override
     protected AttributeSet<EntityAttribute> createAttributes() {
-        DefaultEntitySchema schema = DefaultEntitySchema.of(type(), metamodel);
-        ImmutableArray<? extends EntityAttribute> entityAttributes = schema.getAttributes();
-        List<EntityAttribute> entityAttributeList = new ArrayList<>(entityAttributes.size());
-        EntityBasicAttribute id = null;
-        EntityBasicAttribute version = null;
-        for (EntityAttribute attribute : entityAttributes) {
-            EntityAttribute cur;
-            if (attribute instanceof EntityBasicAttribute basicAttribute) {
-                var attr = new DefaultEntityBasicAttribute(basicAttribute, this, resolver);
-                cur = attr;
-                if (basicAttribute.isId()) {
-                    id = attr;
-                } else if (basicAttribute.isVersion()) {
-                    version = attr;
+        if (isEmbedded()) {
+            List<DefaultAccessor> accessors = DefaultAccessor.of(type());
+            ArrayList<EntityAttribute> attributes = new ArrayList<>();
+            for (DefaultAccessor accessor : accessors) {
+                if (resolver.isTransient(accessor)) {
+                    continue;
                 }
-            } else if (attribute instanceof EntitySchemaAttribute schemaAttribute) {
-                cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel);
-            } else {
-                throw new ConfigurationException(
-                        "Unknown entity attribute type '" + attribute.getClass().getName() +
-                        "' when resolving schema attribute '" + this.path +
-                        "' for entity '" + type().getName() + "'.");
+                boolean isComplexType = !DefaultAccessor.of(accessor.type()).isEmpty();
+                DefaultMetamodelAttribute attr = new DefaultMetamodelAttribute(this, accessor);
+                if (isComplexType && resolver.isEmbedded(accessor)) {
+                    attributes.add(new DefaultEntitySchemaAttribute(attr, this, metamodel));
+                } else if (resolver.isBasicField(accessor)) {
+                    attributes.add(new DefaultEntityBasicAttribute(attr, this, resolver));
+                } else {
+                    log.warn("ignored attribute {}", accessor.field());
+                }
             }
-            entityAttributeList.add(cur);
+            return new Attributes(attributes, null, null, null, null);
+        } else {
+            DefaultEntitySchema schema = DefaultEntitySchema.of(type(), metamodel);
+            ImmutableArray<? extends EntityAttribute> entityAttributes = schema.getAttributes();
+            List<EntityAttribute> entityAttributeList = new ArrayList<>(entityAttributes.size());
+            EntityBasicAttribute id = null;
+            EntityBasicAttribute version = null;
+            for (EntityAttribute attribute : entityAttributes) {
+                EntityAttribute cur;
+                if (attribute instanceof EntityBasicAttribute basicAttribute) {
+                    var attr = new DefaultEntityBasicAttribute(basicAttribute, this, resolver);
+                    cur = attr;
+                    if (basicAttribute.isId()) {
+                        id = attr;
+                    } else if (basicAttribute.isVersion()) {
+                        version = attr;
+                    }
+                } else if (attribute instanceof EntitySchemaAttribute schemaAttribute) {
+                    cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel);
+                } else {
+                    throw new ConfigurationException("Unknown entity attribute type '" + attribute.getClass().getName() + "' when resolving schema attribute '" + this.path + "' for entity '" + type().getName() + "'.");
+                }
+                entityAttributeList.add(cur);
+            }
+            var sourceAttribute = resolver.getJoinSourceAttribute(declareBy(), accessor());
+            var targetAttribute = resolver.getJoinTargetAttribute(schema, accessor());
+            return new Attributes(entityAttributeList, id, version, sourceAttribute, targetAttribute);
         }
-        var sourceAttribute = resolver.getJoinSourceAttribute(declareBy(), accessor());
-        var targetAttribute = resolver.getJoinTargetAttribute(schema, accessor());
-        return new Attributes(entityAttributeList, id, version, sourceAttribute, targetAttribute);
     }
 
     @Override

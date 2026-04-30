@@ -3,6 +3,8 @@ package io.github.nextentity.core.meta.impl;
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.converter.InstantConverter;
 import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.reflect.schema.Accessor;
+import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
 import jakarta.persistence.FetchType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -1151,7 +1153,77 @@ class DefaultMetamodelTest {
         }
     }
 
-    // ── 边界情况测试 ──
+    @Nested
+    @DisplayName("嵌入属性")
+    class EmbeddedAttributeTests {
+
+        @Test
+        @DisplayName("DefaultMetamodelResolver 能检测到 @Embedded 注解")
+        void shouldResolverDetectEmbeddedAnnotation() {
+            DefaultMetamodelResolver resolver = DefaultMetamodelResolver.of();
+            var accessors = DefaultAccessor.of(TestEntities.EntityWithEmbedded.class);
+            Accessor addressAccessor = accessors.stream()
+                    .filter(a -> a.name().equals("address"))
+                    .findFirst()
+                    .orElseThrow();
+
+            assertThat(resolver.isEmbedded(addressAccessor)).isTrue();
+        }
+
+        @Test
+        @DisplayName("@Embedded 字段应被解析为 EntitySchemaAttribute")
+        void shouldEmbeddedFieldBeResolvedAsSchemaAttribute() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithEmbedded.class);
+            EntityAttribute addressAttr = entityType.getAttribute("address");
+
+            assertThat(addressAttr).isInstanceOf(EntitySchemaAttribute.class);
+        }
+
+        @Test
+        @DisplayName("@Embedded 字段的 isEmbedded() 应返回 true")
+        void shouldEmbeddedFieldIsEmbeddedReturnTrue() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithEmbedded.class);
+            EntityAttribute addressAttr = entityType.getAttribute("address");
+
+            assertThat(addressAttr).isInstanceOf(MetamodelSchema.class);
+            assertThat(((MetamodelSchema<?>) addressAttr).isEmbedded()).isTrue();
+        }
+
+        @Test
+        @DisplayName("@Embedded 字段的内部子属性应被展开到 getPrimitives")
+        void shouldExpandEmbeddedFieldInnerAttributesToPrimitives() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithEmbedded.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("street"))
+                    .anyMatch(a -> a.name().equals("city"))
+                    .anyMatch(a -> a.name().equals("zipCode"));
+        }
+
+        @Test
+        @DisplayName("@Embedded 字段自身不应作为整体出现在 getPrimitives 中")
+        void shouldEmbeddedFieldItselfNotAppearInPrimitives() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithEmbedded.class);
+
+            assertThat(entityType.getPrimitives())
+                    .noneMatch(a -> a.name().equals("address"));
+        }
+
+        @Test
+        @DisplayName("嵌套 @Embedded 字段应递归展开内部子属性到 getPrimitives")
+        void shouldNestedEmbeddedFieldExpandRecursively() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedEmbedded.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("email"))
+                    .anyMatch(a -> a.name().equals("phone"))
+                    .anyMatch(a -> a.name().equals("street"))
+                    .anyMatch(a -> a.name().equals("city"))
+                    .anyMatch(a -> a.name().equals("zipCode"))
+                    .noneMatch(a -> a.name().equals("contactInfo"))
+                    .noneMatch(a -> a.name().equals("address"));
+        }
+    }
 
     @Nested
     @DisplayName("边界情况")
