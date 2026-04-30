@@ -61,26 +61,26 @@ public class JpaPersistExecutor extends AbstractPersistExecutor {
             int attrCount = 0;
 
             for (var attr : attributes) {
-                String attrName = attr.name();
-                if (attrName.equals(idAttribute.name())) {
+                String attrName = jpqlAttributeName(attr);
+                if (attrName.equals(jpqlAttributeName(idAttribute))) {
                     continue;
                 }
                 if (attrCount > 0) {
                     jpql.append(", ");
                 }
                 jpql.append("e.").append(attrName).append(" = ?").append(paramIndex);
-                Object value = versionAttribute == attr ? getNextVersion(t, versionAttribute) : attr.get(t);
+                Object value = versionAttribute == attr ? getNextVersion(t, versionAttribute) : attr.getFromRoot(t);
                 params.add(value);
                 paramIndex++;
                 attrCount++;
             }
 
-            jpql.append(" WHERE e.").append(idAttribute.name()).append(" = ?").append(paramIndex);
+            jpql.append(" WHERE e.").append(jpqlAttributeName(idAttribute)).append(" = ?").append(paramIndex);
             params.add(id);
             paramIndex++;
 
             if (versionAttribute != null) {
-                jpql.append(" AND e.").append(versionAttribute.name()).append(" = ?").append(paramIndex);
+                jpql.append(" AND e.").append(jpqlAttributeName(versionAttribute)).append(" = ?").append(paramIndex);
                 params.add(version);
                 entityManager.detach(t);
             }
@@ -288,6 +288,17 @@ public class JpaPersistExecutor extends AbstractPersistExecutor {
 
     protected String getAttributeName(PathNode pathNode) {
         return pathNode.stream().collect(Collectors.joining("."));
+    }
+
+    /// 获取属性在 JPQL 中的路径名。
+    ///
+    /// 对于嵌套属性，路径段用点号连接（如 {@code address.street}），
+    /// 确保 JPQL 能正确导航到嵌入字段。
+    ///
+    /// @param attr 实体属性
+    /// @return JPQL 属性路径
+    private static String jpqlAttributeName(EntityAttribute attr) {
+        return attr.path().stream().collect(Collectors.joining("."));
     }
 
 }

@@ -19,9 +19,16 @@ public sealed interface SelectItem permits SelectItem.Expr, SelectItem.Joined {
         return new Expr(expression, converter);
     }
 
+    /// 根据实体基本属性创建 SelectItem。
+    ///
+    /// 如果属性声明方是嵌入类型（{@code @Embedded}），嵌入字段与主表共享同一张表，
+    /// 因此使用 {@link Expr} 而非 {@link Joined}，避免生成错误的 JOIN 子句。
+    ///
+    /// @param attribute 实体基本属性
+    /// @return SelectItem 实例
     static SelectItem of(EntityBasicAttribute attribute) {
         EntitySchema schema = attribute.declareBy();
-        if (schema instanceof EntitySchemaAttribute target) {
+        if (schema instanceof EntitySchemaAttribute target && !target.schema().isEmbedded()) {
             return new Joined(attribute, target);
         } else {
             return new Expr(attribute.path(), attribute.valueConvertor());

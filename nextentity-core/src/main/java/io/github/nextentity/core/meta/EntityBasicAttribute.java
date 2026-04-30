@@ -37,7 +37,7 @@ public non-sealed interface EntityBasicAttribute extends EntityAttribute {
     /// @param entity 实体实例
     /// @return 数据库值
     default Object getDatabaseValue(Object entity) {
-        Object o = get(entity);
+        Object o = declareBy().isEmbedded() ? getFromRoot(entity) : get(entity);
         return valueConvertor().convertToDatabaseColumn(TypeCastUtil.unsafeCast(o));
     }
 
