@@ -42,10 +42,10 @@ public interface MetamodelSchema<T extends MetamodelAttribute> {
     /// 按字段名称的嵌套路径获取属性。
     ///
     /// 遍历嵌套模式以找到最终属性。
+    /// 如果路径中的某个中间节点不存在，则返回 {@code null}。
     ///
     /// @param fieldNames 字段名称路径
-    /// @return 路径末端的属性
-    /// @throws IllegalArgumentException 如果路径无效
+    /// @return 路径末端的属性，如果路径中的任何节点不存在则返回 {@code null}
     T getAttribute(Iterable<String> fieldNames);
 
     /// 检查投影是否包含懒加载属性

@@ -44,8 +44,11 @@ public abstract class AbstractMetamodelSchema<A extends MetamodelAttribute> impl
             String fieldName = it.next();
             MetamodelAttribute attr = schema.getAttribute(fieldName);
             if (it.hasNext()) {
-                // TODO case attr is null
-                schema = (MetamodelSchema<?>) attr;
+                if (attr instanceof MetamodelSchema<?> nested) {
+                    schema = nested;
+                } else {
+                    return null;
+                }
             } else {
                 //noinspection unchecked
                 return (A) attr;
