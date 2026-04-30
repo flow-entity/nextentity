@@ -588,5 +588,70 @@ public class TestEntities {
         public void setAddress(Address address) { this.address = address; }
     }
 
+    // ── 错层嵌套测试用 ──
+
+    public static class ZipCode {
+        private String code;
+
+        public ZipCode() {}
+
+        public String getCode() { return code; }
+        public void setCode(String code) { this.code = code; }
+    }
+
+    public static class AddressWithZip {
+        private String city;
+        @jakarta.persistence.Embedded
+        private ZipCode zip;
+
+        public AddressWithZip() {}
+
+        public String getCity() { return city; }
+        public void setCity(String city) { this.city = city; }
+        public ZipCode getZip() { return zip; }
+        public void setZip(ZipCode zip) { this.zip = zip; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithCrossLayerEmbedded {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        private AddressWithZip address;
+        @jakarta.persistence.Embedded
+        private ZipCode secondaryZip;
+
+        public EntityWithCrossLayerEmbedded() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public AddressWithZip getAddress() { return address; }
+        public void setAddress(AddressWithZip address) { this.address = address; }
+        public ZipCode getSecondaryZip() { return secondaryZip; }
+        public void setSecondaryZip(ZipCode secondaryZip) { this.secondaryZip = secondaryZip; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithCrossLayerOverride {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        @AttributeOverride(name = "city", column = @Column(name = "addr_city"))
+        @AttributeOverride(name = "zip.code", column = @Column(name = "addr_zip_code"))
+        private AddressWithZip address;
+        @jakarta.persistence.Embedded
+        @AttributeOverride(name = "code", column = @Column(name = "sec_zip_code"))
+        private ZipCode secondaryZip;
+
+        public EntityWithCrossLayerOverride() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public AddressWithZip getAddress() { return address; }
+        public void setAddress(AddressWithZip address) { this.address = address; }
+        public ZipCode getSecondaryZip() { return secondaryZip; }
+        public void setSecondaryZip(ZipCode secondaryZip) { this.secondaryZip = secondaryZip; }
+    }
+
     private TestEntities() {}
 }

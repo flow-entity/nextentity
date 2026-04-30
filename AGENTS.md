@@ -29,3 +29,19 @@ Recent history follows a Conventional Commit style such as `docs: ...`, `fix: ..
 
 ## Configuration Tips
 Do not commit real database credentials. Keep local overrides in environment-specific config, and treat files in `nextentity-examples/src/main/resources` as safe examples rather than production defaults.
+
+集成测试支持通过 `-Ddbc` 参数筛选要测试的数据库：
+
+```bash
+# 默认全部数据库（mysql, postgresql, sqlserver, h2）
+mvn test -pl nextentity-core
+
+# 只测试 H2（最快，无需容器）
+mvn test -pl nextentity-core -Ddbc=h2
+
+# 测试特定数据库
+mvn test -pl nextentity-core -Ddbc=mysql,postgresql
+mvn test -pl nextentity-core -Ddbc=mysql
+```
+
+支持的数据库类型：`mysql`、`postgresql`、`sqlserver`、`h2`

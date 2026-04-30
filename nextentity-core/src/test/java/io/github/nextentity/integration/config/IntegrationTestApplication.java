@@ -19,6 +19,8 @@ import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.LockableEntity;
 import io.github.nextentity.integration.entity.PersonWithAddress;
 import io.github.nextentity.integration.entity.PersonWithNestedAddress;
+import io.github.nextentity.integration.entity.PersonWithNestedOverriddenContact;
+import io.github.nextentity.integration.entity.PersonWithOverriddenAddress;
 import io.github.nextentity.integration.entity.SalesOrder;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaConfig;
@@ -154,6 +156,8 @@ public class IntegrationTestApplication {
         private static final List<Class<?>> RESET_ORDER = List.of(
                 SalesOrder.class,
                 Customer.class,
+                PersonWithNestedOverriddenContact.class,
+                PersonWithOverriddenAddress.class,
                 PersonWithNestedAddress.class,
                 PersonWithAddress.class,
                 Employee.class,

@@ -70,6 +70,14 @@ public interface IntegrationTestContext {
         return new EntityQueryImpl<>(getEntityContext(PersonWithNestedAddress.class));
     }
 
+    default EntityQueryImpl<PersonWithOverriddenAddress> queryPersonWithOverriddenAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithOverriddenAddress.class));
+    }
+
+    default EntityQueryImpl<PersonWithNestedOverriddenContact> queryPersonWithNestedOverriddenContacts() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithNestedOverriddenContact.class));
+    }
+
     @NonNull IntegrationTestContext reset();
 
     <T> T doInTransaction(Supplier<T> runnable);

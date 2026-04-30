@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -1406,6 +1407,96 @@ class DefaultMetamodelTest {
             assertThat(entityType.getPrimitives())
                     .noneMatch(a -> a.name().equals("contactInfo"))
                     .noneMatch(a -> a.name().equals("address"));
+        }
+
+        // ── 错层嵌套 @AttributeOverride 隔离测试 ──
+
+        @Test
+        @DisplayName("错层: address.city 覆盖生效")
+        void shouldCrossLayerCityOverride() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithCrossLayerOverride.class);
+
+            EntityBasicAttribute city = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("city"))
+                    .findFirst().orElse(null);
+            assertThat(city).isNotNull();
+            assertThat(city.columnName()).isEqualTo("addr_city");
+        }
+
+        @Test
+        @DisplayName("错层: address.zip.code 覆盖生效")
+        void shouldCrossLayerNestedZipCodeOverride() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithCrossLayerOverride.class);
+
+            EntityBasicAttribute code = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("code"))
+                    .findFirst().orElse(null);
+            assertThat(code).isNotNull();
+            assertThat(code.columnName()).isEqualTo("addr_zip_code");
+        }
+
+        @Test
+        @DisplayName("错层: secondaryZip.code 独立覆盖，不受 address 影响")
+        void shouldCrossLayerSecondaryZipBeIndependent() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithCrossLayerOverride.class);
+
+            // 有两个 name="code" 的 primitive（address.zip.code 和 secondaryZip.code）
+            // 其中一个应是 addr_zip_code（address.zip.code），另一个是 sec_zip_code（secondaryZip.code）
+            assertThat(entityType.getPrimitives())
+                    .filteredOn(a -> a.name().equals("code"))
+                    .hasSize(2)
+                    .extracting(a -> ((EntityBasicAttribute) a).columnName())
+                    .containsExactlyInAnyOrder("addr_zip_code", "sec_zip_code");
+        }
+
+        @Test
+        @DisplayName("错层: 无覆盖时默认列名")
+        void shouldCrossLayerNoOverrideReturnDefault() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithCrossLayerEmbedded.class);
+
+            EntityBasicAttribute city = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("city"))
+                    .findFirst().orElse(null);
+            assertThat(city).isNotNull();
+            assertThat(city.columnName()).isEqualTo("city");
+
+            EntityBasicAttribute code = (EntityBasicAttribute) entityType.getPrimitives().stream()
+                    .filter(a -> a.name().equals("code"))
+                    .findFirst().orElse(null);
+            assertThat(code).isNotNull();
+            assertThat(code.columnName()).isEqualTo("code");
+        }
+
+        // ── Resolver 直接测试 ──
+
+        @Test
+        @DisplayName("resolver: 有 @AttributeOverride 时返回覆盖映射")
+        void shouldResolverReturnOverrides() {
+            DefaultMetamodelResolver resolver = DefaultMetamodelResolver.of();
+            var accessors = io.github.nextentity.core.reflect.schema.impl.DefaultAccessor
+                    .of(TestEntities.EntityWithAttributeOverride.class);
+            var fullNameAccessor = accessors.stream()
+                    .filter(a -> a.name().equals("fullName"))
+                    .findFirst().orElseThrow();
+
+            Map<String, String> overrides = resolver.getAttributeOverrides(fullNameAccessor);
+
+            assertThat(overrides).containsEntry("firstName", "first_name_ov");
+        }
+
+        @Test
+        @DisplayName("resolver: 无 @AttributeOverride 时返回空映射")
+        void shouldResolverReturnEmptyWhenNoOverride() {
+            DefaultMetamodelResolver resolver = DefaultMetamodelResolver.of();
+            var accessors = io.github.nextentity.core.reflect.schema.impl.DefaultAccessor
+                    .of(TestEntities.EntityWithEmbedded.class);
+            var addressAccessor = accessors.stream()
+                    .filter(a -> a.name().equals("address"))
+                    .findFirst().orElseThrow();
+
+            Map<String, String> overrides = resolver.getAttributeOverrides(addressAccessor);
+
+            assertThat(overrides).isEmpty();
         }
     }
 
