@@ -1,6 +1,7 @@
 package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.exception.ReflectiveException;
+import io.github.nextentity.core.reflect.ReflectUtil;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
 import io.github.nextentity.jdbc.Arguments;
 
@@ -41,7 +42,7 @@ public class RecordConstructor extends AbstractObjectConstructor {
             throw new ReflectiveException(resultType + " is not a record type");
         }
         super(resultType, properties);
-        Constructor<?> constructor = DefaultAccessor.getConstructor(resultType);
+        Constructor<?> constructor = ReflectUtil.getDefaultConstructor(resultType);
         this.constructor = Objects.requireNonNull(constructor);
         this.root = root;
     }

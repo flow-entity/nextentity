@@ -2,12 +2,18 @@ package io.github.nextentity.core.reflect.schema;
 
 import io.github.nextentity.core.exception.ReflectiveException;
 import io.github.nextentity.core.reflect.ReflectUtil;
+import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 
 public interface Accessor {
+
+    static List<? extends Accessor> of(Class<?> clazz) {
+        return DefaultAccessor.of(clazz);
+    }
 
     /// 获取此反射类型表示的Java类型。
     ///

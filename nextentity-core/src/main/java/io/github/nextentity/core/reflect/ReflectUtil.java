@@ -2,6 +2,7 @@ package io.github.nextentity.core.reflect;
 
 import io.github.nextentity.core.exception.ReflectiveException;
 import org.jspecify.annotations.NonNull;
+import org.jspecify.annotations.Nullable;
 
 import java.lang.reflect.*;
 import java.util.Map;
@@ -154,6 +155,30 @@ public class ReflectUtil {
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new ReflectiveException(e);
         }
+    }
+
+    /// 查找无参 public 构造函数（Record 返回规范构造函数）
+    ///
+    /// @param type 类型
+    /// @return 构造函数，如果没有则返回 null
+    public static @Nullable Constructor<?> getDefaultConstructor(Class<?> type) {
+        try {
+            if (type.isRecord()) {
+                RecordComponent[] components = type.getRecordComponents();
+                Class<?>[] argTypes = new Class[components.length];
+                for (int i = 0; i < components.length; i++) {
+                    argTypes[i] = components[i].getType();
+                }
+                return type.getConstructor(argTypes);
+            } else if (!type.isInterface()) {
+                Constructor<?> constructor = type.getConstructor();
+                if (constructor.canAccess(null)) {
+                    return constructor;
+                }
+            }
+        } catch (NoSuchMethodException _) {
+        }
+        return null;
     }
 
 }
