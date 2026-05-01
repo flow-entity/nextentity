@@ -33,6 +33,7 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS sales_order",
                 "DROP TABLE IF EXISTS customer",
+                "DROP TABLE IF EXISTS person_with_cross_layer_embedded",
                 "DROP TABLE IF EXISTS person_with_nested_overridden_contact",
                 "DROP TABLE IF EXISTS person_with_overridden_address",
                 "DROP TABLE IF EXISTS person_with_nested_address",
@@ -143,6 +144,16 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
                             deep_street VARCHAR(100),
                             city VARCHAR(100),
                             zip_code VARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_cross_layer_embedded (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100),
+                            city VARCHAR(100),
+                            street VARCHAR(100),
+                            code VARCHAR(20),
+                            alt_code VARCHAR(20)
                         )
                         """
         );

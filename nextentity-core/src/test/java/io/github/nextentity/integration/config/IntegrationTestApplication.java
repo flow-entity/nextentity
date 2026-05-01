@@ -18,6 +18,7 @@ import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
 import io.github.nextentity.integration.entity.LockableEntity;
 import io.github.nextentity.integration.entity.PersonWithAddress;
+import io.github.nextentity.integration.entity.PersonWithCrossLayerEmbedded;
 import io.github.nextentity.integration.entity.PersonWithNestedAddress;
 import io.github.nextentity.integration.entity.PersonWithNestedOverriddenContact;
 import io.github.nextentity.integration.entity.PersonWithOverriddenAddress;
@@ -156,6 +157,7 @@ public class IntegrationTestApplication {
         private static final List<Class<?>> RESET_ORDER = List.of(
                 SalesOrder.class,
                 Customer.class,
+                PersonWithCrossLayerEmbedded.class,
                 PersonWithNestedOverriddenContact.class,
                 PersonWithOverriddenAddress.class,
                 PersonWithNestedAddress.class,

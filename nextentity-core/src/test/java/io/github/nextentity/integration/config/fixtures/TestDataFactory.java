@@ -111,6 +111,17 @@ public class TestDataFactory {
         return customers;
     }
 
+    public static PersonWithAddress createPersonWithAddress(Long id, String name, Address address) {
+        return new PersonWithAddress(id, name, address);
+    }
+
+    public static PersonWithCrossLayerEmbedded createPersonWithCrossLayerEmbedded(
+            Long id, String name, String city, String street, String zipCode, String altCode) {
+        return new PersonWithCrossLayerEmbedded(id, name,
+                new AddressWithZip(city, street, new ZipCode(zipCode)),
+                new ZipCode(altCode));
+    }
+
     public static List<SalesOrder> createSalesOrders() {
         List<SalesOrder> orders = new ArrayList<>();
         orders.add(new SalesOrder(1L, "ORD-001", 1L, new BigDecimal("99.99")));

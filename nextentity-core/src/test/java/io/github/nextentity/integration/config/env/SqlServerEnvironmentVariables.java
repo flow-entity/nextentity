@@ -31,6 +31,7 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS sales_order",
                 "DROP TABLE IF EXISTS customer",
+                "DROP TABLE IF EXISTS person_with_cross_layer_embedded",
                 "DROP TABLE IF EXISTS person_with_nested_overridden_contact",
                 "DROP TABLE IF EXISTS person_with_overridden_address",
                 "DROP TABLE IF EXISTS person_with_nested_address",
@@ -141,6 +142,16 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                             deep_street NVARCHAR(100),
                             city NVARCHAR(100),
                             zip_code NVARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_cross_layer_embedded (
+                            id BIGINT PRIMARY KEY,
+                            name NVARCHAR(100),
+                            city NVARCHAR(100),
+                            street NVARCHAR(100),
+                            code NVARCHAR(20),
+                            alt_code NVARCHAR(20)
                         )
                         """
         );

@@ -104,6 +104,9 @@ public interface MetamodelAttribute {
         Object declared = root;
         if (schema instanceof MetamodelAttribute parent) {
             declared = parent.getFromRoot(declared);
+            if (declared == null) {
+                return null;
+            }
         }
         return accessor().get(declared);
     }

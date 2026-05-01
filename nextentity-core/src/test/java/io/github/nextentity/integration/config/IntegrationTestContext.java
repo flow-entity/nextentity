@@ -78,6 +78,10 @@ public interface IntegrationTestContext {
         return new EntityQueryImpl<>(getEntityContext(PersonWithNestedOverriddenContact.class));
     }
 
+    default EntityQueryImpl<PersonWithCrossLayerEmbedded> queryPersonWithCrossLayerEmbedded() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithCrossLayerEmbedded.class));
+    }
+
     @NonNull IntegrationTestContext reset();
 
     <T> T doInTransaction(Supplier<T> runnable);
