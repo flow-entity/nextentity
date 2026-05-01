@@ -1242,7 +1242,6 @@ class DefaultMetamodelTest {
                     .filter(a -> a.name().equals("firstName"))
                     .findFirst().orElse(null);
             assertThat(firstName).isNotNull();
-            // 当前缺陷: @AttributeOverride 未处理，列名仍为默认的 "first_name"
             assertThat(firstName.columnName()).isEqualTo("first_name_ov");
         }
 
@@ -1267,14 +1266,12 @@ class DefaultMetamodelTest {
                     .filter(a -> a.name().equals("street"))
                     .findFirst().orElse(null);
             assertThat(street).isNotNull();
-            // 当前缺陷: @AttributeOverrides 未处理，列名仍为默认的 "street"
             assertThat(street.columnName()).isEqualTo("addr_street");
 
             EntityBasicAttribute city = (EntityBasicAttribute) entityType.getPrimitives().stream()
                     .filter(a -> a.name().equals("city"))
                     .findFirst().orElse(null);
             assertThat(city).isNotNull();
-            // 当前缺陷: @AttributeOverrides 未处理，列名仍为默认的 "city"
             assertThat(city.columnName()).isEqualTo("addr_city");
         }
 
@@ -1351,7 +1348,6 @@ class DefaultMetamodelTest {
                     .filter(a -> a.name().equals("email"))
                     .findFirst().orElse(null);
             assertThat(email).isNotNull();
-            // 当前缺陷: 多层嵌套 @AttributeOverride 未处理，列名仍为默认的 "email"
             assertThat(email.columnName()).isEqualTo("contact_email");
         }
 
@@ -1365,7 +1361,6 @@ class DefaultMetamodelTest {
                     .filter(a -> a.name().equals("street"))
                     .findFirst().orElse(null);
             assertThat(street).isNotNull();
-            // 当前缺陷: 多层嵌套 @AttributeOverride 未处理，列名仍为默认的 "street"
             assertThat(street.columnName()).isEqualTo("deep_street");
         }
 
