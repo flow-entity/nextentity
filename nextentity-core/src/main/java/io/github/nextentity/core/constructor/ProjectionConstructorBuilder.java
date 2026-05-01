@@ -34,10 +34,10 @@ public class ProjectionConstructorBuilder {
     ///
     /// @return ValueConstructor 实例
     public ValueConstructor build() {
-        return build(paths, root);
+        return build(paths, root, true);
     }
 
-    private ValueConstructor build(SchemaAttributePaths paths, ProjectionSchema schema) {
+    private ValueConstructor build(SchemaAttributePaths paths, ProjectionSchema schema, boolean root) {
         List<PropertyBinding> bindings = new ArrayList<>();
         boolean supportLazyLoading = isSupportLazyLoading(schema);
         for (ProjectionAttribute attr : schema.getAttributes()) {
@@ -48,7 +48,7 @@ public class ProjectionConstructorBuilder {
                     ValueConstructor constructor = new LazyValueConstructor(queryConfig, schemaAttribute, column);
                     bindings.add(new PropertyBinding(attr, constructor));
                 } else if (sub != null) {
-                    ValueConstructor constructor = build(sub, (ProjectionSchema) attr);
+                    ValueConstructor constructor = build(sub, (ProjectionSchema) attr, false);
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof ProjectionEmbeddedAttribute embeddedAttribute) {
@@ -56,7 +56,7 @@ public class ProjectionConstructorBuilder {
                 if (sub == null) {
                     sub = DeepLimitSchemaAttributePaths.of(1);
                 }
-                ValueConstructor constructor = build(sub, embeddedAttribute.schema());
+                ValueConstructor constructor = build(sub, embeddedAttribute.schema(), false);
                 bindings.add(new PropertyBinding(attr, constructor));
             } else if (attr instanceof ProjectionBasicAttribute pba) {
                 SelectItem column = SelectItem.of(pba);
@@ -64,24 +64,24 @@ public class ProjectionConstructorBuilder {
             }
         }
         if (schema.type().isInterface()) {
-            return getInterfaceConstructor(schema, bindings);
+            return getInterfaceConstructor(schema, bindings, root);
         } else if (schema.type().isRecord()) {
-            return getRecordConstructor(schema, bindings);
+            return getRecordConstructor(schema, bindings, root);
         } else {
-            return getObjectConstructor(schema, bindings);
+            return getObjectConstructor(schema, bindings, root);
         }
     }
 
-    protected @NonNull ValueConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
-        return new ObjectConstructor(schema.type(), bindings);
+    protected @NonNull ValueConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings, boolean root) {
+        return new ObjectConstructor(schema.type(), bindings, root);
     }
 
-    protected ValueConstructor getRecordConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
-        return new RecordConstructor(schema.type(), bindings);
+    protected ValueConstructor getRecordConstructor(ProjectionSchema schema, List<PropertyBinding> bindings, boolean root) {
+        return new RecordConstructor(schema.type(), bindings, root);
     }
 
-    protected @NonNull ValueConstructor getInterfaceConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
-        return new JdkProxyConstructor(schema.type(), bindings);
+    protected @NonNull ValueConstructor getInterfaceConstructor(ProjectionSchema schema, List<PropertyBinding> bindings, boolean root) {
+        return new JdkProxyConstructor(schema.type(), bindings, root);
     }
 
     private boolean isSupportLazyLoading(ProjectionSchema schema) {

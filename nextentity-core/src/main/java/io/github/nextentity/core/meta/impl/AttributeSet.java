@@ -1,6 +1,6 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.meta.EntityEmbeddedAttribute;
+import io.github.nextentity.core.meta.ComplexAttribute;
 import io.github.nextentity.core.meta.MetamodelAttribute;
 import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.ImmutableList;
@@ -34,8 +34,8 @@ public class AttributeSet<T extends MetamodelAttribute> {
         if (attribute.isPrimitive()) {
             //noinspection unchecked
             out.add((T) attribute);
-        } else if (attribute instanceof EntityEmbeddedAttribute embeddedAttribute) {
-            for (MetamodelAttribute child : embeddedAttribute.schema().getAttributes()) {
+        } else if (attribute instanceof ComplexAttribute complex && complex.isEmbeddable()) {
+            for (MetamodelAttribute child : complex.schema().getAttributes()) {
                 collectPrimitives(child, out);
             }
         }

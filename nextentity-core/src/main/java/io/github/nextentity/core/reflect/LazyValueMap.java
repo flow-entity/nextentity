@@ -62,4 +62,15 @@ public class LazyValueMap {
             return null;
         }
     }
+
+    /// 判断是否存在非 null 的值。
+    /// 用于非根级代理构造时判断是否应创建代理对象：当所有值均为 null 时返回 null 而非空代理。
+    public boolean hasNonNullValue() {
+        for (Object value : values.values()) {
+            if (value != null && value != NullValue.of()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

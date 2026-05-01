@@ -93,7 +93,7 @@ public class CglibProxyInterceptor implements ConstructInterceptor {
                 DeepLimitSchemaAttributePaths.of(1)
         ) {
             @Override
-            protected @NonNull ValueConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings) {
+            protected @NonNull ValueConstructor getObjectConstructor(ProjectionSchema schema, List<PropertyBinding> bindings, boolean root) {
                 return new CglibProxyConstructor(schema.type(), bindings);
             }
         };
