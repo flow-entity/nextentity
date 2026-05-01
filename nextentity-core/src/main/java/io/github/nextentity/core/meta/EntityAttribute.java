@@ -1,6 +1,5 @@
 package io.github.nextentity.core.meta;
 
-import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.PathNode;
 
 /// 实体属性元数据接口，表示实体类中映射到数据库的字段或关联。
@@ -12,7 +11,7 @@ import io.github.nextentity.core.expression.PathNode;
 /// @see EntityBasicAttribute
 /// @see EntitySchemaAttribute
 public sealed interface EntityAttribute extends MetamodelAttribute
-        permits EntityBasicAttribute, EntitySchemaAttribute {
+        permits EmbeddedAttribute, EntityBasicAttribute, EntitySchemaAttribute {
 
     /// 获取此属性在查询表达式中的路径节点。
     ///

@@ -1,8 +1,8 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
@@ -459,7 +459,7 @@ public abstract class AbstractStatementBuilder {
     ///
     /// @param attribute 实体属性
     protected void appendAttribute(EntityAttribute attribute) {
-        if (attribute.deep() == 1 || attribute.declareBy().isEmbedded()) {
+        if (attribute.deep() == 1 || attribute.declareBy() instanceof EmbeddedAttribute) {
             appendFromAlias().append(".");
         } else {
             MetamodelSchema<?> parent = attribute.declareBy();
@@ -550,9 +550,7 @@ public abstract class AbstractStatementBuilder {
         ArrayDeque<JoinAttribute> joinAttributes = new ArrayDeque<>(attribute.deep());
         MetamodelSchema<?> join = attribute.declareBy();
         while (join instanceof JoinAttribute schemaAttribute) {
-            if (!schemaAttribute.schema().isEmbedded()) {
-                joinAttributes.addFirst(schemaAttribute);
-            }
+            joinAttributes.addFirst(schemaAttribute);
             join = schemaAttribute.declareBy();
         }
         for (JoinAttribute joinAttribute : joinAttributes) {

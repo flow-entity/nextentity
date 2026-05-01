@@ -1,7 +1,7 @@
 package io.github.nextentity.core.meta.impl;
 
-import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.converter.InstantConverter;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
@@ -11,18 +11,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -1177,7 +1169,7 @@ class DefaultMetamodelTest {
             EntityType entityType = metamodel.getEntity(TestEntities.EntityWithEmbedded.class);
             EntityAttribute addressAttr = entityType.getAttribute("address");
 
-            assertThat(addressAttr).isInstanceOf(EntitySchemaAttribute.class);
+            assertThat(addressAttr).isInstanceOf(EmbeddedAttribute.class);
         }
 
         @Test
@@ -1187,7 +1179,7 @@ class DefaultMetamodelTest {
             EntityAttribute addressAttr = entityType.getAttribute("address");
 
             assertThat(addressAttr).isInstanceOf(MetamodelSchema.class);
-            assertThat(((MetamodelSchema<?>) addressAttr).isEmbedded()).isTrue();
+            assertThat(addressAttr).isInstanceOf(EmbeddedAttribute.class);
         }
 
         @Test
@@ -1215,7 +1207,8 @@ class DefaultMetamodelTest {
         void shouldNestedEmbeddedFieldExpandRecursively() {
             EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedEmbedded.class);
 
-            assertThat(entityType.getPrimitives())
+            var primitives = entityType.getPrimitives();
+            assertThat(primitives)
                     .anyMatch(a -> a.name().equals("email"))
                     .anyMatch(a -> a.name().equals("phone"))
                     .anyMatch(a -> a.name().equals("street"))
@@ -1318,8 +1311,8 @@ class DefaultMetamodelTest {
             EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
 
             EntityAttribute fullName = entityType.getAttribute("fullName");
-            assertThat(fullName).isInstanceOf(EntitySchemaAttribute.class);
-            assertThat(((MetamodelSchema<?>) fullName).isEmbedded()).isTrue();
+            assertThat(fullName).isInstanceOf(EmbeddedAttribute.class);
+            assertThat(fullName).isInstanceOf(EmbeddedAttribute.class);
         }
 
         @Test

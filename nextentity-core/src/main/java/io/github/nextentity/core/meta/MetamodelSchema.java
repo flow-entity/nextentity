@@ -70,12 +70,4 @@ public interface MetamodelSchema<T extends MetamodelAttribute> {
                 ? ma.path().get(name)
                 : new PathNode(name);
     }
-
-    /// 检查此模式是否为嵌入类型。
-    ///
-    /// 嵌入类型是指使用 {@code @Embedded} 注解的复合类型，
-    /// 其属性会展开到宿主实体对应的数据库表中。
-    ///
-    /// @return 如果是嵌入类型则返回 {@code true}
-    boolean isEmbedded();
 }

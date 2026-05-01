@@ -102,16 +102,6 @@ public class DefaultProjectionSchema
         return super.getAttribute(fieldNames);
     }
 
-    /**
-     * 投影模式本身不是嵌入类型，始终返回 {@code false}。
-     *
-     * @return {@code false}
-     */
-    @Override
-    public boolean isEmbedded() {
-        return false;
-    }
-
     @Override
     public ProjectionAttribute getAttribute(String name) {
         return super.getAttribute(name);

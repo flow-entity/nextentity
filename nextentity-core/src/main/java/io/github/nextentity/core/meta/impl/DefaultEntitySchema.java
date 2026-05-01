@@ -38,7 +38,7 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
 
     @Override
     public EntityBasicAttribute id() {
-        return ((EntityAttributeSet) attributesSupplier.get()).id();
+        return attributesSupplier.get() instanceof EntityAttributeSet entityAttributeSet ? entityAttributeSet.id() : null;
     }
 
     @Override
@@ -53,22 +53,12 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
 
     @Override
     public EntityBasicAttribute version() {
-        return ((EntityAttributeSet) attributesSupplier.get()).version();
+        return attributesSupplier.get() instanceof EntityAttributeSet eas ? eas.version() : null;
     }
 
     @Override
     public EntityAttribute getAttribute(Iterable<String> fieldNames) {
         return super.getAttribute(fieldNames);
-    }
-
-    /**
-     * 实体模式本身不是嵌入类型，始终返回 {@code false}。
-     *
-     * @return {@code false}
-     */
-    @Override
-    public boolean isEmbedded() {
-        return false;
     }
 
     @Override
@@ -96,9 +86,14 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
             boolean isComplexType = !DefaultAccessor.of(accessor.type()).isEmpty();
             DefaultMetamodelAttribute attr = new DefaultMetamodelAttribute(this, accessor);
             if (isComplexType && (resolver.isAnyToOne(attr) || resolver.isEmbedded(accessor))) {
-                var entitySchemaAttribute = new DefaultEntitySchemaAttribute(
-                        attr, this, metamodel);
-                attributes.add(entitySchemaAttribute);
+                if (resolver.isEmbedded(accessor)) {
+                    var embeddedAttribute = new DefaultEmbeddedAttribute(attr, this, metamodel);
+                    attributes.add(embeddedAttribute);
+                } else {
+                    var entitySchemaAttribute = new DefaultEntitySchemaAttribute(
+                            attr, this, metamodel);
+                    attributes.add(entitySchemaAttribute);
+                }
             } else if (resolver.isBasicField(accessor)) {
                 boolean versionField = false;
                 if (resolver.isVersionField(accessor)) {
@@ -131,7 +126,7 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
                 }
             }
             idAttribute = found;
-            if (idAttribute == null && !isEmbedded()) {
+            if (idAttribute == null && !(this instanceof EmbeddedAttribute)) {
                 throw new ConfigurationException(
                         "No ID attribute found for entity '" + entityName + "' (" + type.getName() + "). " +
                         "Please annotate the ID field with @Id or ensure a field named 'id' exists.");

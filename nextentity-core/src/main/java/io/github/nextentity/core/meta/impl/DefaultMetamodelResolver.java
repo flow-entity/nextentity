@@ -317,36 +317,27 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
 
     @Override
     public Map<String, String> getAttributeOverrides(Accessor accessor) {
-        Map<String, String> overrides = new HashMap<>();
         AttributeOverride single = getAnnotation(accessor, AttributeOverride.class);
-        if (single != null && !single.name().isEmpty()) {
-            String column = single.column().name();
-            if (!column.isEmpty()) {
-                overrides.put(single.name(), column);
-            }
-        }
         AttributeOverrides multiple = getAnnotation(accessor, AttributeOverrides.class);
-        if (multiple != null) {
-            for (AttributeOverride ao : multiple.value()) {
-                if (!ao.name().isEmpty() && !ao.column().name().isEmpty()) {
-                    overrides.put(ao.name(), ao.column().name());
-                }
-            }
-        }
-        return overrides;
+        return getStringStringMap(single, multiple);
     }
+
 
     @Override
     public Map<String, String> getAttributeOverrides(Class<?> type) {
-        Map<String, String> overrides = new HashMap<>();
         AttributeOverride single = type.getAnnotation(AttributeOverride.class);
+        AttributeOverrides multiple = type.getAnnotation(AttributeOverrides.class);
+        return getStringStringMap(single, multiple);
+    }
+
+    protected Map<String, String> getStringStringMap(AttributeOverride single, AttributeOverrides multiple) {
+        Map<String, String> overrides = new HashMap<>();
         if (single != null && !single.name().isEmpty()) {
             String column = single.column().name();
             if (!column.isEmpty()) {
                 overrides.put(single.name(), column);
             }
         }
-        AttributeOverrides multiple = type.getAnnotation(AttributeOverrides.class);
         if (multiple != null) {
             for (AttributeOverride ao : multiple.value()) {
                 if (!ao.name().isEmpty() && !ao.column().name().isEmpty()) {

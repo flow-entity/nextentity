@@ -35,15 +35,15 @@ public final class EntityConstructorBuilder {
         List<PropertyBinding> bindings = new ArrayList<>();
         for (EntityAttribute attr : schema.getAttributes()) {
             if (attr instanceof EntitySchemaAttribute schemaAttribute) {
-                boolean isEmbedded = schemaAttribute.schema().isEmbedded();
-                // 嵌入属性与主表共享同一张表，必须始终构造（不受 fetch 路径限制）
-                if (isEmbedded || paths.get(schemaAttribute.name()) != null) {
-                    SchemaAttributePaths sub = isEmbedded
-                            ? DeepLimitSchemaAttributePaths.of(1)
-                            : paths.get(schemaAttribute.name());
+                if (paths.get(schemaAttribute.name()) != null) {
+                    SchemaAttributePaths sub = paths.get(schemaAttribute.name());
                     ValueConstructor constructor = build(sub, schemaAttribute.schema());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
+            } else if (attr instanceof EmbeddedAttribute embeddedAttribute) {
+                SchemaAttributePaths sub = DeepLimitSchemaAttributePaths.of(1);
+                ValueConstructor constructor = build(sub, embeddedAttribute.schema());
+                bindings.add(new PropertyBinding(attr, constructor));
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
                 SelectItem column = SelectItem.of(basicAttribute);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));

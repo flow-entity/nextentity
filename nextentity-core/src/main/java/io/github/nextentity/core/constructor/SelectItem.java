@@ -28,7 +28,7 @@ public sealed interface SelectItem permits SelectItem.Expr, SelectItem.Joined {
     /// @return SelectItem 实例
     static SelectItem of(EntityBasicAttribute attribute) {
         EntitySchema schema = attribute.declareBy();
-        if (schema instanceof EntitySchemaAttribute target && !target.schema().isEmbedded()) {
+        if (schema instanceof EntitySchemaAttribute target) {
             return new Joined(attribute, target);
         } else {
             return new Expr(attribute.path(), attribute.valueConvertor());
