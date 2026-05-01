@@ -23,16 +23,13 @@ public class AttributeSet<T extends MetamodelAttribute> {
         this.primitives = ImmutableList.ofCollection(primitives);
     }
 
-    /**
-     * 递归收集属性中的基本（非关联）属性。
-     *
-     * 如果属性本身是基本属性，直接添加到结果列表；
-     * 如果属性是嵌入类型，则递归遍历其内部的所有子属性，
-     * 将其中基本属性展开后收集到结果列表中。
-     *
-     * @param attribute 当前待收集的属性
-     * @param out       收集结果的输出列表
-     */
+    /// 递归收集属性中的基本（非关联）属性。
+    /// 如果属性本身是基本属性，直接添加到结果列表；
+    /// 如果属性是嵌入类型，则递归遍历其内部的所有子属性，
+    /// 将其中基本属性展开后收集到结果列表中。
+    ///
+    /// @param attribute 当前待收集的属性
+    /// @param out       收集结果的输出列表
     private void collectPrimitives(MetamodelAttribute attribute, List<T> out) {
         if (attribute.isPrimitive()) {
             //noinspection unchecked

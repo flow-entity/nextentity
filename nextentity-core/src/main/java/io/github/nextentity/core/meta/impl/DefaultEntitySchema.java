@@ -10,10 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 默认实体类型实现，实现 EntityType 接口。
- * 提供实体元数据的核心实现，包括属性、表名、版本字段、投影等。
- */
+/// 默认实体类型实现，实现 EntityType 接口。
+/// 提供实体元数据的核心实现，包括属性、表名、版本字段、投影等。
 public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute> implements EntityType {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DefaultEntitySchema.class);

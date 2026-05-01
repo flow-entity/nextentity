@@ -24,13 +24,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * JPA 注解元模型解析器实现。
- * 从 JPA 注解提取实体元数据（表名、列名、关系等）。
- *
- * @author HuangChengwei
- * @since 2.0.0
- */
+/// JPA 注解元模型解析器实现。
+/// 从 JPA 注解提取实体元数据（表名、列名、关系等）。
+///
+/// @author HuangChengwei
+/// @since 2.0.0
 public class DefaultMetamodelResolver implements MetamodelResolver {
 
     private static final DefaultMetamodelResolver DEFAULT_INSTANCE = new DefaultMetamodelResolver();
@@ -97,12 +95,10 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
                || getAnnotation(accessor, Transient.class) != null;
     }
 
-    /**
-     * 检查访问器对应的属性是否标记了 {@code @Embedded} 注解。
-     *
-     * @param accessor 属性访问器
-     * @return 存在 {@code @Embedded} 注解则返回 {@code true}
-     */
+    /// 检查访问器对应的属性是否标记了 `@Embedded` 注解。
+    ///
+    /// @param accessor 属性访问器
+    /// @return 存在 `@Embedded` 注解则返回 `true`
     @Override
     public boolean isEmbedded(Accessor accessor) {
         return getAnnotation(accessor, Embedded.class) != null;

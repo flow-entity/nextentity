@@ -2,10 +2,8 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.meta.*;
 
-/**
- * Utility class for creating ProjectionAttribute instances.
- * Extracted from DefaultProjectionJoinAttribute and DefaultProjectionSchemaAttribute to eliminate code duplication.
- */
+/// Utility class for creating ProjectionAttribute instances.
+/// Extracted from DefaultProjectionJoinAttribute and DefaultProjectionSchemaAttribute to eliminate code duplication.
 public final class ProjectionAttributeFactory {
 
     private ProjectionAttributeFactory() {
