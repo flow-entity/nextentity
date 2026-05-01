@@ -40,7 +40,7 @@ public final class EntityConstructorBuilder {
                     ValueConstructor constructor = build(sub, schemaAttribute.schema());
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
-            } else if (attr instanceof EmbeddedAttribute embeddedAttribute) {
+            } else if (attr instanceof EntityEmbeddedAttribute embeddedAttribute) {
                 SchemaAttributePaths sub = DeepLimitSchemaAttributePaths.of(1);
                 ValueConstructor constructor = build(sub, embeddedAttribute.schema());
                 bindings.add(new PropertyBinding(attr, constructor));

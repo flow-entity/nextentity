@@ -1148,7 +1148,7 @@ class DefaultMetamodelTest {
 
     @Nested
     @DisplayName("嵌入属性")
-    class EmbeddedAttributeTests {
+    class EntityEmbeddedAttributeTests {
 
         @Test
         @DisplayName("DefaultMetamodelResolver 能检测到 @Embedded 注解")
@@ -1169,7 +1169,7 @@ class DefaultMetamodelTest {
             EntityType entityType = metamodel.getEntity(TestEntities.EntityWithEmbedded.class);
             EntityAttribute addressAttr = entityType.getAttribute("address");
 
-            assertThat(addressAttr).isInstanceOf(EmbeddedAttribute.class);
+            assertThat(addressAttr).isInstanceOf(EntityEmbeddedAttribute.class);
         }
 
         @Test
@@ -1179,7 +1179,7 @@ class DefaultMetamodelTest {
             EntityAttribute addressAttr = entityType.getAttribute("address");
 
             assertThat(addressAttr).isInstanceOf(MetamodelSchema.class);
-            assertThat(addressAttr).isInstanceOf(EmbeddedAttribute.class);
+            assertThat(addressAttr).isInstanceOf(EntityEmbeddedAttribute.class);
         }
 
         @Test
@@ -1311,8 +1311,8 @@ class DefaultMetamodelTest {
             EntityType entityType = metamodel.getEntity(TestEntities.EntityWithAttributeOverride.class);
 
             EntityAttribute fullName = entityType.getAttribute("fullName");
-            assertThat(fullName).isInstanceOf(EmbeddedAttribute.class);
-            assertThat(fullName).isInstanceOf(EmbeddedAttribute.class);
+            assertThat(fullName).isInstanceOf(EntityEmbeddedAttribute.class);
+            assertThat(fullName).isInstanceOf(EntityEmbeddedAttribute.class);
         }
 
         @Test

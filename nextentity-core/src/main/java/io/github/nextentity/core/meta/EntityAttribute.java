@@ -10,9 +10,7 @@ import io.github.nextentity.core.expression.PathNode;
 ///
 /// @see EntityBasicAttribute
 /// @see EntitySchemaAttribute
-public sealed interface EntityAttribute extends MetamodelAttribute
-        permits EmbeddedAttribute, EntityBasicAttribute, EntitySchemaAttribute {
-
+public sealed interface EntityAttribute extends MetamodelAttribute permits EntityBasicAttribute, EntityComplexAttribute {
     /// 获取此属性在查询表达式中的路径节点。
     ///
     /// 路径节点用于构建 WHERE 条件、ORDER BY 子句等查询表达式，

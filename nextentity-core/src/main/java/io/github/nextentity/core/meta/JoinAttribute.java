@@ -17,16 +17,6 @@ public sealed interface JoinAttribute extends MetamodelAttribute
     /// @return 目标 Schema
     MetamodelSchema<?> schema();
 
-    @Override
-    default boolean isObject() {
-        return true;
-    }
-
-    @Override
-    default boolean isPrimitive() {
-        return false;
-    }
-
     /// 获取此关联的连接表名。
     ///
     /// 对于多对多关系，返回中间连接表。

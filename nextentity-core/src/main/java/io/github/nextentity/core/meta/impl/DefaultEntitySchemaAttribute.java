@@ -110,7 +110,7 @@ public class DefaultEntitySchemaAttribute
                         version = attr;
                     }
                 }
-                case EmbeddedAttribute embedded -> cur = new DefaultEmbeddedAttribute(embedded, this, metamodel);
+                case EntityEmbeddedAttribute embedded -> cur = new DefaultEntityEmbeddedAttribute(embedded, this, metamodel);
                 case EntitySchemaAttribute schemaAttribute ->
                         cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel);
                 default ->

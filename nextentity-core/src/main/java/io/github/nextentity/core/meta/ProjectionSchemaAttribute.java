@@ -10,13 +10,7 @@ package io.github.nextentity.core.meta;
 /// @see ProjectionAttribute
 /// @see EntitySchemaAttribute
 /// @see JoinAttribute
-public non-sealed interface ProjectionSchemaAttribute extends ProjectionAttribute, JoinAttribute {
-
-    /// 获取此投影关联属性指向的目标投影 Schema。
-    ///
-    /// @return 目标投影 Schema
-    @Override
-    ProjectionSchema schema();
+public non-sealed interface ProjectionSchemaAttribute extends ProjectionComplexAttribute, JoinAttribute {
 
     /// 获取此投影属性对应的实体关联属性。
     ///

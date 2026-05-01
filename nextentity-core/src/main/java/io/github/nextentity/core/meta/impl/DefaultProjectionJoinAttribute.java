@@ -43,7 +43,6 @@ public class DefaultProjectionJoinAttribute
         for (ProjectionAttribute projectionAttribute : projection.getAttributes()) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
-                    projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
                     metamodel
             );

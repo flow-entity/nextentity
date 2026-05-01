@@ -15,8 +15,7 @@ package io.github.nextentity.core.meta;
 public sealed interface ProjectionAttribute
         extends MetamodelAttribute permits
         ProjectionBasicAttribute,
-        ProjectionJoinAttribute,
-        ProjectionSchemaAttribute {
+        ProjectionComplexAttribute {
 
     /// 获取此投影属性对应的实体属性。
     ///

@@ -1,10 +1,7 @@
 package io.github.nextentity.core.constructor;
 
 import io.github.nextentity.core.QueryConfig;
-import io.github.nextentity.core.meta.JoinAttribute;
-import io.github.nextentity.core.meta.ProjectionAttribute;
-import io.github.nextentity.core.meta.ProjectionBasicAttribute;
-import io.github.nextentity.core.meta.ProjectionSchema;
+import io.github.nextentity.core.meta.*;
 import jakarta.persistence.FetchType;
 import org.jspecify.annotations.NonNull;
 
@@ -54,6 +51,13 @@ public class ProjectionConstructorBuilder {
                     ValueConstructor constructor = build(sub, (ProjectionSchema) attr);
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
+            } else if (attr instanceof ProjectionEmbeddedAttribute embeddedAttribute) {
+                SchemaAttributePaths sub = paths == null ? DeepLimitSchemaAttributePaths.of(1) : paths.get(embeddedAttribute.name());
+                if (sub == null) {
+                    sub = DeepLimitSchemaAttributePaths.of(1);
+                }
+                ValueConstructor constructor = build(sub, embeddedAttribute.schema());
+                bindings.add(new PropertyBinding(attr, constructor));
             } else if (attr instanceof ProjectionBasicAttribute pba) {
                 SelectItem column = SelectItem.of(pba);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));

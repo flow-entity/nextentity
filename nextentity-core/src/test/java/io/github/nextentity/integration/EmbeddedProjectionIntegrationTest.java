@@ -5,7 +5,6 @@ import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.dto.*;
 import io.github.nextentity.integration.entity.*;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ArgumentsSource;
@@ -43,7 +42,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressBasic dto = results.get(0);
+        PersonAddressBasic dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80000L);
         assertThat(dto.getName()).isEqualTo("Alice");
         assertThat(dto.getStreet()).isEqualTo("123 Main St");
@@ -65,7 +64,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressRecord record = results.get(0);
+        PersonAddressRecord record = results.getFirst();
         assertThat(record.id()).isEqualTo(80001L);
         assertThat(record.name()).isEqualTo("Bob");
         assertThat(record.street()).isEqualTo("456 Oak Ave");
@@ -87,7 +86,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressInfo info = results.get(0);
+        PersonAddressInfo info = results.getFirst();
         assertThat(info.getId()).isEqualTo(80002L);
         assertThat(info.getName()).isEqualTo("Carol");
         assertThat(info.getStreet()).isEqualTo("789 Pine Rd");
@@ -111,8 +110,8 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        assertThat(results.get(0).getName()).isEqualTo("Dave");
-        assertThat(results.get(0).getCity()).isEqualTo("Springfield");
+        assertThat(results.getFirst().getName()).isEqualTo("Dave");
+        assertThat(results.getFirst().getCity()).isEqualTo("Springfield");
     }
 
     // ========================================
@@ -133,7 +132,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressNoAnnotation dto = results.get(0);
+        PersonAddressNoAnnotation dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80020L);
         assertThat(dto.getName()).isEqualTo("Frank");
 
@@ -161,7 +160,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonWithNestedAddressEmbedded dto = results.get(0);
+        PersonWithNestedAddressEmbedded dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80030L);
         assertThat(dto.getName()).isEqualTo("Grace");
 
@@ -189,7 +188,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonContactBasic dto = results.get(0);
+        PersonContactBasic dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80040L);
         assertThat(dto.getName()).isEqualTo("Grace");
         assertThat(dto.getEmail()).isEqualTo("grace@test.com");
@@ -218,7 +217,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressOverridden dto = results.get(0);
+        PersonAddressOverridden dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80050L);
         assertThat(dto.getName()).isEqualTo("Henry");
         assertThat(dto.getStreet()).isEqualTo("Override St");
@@ -246,7 +245,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonCrossLayerBasic dto = results.get(0);
+        PersonCrossLayerBasic dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80060L);
         assertThat(dto.getName()).isEqualTo("Isaac");
         assertThat(dto.getCity()).isEqualTo("CrossCity");
@@ -273,7 +272,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressBasic dto = results.get(0);
+        PersonAddressBasic dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80090L);
         assertThat(dto.getName()).isEqualTo("NullAddr");
         assertThat(dto.getStreet()).isNull();
@@ -329,7 +328,7 @@ public class EmbeddedProjectionIntegrationTest {
                 .list();
 
         assertThat(results).hasSize(1);
-        PersonAddressWrongType dto = results.get(0);
+        PersonAddressWrongType dto = results.getFirst();
         assertThat(dto.getId()).isEqualTo(80110L);
         assertThat(dto.getName()).isEqualTo("TypeFail");
         assertThat(dto.getCity()).isEqualTo("NYC");
@@ -359,7 +358,7 @@ public class EmbeddedProjectionIntegrationTest {
         assertThat(results).hasSize(1);
         // When ALL properties have null values, ObjectConstructor returns null.
         // This means the list contains [null], causing NPE on results.get(0).getStreet().
-        PersonAddressOnlyEmbedded dto = results.get(0);
+        PersonAddressOnlyEmbedded dto = results.getFirst();
         assertThat(dto).as("DEFECT: DTO with all-null embedded fields returns null from ObjectConstructor, expected non-null DTO with null fields").isNotNull();
     }
 

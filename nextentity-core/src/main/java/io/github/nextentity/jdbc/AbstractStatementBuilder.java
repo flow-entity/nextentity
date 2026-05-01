@@ -459,7 +459,7 @@ public abstract class AbstractStatementBuilder {
     ///
     /// @param attribute 实体属性
     protected void appendAttribute(EntityAttribute attribute) {
-        if (attribute.deep() == 1 || attribute.declareBy() instanceof EmbeddedAttribute) {
+        if (attribute.deep() == 1 || attribute.declareBy() instanceof EntityEmbeddedAttribute) {
             appendFromAlias().append(".");
         } else {
             MetamodelSchema<?> parent = attribute.declareBy();

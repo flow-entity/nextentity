@@ -2,7 +2,7 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.expression.PathNode;
-import io.github.nextentity.core.meta.EmbeddedAttribute;
+import io.github.nextentity.core.meta.EntityEmbeddedAttribute;
 import io.github.nextentity.core.meta.EntityAttribute;
 import io.github.nextentity.core.meta.EntitySchema;
 import io.github.nextentity.core.meta.MetamodelAttribute;
@@ -16,17 +16,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class DefaultEmbeddedAttribute extends DefaultEntitySchema implements EmbeddedAttribute {
+public class DefaultEntityEmbeddedAttribute extends DefaultEntitySchema implements EntityEmbeddedAttribute {
 
-    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DefaultEmbeddedAttribute.class);
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DefaultEntityEmbeddedAttribute.class);
 
     private final Accessor accessor;
     private final DefaultEntitySchema declareBy;
     private final PathNode path;
 
-    public DefaultEmbeddedAttribute(MetamodelAttribute attribute,
-                                    DefaultEntitySchema declareBy,
-                                    DefaultMetamodel metamodel) {
+    public DefaultEntityEmbeddedAttribute(MetamodelAttribute attribute,
+                                          DefaultEntitySchema declareBy,
+                                          DefaultMetamodel metamodel) {
         super(attribute.type(), metamodel);
         this.declareBy = declareBy;
         this.accessor = attribute.accessor();
@@ -65,7 +65,7 @@ public class DefaultEmbeddedAttribute extends DefaultEntitySchema implements Emb
             boolean isComplexType = !DefaultAccessor.of(accessor.type()).isEmpty();
             DefaultMetamodelAttribute attr = new DefaultMetamodelAttribute(this, accessor);
             if (isComplexType && resolver.isEmbedded(accessor)) {
-                attributes.add(new DefaultEmbeddedAttribute(attr, this, metamodel));
+                attributes.add(new DefaultEntityEmbeddedAttribute(attr, this, metamodel));
             } else if (resolver.isBasicField(accessor)) {
                 String columnName = attributeOverrides.getOrDefault(
                         accessor.name(),

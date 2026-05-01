@@ -11,7 +11,6 @@ public final class ProjectionAttributeFactory {
 
     public static ProjectionAttribute createAttribute(
             DefaultProjectionSchema declareBy,
-            EntityAttribute source,
             ProjectionAttribute original,
             DefaultMetamodel metamodel) {
         return switch (original) {
@@ -31,6 +30,11 @@ public final class ProjectionAttributeFactory {
                     join.getTargetEntityType(),
                     metamodel,
                     join);
+            case ProjectionEmbeddedAttribute embedded -> new DefaultProjectionEmbeddedAttribute(
+                    declareBy,
+                    embedded.getEntityAttribute(),
+                    embedded,
+                    metamodel);
         };
     }
 }
