@@ -291,15 +291,22 @@ class EmbeddedPersistSqlTest {
         }
 
         private long countOccurrences(String sql, String columnName) {
-            String quoted = detectQuote(sql) + columnName + detectQuote(sql);
+            String quoted = detectLeftQuote(sql) + columnName + detectRightQuote(sql);
             return Pattern.compile(Pattern.quote(quoted), Pattern.CASE_INSENSITIVE)
                     .matcher(sql).results().count();
         }
 
-        private String detectQuote(String sql) {
+        private String detectLeftQuote(String sql) {
             if (sql.contains("`")) return "`";
             if (sql.contains("\"")) return "\"";
             if (sql.contains("[")) return "[";
+            return "";
+        }
+
+        private String detectRightQuote(String sql) {
+            if (sql.contains("`")) return "`";
+            if (sql.contains("\"")) return "\"";
+            if (sql.contains("[")) return "]";
             return "";
         }
     }
