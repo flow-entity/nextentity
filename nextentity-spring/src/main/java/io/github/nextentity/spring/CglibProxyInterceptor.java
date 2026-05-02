@@ -127,6 +127,7 @@ public record CglibProxyInterceptor(int order) implements ConstructInterceptor {
         public Object constructConcrete(Arguments arguments) throws ReflectiveOperationException {
             Object instance = root ? constructor.newInstance() : null;
             Map<Method, LazyProperty> lazyProperties = new ConcurrentHashMap<>();
+            Map<Method, Method> methodMapper = new ConcurrentHashMap<>();
             for (PropertyBinding prop : properties) {
                 Object value = prop.valueConstructor().construct(arguments);
                 if (value != null) {
@@ -136,6 +137,10 @@ public record CglibProxyInterceptor(int order) implements ConstructInterceptor {
                     MetamodelAttribute attribute = prop.attribute();
                     if (value instanceof LazyValue lazyValue) {
                         lazyProperties.put(attribute.getter(), new LazyProperty(lazyValue, attribute));
+                        Method setter = attribute.setter();
+                        if (setter != null) {
+                            methodMapper.put(setter, attribute.getter());
+                        }
                     } else {
                         attribute.set(instance, value);
                     }
@@ -144,26 +149,31 @@ public record CglibProxyInterceptor(int order) implements ConstructInterceptor {
             if (instance == null) {
                 return null;
             } else {
-                return createProxy(lazyProperties, instance);
+                return createProxy(methodMapper, lazyProperties, instance);
             }
         }
 
-        private Object createProxy(Map<Method, LazyProperty> map, Object target) {
+        private Object createProxy(Map<Method, Method> methodMapper, Map<Method, LazyProperty> map, Object target) {
             Enhancer enhancer = new Enhancer();
             enhancer.setSuperclass(getResultType());
-            MethodInterceptorImpl interceptor = new MethodInterceptorImpl(map, target);
+            MethodInterceptorImpl interceptor = new MethodInterceptorImpl(methodMapper, map, target);
             enhancer.setCallback(interceptor);
             return enhancer.create();
         }
 
         private record MethodInterceptorImpl(
+                Map<Method, Method> setterToGetter,
                 Map<Method, LazyProperty> lazyProperties,
                 Object target
         ) implements MethodInterceptor {
 
             @Override
             public Object intercept(Object obj, Method method, Object[] args, MethodProxy proxy) throws Throwable {
-                lazyProperties().computeIfPresent(method, (_, property) -> {
+                Method possibleGetter = setterToGetter().remove(method);
+                if (possibleGetter == null) {
+                    possibleGetter = method;
+                }
+                lazyProperties().computeIfPresent(possibleGetter, (_, property) -> {
                     Object propertyValue = property.lazyValue().get();
                     property.attribute().set(target(), propertyValue);
                     return null;
