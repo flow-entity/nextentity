@@ -12,10 +12,13 @@ import jakarta.persistence.FetchType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 public class DefaultEntitySchemaAttribute
         extends DefaultEntitySchema
         implements EntitySchemaAttribute {
+
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(DefaultEntitySchemaAttribute.class);
 
     private final Accessor accessor;
     private final DefaultEntitySchema declareBy;
@@ -99,27 +102,32 @@ public class DefaultEntitySchemaAttribute
         EntityBasicAttribute version = null;
         for (EntityAttribute attribute : entityAttributes) {
             EntityAttribute cur;
-            if (attribute instanceof EntityBasicAttribute basicAttribute) {
-                var attr = new DefaultEntityBasicAttribute(basicAttribute, this, resolver);
-                cur = attr;
-                if (basicAttribute.isId()) {
-                    id = attr;
-                } else if (basicAttribute.isVersion()) {
-                    version = attr;
+            switch (attribute) {
+                case EntityBasicAttribute basic -> {
+                    var attr = new DefaultEntityBasicAttribute(basic, this, resolver);
+                    cur = attr;
+                    if (basic.isId()) {
+                        id = attr;
+                    } else if (basic.isVersion()) {
+                        version = attr;
+                    }
                 }
-            } else if (attribute instanceof EntitySchemaAttribute schemaAttribute) {
-                cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel);
-            } else {
-                throw new ConfigurationException(
-                        "Unknown entity attribute type '" + attribute.getClass().getName() +
-                        "' when resolving schema attribute '" + this.path +
-                        "' for entity '" + type().getName() + "'.");
+                case EntityEmbeddedAttribute embedded -> cur = new DefaultEntityEmbeddedAttribute(embedded, this, metamodel);
+                case EntitySchemaAttribute schemaAttribute ->
+                        cur = new DefaultEntitySchemaAttribute(schemaAttribute, this, metamodel);
+                default ->
+                        throw new ConfigurationException("Unknown entity attribute type '" + attribute.getClass().getName() + "' when resolving schema attribute '" + this.path + "' for entity '" + type().getName() + "'.");
             }
             entityAttributeList.add(cur);
         }
         var sourceAttribute = resolver.getJoinSourceAttribute(declareBy(), accessor());
         var targetAttribute = resolver.getJoinTargetAttribute(schema, accessor());
         return new Attributes(entityAttributeList, id, version, sourceAttribute, targetAttribute);
+    }
+
+    @Override
+    protected Map<String, String> getAttributeOverrides() {
+        return mergeAttributeOverrides(resolver, accessor, declareBy(), name());
     }
 
     @Override
@@ -131,4 +139,5 @@ public class DefaultEntitySchemaAttribute
     public EntitySchema schema() {
         return this;
     }
+
 }

@@ -1,8 +1,8 @@
 package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.constructor.SelectItem;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
@@ -452,8 +452,14 @@ public abstract class AbstractStatementBuilder {
         appendAttribute(attribute);
     }
 
+    /// 追加属性的 SQL 列引用。
+    ///
+    /// 对于根实体属性（deep == 1）和嵌入属性（{@code @Embedded}），使用主表别名；
+    /// 对于关联属性，使用对应的 JOIN 表别名。
+    ///
+    /// @param attribute 实体属性
     protected void appendAttribute(EntityAttribute attribute) {
-        if (attribute.deep() == 1) {
+        if (attribute.deep() == 1 || attribute.declareBy() instanceof EntityEmbeddedAttribute) {
             appendFromAlias().append(".");
         } else {
             MetamodelSchema<?> parent = attribute.declareBy();
@@ -534,6 +540,12 @@ public abstract class AbstractStatementBuilder {
         }
     }
 
+    /// 收集属性路径上需要的 JOIN 关联。
+    ///
+    /// 从属性的声明链底部向上遍历，将非嵌入的关联属性收集到待 JOIN 列表中。
+    /// 嵌入属性（{@code @Embedded}）共享同一张表，不需要 JOIN，直接跳过。
+    ///
+    /// @param attribute 要处理的属性
     protected void addJoin(MetamodelAttribute attribute) {
         ArrayDeque<JoinAttribute> joinAttributes = new ArrayDeque<>(attribute.deep());
         MetamodelSchema<?> join = attribute.declareBy();

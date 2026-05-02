@@ -72,25 +72,25 @@ NextEntity 支持两种数据库后端：
 
 ### JPA 高级功能
 
-| 功能 | JDBC 后端 | JPA 后端 | 说明 |
-|------|:---------:|:--------:|------|
-| **乐观锁 (@Version)** | ✅ | ✅ | 自动版本控制 |
-| **懒加载 (Lazy Loading)** | ❌ | ✅ | JDBC 需显式 `fetch()` |
-| **脏检查 (Dirty Checking)** | ❌ | ✅ | JDBC 需显式调用 `update()` |
-| **一级缓存 (Session Cache)** | ❌ | ✅ | 同一事务内重复查询无缓存 |
-| **二级缓存 (Second Level Cache)** | ❌ | ✅ | 跨 Session 缓存不可用 |
-| **自动 DDL (ddl-auto)** | ❌ | ✅ | JDBC 需手动建表或使用其他工具 |
-| **实体生命周期回调** | ❌ | ✅ | @PrePersist/@PostLoad 等无效 |
-| **继承映射策略** | ❌ | ✅ | SINGLE_TABLE/JOINED 等不支持 |
-| **多对多关联 (@ManyToMany)** | ❌ | ✅ | JDBC 需手动处理中间表 |
-| **嵌入对象 (@Embedded)** | ❌ | ✅ | JDBC 不支持嵌入式对象 |
-| **集合映射 (@ElementCollection)** | ❌ | ✅ | JDBC 不支持集合字段映射 |
-| **枚举映射 (@Enumerated)** | 部分 | ✅ | JDBC 只支持简单映射 |
-| **级联操作 (Cascade)** | ❌ | ✅ | JDBC 需手动处理级联 |
-| **Orphan Removal** | ❌ | ✅ | JDBC 需手动删除孤立记录 |
-| **Entity Graph** | ❌ | ✅ | JDBC 不支持动态抓取计划 |
-| **Criteria API** | ❌ | ✅ | NextEntity 提供替代 DSL |
-| **JPQL 原生查询** | ❌ | ✅ | JDBC 使用 SQL 原生查询 |
+| 功能                            | JDBC 后端 | JPA 后端 | 说明                        |
+|-------------------------------|:-------:|:------:|---------------------------|
+| **乐观锁 (@Version)**            |    ✅    |   ✅    | 自动版本控制                    |
+| **懒加载 (Lazy Loading)**        |    ❌    |   ✅    | JDBC 需显式 `fetch()`        |
+| **脏检查 (Dirty Checking)**      |    ❌    |   ✅    | JDBC 需显式调用 `update()`     |
+| **一级缓存 (Session Cache)**      |    ❌    |   ✅    | 同一事务内重复查询无缓存              |
+| **二级缓存 (Second Level Cache)** |    ❌    |   ✅    | 跨 Session 缓存不可用           |
+| **自动 DDL (ddl-auto)**         |    ❌    |   ✅    | JDBC 需手动建表或使用其他工具         |
+| **实体生命周期回调**                  |    ❌    |   ✅    | @PrePersist/@PostLoad 等无效 |
+| **继承映射策略**                    |    ❌    |   ✅    | SINGLE_TABLE/JOINED 等不支持  |
+| **多对多关联 (@ManyToMany)**       |    ❌    |   ✅    | JDBC 需手动处理中间表             |
+| **嵌入对象 (@Embedded)**          |    ✅    |   ✅    | JDBC 和 JPA 都支持嵌入式对象       |
+| **集合映射 (@ElementCollection)** |    ❌    |   ✅    | JDBC 不支持集合字段映射            |
+| **枚举映射 (@Enumerated)**        |   部分    |   ✅    | JDBC 只支持简单映射              |
+| **级联操作 (Cascade)**            |    ❌    |   ✅    | JDBC 需手动处理级联              |
+| **Orphan Removal**            |    ❌    |   ✅    | JDBC 需手动删除孤立记录            |
+| **Entity Graph**              |    ❌    |   ✅    | JDBC 不支持动态抓取计划            |
+| **Criteria API**              |    ❌    |   ✅    | NextEntity 提供替代 DSL       |
+| **JPQL 原生查询**                 |    ❌    |   ✅    | JDBC 使用 SQL 原生查询          |
 
 ### JDBC 后端限制详解
 
@@ -288,7 +288,7 @@ JDBC 和 JPA 后端均支持此方式。
 - ❌ 级联操作 CascadeType
 - ❌ 实体生命周期回调
 - ❌ 继承映射策略
-- ❌ 嵌入对象 @Embedded
+- ✅ 嵌入对象 @Embedded
 - ❌ 多对多关联自动处理
 
 #### 代码示例差异

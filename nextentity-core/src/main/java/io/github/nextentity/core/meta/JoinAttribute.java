@@ -9,15 +9,13 @@ import jakarta.persistence.FetchType;
 public sealed interface JoinAttribute extends MetamodelAttribute
         permits EntitySchemaAttribute, ProjectionJoinAttribute, ProjectionSchemaAttribute {
 
-    @Override
-    default boolean isObject() {
-        return true;
-    }
-
-    @Override
-    default boolean isPrimitive() {
-        return false;
-    }
+    /// 获取此连接属性指向的目标 Schema。
+    ///
+    /// 对于实体关联（{@link EntitySchemaAttribute}）返回目标实体 Schema；
+    /// 对于投影关联（{@link ProjectionSchemaAttribute}）返回目标投影 Schema。
+    ///
+    /// @return 目标 Schema
+    MetamodelSchema<?> schema();
 
     /// 获取此关联的连接表名。
     ///

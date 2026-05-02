@@ -2,10 +2,8 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.meta.*;
 
-/**
- * Utility class for creating ProjectionAttribute instances.
- * Extracted from DefaultProjectionJoinAttribute and DefaultProjectionSchemaAttribute to eliminate code duplication.
- */
+/// Utility class for creating ProjectionAttribute instances.
+/// Extracted from DefaultProjectionJoinAttribute and DefaultProjectionSchemaAttribute to eliminate code duplication.
 public final class ProjectionAttributeFactory {
 
     private ProjectionAttributeFactory() {
@@ -13,7 +11,6 @@ public final class ProjectionAttributeFactory {
 
     public static ProjectionAttribute createAttribute(
             DefaultProjectionSchema declareBy,
-            EntityAttribute source,
             ProjectionAttribute original,
             DefaultMetamodel metamodel) {
         return switch (original) {
@@ -33,6 +30,11 @@ public final class ProjectionAttributeFactory {
                     join.getTargetEntityType(),
                     metamodel,
                     join);
+            case ProjectionEmbeddedAttribute embedded -> new DefaultProjectionEmbeddedAttribute(
+                    declareBy,
+                    embedded.getEntityAttribute(),
+                    embedded,
+                    metamodel);
         };
     }
 }

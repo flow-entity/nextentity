@@ -9,6 +9,6 @@ package io.github.nextentity.core.meta;
 ///
 /// @see ProjectionAttribute
 /// @see ProjectionSchemaAttribute
-public non-sealed interface ProjectionJoinAttribute extends ProjectionAttribute, JoinAttribute {
+public non-sealed interface ProjectionJoinAttribute extends ProjectionComplexAttribute, JoinAttribute {
 
 }

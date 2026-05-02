@@ -62,6 +62,26 @@ public interface IntegrationTestContext {
         return new EntityQueryImpl<>(getEntityContext(Customer.class));
     }
 
+    default EntityQueryImpl<PersonWithAddress> queryPersonWithAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithAddress.class));
+    }
+
+    default EntityQueryImpl<PersonWithNestedAddress> queryPersonWithNestedAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithNestedAddress.class));
+    }
+
+    default EntityQueryImpl<PersonWithOverriddenAddress> queryPersonWithOverriddenAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithOverriddenAddress.class));
+    }
+
+    default EntityQueryImpl<PersonWithNestedOverriddenContact> queryPersonWithNestedOverriddenContacts() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithNestedOverriddenContact.class));
+    }
+
+    default EntityQueryImpl<PersonWithCrossLayerEmbedded> queryPersonWithCrossLayerEmbedded() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithCrossLayerEmbedded.class));
+    }
+
     @NonNull IntegrationTestContext reset();
 
     <T> T doInTransaction(Supplier<T> runnable);

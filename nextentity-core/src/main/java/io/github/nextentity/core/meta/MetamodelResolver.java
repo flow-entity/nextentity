@@ -4,6 +4,8 @@ import io.github.nextentity.core.meta.impl.DefaultEntitySchema;
 import io.github.nextentity.core.reflect.schema.Accessor;
 import jakarta.persistence.FetchType;
 
+import java.util.Map;
+
 /// 元模型解析器接口，从 JPA 注解中提取实体元数据。
 ///
 /// 负责将 JPA 注解（如 {@code @Column}、{@code @JoinColumn}、{@code @Id} 等）
@@ -23,6 +25,12 @@ public interface MetamodelResolver {
     /// @param accessor 属性访问器
     /// @return 如果是 transient 则返回 {@code true}
     boolean isTransient(Accessor accessor);
+
+    /// 检查属性是否为嵌入字段。
+    ///
+    /// @param accessor 属性访问器
+    /// @return 如果是嵌入字段则返回 {@code true}
+    boolean isEmbedded(Accessor accessor);
 
     /// 检查属性是否为基本字段（非关联字段）。
     ///
@@ -144,4 +152,14 @@ public interface MetamodelResolver {
     /// @param attribute 要检查的属性
     /// @return 加载策略，或 {@code null} 表示使用全局默认
     FetchType getFetchType(MetamodelAttribute attribute);
+
+    /// 获取属性/类上的 @AttributeOverride 映射。
+    ///
+    /// @param accessor 字段访问器
+    /// @return 嵌入子字段名 → 覆盖列名，无覆盖时返回空 Map
+    Map<String, String> getAttributeOverrides(Accessor accessor);
+
+    /// @param type 实体类（用于 {@code @MappedSuperclass} 继承场景）
+    /// @return 嵌入子字段名 → 覆盖列名，无覆盖时返回空 Map
+    Map<String, String> getAttributeOverrides(Class<?> type);
 }

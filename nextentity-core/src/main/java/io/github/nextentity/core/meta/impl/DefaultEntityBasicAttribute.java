@@ -11,8 +11,15 @@ public class DefaultEntityBasicAttribute extends DefaultMetamodelAttribute imple
     public DefaultEntityBasicAttribute(MetamodelAttribute attribute,
                                        DefaultEntitySchema declareBy,
                                        MetamodelResolver resolver) {
+        this(attribute, declareBy, resolver, resolver.getColumnName(attribute.accessor()));
+    }
+
+    public DefaultEntityBasicAttribute(MetamodelAttribute attribute,
+                                       DefaultEntitySchema declareBy,
+                                       MetamodelResolver resolver,
+                                       String columnName) {
         super(declareBy, attribute.accessor(), declareBy.getPath(attribute.name()));
-        this.columnName = resolver.getColumnName(attribute.accessor());
+        this.columnName = columnName;
         this.updatable = resolver.isUpdatable(attribute.accessor());
         this.valueConverter = resolver.databaseType(attribute.accessor());
     }

@@ -20,15 +20,15 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-/**
- * JPA 注解元模型解析器实现。
- * 从 JPA 注解提取实体元数据（表名、列名、关系等）。
- *
- * @author HuangChengwei
- * @since 2.0.0
- */
+/// JPA 注解元模型解析器实现。
+/// 从 JPA 注解提取实体元数据（表名、列名、关系等）。
+///
+/// @author HuangChengwei
+/// @since 2.0.0
 public class DefaultMetamodelResolver implements MetamodelResolver {
 
     private static final DefaultMetamodelResolver DEFAULT_INSTANCE = new DefaultMetamodelResolver();
@@ -93,6 +93,15 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
                || Modifier.isTransient(accessor.field().getModifiers())
                || Modifier.isStatic(accessor.field().getModifiers())
                || getAnnotation(accessor, Transient.class) != null;
+    }
+
+    /// 检查访问器对应的属性是否标记了 `@Embedded` 注解。
+    ///
+    /// @param accessor 属性访问器
+    /// @return 存在 `@Embedded` 注解则返回 `true`
+    @Override
+    public boolean isEmbedded(Accessor accessor) {
+        return getAnnotation(accessor, Embedded.class) != null;
     }
 
     @Override
@@ -300,6 +309,39 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
         }
 
         return fetchType;
+    }
+
+    @Override
+    public Map<String, String> getAttributeOverrides(Accessor accessor) {
+        AttributeOverride single = getAnnotation(accessor, AttributeOverride.class);
+        AttributeOverrides multiple = getAnnotation(accessor, AttributeOverrides.class);
+        return getStringStringMap(single, multiple);
+    }
+
+
+    @Override
+    public Map<String, String> getAttributeOverrides(Class<?> type) {
+        AttributeOverride single = type.getAnnotation(AttributeOverride.class);
+        AttributeOverrides multiple = type.getAnnotation(AttributeOverrides.class);
+        return getStringStringMap(single, multiple);
+    }
+
+    protected Map<String, String> getStringStringMap(AttributeOverride single, AttributeOverrides multiple) {
+        Map<String, String> overrides = new HashMap<>();
+        if (single != null && !single.name().isEmpty()) {
+            String column = single.column().name();
+            if (!column.isEmpty()) {
+                overrides.put(single.name(), column);
+            }
+        }
+        if (multiple != null) {
+            for (AttributeOverride ao : multiple.value()) {
+                if (!ao.name().isEmpty() && !ao.column().name().isEmpty()) {
+                    overrides.put(ao.name(), ao.column().name());
+                }
+            }
+        }
+        return overrides;
     }
 
     protected <T extends Annotation> T getAnnotation(Accessor accessor, Class<T> annotationClass) {

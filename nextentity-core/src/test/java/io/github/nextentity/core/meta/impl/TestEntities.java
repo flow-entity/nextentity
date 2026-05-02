@@ -1,6 +1,8 @@
 package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.annotation.Fetch;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -451,6 +453,204 @@ public class TestEntities {
         public void setLocalTime(LocalTime localTime) { this.localTime = localTime; }
         public Instant getInstant() { return instant; }
         public void setInstant(Instant instant) { this.instant = instant; }
+    }
+
+    public static class Address {
+        private String street;
+        private String city;
+        private String zipCode;
+
+        public Address() {}
+
+        public String getStreet() { return street; }
+        public void setStreet(String street) { this.street = street; }
+        public String getCity() { return city; }
+        public void setCity(String city) { this.city = city; }
+        public String getZipCode() { return zipCode; }
+        public void setZipCode(String zipCode) { this.zipCode = zipCode; }
+    }
+
+    public static class FullName {
+        private String firstName;
+        private String lastName;
+
+        public FullName() {}
+
+        public String getFirstName() { return firstName; }
+        public void setFirstName(String firstName) { this.firstName = firstName; }
+        public String getLastName() { return lastName; }
+        public void setLastName(String lastName) { this.lastName = lastName; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithEmbedded {
+        @Id
+        private Long id;
+        private String name;
+        @jakarta.persistence.Embedded
+        private Address address;
+
+        public EntityWithEmbedded() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public Address getAddress() { return address; }
+        public void setAddress(Address address) { this.address = address; }
+    }
+
+    public static class ContactInfo {
+        private String email;
+        private String phone;
+        @jakarta.persistence.Embedded
+        private Address address;
+
+        public ContactInfo() {}
+
+        public String getEmail() { return email; }
+        public void setEmail(String email) { this.email = email; }
+        public String getPhone() { return phone; }
+        public void setPhone(String phone) { this.phone = phone; }
+        public Address getAddress() { return address; }
+        public void setAddress(Address address) { this.address = address; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithNestedEmbedded {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        private ContactInfo contactInfo;
+
+        public EntityWithNestedEmbedded() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public ContactInfo getContactInfo() { return contactInfo; }
+        public void setContactInfo(ContactInfo contactInfo) { this.contactInfo = contactInfo; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithNestedAttributeOverride {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        @AttributeOverrides({
+                @AttributeOverride(name = "email", column = @Column(name = "contact_email")),
+                @AttributeOverride(name = "address.street", column = @Column(name = "deep_street"))
+        })
+        private ContactInfo contactInfo;
+
+        public EntityWithNestedAttributeOverride() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public ContactInfo getContactInfo() { return contactInfo; }
+        public void setContactInfo(ContactInfo contactInfo) { this.contactInfo = contactInfo; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithAttributeOverride {
+        @Id
+        private Long id;
+        private String name;
+        @jakarta.persistence.Embedded
+        @AttributeOverride(name = "firstName", column = @Column(name = "first_name_ov"))
+        private FullName fullName;
+
+        public EntityWithAttributeOverride() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public FullName getFullName() { return fullName; }
+        public void setFullName(FullName fullName) { this.fullName = fullName; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithAttributeOverrides {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        @AttributeOverrides({
+                @AttributeOverride(name = "street", column = @Column(name = "addr_street")),
+                @AttributeOverride(name = "city", column = @Column(name = "addr_city"))
+        })
+        private Address address;
+
+        public EntityWithAttributeOverrides() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public Address getAddress() { return address; }
+        public void setAddress(Address address) { this.address = address; }
+    }
+
+    // ── 错层嵌套测试用 ──
+
+    public static class ZipCode {
+        private String code;
+
+        public ZipCode() {}
+
+        public String getCode() { return code; }
+        public void setCode(String code) { this.code = code; }
+    }
+
+    public static class AddressWithZip {
+        private String city;
+        @jakarta.persistence.Embedded
+        private ZipCode zip;
+
+        public AddressWithZip() {}
+
+        public String getCity() { return city; }
+        public void setCity(String city) { this.city = city; }
+        public ZipCode getZip() { return zip; }
+        public void setZip(ZipCode zip) { this.zip = zip; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithCrossLayerEmbedded {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        private AddressWithZip address;
+        @jakarta.persistence.Embedded
+        private ZipCode secondaryZip;
+
+        public EntityWithCrossLayerEmbedded() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public AddressWithZip getAddress() { return address; }
+        public void setAddress(AddressWithZip address) { this.address = address; }
+        public ZipCode getSecondaryZip() { return secondaryZip; }
+        public void setSecondaryZip(ZipCode secondaryZip) { this.secondaryZip = secondaryZip; }
+    }
+
+    @jakarta.persistence.Entity
+    public static class EntityWithCrossLayerOverride {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        @AttributeOverride(name = "city", column = @Column(name = "addr_city"))
+        @AttributeOverride(name = "zip.code", column = @Column(name = "addr_zip_code"))
+        private AddressWithZip address;
+        @jakarta.persistence.Embedded
+        @AttributeOverride(name = "code", column = @Column(name = "sec_zip_code"))
+        private ZipCode secondaryZip;
+
+        public EntityWithCrossLayerOverride() {}
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public AddressWithZip getAddress() { return address; }
+        public void setAddress(AddressWithZip address) { this.address = address; }
+        public ZipCode getSecondaryZip() { return secondaryZip; }
+        public void setSecondaryZip(ZipCode secondaryZip) { this.secondaryZip = secondaryZip; }
     }
 
     private TestEntities() {}

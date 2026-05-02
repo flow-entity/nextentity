@@ -43,7 +43,6 @@ public class DefaultProjectionJoinAttribute
         for (ProjectionAttribute projectionAttribute : projection.getAttributes()) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
-                    projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
                     metamodel
             );
@@ -55,6 +54,14 @@ public class DefaultProjectionJoinAttribute
     @Override
     public EntityAttribute getEntityAttribute() {
         return sourceAttribute;
+    }
+
+    /// 获取此自定义连接属性的目标投影 Schema（自身即为投影 Schema）。
+    ///
+    /// @return 当前实例
+    @Override
+    public ProjectionSchema schema() {
+        return this;
     }
 
     @Override

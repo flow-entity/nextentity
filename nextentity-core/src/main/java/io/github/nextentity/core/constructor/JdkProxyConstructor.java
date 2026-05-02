@@ -14,12 +14,22 @@ import java.util.Collection;
 /// @since 2.2.2
 public class JdkProxyConstructor extends ProxyConstructor {
 
-    public JdkProxyConstructor(Class<?> resultType, Collection<PropertyBinding> properties) {
-        super(resultType, properties);
+    /// 是否为根级投影/实体构造。
+    /// 根级构造即使所有属性值为 null 也必须返回非 null 代理对象，
+    /// 而非根级的嵌入式属性在所有字段为 null 时返回 null。
+    private final boolean root;
+
+    public JdkProxyConstructor(Class<?> type, Collection<PropertyBinding> bindings, boolean root) {
+        super(type, bindings);
+        this.root = root;
     }
 
     @Override
     protected Object createProxy(LazyValueMap map) {
-        return ReflectUtil.newProxyInstance(getResultType(), map);
+        if (root || map.hasNonNullValue()) {
+            return ReflectUtil.newProxyInstance(getResultType(), map);
+        } else {
+            return null;
+        }
     }
 }

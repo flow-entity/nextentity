@@ -87,6 +87,17 @@ public class DefaultProjectionSchema
                             attributes.add(projAttr);
                         }
                     }
+                    case EntityEmbeddedAttribute embedded -> {
+                        boolean isComplexType = !DefaultAccessor.of(accessor.type()).isEmpty();
+                        if (!isComplexType) {
+                            log.warn("Attribute '{}' in projection '{}' is not a complex type but maps to EmbeddedAttribute, skipped",
+                                    accessor.name(), type.getSimpleName());
+                            continue;
+                        }
+                        DefaultMetamodelAttribute attr = new DefaultMetamodelAttribute(this, accessor);
+                        var projAttr = new DefaultProjectionEmbeddedAttribute(this, embedded, attr, metamodel);
+                        attributes.add(projAttr);
+                    }
                     case null ->
                             log.warn("No attribute found for path {} in entity schema {}", path, entitySchema);
                     default -> {

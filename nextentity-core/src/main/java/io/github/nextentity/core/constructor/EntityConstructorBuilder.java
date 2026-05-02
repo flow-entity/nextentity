@@ -28,30 +28,34 @@ public final class EntityConstructorBuilder {
     ///
     /// @return ValueConstructor 实例
     public ValueConstructor build() {
-        return build(paths, root);
+        return build(paths, root, true);
     }
 
-    private ValueConstructor build(SchemaAttributePaths paths, EntitySchema schema) {
+    private ValueConstructor build(SchemaAttributePaths paths, EntitySchema schema, boolean root) {
         List<PropertyBinding> bindings = new ArrayList<>();
         for (EntityAttribute attr : schema.getAttributes()) {
             if (attr instanceof EntitySchemaAttribute schemaAttribute) {
-                SchemaAttributePaths sub = paths.get(schemaAttribute.name());
-                if (sub != null) {
-                    ValueConstructor constructor = build(sub, schemaAttribute.schema());
+                if (paths.get(schemaAttribute.name()) != null) {
+                    SchemaAttributePaths sub = paths.get(schemaAttribute.name());
+                    ValueConstructor constructor = build(sub, schemaAttribute.schema(), false);
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
+            } else if (attr instanceof EntityEmbeddedAttribute embeddedAttribute) {
+                SchemaAttributePaths sub = DeepLimitSchemaAttributePaths.of(1);
+                ValueConstructor constructor = build(sub, embeddedAttribute.schema(), false);
+                bindings.add(new PropertyBinding(attr, constructor));
             } else if (attr instanceof EntityBasicAttribute basicAttribute) {
                 SelectItem column = SelectItem.of(basicAttribute);
                 bindings.add(new PropertyBinding(attr, new SingleValueConstructor(column)));
             }
         }
         if (schema.type().isInterface()) {
-            return new JdkProxyConstructor(schema.type(), bindings);
+            return new JdkProxyConstructor(schema.type(), bindings, root);
         } else if (schema.type().isRecord()) {
             throw new UnsupportedOperationException(
                     "Record type '" + schema.type() + "' is not supported in entity constructor, use RecordConstructor instead");
         } else {
-            return new ObjectConstructor(schema.type(), bindings);
+            return new ObjectConstructor(schema.type(), bindings, root);
         }
 
     }

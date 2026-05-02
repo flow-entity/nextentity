@@ -40,7 +40,6 @@ public class DefaultProjectionSchemaAttribute
         for (ProjectionAttribute projectionAttribute : attributes) {
             var item = ProjectionAttributeFactory.createAttribute(
                     this,
-                    projectionAttribute.getEntityAttribute(),
                     projectionAttribute,
                     metamodel
             );

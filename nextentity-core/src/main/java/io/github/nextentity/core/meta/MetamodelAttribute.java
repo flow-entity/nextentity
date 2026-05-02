@@ -77,26 +77,50 @@ public interface MetamodelAttribute {
         return path().size();
     }
 
-    /// 从实体实例获取属性值。
+    /// 从指定对象实例中获取此属性的值。
     ///
+    /// 对象实例可以是根实体、嵌入对象或投影实例，只要它包含此属性的声明。
     /// 如果 getter 方法可访问则使用它，否则直接访问字段。
     ///
-    /// @param entity 实体实例
+    /// @param instance 包含此属性的对象实例
     /// @return 属性值
     /// @throws ReflectiveException 如果访问失败
-    default Object get(Object entity) {
-        return accessor().get(entity);
+    default Object get(Object instance) {
+        return accessor().get(instance);
     }
 
-    /// 在实体实例上设置属性值。
+    /// 从根实体开始沿声明链向下导航，获取此属性的值。
     ///
+    /// 与 {@link #get(Object)} 要求传入声明类型的实例不同，此方法
+    /// 接受根实体实例，自动遍历 {@code @Embedded} 属性链直到当前层级。
+    /// 例如对于 {@code address.zipCode} 属性，传入 {@code Person} 实例即可，
+    /// 方法会先获取 {@code address} 再获取 {@code zipCode}。
+    ///
+    /// @param root 根实体实例
+    /// @return 属性值
+    /// @throws ReflectiveException 如果访问失败
+    default Object getFromRoot(Object root) {
+        MetamodelSchema<?> schema = declareBy();
+        Object declared = root;
+        if (schema instanceof MetamodelAttribute parent) {
+            declared = parent.getFromRoot(declared);
+            if (declared == null) {
+                return null;
+            }
+        }
+        return accessor().get(declared);
+    }
+
+    /// 在指定对象实例上设置属性值。
+    ///
+    /// 对象实例可以是根实体、嵌入对象或投影实例，只要它包含此属性的声明。
     /// 如果 setter 方法可访问则使用它，否则直接设置字段。
     ///
-    /// @param entity 实体实例
-    /// @param value  要设置的值
+    /// @param instance 包含此属性的对象实例
+    /// @param value    要设置的值
     /// @throws ReflectiveException 如果访问失败
-    default void set(Object entity, Object value) {
-        accessor().set(entity, value);
+    default void set(Object instance, Object value) {
+        accessor().set(instance, value);
     }
 
 }
