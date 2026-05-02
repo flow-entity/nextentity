@@ -52,7 +52,7 @@ public class ProjectionConstructorBuilder {
                     bindings.add(new PropertyBinding(attr, constructor));
                 }
             } else if (attr instanceof ProjectionEmbeddedAttribute embeddedAttribute) {
-                SchemaAttributePaths sub = paths == null ? DeepLimitSchemaAttributePaths.of(1) : paths.get(embeddedAttribute.name());
+                SchemaAttributePaths sub = paths != null ? paths.get(embeddedAttribute.name()) : null;
                 if (sub == null) {
                     sub = DeepLimitSchemaAttributePaths.of(1);
                 }

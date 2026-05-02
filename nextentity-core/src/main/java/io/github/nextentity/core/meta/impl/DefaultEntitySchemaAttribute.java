@@ -9,8 +9,10 @@ import io.github.nextentity.core.util.ImmutableArray;
 import io.github.nextentity.core.util.Lazy;
 import jakarta.persistence.FetchType;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
 public class DefaultEntitySchemaAttribute
         extends DefaultEntitySchema
@@ -123,20 +125,9 @@ public class DefaultEntitySchemaAttribute
         return new Attributes(entityAttributeList, id, version, sourceAttribute, targetAttribute);
     }
 
-    /// 合并当前字段的 @AttributeOverride 与父级传递的点号路径覆盖。
-    /// 如父级的 address.street 在当前层级为 address 时，截取前缀后变为 street。
+    @Override
     protected Map<String, String> getAttributeOverrides() {
-        Map<String, String> overrides = resolver.getAttributeOverrides(accessor);
-        Map<String, String> parent = declareBy().getAttributeOverrides();
-        for (Map.Entry<String, String> entry : parent.entrySet()) {
-            String[] split = entry.getKey().split("\\.");
-            if (split.length > 1 && split[0].equals(name())) {
-                String key = Arrays.stream(split).skip(1)
-                        .collect(Collectors.joining("."));
-                overrides.put(key, entry.getValue());
-            }
-        }
-        return overrides;
+        return mergeAttributeOverrides(resolver, accessor, declareBy(), name());
     }
 
     @Override

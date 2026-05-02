@@ -198,6 +198,63 @@ DTO 字段名称需要与实体字段名称匹配：
 | `salary` | `salary` | 名称相同 |
 | `status` | `status` | 名称相同 |
 
+### 嵌套路径映射（@EntityPath）
+
+对于嵌入对象（`@Embedded`）或关联对象的嵌套字段，DTO 可以使用 `@EntityPath` 注解将字段映射到深层路径：
+
+```java
+// 实体类
+@Embeddable
+public class Address {
+    private String street;
+    private String city;
+    private String zipCode;
+}
+
+@Entity
+public class Employee {
+    @Id
+    private Long id;
+    private String name;
+    @Embedded
+    private Address address;
+}
+```
+
+```java
+// DTO：通过 @EntityPath 展平嵌入字段
+public class EmployeeAddressSummary {
+
+    private Long id;
+    private String name;
+
+    @EntityPath("address.street")
+    private String street;
+
+    @EntityPath("address.city")
+    private String city;
+
+    @EntityPath("address.zipCode")
+    private String zipCode;
+
+    // 无参构造函数、Getter、Setter
+}
+```
+
+```java
+// 使用方式与普通 DTO 投影相同
+List<EmployeeAddressSummary> summaries = employeeRepository.query()
+    .select(EmployeeAddressSummary.class)
+    .where(Employee::getActive).eq(true)
+    .list();
+
+for (EmployeeAddressSummary s : summaries) {
+    System.out.println(s.getName() + ": " + s.getCity());
+}
+```
+
+`@EntityPath` 也支持多层嵌套，如 `contact.address.street`。
+
 ---
 
 ## Distinct 投影

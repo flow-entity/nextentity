@@ -6,10 +6,12 @@ import io.github.nextentity.core.expression.PathNode;
 ///
 /// 这是元模型属性体系的核心接口，采用 sealed hierarchy 设计：
 /// - {@link EntityBasicAttribute}：基本属性，直接映射到数据库列
-/// - {@link EntitySchemaAttribute}：关联属性，引用另一个实体类型
+/// - {@link EntityComplexAttribute}：复合属性，包含子属性
+///   - {@link EntitySchemaAttribute}：关联属性，引用另一个实体类型
+///   - {@link EntityEmbeddedAttribute}：嵌入属性（{@code @Embedded}）
 ///
 /// @see EntityBasicAttribute
-/// @see EntitySchemaAttribute
+/// @see EntityComplexAttribute
 public sealed interface EntityAttribute extends MetamodelAttribute permits EntityBasicAttribute, EntityComplexAttribute {
     /// 获取此属性在查询表达式中的路径节点。
     ///

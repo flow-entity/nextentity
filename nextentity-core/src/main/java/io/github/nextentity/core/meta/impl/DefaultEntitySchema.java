@@ -2,13 +2,16 @@ package io.github.nextentity.core.meta.impl;
 
 import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.meta.*;
+import io.github.nextentity.core.reflect.schema.Accessor;
 import io.github.nextentity.core.reflect.schema.impl.DefaultAccessor;
 import io.github.nextentity.core.util.Lazy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /// 默认实体类型实现，实现 EntityType 接口。
 /// 提供实体元数据的核心实现，包括属性、表名、版本字段、投影等。
@@ -142,4 +145,33 @@ public class DefaultEntitySchema extends AbstractMetamodelSchema<EntityAttribute
     protected Map<String, String> getAttributeOverrides() {
         return resolver.getAttributeOverrides(type());
     }
+
+    /// 合并当前字段的 @AttributeOverride 与父级传递的点号路径覆盖。
+    ///
+    /// 如父级的 {@code address.street} 在当前层级为 {@code address} 时，
+    /// 截取前缀后变为 {@code street}。
+    ///
+    /// @param resolver  元模型解析器
+    /// @param accessor  当前字段的访问器
+    /// @param declareBy 声明当前字段的父级 Schema
+    /// @param name      当前字段名称
+    /// @return 合并后的字段名 → 列名映射
+    protected static Map<String, String> mergeAttributeOverrides(
+            MetamodelResolver resolver,
+            Accessor accessor,
+            DefaultEntitySchema declareBy,
+            String name) {
+        Map<String, String> overrides = resolver.getAttributeOverrides(accessor);
+        Map<String, String> parent = declareBy.getAttributeOverrides();
+        for (Map.Entry<String, String> entry : parent.entrySet()) {
+            String[] split = entry.getKey().split("\\.");
+            if (split.length > 1 && split[0].equals(name)) {
+                String key = Arrays.stream(split).skip(1)
+                        .collect(Collectors.joining("."));
+                overrides.put(key, entry.getValue());
+            }
+        }
+        return overrides;
+    }
+
 }
