@@ -1,6 +1,7 @@
 package io.github.nextentity.jpa;
 
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.expression.*;
 import jakarta.persistence.criteria.*;
 import jakarta.persistence.criteria.From;
@@ -105,7 +106,7 @@ public class JpaExpressionBuilder {
                             try {
                                 in = in.value(toExpression(arg));
                             } catch (Exception e) {
-                                throw new RuntimeException(e);
+                                throw new SqlException(e);
                             }
                         }
                         return in;
@@ -126,7 +127,7 @@ public class JpaExpressionBuilder {
                     } else if (operands.size() == 3) {
                         return cb.substring(cast(operand0), cast(toExpression(e1)), cast(toExpression(e2)));
                     } else {
-                        throw new IllegalArgumentException("argument length error");
+                        throw new IllegalArgumentException("SUBSTRING requires 2 or 3 arguments, but got " + operands.size());
                     }
                 }
                 case TRIM:

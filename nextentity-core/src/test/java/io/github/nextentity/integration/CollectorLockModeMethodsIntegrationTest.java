@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.LockableEntity;
@@ -451,7 +452,7 @@ public class CollectorLockModeMethodsIntegrationTest {
                                 .where(LockableEntity::getId).lt(3L)
                                 .lock(LockModeType.PESSIMISTIC_READ).single()
                 )
-        ).isInstanceOf(IllegalStateException.class)
+        ).isInstanceOf(NextEntityException.class)
                 .hasMessageContaining("found more than one");
     }
 

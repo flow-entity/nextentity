@@ -2,6 +2,7 @@ package io.github.nextentity.core;
 
 import io.github.nextentity.core.event.EntityEventListener;
 import io.github.nextentity.core.event.EntityEventType;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.ExpressionNode;
 import io.github.nextentity.core.expression.UpdateStructure;
 import io.github.nextentity.core.util.ImmutableList;
@@ -21,53 +22,83 @@ public abstract class AbstractPersistExecutor implements PersistExecutor {
 
     @Override
     public <T> void insertAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> list = ImmutableList.ofIterable(entities);
-        if (list.isEmpty()) {
-            return;
+        try {
+            List<T> list = ImmutableList.ofIterable(entities);
+            if (list.isEmpty()) {
+                return;
+            }
+            fireEvent(descriptor, EntityEventType.BEFORE_INSERT, list, 0);
+            doInsertAll(list, descriptor);
+            fireEvent(descriptor, EntityEventType.AFTER_INSERT, list, list.size());
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to insert entities", e);
         }
-        fireEvent(descriptor, EntityEventType.BEFORE_INSERT, list, 0);
-        doInsertAll(list, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_INSERT, list, list.size());
     }
 
     @Override
     public <T> void updateAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> list = ImmutableList.ofIterable(entities);
-        if (list.isEmpty()) {
-            return;
+        try {
+            List<T> list = ImmutableList.ofIterable(entities);
+            if (list.isEmpty()) {
+                return;
+            }
+            fireEvent(descriptor, EntityEventType.BEFORE_UPDATE, list, 0);
+            doUpdateAll(list, descriptor);
+            fireEvent(descriptor, EntityEventType.AFTER_UPDATE, list, list.size());
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to update entities", e);
         }
-        fireEvent(descriptor, EntityEventType.BEFORE_UPDATE, list, 0);
-        doUpdateAll(list, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_UPDATE, list, list.size());
     }
 
     @Override
     public <T> void deleteAll(@NonNull Iterable<T> entities, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> list = ImmutableList.ofIterable(entities);
-        if (list.isEmpty()) {
-            return;
+        try {
+            List<T> list = ImmutableList.ofIterable(entities);
+            if (list.isEmpty()) {
+                return;
+            }
+            fireEvent(descriptor, EntityEventType.BEFORE_DELETE, list, 0);
+            doDeleteAll(list, descriptor);
+            fireEvent(descriptor, EntityEventType.AFTER_DELETE, list, list.size());
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to delete entities", e);
         }
-        fireEvent(descriptor, EntityEventType.BEFORE_DELETE, list, 0);
-        doDeleteAll(list, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_DELETE, list, list.size());
     }
 
     @Override
     public <T> int update(@NonNull UpdateStructure structure, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> entities = List.of();
-        fireEvent(descriptor, EntityEventType.BEFORE_PREDICATE_UPDATE, entities, 0);
-        int updated = doUpdate(structure, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_PREDICATE_UPDATE, entities, updated);
-        return updated;
+        try {
+            List<T> entities = List.of();
+            fireEvent(descriptor, EntityEventType.BEFORE_PREDICATE_UPDATE, entities, 0);
+            int updated = doUpdate(structure, descriptor);
+            fireEvent(descriptor, EntityEventType.AFTER_PREDICATE_UPDATE, entities, updated);
+            return updated;
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to execute predicate update", e);
+        }
     }
 
     @Override
     public <T> int delete(@NonNull ExpressionNode predicate, @NonNull PersistDescriptor<T> descriptor) {
-        List<T> entities = List.of();
-        fireEvent(descriptor, EntityEventType.BEFORE_PREDICATE_DELETE, entities, 0);
-        int deleted = doDelete(predicate, descriptor);
-        fireEvent(descriptor, EntityEventType.AFTER_PREDICATE_DELETE, entities, deleted);
-        return deleted;
+        try {
+            List<T> entities = List.of();
+            fireEvent(descriptor, EntityEventType.BEFORE_PREDICATE_DELETE, entities, 0);
+            int deleted = doDelete(predicate, descriptor);
+            fireEvent(descriptor, EntityEventType.AFTER_PREDICATE_DELETE, entities, deleted);
+            return deleted;
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to execute predicate delete", e);
+        }
     }
 
     protected abstract <T> void doInsertAll(List<T> entities, PersistDescriptor<T> descriptor);

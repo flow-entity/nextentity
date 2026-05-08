@@ -1,5 +1,6 @@
 package io.github.nextentity.core.util;
 
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

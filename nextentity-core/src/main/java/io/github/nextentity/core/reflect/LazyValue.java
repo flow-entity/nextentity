@@ -1,5 +1,7 @@
 package io.github.nextentity.core.reflect;
 
+import io.github.nextentity.core.exception.NextEntityException;
+
 import java.util.Objects;
 import java.util.function.Function;
 
@@ -30,7 +32,7 @@ public final class LazyValue implements LazyValueMap.Resolvable {
 
     private void preventReentry() {
         if (Thread.holdsLock(this)) {
-            throw new IllegalStateException("Recursive invocation of a LazyValue's computing function: " + loader);
+            throw new NextEntityException("Recursive invocation of a LazyValue's computing function: " + loader);
         }
     }
 

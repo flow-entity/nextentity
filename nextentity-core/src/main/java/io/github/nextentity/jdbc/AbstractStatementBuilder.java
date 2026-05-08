@@ -3,6 +3,7 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.SelectItem;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
@@ -447,7 +448,7 @@ public abstract class AbstractStatementBuilder {
         appendBlank();
         int iMax = column.deep() - 1;
         if (iMax == -1)
-            throw new IllegalStateException();
+            throw new IllegalStateException("Path depth cannot be -1");
         EntityAttribute attribute = getEntityType().getAttribute(column);
         appendAttribute(attribute);
     }
@@ -464,7 +465,7 @@ public abstract class AbstractStatementBuilder {
         } else {
             MetamodelSchema<?> parent = attribute.declareBy();
             if (!(parent instanceof JoinAttribute join)) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Parent schema must be a JoinAttribute");
             }
             Integer index = joins.get(join);
             appendTableAlias(join, index).append('.');
@@ -517,7 +518,7 @@ public abstract class AbstractStatementBuilder {
             appendTableAliasTo(sb, k, v);
             sb.append(".").append(targeted.columnName());
         } else {
-            throw new IllegalStateException();
+            throw new IllegalStateException("JoinAttribute must be an object type");
         }
     }
 

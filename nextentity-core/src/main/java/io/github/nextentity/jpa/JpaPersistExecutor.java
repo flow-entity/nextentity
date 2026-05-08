@@ -2,6 +2,8 @@ package io.github.nextentity.jpa;
 
 import io.github.nextentity.core.AbstractPersistExecutor;
 import io.github.nextentity.core.PersistDescriptor;
+import io.github.nextentity.core.exception.ConfigurationException;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityAttribute;
@@ -95,7 +97,7 @@ public class JpaPersistExecutor extends AbstractPersistExecutor {
                 if (versionAttribute != null) {
                     throw new OptimisticLockException("Entity not found or concurrent modification detected for entity with id: " + id);
                 } else {
-                    throw new IllegalStateException("Entity not found with id: " + id);
+                    throw new NextEntityException("Entity not found with id: " + id);
                 }
             }
 
@@ -119,7 +121,7 @@ public class JpaPersistExecutor extends AbstractPersistExecutor {
         } else if (type == Long.class || type == long.class) {
             version = version == null ? 0L : (Long) version + 1;
         } else {
-            throw new IllegalStateException("Unsupported version type: " + type);
+            throw new ConfigurationException("Unsupported version type: " + type);
         }
         return version;
     }
@@ -154,7 +156,7 @@ public class JpaPersistExecutor extends AbstractPersistExecutor {
         query.setParameter("ids", ids);
         int updated = query.executeUpdate();
         if (updated != ids.size()) {
-            throw new IllegalStateException("Deleted " + updated + " entities, expected " + ids.size());
+            throw new NextEntityException("Deleted " + updated + " entities, expected " + ids.size());
         }
 
     }

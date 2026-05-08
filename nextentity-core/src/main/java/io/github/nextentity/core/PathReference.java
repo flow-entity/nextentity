@@ -1,7 +1,9 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.PathRef;
+import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
+import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodHandleInfo;
@@ -61,7 +63,7 @@ public class PathReference {
             int implMethodKind = serializedLambda.getImplMethodKind();
             if (implMethodKind != MethodHandleInfo.REF_invokeVirtual
                 && implMethodKind != MethodHandleInfo.REF_invokeInterface) {
-                throw new IllegalStateException(
+                throw new IllegalArgumentException(
                         "implMethodKind error: required "
                         + MethodHandleInfo.referenceKindToString(MethodHandleInfo.REF_invokeVirtual)
                         + " or " + MethodHandleInfo.referenceKindToString(MethodHandleInfo.REF_invokeInterface)

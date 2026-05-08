@@ -32,7 +32,7 @@ public class Maps {
 
         public Builder<MAP, K, V> put(Collection<K> keys, Collection<V> values) {
             if (keys.size() != values.size()) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("keys.size() != values.size()");
             }
             Iterator<K> itk = keys.iterator();
             Iterator<V> itv = values.iterator();

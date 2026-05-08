@@ -4,6 +4,7 @@ import io.github.nextentity.api.SortOrder;
 import io.github.nextentity.core.QueryExecutor;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.SelectItem;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.ValueConstructor;
 import io.github.nextentity.core.expression.*;
@@ -43,26 +44,32 @@ public class JpaQueryExecutor implements QueryExecutor {
 
     @Override
     public <T> List<T> getList(@NonNull QueryContext context) {
-        QueryStructure queryStructure = context.getStructure();
-        // 应用 nativeSubqueries 配置
-        if (config.nativeSubqueries() && requiredNativeQuery(context, queryStructure)) {
-            return nativeQueryExecutor.getList(context);
+        try {
+            QueryStructure queryStructure = context.getStructure();
+            // 应用 nativeSubqueries 配置
+            if (config.nativeSubqueries() && requiredNativeQuery(context, queryStructure)) {
+                return nativeQueryExecutor.getList(context);
+            }
+            Selected selected = queryStructure.select();
+            if (selected instanceof SelectEntity) {
+                List<?> resultList = getEntityResultList(queryStructure);
+                return TypeCastUtil.cast(resultList);
+            }
+            ValueConstructor constructor = context.newConstructor();
+            List<Object[]> objectsList = getObjectsList(queryStructure, constructor.columns());
+            List<Object> result = objectsList.stream()
+                    .map(objects -> {
+                        JpaArguments arguments = new JpaArguments(
+                                objects);
+                        return constructor.construct(arguments);
+                    })
+                    .collect(ImmutableList.collector(objectsList.size()));
+            return TypeCastUtil.cast(result);
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to execute query", e);
         }
-        Selected selected = queryStructure.select();
-        if (selected instanceof SelectEntity) {
-            List<?> resultList = getEntityResultList(queryStructure);
-            return TypeCastUtil.cast(resultList);
-        }
-        ValueConstructor constructor = context.newConstructor();
-        List<Object[]> objectsList = getObjectsList(queryStructure, constructor.columns());
-        List<Object> result = objectsList.stream()
-                .map(objects -> {
-                    JpaArguments arguments = new JpaArguments(
-                            objects);
-                    return constructor.construct(arguments);
-                })
-                .collect(ImmutableList.collector(objectsList.size()));
-        return TypeCastUtil.cast(result);
     }
 
     private boolean requiredNativeQuery(@NonNull QueryContext context, @NonNull QueryStructure queryStructure) {

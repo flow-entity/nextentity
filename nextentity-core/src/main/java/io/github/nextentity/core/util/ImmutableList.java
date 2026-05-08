@@ -2,6 +2,7 @@ package io.github.nextentity.core.util;
 
 
 import io.github.nextentity.core.TypeCastUtil;
+import io.github.nextentity.core.exception.NextEntityException;
 import org.jspecify.annotations.NonNull;
 
 import java.io.Serializable;
@@ -429,7 +430,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
         try {
             return TypeCastUtil.unsafeCast(super.clone());
         } catch (CloneNotSupportedException e) {
-            throw new InternalError(e);
+            throw new AssertionError("Failed to clone ImmutableList", e);
         }
     }
 
@@ -464,7 +465,7 @@ public class ImmutableList<E> extends AbstractList<E> implements List<E>, Random
         if (toIndex > size)
             throw new IndexOutOfBoundsException("toIndex = " + toIndex);
         if (fromIndex > toIndex)
-            throw new IllegalArgumentException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
+            throw new IndexOutOfBoundsException("fromIndex(" + fromIndex + ") > toIndex(" + toIndex + ")");
     }
 
     /// 获取收集器。

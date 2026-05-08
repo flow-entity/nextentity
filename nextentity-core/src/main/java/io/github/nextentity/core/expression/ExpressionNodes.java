@@ -46,7 +46,7 @@ public class ExpressionNodes {
         } else if (expression instanceof PathRef<?, ?> path) {
             tree = (ExpressionTree) Path.of(path);
         } else {
-            throw new IllegalArgumentException(expression.getClass().getName());
+            throw new IllegalArgumentException("Unsupported expression type: " + expression.getClass().getName());
         }
         return tree.getRoot();
     }

@@ -1,5 +1,6 @@
 package io.github.nextentity.core.util;
 
+
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
@@ -643,7 +644,7 @@ class ImmutableListTest {
             assertThatThrownBy(() -> list.subList(0, 10))
                     .isInstanceOf(IndexOutOfBoundsException.class);
             assertThatThrownBy(() -> list.subList(2, 1))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(IndexOutOfBoundsException.class);
         }
     }
 
