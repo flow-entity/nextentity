@@ -1,6 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.Path;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -90,7 +91,7 @@ public class ErrorHandlingIntegrationTest {
         // When/Then
         assertThatThrownBy(() ->
                 context.queryEmployees().single())
-                .isInstanceOf(IllegalStateException.class)
+                .isInstanceOf(NextEntityException.class)
                 .hasMessageContaining("more than one");
     }
 

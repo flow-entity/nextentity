@@ -3,7 +3,6 @@ package io.github.nextentity.core.constructor;
 import io.github.nextentity.core.ExpressionTypeResolver;
 import io.github.nextentity.core.QueryConfig;
 import io.github.nextentity.core.QueryExecutor;
-import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
 import io.github.nextentity.core.meta.*;
@@ -85,7 +84,7 @@ public class QueryContext {
             case SelectExpression selectExpression -> newConstructor(entityType, selectExpression.expression());
             case SelectExpressions selectExpressions -> newConstructor(entityType, selectExpressions);
             case SelectNested selectNested -> newConstructor(entityType, selectNested);
-            case null -> throw new ConfigurationException("Query select clause must not be null");
+            case null -> throw new IllegalStateException("Query select clause must not be null");
         };
     }
 

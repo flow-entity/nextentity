@@ -2,6 +2,7 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.QueryExecutor;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.exception.TransactionRequiredException;
 import io.github.nextentity.core.interceptor.ConstructInterceptor;
@@ -63,9 +64,9 @@ public class JdbcQueryExecutor implements QueryExecutor {
     @Override
     @NonNull
     public <R> List<R> getList(@NonNull QueryContext context) {
-        QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
-        sql.debug();
         try {
+            QuerySqlStatement sql = sqlBuilder.buildQueryStatement(context);
+            sql.debug();
             return connectionProvider.execute(connection -> {
                 LockModeType locked = context.getStructure().lockType();
                 if (locked != null && locked != LockModeType.NONE && connection.getAutoCommit()) {
@@ -89,6 +90,10 @@ public class JdbcQueryExecutor implements QueryExecutor {
             });
         } catch (SQLException e) {
             throw new SqlException(e);
+        } catch (NextEntityException e) {
+            throw e;
+        } catch (RuntimeException e) {
+            throw new NextEntityException("Failed to execute query", e);
         }
     }
 

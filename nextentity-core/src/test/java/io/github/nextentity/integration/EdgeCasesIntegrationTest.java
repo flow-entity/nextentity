@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Department;
@@ -469,7 +470,7 @@ public class EdgeCasesIntegrationTest {
     void shouldThrowExceptionForGetSingleWithMultipleResults(IntegrationTestContext context) {
         // When/Then
         assertThatThrownBy(() -> context.queryEmployees().single())
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(NextEntityException.class);
     }
 
     ///

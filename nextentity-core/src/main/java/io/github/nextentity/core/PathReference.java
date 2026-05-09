@@ -61,7 +61,7 @@ public class PathReference {
             int implMethodKind = serializedLambda.getImplMethodKind();
             if (implMethodKind != MethodHandleInfo.REF_invokeVirtual
                 && implMethodKind != MethodHandleInfo.REF_invokeInterface) {
-                throw new IllegalStateException(
+                throw new IllegalArgumentException(
                         "implMethodKind error: required "
                         + MethodHandleInfo.referenceKindToString(MethodHandleInfo.REF_invokeVirtual)
                         + " or " + MethodHandleInfo.referenceKindToString(MethodHandleInfo.REF_invokeInterface)

@@ -6,6 +6,7 @@ import io.github.nextentity.core.meta.EntityBasicAttribute;
 import io.github.nextentity.core.meta.EntitySchemaAttribute;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.meta.ValueConverter;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.reflect.LazyValue;
 import io.github.nextentity.core.reflect.LoadObserver;
 import io.github.nextentity.core.reflect.LoadObserverRegistry;
@@ -623,7 +624,7 @@ class LazyValueConstructorTest {
                 return "result";
             }, "id");
             assertThatThrownBy(holder[0]::get)
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(NextEntityException.class)
                     .message().contains("Recursive invocation");
         }
     }

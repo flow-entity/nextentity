@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.meta.ValueConverter;
 
 import java.sql.ResultSet;
@@ -35,7 +36,7 @@ public class JdbcArguments extends AbstractArguments {
         try {
             return JdbcUtil.getValue(resultSet, 1 + index, convertor);
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new SqlException(e);
         }
     }
 

@@ -1,5 +1,6 @@
 package io.github.nextentity.jdbc;
 
+import io.github.nextentity.core.exception.ConfigurationException;
 import org.jspecify.annotations.Nullable;
 
 /// JDBC 执行配置。
@@ -36,10 +37,10 @@ public record JdbcConfig(
     /// 紧凑构造函数，验证参数合法性。
     public JdbcConfig {
         if (batchSize <= 0) {
-            throw new IllegalArgumentException("batchSize must be positive, but was: " + batchSize);
+            throw new ConfigurationException("batchSize must be positive, but was: " + batchSize);
         }
         if (fetchSize < 0) {
-            throw new IllegalArgumentException("fetchSize must be non-negative, but was: " + fetchSize);
+            throw new ConfigurationException("fetchSize must be non-negative, but was: " + fetchSize);
         }
     }
 

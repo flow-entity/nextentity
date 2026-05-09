@@ -1,5 +1,6 @@
 package io.github.nextentity.integration;
 
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -57,7 +58,7 @@ public class ExceptionPropagationIntegrationTest {
     void shouldThrowExceptionForGetSingleWithMultipleResults(IntegrationTestContext context) {
         // When/Then - query that returns multiple results
         assertThatThrownBy(() -> context.queryEmployees().single())
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(NextEntityException.class);
     }
 
     ///

@@ -124,7 +124,7 @@ public class ReflectUtil {
     /// @throws IllegalArgumentException 当不是枚举类型时抛出
     public static Object getEnum(Class<?> cls, int ordinal) {
         if (!cls.isEnum()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(cls + " is not an enum type");
         }
         Object array = SINGLE_ENUM_MAP.computeIfAbsent(cls, k -> {
             try {
@@ -146,7 +146,7 @@ public class ReflectUtil {
     /// @throws IllegalArgumentException 当不是枚举类型时抛出
     public static Object getEnum(Class<?> cls, String name) {
         if (!cls.isEnum()) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException(cls + " is not an enum type");
         }
         try {
             Method method = cls.getMethod("valueOf", String.class);

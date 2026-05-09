@@ -2,6 +2,8 @@ package io.github.nextentity.jdbc;
 
 import io.github.nextentity.core.AbstractPersistExecutor;
 import io.github.nextentity.core.PersistDescriptor;
+import io.github.nextentity.core.exception.ConfigurationException;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.exception.OptimisticLockException;
 import io.github.nextentity.core.exception.SqlException;
 import io.github.nextentity.core.expression.ExpressionNode;
@@ -108,7 +110,7 @@ public class JdbcPersistExecutor extends AbstractPersistExecutor {
                         if (hasVersion) {
                             throw new OptimisticLockException("id not found or concurrent modified");
                         } else {
-                            throw new IllegalStateException("id not found");
+                            throw new NextEntityException("Entity not found");
                         }
                     }
                 }
@@ -141,7 +143,7 @@ public class JdbcPersistExecutor extends AbstractPersistExecutor {
                 log.trace("executeBatch result: {}", Arrays.toString(result));
                 for (int updated : result) {
                     if (updated != 1) {
-                        throw new IllegalStateException("ID does not exist or is deleted repeatedly");
+                        throw new NextEntityException("ID does not exist or is deleted repeatedly");
                     }
                 }
                 return null;
@@ -201,7 +203,7 @@ public class JdbcPersistExecutor extends AbstractPersistExecutor {
         } else if (type == Long.class || type == long.class) {
             version = version == null ? 0L : (Long) version + 1;
         } else {
-            throw new IllegalStateException();
+            throw new ConfigurationException("Unsupported version type: " + type);
         }
         attribute.setByDatabaseValue(entity, version);
     }

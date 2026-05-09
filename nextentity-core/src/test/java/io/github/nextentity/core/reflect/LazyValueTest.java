@@ -4,6 +4,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import io.github.nextentity.core.exception.NextEntityException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -156,7 +158,7 @@ class LazyValueTest {
             }, "key1");
 
             assertThatThrownBy(holder[0]::get)
-                    .isInstanceOf(IllegalStateException.class)
+                    .isInstanceOf(NextEntityException.class)
                     .hasMessageContaining("Recursive invocation");
         }
     }

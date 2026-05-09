@@ -1,5 +1,6 @@
 package io.github.nextentity.core;
 
+import io.github.nextentity.core.exception.ConfigurationException;
 import jakarta.persistence.FetchType;
 
 /// 查询配置属性。
@@ -26,10 +27,10 @@ public record QueryProperties(
 
     public QueryProperties {
         if (fetchBatchMaxSize <= 0) {
-            throw new IllegalArgumentException("fetchBatchMaxSize must be positive, but was: " + fetchBatchMaxSize);
+            throw new ConfigurationException("fetchBatchMaxSize must be positive, but was: " + fetchBatchMaxSize);
         }
         if (defaultFetchType == null) {
-            throw new IllegalArgumentException("defaultFetchType must not be null");
+            throw new ConfigurationException("defaultFetchType must not be null");
         }
     }
 }

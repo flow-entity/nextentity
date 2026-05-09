@@ -40,7 +40,7 @@ public abstract class JdbcUtil {
         ResultSetGetter<Character> getChar = (resultSet, index) -> {
             String string = resultSet.getString(index);
             if (string == null || string.length() != 1) {
-                throw new IllegalStateException(string + " is not a character");
+                throw new IllegalArgumentException(string + " is not a character");
             }
             return string.charAt(0);
         };

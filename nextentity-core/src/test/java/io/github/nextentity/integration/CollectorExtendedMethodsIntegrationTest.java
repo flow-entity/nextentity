@@ -1,6 +1,7 @@
 package io.github.nextentity.integration;
 
 import io.github.nextentity.api.model.Slice;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.integration.config.IntegrationTestContext;
 import io.github.nextentity.integration.config.IntegrationTestProvider;
 import io.github.nextentity.integration.entity.Employee;
@@ -109,7 +110,7 @@ public class CollectorExtendedMethodsIntegrationTest {
     @DisplayName("Should getSingle throw exception when multiple results")
     void shouldGetSingleThrowExceptionWhenMultipleResults(IntegrationTestContext context) {
         // When & Then
-        org.junit.jupiter.api.Assertions.assertThrows(IllegalStateException.class, () -> {
+        org.junit.jupiter.api.Assertions.assertThrows(NextEntityException.class, () -> {
             context.queryEmployees()
                     .where(Employee::getSalary).gt(50000.0)
                     .single();

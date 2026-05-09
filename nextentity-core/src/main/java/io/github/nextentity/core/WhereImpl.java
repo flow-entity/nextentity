@@ -3,6 +3,7 @@ package io.github.nextentity.core;
 import io.github.nextentity.api.*;
 import io.github.nextentity.api.model.Order;
 import io.github.nextentity.core.constructor.QueryContext;
+import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.EntityType;
 import io.github.nextentity.core.util.ImmutableList;
@@ -180,7 +181,7 @@ public class WhereImpl<T, U> implements WhereStep<T, U>, HavingStep<T, U>, Colle
     public U single() {
         List<U> list = createContext(buildPaginatedQueryStructure(0, 2, false)).getResultList();
         if (list.size() > 1) {
-            throw new IllegalStateException("found more than one");
+            throw new NextEntityException("found more than one result, expected one");
         }
         return list.isEmpty() ? null : list.getFirst();
     }
