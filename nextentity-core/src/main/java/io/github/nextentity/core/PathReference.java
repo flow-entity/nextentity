@@ -1,9 +1,7 @@
 package io.github.nextentity.core;
 
 import io.github.nextentity.api.PathRef;
-import io.github.nextentity.core.exception.ConfigurationException;
 import io.github.nextentity.core.exception.ReflectiveException;
-import org.jspecify.annotations.Nullable;
 
 import java.io.Serializable;
 import java.lang.invoke.MethodHandleInfo;

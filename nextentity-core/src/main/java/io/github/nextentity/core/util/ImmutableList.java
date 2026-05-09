@@ -2,7 +2,6 @@ package io.github.nextentity.core.util;
 
 
 import io.github.nextentity.core.TypeCastUtil;
-import io.github.nextentity.core.exception.NextEntityException;
 import org.jspecify.annotations.NonNull;
 
 import java.io.Serializable;

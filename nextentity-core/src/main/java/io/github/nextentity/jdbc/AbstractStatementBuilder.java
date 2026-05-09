@@ -3,7 +3,6 @@ package io.github.nextentity.jdbc;
 import io.github.nextentity.core.TypeCastUtil;
 import io.github.nextentity.core.constructor.QueryContext;
 import io.github.nextentity.core.constructor.SelectItem;
-import io.github.nextentity.core.exception.NextEntityException;
 import io.github.nextentity.core.expression.*;
 import io.github.nextentity.core.meta.*;
 import io.github.nextentity.core.meta.impl.IdentityValueConverter;
