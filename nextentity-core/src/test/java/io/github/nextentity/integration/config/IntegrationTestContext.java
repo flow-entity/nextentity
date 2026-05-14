@@ -82,6 +82,10 @@ public interface IntegrationTestContext {
         return new EntityQueryImpl<>(getEntityContext(PersonWithCrossLayerEmbedded.class));
     }
 
+    default EntityQueryImpl<PersonWithRecordAddress> queryPersonWithRecordAddresses() {
+        return new EntityQueryImpl<>(getEntityContext(PersonWithRecordAddress.class));
+    }
+
     @NonNull IntegrationTestContext reset();
 
     <T> T doInTransaction(Supplier<T> runnable);

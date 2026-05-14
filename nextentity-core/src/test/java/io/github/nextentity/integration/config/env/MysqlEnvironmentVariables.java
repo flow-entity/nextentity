@@ -37,6 +37,7 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
                 "DROP TABLE IF EXISTS person_with_nested_overridden_contact",
                 "DROP TABLE IF EXISTS person_with_overridden_address",
                 "DROP TABLE IF EXISTS person_with_nested_address",
+                "DROP TABLE IF EXISTS person_with_record_address",
                 "DROP TABLE IF EXISTS person_with_address",
                 "DROP TABLE IF EXISTS employee",
                 "DROP TABLE IF EXISTS department",
@@ -108,6 +109,15 @@ public class MysqlEnvironmentVariables extends DbContainerEnvironmentVariables {
                         """,
                 """
                         CREATE TABLE person_with_address (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100),
+                            street VARCHAR(100),
+                            city VARCHAR(100),
+                            zip_code VARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE person_with_record_address (
                             id BIGINT PRIMARY KEY,
                             name VARCHAR(100),
                             street VARCHAR(100),

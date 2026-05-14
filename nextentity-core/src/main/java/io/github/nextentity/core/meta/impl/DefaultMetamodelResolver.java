@@ -88,11 +88,19 @@ public class DefaultMetamodelResolver implements MetamodelResolver {
 
     @Override
     public boolean isTransient(Accessor accessor) {
-        return accessor == null
-               || accessor.field() == null
-               || Modifier.isTransient(accessor.field().getModifiers())
-               || Modifier.isStatic(accessor.field().getModifiers())
-               || getAnnotation(accessor, Transient.class) != null;
+        if (accessor == null) {
+            return true;
+        }
+        if (accessor.field() != null) {
+            if (Modifier.isTransient(accessor.field().getModifiers())
+                || Modifier.isStatic(accessor.field().getModifiers())) {
+                return true;
+            }
+        }
+        if (accessor.field() == null && accessor.getter() == null) {
+            return true;
+        }
+        return getAnnotation(accessor, Transient.class) != null;
     }
 
     /// 检查访问器对应的属性是否标记了 `@Embedded` 注解。

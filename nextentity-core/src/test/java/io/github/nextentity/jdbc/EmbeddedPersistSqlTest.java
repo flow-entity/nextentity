@@ -310,4 +310,59 @@ class EmbeddedPersistSqlTest {
             return "";
         }
     }
+
+    @Nested
+    @DisplayName("Record 嵌入持久化")
+    class RecordEmbeddedPersistTests {
+
+        @Test
+        @DisplayName("INSERT 包含 Record 嵌入属性的子列")
+        void shouldInsertIncludeRecordEmbeddedSubColumns() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            TestEntities.EntityWithRecordEmbedded entity = new TestEntities.EntityWithRecordEmbedded(
+                    1L, "John", new TestEntities.AddressRecord("5th Ave", "NYC", "10001"));
+
+            List<InsertSqlStatement> statements = sqlBuilder.buildInsertStatement(
+                    Collections.singletonList(entity), entityType);
+
+            assertThat(statements).hasSize(1);
+            String sql = statements.get(0).sql();
+            assertThat(sql).containsIgnoringCase("street");
+            assertThat(sql).containsIgnoringCase("city");
+            assertThat(sql).containsIgnoringCase("zip_code");
+        }
+
+        @Test
+        @DisplayName("INSERT 参数包含 Record 嵌入子属性值")
+        void shouldInsertParametersIncludeRecordEmbeddedValues() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            TestEntities.EntityWithRecordEmbedded entity = new TestEntities.EntityWithRecordEmbedded(
+                    1L, "John", new TestEntities.AddressRecord("5th Ave", "NYC", "10001"));
+
+            List<InsertSqlStatement> statements = sqlBuilder.buildInsertStatement(
+                    Collections.singletonList(entity), entityType);
+
+            InsertSqlStatement stmt = statements.get(0);
+            ArrayList<Object> firstRow = new ArrayList<>();
+            stmt.parameters().iterator().next().forEach(firstRow::add);
+            // id, name, street, city, zip_code
+            assertThat(firstRow).containsExactly(1L, "John", "5th Ave", "NYC", "10001");
+        }
+
+        @Test
+        @DisplayName("UPDATE 包含 Record 嵌入属性的子列")
+        void shouldUpdateIncludeRecordEmbeddedSubColumns() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            TestEntities.EntityWithRecordEmbedded entity = new TestEntities.EntityWithRecordEmbedded(
+                    1L, "John", new TestEntities.AddressRecord("5th Ave", "NYC", "10001"));
+
+            BatchSqlStatement stmt = sqlBuilder.buildUpdateStatement(
+                    Collections.singletonList(entity), entityType);
+
+            String sql = stmt.sql();
+            assertThat(sql).containsIgnoringCase("street");
+            assertThat(sql).containsIgnoringCase("city");
+            assertThat(sql).containsIgnoringCase("zip_code");
+        }
+    }
 }

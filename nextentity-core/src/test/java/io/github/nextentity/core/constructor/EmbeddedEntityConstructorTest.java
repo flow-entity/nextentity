@@ -258,4 +258,137 @@ class EmbeddedEntityConstructorTest {
             return get(index++, convertor);
         }
     }
+
+    @Nested
+    @DisplayName("Record 嵌入构造")
+    class RecordEmbeddedConstructionTests {
+
+        @Test
+        @DisplayName("Record 嵌入属性，构造器返回 ObjectConstructor（实体是普通类）")
+        void shouldBuildObjectConstructorForRecordEmbeddedEntity() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            assertThat(constructor).isInstanceOf(ObjectConstructor.class);
+        }
+
+        @Test
+        @DisplayName("Record 嵌入属性列数正确（id, name, street, city, zipCode = 5）")
+        void shouldRecordEmbeddedHaveCorrectColumnCount() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            List<SelectItem> columns = constructor.columns();
+            assertThat(columns).hasSize(5);
+        }
+
+        @Test
+        @DisplayName("从 Arguments 构造 Record 嵌入对象")
+        void shouldConstructRecordEmbeddedFromArguments() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            Arguments args = new TestArguments(
+                    1L,          // id
+                    "John",      // name
+                    "5th Ave",   // street
+                    "NYC",       // city
+                    "10001"      // zipCode
+            );
+
+            Object result = constructor.construct(args);
+            assertThat(result).isInstanceOf(TestEntities.EntityWithRecordEmbedded.class);
+
+            TestEntities.EntityWithRecordEmbedded entity = (TestEntities.EntityWithRecordEmbedded) result;
+            assertThat(entity.getId()).isEqualTo(1L);
+            assertThat(entity.getName()).isEqualTo("John");
+            assertThat(entity.getAddress()).isNotNull();
+            assertThat(entity.getAddress().street()).isEqualTo("5th Ave");
+            assertThat(entity.getAddress().city()).isEqualTo("NYC");
+            assertThat(entity.getAddress().zipCode()).isEqualTo("10001");
+        }
+
+        @Test
+        @DisplayName("Record 嵌入子属性全 null 时嵌入对象为 null")
+        void shouldRecordEmbeddedBeNullWhenAllSubAttributesNull() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            Arguments args = new TestArguments(1L, "John", null, null, null);
+
+            Object result = constructor.construct(args);
+            TestEntities.EntityWithRecordEmbedded entity = (TestEntities.EntityWithRecordEmbedded) result;
+            assertThat(entity.getId()).isEqualTo(1L);
+            assertThat(entity.getName()).isEqualTo("John");
+            assertThat(entity.getAddress()).isNull();
+        }
+    }
+
+    @Nested
+    @DisplayName("嵌套 Record 嵌入构造")
+    class NestedRecordEmbeddedConstructionTests {
+
+        @Test
+        @DisplayName("嵌套 Record 嵌入构造器包含所有子列")
+        void shouldNestedRecordEmbeddedIncludeAllSubColumns() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            // id, email, phone, street, city, zipCode = 6 columns
+            List<SelectItem> columns = constructor.columns();
+            assertThat(columns).hasSize(6);
+        }
+
+        @Test
+        @DisplayName("从 Arguments 构造嵌套 Record 嵌入对象")
+        void shouldConstructNestedRecordEmbeddedFromArguments() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            Arguments args = new TestArguments(
+                    1L,          // id
+                    "a@b.com",   // email
+                    "123456",    // phone
+                    "5th Ave",   // street
+                    "NYC",       // city
+                    "10001"      // zipCode
+            );
+
+            Object result = constructor.construct(args);
+            assertThat(result).isInstanceOf(TestEntities.EntityWithNestedRecordEmbedded.class);
+
+            TestEntities.EntityWithNestedRecordEmbedded entity =
+                    (TestEntities.EntityWithNestedRecordEmbedded) result;
+            assertThat(entity.getId()).isEqualTo(1L);
+            assertThat(entity.getContactInfo()).isNotNull();
+            assertThat(entity.getContactInfo().email()).isEqualTo("a@b.com");
+            assertThat(entity.getContactInfo().phone()).isEqualTo("123456");
+            assertThat(entity.getContactInfo().address()).isNotNull();
+            assertThat(entity.getContactInfo().address().street()).isEqualTo("5th Ave");
+            assertThat(entity.getContactInfo().address().city()).isEqualTo("NYC");
+            assertThat(entity.getContactInfo().address().zipCode()).isEqualTo("10001");
+        }
+
+        @Test
+        @DisplayName("嵌套 Record 嵌入全 null 时中间层和深层均为 null")
+        void shouldNestedRecordEmbeddedBeNullWhenAllNull() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedRecordEmbedded.class);
+            EntityConstructorBuilder builder = new EntityConstructorBuilder(entityType, SchemaAttributePaths.empty());
+            ValueConstructor constructor = builder.build();
+
+            Arguments args = new TestArguments(1L, null, null, null, null, null);
+
+            Object result = constructor.construct(args);
+            TestEntities.EntityWithNestedRecordEmbedded entity =
+                    (TestEntities.EntityWithNestedRecordEmbedded) result;
+            assertThat(entity.getId()).isEqualTo(1L);
+            assertThat(entity.getContactInfo()).isNull();
+        }
+    }
 }

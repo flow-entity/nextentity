@@ -1500,6 +1500,46 @@ class DefaultMetamodelTest {
             assertThat(entityType.type()).isEqualTo(TestEntities.SimpleEntity.class);
         }
 
+        // ── Record 嵌入属性测试 ──
+
+        @Test
+        @DisplayName("Record @Embedded 字段应被解析为 EntityEmbeddedAttribute")
+        void shouldRecordEmbeddedFieldBeResolvedAsEmbeddedAttribute() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+            EntityAttribute addressAttr = entityType.getAttribute("address");
+
+            assertThat(addressAttr).isInstanceOf(EntityEmbeddedAttribute.class);
+        }
+
+        @Test
+        @DisplayName("Record @Embedded 字段的子属性应被展开到 getPrimitives")
+        void shouldRecordEmbeddedFieldExpandPrimitives() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithRecordEmbedded.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("street"))
+                    .anyMatch(a -> a.name().equals("city"))
+                    .anyMatch(a -> a.name().equals("zipCode"));
+            assertThat(entityType.getPrimitives())
+                    .noneMatch(a -> a.name().equals("address"));
+        }
+
+        @Test
+        @DisplayName("嵌套 Record @Embedded 字段应递归展开到 getPrimitives")
+        void shouldNestedRecordEmbeddedFieldExpandRecursively() {
+            EntityType entityType = metamodel.getEntity(TestEntities.EntityWithNestedRecordEmbedded.class);
+
+            assertThat(entityType.getPrimitives())
+                    .anyMatch(a -> a.name().equals("email"))
+                    .anyMatch(a -> a.name().equals("phone"))
+                    .anyMatch(a -> a.name().equals("street"))
+                    .anyMatch(a -> a.name().equals("city"))
+                    .anyMatch(a -> a.name().equals("zipCode"));
+            assertThat(entityType.getPrimitives())
+                    .noneMatch(a -> a.name().equals("contactInfo"))
+                    .noneMatch(a -> a.name().equals("address"));
+        }
+
         @Test
         @DisplayName("简单类型的 ValueConverter 为 IdentityValueConverter")
         void shouldValueConverterResolvedForSimpleTypes() {

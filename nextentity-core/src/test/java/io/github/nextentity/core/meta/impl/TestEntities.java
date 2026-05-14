@@ -653,5 +653,55 @@ public class TestEntities {
         public void setSecondaryZip(ZipCode secondaryZip) { this.secondaryZip = secondaryZip; }
     }
 
+    // ── Record 嵌入测试用 ──
+
+    public record AddressRecord(String street, String city, String zipCode) {}
+
+    @jakarta.persistence.Entity
+    public static class EntityWithRecordEmbedded {
+        @Id
+        private Long id;
+        private String name;
+        @jakarta.persistence.Embedded
+        private AddressRecord address;
+
+        public EntityWithRecordEmbedded() {}
+
+        public EntityWithRecordEmbedded(Long id, String name, AddressRecord address) {
+            this.id = id;
+            this.name = name;
+            this.address = address;
+        }
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public String getName() { return name; }
+        public void setName(String name) { this.name = name; }
+        public AddressRecord getAddress() { return address; }
+        public void setAddress(AddressRecord address) { this.address = address; }
+    }
+
+    public record ContactInfoRecord(String email, String phone, @jakarta.persistence.Embedded AddressRecord address) {}
+
+    @jakarta.persistence.Entity
+    public static class EntityWithNestedRecordEmbedded {
+        @Id
+        private Long id;
+        @jakarta.persistence.Embedded
+        private ContactInfoRecord contactInfo;
+
+        public EntityWithNestedRecordEmbedded() {}
+
+        public EntityWithNestedRecordEmbedded(Long id, ContactInfoRecord contactInfo) {
+            this.id = id;
+            this.contactInfo = contactInfo;
+        }
+
+        public Long getId() { return id; }
+        public void setId(Long id) { this.id = id; }
+        public ContactInfoRecord getContactInfo() { return contactInfo; }
+        public void setContactInfo(ContactInfoRecord contactInfo) { this.contactInfo = contactInfo; }
+    }
+
     private TestEntities() {}
 }

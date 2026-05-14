@@ -22,6 +22,7 @@ import io.github.nextentity.integration.entity.PersonWithCrossLayerEmbedded;
 import io.github.nextentity.integration.entity.PersonWithNestedAddress;
 import io.github.nextentity.integration.entity.PersonWithNestedOverriddenContact;
 import io.github.nextentity.integration.entity.PersonWithOverriddenAddress;
+import io.github.nextentity.integration.entity.PersonWithRecordAddress;
 import io.github.nextentity.integration.entity.SalesOrder;
 import io.github.nextentity.jdbc.*;
 import io.github.nextentity.jpa.JpaConfig;
@@ -161,6 +162,7 @@ public class IntegrationTestApplication {
                 PersonWithNestedOverriddenContact.class,
                 PersonWithOverriddenAddress.class,
                 PersonWithNestedAddress.class,
+                PersonWithRecordAddress.class,
                 PersonWithAddress.class,
                 Employee.class,
                 Department.class,

@@ -52,8 +52,7 @@ public final class EntityConstructorBuilder {
         if (schema.type().isInterface()) {
             return new JdkProxyConstructor(schema.type(), bindings, root);
         } else if (schema.type().isRecord()) {
-            throw new UnsupportedOperationException(
-                    "Record type '" + schema.type() + "' is not supported in entity constructor, use RecordConstructor instead");
+            return new RecordConstructor(schema.type(), bindings, root);
         } else {
             return new ObjectConstructor(schema.type(), bindings, root);
         }
