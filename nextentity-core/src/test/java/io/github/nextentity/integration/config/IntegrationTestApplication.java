@@ -16,6 +16,7 @@ import io.github.nextentity.integration.entity.Category;
 import io.github.nextentity.integration.entity.Customer;
 import io.github.nextentity.integration.entity.Department;
 import io.github.nextentity.integration.entity.Employee;
+import io.github.nextentity.integration.entity.InstantEntity;
 import io.github.nextentity.integration.entity.LockableEntity;
 import io.github.nextentity.integration.entity.PersonWithAddress;
 import io.github.nextentity.integration.entity.PersonWithCrossLayerEmbedded;
@@ -166,7 +167,8 @@ public class IntegrationTestApplication {
                 Department.class,
                 Category.class,
                 LockableEntity.class,
-                AutoIncrementEntity.class
+                AutoIncrementEntity.class,
+                InstantEntity.class
         );
 
         private static final Set<Class<?>> FIXTURE_ENTITY_TYPES = Set.of(

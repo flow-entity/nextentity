@@ -14,10 +14,12 @@ package io.github.nextentity.spring;
 /// @since 2.1.0
 public class JpaProperties {
 
-    /// 字符串是否使用参数绑定
+    /// 字面量是否使用参数绑定
     ///
-    /// true: 使用参数绑定，确保 SQL Server Unicode 字符正确处理 (N prefix)
-    /// false: 使用 cb.literal()，可能导致 SQL Server Unicode 问题
+    /// true: 字符串参数绑定确保 SQL Server Unicode 字符正确处理 (N prefix)，
+    /// 时间类型参数绑定确保时区口径与 TIMESTAMP_UTC 一致
+    /// false: 使用 cb.literal()，字符串可能导致 SQL Server Unicode 问题，
+    /// 时间类型按 JVM 默认时区渲染字面量
     private boolean stringParameterBinding = true;
 
     /// 子查询是否使用原生 SQL

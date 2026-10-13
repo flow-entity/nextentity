@@ -325,9 +325,8 @@ public class JpaQueryExecutor implements QueryExecutor {
 
         private TypedQuery<?> createTypedQuery() {
             TypedQuery<?> objectsQuery = getTypedQuery();
-            // Set string literal parameter values
-            for (int i = 0; i < stringParameters.size(); i++) {
-                objectsQuery.setParameter("p" + i, stringParameters.get(i));
+            for (int i = 0; i < parameterValues.size(); i++) {
+                objectsQuery.setParameter("p" + i, parameterValues.get(i));
             }
             Integer offset = structure.offset();
             if (offset != null && offset > 0) {

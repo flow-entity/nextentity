@@ -28,6 +28,7 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
     @Override
     public List<String> ddl() {
         return List.of(
+                "DROP TABLE IF EXISTS instant_entity",
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS sales_order",
                 "DROP TABLE IF EXISTS customer",
@@ -152,6 +153,13 @@ public class SqlServerEnvironmentVariables extends DbContainerEnvironmentVariabl
                             street NVARCHAR(100),
                             code NVARCHAR(20),
                             alt_code NVARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE instant_entity (
+                            id BIGINT PRIMARY KEY,
+                            name NVARCHAR(100) NOT NULL,
+                            created_at DATETIME2
                         )
                         """
         );

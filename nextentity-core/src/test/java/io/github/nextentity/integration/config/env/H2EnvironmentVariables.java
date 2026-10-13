@@ -32,6 +32,7 @@ public class H2EnvironmentVariables implements DatabaseEnvironmentVariables {
     @Override
     public List<String> ddl() {
         return List.of(
+                "DROP TABLE IF EXISTS instant_entity",
                 "DROP TABLE IF EXISTS auto_increment_entity",
                 "DROP TABLE IF EXISTS sales_order",
                 "DROP TABLE IF EXISTS customer",
@@ -156,6 +157,13 @@ public class H2EnvironmentVariables implements DatabaseEnvironmentVariables {
                             street VARCHAR(100),
                             code VARCHAR(20),
                             alt_code VARCHAR(20)
+                        )
+                        """,
+                """
+                        CREATE TABLE instant_entity (
+                            id BIGINT PRIMARY KEY,
+                            name VARCHAR(100) NOT NULL,
+                            created_at TIMESTAMP
                         )
                         """
         );

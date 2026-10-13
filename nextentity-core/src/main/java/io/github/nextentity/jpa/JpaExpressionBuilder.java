@@ -7,6 +7,12 @@ import jakarta.persistence.criteria.*;
 import jakarta.persistence.criteria.From;
 import org.jspecify.annotations.NonNull;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +23,7 @@ import java.util.Map;
 /// 该类提供了将各种表达式节点（字面量、路径、操作符等）转换为对应的 JPA 表达式的功能。
 ///
 /// 注意：该类不可复用，每次查询应创建新的实例。
-/// 实例在构建过程中会累积字符串参数等状态，复用会导致参数索引混乱。
+/// 实例在构建过程中会累积参数绑定值等状态，复用会导致参数索引混乱。
 ///
 /// @author HuangChengwei
 /// @since 2.0.0
@@ -29,8 +35,8 @@ public class JpaExpressionBuilder {
 
     protected final Map<PathNode, FetchParent<?, ?>> fetched = new HashMap<>();
 
-    /// 收集字符串字面量参数值，用于在查询执行时设置参数
-    protected final List<String> stringParameters = new ArrayList<>();
+    /// 收集以参数绑定方式下发的字面量值，用于在查询执行时设置参数
+    protected final List<Object> parameterValues = new ArrayList<>();
 
     protected final JpaConfig config;
 
@@ -42,13 +48,10 @@ public class JpaExpressionBuilder {
 
     public Expression<?> toExpression(ExpressionNode expression) {
         if (expression instanceof LiteralNode(Object value)) {
-            // 应用 stringParameterBinding 配置
-            // Use parameter binding for strings to ensure proper Unicode handling
-            // especially for SQL Server which requires N prefix for Unicode strings
-            if (config.stringParameterBinding() && value instanceof String s) {
-                int paramIndex = stringParameters.size();
-                stringParameters.add(s);
-                return cb.parameter(String.class, "p" + paramIndex);
+            if (config.stringParameterBinding() && isBoundLiteral(value)) {
+                int paramIndex = parameterValues.size();
+                parameterValues.add(value);
+                return cb.parameter(unsafeCast(value.getClass()), "p" + paramIndex);
             }
             return cb.literal(value);
         }
@@ -177,6 +180,25 @@ public class JpaExpressionBuilder {
         } else {
             throw new UnsupportedOperationException("unknown expression type " + expression.getClass());
         }
+    }
+
+    /// 判断字面量是否必须以参数绑定下发，而不是内联进 SQL。
+    ///
+    /// String 内联会丢掉 SQL Server 的 Unicode 语义，因为内联字面量缺少 N 前缀。
+    ///
+    /// 时间类型内联时由 Hibernate 的 JdbcLiteralFormatterTemporal 渲染，取值时区是
+    /// hibernate.jdbc.time_zone，未配置时退回 TimeZone.getDefault()。Instant 默认映射为
+    /// TIMESTAMP_UTC，绑定路径由该 JDBC 类型负责时区口径。两条路径不一致时，
+    /// JVM 默认时区不是 UTC 的进程会生成偏移过的字面量，条件命不中任何行。
+    private boolean isBoundLiteral(Object value) {
+        return value instanceof String
+               || value instanceof Instant
+               || value instanceof LocalDateTime
+               || value instanceof LocalDate
+               || value instanceof LocalTime
+               || value instanceof OffsetDateTime
+               || value instanceof ZonedDateTime
+               || value instanceof java.util.Date;
     }
 
     private <X> Expression<X> firstExpression(OperatorNode ov) {
