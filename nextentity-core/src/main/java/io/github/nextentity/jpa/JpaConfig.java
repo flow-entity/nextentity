@@ -4,7 +4,8 @@ package io.github.nextentity.jpa;
 ///
 /// 封装 JPA 执行时的可配置参数。
 ///
-/// @param stringParameterBinding 字符串是否使用参数绑定（SQL Server Unicode 支持）
+/// @param stringParameterBinding 字面量是否使用参数绑定：字符串用于 SQL Server Unicode 支持，
+///                               时间类型用于与 TIMESTAMP_UTC 的时区口径保持一致
 /// @param nativeSubqueries       子查询是否使用原生 SQL
 /// @author HuangChengwei
 /// @since 2.1.0
